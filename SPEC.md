@@ -75,14 +75,16 @@ field.
 
 #### Login
 
-Basic login form. Account slug, email and password. Needs to support TOTP
+Basic login form. Account slug, email, and password. Needs to support TOTP
 second-factor authentication. Account slug can likely be derived from the URL,
 e.g.:
 
-  https://portal.keygen.sh/{account}/login (see #accounts for more info)
+  https://portal.keygen.sh/{account}/login
 
 The login form should also support logging in via a license key, instead of
 email and password (maybe via a form switcher?).
+
+It will eventually support SSO/SAML.
 
 #### Distribution
 
@@ -326,6 +328,8 @@ waters here.
 
 Very basic CRUD resource.
 
+Docs: https://keygen.sh/docs/api/packages/
+
 ##### Releases
 
 These represent a versioned bucket that artifacts can be put into, but
@@ -335,6 +339,8 @@ You create a release, upload artifacts for it, and then publish it.
 Basic CRUD resource with a couple additional actions, such as publish
 and yank.
 
+Docs: https://keygen.sh/docs/api/releases/
+
 ##### Artifacts
 
 These represent a file for a particular release; everything from tarballs
@@ -342,6 +348,8 @@ to installers. After creating an artifact, an uploader must be shown to
 upload the file.
 
 Basic CRUD resource with a couple additional actions, such as yank.
+
+Docs: https://keygen.sh/docs/api/artifacts/
 
 ##### Engines
 
@@ -352,12 +360,16 @@ usage.
 
 This is a readonly resource.
 
+Docs: https://keygen.sh/docs/api/engines/
+
 ##### Channels
 
 These represent the channels used for an account, e.g. stable, dev, rc,
 beta, etc. These are automatically populated based on usage.
 
 This is a readonly resource.
+
+Docs: https://keygen.sh/docs/api/channels/
 
 ##### Platforms
 
@@ -366,12 +378,16 @@ linux. These are automatically populated based on usage.
 
 This is a readonly resource.
 
+Docs: https://keygen.sh/docs/api/platforms/
+
 ##### Arches
 
 These represent the arches used for an account, e.g. x86_64, amd64,
 arm64, 386. These are automatically populated based on usage.
 
 This is a readonly resource.
+
+Docs: https://keygen.sh/docs/api/arches/
 
 #### Automations
 
@@ -381,6 +397,8 @@ These pages can be used for automations, i.e. webhooks and Zapier.
 
 These pages are used to manage webhooks. Keygen has a robust webhook
 system that powers automation workflows.
+
+Docs: https://keygen.sh/docs/api/webhooks/
 
 ###### Endpoints
 
@@ -410,11 +428,15 @@ These represent request logs ala Stripe request logs, showing recent API
 activity request/response for debugging purposes. This is a readonly
 resource.
 
+Docs: https://keygen.sh/docs/api/request-logs/
+
 ##### Event logs
 
 These represent audit logs for enterprise customers, showing recent
 actions made on an account, including info on who made the action.
 Readonly.
+
+Docs: https://keygen.sh/docs/api/event-logs/
 
 #### Access
 

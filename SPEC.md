@@ -10,6 +10,8 @@ access to releases.
 At its core, Portal will be a front-end for Keygen's API. So anything the API
 can do, Portal should offer a way to do that via a UI.
 
+Portal will be Open Source under the MIT license.
+
 ## Personas
 
 I figure it'd be valuable to detail how Portal will be used, and what types of

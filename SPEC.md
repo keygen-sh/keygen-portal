@@ -409,7 +409,7 @@ send events to as they happen. Very basic CRUD resource.
 ###### Events
 
 These represent webhook logs ala Stripe webhook logs, showing recently
-delivered webhooks for debugging purposes. Basic CRUD resource with a
+delivered webhooks for debugging purposes. Readonly resource with a
 couple additional actions such as retry.
 
 ##### Zapier

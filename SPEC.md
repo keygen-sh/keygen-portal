@@ -21,6 +21,7 @@ people will use it. This way we can design UX accordingly.
   will set things up like environments, entitlements, products and policies.
   They will also create a lot of test data.
 - Technical users debugging production issues.
+- Technical users drafting new releases.
 - Non-technical sales staff, using Keygen to issue licenses to new clients.
   They may do things such as look for upcoming license renewals, and also
   renew licenses and extend trials, or attach/detach entitlements.

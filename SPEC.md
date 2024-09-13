@@ -41,8 +41,8 @@ This is not exhaustive, just an idea of the types of people using Portal.
 ## Design
 
 Design-wise, I don't want Portal to be anything fancy. I like the layouts of
-dashboards like Vercel, Planet Scale, Heroku, Digital Ocean, and Stripe. I do
-particularly like the aesthetic of Vercel and Oxide:
+dashboards like Vercel, Neon, Planet Scale, Heroku, Digital Ocean, and Stripe.
+I do particularly like the aesthetic of Vercel, Neon, and Oxide:
 
   https://console-preview.oxide.computer/
 

@@ -184,6 +184,8 @@ Pages for managing API and Portal access.
 
 ### Account
 
+Pages for managing the account and billing.
+
 - **Account**: Manage account details like name, slug, logo, security settings,
   and import/export functionality.
 - **Billing**: View billing info (current tier, subscription status) with

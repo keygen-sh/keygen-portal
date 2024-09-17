@@ -110,8 +110,9 @@ This will be the dashboard or landing page after login, showing:
 
 ### Licensing
 
-Pages for managing API licensing resources. Each resource will include an
-event logs pane showing historical events for the resource.
+Pages for managing API licensing resources. For enterprise customers, each
+resource will include an event logs pane showing historical events for the
+resource.
 
 - **Products**: CRUD operations for product offerings.
   - [Docs](https://keygen.sh/docs/api/products/)
@@ -140,8 +141,8 @@ event logs pane showing historical events for the resource.
 
 ### Distribution
 
-Pages for managing distribution resources. Each will include an event logs
-pane for tracking resource changes.
+Pages for managing distribution resources. For enterprise customers, each will
+include an event logs pane for tracking resource changes.
 
 - **Packages**: Named buckets for releases (e.g., PyPI, Tauri packages).
   - [Docs](https://keygen.sh/docs/api/packages/)

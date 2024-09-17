@@ -94,12 +94,12 @@ as 'open' releases, since they can be downloaded without any API authentication.
 Typically, these are used to distribute freemium products. Thinking something
 like:
 
-  https://portal.keygen.sh/{account}/releases
+  https://portal.keygen.sh/{account}/downloads
 
-Which will show the list page for releases, but hide most other navigiation
-since the user isn't logged in yet. But I'm covering this now so that the UI
-can be designed to support some resource pages being accessed without logging
-in.
+Which will show the list page for releases, with links to download the
+artifacts for each release. It should hide most other navigiation since the
+user isn't logged in yet. But I'm covering this now so that the UI can be
+designed to support some resource pages being accessed without logging in.
 
 As an example, we use Keygen to distribute our CLI as an 'open' product:
 

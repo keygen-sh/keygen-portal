@@ -77,8 +77,8 @@ We'll use [`shadcn/ui`](https://ui.shadcn.com/) to jump-start the UI.
 
 ### Unauthenticated
 
-- **Registration**: Basic registration form (email, password,
-  auto-generated account slug).
+- **Registration**: Basic registration form (email, password, auto-generated
+  account slug based on email domain, plan, etc.)
 - **Login**: Basic login form (account slug, email, password, 2FA/SSO/SAML
   support). Support for logging in via license key.
 - **Downloads**: Public download page for 'public' releases (freemium

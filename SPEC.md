@@ -64,6 +64,8 @@ via email/password or license key.
 - **Environments**: Environments (e.g., production, QA, development) for
   data siloing. Environment selection via a dropdown that updates the
   `Keygen-Environment` header for API calls.
+  - Switching environments may prompt for reauthentication, i.e. a login modal
+    may be required.
 
 ### Metrics
 

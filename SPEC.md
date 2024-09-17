@@ -115,29 +115,29 @@ resource will include an event logs pane showing historical events for the
 resource.
 
 - **Products**: CRUD operations for product offerings.
-  - [Docs](https://keygen.sh/docs/api/products/)
+  [(docs)](https://keygen.sh/docs/api/products/)
 - **Policies**: CRUD operations for policies, covering licensing models
   (e.g., concurrency, device, user, and offline locks).
-  - [Docs](https://keygen.sh/docs/api/policies/)
+  [(docs)](https://keygen.sh/docs/api/policies/)
 - **Users**: CRUD operations for product users, password resets, and MFA.
-  - [Docs](https://keygen.sh/docs/api/users/)
+  [(docs)](https://keygen.sh/docs/api/users/)
 - **Licenses**: CRUD operations for licenses, including renewals, revokes,
   and entitlement management.
-  - [Docs](https://keygen.sh/docs/api/licenses/)
+  [(docs)](https://keygen.sh/docs/api/licenses/)
 - **Machines**: CRUD operations for activated devices.
-  - [Docs](https://keygen.sh/docs/api/machines/)
+  [(docs)](https://keygen.sh/docs/api/machines/)
 - **Components**: CRUD operations for hardware components of activated
   devices (e.g., CPU, GPU identifiers). This page won’t be in the main nav
   but will surface through individual machine views.
-  - [Docs](https://keygen.sh/docs/api/components/)
+  [(docs)](https://keygen.sh/docs/api/components/)
 - **Processes**: CRUD operations for application processes, used for managing
   concurrency limits (e.g., limiting the number of app instances). This page
   won’t be in the main nav but will surface through machine views.
-  - [Docs](https://keygen.sh/docs/api/processes/)
+  [(docs)](https://keygen.sh/docs/api/processes/)
 - **Entitlements**: CRUD operations for feature flags or license entitlements.
-  - [Docs](https://keygen.sh/docs/api/entitlements/)
+  [(docs)](https://keygen.sh/docs/api/entitlements/)
 - **Groups**: CRUD operations for organizing resources.
-  - [Docs](https://keygen.sh/docs/api/groups/)
+  [(docs)](https://keygen.sh/docs/api/groups/)
 
 ### Distribution
 
@@ -145,14 +145,14 @@ Pages for managing distribution resources. For enterprise customers, each will
 include an event logs pane for tracking resource changes.
 
 - **Packages**: Named buckets for releases (e.g., PyPI, Tauri packages).
-  - [Docs](https://keygen.sh/docs/api/packages/)
+  [(docs)](https://keygen.sh/docs/api/packages/)
 - **Releases**: Versioned buckets for artifacts.
-  - [Docs](https://keygen.sh/docs/api/releases/)
+  [(docs)](https://keygen.sh/docs/api/releases/)
 - **Artifacts**: Files attached to releases (e.g., installers, tarballs).
-  - [Docs](https://keygen.sh/docs/api/artifacts/)
+  [(docs)](https://keygen.sh/docs/api/artifacts/)
 - **Engines, Channels, Platforms, Architectures**: Metadata for releases,
   populated automatically based on usage. These are read-only resources.
-  - [Docs](https://keygen.sh/docs/api/)
+  [(docs)](https://keygen.sh/docs/api/)
 
 ### Automation
 
@@ -160,7 +160,7 @@ Pages for setting up automation, e.g. integrating with a payment provider like
 Stripe, or a CRM like Salesforce.
 
 - **Webhooks**: CRUD operations for webhook endpoints and logs for debugging.
-  - [Docs](https://keygen.sh/docs/api/webhooks/)
+  [(docs)](https://keygen.sh/docs/api/webhooks/)
 - **Zapier**: Optional Zapier integrations page.
 
 ### Logs
@@ -169,19 +169,19 @@ Pages for debugging/reviewing raw request logs, and for auditing event logs.
 
 - **Request Logs**: View recent API activity and request/response details for
   debugging.
-  - [Docs](https://keygen.sh/docs/api/request-logs/)
+  [(docs)](https://keygen.sh/docs/api/request-logs/)
 - **Event Logs**: Audit logs for enterprise customers, showing actions made
   on an account.
-  - [Docs](https://keygen.sh/docs/api/event-logs/)
+  [(docs)](https://keygen.sh/docs/api/event-logs/)
 
 ### Access
 
 Pages for managing API and Portal access.
 
 - **Tokens**: CRUD operations for API tokens with varying permissions.
-  - [Docs](https://keygen.sh/docs/api/tokens/)
+  [(docs)](https://keygen.sh/docs/api/tokens/)
 - **Admins**: Manage admin users, including password resets and 2FA.
-  - [Docs](https://keygen.sh/docs/api/users/)
+  [(docs)](https://keygen.sh/docs/api/users/)
 
 ### Account
 

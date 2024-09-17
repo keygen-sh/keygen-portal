@@ -147,6 +147,8 @@ I'd like to automatically create 'live' and 'test' environments upon
 account creation, so that new accounts can immediately start playing
 with the API.
 
+I'm thinking a typical dropdown in the top left, e.g. see Oxide.
+
 Docs: https://keygen.sh/docs/api/environments/
 
 #### Metrics
@@ -186,6 +188,10 @@ Pages that aren't in main nav, but should be available:
 
 - Components
 - Processes
+
+All licensing resources will have a pane of event logs on the view resource
+page. This will show all historical "events" for the resource, with any
+additional information logged.
 
 ##### Products
 
@@ -310,6 +316,10 @@ Pages that aren't in main nav, but should be available:
 - Channels
 - Platforms
 - Arches
+
+All distribution resources will have a pane of event logs on the view resource
+page. This will show all historical "events" for the resource, with any
+additional information logged.
 
 ##### Packages
 

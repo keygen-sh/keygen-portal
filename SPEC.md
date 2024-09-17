@@ -49,8 +49,8 @@ We'll use [`shadcn/ui`](https://ui.shadcn.com/) to jump-start the UI.
 
 - **Registration**: Basic registration form (email, password,
   auto-generated account slug).
-- **Login**: Basic login form (account slug, email, password, 2FA support).
-  Support for logging in via license key.
+- **Login**: Basic login form (account slug, email, password, 2FA/SSO/SAML
+  support). Support for logging in via license key.
 - **Downloads**: Public download page for 'public' releases (freemium
   products), e.g., `https://portal.keygen.sh/{account}/downloads`.
 

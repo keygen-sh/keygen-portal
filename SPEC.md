@@ -13,19 +13,49 @@ license.
 
 ## Personas
 
-The portal will cater to a range of users, both technical and non-technical:
+The portal will be used by a wide range of users, both technical and
+non-technical. Understanding their roles will help inform the UX and UI
+design to ensure an intuitive experience for all.
 
-- **Technical Users**:
-  - Set up environments, entitlements, products, and policies.
-  - Debug production issues, draft new releases, manage test data.
-- **Sales Staff**:
-  - Issue licenses, manage renewals, extend trials, manage entitlements.
-- **Support Staff**:
-  - Manage device activations, update licenses, handle client issues.
-- **VPs/Executives**:
-  - Monitor license performance and customer data.
-- **End Users**:
-  - Manage devices, view license info, download releases.
+- **Technical users**:
+  - Responsible for implementing Keygen into a product. They will set up
+    environments, entitlements, products, policies, etc.
+  - Perform debugging tasks, such as resolving production issues related to
+    licensing and activation errors.
+  - Draft and prepare new releases, as well as manage existing releases and
+    artifacts.
+  - Use the portal to create test data and simulate customer setups to
+    ensure compatibility before changes go live.
+
+- **Non-Technical sales**:
+  - Use the portal to issue new licenses, renew existing ones, and extend
+    trials for customers.
+  - Perform routine tasks like looking up upcoming license renewals or
+    viewing customer license histories.
+  - Attach or detach entitlements (e.g., feature access) to individual
+    licenses based on customer contracts.
+
+- **Non-Technical support**:
+  - Resolve customer issues such as deactivating old devices so that new
+    activations can occur.
+  - Update license details, such as adjusting expiration dates or
+    entitlements as part of customer support.
+  - Assist customers who encounter difficulties with license activations or
+    need help understanding their licensing options.
+
+- **Non-Technical execs**:
+  - Monitor overall license performance, including tracking the number of
+    active licenses, customer counts, and revenue.
+  - Use the metrics dashboard to gain insights into customer behavior, such
+    as activation rates, product usage, and license renewals.
+  - Look for trends in customer activity to make data-driven business
+    decisions related to pricing or customer engagement.
+
+- **End-users**:
+  - View their license details, such as when the license will expire or renew,
+    and download the latest version of the product.
+  - Manage activations when upgrading hardware (e.g., deactivating a license
+    on an old machine and activating it on a new one).
 
 ## Design
 

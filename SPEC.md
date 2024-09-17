@@ -125,11 +125,16 @@ pane for tracking resource changes.
 
 ### Automation
 
+Pages for setting up automation, e.g. integrating with a payment provider like
+Stripe, or a CRM like Salesforce.
+
 - **Webhooks**: CRUD operations for webhook endpoints and logs for debugging.
   - [Docs](https://keygen.sh/docs/api/webhooks/)
 - **Zapier**: Optional Zapier integrations page.
 
 ### Logs
+
+Pages for debugging/reviewing raw request logs, and for auditing event logs.
 
 - **Request Logs**: View recent API activity and request/response details for
   debugging.
@@ -139,6 +144,8 @@ pane for tracking resource changes.
   - [Docs](https://keygen.sh/docs/api/event-logs/)
 
 ### Access
+
+Pages for managing API and Portal access.
 
 - **Tokens**: CRUD operations for API tokens with varying permissions.
   - [Docs](https://keygen.sh/docs/api/tokens/)

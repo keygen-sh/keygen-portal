@@ -60,8 +60,8 @@ design to ensure an intuitive experience for all.
 ## Design
 
 We aim for a simple, functional design catering to technical and
-non-technical users. Inspiration comes from dashboards like Vercel, Neon,
-Oxide, PlanetScale, Heroku, DigitalOcean, and Stripe, with an emphasis on
+non-technical users. Inspiration comes from dashboards like Resend, Vercel,
+Neon, Oxide, PlanetScale, Heroku, DigitalOcean, and Stripe, with an emphasis on
 Vercel, Neon, and [Oxide](https://console-preview.oxide.computer/).
 
 We'll use [`shadcn/ui`](https://ui.shadcn.com/) to jump-start the UI.

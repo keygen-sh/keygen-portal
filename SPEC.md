@@ -121,8 +121,8 @@ resource.
   [(docs)](https://keygen.sh/docs/api/policies/)
 - **Users**: CRUD operations for product users, password resets, and MFA.
   [(docs)](https://keygen.sh/docs/api/users/)
-- **Licenses**: CRUD operations for licenses, including renewals, revokes,
-  and entitlement management.
+- **Licenses**: CRUD operations for licenses, including renewals, revocation,
+  as well as entitlement and user management.
   [(docs)](https://keygen.sh/docs/api/licenses/)
 - **Machines**: CRUD operations for activated devices.
   [(docs)](https://keygen.sh/docs/api/machines/)

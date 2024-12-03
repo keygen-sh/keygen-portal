@@ -102,7 +102,7 @@ via email/password or license key.
 This will be the dashboard or landing page after login, showing:
 
 - Daily request volume vs. tier limits (upsell if needed).
-- Expiring/renewing licenses (e.g., GitHub activity-style view).
+- Expiring/renewing licenses (e.g., GitHub activity-style calendar view).
 - Active licensed users (ALU).
 - API validation success vs. failure rates.
 - New user registrations.

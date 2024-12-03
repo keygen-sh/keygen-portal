@@ -162,6 +162,7 @@ Stripe, or a CRM like Salesforce.
 - **Webhooks**: CRUD operations for webhook endpoints and logs for debugging.
   [(docs)](https://keygen.sh/docs/api/webhooks/)
 - **Zapier**: Optional Zapier integrations page.
+- **AI**: Future AI-based BI.
 
 ### Logs
 

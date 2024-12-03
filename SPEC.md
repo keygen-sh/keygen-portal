@@ -103,7 +103,7 @@ This will be the dashboard or landing page after login, showing:
 
 - Daily request volume vs. tier limits (upsell if needed).
 - Expiring/renewing licenses (e.g., GitHub activity-style calendar view).
-- Active licensed users (ALU).
+- Active licensed users (ALUs).
 - API validation success vs. failure rates.
 - New user registrations.
 - etc.

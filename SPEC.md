@@ -65,10 +65,12 @@ These are features that Portal will offer that the current dashboard does not
 do at all, or does in a way that is subpar.
 
 - **User-facing portal.** The current dashboard application only allows admin
-  access, and we want to introduce user-facing capabilities to portal so that
-  users can self-manage their resources, e.g. licenses, machines, etc., as well
-  as review and download releases that they have access to. This would be more
-  like a sub-app with very limited functionality.
+  access, and we want to introduce [user-facing capabilities](https://github.com/keygen-sh/example-react-licensing-portal)
+  to portal so that users can self-manage their resources, e.g. licenses,
+  machines, etc., as well as review and download releases that they have access
+  to. For end-users, the experience can be tailored to thjem, e.g. more like a
+  sub-app with very limited functionality, but all accessible from the same
+  portal app so that it's easily self-hostable like Keygen's API.
 - **Policy templates.** The current dashboard offers policy management, but
   because policies are a very complex object, most users find configuring a
   policy pretty daunting. I want to provide a wizard based upon templates or

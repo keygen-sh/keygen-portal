@@ -57,22 +57,6 @@ design to ensure an intuitive experience for all.
   - Manage activations when upgrading hardware (e.g., deactivating a license
     on an old machine and activating it on a new one).
 
-## Design
-
-We aim for a simple, functional design catering to technical and
-non-technical users. Inspiration comes from dashboards like Resend, Vercel,
-Neon, Oxide, PlanetScale, Heroku, DigitalOcean, and Stripe, with an emphasis on
-Vercel, Neon, and [Oxide](https://console-preview.oxide.computer/).
-
-We'll use [`shadcn/ui`](https://ui.shadcn.com/) to jump-start the UI.
-
-## Tech
-
-- **Frontend**: React or Preact
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Kit**: [`shadcn/ui`](https://ui.shadcn.com/) (includes charting support)
-
 ## Key features
 
 These are features that Portal will offer that the current dashboard does not.
@@ -105,6 +89,23 @@ These are features that Portal will offer that the current dashboard does not.
 - **Command-bar.** The current dashboard has no quick navigation, so adding a
   command bar to quickly jump to certain pages "View License xxx", or actions
   "Edit license xxx" would enable power-users to be more effective.
+
+## Design
+
+First and foremost, the design will match [our current brand](https://keygen.sh).
+We aim for a simple, functional design catering to technical and
+non-technical users. Inspiration comes from dashboards like Resend, Vercel,
+Neon, Oxide, PlanetScale, Heroku, DigitalOcean, and Stripe, with an emphasis on
+Vercel, Neon, and [Oxide](https://console-preview.oxide.computer/).
+
+We'll use [`shadcn/ui`](https://ui.shadcn.com/) to jump-start the UI.
+
+## Tech
+
+- **Frontend**: React or Preact
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Kit**: [`shadcn/ui`](https://ui.shadcn.com/) (includes charting support)
 
 ## Pages
 

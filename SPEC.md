@@ -53,9 +53,11 @@ design to ensure an intuitive experience for all.
 
 - **End-users**:
   - View their license details, such as when the license will expire or renew,
-    and download the latest version of the product.
+    and view their entitlements.
   - Manage activations when upgrading hardware (e.g., deactivating a license
     on an old machine and activating it on a new one).
+  - Download the latest version of the licensed application, or simply review
+    available upgrades or downgrades.
 
 ## Key features
 

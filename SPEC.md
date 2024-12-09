@@ -59,11 +59,14 @@ design to ensure an intuitive experience for all.
 
 ## Key features
 
-These are features that Portal will offer that the current dashboard does not.
+These are features that Portal will offer that the current dashboard does not
+do at all, or does in a way that is subpar.
 
 - **User-facing portal.** The current dashboard application only allows admin
   access, and we want to introduce user-facing capabilities to portal so that
-  users can self-manage their resources, e.g. licenses, machines, etc.
+  users can self-manage their resources, e.g. licenses, machines, etc., as well
+  as access and download releases that they have access to. This would be more
+  like a sub-app with very limited functionality.
 - **Policy templates.** The current dashboard offers policy management, but
   because policies are a very complex object, most users find configuring a
   policy pretty daunting. I want to provide a wizard based upon templates or
@@ -88,11 +91,16 @@ These are features that Portal will offer that the current dashboard does not.
   'show all active licenses', or 'show all licenses expiring in 30 days.'
 - **Command-bar.** The current dashboard has no quick navigation, so adding a
   command bar to quickly jump to certain pages "View License xxx", or actions
-  "Edit license xxx" would enable power-users to be more effective.
+  "Edit license xxx" or "New release", would enable power-users to be more
+  effective.
+- **Language-specific onboarding.** The current dashboard does not walk the new
+  user through integrating with their programming language of choice. Portal
+  should do more to get the user to 'first API request' in their preferred
+  programming language.
 
 ## Design
 
-First and foremost, the design will match [our current brand](https://keygen.sh).
+First-and-foremost, the design will match [our current brand](https://keygen.sh).
 We aim for a simple, functional design catering to technical and
 non-technical users. Inspiration comes from dashboards like Resend, Vercel,
 Neon, Oxide, PlanetScale, Heroku, DigitalOcean, and Stripe, with an emphasis on

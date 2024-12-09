@@ -73,6 +73,39 @@ We'll use [`shadcn/ui`](https://ui.shadcn.com/) to jump-start the UI.
 - **Styling**: Tailwind CSS
 - **UI Kit**: [`shadcn/ui`](https://ui.shadcn.com/) (includes charting support)
 
+## Key features
+
+These are features that Portal will offer that the current dashboard does not.
+
+- **User-facing portal.** The current dashboard application only allows admin
+  access, and we want to introduce user-facing capabilities to portal so that
+  users can self-manage their resources, e.g. licenses, machines, etc.
+- **Policy templates.** The current dashboard offers policy management, but
+  because policies are a very complex object, most users find configuring a
+  policy pretty daunting. I want to provide a wizard based upon templates or
+  'recipes' that can be used and combined to craft a safe and effective policy
+  configuration to implement the customer's required [licensing model](https://keygen.sh/docs/choosing-a-licensing-model/).
+- **Activity timeline.** The current dashboard offers enterprise customers
+  audit logs, but they're not as useful as they can be because they're all
+  lumped together in a sort of fire-hose feed. In order to make audit logs more
+  useful, I'd like to add an activity-log per-object, e.g. like Stripe's
+  'recent activity' and 'logs' at the bottom of any object page. The timeline
+  will show all changes made to a given object, including what an attribute's
+  value was before and after the change, and who made the change.
+- **License calendar-view.** The current dashboard is frequently used by sales
+  teams, and surfacing license expirations and renewals in a calendar-like view
+  (think: GitHub's activity graph) would make sales more effective.
+- **Environment-switcher.** The current dashboard only supports a production
+  environment, but the API supports any number of environments. The new portal
+  should provide an environment-switcher in the top of the sidebar for easy
+  access to dev and test environments.
+- **Table-view filtering.** The current dashboard has no UI for filtering
+  table-views, even though the API supports a variety of complex filters, e.g.
+  'show all active licenses', or 'show all licenses expiring in 30 days.'
+- **Command-bar.** The current dashboard has no quick navigation, so adding a
+  command bar to quickly jump to certain pages "View License xxx", or actions
+  "Edit license xxx" would enable power-users to be more effective.
+
 ## Pages
 
 ### Unauthenticated
@@ -102,11 +135,19 @@ via email/password or license key.
 This will be the dashboard or landing page after login, showing:
 
 - Daily request volume vs. tier limits (upsell if needed).
-- Expiring/renewing licenses (e.g., GitHub activity-style calendar view).
+- Expiring/renewing licenses (e.g., GitHub activity-style calendar-view).
 - Active licensed users (ALUs).
 - API validation success vs. failure rates.
 - New user registrations.
+- New activations.
+- Recent downloads.
+- Recent upgrades.
+- Stacked-line chart of app versions in-use.
+- Stacked-line chart of validation statuses e.g. valid, expired, not activated,
+  suspended, over activation limit, etc.
 - etc.
+
+Most of these can be displayed in some sort of chart.
 
 ### Licensing
 

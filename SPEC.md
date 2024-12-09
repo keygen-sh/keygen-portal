@@ -65,7 +65,7 @@ do at all, or does in a way that is subpar.
 - **User-facing portal.** The current dashboard application only allows admin
   access, and we want to introduce user-facing capabilities to portal so that
   users can self-manage their resources, e.g. licenses, machines, etc., as well
-  as access and download releases that they have access to. This would be more
+  as review and download releases that they have access to. This would be more
   like a sub-app with very limited functionality.
 - **Policy templates.** The current dashboard offers policy management, but
   because policies are a very complex object, most users find configuring a

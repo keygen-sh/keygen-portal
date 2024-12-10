@@ -76,6 +76,8 @@ do at all, or does in a way that is subpar.
   policy pretty daunting. I want to provide a wizard based upon templates or
   'recipes' that can be used and combined to craft a safe and effective policy
   configuration to implement the customer's required [licensing model](https://keygen.sh/docs/choosing-a-licensing-model/).
+- **Policy cloning.** In addition to templates, cloning a policy would also be
+  very beneficial in reducing errors during policy management.
 - **Activity timeline.** The current dashboard offers enterprise customers
   audit logs, but they're not as useful as they can be because they're all
   lumped together in a sort of fire-hose feed. In order to make audit logs more

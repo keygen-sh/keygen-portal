@@ -104,6 +104,8 @@ do at all, or does in a way that is subpar.
   user through integrating with their programming language of choice. Portal
   should do more to get the user to 'first API request' in their preferred
   programming language.
+- **More personalized.** Accounts should be able to upload a company logo,
+  and admins and team members should be able to upload an avatar.
 
 ## Design
 

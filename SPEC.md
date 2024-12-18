@@ -93,8 +93,9 @@ do at all, or does in a way that is subpar.
   should provide an environment-switcher in the top of the sidebar for easy
   access to dev and test environments.
 - **Table-view filtering.** The current dashboard has no UI for filtering
-  table-views, even though the API supports a variety of complex filters, e.g.
-  'show all active licenses', or 'show all licenses expiring in 30 days.'
+  table-views, even though the API supports a variety of [complex filters](https://keygen.sh/docs/api/licenses/#licenses-list),
+  e.g. 'show all active licenses', or 'show all licenses expiring in
+  the next 30 days', etc.
 - **Command-bar.** The current dashboard has no quick navigation, so adding a
   command bar to quickly jump to certain pages "View License xxx", or actions
   "Edit license xxx" or "New release", would enable power-users to be more

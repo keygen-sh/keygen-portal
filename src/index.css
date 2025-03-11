@@ -2,4 +2,7 @@
 
 @theme {
 	/* TODO */
+	/* Font Families */
+	--font-owners-wide: "owners-wide", sans-serif;
+	--font-owners-text: "owners-text", sans-serif;
 }

@@ -1,14 +1,64 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@theme {
+	/* Font Families */
+	--font-owners-wide: "owners-wide", sans-serif;
+	--font-owners-text: "owners-text", sans-serif;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	/* Brand Colors */
+	--color-brand-green: #77FA98;
+	--color-brand-teal: #77E2FC;
+	--color-brand-teal-dark: #192F34;
+	--color-brand-red: #F45278;
+	--color-brand-amber: #FFAC30;
+
+	/* Background Colors */
+	--color-brand-background: #030A11;
+	--color-brand-background-1: #0F1419;
+	--color-brand-background-2: #1D2125;
+	--color-brand-background-3: #282E33;
+	--color-brand-background-4: #33383E;
+	--color-brand-background-5: #3B4148;
+
+	/* Border Colors */
+	--color-brand-border: #242A32;
+	--color-brand-border-1: #2F3439;
+	--color-brand-border-2: #414E5D;
+	--color-brand-border-3: #596676;
+	--color-brand-border-4: #727F8E;
+
+	/* Neutral Colors */
+	--color-brand-neutral-0: #F8FAFB;
+	--color-brand-neutral-25: #F6F8FA;
+	--color-brand-neutral-50: #ECEFF3;
+	--color-brand-neutral-100: #DFE1E7;
+	--color-brand-neutral-200: #C1C7D0;
+	--color-brand-neutral-300: #A4ACB9;
+	--color-brand-neutral-400: #818898;
+	--color-brand-neutral-500: #666D80;
+	--color-brand-neutral-600: #36394A;
+	--color-brand-neutral-700: #272835;
+	--color-brand-neutral-800: #1A1B25;
+	--color-brand-neutral-900: #0D0D12;
+
+	/* Content Colors */
+	--color-content-disabled: #50575F;
+	--color-content-subdued: #7B8591;
+	--color-content-normal: #8F9BA9;
+	--color-content-muted: #CBCBCD;
+	--color-content-loud: #FFFFFF;
+
+	/* Button Colors */
+	--color-button-primary: #77FA98;
+	--color-button-primary-hover: #5FF07D;
+	--color-button-secondary: #0D0D12;
+	--color-button-secondary-hover: #FFFFFF;
+	--color-button-destructive: #DF1C41;
+
+	/* Toast Colors */
+	--color-toast: #0D0D12;
+	--color-toast-success: #40C4AA;
+	--color-toast-error: #DF1C41;
+	--color-toast-warning: #FFCD4C;
+	--color-toast-info: #5F57FF;
 }

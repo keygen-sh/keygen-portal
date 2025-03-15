@@ -1,9 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import * as Page from "@pages/index";
 
 export const Route = createFileRoute("/")({
-  component: Index,
+  component: () => <Page.Redirect />,
 });
-
-function Index() {
-  return <div>You're on the home page.</div>;
-}

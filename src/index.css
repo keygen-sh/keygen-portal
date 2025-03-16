@@ -5,9 +5,9 @@
 
 /* Base Styles */
 @theme {
-	/* Font Families */
-	--font-owners-wide: "owners-wide", sans-serif;
-	--font-owners-text: "owners-text", sans-serif;
+  /* Font Families */
+  --font-owners-wide: "Owners Wide", sans-serif;
+  --font-owners-text: "Owners Text", sans-serif;
 
   /* Primary/Secondary/Accent/Destructive */
   --color-brand-primary: #77fa98;

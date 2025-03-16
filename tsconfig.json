@@ -12,6 +12,7 @@
       "@layouts/*": ["src/layouts/*"],
       "@pages/*": ["src/pages/*"],
       "@routes/*": ["src/routes/*"]
-    }
+    },
+    "strict": true,
   }
 }

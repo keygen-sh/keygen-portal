@@ -53,7 +53,7 @@ export default function Login() {
 
   const renderEmailForm = () => (
     <section className="flex w-80 flex-col justify-center">
-      <h1 className="mb-8 bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent">
+      <h1 className="mb-8 bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
         Sign in to your account
       </h1>
 
@@ -91,7 +91,7 @@ export default function Login() {
         </form>
       </Form>
 
-      <div className="space-x-2 rounded border border-content-subdued p-3 text-center text-sm">
+      <div className="space-x-2 rounded border border-content-subdued p-3 text-center text-sm select-none">
         <span className="text-content-subdued">No account yet?</span>
         <Link
           to="/auth/register"
@@ -101,7 +101,7 @@ export default function Login() {
         </Link>
       </div>
 
-      <div className="mt-2 flex w-full justify-center">
+      <div className="mt-2 flex w-full justify-center select-none">
         <Button variant="link" size="link" onClick={() => {}}>
           Sign in with SSO
         </Button>
@@ -111,7 +111,7 @@ export default function Login() {
 
   const renderPasswordForm = () => (
     <section className="relative flex w-80 flex-col justify-center">
-      <h1 className="mb-8 bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent">
+      <h1 className="mb-8 bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
         Enter your password
       </h1>
 
@@ -141,7 +141,7 @@ export default function Login() {
 
                 <Link
                   to="/auth/recovery"
-                  className="underline-slide w-fit pb-1 text-sm font-semibold text-secondary"
+                  className="underline-slide w-fit pb-1 text-sm font-semibold text-secondary select-none"
                 >
                   Forgot password?
                 </Link>

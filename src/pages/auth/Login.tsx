@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { useNavigate, Link } from "@tanstack/react-router";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useState } from "react"
+import { useNavigate, Link } from "@tanstack/react-router"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
 
-import { Button } from "@/assets/components/ui/button";
+import { Button } from "@/assets/components/ui/button"
 import {
   Form,
   FormControl,
@@ -12,27 +12,27 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/assets/components/ui/form";
-import { Input } from "@/assets/components/ui/input";
-import { Checkbox } from "@/assets/components/ui/checkbox";
+} from "@/assets/components/ui/form"
+import { Input } from "@/assets/components/ui/input"
+import { Checkbox } from "@/assets/components/ui/checkbox"
 
 const emailSchema = z.object({
   username: z.string().email("Please enter a valid email."),
-});
+})
 
 const passwordSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters."),
   remember: z.boolean().optional(),
-});
+})
 
 export default function Login() {
-  const [step, setStep] = useState(1);
-  const navigate = useNavigate();
+  const [step, setStep] = useState(1)
+  const navigate = useNavigate()
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({
     resolver: zodResolver(emailSchema),
     defaultValues: { username: "" },
-  });
+  })
 
   const passwordForm = useForm<z.infer<typeof passwordSchema>>({
     resolver: zodResolver(passwordSchema),
@@ -40,15 +40,15 @@ export default function Login() {
       password: "",
       remember: false,
     },
-  });
+  })
 
   function onSubmitEmail() {
-    setStep(2);
+    setStep(2)
   }
 
   function onSubmitPassword() {
     // TODO: Handle auth
-    void navigate({ to: "/app/home" });
+    void navigate({ to: "/app/home" })
   }
 
   const renderEmailForm = () => (
@@ -60,8 +60,8 @@ export default function Login() {
       <Form {...emailForm}>
         <form
           onSubmit={(e) => {
-            e.preventDefault();
-            void emailForm.handleSubmit(onSubmitEmail)(e);
+            e.preventDefault()
+            void emailForm.handleSubmit(onSubmitEmail)(e)
           }}
           className="my-3 w-full space-y-7"
         >
@@ -107,7 +107,7 @@ export default function Login() {
         </Button>
       </div>
     </section>
-  );
+  )
 
   const renderPasswordForm = () => (
     <section className="relative flex w-80 flex-col justify-center">
@@ -118,8 +118,8 @@ export default function Login() {
       <Form {...passwordForm}>
         <form
           onSubmit={(e) => {
-            e.preventDefault();
-            void passwordForm.handleSubmit(onSubmitPassword)(e);
+            e.preventDefault()
+            void passwordForm.handleSubmit(onSubmitPassword)(e)
           }}
           className="my-3 w-full space-y-7"
         >
@@ -173,11 +173,11 @@ export default function Login() {
         </form>
       </Form>
     </section>
-  );
+  )
 
   return (
     <div className="flex w-full flex-col items-center justify-center">
       {step === 1 ? renderEmailForm() : renderPasswordForm()}
     </div>
-  );
+  )
 }

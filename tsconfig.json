@@ -13,6 +13,6 @@
       "@pages/*": ["src/pages/*"],
       "@routes/*": ["src/routes/*"]
     },
-    "strict": true,
+    "strict": true
   }
 }

@@ -1,4 +1,4 @@
-import { Outlet } from "@tanstack/react-router";
+import { Outlet } from "@tanstack/react-router"
 
 export default function AppLayout() {
   return (
@@ -8,5 +8,5 @@ export default function AppLayout() {
       </div>
       <Outlet />
     </main>
-  );
+  )
 }

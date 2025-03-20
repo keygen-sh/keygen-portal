@@ -3,5 +3,5 @@ export default function App() {
     <div>
       <h1>Hello from "/app"!</h1>
     </div>
-  );
+  )
 }

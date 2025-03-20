@@ -135,3 +135,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+@utility underline-slide {
+  position: relative;
+  text-decoration: none;
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 0.1px;
+    background-color: currentColor;
+
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.1s ease;
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
+  }
+}

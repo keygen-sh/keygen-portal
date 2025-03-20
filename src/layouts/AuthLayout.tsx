@@ -1,5 +1,5 @@
-import { Outlet } from "@tanstack/react-router";
-import Logo from "@assets/logos/logo.svg";
+import { Outlet } from "@tanstack/react-router"
+import Logo from "@assets/logos/logo.svg"
 
 export default function AuthLayout() {
   return (
@@ -12,5 +12,5 @@ export default function AuthLayout() {
       </div>
       <div className="w-1/2 bg-brand-background-2">{/* TODO: Hero */}</div>
     </main>
-  );
+  )
 }

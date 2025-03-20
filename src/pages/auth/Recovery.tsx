@@ -3,5 +3,5 @@ export default function Login() {
     <div>
       <h1>Hello from "/auth/recovery"!</h1>
     </div>
-  );
+  )
 }

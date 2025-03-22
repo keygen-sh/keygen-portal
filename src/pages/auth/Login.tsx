@@ -73,12 +73,19 @@ export default function Login() {
 
       <div className="space-x-2 rounded border border-content-subdued p-3 text-center text-sm select-none">
         <span className="text-content-subdued">No account yet?</span>
-        <Link
-          to="/auth/register"
-          className="text-content-main underline-slide py-0.5 font-bold"
+        <Button
+          asChild
+          variant="link"
+          size="link"
+          className="text-content-loud"
         >
-          Create one
-        </Link>
+          <Link
+            to="/auth/register"
+            className="text-content-main underline-slide py-0.5 font-bold"
+          >
+            Create one
+          </Link>
+        </Button>
       </div>
 
       <div className="mt-2 flex w-full justify-center select-none">

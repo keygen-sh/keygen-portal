@@ -65,7 +65,7 @@ export default function Password() {
                     variant="default"
                     type="password"
                     toggle={true}
-                    autoComplete="new-password"
+                    autoComplete="current-password"
                     placeholder="Enter your password..."
                     {...field}
                   />

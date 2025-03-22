@@ -1,0 +1,252 @@
+import { useState, useRef, useEffect, useCallback } from "react"
+import { useNavigate, Link } from "@tanstack/react-router"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+
+import { Button } from "@/assets/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/assets/components/ui/form"
+import { Input } from "@/assets/components/ui/input"
+
+const verificationSchema = z.object({
+  digit1: z.string().regex(/^\d$/, "Must be one digit"),
+  digit2: z.string().regex(/^\d$/, "Must be one digit"),
+  digit3: z.string().regex(/^\d$/, "Must be one digit"),
+  digit4: z.string().regex(/^\d$/, "Must be one digit"),
+  digit5: z.string().regex(/^\d$/, "Must be one digit"),
+  digit6: z.string().regex(/^\d$/, "Must be one digit"),
+})
+
+export default function Verify() {
+  const [error, setError] = useState<string | null>(null)
+
+  const navigate = useNavigate()
+
+  const verificatonForm = useForm<z.infer<typeof verificationSchema>>({
+    resolver: zodResolver(verificationSchema),
+    defaultValues: {
+      digit1: "",
+      digit2: "",
+      digit3: "",
+      digit4: "",
+      digit5: "",
+      digit6: "",
+    },
+    mode: "onChange",
+    reValidateMode: "onSubmit",
+  })
+
+  const { handleSubmit, watch, control, setValue, reset } = verificatonForm
+
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+
+  const onSubmitVerification = useCallback(
+    (data: z.infer<typeof verificationSchema>) => {
+      const code = [
+        data.digit1,
+        data.digit2,
+        data.digit3,
+        data.digit4,
+        data.digit5,
+        data.digit6,
+      ].join("")
+
+      const dummySuccess = false
+      if (!dummySuccess) {
+        setError("The code you entered is incorrect. Please try again.")
+        return
+      }
+
+      // TODO: Verify code with authenticator
+      console.log("Code:", code)
+
+      void navigate({ to: "/app/home" })
+    },
+    [navigate],
+  )
+
+  // Watcher to submit form when digits are filled
+  useEffect(() => {
+    const subscription = watch((values) => {
+      const allFilled = Object.values(values).every((val) => val.length === 1)
+
+      if (allFilled) {
+        void handleSubmit(onSubmitVerification)()
+      }
+    })
+    return () => subscription.unsubscribe()
+  }, [handleSubmit, onSubmitVerification, watch])
+
+  // Handle input change and focus next field
+  const handleChange = (
+    value: string,
+    index: number,
+    onChange: (val: string) => void,
+  ) => {
+    if (error) {
+      setError(null)
+    }
+    onChange(value)
+
+    if (value && index < 5) {
+      inputRefs.current[index + 1]?.focus()
+    }
+  }
+
+  // Handle paste to fill all fields
+  const handlePaste = (
+    e: React.ClipboardEvent<HTMLInputElement>,
+    index: number,
+  ) => {
+    e.preventDefault()
+    const pasteData = e.clipboardData.getData("text").replace(/\D/g, "")
+    if (!pasteData) return
+
+    // Fill from the current field onward
+    const digits = pasteData.split("")
+    let currentIndex = index
+
+    for (let i = 0; i < digits.length && currentIndex < 6; i++) {
+      const fieldKey = (
+        ["digit1", "digit2", "digit3", "digit4", "digit5", "digit6"] as const
+      )[currentIndex]
+      setValue(fieldKey, digits[i], {
+        shouldTouch: true,
+        shouldValidate: true,
+      })
+      currentIndex++
+    }
+
+    // Focus next unfilled field, if any
+    if (currentIndex < 6) {
+      inputRefs.current[currentIndex]?.focus()
+    }
+  }
+
+  return (
+    <div className="relative flex h-full w-full flex-col items-center justify-center">
+      <Button
+        variant="link"
+        size="link"
+        className="absolute top-10 left-20 w-fit text-content-subdued"
+        asChild
+      >
+        <Link to="/auth/login">
+          <svg
+            className="mt-0.5 h-6 w-6 text-content-subdued dark:text-white"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 14 10"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M13 5H1m0 0 4 4M1 5l4-4"
+            />
+          </svg>
+          Back to login
+        </Link>
+      </Button>
+      <section className="flex w-80 flex-col justify-center">
+        <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
+          Enter your authentication code
+        </h1>
+
+        <Form {...verificatonForm}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              void verificatonForm.handleSubmit(onSubmitVerification)(e)
+            }}
+            noValidate
+          >
+            <FormLabel className="mt-6 mb-8">
+              Check your 2FA app and enter the code to log in.
+            </FormLabel>
+
+            <div className="flex items-center justify-between space-x-2">
+              {(
+                [
+                  "digit1",
+                  "digit2",
+                  "digit3",
+                  "digit4",
+                  "digit5",
+                  "digit6",
+                ] as const
+              ).map((fieldName, i) => {
+                return (
+                  <FormField
+                    key={fieldName}
+                    control={control}
+                    name={fieldName}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            ref={(el) => {
+                              inputRefs.current[i] = el
+                            }}
+                            aria-invalid={error ? "true" : "false"}
+                            type="text"
+                            variant={error ? "destructive" : "default"}
+                            fieldSize="xl"
+                            maxLength={1}
+                            className="h-16 w-13 text-center"
+                            value={field.value}
+                            onChange={(e) => {
+                              const val = e.target.value
+
+                              if (/^\d?$/.test(val)) {
+                                handleChange(val, i, field.onChange)
+                              }
+                            }}
+                            onPaste={(e) => handlePaste(e, i)}
+                            onKeyDown={(e) => {
+                              if (
+                                e.key === "Backspace" &&
+                                !field.value &&
+                                i > 0
+                              ) {
+                                inputRefs.current[i - 1]?.focus()
+                              }
+                            }}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                )
+              })}
+            </div>
+          </form>
+        </Form>
+        <div className="mt-6 flex w-full flex-col space-y-6">
+          {error && <p className="text-sm text-destructive">{error}</p>}
+          <Button
+            type="button"
+            variant="link"
+            size="link"
+            onClick={() => {
+              reset()
+              setError(null)
+              inputRefs.current[0]?.focus()
+            }}
+            className="w-fit"
+          >
+            Resend code
+          </Button>
+        </div>
+      </section>
+    </div>
+  )
+}

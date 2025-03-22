@@ -42,6 +42,7 @@ export default function Login() {
             e.preventDefault()
             void emailForm.handleSubmit(onSubmitEmail)(e)
           }}
+          noValidate
           className="my-3 w-full space-y-7"
         >
           <FormField

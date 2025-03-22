@@ -14,6 +14,8 @@ import {
 import { cn } from "@assets/lib/utils"
 import { Label } from "@assets/components/ui/label"
 
+import { CircleAlert } from "lucide-react"
+
 const Form = FormProvider
 
 type FormFieldContextValue<
@@ -145,9 +147,13 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
     <p
       data-slot="form-message"
       id={formMessageId}
-      className={cn("text-sm text-destructive", className)}
+      className={cn(
+        "flex items-center gap-1 text-sm text-destructive",
+        className,
+      )}
       {...props}
     >
+      <CircleAlert className="mt-0.25 h-4 w-4 shrink-0" />
       {body}
     </p>
   )

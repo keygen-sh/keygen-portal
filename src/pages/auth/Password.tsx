@@ -31,10 +31,6 @@ export default function Password() {
     },
   })
 
-  function onReturnToLogin() {
-    void navigate({ to: "/auth/login" })
-  }
-
   function onSubmitPassword() {
     // TODO: Handle auth
     void navigate({ to: "/auth/verify" })
@@ -105,23 +101,36 @@ export default function Password() {
           </Button>
         </form>
       </Form>
-      <div className="flex w-full justify-center">
-        <Button
-          variant="link"
-          size="link"
-          className="w-fit text-content-subdued"
-          onClick={() => {
-            onReturnToLogin()
-          }}
-        >
-          Use a different email
-        </Button>
-      </div>
     </section>
   )
 
   return (
-    <div className="flex w-full flex-col items-center justify-center">
+    <div className="relative flex h-full w-full flex-col items-center justify-center">
+      <Button
+        variant="link"
+        size="link"
+        className="absolute top-10 left-20 w-fit text-content-subdued"
+        asChild
+      >
+        <Link to="/auth/login">
+          <svg
+            className="mt-0.5 h-6 w-6 text-content-subdued dark:text-white"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 14 10"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M13 5H1m0 0 4 4M1 5l4-4"
+            />
+          </svg>
+          Go back
+        </Link>
+      </Button>
       {renderPasswordForm()}
     </div>
   )

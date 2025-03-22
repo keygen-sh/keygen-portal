@@ -21,7 +21,7 @@ const inputVariants = cva(
           "text-destructive border-brand-destructive ring-2 ring-destructive/20 focus-visible:ring-destructive/40",
         outline: "bg-background",
       },
-      size: {
+      fieldSize: {
         default: "h-9 px-3 py-1 text-sm",
         sm: "h-8 px-2 py-1 text-sm",
         lg: "h-10 px-4 py-2 text-base",
@@ -33,7 +33,7 @@ const inputVariants = cva(
     },
     defaultVariants: {
       variant: "default",
-      size: "default",
+      fieldSize: "default",
       toggle: false,
     },
   },
@@ -41,7 +41,7 @@ const inputVariants = cva(
 
 function Input({
   variant,
-  size,
+  fieldSize,
   toggle = false,
   type = "text",
   className,
@@ -52,7 +52,7 @@ function Input({
   }) {
   const [isPasswordVisible, setIsPasswordVisible] = React.useState(false)
 
-  const inputClasses = inputVariants({ variant, size, toggle, className })
+  const inputClasses = inputVariants({ variant, fieldSize, toggle, className })
 
   const isToggleable = toggle === true && type === "password"
   if (!isToggleable) {

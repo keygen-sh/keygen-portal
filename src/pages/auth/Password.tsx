@@ -122,9 +122,9 @@ export default function Password() {
           >
             <path
               stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.5"
               d="M13 5H1m0 0 4 4M1 5l4-4"
             />
           </svg>

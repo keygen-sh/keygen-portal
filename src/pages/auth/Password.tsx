@@ -37,7 +37,7 @@ export default function Password() {
 
   function onSubmitPassword() {
     // TODO: Handle auth
-    void navigate({ to: "/app/home" })
+    void navigate({ to: "/auth/verify" })
   }
 
   const renderPasswordForm = () => (

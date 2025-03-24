@@ -201,6 +201,7 @@ export default function Verify() {
                             inputMode="numeric"
                             pattern="[0-9]*"
                             autoComplete="one-time-code"
+                            autoFocus={i === 0}
                             variant={error ? "destructive" : "default"}
                             fieldSize="xl"
                             maxLength={1}

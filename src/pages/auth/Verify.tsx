@@ -198,6 +198,8 @@ export default function Verify() {
                             }}
                             aria-invalid={error ? "true" : "false"}
                             type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
                             variant={error ? "destructive" : "default"}
                             fieldSize="xl"
                             maxLength={1}

@@ -34,75 +34,71 @@ export default function Login() {
     // TODO: Handle SSO login
   }
 
-  const renderEmailForm = () => (
-    <section className="flex w-80 flex-col justify-center">
-      <h1 className="mb-8 bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
-        Sign in to your account
-      </h1>
-
-      <Form {...emailForm}>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            void emailForm.handleSubmit(onSubmitEmail)(e)
-          }}
-          noValidate
-          className="my-3 w-full space-y-7"
-        >
-          <FormField
-            control={emailForm.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-content-muted">
-                  Email address
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    autoComplete="username"
-                    placeholder="Enter email..."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit" size="lg" className="w-full">
-            Continue
-          </Button>
-        </form>
-      </Form>
-
-      <div className="space-x-2 rounded border border-content-subdued p-3 text-center text-sm select-none">
-        <span className="text-content-subdued">No account yet?</span>
-        <Button
-          asChild
-          variant="link"
-          size="link"
-          className="text-content-loud"
-        >
-          <Link
-            to="/auth/register"
-            className="text-content-main underline-slide py-0.5 font-bold"
-          >
-            Create one
-          </Link>
-        </Button>
-      </div>
-
-      <div className="mt-2 flex w-full justify-center select-none">
-        <Button variant="link" size="link" onClick={onSubmitSSO}>
-          Sign in with SSO
-        </Button>
-      </div>
-    </section>
-  )
-
   return (
     <div className="flex w-full flex-col items-center justify-center">
-      {renderEmailForm()}
+      <section className="flex w-80 flex-col justify-center">
+        <h1 className="mb-8 bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
+          Sign in to your account
+        </h1>
+
+        <Form {...emailForm}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              void emailForm.handleSubmit(onSubmitEmail)(e)
+            }}
+            noValidate
+            className="my-3 w-full space-y-7"
+          >
+            <FormField
+              control={emailForm.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-content-muted">
+                    Email address
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      autoComplete="username"
+                      placeholder="Enter email..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" size="lg" className="w-full">
+              Continue
+            </Button>
+          </form>
+        </Form>
+
+        <div className="space-x-2 rounded border border-content-subdued p-3 text-center text-sm select-none">
+          <span className="text-content-subdued">No account yet?</span>
+          <Button
+            asChild
+            variant="link"
+            size="link"
+            className="text-content-loud"
+          >
+            <Link
+              to="/auth/register"
+              className="text-content-main underline-slide py-0.5 font-bold"
+            >
+              Create one
+            </Link>
+          </Button>
+        </div>
+
+        <div className="mt-2 flex w-full justify-center select-none">
+          <Button variant="link" size="link" onClick={onSubmitSSO}>
+            Sign in with SSO
+          </Button>
+        </div>
+      </section>
     </div>
   )
 }

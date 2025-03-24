@@ -88,6 +88,7 @@ export default function Password() {
                       type="password"
                       toggle={true}
                       autoComplete="current-password"
+                      autoFocus
                       placeholder="Enter your password..."
                       {...field}
                     />

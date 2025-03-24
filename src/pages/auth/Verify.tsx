@@ -200,6 +200,7 @@ export default function Verify() {
                             type="text"
                             inputMode="numeric"
                             pattern="[0-9]*"
+                            autoComplete="one-time-code"
                             variant={error ? "destructive" : "default"}
                             fieldSize="xl"
                             maxLength={1}

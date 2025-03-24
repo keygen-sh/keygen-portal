@@ -36,74 +36,6 @@ export default function Password() {
     void navigate({ to: "/auth/verify" })
   }
 
-  const renderPasswordForm = () => (
-    <section className="flex w-80 flex-col justify-center">
-      <h1 className="mb-8 bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
-        Enter your password
-      </h1>
-
-      <Form {...passwordForm}>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            void passwordForm.handleSubmit(onSubmitPassword)(e)
-          }}
-          className="relative my-3 w-full space-y-7"
-        >
-          <FormField
-            control={passwordForm.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-content-muted">Password</FormLabel>
-                <FormControl>
-                  <Input
-                    variant="default"
-                    type="password"
-                    toggle={true}
-                    autoComplete="current-password"
-                    placeholder="Enter your password..."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-
-                <Link
-                  to="/auth/recovery"
-                  className="underline-slide w-fit pb-0.75 text-sm font-semibold text-secondary select-none"
-                >
-                  Forgot password?
-                </Link>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={passwordForm.control}
-            name="remember"
-            render={({ field }) => (
-              <FormItem className="flex items-center">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <FormLabel className="text-content-muted">
-                  Remember me on this device
-                </FormLabel>
-              </FormItem>
-            )}
-          />
-
-          <Button type="submit" size="lg" className="w-full">
-            Sign in
-          </Button>
-        </form>
-      </Form>
-    </section>
-  )
-
   return (
     <div className="relative flex h-full w-full flex-col items-center justify-center">
       <Button
@@ -131,7 +63,71 @@ export default function Password() {
           Go back
         </Link>
       </Button>
-      {renderPasswordForm()}
+      <section className="flex w-80 flex-col justify-center">
+        <h1 className="mb-8 bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
+          Enter your password
+        </h1>
+
+        <Form {...passwordForm}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              void passwordForm.handleSubmit(onSubmitPassword)(e)
+            }}
+            className="relative my-3 w-full space-y-7"
+          >
+            <FormField
+              control={passwordForm.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-content-muted">Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      variant="default"
+                      type="password"
+                      toggle={true}
+                      autoComplete="current-password"
+                      placeholder="Enter your password..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+
+                  <Link
+                    to="/auth/recovery"
+                    className="underline-slide w-fit pb-0.75 text-sm font-semibold text-secondary select-none"
+                  >
+                    Forgot password?
+                  </Link>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={passwordForm.control}
+              name="remember"
+              render={({ field }) => (
+                <FormItem className="flex items-center">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel className="text-content-muted">
+                    Remember me on this device
+                  </FormLabel>
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit" size="lg" className="w-full">
+              Sign in
+            </Button>
+          </form>
+        </Form>
+      </section>
     </div>
   )
 }

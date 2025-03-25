@@ -130,16 +130,16 @@ export default function Verify() {
   }
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center justify-center">
+    <section className="relative flex h-full w-full flex-col items-center justify-evenly md:justify-center">
       <Button
         variant="link"
         size="link"
-        className="absolute top-10 left-20 w-fit text-content-subdued"
+        className="flex w-80 justify-start text-content-subdued md:absolute md:top-24 md:left-24 md:w-auto"
         asChild
       >
         <Link to="/auth/login">
           <svg
-            className="mt-0.5 h-6 w-6 text-content-subdued dark:text-white"
+            className="mt-0.5 h-6 w-6 text-content-subdued"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -156,85 +156,81 @@ export default function Verify() {
           Back to login
         </Link>
       </Button>
-      <section className="flex w-80 flex-col justify-center">
-        <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
-          Enter your authentication code
-        </h1>
+      <Form {...verificatonForm}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            void verificatonForm.handleSubmit(onSubmitVerification)(e)
+          }}
+          className="relative my-3 h-1/2 w-80 space-y-7 md:h-auto"
+          noValidate
+        >
+          <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
+            Enter your authentication code
+          </h1>
+          <FormLabel className="mt-6 mb-8">
+            Check your 2FA app and enter the code to log in.
+          </FormLabel>
 
-        <Form {...verificatonForm}>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              void verificatonForm.handleSubmit(onSubmitVerification)(e)
-            }}
-            noValidate
-          >
-            <FormLabel className="mt-6 mb-8">
-              Check your 2FA app and enter the code to log in.
-            </FormLabel>
+          <div className="flex items-center justify-between md:space-x-2">
+            {(
+              [
+                "digit1",
+                "digit2",
+                "digit3",
+                "digit4",
+                "digit5",
+                "digit6",
+              ] as const
+            ).map((fieldName, i) => {
+              return (
+                <FormField
+                  key={fieldName}
+                  control={control}
+                  name={fieldName}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          ref={(el) => {
+                            inputRefs.current[i] = el
+                          }}
+                          aria-invalid={error ? "true" : "false"}
+                          type="text"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          autoComplete="one-time-code"
+                          autoFocus={i === 0}
+                          variant={error ? "destructive" : "default"}
+                          fieldSize="xl"
+                          maxLength={1}
+                          className="h-15 w-12 text-center md:h-16 md:w-13"
+                          value={field.value}
+                          onChange={(e) => {
+                            const val = e.target.value
 
-            <div className="flex items-center justify-between space-x-2">
-              {(
-                [
-                  "digit1",
-                  "digit2",
-                  "digit3",
-                  "digit4",
-                  "digit5",
-                  "digit6",
-                ] as const
-              ).map((fieldName, i) => {
-                return (
-                  <FormField
-                    key={fieldName}
-                    control={control}
-                    name={fieldName}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            ref={(el) => {
-                              inputRefs.current[i] = el
-                            }}
-                            aria-invalid={error ? "true" : "false"}
-                            type="text"
-                            inputMode="numeric"
-                            pattern="[0-9]*"
-                            autoComplete="one-time-code"
-                            autoFocus={i === 0}
-                            variant={error ? "destructive" : "default"}
-                            fieldSize="xl"
-                            maxLength={1}
-                            className="h-16 w-13 text-center"
-                            value={field.value}
-                            onChange={(e) => {
-                              const val = e.target.value
-
-                              if (/^\d?$/.test(val)) {
-                                handleChange(val, i, field.onChange)
-                              }
-                            }}
-                            onPaste={(e) => handlePaste(e, i)}
-                            onKeyDown={(e) => {
-                              if (
-                                e.key === "Backspace" &&
-                                !field.value &&
-                                i > 0
-                              ) {
-                                inputRefs.current[i - 1]?.focus()
-                              }
-                            }}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                )
-              })}
-            </div>
-          </form>
-        </Form>
-        <div className="mt-6 flex w-full flex-col space-y-6">
+                            if (/^\d?$/.test(val)) {
+                              handleChange(val, i, field.onChange)
+                            }
+                          }}
+                          onPaste={(e) => handlePaste(e, i)}
+                          onKeyDown={(e) => {
+                            if (
+                              e.key === "Backspace" &&
+                              !field.value &&
+                              i > 0
+                            ) {
+                              inputRefs.current[i - 1]?.focus()
+                            }
+                          }}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              )
+            })}
+          </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button
             type="button"
@@ -249,8 +245,8 @@ export default function Verify() {
           >
             Resend code
           </Button>
-        </div>
-      </section>
-    </div>
+        </form>
+      </Form>
+    </section>
   )
 }

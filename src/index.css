@@ -66,6 +66,9 @@
   --color-toast-warning: #ffcd4c;
   --color-toast-info: #5f57ff;
 
+  /* Breakpoints */
+  --breakpoint-md: 60rem;
+
   /* Base Radius */
   --radius: 0.625rem;
 }

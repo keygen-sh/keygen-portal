@@ -132,15 +132,15 @@ export default function Verify() {
   }
 
   return (
-    <section className="flex h-full w-full flex-col items-center justify-evenly md:justify-center">
+    <section className="flex w-80 flex-col justify-center">
       <Form {...verificatonForm}>
         <form
           onSubmit={(e) => {
             e.preventDefault()
             void verificatonForm.handleSubmit(onSubmitVerification)(e)
           }}
-          className="relative my-3 h-1/2 w-80 space-y-7 md:h-auto"
           noValidate
+          className="my-3 space-y-7"
         >
           <BackButton
             path="/auth/login"
@@ -150,7 +150,7 @@ export default function Verify() {
           <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
             Enter your authentication code
           </h1>
-          <FormLabel className="mt-6 mb-8">
+          <FormLabel>
             Check your 2FA app and enter the code to log in.
           </FormLabel>
 
@@ -223,7 +223,6 @@ export default function Verify() {
               setError(null)
               inputRefs.current[0]?.focus()
             }}
-            className="w-fit"
           >
             Resend code
           </Button>

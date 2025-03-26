@@ -16,7 +16,7 @@ export default function AuthLayout() {
   return (
     <main className="flex min-h-screen">
       <div className="flex w-full flex-col bg-background md:w-1/2">
-        <nav className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-4 p-4 md:pt-8">
+        <nav className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-4 pt-4 md:pt-8">
           <div className="justify-self-center">
             {label && (
               <BackButton
@@ -30,7 +30,7 @@ export default function AuthLayout() {
             <img src={Logo} alt="Keygen Logo" className="h-5" />
           </div>
         </nav>
-        <div className="flex flex-1 items-center justify-center p-4">
+        <div className="flex flex-1 items-center justify-center px-4">
           <Outlet />
         </div>
       </div>

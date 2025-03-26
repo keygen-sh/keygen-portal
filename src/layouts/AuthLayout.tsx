@@ -1,5 +1,5 @@
 import { Outlet, useMatches } from "@tanstack/react-router"
-import Logo from "@assets/logos/logo.svg"
+import logo from "@assets/logos/logo.svg"
 
 import BackButton from "@components/BackButton"
 
@@ -27,7 +27,7 @@ export default function AuthLayout() {
             )}
           </div>
           <div className="justify-self-center">
-            <img src={Logo} alt="Keygen Logo" className="h-6 md:h-5" />
+            <img src={logo} alt="Keygen Logo" className="h-6 md:h-5" />
           </div>
         </nav>
         <div className="flex flex-1 items-center justify-center px-4">

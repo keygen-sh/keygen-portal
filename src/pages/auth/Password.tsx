@@ -39,17 +39,17 @@ export default function Password() {
   }
 
   return (
-    <section className="flex h-full w-full flex-col items-center justify-evenly md:justify-center">
+    <section className="flex w-80 flex-col justify-center">
       <Form {...passwordForm}>
         <form
           onSubmit={(e) => {
             e.preventDefault()
             void passwordForm.handleSubmit(onSubmitPassword)(e)
           }}
-          className="relative my-3 h-1/2 w-80 space-y-7 md:h-auto"
+          className="my-3 space-y-7"
         >
           <BackButton path="/auth/login" className="md:hidden" />
-          <h1 className="mb-8 bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
+          <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
             Enter your password
           </h1>
           <FormField
@@ -92,9 +92,7 @@ export default function Password() {
                     onCheckedChange={field.onChange}
                   />
                 </FormControl>
-                <FormLabel className="text-content-muted">
-                  Remember me on this device
-                </FormLabel>
+                <FormLabel>Remember me on this device</FormLabel>
               </FormItem>
             )}
           />

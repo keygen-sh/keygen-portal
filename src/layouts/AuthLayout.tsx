@@ -27,7 +27,7 @@ export default function AuthLayout() {
             )}
           </div>
           <div className="justify-self-center">
-            <img src={Logo} alt="Keygen Logo" className="h-5" />
+            <img src={Logo} alt="Keygen Logo" className="h-6 md:h-5" />
           </div>
         </nav>
         <div className="flex flex-1 items-center justify-center px-4">

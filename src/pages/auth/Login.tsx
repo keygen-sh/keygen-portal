@@ -74,7 +74,7 @@ export default function Login() {
         </form>
       </Form>
 
-      <div className="space-x-2 rounded border border-content-subdued p-3 text-center text-sm select-none">
+      <div className="space-x-2 rounded border border-content-subdued p-2 text-center text-sm select-none">
         <span className="text-content-subdued">No account yet?</span>
         <Button
           asChild

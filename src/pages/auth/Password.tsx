@@ -15,6 +15,8 @@ import {
 import { Input } from "@/assets/components/ui/input"
 import { Checkbox } from "@/assets/components/ui/checkbox"
 
+import BackButton from "@components/BackButton"
+
 const passwordSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters."),
   remember: z.boolean().optional(),
@@ -37,33 +39,7 @@ export default function Password() {
   }
 
   return (
-    <section className="relative flex h-full w-full flex-col items-center justify-evenly md:justify-center">
-      <Button
-        variant="link"
-        size="link"
-        className="flex w-80 justify-start text-content-subdued md:absolute md:top-24 md:left-24 md:w-auto"
-        asChild
-      >
-        <Link to="/auth/login">
-          <svg
-            className="mt-0.5 h-6 w-6 text-content-subdued"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 14 10"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1.5"
-              d="M13 5H1m0 0 4 4M1 5l4-4"
-            />
-          </svg>
-          Go back
-        </Link>
-      </Button>
-
+    <section className="flex h-full w-full flex-col items-center justify-evenly md:justify-center">
       <Form {...passwordForm}>
         <form
           onSubmit={(e) => {
@@ -72,6 +48,7 @@ export default function Password() {
           }}
           className="relative my-3 h-1/2 w-80 space-y-7 md:h-auto"
         >
+          <BackButton path="/auth/login" className="md:hidden" />
           <h1 className="mb-8 bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
             Enter your password
           </h1>

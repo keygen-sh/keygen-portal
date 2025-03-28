@@ -60,6 +60,7 @@ export default function Login() {
                   <Input
                     type="email"
                     autoComplete="username"
+                    autoFocus
                     placeholder="Enter email..."
                     {...field}
                   />

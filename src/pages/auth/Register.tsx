@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useNavigate, Link } from "@tanstack/react-router"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -14,6 +15,8 @@ import {
 } from "@/assets/components/ui/form"
 import { Input } from "@/assets/components/ui/input"
 
+import * as Loading from "@components/Loading"
+
 const registerSchema = z.object({
   username: z.string().email("Please enter a valid email."),
   password: z.string().min(8, "Password must be at least 8 characters."),
@@ -21,6 +24,7 @@ const registerSchema = z.object({
 
 export default function Register() {
   const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
 
   const registerForm = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -36,23 +40,27 @@ export default function Register() {
   }
 
   async function onSubmitRegister(values: z.infer<typeof registerSchema>) {
-    const isAvailable = await checkEmailAvailability(values.username)
+    setLoading(true)
+    try {
+      const isAvailable = await checkEmailAvailability(values.username)
 
-    if (!isAvailable) {
-      registerForm.setError("username", {
-        type: "manual",
-        message: "This email is already registered.",
-      })
+      if (!isAvailable) {
+        registerForm.setError("username", {
+          type: "manual",
+          message: "This email is already registered.",
+        })
+        return
+      }
 
-      return
+      const slug = values.username.split("@")[1].split(".")[0].toLowerCase()
+
+      // TODO: Handle account creation
+      console.log(`Creating account for ${values.username} with slug: ${slug}`)
+
+      void navigate({ to: "/app/home" })
+    } finally {
+      setLoading(false)
     }
-
-    const slug = values.username.split("@")[1].split(".")[0].toLowerCase()
-
-    // TODO: Handle account creation
-    console.log(`Creating account for ${values.username} with slug: ${slug}`)
-
-    void navigate({ to: "/app/home" })
   }
 
   return (
@@ -88,6 +96,7 @@ export default function Register() {
                     autoComplete="username"
                     autoFocus
                     placeholder="Enter email..."
+                    disabled={loading}
                     {...field}
                   />
                 </FormControl>
@@ -107,6 +116,7 @@ export default function Register() {
                     toggle={true}
                     autoComplete="current-password"
                     placeholder="Enter your password..."
+                    disabled={loading}
                     {...field}
                   />
                 </FormControl>
@@ -114,8 +124,8 @@ export default function Register() {
               </FormItem>
             )}
           />
-          <Button type="submit" size="lg" className="w-full">
-            Continue
+          <Button type="submit" size="lg" className="w-full" disabled={loading}>
+            {loading ? <Loading.Dots color="bg-background" /> : "Continue"}
           </Button>
         </form>
       </Form>
@@ -126,12 +136,9 @@ export default function Register() {
           asChild
           variant="link"
           size="link"
-          className="text-content-loud"
+          className={`${loading ? "pointer-events-none text-content-disabled" : "pointer-events-auto text-content-loud"}`}
         >
-          <Link
-            to="/auth/login"
-            className="text-content-main underline-slide py-0.5 font-bold"
-          >
+          <Link to="/auth/login" className="py-0.5 font-bold">
             Log in
           </Link>
         </Button>

@@ -43,9 +43,14 @@ export default function Register() {
           noValidate
           className="my-3 w-full space-y-7"
         >
-          <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
-            Create an account
-          </h1>
+          <div className="flex flex-col space-y-4">
+            <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
+              Create an account
+            </h1>
+            <h2 className="text-sm text-content-muted">
+              You're one step away from joining Keygen.
+            </h2>
+          </div>
           <FormField
             control={registerForm.control}
             name="username"

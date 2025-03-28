@@ -27,8 +27,28 @@ export default function Register() {
     defaultValues: { username: "", password: "" },
   })
 
-  function onSubmitRegister() {
+  // TODO: API call to check if email is available
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async function checkEmailAvailability(_email: string) {
+    await new Promise((resolve) => setTimeout(resolve, 1000)) // Dummy API call
+
+    return false
+  }
+
+  async function onSubmitRegister(values: z.infer<typeof registerSchema>) {
+    const isAvailable = await checkEmailAvailability(values.username)
+
+    if (!isAvailable) {
+      registerForm.setError("username", {
+        type: "manual",
+        message: "This email is already registered.",
+      })
+
+      return
+    }
+
     // TODO: Handle account creation
+
     void navigate({ to: "/app/home" })
   }
 

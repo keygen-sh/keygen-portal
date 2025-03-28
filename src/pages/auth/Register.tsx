@@ -47,7 +47,10 @@ export default function Register() {
       return
     }
 
+    const slug = values.username.split("@")[1].split(".")[0].toLowerCase()
+
     // TODO: Handle account creation
+    console.log(`Creating account for ${values.username} with slug: ${slug}`)
 
     void navigate({ to: "/app/home" })
   }

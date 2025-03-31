@@ -1,5 +1,6 @@
 export { default as Login } from "./Login"
 export { default as Password } from "./Password"
+export { default as External } from "./External"
 export { default as Verify } from "./Verify"
 export { default as Register } from "./Register"
 export { default as Recovery } from "./Recovery"

@@ -14,30 +14,30 @@ import {
 } from "@/assets/components/ui/form"
 import { Input } from "@/assets/components/ui/input"
 
-const externalSchema = z.object({
+const ssoSchema = z.object({
   username: z.string().email("Please enter a valid email."),
 })
 
-export default function External() {
+export default function SSO() {
   const navigate = useNavigate()
 
-  const externalForm = useForm<z.infer<typeof externalSchema>>({
-    resolver: zodResolver(externalSchema),
+  const ssoForm = useForm<z.infer<typeof ssoSchema>>({
+    resolver: zodResolver(ssoSchema),
     defaultValues: { username: "" },
   })
 
-  function onSubmitExternal() {
+  function onSubmitSSO() {
     // TODO: Handle SSO
     void navigate({ to: "/app/home" })
   }
 
   return (
     <section className="flex w-80 flex-col justify-center">
-      <Form {...externalForm}>
+      <Form {...ssoForm}>
         <form
           onSubmit={(e) => {
             e.preventDefault()
-            void externalForm.handleSubmit(onSubmitExternal)(e)
+            void ssoForm.handleSubmit(onSubmitSSO)(e)
           }}
           noValidate
           className="my-3 w-full space-y-7"
@@ -46,7 +46,7 @@ export default function External() {
             Sign in with SSO
           </h1>
           <FormField
-            control={externalForm.control}
+            control={ssoForm.control}
             name="username"
             render={({ field }) => (
               <FormItem>

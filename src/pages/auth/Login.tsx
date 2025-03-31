@@ -30,10 +30,6 @@ export default function Login() {
     void navigate({ to: "/auth/password" })
   }
 
-  function onSubmitSSO() {
-    // TODO: Handle SSO login
-  }
-
   return (
     <section className="flex w-80 flex-col justify-center">
       <Form {...emailForm}>
@@ -92,8 +88,8 @@ export default function Login() {
       </div>
 
       <div className="mt-2 flex w-full justify-center select-none">
-        <Button variant="link" size="link" onClick={onSubmitSSO}>
-          Sign in with SSO
+        <Button variant="link" size="link" asChild>
+          <Link to="/auth/external">Sign in with SSO</Link>
         </Button>
       </div>
     </section>

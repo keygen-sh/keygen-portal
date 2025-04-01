@@ -90,7 +90,7 @@ export default function Login() {
 
       <div className="mt-2 flex w-full justify-center select-none">
         <Button variant="link" size="link" asChild>
-          <Link to="/auth/external">Sign in with SSO</Link>
+          <Link to="/auth/sso">Sign in with SSO</Link>
         </Button>
       </div>
     </section>

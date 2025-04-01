@@ -20,15 +20,17 @@ import * as Loading from "@components/Loading"
 const registerSchema = z.object({
   username: z.string().email("Please enter a valid email."),
   password: z.string().min(8, "Password must be at least 8 characters."),
+  companyId: z.string().optional(),
 })
 
 export default function Register() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  const [showIdField, setShowIdField] = useState(false)
 
   const registerForm = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { username: "", password: "" },
+    defaultValues: { username: "", password: "", companyId: "" },
   })
 
   // TODO: API call to check if email is available
@@ -52,10 +54,28 @@ export default function Register() {
         return
       }
 
-      const slug = values.username.split("@")[1].split(".")[0].toLowerCase()
+      // Extract domain and slug from email
+      const parts = values.username.split("@")
+      const segments = parts[1].split(".")
+      const domain = segments.slice(0, 2).join("-").toLowerCase()
+      const slug = segments[0].toLowerCase()
+
+      // Dummy domain check
+      if (domain === "umbral-tech" && !values.companyId) {
+        setShowIdField(true)
+        registerForm.setError("companyId", {
+          type: "manual",
+          message: "Company ID already exists for this domain",
+        })
+        return
+      }
 
       // TODO: Handle account creation
-      console.log(`Creating account for ${values.username} with slug: ${slug}`)
+      console.log(
+        `Creating account for ${values.username} with slug: ${slug}${
+          values.companyId ? ` and companyId: ${values.companyId}` : ""
+        }`,
+      )
 
       void navigate({ to: "/app/home" })
     } finally {
@@ -104,6 +124,28 @@ export default function Register() {
               </FormItem>
             )}
           />
+          {showIdField && (
+            <FormField
+              control={registerForm.control}
+              name="companyId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-content-muted">
+                    Company ID
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Enter company ID..."
+                      disabled={loading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
           <FormField
             control={registerForm.control}
             name="password"
@@ -136,7 +178,11 @@ export default function Register() {
           asChild
           variant="link"
           size="link"
-          className={`${loading ? "pointer-events-none text-content-disabled" : "pointer-events-auto text-content-loud"}`}
+          className={`${
+            loading
+              ? "pointer-events-none text-content-disabled"
+              : "pointer-events-auto text-content-loud"
+          }`}
         >
           <Link to="/auth/login" className="py-0.5 font-bold">
             Log in

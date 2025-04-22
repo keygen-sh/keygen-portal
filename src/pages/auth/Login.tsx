@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useNavigate, Link } from "@tanstack/react-router"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -14,11 +15,13 @@ import {
 } from "@/assets/components/ui/form"
 import { Input } from "@/assets/components/ui/input"
 
+import * as Loading from "@components/Loading"
 const emailSchema = z.object({
   username: z.string().email("Please enter a valid email."),
 })
 
 export default function Login() {
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({
@@ -26,7 +29,13 @@ export default function Login() {
     defaultValues: { username: "" },
   })
 
-  function onSubmitEmail() {
+  async function onSubmitEmail() {
+    setLoading(true)
+
+    setTimeout(() => {
+      setLoading(false)
+    }, 1000)
+
     void navigate({ to: "/auth/password" })
   }
 
@@ -65,8 +74,8 @@ export default function Login() {
               </FormItem>
             )}
           />
-          <Button type="submit" size="lg" className="w-full">
-            Continue
+          <Button type="submit" size="lg" className="w-full" disabled={loading}>
+            {loading ? <Loading.Dots color="bg-background" /> : "Continue"}
           </Button>
         </form>
       </Form>
@@ -89,7 +98,16 @@ export default function Login() {
       </div>
 
       <div className="mt-2 flex w-full justify-center select-none">
-        <Button variant="link" size="link" asChild>
+        <Button
+          variant="link"
+          size="link"
+          asChild
+          className={`${
+            loading
+              ? "pointer-events-none text-content-disabled"
+              : "pointer-events-auto text-content-loud"
+          }`}
+        >
           <Link to="/auth/sso">Sign in with SSO</Link>
         </Button>
       </div>

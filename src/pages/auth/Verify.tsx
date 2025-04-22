@@ -16,6 +16,8 @@ import { Input } from "@/assets/components/ui/input"
 
 import BackButton from "@components/BackButton"
 
+import * as Loading from "@components/Loading"
+
 const verificationSchema = z.object({
   digit1: z.string().regex(/^\d$/, "Must be one digit"),
   digit2: z.string().regex(/^\d$/, "Must be one digit"),
@@ -26,6 +28,7 @@ const verificationSchema = z.object({
 })
 
 export default function Verify() {
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const navigate = useNavigate()
@@ -49,7 +52,13 @@ export default function Verify() {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
   const onSubmitVerification = useCallback(
-    (data: z.infer<typeof verificationSchema>) => {
+    async (data: z.infer<typeof verificationSchema>) => {
+      setLoading(true)
+
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1000)
+      })
+
       const code = [
         data.digit1,
         data.digit2,
@@ -62,6 +71,7 @@ export default function Verify() {
       const dummySuccess = false
       if (!dummySuccess) {
         setError("The code you entered is incorrect. Please try again.")
+        setLoading(false)
         return
       }
 
@@ -69,6 +79,7 @@ export default function Verify() {
       console.log("Code:", code)
 
       void navigate({ to: "/app/home" })
+      setLoading(false)
     },
     [navigate],
   )
@@ -154,70 +165,77 @@ export default function Verify() {
             Check your 2FA app and enter the code to log in.
           </FormLabel>
 
-          <div className="flex items-center justify-between md:space-x-2">
-            {(
-              [
-                "digit1",
-                "digit2",
-                "digit3",
-                "digit4",
-                "digit5",
-                "digit6",
-              ] as const
-            ).map((fieldName, i) => {
-              return (
-                <FormField
-                  key={fieldName}
-                  control={control}
-                  name={fieldName}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          ref={(el) => {
-                            inputRefs.current[i] = el
-                          }}
-                          aria-invalid={error ? "true" : "false"}
-                          type="text"
-                          inputMode="numeric"
-                          pattern="[0-9]*"
-                          autoComplete="one-time-code"
-                          autoFocus={i === 0}
-                          variant={error ? "destructive" : "default"}
-                          fieldSize="xl"
-                          maxLength={1}
-                          className="h-15 w-12 text-center md:h-16 md:w-13"
-                          value={field.value}
-                          onChange={(e) => {
-                            const val = e.target.value
+          {loading ? (
+            <div className="flex h-15 items-center justify-center">
+              <Loading.Dots />
+            </div>
+          ) : (
+            <div className="flex items-center justify-between md:space-x-2">
+              {(
+                [
+                  "digit1",
+                  "digit2",
+                  "digit3",
+                  "digit4",
+                  "digit5",
+                  "digit6",
+                ] as const
+              ).map((fieldName, i) => {
+                return (
+                  <FormField
+                    key={fieldName}
+                    control={control}
+                    name={fieldName}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            ref={(el) => {
+                              inputRefs.current[i] = el
+                            }}
+                            aria-invalid={error ? "true" : "false"}
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            autoComplete="one-time-code"
+                            autoFocus={i === 0}
+                            variant={error ? "destructive" : "default"}
+                            fieldSize="xl"
+                            maxLength={1}
+                            className="h-15 w-12 text-center md:h-16 md:w-13"
+                            value={field.value}
+                            onChange={(e) => {
+                              const val = e.target.value
 
-                            if (/^\d?$/.test(val)) {
-                              handleChange(val, i, field.onChange)
-                            }
-                          }}
-                          onPaste={(e) => handlePaste(e, i)}
-                          onKeyDown={(e) => {
-                            if (
-                              e.key === "Backspace" &&
-                              !field.value &&
-                              i > 0
-                            ) {
-                              inputRefs.current[i - 1]?.focus()
-                            }
-                          }}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              )
-            })}
-          </div>
+                              if (/^\d?$/.test(val)) {
+                                handleChange(val, i, field.onChange)
+                              }
+                            }}
+                            onPaste={(e) => handlePaste(e, i)}
+                            onKeyDown={(e) => {
+                              if (
+                                e.key === "Backspace" &&
+                                !field.value &&
+                                i > 0
+                              ) {
+                                inputRefs.current[i - 1]?.focus()
+                              }
+                            }}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                )
+              })}
+            </div>
+          )}
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button
             type="button"
             variant="link"
             size="link"
+            disabled={loading}
             onClick={() => {
               reset()
               setError(null)

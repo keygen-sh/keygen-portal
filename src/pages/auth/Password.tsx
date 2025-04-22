@@ -1,7 +1,10 @@
+import { useState } from "react"
 import { useNavigate, Link } from "@tanstack/react-router"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+
+import { cn } from "@/assets/lib/utils"
 
 import { Button } from "@/assets/components/ui/button"
 import {
@@ -17,12 +20,15 @@ import { Checkbox } from "@/assets/components/ui/checkbox"
 
 import BackButton from "@components/BackButton"
 
+import * as Loading from "@components/Loading"
 const passwordSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters."),
   remember: z.boolean().optional(),
 })
 
 export default function Password() {
+  const [loading, setLoading] = useState(false)
+
   const navigate = useNavigate()
 
   const passwordForm = useForm<z.infer<typeof passwordSchema>>({
@@ -33,8 +39,13 @@ export default function Password() {
     },
   })
 
-  function onSubmitPassword() {
-    // TODO: Handle auth
+  async function onSubmitPassword() {
+    setLoading(true)
+
+    setTimeout(() => {
+      setLoading(false)
+    }, 1000)
+
     void navigate({ to: "/auth/verify" })
   }
 
@@ -66,17 +77,27 @@ export default function Password() {
                     autoComplete="current-password"
                     autoFocus
                     placeholder="Enter your password..."
+                    disabled={loading}
                     {...field}
                   />
                 </FormControl>
                 <FormMessage />
 
-                <Link
-                  to="/auth/recovery"
-                  className="underline-slide w-fit pb-0.75 text-sm font-semibold text-secondary select-none"
+                <Button
+                  variant="link"
+                  size="link"
+                  asChild
+                  className={cn(
+                    `${
+                      loading
+                        ? "pointer-events-none text-content-disabled"
+                        : "pointer-events-auto text-secondary"
+                    }`,
+                    "w-fit",
+                  )}
                 >
-                  Forgot password?
-                </Link>
+                  <Link to="/auth/recovery">Forgot password?</Link>
+                </Button>
               </FormItem>
             )}
           />
@@ -90,6 +111,7 @@ export default function Password() {
                   <Checkbox
                     checked={field.value}
                     onCheckedChange={field.onChange}
+                    disabled={loading}
                   />
                 </FormControl>
                 <FormLabel>Remember me on this device</FormLabel>
@@ -97,8 +119,8 @@ export default function Password() {
             )}
           />
 
-          <Button type="submit" size="lg" className="w-full">
-            Sign in
+          <Button type="submit" size="lg" className="w-full" disabled={loading}>
+            {loading ? <Loading.Dots color="bg-background" /> : "Sign in"}
           </Button>
         </form>
       </Form>

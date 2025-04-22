@@ -5,11 +5,11 @@ import BackButton from "@components/BackButton"
 
 export default function AuthLayout() {
   const matches = useMatches()
-  const currentRoute = matches[matches.length - 1]
+  const currentRoute = matches[matches.length - 1] as { routeId: string }
 
   const label = (() => {
-    if (currentRoute.routeId === "/auth/password") return "Go Back"
-    if (currentRoute.routeId === "/auth/verify") return "Return to Login"
+    if (currentRoute.routeId === "/auth/$id/password") return "Go Back"
+    if (currentRoute.routeId === "/auth/$id/verify") return "Return to Login"
     if (currentRoute.routeId === "/auth/recovery") return "Return to Login"
     if (currentRoute.routeId === "/auth/sent") return "Return to Login"
     return ""

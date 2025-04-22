@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useContext } from "react"
 import { useNavigate, Link } from "@tanstack/react-router"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -15,13 +15,17 @@ import {
 } from "@/assets/components/ui/form"
 import { Input } from "@/assets/components/ui/input"
 
+import * as keygen from "@keygen/index"
+import { AuthContext } from "@contexts/AuthContext"
 import * as Loading from "@components/Loading"
+
 const emailSchema = z.object({
   username: z.string().email("Please enter a valid email."),
 })
 
 export default function Login() {
   const [loading, setLoading] = useState(false)
+  const { setEmail, setSlug } = useContext(AuthContext)
   const navigate = useNavigate()
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({
@@ -32,11 +36,37 @@ export default function Login() {
   async function onSubmitEmail() {
     setLoading(true)
 
-    setTimeout(() => {
-      setLoading(false)
-    }, 1000)
+    const email = emailForm.getValues().username
+    const { errors } = await keygen.authenticate({ email })
 
-    void navigate({ to: "/auth/password" })
+    if (errors?.length) {
+      const { code } = errors[0]
+
+      const parts = email.split("@")
+      const segments = parts[1].split(".")
+      const slug = `${segments[0]}-${segments[1]}`.toLowerCase()
+
+      setSlug(slug)
+      setEmail(email)
+
+      if (code === "PASSWORD_REQUIRED") {
+        void navigate({ to: `/auth/${slug}/password` })
+
+        return
+      } else if (code === "OTP_REQUIRED") {
+        void navigate({ to: `/auth/${slug}/verify` })
+
+        return
+      } else {
+        console.error(errors[0]?.detail)
+
+        return
+      }
+    } else {
+      console.error("An unknown error occurred during authentication.")
+    }
+
+    setLoading(false)
   }
 
   return (

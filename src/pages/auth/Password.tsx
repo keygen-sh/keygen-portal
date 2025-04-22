@@ -20,7 +20,10 @@ import { Checkbox } from "@/assets/components/ui/checkbox"
 
 import BackButton from "@components/BackButton"
 
+import * as keygen from "@keygen/index"
+import { useAuth } from "@hooks/useAuth"
 import * as Loading from "@components/Loading"
+
 const passwordSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters."),
   remember: z.boolean().optional(),
@@ -30,6 +33,8 @@ export default function Password() {
   const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate()
+
+  const { email, slug } = useAuth()
 
   const passwordForm = useForm<z.infer<typeof passwordSchema>>({
     resolver: zodResolver(passwordSchema),
@@ -42,11 +47,42 @@ export default function Password() {
   async function onSubmitPassword() {
     setLoading(true)
 
-    setTimeout(() => {
-      setLoading(false)
-    }, 1000)
+    const password = passwordForm.getValues().password
 
-    void navigate({ to: "/auth/verify" })
+    if (!email) {
+      console.error("No email in context. Redirecting to login.")
+      void navigate({ to: "/auth/login" })
+
+      return
+    }
+
+    const { data, errors } = await keygen.authenticate({
+      email,
+      password,
+    })
+
+    if (errors?.length) {
+      const { code } = errors[0]
+
+      if (code === "OTP_REQUIRED") {
+        void navigate({ to: `/auth/${slug}/verify` })
+
+        return
+      } else {
+        console.error(errors[0].detail)
+
+        return
+      }
+    } else {
+      localStorage.setItem(
+        "token",
+        (data as { attributes: { token: string } }).attributes.token,
+      )
+
+      void navigate({ to: "/app/home" })
+    }
+
+    setLoading(false)
   }
 
   return (

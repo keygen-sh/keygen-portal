@@ -10,8 +10,11 @@
       "@/*": ["src/*"],
       "@assets/*": ["src/assets/*"],
       "@components/*": ["src/components/*"],
+      "@contexts/*": ["src/contexts/*"],
+      "@hooks/*": ["src/hooks/*"],
       "@keygen/*": ["src/keygen/*"],
       "@layouts/*": ["src/layouts/*"],
+      "@providers/*": ["src/providers/*"],
       "@pages/*": ["src/pages/*"],
       "@routes/*": ["src/routes/*"]
     },

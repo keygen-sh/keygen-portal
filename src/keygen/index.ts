@@ -1,6 +1,5 @@
 import { authenticate, AuthResponse } from "./authenticate"
+import config from "./config"
 
-export { authenticate }
+export { authenticate, config }
 export type { AuthResponse }
-
-export { default as config } from "./config"

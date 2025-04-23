@@ -14,6 +14,8 @@ import {
 } from "@/assets/components/ui/form"
 import { Input } from "@/assets/components/ui/input"
 
+import * as keygen from "@keygen/index"
+
 const ssoSchema = z.object({
   username: z.string().email("Please enter a valid email."),
 })
@@ -28,7 +30,7 @@ export default function SSO() {
 
   function onSubmitSSO() {
     // TODO: Handle SSO
-    void navigate({ to: "/app/home" })
+    void navigate({ to: "/$id/app/home", params: { id: keygen.config.id } })
   }
 
   return (
@@ -80,7 +82,8 @@ export default function SSO() {
           className="text-content-loud"
         >
           <Link
-            to="/auth/register"
+            to="/$id/auth/register"
+            params={{ id: keygen.config.id }}
             className="text-content-main underline-slide py-0.5 font-bold"
           >
             Create one
@@ -90,7 +93,9 @@ export default function SSO() {
 
       <div className="mt-2 flex w-full justify-center select-none">
         <Button variant="link" size="link" asChild>
-          <Link to="/auth/login">Use password instead</Link>
+          <Link to="/$id/auth/login" params={{ id: keygen.config.id }}>
+            Use password instead
+          </Link>
         </Button>
       </div>
     </section>

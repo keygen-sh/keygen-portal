@@ -34,7 +34,7 @@ export default function Password() {
 
   const navigate = useNavigate()
 
-  const { email, slug } = useAuth()
+  const { email } = useAuth()
 
   const passwordForm = useForm<z.infer<typeof passwordSchema>>({
     resolver: zodResolver(passwordSchema),
@@ -51,7 +51,7 @@ export default function Password() {
 
     if (!email) {
       console.error("No email in context. Redirecting to login.")
-      void navigate({ to: "/auth/login" })
+      void navigate({ to: "/$id/auth/login", params: { id: keygen.config.id } })
 
       return
     }
@@ -65,7 +65,7 @@ export default function Password() {
       const { code } = errors[0]
 
       if (code === "OTP_REQUIRED") {
-        void navigate({ to: `/auth/${slug}/verify` })
+        void navigate({ to: `/${keygen.config.id}/auth/verify` })
 
         return
       } else {
@@ -79,7 +79,7 @@ export default function Password() {
         (data as { attributes: { token: string } }).attributes.token,
       )
 
-      void navigate({ to: "/app/home" })
+      void navigate({ to: "/$id/app/home", params: { id: keygen.config.id } })
     }
 
     setLoading(false)
@@ -132,7 +132,12 @@ export default function Password() {
                     "w-fit",
                   )}
                 >
-                  <Link to="/auth/recovery">Forgot password?</Link>
+                  <Link
+                    to="/$id/auth/recovery"
+                    params={{ id: keygen.config.id }}
+                  >
+                    Forgot password?
+                  </Link>
                 </Button>
               </FormItem>
             )}

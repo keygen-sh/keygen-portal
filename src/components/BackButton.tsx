@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router"
 import { Button } from "@assets/components/ui/button"
 import { cn } from "@assets/lib/utils"
 
+import * as keygen from "@keygen/index"
+
 interface BackProps {
   path: string
   label?: string
@@ -23,7 +25,7 @@ export default function BackButton({ path, label, className }: BackProps) {
       className={cn("text-content-subdued", className)}
       asChild
     >
-      <Link to={path} aria-label={label}>
+      <Link to={path} params={{ id: keygen.config.id }} aria-label={label}>
         <svg
           className="mt-0.5 h-6 w-6"
           aria-hidden="true"

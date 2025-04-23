@@ -14,6 +14,8 @@ import {
 } from "@/assets/components/ui/form"
 import { Input } from "@/assets/components/ui/input"
 
+import * as keygen from "@keygen/index"
+
 const resetPasswordSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters."),
 })
@@ -30,7 +32,7 @@ export default function Reset() {
 
   function onSubmitResetPassword() {
     // TODO: Handle previous password case & auth
-    void navigate({ to: "/app/home" })
+    void navigate({ to: "/$id/app/home", params: { id: keygen.config.id } })
   }
 
   return (

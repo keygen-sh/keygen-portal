@@ -14,6 +14,7 @@ import {
 } from "@/assets/components/ui/form"
 import { Input } from "@/assets/components/ui/input"
 
+import * as keygen from "@keygen/index"
 import BackButton from "@components/BackButton"
 
 const recoverySchema = z.object({
@@ -30,7 +31,7 @@ export default function Recovery() {
 
   function onSubmitRecovery() {
     // TODO: Handle SMTP
-    void navigate({ to: "/auth/sent" })
+    void navigate({ to: "/$id/auth/sent", params: { id: keygen.config.id } })
   }
 
   return (

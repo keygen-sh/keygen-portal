@@ -2,6 +2,7 @@ const config = {
   host: import.meta.env.VITE_KEYGEN_HOST,
   mode: import.meta.env.VITE_KEYGEN_MODE,
   version: import.meta.env.VITE_KEYGEN_VERSION,
+  id: import.meta.env.VITE_KEYGEN_ACCOUNT_ID,
 
   validate(): void {
     const missing: string[] = []
@@ -9,6 +10,7 @@ const config = {
     if (!this.host) missing.push("VITE_KEYGEN_HOST")
     if (!this.mode) missing.push("VITE_KEYGEN_MODE")
     if (!this.version) missing.push("VITE_KEYGEN_VERSION")
+    if (!this.id) missing.push("VITE_KEYGEN_ACCOUNT_ID")
 
     if (missing.length > 0) {
       throw new Error(

@@ -19,8 +19,8 @@ export default function AuthLayout() {
 
   return (
     <AuthProvider>
-      <main className="flex min-h-screen">
-        <div className="flex w-full flex-col bg-background md:w-1/2">
+      <div className="flex min-h-screen">
+        <section className="flex w-full flex-col bg-background md:w-1/2">
           <nav className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-4 pt-4 md:pt-8">
             <div className="justify-self-center">
               {label && (
@@ -35,14 +35,14 @@ export default function AuthLayout() {
               <img src={logo} alt="Keygen Logo" className="h-6 md:h-5" />
             </div>
           </nav>
-          <div className="flex flex-1 items-center justify-center px-4">
+          <main className="flex flex-1 items-center justify-center px-4">
             <Outlet />
-          </div>
-        </div>
-        <div className="hidden w-1/2 bg-brand-background-2 md:block">
+          </main>
+        </section>
+        <section className="hidden w-1/2 bg-brand-background-2 md:block">
           {/* TODO: Hero */}
-        </div>
-      </main>
+        </section>
+      </div>
     </AuthProvider>
   )
 }

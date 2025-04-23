@@ -10,10 +10,10 @@ export default function AuthLayout() {
   const currentRoute = matches[matches.length - 1] as { routeId: string }
 
   const label = (() => {
-    if (currentRoute.routeId === "/auth/$id/password") return "Go Back"
-    if (currentRoute.routeId === "/auth/$id/verify") return "Return to Login"
-    if (currentRoute.routeId === "/auth/recovery") return "Return to Login"
-    if (currentRoute.routeId === "/auth/sent") return "Return to Login"
+    if (currentRoute.routeId === "/$id/auth/password") return "Go Back"
+    if (currentRoute.routeId === "/$id/auth/verify") return "Return to Login"
+    if (currentRoute.routeId === "/$id/auth/recovery") return "Return to Login"
+    if (currentRoute.routeId === "/$id/auth/sent") return "Return to Login"
     return ""
   })()
 
@@ -25,7 +25,7 @@ export default function AuthLayout() {
             <div className="justify-self-center">
               {label && (
                 <BackButton
-                  path={"/auth/login"}
+                  path={"/$id/auth/login"}
                   label={label}
                   className="hidden md:flex"
                 />

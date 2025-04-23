@@ -15,6 +15,7 @@ import {
 } from "@/assets/components/ui/form"
 import { Input } from "@/assets/components/ui/input"
 
+import * as keygen from "@keygen/index"
 import * as Loading from "@components/Loading"
 
 const registerSchema = z.object({
@@ -77,7 +78,7 @@ export default function Register() {
         }`,
       )
 
-      void navigate({ to: "/app/home" })
+      void navigate({ to: "/$id/app/home", params: { id: keygen.config.id } })
     } finally {
       setLoading(false)
     }
@@ -184,7 +185,11 @@ export default function Register() {
               : "pointer-events-auto text-content-loud"
           }`}
         >
-          <Link to="/auth/login" className="py-0.5 font-bold">
+          <Link
+            to="/$id/auth/login"
+            params={{ id: keygen.config.id }}
+            className="py-0.5 font-bold"
+          >
             Log in
           </Link>
         </Button>

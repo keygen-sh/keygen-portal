@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 import * as Page from "@pages/index"
 
-export const Route = createFileRoute("/auth/$id/password")({
+export const Route = createFileRoute("/$id/auth/password")({
   component: () => <Page.Auth.Password />,
 })

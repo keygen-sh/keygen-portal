@@ -16,6 +16,7 @@ import { Input } from "@/assets/components/ui/input"
 
 import BackButton from "@components/BackButton"
 
+import * as keygen from "@keygen/index"
 import * as Loading from "@components/Loading"
 
 const verificationSchema = z.object({
@@ -78,7 +79,7 @@ export default function Verify() {
       // TODO: Verify code with authenticator
       console.log("Code:", code)
 
-      void navigate({ to: "/app/home" })
+      void navigate({ to: "/$id/app/home", params: { id: keygen.config.id } })
       setLoading(false)
     },
     [navigate],

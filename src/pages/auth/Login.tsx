@@ -25,7 +25,7 @@ const emailSchema = z.object({
 
 export default function Login() {
   const [loading, setLoading] = useState(false)
-  const { setEmail, setSlug } = useContext(AuthContext)
+  const { setEmail } = useContext(AuthContext)
   const navigate = useNavigate()
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({
@@ -42,19 +42,14 @@ export default function Login() {
     if (errors?.length) {
       const { code } = errors[0]
 
-      const parts = email.split("@")
-      const segments = parts[1].split(".")
-      const slug = `${segments[0]}-${segments[1]}`.toLowerCase()
-
-      setSlug(slug)
       setEmail(email)
 
       if (code === "PASSWORD_REQUIRED") {
-        void navigate({ to: `/auth/${slug}/password` })
+        void navigate({ to: `/${keygen.config.id}/auth/password` })
 
         return
       } else if (code === "OTP_REQUIRED") {
-        void navigate({ to: `/auth/${slug}/verify` })
+        void navigate({ to: `/${keygen.config.id}/auth/verify` })
 
         return
       } else {
@@ -119,8 +114,9 @@ export default function Login() {
           className="text-content-loud"
         >
           <Link
-            to="/auth/register"
+            to="/$id/auth/register"
             className="text-content-main underline-slide py-0.5 font-bold"
+            params={{ id: keygen.config.id }}
           >
             Create one
           </Link>
@@ -138,7 +134,9 @@ export default function Login() {
               : "pointer-events-auto text-content-loud"
           }`}
         >
-          <Link to="/auth/sso">Sign in with SSO</Link>
+          <Link to="/$id/auth/sso" params={{ id: keygen.config.id }}>
+            Sign in with SSO
+          </Link>
         </Button>
       </div>
     </section>

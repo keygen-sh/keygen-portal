@@ -1,11 +1,10 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate, Link } from "@tanstack/react-router"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
 import { cn } from "@/assets/lib/utils"
-
 import { Button } from "@/assets/components/ui/button"
 import {
   Form,
@@ -18,10 +17,9 @@ import {
 import { Input } from "@/assets/components/ui/input"
 import { Checkbox } from "@/assets/components/ui/checkbox"
 
-import BackButton from "@components/BackButton"
-
 import * as keygen from "@keygen/index"
 import { useAuth } from "@hooks/useAuth"
+import BackButton from "@components/BackButton"
 import * as Loading from "@components/Loading"
 
 const passwordSchema = z.object({
@@ -32,9 +30,9 @@ const passwordSchema = z.object({
 export default function Password() {
   const [loading, setLoading] = useState(false)
 
-  const navigate = useNavigate()
-
   const { email } = useAuth()
+
+  const navigate = useNavigate()
 
   const passwordForm = useForm<z.infer<typeof passwordSchema>>({
     resolver: zodResolver(passwordSchema),
@@ -43,6 +41,17 @@ export default function Password() {
       remember: false,
     },
   })
+
+  // Redirect to login if no email is present
+  useEffect(() => {
+    if (!email) {
+      console.error("No email in context. Redirecting to login.")
+
+      void navigate({ to: "/$id/auth/login", params: { id: keygen.config.id } })
+
+      return
+    }
+  }, [email, navigate])
 
   async function onSubmitPassword() {
     setLoading(true)

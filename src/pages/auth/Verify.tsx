@@ -14,9 +14,9 @@ import {
 } from "@/assets/components/ui/form"
 import { Input } from "@/assets/components/ui/input"
 
-import BackButton from "@components/BackButton"
-
 import * as keygen from "@keygen/index"
+import { useAuth } from "@hooks/useAuth"
+import BackButton from "@components/BackButton"
 import * as Loading from "@components/Loading"
 
 const verificationSchema = z.object({
@@ -31,6 +31,8 @@ const verificationSchema = z.object({
 export default function Verify() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const { email } = useAuth()
 
   const navigate = useNavigate()
 
@@ -84,6 +86,17 @@ export default function Verify() {
     },
     [navigate],
   )
+
+  // Redirect to login if no email is present
+  useEffect(() => {
+    if (!email) {
+      console.error("No email in context. Redirecting to login.")
+
+      void navigate({ to: "/$id/auth/login", params: { id: keygen.config.id } })
+
+      return
+    }
+  }, [email, navigate])
 
   // Watcher to submit form when digits are filled
   useEffect(() => {

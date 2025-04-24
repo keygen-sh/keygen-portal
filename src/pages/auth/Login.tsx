@@ -25,6 +25,8 @@ const emailSchema = z.object({
 
 export default function Login() {
   const [loading, setLoading] = useState(false)
+  const [serverError, setServerError] = useState<string | null>(null)
+
   const { setEmail } = useContext(AuthContext)
   const navigate = useNavigate()
 
@@ -35,11 +37,12 @@ export default function Login() {
 
   async function onSubmitEmail() {
     setLoading(true)
+    setServerError(null)
 
     const email = emailForm.getValues().username
-    const { errors } = await keygen.authenticate({ email })
 
-    if (errors?.length) {
+    try {
+      const { errors } = await keygen.authenticate({ email })
       const { code } = errors[0]
 
       setEmail(email)
@@ -53,15 +56,14 @@ export default function Login() {
 
         return
       } else {
-        console.error(errors[0]?.detail)
-
-        return
+        throw new Error(errors[0]?.detail)
       }
-    } else {
-      console.error("An unknown error occurred during authentication.")
+    } catch (error) {
+      console.error(error)
+      setServerError("Service is unavailable. Please try again later.")
+    } finally {
+      setLoading(false)
     }
-
-    setLoading(false)
   }
 
   return (
@@ -78,6 +80,7 @@ export default function Login() {
           <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
             Sign in to your account
           </h1>
+
           <FormField
             control={emailForm.control}
             name="username"
@@ -92,13 +95,18 @@ export default function Login() {
                     autoComplete="username"
                     autoFocus
                     placeholder="Enter email..."
-                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e)
+                      setServerError(null)
+                    }}
+                    value={field.value}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage>{serverError}</FormMessage>
               </FormItem>
             )}
           />
+
           <Button type="submit" size="lg" className="w-full" disabled={loading}>
             {loading ? <Loading.Dots color="bg-background" /> : "Continue"}
           </Button>

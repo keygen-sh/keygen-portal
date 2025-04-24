@@ -3,7 +3,7 @@ import { AuthContext } from "@contexts/AuthContext"
 
 /**
  * Custom hook that reads from AuthContext.
- * Provides the current auth state (e.g., user email, slug) and setters.
+ * Provides the current auth state (e.g., user email) and setters.
  *
  * @returns AuthContextValue
  */

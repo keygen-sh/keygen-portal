@@ -1,4 +1,4 @@
-import { useState, useContext } from "react"
+import { useState } from "react"
 import { useNavigate, Link } from "@tanstack/react-router"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -16,7 +16,7 @@ import {
 import { Input } from "@/assets/components/ui/input"
 
 import * as keygen from "@keygen/index"
-import { AuthContext } from "@contexts/AuthContext"
+import { useAuth } from "@hooks/useAuth"
 import * as Loading from "@components/Loading"
 
 const emailSchema = z.object({
@@ -27,7 +27,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
 
-  const { setEmail } = useContext(AuthContext)
+  const { setEmail } = useAuth()
+
   const navigate = useNavigate()
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({

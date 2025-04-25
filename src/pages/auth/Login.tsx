@@ -92,6 +92,7 @@ export default function Login() {
                 </FormLabel>
                 <FormControl>
                   <Input
+                    {...field}
                     type="email"
                     autoComplete="username"
                     autoFocus
@@ -100,7 +101,6 @@ export default function Login() {
                       field.onChange(e)
                       setServerError(null)
                     }}
-                    value={field.value}
                   />
                 </FormControl>
                 <FormMessage>{serverError}</FormMessage>

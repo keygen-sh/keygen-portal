@@ -27,6 +27,10 @@ const passwordSchema = z.object({
   remember: z.boolean().optional(),
 })
 
+/**
+ * Password component that validates user email and password to authenticate user.
+ * Routes users to either OTP verification or application based on account settings.
+ */
 export default function Password() {
   const [loading, setLoading] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
@@ -76,6 +80,10 @@ export default function Password() {
       if (errors?.length) {
         const { code } = errors[0]
 
+        /**
+         * Return if password is invalid
+         * Additionally, if email is invalid, handle the same to deter malicious attempts
+         */
         if (code === "PASSWORD_INVALID" || code === "EMAIL_INVALID") {
           setServerError("Invalid password. Please try again.")
 
@@ -88,6 +96,7 @@ export default function Password() {
           throw new Error(errors[0]?.detail)
         }
       } else {
+        // Successfully authenticated
         localStorage.setItem(
           "token",
           (data as { attributes: { token: string } }).attributes.token,

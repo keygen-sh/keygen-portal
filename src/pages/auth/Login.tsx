@@ -105,6 +105,7 @@ export default function Login() {
                     autoComplete="username"
                     autoFocus
                     placeholder="Enter email..."
+                    disabled={loading}
                     onChange={(e) => {
                       field.onChange(e)
                       setServerError(null)

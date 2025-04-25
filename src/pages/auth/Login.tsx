@@ -23,6 +23,10 @@ const emailSchema = z.object({
   username: z.string().email("Please enter a valid email."),
 })
 
+/**
+ * Login component that validates user email and determines next authentication step.
+ * Routes users to either password or OTP verification based on account settings.
+ */
 export default function Login() {
   const [loading, setLoading] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
@@ -48,6 +52,10 @@ export default function Login() {
 
       setEmail(email)
 
+      /**
+       * If user doesn't have OTP enabled, redirect to password page
+       * Additionally, if email is invalid, continue to password page to deter malicious attempts
+       */
       if (code === "PASSWORD_REQUIRED" || code === "EMAIL_INVALID") {
         void navigate({ to: `/${keygen.config.id}/auth/password` })
 

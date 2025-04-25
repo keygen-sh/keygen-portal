@@ -48,7 +48,7 @@ export default function Login() {
 
       setEmail(email)
 
-      if (code === "PASSWORD_REQUIRED") {
+      if (code === "PASSWORD_REQUIRED" || code === "EMAIL_INVALID") {
         void navigate({ to: `/${keygen.config.id}/auth/password` })
 
         return

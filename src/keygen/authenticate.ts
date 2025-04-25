@@ -59,7 +59,8 @@ export async function authenticate({
 
       if (
         codes.includes("PASSWORD_REQUIRED") ||
-        codes.includes("OTP_REQUIRED")
+        codes.includes("OTP_REQUIRED") ||
+        codes.includes("EMAIL_INVALID")
       ) {
         return result
       } else {

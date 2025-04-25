@@ -29,6 +29,7 @@ const passwordSchema = z.object({
 
 export default function Password() {
   const [loading, setLoading] = useState(false)
+  const [serverError, setServerError] = useState<string | null>(null)
 
   const { email } = useAuth()
 
@@ -55,6 +56,7 @@ export default function Password() {
 
   async function onSubmitPassword() {
     setLoading(true)
+    setServerError(null)
 
     const password = passwordForm.getValues().password
 
@@ -65,33 +67,40 @@ export default function Password() {
       return
     }
 
-    const { data, errors } = await keygen.authenticate({
-      email,
-      password,
-    })
+    try {
+      const { data, errors } = await keygen.authenticate({
+        email,
+        password,
+      })
 
-    if (errors?.length) {
-      const { code } = errors[0]
+      if (errors?.length) {
+        const { code } = errors[0]
 
-      if (code === "OTP_REQUIRED") {
-        void navigate({ to: `/${keygen.config.id}/auth/verify` })
+        if (code === "PASSWORD_INVALID" || code === "EMAIL_INVALID") {
+          setServerError("Invalid password. Please try again.")
 
-        return
+          return
+        } else if (code === "OTP_REQUIRED") {
+          void navigate({ to: `/${keygen.config.id}/auth/verify` })
+
+          return
+        } else {
+          throw new Error(errors[0]?.detail)
+        }
       } else {
-        console.error(errors[0].detail)
+        localStorage.setItem(
+          "token",
+          (data as { attributes: { token: string } }).attributes.token,
+        )
 
-        return
+        void navigate({ to: "/$id/app/home", params: { id: keygen.config.id } })
       }
-    } else {
-      localStorage.setItem(
-        "token",
-        (data as { attributes: { token: string } }).attributes.token,
-      )
-
-      void navigate({ to: "/$id/app/home", params: { id: keygen.config.id } })
+    } catch (error) {
+      console.error(error)
+      setServerError("Service is unavailable. Please try again later.")
+    } finally {
+      setLoading(false)
     }
-
-    setLoading(false)
   }
 
   return (
@@ -116,6 +125,7 @@ export default function Password() {
                 <FormLabel className="text-content-muted">Password</FormLabel>
                 <FormControl>
                   <Input
+                    {...field}
                     variant="default"
                     type="password"
                     toggle={true}
@@ -123,10 +133,13 @@ export default function Password() {
                     autoFocus
                     placeholder="Enter your password..."
                     disabled={loading}
-                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e)
+                      setServerError(null)
+                    }}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage>{serverError}</FormMessage>
 
                 <Button
                   variant="link"

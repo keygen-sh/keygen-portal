@@ -80,11 +80,7 @@ export default function Password() {
       if (errors?.length) {
         const { code } = errors[0]
 
-        /**
-         * Return if password is invalid
-         * Additionally, if email is invalid, handle the same to deter malicious attempts
-         */
-        if (code === "PASSWORD_INVALID" || code === "EMAIL_INVALID") {
+        if (code === "PASSWORD_INVALID") {
           setServerError("Invalid password. Please try again.")
 
           return

@@ -52,16 +52,12 @@ export default function Login() {
 
       setEmail(email)
 
-      /**
-       * If user doesn't have OTP enabled, redirect to password page
-       * Additionally, if email is invalid, continue to password page to deter malicious attempts
-       */
-      if (code === "PASSWORD_REQUIRED" || code === "EMAIL_INVALID") {
+      if (code === "PASSWORD_REQUIRED") {
         void navigate({ to: `/${keygen.config.id}/auth/password` })
 
         return
-      } else if (code === "OTP_REQUIRED") {
-        void navigate({ to: `/${keygen.config.id}/auth/verify` })
+      } else if (code === "EMAIL_INVALID") {
+        setServerError("Invalid email. Please try again.")
 
         return
       } else {

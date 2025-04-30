@@ -35,7 +35,7 @@ export default function Password() {
   const [loading, setLoading] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
 
-  const { email } = useAuth()
+  const { email, setPassword } = useAuth()
 
   const navigate = useNavigate()
 
@@ -85,6 +85,7 @@ export default function Password() {
 
           return
         } else if (code === "OTP_REQUIRED") {
+          setPassword(password)
           void navigate({ to: `/${keygen.config.id}/auth/verify` })
 
           return

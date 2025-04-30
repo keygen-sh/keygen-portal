@@ -33,9 +33,9 @@ const passwordSchema = z.object({
  */
 export default function Password() {
   const [loading, setLoading] = useState(false)
-  const [serverError, setServerError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
-  const { email, setPassword } = useAuth()
+  const auth = useAuth()
 
   const navigate = useNavigate()
 
@@ -47,33 +47,29 @@ export default function Password() {
     },
   })
 
-  // Redirect to login if no email is present
   useEffect(() => {
-    if (!email) {
-      console.error("No email in context. Redirecting to login.")
-
-      void navigate({ to: "/$id/auth/login", params: { id: keygen.config.id } })
+    if (!auth.email) {
+      auth.redirect()
 
       return
     }
-  }, [email, navigate])
+  }, [auth, navigate])
 
   async function onSubmitPassword() {
     setLoading(true)
-    setServerError(null)
+    setError(null)
 
     const password = passwordForm.getValues().password
 
-    if (!email) {
-      console.error("No email in context. Redirecting to login.")
-      void navigate({ to: "/$id/auth/login", params: { id: keygen.config.id } })
+    if (!auth.email) {
+      auth.redirect()
 
       return
     }
 
     try {
       const { data, errors } = await keygen.authenticate({
-        email,
+        email: auth.email,
         password,
       })
 
@@ -81,11 +77,11 @@ export default function Password() {
         const { code } = errors[0]
 
         if (code === "PASSWORD_INVALID") {
-          setServerError("Invalid password. Please try again.")
+          setError("Invalid password. Please try again.")
 
           return
         } else if (code === "OTP_REQUIRED") {
-          setPassword(password)
+          auth.setPassword(password)
           void navigate({ to: `/${keygen.config.id}/auth/verify` })
 
           return
@@ -93,7 +89,6 @@ export default function Password() {
           throw new Error(errors[0]?.detail)
         }
       } else {
-        // Successfully authenticated
         localStorage.setItem(
           "token",
           (data as { attributes: { token: string } }).attributes.token,
@@ -103,7 +98,9 @@ export default function Password() {
       }
     } catch (error) {
       console.error(error)
-      setServerError("Service is unavailable. Please try again later.")
+      auth.setError("Service is unavailable. Please try again later.")
+
+      void navigate({ to: "/$id/auth/login", params: { id: keygen.config.id } })
     } finally {
       setLoading(false)
     }
@@ -141,11 +138,11 @@ export default function Password() {
                     disabled={loading}
                     onChange={(e) => {
                       field.onChange(e)
-                      setServerError(null)
+                      setError(null)
                     }}
                   />
                 </FormControl>
-                <FormMessage>{serverError}</FormMessage>
+                <FormMessage>{error}</FormMessage>
 
                 <Button
                   variant="link"

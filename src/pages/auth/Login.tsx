@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate, Link } from "@tanstack/react-router"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -29,9 +29,9 @@ const emailSchema = z.object({
  */
 export default function Login() {
   const [loading, setLoading] = useState(false)
-  const [serverError, setServerError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
-  const { setEmail } = useAuth()
+  const auth = useAuth()
 
   const navigate = useNavigate()
 
@@ -40,9 +40,16 @@ export default function Login() {
     defaultValues: { username: "" },
   })
 
+  // Unify global error state with local error state
+  useEffect(() => {
+    if (auth.error) {
+      setError(auth.error)
+    }
+  }, [auth.error])
+
   async function onSubmitEmail() {
     setLoading(true)
-    setServerError(null)
+    setError(null)
 
     const email = emailForm.getValues().username
 
@@ -50,14 +57,14 @@ export default function Login() {
       const { errors } = await keygen.authenticate({ email })
       const { code } = errors[0]
 
-      setEmail(email)
+      auth.setEmail(email)
 
       if (code === "PASSWORD_REQUIRED") {
         void navigate({ to: `/${keygen.config.id}/auth/password` })
 
         return
       } else if (code === "EMAIL_INVALID") {
-        setServerError("Invalid email. Please try again.")
+        setError("Invalid email. Please try again.")
 
         return
       } else {
@@ -65,7 +72,7 @@ export default function Login() {
       }
     } catch (error) {
       console.error(error)
-      setServerError("Service is unavailable. Please try again later.")
+      setError("Service is unavailable. Please try again later.")
     } finally {
       setLoading(false)
     }
@@ -104,11 +111,11 @@ export default function Login() {
                     disabled={loading}
                     onChange={(e) => {
                       field.onChange(e)
-                      setServerError(null)
+                      setError(null)
                     }}
                   />
                 </FormControl>
-                <FormMessage>{serverError}</FormMessage>
+                <FormMessage>{error}</FormMessage>
               </FormItem>
             )}
           />

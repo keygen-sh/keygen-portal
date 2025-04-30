@@ -32,7 +32,7 @@ export default function Verify() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const { email } = useAuth()
+  const auth = useAuth()
 
   const navigate = useNavigate()
 
@@ -54,49 +54,78 @@ export default function Verify() {
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
-  const onSubmitVerification = useCallback(
-    async (data: z.infer<typeof verificationSchema>) => {
-      setLoading(true)
-
-      await new Promise((resolve) => {
-        setTimeout(resolve, 1000)
-      })
-
-      const code = [
-        data.digit1,
-        data.digit2,
-        data.digit3,
-        data.digit4,
-        data.digit5,
-        data.digit6,
-      ].join("")
-
-      const dummySuccess = false
-      if (!dummySuccess) {
-        setError("The code you entered is incorrect. Please try again.")
-        setLoading(false)
-        return
-      }
-
-      // TODO: Verify code with authenticator
-      console.log("Code:", code)
-
-      void navigate({ to: "/$id/app/home", params: { id: keygen.config.id } })
-      setLoading(false)
-    },
-    [navigate],
-  )
-
-  // Redirect to login if no email is present
   useEffect(() => {
-    if (!email) {
-      console.error("No email in context. Redirecting to login.")
-
-      void navigate({ to: "/$id/auth/login", params: { id: keygen.config.id } })
+    if (!auth.email || !auth.password) {
+      auth.redirect()
 
       return
     }
-  }, [email, navigate])
+  }, [auth, navigate])
+
+  const onSubmitVerification = useCallback(
+    async (form: z.infer<typeof verificationSchema>) => {
+      setLoading(true)
+      setError(null)
+
+      if (!auth.email || !auth.password) {
+        auth.redirect()
+
+        return
+      }
+
+      const otp = [
+        form.digit1,
+        form.digit2,
+        form.digit3,
+        form.digit4,
+        form.digit5,
+        form.digit6,
+      ].join("")
+
+      try {
+        const { data, errors } = await keygen.authenticate({
+          email: auth.email,
+          password: auth.password,
+          otp,
+        })
+
+        if (errors?.length) {
+          const { code } = errors[0]
+
+          if (code === "OTP_INVALID") {
+            setError("The code you entered is incorrect. Please try again.")
+            setLoading(false)
+            reset()
+
+            return
+          } else {
+            throw new Error(errors[0]?.detail)
+          }
+        } else {
+          localStorage.setItem(
+            "token",
+            (data as { attributes: { token: string } }).attributes.token,
+          )
+
+          void navigate({
+            to: "/$id/app/home",
+            params: { id: keygen.config.id },
+          })
+        }
+      } catch (error) {
+        console.error(error)
+        auth.setError("Service is unavailable. Please try again later.")
+
+        void navigate({
+          to: "/$id/auth/login",
+          params: { id: keygen.config.id },
+        })
+      } finally {
+        setLoading(false)
+      }
+    },
+    [auth, reset, navigate],
+  )
 
   // Watcher to submit form when digits are filled
   useEffect(() => {

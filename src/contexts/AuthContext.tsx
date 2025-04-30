@@ -5,6 +5,8 @@ export interface AuthContextValue {
   setEmail: (email: string) => void
   password: string | null
   setPassword: (password: string) => void
+  error: string | null
+  setError: (error: string | null) => void
 }
 
 /**
@@ -15,4 +17,6 @@ export const AuthContext = createContext<AuthContextValue>({
   setEmail: () => {},
   password: null,
   setPassword: () => {},
+  error: null,
+  setError: () => {},
 })

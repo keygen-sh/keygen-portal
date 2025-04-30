@@ -15,9 +15,9 @@ interface AuthProviderProps {
  */
 export function AuthProvider({ children }: AuthProviderProps) {
   const [email, setEmail] = useState("")
-
+  const [password, setPassword] = useState("")
   return (
-    <AuthContext.Provider value={{ email, setEmail }}>
+    <AuthContext.Provider value={{ email, setEmail, password, setPassword }}>
       {children}
     </AuthContext.Provider>
   )

@@ -47,14 +47,6 @@ export default function Password() {
     },
   })
 
-  useEffect(() => {
-    if (!auth.email) {
-      auth.redirect()
-
-      return
-    }
-  }, [auth, navigate])
-
   // Unify global error state with local error state
   useEffect(() => {
     if (auth.error) {
@@ -69,15 +61,9 @@ export default function Password() {
 
     const password = passwordForm.getValues().password
 
-    if (!auth.email) {
-      auth.redirect()
-
-      return
-    }
-
     try {
       const { data, errors } = await keygen.authenticate({
-        email: auth.email,
+        email: auth.email!,
         password,
       })
 

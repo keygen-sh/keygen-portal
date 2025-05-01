@@ -65,6 +65,7 @@ export default function Password() {
   async function onSubmitPassword() {
     setLoading(true)
     setError(null)
+    auth.setError(null)
 
     const password = passwordForm.getValues().password
 

@@ -54,24 +54,10 @@ export default function Verify() {
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
-  useEffect(() => {
-    if (!auth.email || !auth.password) {
-      auth.redirect()
-
-      return
-    }
-  }, [auth, navigate])
-
   const onSubmitVerification = useCallback(
     async (form: z.infer<typeof verificationSchema>) => {
       setLoading(true)
       setError(null)
-
-      if (!auth.email || !auth.password) {
-        auth.redirect()
-
-        return
-      }
 
       const otp = [
         form.digit1,
@@ -84,8 +70,8 @@ export default function Verify() {
 
       try {
         const { data, errors } = await keygen.authenticate({
-          email: auth.email,
-          password: auth.password,
+          email: auth.email!,
+          password: auth.password!,
           otp,
         })
 

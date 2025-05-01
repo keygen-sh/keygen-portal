@@ -15,6 +15,7 @@
       "@keygen/*": ["src/keygen/*"],
       "@layouts/*": ["src/layouts/*"],
       "@providers/*": ["src/providers/*"],
+      "@guards/*": ["src/guards/*"],
       "@pages/*": ["src/pages/*"],
       "@routes/*": ["src/routes/*"]
     },

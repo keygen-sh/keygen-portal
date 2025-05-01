@@ -16,6 +16,7 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [remember, setRemember] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const clearCredentials = useCallback(() => {
@@ -30,6 +31,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setEmail,
         password,
         setPassword,
+        remember,
+        setRemember,
         error,
         setError,
         clearCredentials,

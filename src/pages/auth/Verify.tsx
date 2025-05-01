@@ -97,6 +97,7 @@ export default function Verify() {
             "token",
             (data as { attributes: { token: string } }).attributes.token,
           )
+          localStorage.setItem("tokenId", (data as { id: string }).id)
 
           void navigate({
             to: "/$id/app/home",

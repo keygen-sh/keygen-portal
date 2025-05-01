@@ -59,7 +59,7 @@ export default function Password() {
     setError(null)
     auth.setError(null)
 
-    const password = passwordForm.getValues().password
+    const { password, remember } = passwordForm.getValues()
 
     try {
       const { data, errors } = await keygen.authenticate({
@@ -76,6 +76,7 @@ export default function Password() {
           return
         } else if (code === "OTP_REQUIRED") {
           auth.setPassword(password)
+          auth.setRemember(remember || false)
           void navigate({ to: `/${keygen.config.id}/auth/verify` })
 
           return
@@ -83,11 +84,13 @@ export default function Password() {
           throw new Error(errors[0]?.detail)
         }
       } else {
-        localStorage.setItem(
+        const storage = remember ? localStorage : sessionStorage
+
+        storage.setItem(
           "token",
           (data as { attributes: { token: string } }).attributes.token,
         )
-        localStorage.setItem("tokenId", (data as { id: string }).id)
+        storage.setItem("tokenId", (data as { id: string }).id)
 
         void navigate({ to: "/" })
       }

@@ -9,8 +9,11 @@ export default function Redirect() {
   const auth = useAuth()
   const navigate = useNavigate()
 
-  const tokenId: string | null = localStorage.getItem("tokenId")
-  const token: string | null = localStorage.getItem("token")
+  const token: string | null =
+    localStorage.getItem("token") || sessionStorage.getItem("token")
+  const tokenId: string | null =
+    localStorage.getItem("tokenId") || sessionStorage.getItem("tokenId")
+
   const user = tokenId && token ? keygen.verify({ tokenId, token }) : null
 
   useEffect(() => {

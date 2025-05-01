@@ -93,11 +93,13 @@ export default function Verify() {
             throw new Error(errors[0]?.detail)
           }
         } else {
-          localStorage.setItem(
+          const storage = auth.remember ? localStorage : sessionStorage
+
+          storage.setItem(
             "token",
             (data as { attributes: { token: string } }).attributes.token,
           )
-          localStorage.setItem("tokenId", (data as { id: string }).id)
+          storage.setItem("tokenId", (data as { id: string }).id)
 
           void navigate({ to: "/" })
         }

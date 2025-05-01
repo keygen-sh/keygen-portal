@@ -18,6 +18,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
 
+  const clearCredentials = useCallback(() => {
+    setEmail("")
+    setPassword("")
+  }, [])
 
   return (
     <AuthContext.Provider
@@ -28,6 +32,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setPassword,
         error,
         setError,
+        clearCredentials,
       }}
     >
       {children}

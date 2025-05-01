@@ -7,6 +7,7 @@ export interface AuthContextValue {
   setPassword: (password: string) => void
   error: string | null
   setError: (error: string | null) => void
+  clearCredentials: () => void
 }
 
 /**
@@ -19,4 +20,5 @@ export const AuthContext = createContext<AuthContextValue>({
   setPassword: () => {},
   error: null,
   setError: () => {},
+  clearCredentials: () => {},
 })

@@ -50,6 +50,7 @@ export default function Login() {
   async function onSubmitEmail() {
     setLoading(true)
     setError(null)
+    auth.setError(null)
 
     const email = emailForm.getValues().username
 

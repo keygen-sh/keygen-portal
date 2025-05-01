@@ -1,8 +1,5 @@
 import { useState, useCallback } from "react"
 import { AuthContext } from "@contexts/AuthContext"
-import { useNavigate } from "@tanstack/react-router"
-
-import * as keygen from "@keygen/index"
 
 interface AuthProviderProps {
   children: React.ReactNode
@@ -21,16 +18,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
 
-  const navigate = useNavigate()
-
-  const redirect = useCallback(() => {
-    console.error(
-      `Missing context:${!email && " email"}${!password && " password"}. Redirecting to login.`,
-    )
-    setError("Something went wrong. Please try again.")
-
-    void navigate({ to: "/$id/auth/login", params: { id: keygen.config.id } })
-  }, [email, password, navigate])
 
   return (
     <AuthContext.Provider
@@ -41,7 +28,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setPassword,
         error,
         setError,
-        redirect,
       }}
     >
       {children}

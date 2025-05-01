@@ -55,6 +55,13 @@ export default function Password() {
     }
   }, [auth, navigate])
 
+  // Unify global error state with local error state
+  useEffect(() => {
+    if (auth.error) {
+      setError(auth.error)
+    }
+  }, [auth.error])
+
   async function onSubmitPassword() {
     setLoading(true)
     setError(null)

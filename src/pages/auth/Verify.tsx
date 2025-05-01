@@ -96,8 +96,13 @@ export default function Verify() {
             setError("The code you entered is incorrect. Please try again.")
             setLoading(false)
             reset()
+          } else if (code === "PASSWORD_INVALID") {
+            auth.setError("Invalid password. Please try again.")
 
-            return
+            void navigate({
+              to: "/$id/auth/password",
+              params: { id: keygen.config.id },
+            })
           } else {
             throw new Error(errors[0]?.detail)
           }

@@ -89,7 +89,7 @@ export default function Password() {
         )
         localStorage.setItem("tokenId", (data as { id: string }).id)
 
-        void navigate({ to: "/$id/app/home", params: { id: keygen.config.id } })
+        void navigate({ to: "/" })
       }
     } catch (error) {
       console.error(error)

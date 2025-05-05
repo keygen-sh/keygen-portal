@@ -70,18 +70,17 @@ export default function Password() {
       if (errors?.length) {
         const { code } = errors[0]
 
-        if (code === "PASSWORD_INVALID") {
-          setError("Invalid password. Please try again.")
-
-          return
-        } else if (code === "OTP_REQUIRED") {
-          auth.setPassword(password)
-          auth.setRemember(remember || false)
-          void navigate({ to: `/${keygen.config.id}/auth/verify` })
-
-          return
-        } else {
-          throw new Error(errors[0]?.detail)
+        switch (code) {
+          case "PASSWORD_INVALID":
+            setError("Invalid password. Please try again.")
+            break
+          case "OTP_REQUIRED":
+            auth.setPassword(password)
+            auth.setRemember(remember || false)
+            void navigate({ to: `/${keygen.config.id}/auth/verify` })
+            break
+          default:
+            throw new Error(errors[0]?.detail)
         }
       } else {
         const storage = remember ? localStorage : sessionStorage

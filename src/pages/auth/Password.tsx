@@ -68,13 +68,13 @@ export default function Password() {
       })
 
       if (errors?.length) {
-        const { code } = errors[0]
+        const { code } = errors[0] as unknown as { code: keygen.ErrorCode }
 
         switch (code) {
-          case "PASSWORD_INVALID":
+          case keygen.ErrorCode.PASSWORD_INVALID:
             setError("Invalid password. Please try again.")
             break
-          case "OTP_REQUIRED":
+          case keygen.ErrorCode.OTP_REQUIRED:
             auth.setPassword(password)
             auth.setRemember(remember || false)
             void navigate({ to: `/${keygen.config.id}/auth/verify` })

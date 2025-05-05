@@ -56,15 +56,15 @@ export default function Login() {
 
     try {
       const { errors } = await keygen.authenticate({ email })
-      const { code } = errors[0]
+      const { code } = errors[0] as unknown as { code: keygen.ErrorCode }
 
       auth.setEmail(email)
 
       switch (code) {
-        case "PASSWORD_REQUIRED":
+        case keygen.ErrorCode.PASSWORD_REQUIRED:
           void navigate({ to: `/${keygen.config.id}/auth/password` })
           break
-        case "EMAIL_INVALID":
+        case keygen.ErrorCode.OTP_REQUIRED:
           setError("Invalid email. Please try again.")
           break
         default:

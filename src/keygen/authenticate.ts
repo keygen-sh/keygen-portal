@@ -1,4 +1,5 @@
 import config from "@keygen/config"
+import { isAuthError } from "@keygen/errors"
 
 // Make sure environment variables exist
 config.validate()
@@ -58,13 +59,7 @@ export async function authenticate({
     if (!response.ok) {
       const codes = result.errors?.map((err) => err.code) || []
 
-      if (
-        codes.includes("PASSWORD_REQUIRED") ||
-        codes.includes("OTP_REQUIRED") ||
-        codes.includes("EMAIL_INVALID") ||
-        codes.includes("PASSWORD_INVALID") ||
-        codes.includes("OTP_INVALID")
-      ) {
+      if (codes.some(isAuthError)) {
         return result
       } else {
         throw new Error(`Request failed with status ${response.status}`)

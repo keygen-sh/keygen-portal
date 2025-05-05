@@ -4,7 +4,6 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
-import { Button } from "@/assets/components/ui/button"
 import {
   Form,
   FormControl,
@@ -267,19 +266,6 @@ export default function Verify() {
             </div>
           )}
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <Button
-            type="button"
-            variant="link"
-            size="link"
-            disabled={loading}
-            onClick={() => {
-              reset()
-              setError(null)
-              inputRefs.current[0]?.focus()
-            }}
-          >
-            Resend code
-          </Button>
         </form>
       </Form>
     </section>

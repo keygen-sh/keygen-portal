@@ -78,7 +78,10 @@ export default function Register() {
         }`,
       )
 
-      void navigate({ to: "/$id/app/home", params: { id: keygen.config.id } })
+      void navigate({
+        to: "/$id/app/dashboard",
+        params: { id: keygen.config.id },
+      })
     } finally {
       setLoading(false)
     }

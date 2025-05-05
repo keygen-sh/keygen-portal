@@ -60,16 +60,15 @@ export default function Login() {
 
       auth.setEmail(email)
 
-      if (code === "PASSWORD_REQUIRED") {
-        void navigate({ to: `/${keygen.config.id}/auth/password` })
-
-        return
-      } else if (code === "EMAIL_INVALID") {
-        setError("Invalid email. Please try again.")
-
-        return
-      } else {
-        throw new Error(errors[0]?.detail)
+      switch (code) {
+        case "PASSWORD_REQUIRED":
+          void navigate({ to: `/${keygen.config.id}/auth/password` })
+          break
+        case "EMAIL_INVALID":
+          setError("Invalid email. Please try again.")
+          break
+        default:
+          throw new Error(errors[0]?.detail)
       }
     } catch (error) {
       console.error(error)

@@ -78,19 +78,21 @@ export default function Verify() {
         if (errors?.length) {
           const { code } = errors[0]
 
-          if (code === "OTP_INVALID") {
-            setError("The code you entered is incorrect. Please try again.")
-            setLoading(false)
-            reset()
-          } else if (code === "PASSWORD_INVALID") {
-            auth.setError("Invalid password. Please try again.")
-
-            void navigate({
-              to: "/$id/auth/password",
-              params: { id: keygen.config.id },
-            })
-          } else {
-            throw new Error(errors[0]?.detail)
+          switch (code) {
+            case "OTP_INVALID":
+              setError("The code you entered is incorrect. Please try again.")
+              setLoading(false)
+              reset()
+              break
+            case "PASSWORD_INVALID":
+              auth.setError("Invalid password. Please try again.")
+              void navigate({
+                to: "/$id/auth/password",
+                params: { id: keygen.config.id },
+              })
+              break
+            default:
+              throw new Error(errors[0]?.detail)
           }
         } else {
           const storage = auth.remember ? localStorage : sessionStorage

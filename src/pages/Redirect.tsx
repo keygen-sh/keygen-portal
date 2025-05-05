@@ -21,7 +21,10 @@ export default function Redirect() {
       if (auth.email || auth.password) {
         auth.clearCredentials()
       }
-      void navigate({ to: "/$id/app/home", params: { id: keygen.config.id } })
+      void navigate({
+        to: "/$id/app/dashboard",
+        params: { id: keygen.config.id },
+      })
     } else {
       void navigate({ to: "/$id/auth/login", params: { id: keygen.config.id } })
     }

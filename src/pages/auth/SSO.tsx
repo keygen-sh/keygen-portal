@@ -30,7 +30,10 @@ export default function SSO() {
 
   function onSubmitSSO() {
     // TODO: Handle SSO
-    void navigate({ to: "/$id/app/home", params: { id: keygen.config.id } })
+    void navigate({
+      to: "/$id/app/dashboard",
+      params: { id: keygen.config.id },
+    })
   }
 
   return (

@@ -32,7 +32,10 @@ export default function Reset() {
 
   function onSubmitResetPassword() {
     // TODO: Handle previous password case & auth
-    void navigate({ to: "/$id/app/home", params: { id: keygen.config.id } })
+    void navigate({
+      to: "/$id/app/dashboard",
+      params: { id: keygen.config.id },
+    })
   }
 
   return (

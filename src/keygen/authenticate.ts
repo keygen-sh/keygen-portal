@@ -53,8 +53,9 @@ export async function authenticate({
       body,
     })
 
+    const result = (await response.json()) as AuthResponse
+
     if (!response.ok) {
-      const result = (await response.json()) as AuthResponse
       const codes = result.errors?.map((err) => err.code) || []
 
       if (
@@ -69,8 +70,6 @@ export async function authenticate({
         throw new Error(`Request failed with status ${response.status}`)
       }
     }
-
-    const result = (await response.json()) as AuthResponse
 
     return result
   } catch (error) {

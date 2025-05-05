@@ -76,15 +76,15 @@ export default function Verify() {
         })
 
         if (errors?.length) {
-          const { code } = errors[0]
+          const { code } = errors[0] as unknown as { code: keygen.ErrorCode }
 
           switch (code) {
-            case "OTP_INVALID":
+            case keygen.ErrorCode.OTP_INVALID:
               setError("The code you entered is incorrect. Please try again.")
               setLoading(false)
               reset()
               break
-            case "PASSWORD_INVALID":
+            case keygen.ErrorCode.PASSWORD_INVALID:
               auth.setError("Invalid password. Please try again.")
               void navigate({
                 to: "/$id/auth/password",

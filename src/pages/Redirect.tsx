@@ -1,9 +1,9 @@
 import { useEffect } from "react"
 import { useNavigate } from "@tanstack/react-router"
 
-import * as keygen from "@keygen/index"
-import { useAuth } from "@hooks/useAuth"
-import * as Loading from "@components/Loading"
+import * as keygen from "@/keygen/index"
+import { useAuth } from "@/hooks/useAuth"
+import * as Loading from "@/components/Loading"
 
 export default function Redirect() {
   const auth = useAuth()

@@ -10,13 +10,13 @@ import {
   FormField,
   FormItem,
   FormLabel,
-} from "@/assets/components/ui/form"
-import { Input } from "@/assets/components/ui/input"
+} from "@assets/components/ui/form"
+import { Input } from "@assets/components/ui/input"
 
-import * as keygen from "@keygen/index"
-import { useAuth } from "@hooks/useAuth"
-import BackButton from "@components/BackButton"
-import * as Loading from "@components/Loading"
+import * as keygen from "@/keygen/index"
+import { useAuth } from "@/hooks/useAuth"
+import BackButton from "@/components/BackButton"
+import * as Loading from "@/components/Loading"
 
 const verificationSchema = z.object({
   digit1: z.string().regex(/^\d$/, "Must be one digit"),

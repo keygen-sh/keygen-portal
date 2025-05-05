@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react"
-import { AuthContext } from "@contexts/AuthContext"
+import { AuthContext } from "@/contexts/AuthContext"
 
 interface AuthProviderProps {
   children: React.ReactNode

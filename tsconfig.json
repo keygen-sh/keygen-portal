@@ -8,16 +8,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@assets/*": ["src/assets/*"],
-      "@components/*": ["src/components/*"],
-      "@contexts/*": ["src/contexts/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@keygen/*": ["src/keygen/*"],
-      "@layouts/*": ["src/layouts/*"],
-      "@providers/*": ["src/providers/*"],
-      "@guards/*": ["src/guards/*"],
-      "@pages/*": ["src/pages/*"],
-      "@routes/*": ["src/routes/*"]
+      "@assets/*": ["src/assets/*"], // shadcn
     },
     "strict": true
   }

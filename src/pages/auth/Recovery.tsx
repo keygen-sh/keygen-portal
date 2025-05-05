@@ -3,7 +3,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
-import { Button } from "@/assets/components/ui/button"
+import { Button } from "@assets/components/ui/button"
 import {
   Form,
   FormControl,
@@ -11,11 +11,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/assets/components/ui/form"
-import { Input } from "@/assets/components/ui/input"
+} from "@assets/components/ui/form"
+import { Input } from "@assets/components/ui/input"
 
-import * as keygen from "@keygen/index"
-import BackButton from "@components/BackButton"
+import * as keygen from "@/keygen/index"
+import BackButton from "@/components/BackButton"
 
 const recoverySchema = z.object({
   username: z.string().email("Please enter a valid email."),

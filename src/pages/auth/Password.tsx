@@ -4,8 +4,8 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
-import { cn } from "@/assets/lib/utils"
-import { Button } from "@/assets/components/ui/button"
+import { cn } from "@assets/lib/utils"
+import { Button } from "@assets/components/ui/button"
 import {
   Form,
   FormControl,
@@ -13,14 +13,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/assets/components/ui/form"
-import { Input } from "@/assets/components/ui/input"
-import { Checkbox } from "@/assets/components/ui/checkbox"
+} from "@assets/components/ui/form"
+import { Input } from "@assets/components/ui/input"
+import { Checkbox } from "@assets/components/ui/checkbox"
 
-import * as keygen from "@keygen/index"
-import { useAuth } from "@hooks/useAuth"
-import BackButton from "@components/BackButton"
-import * as Loading from "@components/Loading"
+import * as keygen from "@/keygen/index"
+import { useAuth } from "@/hooks/useAuth"
+import BackButton from "@/components/BackButton"
+import * as Loading from "@/components/Loading"
 
 const passwordSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters."),

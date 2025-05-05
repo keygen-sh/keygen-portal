@@ -1,4 +1,4 @@
-import config from "@keygen/config"
+import config from "@/keygen/config"
 
 config.validate()
 
@@ -14,17 +14,23 @@ interface VerifyProps {
  * @param {string} props.token - Token to verify
  * @return {Promise<boolean>}
  */
-export async function verify({ tokenId, token }: VerifyProps): Promise<boolean> {
+export async function verify({
+  tokenId,
+  token,
+}: VerifyProps): Promise<boolean> {
   try {
-    const response = await fetch(`https://${config.host}/v1/accounts/${config.id}/tokens/${tokenId}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/vnd.api+json",
-        Accept: "application/vnd.api+json",
-        "Keygen-Version": config.version,
+    const response = await fetch(
+      `https://${config.host}/v1/accounts/${config.id}/tokens/${tokenId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/vnd.api+json",
+          Accept: "application/vnd.api+json",
+          "Keygen-Version": config.version,
+        },
       },
-    })
+    )
 
     if (!response.ok) {
       throw new Error(`Token verification failed: ${response.status}`)

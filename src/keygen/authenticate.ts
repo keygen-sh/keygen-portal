@@ -1,5 +1,5 @@
-import config from "@keygen/config"
-import { isAuthError } from "@keygen/errors"
+import config from "@/keygen/config"
+import { isAuthError } from "@/keygen/errors"
 
 // Make sure environment variables exist
 config.validate()

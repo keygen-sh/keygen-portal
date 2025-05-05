@@ -1,7 +1,7 @@
 import { Navigate } from "@tanstack/react-router"
-import { useAuth } from "@hooks/useAuth"
+import { useAuth } from "@/hooks/useAuth"
 
-import * as keygen from "@keygen/index"
+import * as keygen from "@/keygen/index"
 
 export default function RequireEmail({
   children,

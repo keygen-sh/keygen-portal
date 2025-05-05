@@ -1,7 +1,12 @@
-import { authenticate, AuthResponse } from "./authenticate"
 import config from "./config"
-import { verify } from "./verify"
-import { ErrorCode, error, isAuthError } from "./errors"
+export { config }
 
-export { authenticate, config, verify, error, isAuthError, ErrorCode }
+import { authenticate, AuthResponse } from "./authenticate"
+export { authenticate }
 export type { AuthResponse }
+
+import { verify } from "./verify"
+export { verify }
+
+import { ErrorCode, error, isAuthError } from "./errors"
+export { ErrorCode, error, isAuthError }

@@ -1,5 +1,5 @@
 import { Outlet, useMatches } from "@tanstack/react-router"
-import logo from "@assets/logos/logo.svg"
+import logo from "/logo.svg"
 
 import { AuthProvider } from "@/providers/AuthProvider"
 

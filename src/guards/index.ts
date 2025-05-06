@@ -1,2 +1,2 @@
-export { default as RequireEmail } from "./RequireEmail"
-export { default as RequirePassword } from "./RequirePassword"
+export { default as RequireEmail } from "./require-email"
+export { default as RequirePassword } from "./require-password"

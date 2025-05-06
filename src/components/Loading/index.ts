@@ -1,1 +1,1 @@
-export { default as Dots } from "./Dots"
+export { default as Dots } from "./dots"

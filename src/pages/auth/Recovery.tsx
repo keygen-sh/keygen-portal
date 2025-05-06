@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input"
 
 import * as keygen from "@/keygen/index"
-import BackButton from "@/components/BackButton"
+import BackButton from "@/components/back-button"
 
 const recoverySchema = z.object({
   username: z.string().email("Please enter a valid email."),

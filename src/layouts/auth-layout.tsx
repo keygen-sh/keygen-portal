@@ -1,9 +1,9 @@
 import { Outlet, useMatches } from "@tanstack/react-router"
 import logo from "/logo.svg"
 
-import { AuthProvider } from "@/providers/AuthProvider"
+import { AuthProvider } from "@/providers/auth-provider"
 
-import BackButton from "@/components/BackButton"
+import BackButton from "@/components/back-button"
 
 export default function AuthLayout() {
   const matches = useMatches()

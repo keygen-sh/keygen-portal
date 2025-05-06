@@ -18,9 +18,9 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 
 import * as keygen from "@/keygen/index"
-import { useAuth } from "@/hooks/useAuth"
-import BackButton from "@/components/BackButton"
-import * as Loading from "@/components/Loading"
+import { useAuth } from "@/hooks/use-auth"
+import BackButton from "@/components/back-button"
+import * as Loading from "@/components/loading"
 
 const passwordSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters."),

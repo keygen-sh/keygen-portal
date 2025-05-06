@@ -1,4 +1,4 @@
-import BackButton from "@/components/BackButton"
+import BackButton from "@/components/back-button"
 
 export default function Sent() {
   return (

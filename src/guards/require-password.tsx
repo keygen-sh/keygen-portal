@@ -1,5 +1,5 @@
 import { Navigate } from "@tanstack/react-router"
-import { useAuth } from "@/hooks/useAuth"
+import { useAuth } from "@/hooks/use-auth"
 
 import * as keygen from "@/keygen/index"
 

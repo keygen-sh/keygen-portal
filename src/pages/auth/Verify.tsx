@@ -14,9 +14,9 @@ import {
 import { Input } from "@/components/ui/input"
 
 import * as keygen from "@/keygen/index"
-import { useAuth } from "@/hooks/useAuth"
-import BackButton from "@/components/BackButton"
-import * as Loading from "@/components/Loading"
+import { useAuth } from "@/hooks/use-auth"
+import BackButton from "@/components/back-button"
+import * as Loading from "@/components/loading"
 
 const verificationSchema = z.object({
   digit1: z.string().regex(/^\d$/, "Must be one digit"),

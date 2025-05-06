@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input"
 
 import * as keygen from "@/keygen/index"
-import * as Loading from "@/components/Loading"
+import * as Loading from "@/components/loading"
 
 const registerSchema = z.object({
   username: z.string().email("Please enter a valid email."),

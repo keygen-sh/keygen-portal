@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router"
-import { Button } from "@assets/components/ui/button"
-import { cn } from "@assets/lib/utils"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 import * as keygen from "@/keygen/index"
 

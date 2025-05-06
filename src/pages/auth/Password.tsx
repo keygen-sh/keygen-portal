@@ -4,8 +4,8 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
-import { cn } from "@assets/lib/utils"
-import { Button } from "@assets/components/ui/button"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -13,9 +13,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@assets/components/ui/form"
-import { Input } from "@assets/components/ui/input"
-import { Checkbox } from "@assets/components/ui/checkbox"
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
 
 import * as keygen from "@/keygen/index"
 import { useAuth } from "@/hooks/useAuth"

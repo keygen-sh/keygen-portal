@@ -10,8 +10,8 @@ import {
   FormField,
   FormItem,
   FormLabel,
-} from "@assets/components/ui/form"
-import { Input } from "@assets/components/ui/input"
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 
 import * as keygen from "@/keygen/index"
 import { useAuth } from "@/hooks/useAuth"

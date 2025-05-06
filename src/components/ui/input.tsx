@@ -2,7 +2,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Eye, EyeOff } from "lucide-react"
 
-import { cn } from "@/assets/lib/utils"
+import { cn } from "@/lib/utils"
 
 const inputVariants = cva(
   "flex w-full min-w-0 rounded-md border border-content-subdued bg-transparent selection:bg-primary selection:text-primary-foreground caret-white " +

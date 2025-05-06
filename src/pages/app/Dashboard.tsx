@@ -1,4 +1,4 @@
-import { Button } from "@assets/components/ui/button"
+import { Button } from "@/components/ui/button"
 
 export default function App() {
   const token = localStorage.getItem("token") || sessionStorage.getItem("token")

@@ -10,3 +10,6 @@ export { verify }
 
 import { ErrorCode, error, isAuthError } from "./errors"
 export { ErrorCode, error, isAuthError }
+
+import { logout } from "./logout"
+export { logout }

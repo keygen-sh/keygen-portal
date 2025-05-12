@@ -83,6 +83,11 @@
 
   /* Background/Foreground */
   --color-background: var(--color-brand-background-main);
+  --color-background-1: var(--color-brand-background-1);
+  --color-background-2: var(--color-brand-background-2);
+  --color-background-3: var(--color-brand-background-3);
+  --color-background-4: var(--color-brand-background-4);
+  --color-background-5: var(--color-brand-background-5);
   --color-foreground: var(--color-content-loud);
 
   /* Cards */

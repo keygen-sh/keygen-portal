@@ -96,7 +96,7 @@
 
   /* Popovers */
   --color-popover: var(--color-brand-background-2);
-  --color-popover-foreground: var(--color-content-loud);
+  --color-popover-foreground: var(--color-content-muted);
 
   /* Primary/Secondary/Accent/Destructive */
   --color-primary: var(--color-brand-primary);
@@ -125,11 +125,11 @@
   --color-chart-4: var(--color-brand-background-3);
   --color-chart-5: var(--color-button-secondary);
 
-  --color-sidebar: var(--color-brand-background-2);
-  --color-sidebar-foreground: var(--color-content-loud);
+  --color-sidebar: var(--color-brand-background);
+  --color-sidebar-foreground: var(--color-content-subdued);
   --color-sidebar-primary: var(--color-brand-primary);
   --color-sidebar-primary-foreground: var(--color-brand-neutral-900);
-  --color-sidebar-accent: var(--color-brand-secondary);
+  --color-sidebar-accent: var(--color-background-2);
   --color-sidebar-accent-foreground: var(--color-content-loud);
   --color-sidebar-border: var(--color-brand-border-2);
   --color-sidebar-ring: var(--color-brand-border-3);

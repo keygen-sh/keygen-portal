@@ -33,7 +33,7 @@ interface CommandMenuProps {
  * @param {ReadonlyArray<Route>} routes - Routes to display in the command menu
  * @returns {JSX.Element}
  */
-export default function CommandMenu({ routes }: CommandMenuProps) {
+export default function SidebarCommand({ routes }: CommandMenuProps) {
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState<MODES>(MODES.ACTION)
   const navigate = useNavigate()

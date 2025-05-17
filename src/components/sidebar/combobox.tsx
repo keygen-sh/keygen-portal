@@ -50,7 +50,7 @@ const products: Prod[] = [
  *
  * @returns {JSX.Element}
  */
-export default function ProductCombobox() {
+export default function SidebarCombobox() {
   const [open, setOpen] = useState(false)
 
   const [productId, setProductId] = useState(products[0].id)

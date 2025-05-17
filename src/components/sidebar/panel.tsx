@@ -48,8 +48,8 @@ import {
 
 import * as keygen from "@/keygen/index"
 import Icon from "@/components/icon"
-import Combobox from "@/components/combobox"
-import CommandMenu from "@/components/command-menu"
+import Combobox from "./combobox"
+import Command from "./command"
 
 enum VIEWS {
   HOME = "home",
@@ -76,7 +76,7 @@ const options = linkOptions([
  *
  * @returns {JSX.Element}
  */
-export function AppSidebar() {
+export default function SidebarPanel() {
   const [selectedView, setSelectedView] = useState(VIEWS.HOME)
   const { open, setOpen } = useSidebar()
 
@@ -208,7 +208,7 @@ export function AppSidebar() {
                 </kbd>
               </Button>
             </div>
-            <CommandMenu routes={options} />
+            <Command routes={options} />
           </SidebarGroup>
         </SidebarHeader>
 

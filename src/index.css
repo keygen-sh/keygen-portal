@@ -108,8 +108,8 @@
   --color-muted: var(--color-content-subdued);
   --color-muted-foreground: var(--color-content-loud);
 
-  --color-accent: var(--color-brand-accent);
-  --color-accent-foreground: var(--color-brand-neutral-900);
+  --color-accent: var(--color-background-3);
+  --color-accent-foreground: var(--color-content-loud);
 
   --color-destructive: var(--color-brand-destructive);
 

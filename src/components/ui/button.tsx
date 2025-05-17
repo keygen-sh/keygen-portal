@@ -31,6 +31,7 @@ const buttonVariants = cva(
         icon: "size-9",
         link: "h-6",
         rail: "size-10",
+        command: "h-9 px-2",
       },
     },
     defaultVariants: {

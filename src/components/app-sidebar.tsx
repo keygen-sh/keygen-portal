@@ -210,7 +210,7 @@ export function AppSidebar() {
           </SidebarGroup>
         </SidebarHeader>
 
-        <SidebarContent>
+        <SidebarContent className="overflow-hidden">
           <SidebarGroup>{renderView(selectedView)}</SidebarGroup>
         </SidebarContent>
 

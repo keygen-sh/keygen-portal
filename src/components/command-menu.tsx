@@ -30,6 +30,7 @@ interface CommandMenuProps {
 /**
  * Renders a command menu that allows users to search for pages or perform quick actions.
  *
+ * @param {ReadonlyArray<Route>} routes - Routes to display in the command menu
  * @returns {JSX.Element}
  */
 export default function CommandMenu({ routes }: CommandMenuProps) {

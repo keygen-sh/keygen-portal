@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { Link, linkOptions } from "@tanstack/react-router"
 
+import { Search } from "lucide-react"
+
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -33,6 +35,7 @@ import {
 
 import * as keygen from "@/keygen/index"
 import Icon from "@/components/icon"
+import CommandMenu from "@/components/command-menu"
 
 enum VIEWS {
   HOME = "home",
@@ -151,7 +154,34 @@ export function AppSidebar() {
           <SidebarGroup className="flex w-full justify-between">
             <SidebarTrigger variant="rail" size="rail" />
           </SidebarGroup>
-          <SidebarGroup>{/* TODO: Add CMDK/Search */}</SidebarGroup>
+          <SidebarGroup>
+            <div className="flex w-full gap-2">
+              {/* Quick actions */}
+              <Button
+                variant="command"
+                size="command"
+                className="flex items-center justify-between"
+              >
+                Quick actions
+                <kbd className="rounded-[3px] border-t border-content-subdued bg-background-3 px-1 text-xs text-nowrap text-content-subdued">
+                  ⌘ K
+                </kbd>
+              </Button>
+
+              {/* Search */}
+              <Button
+                variant="command"
+                size="command"
+                className="flex items-center justify-between"
+              >
+                <Search className="size-4" />
+                <kbd className="rounded-[3px] border-t border-content-subdued bg-background-3 px-1.5 text-xs text-nowrap text-content-subdued">
+                  /
+                </kbd>
+              </Button>
+            </div>
+            <CommandMenu routes={options} />
+          </SidebarGroup>
         </SidebarHeader>
 
         <SidebarContent>

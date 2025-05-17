@@ -16,6 +16,7 @@ import {
   SidebarHeader,
   SidebarTrigger,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
@@ -37,6 +38,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card"
 
 import * as keygen from "@/keygen/index"
 import Icon from "@/components/icon"
@@ -205,6 +213,23 @@ export function AppSidebar() {
         <SidebarContent>
           <SidebarGroup>{renderView(selectedView)}</SidebarGroup>
         </SidebarContent>
+
+        <SidebarFooter className="w-60 border-none p-4">
+          <Card className="w-full items-start gap-4 rounded border-none p-4">
+            <CardHeader className="w-full px-0">
+              <CardTitle className="text-sm">
+                Your free trial ends soon
+              </CardTitle>
+              <CardDescription className="text-xs">
+                Upgrade today to enjoy the full set of features from Keygen.
+              </CardDescription>
+            </CardHeader>
+
+            <CardFooter className="w-full px-0">
+              <Button size="sm">Upgrade</Button>
+            </CardFooter>
+          </Card>
+        </SidebarFooter>
       </Sidebar>
     </div>
   )

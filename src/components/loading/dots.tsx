@@ -6,8 +6,9 @@ interface DotsProps {
 
 /**
  * Renders loading animation with three dots that fade in and out.
- * @param color - Optional color class for dots
- * @returns JSX.Element
+ *
+ * @param {string} color - Optional color class for dots
+ * @returns {JSX.Element}
  */
 export default function Dots({ color = "bg-primary" }: DotsProps) {
   const [visibleDot, setVisibleDot] = useState(0)

@@ -15,7 +15,7 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
  * @param {string} name - The name of the icon to render. Should match a key in the `icons` object
  * @param {string} className - Additional classes
  * @param {React.SVGProps<SVGSVGElement>} props - Additional SVG props
- * @returns {JSX.Element} The rendered SVG icon
+ * @returns {JSX.Element}
  */
 export default function Icon({ name, className, ...props }: IconProps) {
   const SvgIcon = icons[name]

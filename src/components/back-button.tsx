@@ -12,10 +12,11 @@ interface BackProps {
 
 /**
  * Renders a back button based on ShadCN button, with a label and path to navigate back to.
- * @param path - Path to navigate back to
- * @param label - Optional label to display on the button
- * @param className - Optional class name additions for styling
- * @returns JSX.Element
+ *
+ * @param {string} path - Path to navigate back to
+ * @param {string} label - Optional label to display on the button
+ * @param {string} className - Optional class name additions for styling
+ * @returns {JSX.Element}
  */
 export default function BackButton({ path, label, className }: BackProps) {
   return (

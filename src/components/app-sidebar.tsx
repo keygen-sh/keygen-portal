@@ -32,6 +32,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 import * as keygen from "@/keygen/index"
 import Icon from "@/components/icon"
@@ -90,25 +95,32 @@ export function AppSidebar() {
         >
           <RailGroup className="flex flex-col items-center">
             {VIEWS_LIST.map((view) => (
-              <Button
-                key={view}
-                variant="rail"
-                size="rail"
-                className={cn(selectedView === view && "bg-background-3")}
-                onClick={() => {
-                  setSelectedView(view)
-                  setOpen(true)
-                }}
-              >
-                <Icon
-                  name={view}
-                  className={cn(
-                    selectedView === view
-                      ? "text-content-loud"
-                      : "group-hover:text-primary",
-                  )}
-                />
-              </Button>
+              <Tooltip key={view} delayDuration={300}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="rail"
+                    size="rail"
+                    className={cn(selectedView === view && "bg-background-3")}
+                    onClick={() => {
+                      setSelectedView(view)
+                      setOpen(true)
+                    }}
+                  >
+                    <Icon
+                      name={view}
+                      className={cn(
+                        selectedView === view
+                          ? "text-content-loud"
+                          : "group-hover:text-primary",
+                      )}
+                    />
+                  </Button>
+                </TooltipTrigger>
+
+                <TooltipContent side="right" className="ml-1">
+                  {view.charAt(0).toUpperCase() + view.slice(1)}
+                </TooltipContent>
+              </Tooltip>
             ))}
           </RailGroup>
         </RailContent>

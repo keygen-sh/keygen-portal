@@ -48,6 +48,7 @@ import {
 
 import * as keygen from "@/keygen/index"
 import Icon from "@/components/icon"
+import Combobox from "@/components/combobox"
 import CommandMenu from "@/components/command-menu"
 
 enum VIEWS {
@@ -176,11 +177,12 @@ export function AppSidebar() {
           open ? "w-60 border-r" : "w-0",
         )}
       >
-        <SidebarHeader className="flex flex-col items-center justify-center border-b p-2">
-          <SidebarGroup className="flex w-full justify-between">
-            <SidebarTrigger variant="rail" size="rail" />
+        <SidebarHeader className="flex flex-col items-center justify-center border-b">
+          <SidebarGroup className="flex-row justify-between px-1">
+            <Combobox />
+            <SidebarTrigger variant="rail" size="rail" className="!size-8" />
           </SidebarGroup>
-          <SidebarGroup>
+          <SidebarGroup className="flex-row justify-between px-1 pt-0 pb-2">
             <div className="flex w-full gap-2">
               {/* Quick actions */}
               <Button

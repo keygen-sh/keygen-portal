@@ -62,12 +62,18 @@ const options = linkOptions([
   },
 ])
 
+/**
+ * Renders the main app sidebar with a rail sidebar and a content sidebar.
+ *
+ * @returns {JSX.Element}
+ */
 export function AppSidebar() {
   const [selectedView, setSelectedView] = useState(VIEWS.HOME)
   const { open, setOpen } = useSidebar()
 
   return (
     <div className="flex h-full">
+      {/* Rail Sidebar */}
       <Rail collapsible="none" className="w-16 border-r">
         <RailHeader className="flex flex-col items-center justify-center space-y-4 pt-6">
           <img

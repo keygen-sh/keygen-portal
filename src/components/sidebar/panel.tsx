@@ -179,7 +179,7 @@ export default function SidebarPanel() {
         variant="sidebar"
         side="left"
         className={cn(
-          "flex h-full flex-col overflow-hidden transition-all duration-200",
+          "z-10 flex h-full flex-col overflow-hidden bg-background transition-all duration-200",
           open ? "w-60 border-r" : "w-0",
         )}
       >

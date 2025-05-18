@@ -186,6 +186,11 @@ export default function SidebarPanel() {
             <div className="flex w-full gap-2">
               {/* Quick actions */}
               <Button
+                onClick={() => {
+                  window.dispatchEvent(
+                    new KeyboardEvent("keydown", { key: "k", metaKey: true }),
+                  )
+                }}
                 variant="command"
                 size="command"
                 className="flex items-center justify-between"
@@ -198,6 +203,11 @@ export default function SidebarPanel() {
 
               {/* Search */}
               <Button
+                onClick={() =>
+                  window.dispatchEvent(
+                    new KeyboardEvent("keydown", { key: "/" }),
+                  )
+                }
                 variant="command"
                 size="command"
                 className="flex items-center justify-between"

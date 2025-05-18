@@ -1,5 +1,10 @@
 import { Outlet } from "@tanstack/react-router"
+import { SidebarProvider } from "@/components/ui/sidebar"
 
 export default function RootLayout() {
-  return <Outlet />
+  return (
+    <SidebarProvider>
+      <Outlet />
+    </SidebarProvider>
+  )
 }

@@ -47,6 +47,7 @@ import {
 } from "@/components/ui/card"
 
 import * as keygen from "@/keygen/index"
+import { useIsMobile } from "@/hooks/use-mobile"
 import Icon from "@/components/icon"
 import Combobox from "./combobox"
 import Command from "./command"
@@ -79,6 +80,8 @@ const options = linkOptions([
 export default function SidebarPanel() {
   const [selectedView, setSelectedView] = useState(VIEWS.HOME)
   const { open, setOpen } = useSidebar()
+
+  const isMobile = useIsMobile()
 
   return (
     <div className="flex h-full">
@@ -132,9 +135,11 @@ export default function SidebarPanel() {
                   </Button>
                 </TooltipTrigger>
 
-                <TooltipContent side="right" className="ml-1">
-                  {view.charAt(0).toUpperCase() + view.slice(1)}
-                </TooltipContent>
+                {!isMobile && (
+                  <TooltipContent side="right" className="ml-1">
+                    {view.charAt(0).toUpperCase() + view.slice(1)}
+                  </TooltipContent>
+                )}
               </Tooltip>
             ))}
           </RailGroup>
@@ -195,10 +200,13 @@ export default function SidebarPanel() {
                 size="command"
                 className="flex items-center justify-between"
               >
+                {isMobile && <span className="text-lg">⌘</span>}
                 Quick actions
-                <kbd className="rounded-[3px] border-t border-content-subdued bg-background-3 px-1 text-xs text-nowrap text-content-subdued">
-                  ⌘ K
-                </kbd>
+                {!isMobile && (
+                  <kbd className="rounded-[3px] border-t border-content-subdued bg-background-3 px-1 text-xs text-nowrap text-content-subdued">
+                    ⌘ K
+                  </kbd>
+                )}
               </Button>
 
               {/* Search */}
@@ -212,10 +220,16 @@ export default function SidebarPanel() {
                 size="command"
                 className="flex items-center justify-between"
               >
-                <Search className="size-4" />
-                <kbd className="rounded-[3px] border-t border-content-subdued bg-background-3 px-1.5 text-xs text-nowrap text-content-subdued">
-                  /
-                </kbd>
+                <Search className="size-3 md:size-4" />
+                {isMobile ? (
+                  <span className="text-nowrap text-content-subdued">
+                    Search
+                  </span>
+                ) : (
+                  <kbd className="rounded-[3px] border-t border-content-subdued bg-background-3 px-1.5 text-xs text-nowrap text-content-subdued">
+                    /
+                  </kbd>
+                )}
               </Button>
             </div>
             <Command routes={options} />

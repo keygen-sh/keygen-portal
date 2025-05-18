@@ -91,7 +91,7 @@ export default function SidebarPanel() {
           <img
             src="/logomark.svg"
             alt="Keygen Logomark"
-            className="h-6 md:h-4"
+            className="h-5 md:h-4"
           />
           <div
             className={cn(
@@ -127,6 +127,7 @@ export default function SidebarPanel() {
                     <Icon
                       name={view}
                       className={cn(
+                        "size-6 md:size-5",
                         selectedView === view
                           ? "text-content-loud"
                           : "group-hover:text-primary",

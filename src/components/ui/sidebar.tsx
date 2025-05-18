@@ -272,7 +272,10 @@ function SidebarTrigger({
       }}
       {...props}
     >
-      <Icon name="sidebar" className="group-hover:text-content-loud" />
+      <Icon
+        name="sidebar"
+        className="size-6 group-hover:text-content-loud md:size-5"
+      />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )

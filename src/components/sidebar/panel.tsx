@@ -93,7 +93,7 @@ export default function SidebarPanel() {
           isMobile && !open ? "w-0" : isMobile && open ? "w-16" : "w-16",
         )}
       >
-        <RailHeader className="flex flex-col items-center justify-center space-y-4 pt-6">
+        <RailHeader className="flex flex-col items-center justify-center space-y-4 pt-6 pb-0">
           <img
             src="/logomark.svg"
             alt="Keygen Logomark"
@@ -152,7 +152,7 @@ export default function SidebarPanel() {
           </RailGroup>
         </RailContent>
 
-        <RailFooter className="flex flex-col items-center pb-4">
+        <RailFooter className="flex flex-col items-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               {open && (

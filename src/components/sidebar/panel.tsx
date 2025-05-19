@@ -113,7 +113,7 @@ export default function SidebarPanel() {
 
         <RailContent
           className={cn(
-            "overflow-hidden md:transition-transform md:duration-200",
+            "overflow-x-hidden border-t border-b border-accent md:border-none md:transition-transform md:duration-200",
             open ? "md:-translate-y-14 md:delay-100" : "md:translate-y-0",
           )}
         >

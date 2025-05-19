@@ -84,9 +84,15 @@ export default function SidebarPanel() {
   const isMobile = useIsMobile()
 
   return (
-    <div className="flex h-full">
+    <div className={cn("flex h-full", isMobile && "absolute z-50")}>
       {/* Rail Sidebar */}
-      <Rail collapsible="none" className="w-16 border-r">
+      <Rail
+        collapsible={"none"}
+        className={cn(
+          "border-r transition-all duration-200",
+          isMobile && !open ? "w-0" : isMobile && open ? "w-16" : "w-16",
+        )}
+      >
         <RailHeader className="flex flex-col items-center justify-center space-y-4 pt-6">
           <img
             src="/logomark.svg"
@@ -101,14 +107,14 @@ export default function SidebarPanel() {
                 : "pointer-events-auto opacity-100 delay-100",
             )}
           >
-            <RailTrigger variant="rail" size="rail" />
+            {!isMobile && <RailTrigger variant="rail" size="rail" />}
           </div>
         </RailHeader>
 
         <RailContent
           className={cn(
-            "transition-transform duration-200",
-            open ? "-translate-y-14 delay-100" : "translate-y-0",
+            "overflow-hidden md:transition-transform md:duration-200",
+            open ? "md:-translate-y-14 md:delay-100" : "md:translate-y-0",
           )}
         >
           <RailGroup className="flex flex-col items-center">
@@ -149,9 +155,14 @@ export default function SidebarPanel() {
         <RailFooter className="flex flex-col items-center pb-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="rail" size="rail">
-                <Icon name="user" className="size-6 group-hover:text-primary" />
-              </Button>
+              {open && (
+                <Button variant="rail" size="rail">
+                  <Icon
+                    name="user"
+                    className="size-6 group-hover:text-primary md:size-5"
+                  />
+                </Button>
+              )}
             </DropdownMenuTrigger>
             <DropdownMenuContent className="ml-8 w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>

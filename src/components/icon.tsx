@@ -11,13 +11,12 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 
 /**
  * Renders an SVG icon from `icons.ts` that can be styled.
- *
- * @param {string} name - The name of the icon to render. Should match a key in the `icons` object
- * @param {string} className - Additional classes
- * @param {React.SVGProps<SVGSVGElement>} props - Additional SVG props
- * @returns {JSX.Element}
  */
-export default function Icon({ name, className, ...props }: IconProps) {
+export default function Icon({
+  name,
+  className,
+  ...props
+}: IconProps): React.ReactElement {
   const SvgIcon = icons[name]
 
   return (

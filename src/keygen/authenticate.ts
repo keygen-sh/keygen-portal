@@ -25,11 +25,6 @@ export interface AuthResponse {
  * Authenticates user with Keygen API using email and optional password or one-time password.
  * If both password and otp are omitted, returns either OTP_REQUIRED or PASSWORD_REQUIRED codes stored in { errors }.
  * On success, returns a token object stored in { data }.
- *
- * @param {string} props.email - Email address to authenticate with
- * @param {string} [props.password] - Password to authenticate with
- * @param {string} [props.otp] - One-time password to authenticate with
- * @return {Promise<AuthResponse>} Auth response object containing data, errors, and links
  */
 export async function authenticate({
   email,

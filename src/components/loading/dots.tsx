@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { cn } from "@/lib/utils"
 
 interface DotsProps {
   color?: string
@@ -30,19 +31,34 @@ export default function Dots({
   return (
     <div className="flex space-x-1">
       <span
-        className={`h-2 w-2 rounded-full ${color} transition-opacity duration-500 ${
-          visibleDot === 0 ? "opacity-100" : "opacity-20"
-        }`}
+        className={cn(
+          "h-2 w-2 rounded-full transition-opacity duration-500",
+          color,
+          {
+            "opacity-100": visibleDot === 0,
+            "opacity-20": visibleDot !== 0,
+          },
+        )}
       ></span>
       <span
-        className={`h-2 w-2 rounded-full ${color} transition-opacity duration-500 ${
-          visibleDot === 1 ? "opacity-100" : "opacity-20"
-        }`}
+        className={cn(
+          "h-2 w-2 rounded-full transition-opacity duration-500",
+          color,
+          {
+            "opacity-100": visibleDot === 1,
+            "opacity-20": visibleDot !== 1,
+          },
+        )}
       ></span>
       <span
-        className={`h-2 w-2 rounded-full ${color} transition-opacity duration-500 ${
-          visibleDot === 2 ? "opacity-100" : "opacity-20"
-        }`}
+        className={cn(
+          "h-2 w-2 rounded-full transition-opacity duration-500",
+          color,
+          {
+            "opacity-100": visibleDot === 2,
+            "opacity-20": visibleDot !== 2,
+          },
+        )}
       ></span>
     </div>
   )

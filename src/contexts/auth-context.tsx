@@ -12,9 +12,6 @@ export interface AuthContextValue {
   clearCredentials: () => void
 }
 
-/**
- * Context for storing authentication state.
- */
 export const AuthContext = createContext<AuthContextValue>({
   email: null,
   setEmail: () => {},

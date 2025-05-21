@@ -8,12 +8,10 @@ interface AuthProviderProps {
 /**
  * Context provider that manages authentication state.
  * Renders children within the AuthContext.Provider
- *
- * @param {AuthProviderProps} props - Provider props
- * @param {React.ReactNode} props.children - Components that consume this provider
- * @returns {React.ReactNode} React element that provides authentication state to children
  */
-export function AuthProvider({ children }: AuthProviderProps) {
+export function AuthProvider({
+  children,
+}: AuthProviderProps): React.ReactElement {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [remember, setRemember] = useState(false)

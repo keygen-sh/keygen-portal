@@ -10,9 +10,6 @@ interface VerifyProps {
 /**
  * Checks user token validity with the Keygen API.
  * If the response returns a 401, the token is invalid, otherwise it's still valid.
- *
- * @param {string} props.token - Token to verify
- * @return {Promise<boolean>}
  */
 export async function verify({
   tokenId,

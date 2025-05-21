@@ -74,10 +74,8 @@ const options = linkOptions([
 
 /**
  * Renders the main app sidebar with a rail sidebar and a content sidebar.
- *
- * @returns {JSX.Element}
  */
-export default function SidebarPanel() {
+export default function SidebarPanel(): React.ReactElement {
   const [selectedView, setSelectedView] = useState(VIEWS.HOME)
   const { open, setOpen } = useSidebar()
 

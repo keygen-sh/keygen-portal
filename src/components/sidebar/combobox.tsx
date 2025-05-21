@@ -47,10 +47,8 @@ const products: Prod[] = [
 
 /**
  * Renders a combobox that allows users to select a product and environment.
- *
- * @returns {JSX.Element}
  */
-export default function SidebarCombobox() {
+export default function SidebarCombobox(): React.ReactElement {
   const [open, setOpen] = useState(false)
 
   const [productId, setProductId] = useState(products[0].id)

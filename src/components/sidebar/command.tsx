@@ -29,11 +29,10 @@ interface CommandMenuProps {
 
 /**
  * Renders a command menu that allows users to search for pages or perform quick actions.
- *
- * @param {ReadonlyArray<Route>} routes - Routes to display in the command menu
- * @returns {JSX.Element}
  */
-export default function SidebarCommand({ routes }: CommandMenuProps) {
+export default function SidebarCommand({
+  routes,
+}: CommandMenuProps): React.ReactElement {
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState<MODES>(MODES.ACTION)
   const navigate = useNavigate()

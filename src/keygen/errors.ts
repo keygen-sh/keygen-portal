@@ -20,10 +20,7 @@ export const error = {
 
 /**
  * Checks if provided error code is an authentication error.
- *
- * @param code - Error code to check
- * @returns true if error code is an authentication error as defined above in error.codes.auth, otherwise false
  */
-export function isAuthError(code: string) {
+export function isAuthError(code: string): boolean {
   return error.codes.auth.has(code as ErrorCode)
 }

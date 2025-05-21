@@ -1,6 +1,5 @@
 /**
- * Logout function that removes token from storage and redirects.
- * (Cazden) To be expanded upon later.
+ * TODO(cazden) Logout function that removes token from storage and redirects.
  */
 export const logout = () => {
   localStorage.removeItem("token")

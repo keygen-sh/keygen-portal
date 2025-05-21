@@ -34,7 +34,7 @@ export default function Register() {
     defaultValues: { username: "", password: "", companyId: "" },
   })
 
-  // TODO: API call to check if email is available
+  // TODO(cazden) API call to check if email is available
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function checkEmailAvailability(_email: string) {
     await new Promise((resolve) => setTimeout(resolve, 1000)) // Dummy API call
@@ -71,7 +71,7 @@ export default function Register() {
         return
       }
 
-      // TODO: Handle account creation
+      // TODO(cazden) Handle account creation
       console.log(
         `Creating account for ${values.username} with slug: ${slug}${
           values.companyId ? ` and companyId: ${values.companyId}` : ""

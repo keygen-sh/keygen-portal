@@ -30,7 +30,7 @@ export default function Recovery() {
   })
 
   function onSubmitRecovery() {
-    // TODO: Handle SMTP
+    // TODO(cazden): Handle SMTP
     void navigate({ to: "/$id/auth/sent", params: { id: keygen.config.id } })
   }
 

@@ -2,15 +2,13 @@ import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 
 interface DotsProps {
-  color?: string
+  className?: string
 }
 
 /**
  * Renders loading animation with three dots that fade in and out.
  */
-export default function Dots({
-  color = "bg-primary",
-}: DotsProps): React.ReactElement {
+export default function Dots({ className }: DotsProps): React.ReactElement {
   const [visibleDot, setVisibleDot] = useState(0)
 
   useEffect(() => {
@@ -32,8 +30,8 @@ export default function Dots({
     <div className="flex space-x-1">
       <span
         className={cn(
-          "h-2 w-2 rounded-full transition-opacity duration-500",
-          color,
+          "h-2 w-2 rounded-full bg-primary transition-opacity duration-500",
+          className,
           {
             "opacity-100": visibleDot === 0,
             "opacity-20": visibleDot !== 0,
@@ -42,8 +40,8 @@ export default function Dots({
       ></span>
       <span
         className={cn(
-          "h-2 w-2 rounded-full transition-opacity duration-500",
-          color,
+          "h-2 w-2 rounded-full bg-primary transition-opacity duration-500",
+          className,
           {
             "opacity-100": visibleDot === 1,
             "opacity-20": visibleDot !== 1,
@@ -52,8 +50,8 @@ export default function Dots({
       ></span>
       <span
         className={cn(
-          "h-2 w-2 rounded-full transition-opacity duration-500",
-          color,
+          "h-2 w-2 rounded-full bg-primary transition-opacity duration-500",
+          className,
           {
             "opacity-100": visibleDot === 2,
             "opacity-20": visibleDot !== 2,

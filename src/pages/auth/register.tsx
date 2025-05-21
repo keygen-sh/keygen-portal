@@ -171,7 +171,7 @@ export default function Register() {
             )}
           />
           <Button type="submit" size="lg" className="w-full" disabled={loading}>
-            {loading ? <Loading.Dots color="bg-background" /> : "Continue"}
+            {loading ? <Loading.Dots className="bg-background" /> : "Continue"}
           </Button>
         </form>
       </Form>

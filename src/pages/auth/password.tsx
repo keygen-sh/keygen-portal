@@ -183,7 +183,7 @@ export default function Password() {
           />
 
           <Button type="submit" size="lg" className="w-full" disabled={loading}>
-            {loading ? <Loading.Dots color="bg-background" /> : "Sign in"}
+            {loading ? <Loading.Dots className="bg-background" /> : "Sign in"}
           </Button>
         </form>
       </Form>

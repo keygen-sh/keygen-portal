@@ -29,7 +29,7 @@ export default function SSO() {
   })
 
   function onSubmitSSO() {
-    // TODO: Handle SSO
+    // TODO(cazden) Handle SSO
     void navigate({
       to: "/$id/app/dashboard",
       params: { id: keygen.config.id },

@@ -5,11 +5,11 @@ import { Eye, EyeOff } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const inputVariants = cva(
-  "flex w-full min-w-0 rounded-md border border-content-subdued bg-transparent selection:bg-primary selection:text-primary-foreground caret-white " +
+  "flex w-full min-w-0 rounded-md border border-accent bg-transparent selection:bg-primary selection:text-primary-foreground caret-white " +
     "shadow-xs transition-colors duration-300 outline-none select-none " +
     "placeholder:text-muted-foreground " +
     "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 " +
-    "focus-visible:border-content-loud " +
+    "focus-visible:border-content-subdued " +
     "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 " +
     "file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground " +
     "dark:bg-input/30",

@@ -13,7 +13,8 @@
   --color-brand-primary: #77fa98;
   --color-brand-secondary: #77e2fc;
   --color-brand-secondary-dark: #192f34;
-  --color-brand-accent: #ffac30;
+  --color-brand-accent: #282e33;
+  --color-brand-amber: #ffac30;
   --color-brand-destructive: #f45278;
 
   /* Backgrounds */
@@ -108,7 +109,7 @@
   --color-muted: var(--color-content-subdued);
   --color-muted-foreground: var(--color-content-normal);
 
-  --color-accent: var(--color-background-3);
+  --color-accent: var(--color-brand-accent);
   --color-accent-foreground: var(--color-content-loud);
 
   --color-destructive: var(--color-brand-destructive);

@@ -23,6 +23,8 @@ const buttonVariants = cva(
         rail: "group hover:text-primary",
         command:
           "font-normal border border-main bg-background shadow-xs hover:text-content-muted",
+        clipboard:
+          "flex items-center rounded-sm border border-accent text-sm font-normal text-muted-foreground bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
@@ -32,6 +34,7 @@ const buttonVariants = cva(
         link: "h-6",
         rail: "size-10",
         command: "h-9 px-2",
+        clipboard: "h-5 px-2",
       },
     },
     defaultVariants: {

@@ -1,0 +1,123 @@
+import { Button } from "@/components/ui/button"
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog"
+import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/ui/badge"
+
+import { Copy, Globe, GlobeLock } from "lucide-react"
+
+import CollapsibleCard from "@/components/collapsible-card"
+import CollapsibleMenu from "@/components/collapsible-menu"
+import Attribute from "@/components/attribute"
+
+import { Environment } from "@/types/environments"
+
+interface EnvironmentDetailsProps {
+  environment: Environment
+  onEditEnvironment: () => void
+  onDeleteEnvironment: () => void
+}
+
+export default function EnvironmentDetails({
+  environment,
+  onEditEnvironment,
+  onDeleteEnvironment,
+}: EnvironmentDetailsProps) {
+  return (
+    <>
+      <div className="flex justify-between px-4 py-0">
+        <div className="flex flex-col space-y-2">
+          <h2 className="text-sm">
+            {environment.isolationStrategy === "ISOLATED" ? (
+              <Badge variant="secondary">
+                <GlobeLock className="inline size-4" />
+                Isolated
+              </Badge>
+            ) : (
+              <Badge variant="secondary">
+                <Globe className="inline size-4" />
+                Shared
+              </Badge>
+            )}
+          </h2>
+          <div className="flex items-center gap-2">
+            <h1 className="font-owners-wide text-2xl font-medium">
+              {environment.name}
+            </h1>
+            <Button variant="clipboard" size="clipboard">
+              {environment.code}
+              <Copy className="size-3" />
+            </Button>
+          </div>
+        </div>
+        <div className="space-x-2">
+          <Button variant="outline">Duplicate</Button>
+          <Button variant="outline" onClick={onEditEnvironment}>
+            Edit
+          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline">Delete</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Delete environment {environment.name}?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will remove the environment and queue all resources for
+                  removal. This action is irreversible.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel asChild>
+                  <Button variant="outline">Cancel</Button>
+                </AlertDialogCancel>
+                <Button variant="destructive" onClick={onDeleteEnvironment}>
+                  Confirm
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      </div>
+
+      <div className="mx-4">
+        <CollapsibleCard title="Environment attributes">
+          <CollapsibleMenu title="Environment details" className="flex">
+            <div className="flex-1 space-y-4">
+              <Attribute label="Code" value={environment.code} />
+              <Attribute
+                label="Isolation"
+                value={environment.isolationStrategy}
+              />
+            </div>
+            <div className="mx-4">
+              <Separator orientation="vertical" dashed={true} />
+            </div>
+            <div className="flex-1 space-y-4">
+              <Attribute label="Created" value={environment.created} />
+            </div>
+          </CollapsibleMenu>
+          <CollapsibleMenu title="Tokens">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-sm font-semibold">Environment Tokens</h2>
+              <Button size="sm" variant="outline">
+                Generate Token
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">No tokens yet...</p>
+          </CollapsibleMenu>
+        </CollapsibleCard>
+      </div>
+    </>
+  )
+}

@@ -20,6 +20,7 @@ const inputVariants = cva(
         destructive:
           "text-destructive border-brand-destructive ring-2 ring-destructive/20 focus-visible:ring-destructive/40",
         outline: "bg-background",
+        title: "font-owners-wide font-medium placeholder:text-content-normal",
       },
       fieldSize: {
         default: "h-9 px-3 py-1 text-sm",

@@ -2,11 +2,6 @@ import { useState, useCallback } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip"
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -28,7 +23,6 @@ import { Environment } from "@/types/environments"
 import { MODES, STRATEGIES, DESCRIPTIONS } from "@/constants/environments"
 
 import StrategyForm from "./strategy-form"
-import AdminForm from "./admin-form"
 import AttributesForm from "./attributes-form"
 
 interface EnvironmentsCreateModalProps {
@@ -44,12 +38,11 @@ export default function EnvironmentsCreateModal({
   onSelectEnvironment,
   onChangeMode,
 }: EnvironmentsCreateModalProps) {
-  const [step, setStep] = useState<0 | 1 | 2>(0)
+  const [step, setStep] = useState<0 | 1>(0)
 
   const [isolationStrategy, setIsolationStrategy] = useState<STRATEGIES>(
     STRATEGIES.ISOLATED,
   )
-  const [admin, setAdmin] = useState<string | null>(null)
   const [name, setName] = useState<string | null>(null)
   const [code, setCode] = useState<string | null>(null)
 
@@ -64,7 +57,6 @@ export default function EnvironmentsCreateModal({
       name: name as string,
       code: code as string,
       isolationStrategy,
-      admin: admin as string,
       created: new Date().toISOString(),
     }
 
@@ -72,27 +64,11 @@ export default function EnvironmentsCreateModal({
 
     onSelectEnvironment(newEnvironment)
     onChangeMode(MODES.VIEW, newEnvironment)
-  }, [name, code, isolationStrategy, admin, onSelectEnvironment, onChangeMode])
+  }, [name, code, isolationStrategy, onSelectEnvironment, onChangeMode])
 
   const handleCancelCreate = useCallback(() => {
     onChangeMode(MODES.VIEW)
   }, [onChangeMode])
-
-  const handleStrategySubmit = useCallback((strategy: STRATEGIES) => {
-    setIsolationStrategy(strategy)
-
-    if (strategy === STRATEGIES.SHARED) {
-      setAdmin(null)
-      setStep(2)
-    } else {
-      setStep(1)
-    }
-  }, [])
-
-  const handleAdminSubmit = useCallback((admin: string) => {
-    setAdmin(admin)
-    setStep(2)
-  }, [])
 
   const handleAttributesSubmit = useCallback(
     (values: { name: string; code: string }) => {
@@ -106,10 +82,6 @@ export default function EnvironmentsCreateModal({
 
   const handleStrategyChange = useCallback((newStrategy: STRATEGIES) => {
     setIsolationStrategy(newStrategy)
-  }, [])
-
-  const handleAdminChange = useCallback((newAdmin: string) => {
-    setAdmin(newAdmin)
   }, [])
 
   const handleNameChange = useCallback((newName: string) => {
@@ -169,37 +141,9 @@ export default function EnvironmentsCreateModal({
                     </BreadcrumbLink>
                   )}
                 </BreadcrumbItem>
-
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                   {step === 1 ? (
-                    <BreadcrumbPage>Administrator</BreadcrumbPage>
-                  ) : isolationStrategy === STRATEGIES.ISOLATED && step > 1 ? (
-                    <BreadcrumbLink onClick={() => setStep(1)}>
-                      Administrator
-                    </BreadcrumbLink>
-                  ) : isolationStrategy === STRATEGIES.SHARED && step !== 0 ? (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span className="text-sm font-medium break-words text-muted-foreground">
-                          Administrator
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-80 bg-background-4 text-content-muted">
-                        Shared environments do not require an administrator to
-                        be configured.
-                      </TooltipContent>
-                    </Tooltip>
-                  ) : (
-                    <span className="text-sm font-medium break-words text-muted-foreground">
-                      Administrator
-                    </span>
-                  )}
-                </BreadcrumbItem>
-
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  {step === 2 ? (
                     <BreadcrumbPage>Attributes</BreadcrumbPage>
                   ) : (
                     <span className="text-sm font-medium break-words text-muted-foreground">
@@ -217,21 +161,12 @@ export default function EnvironmentsCreateModal({
             isolationStrategy={isolationStrategy}
             onStrategyChange={handleStrategyChange}
             onDescriptionChange={handleDescriptionChange}
-            onSubmit={handleStrategySubmit}
+            onSubmit={() => setStep(1)}
             onCancel={handleCancelCreate}
           />
         )}
 
         {step === 1 && (
-          <AdminForm
-            adminEmail={admin}
-            onAdminChange={handleAdminChange}
-            onSubmit={handleAdminSubmit}
-            onCancel={handleCancelCreate}
-          />
-        )}
-
-        {step === 2 && (
           <AttributesForm
             name={name}
             code={code}

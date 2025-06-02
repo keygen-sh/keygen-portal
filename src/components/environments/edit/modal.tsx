@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { useState, useEffect, useCallback } from "react"
 
 import {
   Dialog,
@@ -9,6 +9,8 @@ import {
 
 import { Environment } from "@/types/environments"
 import { MODES } from "@/constants/environments"
+
+import * as keygen from "@/keygen"
 
 import EditForm from "./edit-form"
 
@@ -24,31 +26,109 @@ export default function EnvironmentsViewModal({
   open,
   onClose,
   selectedEnvironment,
+  onSelectEnvironment,
   onChangeMode,
 }: EnvironmentsViewModalProps) {
-  const handleSaveEnvironment = useCallback(
-    (updatedEnvironment: Environment) => {
-      // TODO(cazden) - Implement save logic
-      onChangeMode(MODES.VIEW, updatedEnvironment)
-    },
-    [onChangeMode],
-  )
+  const [loading, setLoading] = useState(false)
+  const [token, setToken] = useState<string | null>(null)
 
-  const handleCancelEdit = useCallback(() => {
+  const [name, setName] = useState<string | null>(null)
+  const [code, setCode] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (selectedEnvironment) {
+      setName(selectedEnvironment.attributes.name || null)
+      setCode(selectedEnvironment.attributes.code || null)
+    }
+  }, [selectedEnvironment])
+
+  useEffect(() => {
+    const storedToken =
+      localStorage.getItem("token") || sessionStorage.getItem("token")
+    if (storedToken) {
+      setToken(storedToken)
+    } else {
+      console.error("No Keygen token found in local or session storage.")
+    }
+  }, [])
+
+  const handleUpdateEnvironment = useCallback(async () => {
+    if (!token) {
+      console.error("No token available for updating environment.")
+      return
+    }
+
+    setLoading(true)
+
+    try {
+      const existingAttributes = selectedEnvironment.attributes
+      const updates: Partial<{ name: string | null; code: string | null }> = {}
+
+      if (name !== existingAttributes.name) {
+        updates.name = name
+      }
+
+      if (code !== existingAttributes.code) {
+        updates.code = code
+      }
+
+      // Bail if no updates
+      if (Object.keys(updates).length === 0) {
+        setLoading(false)
+        onChangeMode(MODES.VIEW, selectedEnvironment)
+        return
+      }
+
+      const updatedEnvironment = (await keygen.environments.update({
+        token,
+        id: selectedEnvironment.id,
+        name: updates.name ?? null,
+        code: updates.code ?? null,
+      })) as Environment
+
+      if (!updatedEnvironment) {
+        throw new Error("Failed to update environment.")
+      }
+
+      onSelectEnvironment(updatedEnvironment)
+      onChangeMode(MODES.VIEW, updatedEnvironment)
+    } catch (error) {
+      console.error("Error updating environment:", error)
+    } finally {
+      setLoading(false)
+    }
+  }, [name, code, onSelectEnvironment, onChangeMode])
+
+  const handleCancelUpdate = useCallback(() => {
     onChangeMode(MODES.VIEW)
   }, [onChangeMode])
+
+  const handleNameChange = useCallback((newName: string) => {
+    setName(newName)
+  }, [])
+
+  const handleCodeChange = useCallback((newCode: string) => {
+    setCode(newCode)
+  }, [])
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="flex min-w-[700px] flex-col justify-between p-0 transition-all duration-300">
         <DialogHeader className="h-fit border-b border-accent p-4">
-          <DialogTitle>{selectedEnvironment?.name || ""}</DialogTitle>
+          <DialogTitle>
+            {selectedEnvironment?.attributes.name || ""}
+          </DialogTitle>
         </DialogHeader>
 
         <EditForm
+          name={name}
+          code={code}
+          onNameChange={handleNameChange}
+          onCodeChange={handleCodeChange}
           environment={selectedEnvironment}
-          onSaveEnvironment={handleSaveEnvironment}
-          onCancelEdit={handleCancelEdit}
+          onSubmit={handleUpdateEnvironment}
+          onCancel={handleCancelUpdate}
+          loading={loading}
         />
       </DialogContent>
     </Dialog>

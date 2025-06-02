@@ -8,6 +8,9 @@ export type { AuthResponse }
 import { verify } from "./verify"
 export { verify }
 
+import * as environments from "./environments"
+export { environments }
+
 import { ErrorCode, error, isAuthError } from "./errors"
 export { ErrorCode, error, isAuthError }
 

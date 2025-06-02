@@ -1,5 +1,6 @@
 import config from "@/keygen/config"
 import { isAuthError } from "@/keygen/errors"
+import { AuthResponse } from "@/types/auth"
 
 // Make sure environment variables exist
 config.validate()
@@ -8,17 +9,6 @@ interface AuthProps {
   email: string
   password?: string
   otp?: string
-}
-
-export interface AuthResponse {
-  data: object
-  errors: Array<{
-    title: string
-    detail: string
-    code: string
-    source: object
-    links: object
-  }>
 }
 
 /**
@@ -69,7 +59,6 @@ export async function authenticate({
     )
 
     return {
-      data: {},
       errors: [
         {
           title: "Authentication Error",
@@ -80,6 +69,6 @@ export async function authenticate({
           links: {},
         },
       ],
-    } as AuthResponse
+    }
   }
 }

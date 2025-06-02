@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input"
 import * as keygen from "@/keygen"
 import { useAuth } from "@/hooks/use-auth"
 import * as Loading from "@/components/loading"
+import { AUTH_ERROR_CODES } from "@/constants/auth"
 
 const emailSchema = z.object({
   username: z.string().email("Please enter a valid email."),
@@ -55,16 +56,22 @@ export default function Login() {
     const email = emailForm.getValues().username
 
     try {
-      const { errors } = await keygen.authenticate({ email })
-      const { code } = errors[0] as unknown as { code: keygen.ErrorCode }
+      const response = await keygen.authenticate({ email })
+      const { errors } = response || {}
+
+      if (!errors?.length) {
+        throw new Error("Service is unavailable.")
+      }
+
+      const { code } = errors[0] as { code: AUTH_ERROR_CODES }
 
       auth.setEmail(email)
 
       switch (code) {
-        case keygen.ErrorCode.PASSWORD_REQUIRED:
+        case AUTH_ERROR_CODES.PASSWORD_REQUIRED:
           void navigate({ to: `/${keygen.config.id}/auth/password` })
           break
-        case keygen.ErrorCode.OTP_REQUIRED:
+        case AUTH_ERROR_CODES.OTP_REQUIRED:
           setError("Invalid email. Please try again.")
           break
         default:

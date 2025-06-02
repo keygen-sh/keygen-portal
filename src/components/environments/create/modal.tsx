@@ -39,6 +39,7 @@ export default function EnvironmentsCreateModal({
   onChangeMode,
 }: EnvironmentsCreateModalProps) {
   const [step, setStep] = useState<0 | 1>(0)
+  const [loading, setLoading] = useState(false)
 
   const [isolationStrategy, setIsolationStrategy] = useState<STRATEGIES>(
     STRATEGIES.ISOLATED,
@@ -174,6 +175,7 @@ export default function EnvironmentsCreateModal({
             onCodeChange={handleCodeChange}
             onSubmit={handleAttributesSubmit}
             onCancel={handleCancelCreate}
+            loading={loading}
           />
         )}
       </DialogContent>

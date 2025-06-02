@@ -59,7 +59,6 @@ export default function EnvironmentDetails({
           </div>
         </div>
         <div className="space-x-2">
-          <Button variant="outline">Duplicate</Button>
           <Button variant="outline" onClick={onEditEnvironment}>
             Edit
           </Button>

@@ -36,7 +36,7 @@ export default function EnvironmentDetails({
       <div className="flex justify-between px-4 py-0">
         <div className="flex flex-col space-y-2">
           <h2 className="text-sm">
-            {environment.isolationStrategy === "ISOLATED" ? (
+            {environment.attributes.isolationStrategy === "ISOLATED" ? (
               <Badge variant="secondary">
                 <GlobeLock className="inline size-4" />
                 Isolated
@@ -50,10 +50,10 @@ export default function EnvironmentDetails({
           </h2>
           <div className="flex items-center gap-2">
             <h1 className="font-owners-wide text-2xl font-medium">
-              {environment.name}
+              {environment.attributes.name}
             </h1>
             <Button variant="clipboard" size="clipboard">
-              {environment.code}
+              {environment.attributes.code}
               <Copy className="size-3" />
             </Button>
           </div>
@@ -70,7 +70,7 @@ export default function EnvironmentDetails({
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>
-                  Delete environment {environment.name}?
+                  Delete environment {environment.attributes.name}?
                 </AlertDialogTitle>
                 <AlertDialogDescription>
                   This will remove the environment and queue all resources for
@@ -94,17 +94,20 @@ export default function EnvironmentDetails({
         <CollapsibleCard title="Environment attributes">
           <CollapsibleMenu title="Environment details" className="flex">
             <div className="flex-1 space-y-4">
-              <Attribute label="Code" value={environment.code} />
+              <Attribute label="Code" value={environment.attributes.code} />
               <Attribute
                 label="Isolation"
-                value={environment.isolationStrategy}
+                value={environment.attributes.isolationStrategy}
               />
             </div>
             <div className="mx-4">
               <Separator orientation="vertical" dashed={true} />
             </div>
             <div className="flex-1 space-y-4">
-              <Attribute label="Created" value={environment.created} />
+              <Attribute
+                label="Created"
+                value={environment.attributes.created}
+              />
             </div>
           </CollapsibleMenu>
           <CollapsibleMenu title="Tokens">

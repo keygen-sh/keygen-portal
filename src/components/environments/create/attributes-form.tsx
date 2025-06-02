@@ -23,6 +23,7 @@ import {
 import { Info } from "lucide-react"
 
 import SectionCard from "@/components/section-card"
+import * as Loading from "@/components/loading"
 
 const attributesSchema = z.object({
   name: z.string().min(1, "Environment name is required"),
@@ -38,6 +39,7 @@ interface AttributesFormProps {
   onCodeChange?: (code: string) => void
   onSubmit: (values: { name: string; code: string }) => void
   onCancel: () => void
+  loading?: boolean
 }
 
 export default function AttributesForm({
@@ -47,6 +49,7 @@ export default function AttributesForm({
   onCodeChange,
   onSubmit,
   onCancel,
+  loading,
 }: AttributesFormProps) {
   const form = useForm<AttributesFormValues>({
     resolver: zodResolver(attributesSchema),
@@ -77,11 +80,12 @@ export default function AttributesForm({
               <FormItem className="mx-0 mt-0 mb-5">
                 <FormControl>
                   <Input
+                    {...field}
                     variant="title"
                     placeholder="Enter environment name..."
                     className="border-none text-2xl placeholder:text-content-subdued!"
                     autoComplete="off"
-                    {...field}
+                    disabled={loading}
                     onChange={(e) => {
                       field.onChange(e)
                       onNameChange?.(e.target.value)
@@ -113,8 +117,9 @@ export default function AttributesForm({
                   </div>
                   <FormControl>
                     <Input
-                      placeholder="e.g. sandbox"
                       {...field}
+                      placeholder="e.g. sandbox"
+                      disabled={loading}
                       onChange={(e) => {
                         field.onChange(e)
                         onCodeChange?.(e.target.value)
@@ -144,11 +149,16 @@ export default function AttributesForm({
           </div>
         </div>
         <DialogFooter className="border-t border-accent p-4">
-          <Button variant="outline" onClick={onCancel} className="w-48">
+          <Button
+            variant="outline"
+            onClick={onCancel}
+            disabled={loading}
+            className="w-48"
+          >
             Cancel
           </Button>
-          <Button type="submit" className="w-48">
-            Create
+          <Button type="submit" className="w-48" disabled={loading}>
+            {loading ? <Loading.Dots className="bg-background" /> : "Create"}
           </Button>
         </DialogFooter>
       </form>

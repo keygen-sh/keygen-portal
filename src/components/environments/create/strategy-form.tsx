@@ -85,7 +85,7 @@ export default function StrategyForm({
                         : "",
                     )}
                     onClick={() => {
-                      field.onChange("ISOLATED")
+                      field.onChange(STRATEGIES.ISOLATED)
                       onStrategyChange?.(STRATEGIES.ISOLATED)
                       onDescriptionChange?.(DESCRIPTIONS.ISOLATED)
                     }}
@@ -122,7 +122,7 @@ export default function StrategyForm({
                         : "",
                     )}
                     onClick={() => {
-                      field.onChange("SHARED")
+                      field.onChange(STRATEGIES.SHARED)
                       onStrategyChange?.(STRATEGIES.SHARED)
                       onDescriptionChange?.(DESCRIPTIONS.SHARED)
                     }}

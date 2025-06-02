@@ -8,14 +8,17 @@ import {
 } from "@/components/ui/table"
 
 import { Environment } from "@/types/environments"
+import * as Loading from "@/components/loading"
 
 interface EnvironmentsListProps {
   data: Environment[]
+  fetching: boolean
   onViewDetails: (environment: Environment) => void
 }
 
 export default function EnvironmentsList({
   data,
+  fetching,
   onViewDetails,
 }: EnvironmentsListProps) {
   return (
@@ -45,6 +48,10 @@ export default function EnvironmentsList({
             ))}
           </TableBody>
         </Table>
+      ) : fetching ? (
+        <div className="flex h-full w-full items-center justify-center">
+          <Loading.Dots />
+        </div>
       ) : (
         <p className="my-8 text-center text-sm text-content-subdued">
           Looks empty. Create an environment to get started.

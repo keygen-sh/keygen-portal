@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react"
+import { useState, useEffect, useCallback } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import {
@@ -22,6 +22,8 @@ import { Globe, GlobeLock } from "lucide-react"
 import { Environment } from "@/types/environments"
 import { MODES, STRATEGIES, DESCRIPTIONS } from "@/constants/environments"
 
+import * as keygen from "@/keygen"
+
 import StrategyForm from "./strategy-form"
 import AttributesForm from "./attributes-form"
 
@@ -40,31 +42,51 @@ export default function EnvironmentsCreateModal({
 }: EnvironmentsCreateModalProps) {
   const [step, setStep] = useState<0 | 1>(0)
   const [loading, setLoading] = useState(false)
+  const [token, setToken] = useState<string | null>(null)
 
+  const [name, setName] = useState<string | null>(null)
+  const [code, setCode] = useState<string | null>(null)
   const [isolationStrategy, setIsolationStrategy] = useState<STRATEGIES>(
     STRATEGIES.ISOLATED,
   )
-  const [name, setName] = useState<string | null>(null)
-  const [code, setCode] = useState<string | null>(null)
 
   const [description, setDescription] = useState<DESCRIPTIONS>(
     DESCRIPTIONS.ISOLATED,
   )
 
-  // TODO(cazden) - Implement API call
-  const handleCreateEnvironment = useCallback(() => {
-    const newEnvironment: Environment = {
-      id: crypto.randomUUID(),
-      name: name as string,
-      code: code as string,
-      isolationStrategy,
-      created: new Date().toISOString(),
+  useEffect(() => {
+    const storedToken =
+      localStorage.getItem("token") || sessionStorage.getItem("token")
+    if (storedToken) {
+      setToken(storedToken)
+    } else {
+      console.error("No Keygen token found in local or session storage.")
+    }
+  }, [])
+
+  const handleCreateEnvironment = useCallback(async () => {
+    if (!token || !name || !code) {
+      console.warn("Missing required fields.")
+      return
     }
 
-    console.log("Creating environment:", newEnvironment)
+    setLoading(true)
 
-    onSelectEnvironment(newEnvironment)
-    onChangeMode(MODES.VIEW, newEnvironment)
+    try {
+      const newEnvironment = (await keygen.environments.create({
+        token,
+        name: name,
+        code: code,
+        isolationStrategy,
+      })) as Environment
+
+      onSelectEnvironment(newEnvironment)
+      onChangeMode(MODES.VIEW, newEnvironment)
+    } catch (error) {
+      console.error("Error creating environment:", error)
+    } finally {
+      setLoading(false)
+    }
   }, [name, code, isolationStrategy, onSelectEnvironment, onChangeMode])
 
   const handleCancelCreate = useCallback(() => {

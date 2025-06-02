@@ -1,18 +1,28 @@
 import { useState, useEffect, useCallback } from "react"
 
+import { Badge } from "@/components/ui/badge"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb"
+
+import { Globe, GlobeLock } from "lucide-react"
 
 import { Environment } from "@/types/environments"
-import { MODES } from "@/constants/environments"
+import { MODES, STRATEGIES } from "@/constants/environments"
 
 import * as keygen from "@/keygen"
 
 import EditForm from "./edit-form"
+import { DialogDescription } from "@radix-ui/react-dialog"
 
 interface EnvironmentsViewModalProps {
   open: boolean
@@ -114,9 +124,33 @@ export default function EnvironmentsViewModal({
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="flex min-w-[700px] flex-col justify-between p-0 transition-all duration-300">
-        <DialogHeader className="h-fit border-b border-accent p-4">
+        <DialogHeader className="h-fit border-b border-accent p-2">
+          <DialogDescription className="flex h-5 items-center space-x-1 text-xs text-content-normal">
+            Editing a
+            <Badge variant="secondary" className="mx-1">
+              {selectedEnvironment.attributes.isolationStrategy ===
+              STRATEGIES.ISOLATED ? (
+                <>
+                  <GlobeLock />
+                  Isolated
+                </>
+              ) : (
+                <>
+                  <Globe />
+                  Shared
+                </>
+              )}
+            </Badge>
+            environment
+          </DialogDescription>
           <DialogTitle>
-            {selectedEnvironment?.attributes.name || ""}
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Update attributes</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
           </DialogTitle>
         </DialogHeader>
 

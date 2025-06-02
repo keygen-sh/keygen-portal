@@ -1,19 +1,13 @@
-export enum ErrorCode {
-  PASSWORD_REQUIRED = "PASSWORD_REQUIRED",
-  PASSWORD_INVALID = "PASSWORD_INVALID",
-  EMAIL_INVALID = "EMAIL_INVALID",
-  OTP_REQUIRED = "OTP_REQUIRED",
-  OTP_INVALID = "OTP_INVALID",
-}
+import { AUTH_ERROR_CODES } from "@/constants/auth"
 
 export const error = {
   codes: {
-    auth: new Set<ErrorCode>([
-      ErrorCode.PASSWORD_REQUIRED,
-      ErrorCode.PASSWORD_INVALID,
-      ErrorCode.EMAIL_INVALID,
-      ErrorCode.OTP_REQUIRED,
-      ErrorCode.OTP_INVALID,
+    auth: new Set<AUTH_ERROR_CODES>([
+      AUTH_ERROR_CODES.PASSWORD_REQUIRED,
+      AUTH_ERROR_CODES.PASSWORD_INVALID,
+      AUTH_ERROR_CODES.EMAIL_INVALID,
+      AUTH_ERROR_CODES.OTP_REQUIRED,
+      AUTH_ERROR_CODES.OTP_INVALID,
     ]),
   },
 }
@@ -22,5 +16,5 @@ export const error = {
  * Checks if provided error code is an authentication error.
  */
 export function isAuthError(code: string): boolean {
-  return error.codes.auth.has(code as ErrorCode)
+  return error.codes.auth.has(code as AUTH_ERROR_CODES)
 }

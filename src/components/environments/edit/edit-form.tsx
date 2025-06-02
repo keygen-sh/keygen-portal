@@ -159,7 +159,12 @@ export default function EnvironmentEditForm({
         </div>
 
         <DialogFooter className="border-t border-accent p-4">
-          <Button variant="outline" onClick={onCancel} className="w-48">
+          <Button
+            variant="outline"
+            type="button"
+            onClick={onCancel}
+            className="w-48"
+          >
             Cancel
           </Button>
           <Button type="submit" className="w-48" disabled={loading}>

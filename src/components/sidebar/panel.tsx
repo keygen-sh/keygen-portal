@@ -46,7 +46,7 @@ import {
   CardFooter,
 } from "@/components/ui/card"
 
-import * as keygen from "@/keygen/index"
+import * as keygen from "@/keygen"
 import { useIsMobile } from "@/hooks/use-mobile"
 import Icon from "@/components/icon"
 import Combobox from "./combobox"

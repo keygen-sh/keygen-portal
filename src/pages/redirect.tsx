@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { useNavigate } from "@tanstack/react-router"
 
-import * as keygen from "@/keygen/index"
+import * as keygen from "@/keygen"
 import { useAuth } from "@/hooks/use-auth"
 import * as Loading from "@/components/loading"
 

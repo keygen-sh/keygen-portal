@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
-import * as keygen from "@/keygen/index"
+import * as keygen from "@/keygen"
 
 interface BackProps {
   path: string

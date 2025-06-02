@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react"
+import { useState, useEffect, useCallback } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -20,6 +20,8 @@ import {
 import { Environment } from "@/types/environments"
 import { MODES, VIEWS } from "@/constants/environments"
 
+import * as keygen from "@/keygen"
+
 import EnvironmentsList from "./list"
 import EnvironmentDetails from "./details"
 
@@ -39,7 +41,34 @@ export default function EnvironmentsViewModal({
   onChangeMode,
 }: EnvironmentsViewModalProps) {
   const [data, setData] = useState<Environment[]>([])
+  const [fetching, setFetching] = useState(true)
+  const [token, setToken] = useState<string | null>(null)
   const [view, setView] = useState<VIEWS>(VIEWS.LIST)
+
+  useEffect(() => {
+    const storedToken =
+      localStorage.getItem("token") || sessionStorage.getItem("token")
+    if (storedToken) {
+      setToken(storedToken)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!token) return
+
+    const fetchEnvironments = async () => {
+      try {
+        const environments = await keygen.environments.list({ token })
+        setData(environments.data ?? [])
+      } catch (error) {
+        console.error("Error fetching environments:", error)
+      } finally {
+        setFetching(false)
+      }
+    }
+
+    fetchEnvironments()
+  }, [token])
 
   const handleViewDetails = useCallback(
     (environment: Environment) => {
@@ -66,8 +95,22 @@ export default function EnvironmentsViewModal({
     [onSelectEnvironment, onChangeMode],
   )
 
-  const handleDeleteEnvironment = useCallback((id: string) => {
-    console.log("Deleting environment:", id)
+  const handleDeleteEnvironment = useCallback(async (id: string) => {
+    if (!token) {
+      console.warn("No token available to delete environment.")
+      return
+    }
+
+    await keygen.environments
+      .remove({ token, id })
+      .then(() => {
+        setData((prev) => prev.filter((env) => env.id !== id))
+        onSelectEnvironment(null)
+        setView(VIEWS.LIST)
+      })
+      .catch((error) => {
+        console.error("Error deleting environment:", error)
+      })
   }, [])
 
   return (

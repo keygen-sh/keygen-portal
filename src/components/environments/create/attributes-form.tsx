@@ -151,6 +151,7 @@ export default function AttributesForm({
         <DialogFooter className="border-t border-accent p-4">
           <Button
             variant="outline"
+            type="button"
             onClick={onCancel}
             disabled={loading}
             className="w-48"

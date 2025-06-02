@@ -1,3 +1,5 @@
+import { copyToClipboard } from "@/lib/clipboard"
+
 import { Button } from "@/components/ui/button"
 import {
   AlertDialog,
@@ -52,7 +54,11 @@ export default function EnvironmentDetails({
             <h1 className="font-owners-wide text-2xl font-medium">
               {environment.attributes.name}
             </h1>
-            <Button variant="clipboard" size="clipboard">
+            <Button
+              variant="clipboard"
+              size="clipboard"
+              onClick={() => copyToClipboard(environment.attributes.code)}
+            >
               {environment.attributes.code}
               <Copy className="size-3" />
             </Button>

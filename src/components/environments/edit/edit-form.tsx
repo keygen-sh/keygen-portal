@@ -122,7 +122,10 @@ export default function EnvironmentEditForm({
                     </FormControl>
                     <FormMessage />
                     <Tooltip>
-                      <TooltipTrigger className="flex items-center gap-1 text-xs text-brand-amber">
+                      <TooltipTrigger
+                        type="button"
+                        className="flex items-center gap-1 text-xs text-brand-amber"
+                      >
                         <TriangleAlert className="size-3" />
                         <p>
                           Renaming an environment code that is already in use

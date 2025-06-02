@@ -150,6 +150,7 @@ export default function EnvironmentsViewModal({
         {view === VIEWS.LIST && (
           <EnvironmentsList
             data={data}
+            fetching={fetching}
             onViewDetails={handleViewDetails}
           />
         )}

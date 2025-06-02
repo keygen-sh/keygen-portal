@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 
-import * as keygen from "@/keygen/index"
+import * as keygen from "@/keygen"
 import { useAuth } from "@/hooks/use-auth"
 import BackButton from "@/components/back-button"
 import * as Loading from "@/components/loading"

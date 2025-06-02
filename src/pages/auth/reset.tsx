@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
-import * as keygen from "@/keygen/index"
+import * as keygen from "@/keygen"
 
 const resetPasswordSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters."),

@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
-import * as keygen from "@/keygen/index"
+import * as keygen from "@/keygen"
 
 const ssoSchema = z.object({
   username: z.string().email("Please enter a valid email."),

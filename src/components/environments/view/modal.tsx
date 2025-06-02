@@ -38,6 +38,7 @@ export default function EnvironmentsViewModal({
   onSelectEnvironment,
   onChangeMode,
 }: EnvironmentsViewModalProps) {
+  const [data, setData] = useState<Environment[]>([])
   const [view, setView] = useState<VIEWS>(VIEWS.LIST)
 
   const handleViewDetails = useCallback(
@@ -93,7 +94,7 @@ export default function EnvironmentsViewModal({
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
                       <BreadcrumbPage>
-                        {selectedEnvironment.name}
+                        {selectedEnvironment.attributes.name}
                       </BreadcrumbPage>
                     </BreadcrumbItem>
                   </>
@@ -104,7 +105,10 @@ export default function EnvironmentsViewModal({
         </DialogHeader>
 
         {view === VIEWS.LIST && (
-          <EnvironmentsList onViewDetails={handleViewDetails} />
+          <EnvironmentsList
+            data={data}
+            onViewDetails={handleViewDetails}
+          />
         )}
 
         {view === VIEWS.DETAILS && selectedEnvironment && (

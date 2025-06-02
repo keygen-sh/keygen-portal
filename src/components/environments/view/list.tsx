@@ -9,13 +9,13 @@ import {
 
 import { Environment } from "@/types/environments"
 
-import { data } from "@/components/environments/data"
-
 interface EnvironmentsListProps {
+  data: Environment[]
   onViewDetails: (environment: Environment) => void
 }
 
 export default function EnvironmentsList({
+  data,
   onViewDetails,
 }: EnvironmentsListProps) {
   return (
@@ -36,9 +36,11 @@ export default function EnvironmentsList({
                 onClick={() => onViewDetails(env)}
                 className="cursor-pointer"
               >
-                <TableCell className="font-medium">{env.name}</TableCell>
-                <TableCell>{env.code}</TableCell>
-                <TableCell>{env.isolationStrategy}</TableCell>
+                <TableCell className="font-medium">
+                  {env.attributes.name}
+                </TableCell>
+                <TableCell>{env.attributes.code}</TableCell>
+                <TableCell>{env.attributes.isolationStrategy}</TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -4,6 +4,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { Toaster } from "@/components/ui/sonner"
 
 import * as Sidebar from "@/components/sidebar"
 
@@ -45,6 +46,7 @@ function AppLayoutContent() {
         >
           <Outlet />
         </main>
+        <Toaster />
       </div>
     </SidebarProvider>
   )

@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input"
 
 import * as keygen from "@/keygen"
-import { AUTH_ERROR_CODES } from "@/types/auth"
+import { AuthErrorCodes } from "@/types/auth"
 import { useAuth } from "@/hooks/use-auth"
 import BackButton from "@/components/back-button"
 import * as Loading from "@/components/loading"
@@ -76,15 +76,15 @@ export default function Verify() {
         })
 
         if (errors?.length) {
-          const { code } = errors[0] as unknown as { code: AUTH_ERROR_CODES }
+          const { code } = errors[0] as unknown as { code: AuthErrorCodes }
 
           switch (code) {
-            case AUTH_ERROR_CODES.OTP_INVALID:
+            case AuthErrorCodes.OTP_INVALID:
               setError("The code you entered is incorrect. Please try again.")
               setLoading(false)
               reset()
               break
-            case AUTH_ERROR_CODES.PASSWORD_INVALID:
+            case AuthErrorCodes.PASSWORD_INVALID:
               auth.setError("Invalid password. Please try again.")
               void navigate({
                 to: "/$id/auth/password",

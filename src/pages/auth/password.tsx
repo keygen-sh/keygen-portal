@@ -21,7 +21,7 @@ import * as keygen from "@/keygen"
 import { useAuth } from "@/hooks/use-auth"
 import BackButton from "@/components/back-button"
 import * as Loading from "@/components/loading"
-import { AUTH_ERROR_CODES } from "@/types/auth"
+import { AuthErrorCodes } from "@/types/auth"
 
 const passwordSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters."),
@@ -69,13 +69,13 @@ export default function Password() {
       })
 
       if (errors?.length) {
-        const { code } = errors[0] as unknown as { code: AUTH_ERROR_CODES }
+        const { code } = errors[0] as unknown as { code: AuthErrorCodes }
 
         switch (code) {
-          case AUTH_ERROR_CODES.PASSWORD_INVALID:
+          case AuthErrorCodes.PASSWORD_INVALID:
             setError("Invalid password. Please try again.")
             break
-          case AUTH_ERROR_CODES.OTP_REQUIRED:
+          case AuthErrorCodes.OTP_REQUIRED:
             auth.setPassword(password)
             auth.setRemember(remember || false)
             void navigate({ to: `/${keygen.config.id}/auth/verify` })

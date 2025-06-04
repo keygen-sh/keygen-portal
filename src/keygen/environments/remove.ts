@@ -11,7 +11,7 @@ interface RemoveProps {
 export default async function remove({
   token,
   id,
-}: RemoveProps): Promise<EnvironmentResponse> {
+}: RemoveProps): Promise<null> {
   try {
     const response = await fetch(
       `https://${config.host}/v1/accounts/${config.id}/environments/${id}`,
@@ -36,24 +36,13 @@ export default async function remove({
       throw new Error(`Request failed with status ${response.status}`)
     }
 
-    return {}
+    return null
   } catch (error) {
     console.error(
       "Delete Environment Error:",
       error instanceof Error ? error.message : "Unknown error occurred",
     )
 
-    return {
-      errors: [
-        {
-          title: "Delete Environment Error",
-          detail:
-            error instanceof Error ? error.message : "Unknown error occurred",
-          code: "CLIENT_ERROR",
-          source: {},
-          links: {},
-        },
-      ],
-    }
+    return null
   }
 }

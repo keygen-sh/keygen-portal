@@ -1,6 +1,5 @@
 import config from "@/keygen/config"
-import { EnvironmentResponse } from "@/types/environments"
-import { STRATEGIES } from "@/components/environments/constants"
+import { EnvironmentResponse, IsolationStrategies } from "@/types/environments"
 
 config.validate()
 
@@ -8,7 +7,7 @@ interface CreateProps {
   token: string
   name: string
   code: string
-  isolationStrategy: STRATEGIES
+  isolationStrategy: IsolationStrategies
 }
 
 export default async function create({

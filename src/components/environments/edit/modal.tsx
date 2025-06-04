@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog"
 import {
   Breadcrumb,
@@ -21,7 +22,6 @@ import { Environment, MODES, STRATEGIES } from "@/types/environments"
 import * as keygen from "@/keygen"
 
 import EditForm from "./edit-form"
-import { DialogDescription } from "@radix-ui/react-dialog"
 
 interface EnvironmentsViewModalProps {
   open: boolean

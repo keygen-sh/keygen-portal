@@ -1,6 +1,6 @@
 import config from "@/keygen/config"
 import { EnvironmentResponse } from "@/types/environments"
-import { STRATEGIES } from "@/constants/environments"
+import { STRATEGIES } from "@/components/environments/constants"
 
 config.validate()
 

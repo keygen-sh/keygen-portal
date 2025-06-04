@@ -17,7 +17,7 @@ import {
 
 import { GlobeLock, Globe, Info } from "lucide-react"
 
-import { STRATEGIES, DESCRIPTIONS } from "@/constants/environments"
+import { STRATEGIES, DESCRIPTIONS } from "@/types/environments"
 
 const strategySchema = z.object({
   isolationStrategy: z.enum([STRATEGIES.ISOLATED, STRATEGIES.SHARED]),

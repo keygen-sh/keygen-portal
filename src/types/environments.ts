@@ -1,5 +1,25 @@
 import { APIResponse } from "@/types/api"
-import { STRATEGIES } from "@/constants/environments"
+
+export enum MODES {
+  VIEW = "view",
+  EDIT = "edit",
+  CREATE = "create",
+}
+
+export enum VIEWS {
+  LIST = "list",
+  DETAILS = "details",
+}
+
+export enum STRATEGIES {
+  ISOLATED = "ISOLATED",
+  SHARED = "SHARED",
+}
+
+export enum DESCRIPTIONS {
+  ISOLATED = "Creating a new Isolated environment",
+  SHARED = "Creating a new Shared environment",
+}
 
 export interface EnvironmentAttributes {
   name: string

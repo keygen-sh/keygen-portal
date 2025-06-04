@@ -19,8 +19,12 @@ import {
 
 import { Globe, GlobeLock } from "lucide-react"
 
-import { Environment } from "@/types/environments"
-import { MODES, STRATEGIES, DESCRIPTIONS } from "@/constants/environments"
+import {
+  Environment,
+  MODES,
+  STRATEGIES,
+  DESCRIPTIONS,
+} from "@/types/environments"
 
 import * as keygen from "@/keygen"
 

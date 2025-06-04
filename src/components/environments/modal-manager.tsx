@@ -1,11 +1,10 @@
 import { useState, useCallback } from "react"
 
-import { Environment } from "@/types/environments"
-import { MODES } from "@/constants/environments"
+import { Environment, MODES } from "@/types/environments"
 
-import * as View from "@/components/environments/view/index"
-import * as Edit from "@/components/environments/edit/index"
-import * as Create from "@/components/environments/create/index"
+import * as View from "@/components/environments/view"
+import * as Edit from "@/components/environments/edit"
+import * as Create from "@/components/environments/create"
 
 interface EnvironmentsModalManagerProps {
   open: boolean

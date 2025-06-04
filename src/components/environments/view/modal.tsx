@@ -18,8 +18,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 
-import { Environment } from "@/types/environments"
-import { MODES, VIEWS } from "@/constants/environments"
+import { Environment, MODES, VIEWS } from "@/types/environments"
 
 import * as keygen from "@/keygen"
 

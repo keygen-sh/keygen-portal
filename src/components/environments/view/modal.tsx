@@ -18,7 +18,11 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 
-import { Environment, MODES, VIEWS } from "@/types/environments"
+import {
+  Environment,
+  EnvironmentModes,
+  EnvironmentViews,
+} from "@/types/environments"
 
 import * as keygen from "@/keygen"
 
@@ -30,7 +34,7 @@ interface EnvironmentsViewModalProps {
   onClose: () => void
   selectedEnvironment: Environment | null
   onSelectEnvironment: (env: Environment | null) => void
-  onChangeMode: (mode: MODES, env?: Environment) => void
+  onChangeMode: (mode: EnvironmentModes, env?: Environment) => void
 }
 
 export default function EnvironmentsViewModal({
@@ -43,7 +47,7 @@ export default function EnvironmentsViewModal({
   const [data, setData] = useState<Environment[]>([])
   const [fetching, setFetching] = useState(true)
   const [token, setToken] = useState<string | null>(null)
-  const [view, setView] = useState<VIEWS>(VIEWS.LIST)
+  const [view, setView] = useState<EnvironmentViews>(EnvironmentViews.LIST)
 
   useEffect(() => {
     const storedToken =
@@ -73,24 +77,24 @@ export default function EnvironmentsViewModal({
   const handleViewDetails = useCallback(
     (environment: Environment) => {
       onSelectEnvironment(environment)
-      setView(VIEWS.DETAILS)
+      setView(EnvironmentViews.DETAILS)
     },
     [onSelectEnvironment],
   )
 
   const handleBackToList = useCallback(() => {
     onSelectEnvironment(null)
-    setView(VIEWS.LIST)
+    setView(EnvironmentViews.LIST)
   }, [onSelectEnvironment])
 
   const handleStartCreate = useCallback(() => {
-    onChangeMode(MODES.CREATE)
+    onChangeMode(EnvironmentModes.CREATE)
   }, [onChangeMode])
 
   const handleStartEdit = useCallback(
     (environment: Environment) => {
       onSelectEnvironment(environment)
-      onChangeMode(MODES.EDIT)
+      onChangeMode(EnvironmentModes.EDIT)
     },
     [onSelectEnvironment, onChangeMode],
   )
@@ -107,7 +111,7 @@ export default function EnvironmentsViewModal({
         .then(() => {
           setData((prev) => prev.filter((env) => env.id !== id))
           onSelectEnvironment(null)
-          setView(VIEWS.LIST)
+          setView(EnvironmentViews.LIST)
         })
         .catch((error) => {
           console.error("Error deleting environment:", error)
@@ -127,7 +131,7 @@ export default function EnvironmentsViewModal({
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  {view === VIEWS.LIST ? (
+                  {view === EnvironmentViews.LIST ? (
                     <BreadcrumbPage>Manage Environments</BreadcrumbPage>
                   ) : (
                     <BreadcrumbLink
@@ -138,7 +142,7 @@ export default function EnvironmentsViewModal({
                     </BreadcrumbLink>
                   )}
                 </BreadcrumbItem>
-                {view === VIEWS.DETAILS && selectedEnvironment && (
+                {view === EnvironmentViews.DETAILS && selectedEnvironment && (
                   <>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
@@ -153,7 +157,7 @@ export default function EnvironmentsViewModal({
           </DialogTitle>
         </DialogHeader>
 
-        {view === VIEWS.LIST && (
+        {view === EnvironmentViews.LIST && (
           <EnvironmentsList
             data={data}
             fetching={fetching}
@@ -161,7 +165,7 @@ export default function EnvironmentsViewModal({
           />
         )}
 
-        {view === VIEWS.DETAILS && selectedEnvironment && (
+        {view === EnvironmentViews.DETAILS && selectedEnvironment && (
           <EnvironmentDetails
             environment={selectedEnvironment}
             onEditEnvironment={() => handleStartEdit(selectedEnvironment)}
@@ -171,12 +175,12 @@ export default function EnvironmentsViewModal({
           />
         )}
         <DialogFooter className="border-t border-accent p-4">
-          {view === VIEWS.DETAILS && selectedEnvironment && (
+          {view === EnvironmentViews.DETAILS && selectedEnvironment && (
             <Button variant="outline" onClick={handleBackToList}>
               Back to List
             </Button>
           )}
-          {view === VIEWS.LIST && (
+          {view === EnvironmentViews.LIST && (
             <Button onClick={handleStartCreate}>Create Environment</Button>
           )}
         </DialogFooter>

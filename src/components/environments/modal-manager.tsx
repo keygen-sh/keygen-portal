@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react"
 
-import { Environment, MODES } from "@/types/environments"
+import { Environment, EnvironmentModes } from "@/types/environments"
 
 import * as View from "@/components/environments/view"
 import * as Edit from "@/components/environments/edit"
@@ -15,7 +15,7 @@ export default function EnvironmentsModalManager({
   open,
   onClose,
 }: EnvironmentsModalManagerProps): React.ReactElement {
-  const [mode, setMode] = useState<MODES>(MODES.VIEW)
+  const [mode, setMode] = useState<EnvironmentModes>(EnvironmentModes.VIEW)
   const [selectedEnvironment, setSelectedEnvironment] =
     useState<Environment | null>(null)
 
@@ -26,13 +26,13 @@ export default function EnvironmentsModalManager({
     [],
   )
 
-  const handleChangeMode = useCallback((newMode: MODES) => {
+  const handleChangeMode = useCallback((newMode: EnvironmentModes) => {
     setMode(newMode)
   }, [])
 
   return (
     <>
-      {mode === MODES.VIEW && (
+      {mode === EnvironmentModes.VIEW && (
         <View.Modal
           open={open}
           onClose={onClose}
@@ -41,7 +41,7 @@ export default function EnvironmentsModalManager({
           onChangeMode={handleChangeMode}
         />
       )}
-      {mode === MODES.EDIT && selectedEnvironment && (
+      {mode === EnvironmentModes.EDIT && selectedEnvironment && (
         <Edit.Modal
           open={open}
           onClose={onClose}
@@ -50,7 +50,7 @@ export default function EnvironmentsModalManager({
           onChangeMode={handleChangeMode}
         />
       )}
-      {mode === MODES.CREATE && (
+      {mode === EnvironmentModes.CREATE && (
         <Create.Modal
           open={open}
           onClose={onClose}

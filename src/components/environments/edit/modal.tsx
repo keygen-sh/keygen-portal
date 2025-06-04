@@ -17,7 +17,11 @@ import {
 
 import { Globe, GlobeLock } from "lucide-react"
 
-import { Environment, MODES, STRATEGIES } from "@/types/environments"
+import {
+  Environment,
+  EnvironmentModes,
+  IsolationStrategies,
+} from "@/types/environments"
 
 import * as keygen from "@/keygen"
 
@@ -28,7 +32,7 @@ interface EnvironmentsViewModalProps {
   onClose: () => void
   selectedEnvironment: Environment
   onSelectEnvironment: (env: Environment | null) => void
-  onChangeMode: (mode: MODES, env?: Environment) => void
+  onChangeMode: (mode: EnvironmentModes, env?: Environment) => void
 }
 
 export default function EnvironmentsViewModal({
@@ -84,7 +88,7 @@ export default function EnvironmentsViewModal({
       // Bail if no updates
       if (Object.keys(updates).length === 0) {
         setLoading(false)
-        onChangeMode(MODES.VIEW, selectedEnvironment)
+        onChangeMode(EnvironmentModes.VIEW, selectedEnvironment)
         return
       }
 
@@ -100,7 +104,7 @@ export default function EnvironmentsViewModal({
       }
 
       onSelectEnvironment(updatedEnvironment)
-      onChangeMode(MODES.VIEW, updatedEnvironment)
+      onChangeMode(EnvironmentModes.VIEW, updatedEnvironment)
     } catch (error) {
       console.error("Error updating environment:", error)
     } finally {
@@ -109,7 +113,7 @@ export default function EnvironmentsViewModal({
   }, [name, code, onSelectEnvironment, onChangeMode])
 
   const handleCancelUpdate = useCallback(() => {
-    onChangeMode(MODES.VIEW)
+    onChangeMode(EnvironmentModes.VIEW)
   }, [onChangeMode])
 
   const handleNameChange = useCallback((newName: string) => {
@@ -128,7 +132,7 @@ export default function EnvironmentsViewModal({
             Editing a
             <Badge variant="secondary" className="mx-1">
               {selectedEnvironment.attributes.isolationStrategy ===
-              STRATEGIES.ISOLATED ? (
+              IsolationStrategies.ISOLATED ? (
                 <>
                   <GlobeLock />
                   Isolated

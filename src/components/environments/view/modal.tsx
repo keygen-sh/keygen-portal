@@ -96,23 +96,26 @@ export default function EnvironmentsViewModal({
     [onSelectEnvironment, onChangeMode],
   )
 
-  const handleDeleteEnvironment = useCallback(async (id: string) => {
-    if (!token) {
-      console.warn("No token available to delete environment.")
-      return
-    }
+  const handleDeleteEnvironment = useCallback(
+    async (id: string) => {
+      if (!token) {
+        console.warn("No token available to delete environment.")
+        return
+      }
 
-    await keygen.environments
-      .remove({ token, id })
-      .then(() => {
-        setData((prev) => prev.filter((env) => env.id !== id))
-        onSelectEnvironment(null)
-        setView(VIEWS.LIST)
-      })
-      .catch((error) => {
-        console.error("Error deleting environment:", error)
-      })
-  }, [])
+      await keygen.environments
+        .remove({ token, id })
+        .then(() => {
+          setData((prev) => prev.filter((env) => env.id !== id))
+          onSelectEnvironment(null)
+          setView(VIEWS.LIST)
+        })
+        .catch((error) => {
+          console.error("Error deleting environment:", error)
+        })
+    },
+    [token],
+  )
 
   return (
     <Dialog open={open} onOpenChange={onClose}>

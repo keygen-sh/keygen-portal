@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input"
 import * as keygen from "@/keygen"
 import { useAuth } from "@/hooks/use-auth"
 import * as Loading from "@/components/loading"
-import { AUTH_ERROR_CODES } from "@/constants/auth"
+import { AUTH_ERROR_CODES } from "@/types/auth"
 
 const emailSchema = z.object({
   username: z.string().email("Please enter a valid email."),

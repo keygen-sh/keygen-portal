@@ -21,7 +21,7 @@ import * as keygen from "@/keygen"
 import { useAuth } from "@/hooks/use-auth"
 import BackButton from "@/components/back-button"
 import * as Loading from "@/components/loading"
-import { AUTH_ERROR_CODES } from "@/constants/auth"
+import { AUTH_ERROR_CODES } from "@/types/auth"
 
 const passwordSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters."),

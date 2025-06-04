@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input"
 
 import * as keygen from "@/keygen"
-import { AUTH_ERROR_CODES } from "@/constants/auth"
+import { AUTH_ERROR_CODES } from "@/types/auth"
 import { useAuth } from "@/hooks/use-auth"
 import BackButton from "@/components/back-button"
 import * as Loading from "@/components/loading"

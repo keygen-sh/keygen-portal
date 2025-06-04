@@ -1,5 +1,13 @@
 import { APIResponse } from "@/types/api"
 
+export enum AUTH_ERROR_CODES {
+  PASSWORD_REQUIRED = "PASSWORD_REQUIRED",
+  PASSWORD_INVALID = "PASSWORD_INVALID",
+  EMAIL_INVALID = "EMAIL_INVALID",
+  OTP_REQUIRED = "OTP_REQUIRED",
+  OTP_INVALID = "OTP_INVALID",
+}
+
 export interface AuthAttributes {
   token: string
   kind: string

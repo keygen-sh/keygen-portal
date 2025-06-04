@@ -1,4 +1,4 @@
-import { AUTH_ERROR_CODES } from "@/constants/auth"
+import { AUTH_ERROR_CODES } from "@/types/auth"
 
 export const error = {
   codes: {

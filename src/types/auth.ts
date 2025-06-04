@@ -1,6 +1,6 @@
 import { APIResponse } from "@/types/api"
 
-export enum AUTH_ERROR_CODES {
+export enum AuthErrorCodes {
   PASSWORD_REQUIRED = "PASSWORD_REQUIRED",
   PASSWORD_INVALID = "PASSWORD_INVALID",
   EMAIL_INVALID = "EMAIL_INVALID",

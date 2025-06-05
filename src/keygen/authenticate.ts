@@ -2,7 +2,6 @@ import config from "@/keygen/config"
 import client from "@/keygen/client"
 import { AuthResponse } from "@/types/auth"
 
-// Make sure environment variables exist
 config.validate()
 
 interface AuthProps {
@@ -11,11 +10,6 @@ interface AuthProps {
   otp?: string
 }
 
-/**
- * Authenticates user with Keygen API using email and optional password or one-time password.
- * If both password and otp are omitted, returns either OTP_REQUIRED or PASSWORD_REQUIRED codes stored in { errors }.
- * On success, returns a token object stored in { data }.
- */
 export async function authenticate({
   email,
   password,

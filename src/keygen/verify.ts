@@ -1,4 +1,6 @@
 import config from "@/keygen/config"
+import { Client } from "@/keygen/client"
+import { EnvironmentResponse } from "@/types/environments"
 
 config.validate()
 
@@ -14,32 +16,13 @@ interface VerifyProps {
 export async function verify({
   tokenId,
   token,
-}: VerifyProps): Promise<boolean> {
-  try {
-    const response = await fetch(
-      `https://${config.host}/v1/accounts/${config.id}/tokens/${tokenId}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/vnd.api+json",
-          Accept: "application/vnd.api+json",
-          "Keygen-Version": config.version,
-        },
-      },
-    )
+}: VerifyProps): Promise<EnvironmentResponse> {
+  const tempClient = new Client(token)
 
-    if (!response.ok) {
-      throw new Error(`Token verification failed: ${response.status}`)
-    }
+  const result = (await tempClient.request(
+    `/accounts/${config.id}/tokens/${tokenId}`,
+    { method: "GET" },
+  )) as EnvironmentResponse
 
-    return true
-  } catch (error) {
-    console.error(
-      "Token Error:",
-      error instanceof Error ? error.message : "Unknown error occurred",
-    )
-
-    return false
-  }
+  return result
 }

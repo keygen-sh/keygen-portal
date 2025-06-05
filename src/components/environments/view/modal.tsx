@@ -62,7 +62,7 @@ export default function EnvironmentsViewModal({
 
     const fetchEnvironments = async () => {
       try {
-        const environments = await keygen.environments.list({ token })
+        const environments = await keygen.environments.list({})
         setData(environments.data ?? [])
       } catch (error) {
         console.error("Error fetching environments:", error)
@@ -99,26 +99,18 @@ export default function EnvironmentsViewModal({
     [onSelectEnvironment, onChangeMode],
   )
 
-  const handleDeleteEnvironment = useCallback(
-    async (id: string) => {
-      if (!token) {
-        console.warn("No token available to delete environment.")
-        return
-      }
-
-      await keygen.environments
-        .remove({ token, id })
-        .then(() => {
-          setData((prev) => prev.filter((env) => env.id !== id))
-          onSelectEnvironment(null)
-          setView(EnvironmentViews.LIST)
-        })
-        .catch((error) => {
-          console.error("Error deleting environment:", error)
-        })
-    },
-    [token],
-  )
+  const handleDeleteEnvironment = useCallback(async (id: string) => {
+    await keygen.environments
+      .remove({ id })
+      .then(() => {
+        setData((prev) => prev.filter((env) => env.id !== id))
+        onSelectEnvironment(null)
+        setView(EnvironmentViews.LIST)
+      })
+      .catch((error) => {
+        console.error("Error deleting environment:", error)
+      })
+  }, [])
 
   return (
     <Dialog open={open} onOpenChange={onClose}>

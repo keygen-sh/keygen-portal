@@ -77,7 +77,6 @@ export default function EnvironmentsCreateModal({
 
     try {
       const newEnvironment = (await keygen.environments.create({
-        token,
         name: name,
         code: code,
         isolationStrategy,

@@ -93,7 +93,6 @@ export default function EnvironmentsViewModal({
       }
 
       const updatedEnvironment = (await keygen.environments.update({
-        token,
         id: selectedEnvironment.id,
         name: updates.name ?? null,
         code: updates.code ?? null,

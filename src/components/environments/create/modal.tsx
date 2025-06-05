@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useCallback } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import {
@@ -46,7 +46,6 @@ export default function EnvironmentsCreateModal({
 }: EnvironmentsCreateModalProps) {
   const [step, setStep] = useState<0 | 1>(0)
   const [loading, setLoading] = useState(false)
-  const [token, setToken] = useState<string | null>(null)
 
   const [name, setName] = useState<string | null>(null)
   const [code, setCode] = useState<string | null>(null)
@@ -57,18 +56,8 @@ export default function EnvironmentsCreateModal({
     EnvironmentDescriptions.ISOLATED,
   )
 
-  useEffect(() => {
-    const storedToken =
-      localStorage.getItem("token") || sessionStorage.getItem("token")
-    if (storedToken) {
-      setToken(storedToken)
-    } else {
-      console.error("No Keygen token found in local or session storage.")
-    }
-  }, [])
-
   const handleCreateEnvironment = useCallback(async () => {
-    if (!token || !name || !code) {
+    if (!name || !code) {
       console.warn("Missing required fields.")
       return
     }

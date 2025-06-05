@@ -1,6 +1,9 @@
 import config from "./config"
 export { config }
 
+import client from "./client"
+export { client }
+
 import { authenticate } from "./authenticate"
 export { authenticate }
 

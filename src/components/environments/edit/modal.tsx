@@ -43,8 +43,6 @@ export default function EnvironmentsViewModal({
   onChangeMode,
 }: EnvironmentsViewModalProps) {
   const [loading, setLoading] = useState(false)
-  const [token, setToken] = useState<string | null>(null)
-
   const [name, setName] = useState<string | null>(null)
   const [code, setCode] = useState<string | null>(null)
 
@@ -55,22 +53,7 @@ export default function EnvironmentsViewModal({
     }
   }, [selectedEnvironment])
 
-  useEffect(() => {
-    const storedToken =
-      localStorage.getItem("token") || sessionStorage.getItem("token")
-    if (storedToken) {
-      setToken(storedToken)
-    } else {
-      console.error("No Keygen token found in local or session storage.")
-    }
-  }, [])
-
   const handleUpdateEnvironment = useCallback(async () => {
-    if (!token) {
-      console.error("No token available for updating environment.")
-      return
-    }
-
     setLoading(true)
 
     try {

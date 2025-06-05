@@ -46,20 +46,9 @@ export default function EnvironmentsViewModal({
 }: EnvironmentsViewModalProps) {
   const [data, setData] = useState<Environment[]>([])
   const [fetching, setFetching] = useState(true)
-  const [token, setToken] = useState<string | null>(null)
   const [view, setView] = useState<EnvironmentViews>(EnvironmentViews.LIST)
 
   useEffect(() => {
-    const storedToken =
-      localStorage.getItem("token") || sessionStorage.getItem("token")
-    if (storedToken) {
-      setToken(storedToken)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!token) return
-
     const fetchEnvironments = async () => {
       try {
         const environments = await keygen.environments.list({})
@@ -72,7 +61,7 @@ export default function EnvironmentsViewModal({
     }
 
     fetchEnvironments()
-  }, [token])
+  }, [])
 
   const handleViewDetails = useCallback(
     (environment: Environment) => {

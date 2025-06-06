@@ -1,13 +1,13 @@
-import { AuthErrorCodes } from "@/types/auth"
+import { AuthErrorCode } from "@/types/auth"
 
 export const error = {
   codes: {
-    auth: new Set<AuthErrorCodes>([
-      AuthErrorCodes.PASSWORD_REQUIRED,
-      AuthErrorCodes.PASSWORD_INVALID,
-      AuthErrorCodes.EMAIL_INVALID,
-      AuthErrorCodes.OTP_REQUIRED,
-      AuthErrorCodes.OTP_INVALID,
+    auth: new Set<AuthErrorCode>([
+      AuthErrorCode.PASSWORD_REQUIRED,
+      AuthErrorCode.PASSWORD_INVALID,
+      AuthErrorCode.EMAIL_INVALID,
+      AuthErrorCode.OTP_REQUIRED,
+      AuthErrorCode.OTP_INVALID,
     ]),
   },
 }
@@ -16,5 +16,5 @@ export const error = {
  * Checks if provided error code is an authentication error.
  */
 export function isAuthError(code: string): boolean {
-  return error.codes.auth.has(code as AuthErrorCodes)
+  return error.codes.auth.has(code as AuthErrorCode)
 }

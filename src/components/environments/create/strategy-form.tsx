@@ -17,25 +17,22 @@ import {
 
 import { GlobeLock, Globe, Info } from "lucide-react"
 
-import {
-  IsolationStrategies,
-  EnvironmentDescriptions,
-} from "@/types/environments"
+import { IsolationStrategy, EnvironmentDescription } from "@/types/environments"
 
 const strategySchema = z.object({
   isolationStrategy: z.enum([
-    IsolationStrategies.ISOLATED,
-    IsolationStrategies.SHARED,
+    IsolationStrategy.ISOLATED,
+    IsolationStrategy.SHARED,
   ]),
 })
 
 type StrategyValues = z.infer<typeof strategySchema>
 
 interface StrategyFormProps {
-  isolationStrategy?: IsolationStrategies
-  onStrategyChange?: (strategy: IsolationStrategies) => void
-  onDescriptionChange?: (desc: EnvironmentDescriptions) => void
-  onSubmit: (strategy: IsolationStrategies) => void
+  isolationStrategy?: IsolationStrategy
+  onStrategyChange?: (strategy: IsolationStrategy) => void
+  onDescriptionChange?: (desc: EnvironmentDescription) => void
+  onSubmit: (strategy: IsolationStrategy) => void
   onCancel: () => void
 }
 
@@ -86,14 +83,14 @@ export default function StrategyForm({
                   <Card
                     className={cn(
                       "w-60 cursor-pointer rounded-xl bg-background p-px transition-colors duration-200",
-                      field.value === IsolationStrategies.ISOLATED
+                      field.value === IsolationStrategy.ISOLATED
                         ? "bg-gradient-to-r from-primary to-secondary"
                         : "",
                     )}
                     onClick={() => {
-                      field.onChange(IsolationStrategies.ISOLATED)
-                      onStrategyChange?.(IsolationStrategies.ISOLATED)
-                      onDescriptionChange?.(EnvironmentDescriptions.ISOLATED)
+                      field.onChange(IsolationStrategy.ISOLATED)
+                      onStrategyChange?.(IsolationStrategy.ISOLATED)
+                      onDescriptionChange?.(EnvironmentDescription.ISOLATED)
                     }}
                   >
                     <div className="space-y-4 rounded-[inherit] bg-background p-4">
@@ -123,14 +120,14 @@ export default function StrategyForm({
                   <Card
                     className={cn(
                       "w-60 cursor-pointer rounded-xl bg-background p-px transition-colors duration-200",
-                      field.value === IsolationStrategies.SHARED
+                      field.value === IsolationStrategy.SHARED
                         ? "bg-gradient-to-r from-primary to-secondary"
                         : "",
                     )}
                     onClick={() => {
-                      field.onChange(IsolationStrategies.SHARED)
-                      onStrategyChange?.(IsolationStrategies.SHARED)
-                      onDescriptionChange?.(EnvironmentDescriptions.SHARED)
+                      field.onChange(IsolationStrategy.SHARED)
+                      onStrategyChange?.(IsolationStrategy.SHARED)
+                      onDescriptionChange?.(EnvironmentDescription.SHARED)
                     }}
                   >
                     <div className="space-y-4 rounded-[inherit] bg-background p-4">

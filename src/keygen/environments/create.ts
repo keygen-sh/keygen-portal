@@ -1,13 +1,13 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
-import { EnvironmentResponse, IsolationStrategies } from "@/types/environments"
+import { EnvironmentResponse, IsolationStrategy } from "@/types/environments"
 
 config.validate()
 
 interface CreateProps {
   name: string
   code: string
-  isolationStrategy: IsolationStrategies
+  isolationStrategy: IsolationStrategy
 }
 
 export default async function create({

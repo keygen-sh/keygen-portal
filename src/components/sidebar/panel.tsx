@@ -52,7 +52,7 @@ import Icon from "@/components/icon"
 import Combobox from "./combobox"
 import Command from "./command"
 
-enum VIEWS {
+enum View {
   HOME = "home",
   LICENSING = "licensing",
   DISTRIBUTION = "distribution",
@@ -62,7 +62,7 @@ enum VIEWS {
   SECURITY = "security",
 }
 
-const VIEWS_LIST = Object.values(VIEWS) as VIEWS[]
+const VIEWS_LIST = Object.values(View) as View[]
 
 const options = linkOptions([
   {
@@ -76,7 +76,7 @@ const options = linkOptions([
  * Renders the main app sidebar with a rail sidebar and a content sidebar.
  */
 export default function SidebarPanel(): React.ReactElement {
-  const [selectedView, setSelectedView] = useState(VIEWS.HOME)
+  const [selectedView, setSelectedView] = useState(View.HOME)
   const { open, setOpen } = useSidebar()
 
   const isMobile = useIsMobile()
@@ -271,21 +271,21 @@ export default function SidebarPanel(): React.ReactElement {
   )
 }
 
-function renderView(view: VIEWS) {
+function renderView(view: View) {
   switch (view) {
-    case VIEWS.HOME:
+    case View.HOME:
       return renderHome()
-    case VIEWS.LICENSING:
+    case View.LICENSING:
       return renderLicensing()
-    case VIEWS.DISTRIBUTION:
+    case View.DISTRIBUTION:
       return renderDistribution()
-    case VIEWS.AUTOMATE:
+    case View.AUTOMATE:
       return renderAutomate()
-    case VIEWS.WEBHOOKS:
+    case View.WEBHOOKS:
       return renderWebhooks()
-    case VIEWS.ACCESS:
+    case View.ACCESS:
       return renderAccess()
-    case VIEWS.SECURITY:
+    case View.SECURITY:
       return renderSecurity()
     default:
       return null

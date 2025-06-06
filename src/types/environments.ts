@@ -1,22 +1,22 @@
 import { APIResponse } from "@/types/api"
 
-export enum EnvironmentModes {
+export enum EnvironmentMode {
   VIEW = "view",
   EDIT = "edit",
   CREATE = "create",
 }
 
-export enum EnvironmentViews {
+export enum EnvironmentView {
   LIST = "list",
   DETAILS = "details",
 }
 
-export enum IsolationStrategies {
+export enum IsolationStrategy {
   ISOLATED = "ISOLATED",
   SHARED = "SHARED",
 }
 
-export enum EnvironmentDescriptions {
+export enum EnvironmentDescription {
   ISOLATED = "Creating a new Isolated environment",
   SHARED = "Creating a new Shared environment",
 }
@@ -24,7 +24,7 @@ export enum EnvironmentDescriptions {
 export interface EnvironmentAttributes {
   name: string
   code: string
-  isolationStrategy: IsolationStrategies
+  isolationStrategy: IsolationStrategy
   created: string
   updated: string
 }

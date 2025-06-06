@@ -21,9 +21,9 @@ import { Globe, GlobeLock } from "lucide-react"
 
 import {
   Environment,
-  EnvironmentModes,
-  IsolationStrategies,
-  EnvironmentDescriptions,
+  EnvironmentMode,
+  IsolationStrategy,
+  EnvironmentDescription,
 } from "@/types/environments"
 
 import * as keygen from "@/keygen"
@@ -35,7 +35,7 @@ interface EnvironmentsCreateModalProps {
   open: boolean
   onClose: () => void
   onSelectEnvironment: (env: Environment | null) => void
-  onChangeMode: (mode: EnvironmentModes, env?: Environment) => void
+  onChangeMode: (mode: EnvironmentMode, env?: Environment) => void
 }
 
 export default function EnvironmentsCreateModal({
@@ -49,11 +49,12 @@ export default function EnvironmentsCreateModal({
 
   const [name, setName] = useState<string | null>(null)
   const [code, setCode] = useState<string | null>(null)
-  const [isolationStrategy, setIsolationStrategy] =
-    useState<IsolationStrategies>(IsolationStrategies.ISOLATED)
+  const [isolationStrategy, setIsolationStrategy] = useState<IsolationStrategy>(
+    IsolationStrategy.ISOLATED,
+  )
 
-  const [description, setDescription] = useState<EnvironmentDescriptions>(
-    EnvironmentDescriptions.ISOLATED,
+  const [description, setDescription] = useState<EnvironmentDescription>(
+    EnvironmentDescription.ISOLATED,
   )
 
   const handleCreateEnvironment = useCallback(async () => {
@@ -72,7 +73,7 @@ export default function EnvironmentsCreateModal({
       })) as Environment
 
       onSelectEnvironment(newEnvironment)
-      onChangeMode(EnvironmentModes.VIEW, newEnvironment)
+      onChangeMode(EnvironmentMode.VIEW, newEnvironment)
     } catch (error) {
       console.error("Error creating environment:", error)
     } finally {
@@ -81,7 +82,7 @@ export default function EnvironmentsCreateModal({
   }, [name, code, isolationStrategy, onSelectEnvironment, onChangeMode])
 
   const handleCancelCreate = useCallback(() => {
-    onChangeMode(EnvironmentModes.VIEW)
+    onChangeMode(EnvironmentMode.VIEW)
   }, [onChangeMode])
 
   const handleAttributesSubmit = useCallback(
@@ -94,12 +95,9 @@ export default function EnvironmentsCreateModal({
     [handleCreateEnvironment],
   )
 
-  const handleStrategyChange = useCallback(
-    (newStrategy: IsolationStrategies) => {
-      setIsolationStrategy(newStrategy)
-    },
-    [],
-  )
+  const handleStrategyChange = useCallback((newStrategy: IsolationStrategy) => {
+    setIsolationStrategy(newStrategy)
+  }, [])
 
   const handleNameChange = useCallback((newName: string) => {
     setName(newName)
@@ -110,7 +108,7 @@ export default function EnvironmentsCreateModal({
   }, [])
 
   const handleDescriptionChange = useCallback(
-    (newDescription: EnvironmentDescriptions) => {
+    (newDescription: EnvironmentDescription) => {
       setDescription(newDescription)
     },
     [],
@@ -119,16 +117,16 @@ export default function EnvironmentsCreateModal({
   const renderDescription = useCallback(() => {
     const words = description.split(" ")
     const tags = words.filter((word) =>
-      Object.values(IsolationStrategies).includes(
-        word.toUpperCase() as IsolationStrategies,
+      Object.values(IsolationStrategy).includes(
+        word.toUpperCase() as IsolationStrategy,
       ),
     )
 
     return words.map((word, index) => {
-      if (tags.includes(word as IsolationStrategies)) {
+      if (tags.includes(word as IsolationStrategy)) {
         return (
           <Badge key={index} variant="secondary">
-            {(word as IsolationStrategies) === IsolationStrategies.ISOLATED ? (
+            {(word as IsolationStrategy) === IsolationStrategy.ISOLATED ? (
               <GlobeLock />
             ) : (
               <Globe />

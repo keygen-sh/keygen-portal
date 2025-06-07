@@ -4,6 +4,10 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { DialogFooter } from "@/components/ui/dialog"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Form,
   FormField,
@@ -12,9 +16,6 @@ import {
   FormMessage,
   FormLabel,
 } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { DialogFooter } from "@/components/ui/dialog"
 import {
   Tooltip,
   TooltipTrigger,
@@ -71,106 +72,108 @@ export default function EnvironmentEditForm({
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex h-full flex-col"
       >
-        <div className="flex h-full flex-col justify-between p-4 pt-0">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    {...field}
-                    variant="title"
-                    placeholder="Enter environment name..."
-                    className="border-none text-2xl placeholder:text-content-subdued!"
-                    autoComplete="off"
-                    disabled={loading}
-                    onChange={(e) => {
-                      field.onChange(e)
-                      onNameChange?.(e.target.value)
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <ScrollArea className="h-[60vh] md:h-[25vh]">
+          <div className="flex h-full flex-col justify-between p-4 pt-0">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      variant="title"
+                      placeholder="Enter environment name..."
+                      className="my-4 border-none text-xl placeholder:text-content-subdued! md:text-2xl"
+                      autoComplete="off"
+                      disabled={loading}
+                      onChange={(e) => {
+                        field.onChange(e)
+                        onNameChange?.(e.target.value)
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <Card className="my-4 rounded-sm bg-background p-0">
-            <CardHeader className="h-9 rounded-t-sm border-b border-accent bg-background-1 px-4 py-2">
-              <CardTitle className="text-sm text-content-loud">
-                Environment Attributes
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 p-4">
-              <FormField
-                control={form.control}
-                name="code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Code</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="e.g. qa"
-                        disabled={loading}
-                        onChange={(e) => {
-                          field.onChange(e)
-                          onCodeChange?.(e.target.value)
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                    <Tooltip>
-                      <TooltipTrigger
-                        type="button"
-                        className="flex items-center gap-1 text-sm text-brand-amber md:text-xs"
-                      >
-                        <TriangleAlert className="size-4 flex-none md:size-3" />
-                        <p className="hidden md:inline">
-                          Renaming an environment code that is already in use
-                          may cause requests using the old environment code to
-                          fail.
-                        </p>
-                        <p className="md:hidden">
-                          See&nbsp;
-                          <a
-                            href="https://keygen.sh/docs/api/environments/#environments-update"
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-brand-amber underline"
-                          >
-                            documentation
-                          </a>
-                          &nbsp;before updating.
-                        </p>
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-88 bg-background-4 text-content-muted">
-                        We suggest making sure the existing code is no longer in
-                        use before changing it, to prevent unintended request
-                        failures.
-                      </TooltipContent>
-                    </Tooltip>
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
+            <Card className="rounded-sm bg-background p-0">
+              <CardHeader className="h-9 rounded-t-sm border-b border-accent bg-background-1 px-4 py-2">
+                <CardTitle className="text-sm text-content-loud">
+                  Environment Attributes
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 p-4">
+                <FormField
+                  control={form.control}
+                  name="code"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Code</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="e.g. qa"
+                          disabled={loading}
+                          onChange={(e) => {
+                            field.onChange(e)
+                            onCodeChange?.(e.target.value)
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                      <Tooltip>
+                        <TooltipTrigger
+                          type="button"
+                          className="flex items-center gap-1 text-sm text-brand-amber md:text-xs"
+                        >
+                          <TriangleAlert className="size-4 flex-none md:size-3" />
+                          <p className="hidden md:inline">
+                            Renaming an environment code that is already in use
+                            may cause requests using the old environment code to
+                            fail.
+                          </p>
+                          <p className="md:hidden">
+                            See&nbsp;
+                            <a
+                              href="https://keygen.sh/docs/api/environments/#environments-update"
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-brand-amber underline"
+                            >
+                              documentation
+                            </a>
+                            &nbsp;before updating.
+                          </p>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-88 bg-background-4 text-content-muted">
+                          We suggest making sure the existing code is no longer
+                          in use before changing it, to prevent unintended
+                          request failures.
+                        </TooltipContent>
+                      </Tooltip>
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </ScrollArea>
 
-          <p className="mt-8 hidden flex-wrap items-center text-sm text-content-subdued md:flex">
-            To learn more about environments, see the&nbsp;
-            <Button asChild variant="link" size="link">
-              <a
-                href="https://keygen.sh/docs/api/environments"
-                target="_blank"
-                rel="noreferrer"
-              >
-                documentation
-              </a>
-            </Button>
-            &nbsp;for more information.
-          </p>
-        </div>
+        <p className="hidden flex-wrap items-center p-4 text-sm text-content-subdued md:flex">
+          To learn more about environments, see the&nbsp;
+          <Button asChild variant="link" size="link">
+            <a
+              href="https://keygen.sh/docs/api/environments"
+              target="_blank"
+              rel="noreferrer"
+            >
+              documentation
+            </a>
+          </Button>
+          &nbsp;for more information.
+        </p>
 
         <DialogFooter className="flex flex-col-reverse gap-4 border-t border-accent p-4 md:flex-row">
           <Button

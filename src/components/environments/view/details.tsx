@@ -123,15 +123,6 @@ export default function EnvironmentDetails({
               />
             </div>
           </CollapsibleMenu>
-          <CollapsibleMenu title="Tokens">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-sm font-semibold">Environment Tokens</h2>
-              <Button size="sm" variant="outline">
-                Generate Token
-              </Button>
-            </div>
-            <p className="text-xs text-muted-foreground">No tokens yet...</p>
-          </CollapsibleMenu>
         </CollapsibleCard>
       </div>
     </>

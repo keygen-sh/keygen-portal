@@ -141,7 +141,7 @@ export default function EnvironmentsCreateModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="flex min-w-[700px] flex-col justify-between p-0 transition-all duration-300">
+      <DialogContent className="flex flex-col justify-between p-0 transition-all duration-300 md:min-w-[700px]">
         <DialogHeader className="h-fit border-b border-accent p-2">
           <DialogDescription className="flex h-5 items-center space-x-1 text-xs">
             {renderDescription()}

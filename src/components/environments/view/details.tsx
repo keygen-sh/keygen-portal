@@ -109,7 +109,7 @@ export default function EnvironmentDetails({
             <div className="flex-1 space-y-4">
               <Attribute label="Code" value={environment.attributes.code} />
               <Attribute
-                label="Isolation"
+                label="Isolation Strategy"
                 value={environment.attributes.isolationStrategy}
               />
             </div>

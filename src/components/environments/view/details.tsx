@@ -35,7 +35,7 @@ export default function EnvironmentDetails({
 }: EnvironmentDetailsProps) {
   return (
     <>
-      <div className="flex flex-col justify-between px-4 py-0 md:flex-row">
+      <div className="flex flex-col justify-between p-4 md:flex-row">
         <div className="flex flex-col space-y-2">
           <h2 className="text-sm">
             {environment.attributes.isolationStrategy === "ISOLATED" ? (
@@ -100,7 +100,7 @@ export default function EnvironmentDetails({
         </div>
       </div>
 
-      <div className="mx-4">
+      <div className="m-4 mt-0">
         <CollapsibleCard title="Environment attributes">
           <CollapsibleMenu
             title="Environment details"

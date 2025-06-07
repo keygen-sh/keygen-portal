@@ -22,7 +22,7 @@ export default function EnvironmentsList({
   onViewDetails,
 }: EnvironmentsListProps) {
   return (
-    <div className="flex flex-grow flex-col justify-between px-4">
+    <div className="px-4">
       {data && data.length > 0 ? (
         <Table>
           <TableHeader>
@@ -49,7 +49,7 @@ export default function EnvironmentsList({
           </TableBody>
         </Table>
       ) : fetching ? (
-        <div className="flex h-full w-full items-center justify-center">
+        <div className="flex h-[50vh] w-full items-center justify-center">
           <Loading.Dots />
         </div>
       ) : (

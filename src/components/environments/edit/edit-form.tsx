@@ -175,16 +175,20 @@ export default function EnvironmentEditForm({
           &nbsp;for more information.
         </p>
 
-        <DialogFooter className="flex flex-col-reverse gap-4 border-t border-accent p-4 md:flex-row">
+        <DialogFooter className="flex flex-row gap-4 border-t border-accent p-4">
           <Button
             variant="outline"
             type="button"
             onClick={onCancel}
-            className="w-full md:w-48"
+            className="max-w-[12rem] flex-1 basis-1/2"
           >
             Cancel
           </Button>
-          <Button type="submit" className="w-full md:w-48" disabled={loading}>
+          <Button
+            type="submit"
+            className="max-w-[12rem] flex-1 basis-1/2"
+            disabled={loading}
+          >
             {loading ? <Loading.Dots className="bg-background" /> : "Update"}
           </Button>
         </DialogFooter>

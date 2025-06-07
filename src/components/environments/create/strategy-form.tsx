@@ -160,20 +160,23 @@ export default function StrategyForm({
             )}
           />
 
-          <div className="mt-8 flex items-center text-sm text-content-subdued">
-            For more information on isolation strategies and their effects,
-            please see
-            <Button variant="link" size="link" className="ml-1">
+          <p className="mt-8 flex flex-wrap items-center text-sm text-content-subdued">
+            For more information
+            <span className="hidden md:inline">
+              &nbsp;on isolation strategies and their effects
+            </span>
+            , see&nbsp;
+            <Button asChild variant="link" size="link">
               <a
                 href="https://keygen.sh/docs/api/environments/#notes-on-isolation"
                 target="_blank"
                 rel="noreferrer"
               >
-                Notes on Isolation
+                Notes&nbsp;on&nbsp;Isolation
               </a>
             </Button>
             .
-          </div>
+          </p>
         </div>
 
         <DialogFooter className="border-t border-accent p-4">

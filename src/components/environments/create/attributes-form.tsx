@@ -132,11 +132,9 @@ export default function AttributesForm({
             />
           </SectionCard>
 
-          <div className="mt-8 flex items-center space-x-1 text-sm">
-            <p className="text-content-subdued">
-              If you want to learn more about environments, view the
-            </p>
-            <Button variant="link" size="link">
+          <p className="mt-8 flex flex-wrap items-center text-sm text-content-subdued">
+            To learn more about environments, see the&nbsp;
+            <Button asChild variant="link" size="link">
               <a
                 href="https://keygen.sh/docs/api/environments/"
                 target="_blank"
@@ -145,8 +143,8 @@ export default function AttributesForm({
                 documentation
               </a>
             </Button>
-            <p className="text-content-subdued">for more information.</p>
-          </div>
+            &nbsp;for more information.
+          </p>
         </div>
         <DialogFooter className="border-t border-accent p-4">
           <Button

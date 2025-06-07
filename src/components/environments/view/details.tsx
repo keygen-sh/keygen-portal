@@ -79,7 +79,9 @@ export default function EnvironmentDetails({
                 </AlertDialogTitle>
                 <AlertDialogDescription>
                   This will remove the environment and queue all resources for
-                  removal. This action is irreversible.
+                  removal.
+                  <br />
+                  This action cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

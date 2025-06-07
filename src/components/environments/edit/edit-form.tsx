@@ -124,13 +124,25 @@ export default function EnvironmentEditForm({
                     <Tooltip>
                       <TooltipTrigger
                         type="button"
-                        className="flex items-center gap-1 text-xs text-brand-amber"
+                        className="flex items-center gap-1 text-sm text-brand-amber md:text-xs"
                       >
-                        <TriangleAlert className="size-3" />
-                        <p>
+                        <TriangleAlert className="size-4 flex-none md:size-3" />
+                        <p className="hidden md:inline">
                           Renaming an environment code that is already in use
                           may cause requests using the old environment code to
                           fail.
+                        </p>
+                        <p className="md:hidden">
+                          See&nbsp;
+                          <a
+                            href="https://keygen.sh/docs/api/environments/#environments-update"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-brand-amber underline"
+                          >
+                            documentation
+                          </a>
+                          &nbsp;before updating.
                         </p>
                       </TooltipTrigger>
                       <TooltipContent className="max-w-88 bg-background-4 text-content-muted">
@@ -145,20 +157,19 @@ export default function EnvironmentEditForm({
             </CardContent>
           </Card>
 
-          <div className="mt-4 flex items-center space-x-1 text-sm">
-            <p className="text-content-subdued">
-              If you want to learn more about environments, view the
-            </p>
-            <Button variant="link" size="link">
+          <p className="mt-8 hidden flex-wrap items-center text-sm text-content-subdued md:flex">
+            To learn more about environments, see the&nbsp;
+            <Button asChild variant="link" size="link">
               <a
-                href="https://keygen.sh/docs/api/environments/"
+                href="https://keygen.sh/docs/api/environments"
                 target="_blank"
+                rel="noreferrer"
               >
                 documentation
               </a>
             </Button>
-            <p className="text-content-subdued">for more information.</p>
-          </div>
+            &nbsp;for more information.
+          </p>
         </div>
 
         <DialogFooter className="border-t border-accent p-4">

@@ -83,7 +83,7 @@ export default function AttributesForm({
                     {...field}
                     variant="title"
                     placeholder="Enter environment name..."
-                    className="border-none text-2xl placeholder:text-content-subdued!"
+                    className="border-none text-xl placeholder:text-content-subdued! md:text-2xl"
                     autoComplete="off"
                     disabled={loading}
                     onChange={(e) => {

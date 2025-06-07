@@ -35,7 +35,7 @@ export default function EnvironmentDetails({
 }: EnvironmentDetailsProps) {
   return (
     <>
-      <div className="flex justify-between px-4 py-0">
+      <div className="flex flex-col justify-between px-4 py-0 md:flex-row">
         <div className="flex flex-col space-y-2">
           <h2 className="text-sm">
             {environment.attributes.isolationStrategy === "ISOLATED" ? (
@@ -64,7 +64,10 @@ export default function EnvironmentDetails({
             </Button>
           </div>
         </div>
-        <div className="space-x-2">
+        <div className="my-2 block md:hidden">
+          <Separator />
+        </div>
+        <div className="mt-2 flex space-x-2 md:mt-0">
           <Button variant="outline" onClick={onEditEnvironment}>
             Edit
           </Button>
@@ -99,7 +102,10 @@ export default function EnvironmentDetails({
 
       <div className="mx-4">
         <CollapsibleCard title="Environment attributes">
-          <CollapsibleMenu title="Environment details" className="flex">
+          <CollapsibleMenu
+            title="Environment details"
+            className="flex flex-col space-y-4 md:flex-row md:space-y-0"
+          >
             <div className="flex-1 space-y-4">
               <Attribute label="Code" value={environment.attributes.code} />
               <Attribute
@@ -107,7 +113,7 @@ export default function EnvironmentDetails({
                 value={environment.attributes.isolationStrategy}
               />
             </div>
-            <div className="mx-4">
+            <div className="mx-4 hidden md:block">
               <Separator orientation="vertical" dashed={true} />
             </div>
             <div className="flex-1 space-y-4">

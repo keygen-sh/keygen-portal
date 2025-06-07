@@ -79,10 +79,10 @@ export default function StrategyForm({
             name="isolationStrategy"
             render={({ field }) => (
               <FormItem>
-                <div className="flex gap-4">
+                <div className="flex flex-col gap-4 md:flex-row">
                   <Card
                     className={cn(
-                      "w-60 cursor-pointer rounded-xl bg-background p-px transition-colors duration-200",
+                      "w-60 cursor-pointer rounded-lg bg-background p-0.5 transition-colors duration-200 md:rounded-xl md:p-px",
                       field.value === IsolationStrategy.ISOLATED
                         ? "bg-gradient-to-r from-primary to-secondary"
                         : "",
@@ -119,7 +119,7 @@ export default function StrategyForm({
 
                   <Card
                     className={cn(
-                      "w-60 cursor-pointer rounded-xl bg-background p-px transition-colors duration-200",
+                      "w-60 cursor-pointer rounded-lg bg-background p-0.5 transition-colors duration-200 md:rounded-xl md:p-px",
                       field.value === IsolationStrategy.SHARED
                         ? "bg-gradient-to-r from-primary to-secondary"
                         : "",

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react"
 
 import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Dialog,
   DialogContent,
@@ -138,23 +139,25 @@ export default function EnvironmentsViewModal({
           </DialogTitle>
         </DialogHeader>
 
-        {view === EnvironmentView.LIST && (
-          <EnvironmentsList
-            data={data}
-            fetching={fetching}
-            onViewDetails={handleViewDetails}
-          />
-        )}
+        <ScrollArea className="h-[60vh] md:h-[40vh]">
+          {view === EnvironmentView.LIST && (
+            <EnvironmentsList
+              data={data}
+              fetching={fetching}
+              onViewDetails={handleViewDetails}
+            />
+          )}
 
-        {view === EnvironmentView.DETAILS && selectedEnvironment && (
-          <EnvironmentDetails
-            environment={selectedEnvironment}
-            onEditEnvironment={() => handleStartEdit(selectedEnvironment)}
-            onDeleteEnvironment={() =>
-              handleDeleteEnvironment(selectedEnvironment.id)
-            }
-          />
-        )}
+          {view === EnvironmentView.DETAILS && selectedEnvironment && (
+            <EnvironmentDetails
+              environment={selectedEnvironment}
+              onEditEnvironment={() => handleStartEdit(selectedEnvironment)}
+              onDeleteEnvironment={() =>
+                handleDeleteEnvironment(selectedEnvironment.id)
+              }
+            />
+          )}
+        </ScrollArea>
         <DialogFooter className="border-t border-accent p-4">
           {view === EnvironmentView.DETAILS && selectedEnvironment && (
             <Button variant="outline" onClick={handleBackToList}>

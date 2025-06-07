@@ -146,17 +146,18 @@ export default function AttributesForm({
             &nbsp;for more information.
           </p>
         </div>
-        <DialogFooter className="border-t border-accent p-4">
+
+        <DialogFooter className="flex flex-col-reverse gap-4 border-t border-accent p-4 md:flex-row">
           <Button
             variant="outline"
             type="button"
             onClick={onCancel}
             disabled={loading}
-            className="w-48"
+            className="w-full md:w-48"
           >
             Cancel
           </Button>
-          <Button type="submit" className="w-48" disabled={loading}>
+          <Button type="submit" className="w-full md:w-48" disabled={loading}>
             {loading ? <Loading.Dots className="bg-background" /> : "Create"}
           </Button>
         </DialogFooter>

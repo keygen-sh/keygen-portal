@@ -115,7 +115,7 @@ export default function AttributesForm({
                       {isMobile ? (
                         <Popover>
                           <PopoverTrigger onClick={(e) => e.stopPropagation()}>
-                            <Info className="size-6 text-content-subdued" />
+                            <Info className="size-5 text-content-subdued" />
                           </PopoverTrigger>
                           <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
                             The unique code for the environment. The code cannot

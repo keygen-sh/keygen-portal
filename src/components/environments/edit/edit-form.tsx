@@ -121,13 +121,13 @@ export default function EnvironmentEditForm({
                   render={({ field }) => (
                     <FormItem>
                       <div className="flex items-center gap-2">
-                        <FormLabel>Code</FormLabel>
+                        <FormLabel className="">Code</FormLabel>
                         {isMobile ? (
                           <Popover>
                             <PopoverTrigger
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <Info className="size-6 text-content-subdued" />
+                              <Info className="size-5 text-content-subdued" />
                             </PopoverTrigger>
                             <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
                               The unique code for the environment. The code

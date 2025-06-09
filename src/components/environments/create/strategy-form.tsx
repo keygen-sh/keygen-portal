@@ -217,18 +217,15 @@ export default function StrategyForm({
         </ScrollArea>
 
         <p className="hidden flex-wrap items-center p-4 text-sm text-content-subdued md:flex">
-          For more information
-          <span className="hidden md:inline">
-            &nbsp;on isolation strategies and their effects
-          </span>
-          , see&nbsp;
+          For more information on isolation strategies and their effects,
+          see&nbsp;
           <Button asChild variant="link" size="link">
             <a
               href="https://keygen.sh/docs/api/environments/#notes-on-isolation"
               target="_blank"
               rel="noreferrer"
             >
-              Notes&nbsp;on&nbsp;Isolation
+              Notes on Isolation
             </a>
           </Button>
           .

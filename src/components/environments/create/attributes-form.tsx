@@ -20,9 +20,15 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip"
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover"
 
 import { Info } from "lucide-react"
 
+import { useMobile } from "@/hooks/use-mobile"
 import SectionCard from "@/components/section-card"
 import * as Loading from "@/components/loading"
 
@@ -52,6 +58,8 @@ export default function AttributesForm({
   onCancel,
   loading,
 }: AttributesFormProps) {
+  const isMobile = useMobile()
+
   const form = useForm<AttributesFormValues>({
     resolver: zodResolver(attributesSchema),
     defaultValues: {
@@ -104,15 +112,27 @@ export default function AttributesForm({
                   <FormItem>
                     <div className="flex items-center gap-2">
                       <FormLabel>Code</FormLabel>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Info className="size-4 pt-0.5 text-content-subdued" />
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-80 bg-background-4 text-content-muted">
-                          The unique code for the environment. The code cannot
-                          collide with any environments that already exist.
-                        </TooltipContent>
-                      </Tooltip>
+                      {isMobile ? (
+                        <Popover>
+                          <PopoverTrigger onClick={(e) => e.stopPropagation()}>
+                            <Info className="size-6 text-content-subdued" />
+                          </PopoverTrigger>
+                          <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
+                            The unique code for the environment. The code cannot
+                            collide with any environments that already exist.
+                          </PopoverContent>
+                        </Popover>
+                      ) : (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="size-4 pt-0.5 text-content-subdued" />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-80 bg-background-4 text-content-muted">
+                            The unique code for the environment. The code cannot
+                            collide with any environments that already exist.
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
                     </div>
                     <FormControl>
                       <Input

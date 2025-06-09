@@ -72,13 +72,13 @@ export default function StrategyForm({
         <ScrollArea className="h-[60vh] md:h-[25vh]">
           <div className="flex h-full flex-col justify-between p-4">
             <div className="mb-6 flex items-center gap-2">
-              <h2 className="text-lg font-semibold">
+              <h2 className="text-xl font-semibold md:text-lg">
                 Choose isolation strategy
               </h2>
               {isMobile ? (
                 <Popover>
                   <PopoverTrigger>
-                    <Info className="size-6 text-content-subdued" />
+                    <Info className="size-5 text-content-subdued" />
                   </PopoverTrigger>
                   <PopoverContent className="mr-2 max-w-60 bg-background-4 text-content-muted">
                     The strategy used for isolating the environment from other
@@ -120,11 +120,11 @@ export default function StrategyForm({
                       <div className="space-y-4 rounded-[inherit] bg-background p-4">
                         <CardHeader className="p-0">
                           <CardTitle>
-                            <GlobeLock className="size-5 text-content-subdued" />
+                            <GlobeLock className="size-6 text-content-subdued md:size-5" />
                           </CardTitle>
                         </CardHeader>
                         <CardContent className="flex items-center gap-2 p-0">
-                          <p className="text-base font-medium text-content-loud">
+                          <p className="text-lg font-medium text-content-loud md:text-base">
                             Isolated
                           </p>
                           {isMobile ? (
@@ -132,7 +132,7 @@ export default function StrategyForm({
                               <PopoverTrigger
                                 onClick={(e) => e.stopPropagation()}
                               >
-                                <Info className="size-6 text-content-subdued" />
+                                <Info className="size-5 text-content-subdued" />
                               </PopoverTrigger>
                               <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
                                 The environment will be isolated from all other
@@ -172,11 +172,11 @@ export default function StrategyForm({
                       <div className="space-y-4 rounded-[inherit] bg-background p-4">
                         <CardHeader className="p-0">
                           <CardTitle>
-                            <Globe className="size-5 text-content-subdued" />
+                            <Globe className="size-6 text-content-subdued md:size-5" />
                           </CardTitle>
                         </CardHeader>
                         <CardContent className="flex items-center gap-2 p-0">
-                          <p className="text-base font-medium text-content-loud">
+                          <p className="text-lg font-medium text-content-loud md:text-base">
                             Shared
                           </p>
                           {isMobile ? (
@@ -184,7 +184,7 @@ export default function StrategyForm({
                               <PopoverTrigger
                                 onClick={(e) => e.stopPropagation()}
                               >
-                                <Info className="size-6 text-content-subdued" />
+                                <Info className="size-5 text-content-subdued" />
                               </PopoverTrigger>
                               <PopoverContent className="ml-2 max-w-60 bg-background-4 text-content-muted">
                                 The environment will be shared with the global

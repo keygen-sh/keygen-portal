@@ -30,7 +30,7 @@ import {
 
 import { useMobile } from "@/hooks/use-mobile"
 
-import { TriangleAlert } from "lucide-react"
+import { Info, TriangleAlert } from "lucide-react"
 
 import { Environment } from "@/types/environments"
 import * as Loading from "@/components/loading"
@@ -120,7 +120,34 @@ export default function EnvironmentEditForm({
                   name="code"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Code</FormLabel>
+                      <div className="flex items-center gap-2">
+                        <FormLabel>Code</FormLabel>
+                        {isMobile ? (
+                          <Popover>
+                            <PopoverTrigger
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Info className="size-6 text-content-subdued" />
+                            </PopoverTrigger>
+                            <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
+                              The unique code for the environment. The code
+                              cannot collide with any environments that already
+                              exist.
+                            </PopoverContent>
+                          </Popover>
+                        ) : (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Info className="size-4 text-content-subdued" />
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-80 bg-background-4 text-content-muted">
+                              The unique code for the environment. The code
+                              cannot collide with any environments that already
+                              exist.
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
+                      </div>
                       <FormControl>
                         <Input
                           {...field}

@@ -61,7 +61,7 @@ export default function StrategyForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <ScrollArea className="h-[60vh] md:h-[20vh]">
+        <ScrollArea className="h-[60vh] md:h-[25vh]">
           <div className="flex h-full flex-col justify-between p-4">
             <div className="mb-6 flex items-center gap-2">
               <h2 className="text-lg font-semibold">

@@ -19,18 +19,21 @@ import { Copy, Globe, GlobeLock } from "lucide-react"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import Attribute from "@/components/attribute"
+import * as Loading from "@/components/loading"
 
 import { Environment } from "@/types/environments"
 
 interface EnvironmentDetailsProps {
   environment: Environment
   onEditEnvironment: () => void
+  loading: boolean
   onDeleteEnvironment: () => void
 }
 
 export default function EnvironmentDetails({
   environment,
   onEditEnvironment,
+  loading,
   onDeleteEnvironment,
 }: EnvironmentDetailsProps) {
   return (
@@ -89,10 +92,20 @@ export default function EnvironmentDetails({
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline" disabled={loading}>
+                    Cancel
+                  </Button>
                 </AlertDialogCancel>
-                <Button variant="destructive" onClick={onDeleteEnvironment}>
-                  Confirm
+                <Button
+                  variant="destructive"
+                  disabled={loading}
+                  onClick={onDeleteEnvironment}
+                >
+                  {loading ? (
+                    <Loading.Dots className="bg-background" />
+                  ) : (
+                    "Create"
+                  )}
                 </Button>
               </AlertDialogFooter>
             </AlertDialogContent>

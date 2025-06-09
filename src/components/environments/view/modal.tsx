@@ -47,6 +47,7 @@ export default function EnvironmentsViewModal({
 }: EnvironmentsViewModalProps) {
   const [data, setData] = useState<Environment[]>([])
   const [fetching, setFetching] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [view, setView] = useState<EnvironmentView>(EnvironmentView.LIST)
 
   useEffect(() => {
@@ -90,6 +91,7 @@ export default function EnvironmentsViewModal({
   )
 
   const handleDeleteEnvironment = useCallback(async (id: string) => {
+    setLoading(true)
     await keygen.environments
       .remove({ id })
       .then(() => {
@@ -99,6 +101,9 @@ export default function EnvironmentsViewModal({
       })
       .catch((error) => {
         console.error("Error deleting environment:", error)
+      })
+      .finally(() => {
+        setLoading(false)
       })
   }, [])
 
@@ -152,6 +157,7 @@ export default function EnvironmentsViewModal({
             <EnvironmentDetails
               environment={selectedEnvironment}
               onEditEnvironment={() => handleStartEdit(selectedEnvironment)}
+              loading={loading}
               onDeleteEnvironment={() =>
                 handleDeleteEnvironment(selectedEnvironment.id)
               }

@@ -15,9 +15,15 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip"
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover"
 
 import { GlobeLock, Globe, Info } from "lucide-react"
 
+import { useMobile } from "@/hooks/use-mobile"
 import { IsolationStrategy, EnvironmentDescription } from "@/types/environments"
 
 const strategySchema = z.object({
@@ -44,6 +50,8 @@ export default function StrategyForm({
   onSubmit,
   onCancel,
 }: StrategyFormProps) {
+  const isMobile = useMobile()
+
   const form = useForm<StrategyValues>({
     resolver: zodResolver(strategySchema),
     defaultValues: {
@@ -67,15 +75,27 @@ export default function StrategyForm({
               <h2 className="text-lg font-semibold">
                 Choose isolation strategy
               </h2>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="size-4 pt-0.5 text-content-subdued" />
-                </TooltipTrigger>
-                <TooltipContent className="max-w-60 bg-background-4 text-content-muted">
-                  The strategy used for isolating the environment from other
-                  environments.
-                </TooltipContent>
-              </Tooltip>
+              {isMobile ? (
+                <Popover>
+                  <PopoverTrigger>
+                    <Info className="size-6 text-content-subdued" />
+                  </PopoverTrigger>
+                  <PopoverContent className="mr-2 max-w-60 bg-background-4 text-content-muted">
+                    The strategy used for isolating the environment from other
+                    environments.
+                  </PopoverContent>
+                </Popover>
+              ) : (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="size-4 pt-0.5 text-content-subdued" />
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-60 bg-background-4 text-content-muted">
+                    The strategy used for isolating the environment from other
+                    environments.
+                  </TooltipContent>
+                </Tooltip>
+              )}
             </div>
 
             <FormField
@@ -107,16 +127,31 @@ export default function StrategyForm({
                           <p className="text-base font-medium text-content-loud">
                             Isolated
                           </p>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Info className="size-4 pt-0.5 text-content-subdued" />
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-64 bg-background-4 text-content-muted">
-                              The environment will be isolated from all other
-                              resources in other environments. This is
-                              effectively a separate Keygen account.
-                            </TooltipContent>
-                          </Tooltip>
+                          {isMobile ? (
+                            <Popover>
+                              <PopoverTrigger
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Info className="size-6 text-content-subdued" />
+                              </PopoverTrigger>
+                              <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
+                                The environment will be isolated from all other
+                                resources in other environments. This is
+                                effectively a separate Keygen account.
+                              </PopoverContent>
+                            </Popover>
+                          ) : (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Info className="size-4 pt-0.5 text-content-subdued" />
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-64 bg-background-4 text-content-muted">
+                                The environment will be isolated from all other
+                                resources in other environments. This is
+                                effectively a separate Keygen account.
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
                         </CardContent>
                       </div>
                     </Card>
@@ -144,16 +179,31 @@ export default function StrategyForm({
                           <p className="text-base font-medium text-content-loud">
                             Shared
                           </p>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Info className="size-4 pt-0.5 text-content-subdued" />
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-60 bg-background-4 text-content-muted">
-                              The environment will be shared with the global
-                              environment. Resources in the global environment
-                              will be available as read-only resources.
-                            </TooltipContent>
-                          </Tooltip>
+                          {isMobile ? (
+                            <Popover>
+                              <PopoverTrigger
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Info className="size-6 text-content-subdued" />
+                              </PopoverTrigger>
+                              <PopoverContent className="ml-2 max-w-60 bg-background-4 text-content-muted">
+                                The environment will be shared with the global
+                                environment. Resources in the global environment
+                                will be available as read-only resources.
+                              </PopoverContent>
+                            </Popover>
+                          ) : (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Info className="size-4 pt-0.5 text-content-subdued" />
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-60 bg-background-4 text-content-muted">
+                                The environment will be shared with the global
+                                environment. Resources in the global environment
+                                will be available as read-only resources.
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
                         </CardContent>
                       </div>
                     </Card>

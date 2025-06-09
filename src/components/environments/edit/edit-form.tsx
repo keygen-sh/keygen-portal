@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { DialogFooter } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
 import {
   Form,
   FormField,
@@ -21,6 +22,13 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip"
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover"
+
+import { useMobile } from "@/hooks/use-mobile"
 
 import { TriangleAlert } from "lucide-react"
 
@@ -54,6 +62,8 @@ export default function EnvironmentEditForm({
   onCancel,
   loading,
 }: EnvironmentEditProps) {
+  const isMobile = useMobile()
+
   const form = useForm<EditEnvironmentFormValues>({
     resolver: zodResolver(editEnvironmentSchema),
     defaultValues: {
@@ -123,36 +133,52 @@ export default function EnvironmentEditForm({
                         />
                       </FormControl>
                       <FormMessage />
-                      <Tooltip>
-                        <TooltipTrigger
-                          type="button"
-                          className="flex items-center gap-1 text-sm text-brand-amber md:text-xs"
-                        >
-                          <TriangleAlert className="size-4 flex-none md:size-3" />
-                          <p className="hidden md:inline">
-                            Renaming an environment code that is already in use
-                            may cause requests using the old environment code to
-                            fail.
-                          </p>
-                          <p className="md:hidden">
-                            See&nbsp;
-                            <a
-                              href="https://keygen.sh/docs/api/environments/#environments-update"
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-brand-amber underline"
-                            >
-                              documentation
-                            </a>
-                            &nbsp;before updating.
-                          </p>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-88 bg-background-4 text-content-muted">
-                          We suggest making sure the existing code is no longer
-                          in use before changing it, to prevent unintended
-                          request failures.
-                        </TooltipContent>
-                      </Tooltip>
+                      {isMobile ? (
+                        <Popover>
+                          <PopoverTrigger
+                            type="button"
+                            className="flex items-center gap-1 text-sm text-brand-amber"
+                          >
+                            <TriangleAlert className="size-5 flex-none pt-0.5" />
+
+                            <span className="text-brand-amber underline">
+                              Note on updating environment codes
+                            </span>
+                          </PopoverTrigger>
+                          <PopoverContent className="max-w-88 bg-background-4 text-content-muted">
+                            <span>
+                              Renaming an environment code that is already in
+                              use may cause requests using the old environment
+                              code to fail.
+                            </span>
+                            <Separator className="my-2 bg-content-subdued" />
+                            <span>
+                              We suggest making sure the existing code is no
+                              longer in use before changing it, to prevent
+                              unintended request failures.
+                            </span>
+                          </PopoverContent>
+                        </Popover>
+                      ) : (
+                        <Tooltip>
+                          <TooltipTrigger
+                            type="button"
+                            className="mtext-xs flex items-center gap-1 text-brand-amber"
+                          >
+                            <TriangleAlert className="size-3 flex-none" />
+                            <p>
+                              Renaming an environment code that is already in
+                              use may cause requests using the old environment
+                              code to fail.
+                            </p>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-88 bg-background-4 text-content-muted">
+                            We suggest making sure the existing code is no
+                            longer in use before changing it, to prevent
+                            unintended request failures.
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
                     </FormItem>
                   )}
                 />

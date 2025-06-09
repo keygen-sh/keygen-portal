@@ -27,7 +27,7 @@ export default function EnvironmentsList({
         <Table>
           <TableHeader>
             <TableRow className="pointer-events-none">
-              <TableHead className="w-48">Name</TableHead>
+              <TableHead className="w-48 pl-0">Name</TableHead>
               <TableHead className="w-12">Code</TableHead>
               <TableHead className="w-32">Isolation Strategy</TableHead>
             </TableRow>
@@ -39,7 +39,7 @@ export default function EnvironmentsList({
                 onClick={() => onViewDetails(env)}
                 className="cursor-pointer"
               >
-                <TableCell className="font-medium">
+                <TableCell className="pl-0 font-medium">
                   {env.attributes.name}
                 </TableCell>
                 <TableCell>{env.attributes.code}</TableCell>

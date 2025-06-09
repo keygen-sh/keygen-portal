@@ -190,7 +190,7 @@ export default function EnvironmentEditForm({
                         <Tooltip>
                           <TooltipTrigger
                             type="button"
-                            className="mtext-xs flex items-center gap-1 text-brand-amber"
+                            className="flex items-center gap-1 text-xs text-brand-amber"
                           >
                             <TriangleAlert className="size-3 flex-none" />
                             <p>

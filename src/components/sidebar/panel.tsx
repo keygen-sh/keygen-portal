@@ -47,7 +47,7 @@ import {
 } from "@/components/ui/card"
 
 import * as keygen from "@/keygen"
-import { useIsMobile } from "@/hooks/use-mobile"
+import { useMobile } from "@/hooks/use-mobile"
 import Icon from "@/components/icon"
 import Combobox from "./combobox"
 import Command from "./command"
@@ -79,7 +79,7 @@ export default function SidebarPanel(): React.ReactElement {
   const [selectedView, setSelectedView] = useState(View.HOME)
   const { open, setOpen } = useSidebar()
 
-  const isMobile = useIsMobile()
+  const isMobile = useMobile()
 
   return (
     <div className={cn("flex h-full", isMobile && "absolute z-50")}>

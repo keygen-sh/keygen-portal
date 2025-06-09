@@ -1,7 +1,7 @@
 import { Outlet } from "@tanstack/react-router"
 import { useSession } from "@/hooks/use-session"
 import { useSidebar } from "@/components/ui/sidebar"
-import { useIsMobile } from "@/hooks/use-mobile"
+import { useMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
@@ -34,7 +34,7 @@ export default function AppLayout() {
 
 function AppLayoutContent() {
   const { open } = useSidebar()
-  const isMobile = useIsMobile()
+  const isMobile = useMobile()
 
   return (
     <SidebarProvider>

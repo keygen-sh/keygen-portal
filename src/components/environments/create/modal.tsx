@@ -24,6 +24,7 @@ import {
   EnvironmentMode,
   IsolationStrategy,
   EnvironmentDescription,
+  EnvironmentErrorCode,
 } from "@/types/environments"
 
 import * as keygen from "@/keygen"
@@ -52,6 +53,7 @@ export default function EnvironmentsCreateModal({
   const [isolationStrategy, setIsolationStrategy] = useState<IsolationStrategy>(
     IsolationStrategy.ISOLATED,
   )
+  const [error, setError] = useState<string | null>(null)
 
   const [description, setDescription] = useState<EnvironmentDescription>(
     EnvironmentDescription.ISOLATED,
@@ -66,16 +68,27 @@ export default function EnvironmentsCreateModal({
     setLoading(true)
 
     try {
-      const newEnvironment = (await keygen.environments.create({
+      const result = await keygen.environments.create({
         name: name,
         code: code,
         isolationStrategy,
-      })) as Environment
+      })
+
+      if (result.errors) {
+        const errorCode = result.errors[0].code
+        if (errorCode === EnvironmentErrorCode.CODE_TAKEN) {
+          setError("Code already exists")
+        }
+
+        throw new Error(`${result.errors.map((e) => e.code).join(", ")}`)
+      }
+
+      const newEnvironment = result as Environment
 
       onSelectEnvironment(newEnvironment)
       onChangeMode(EnvironmentMode.VIEW, newEnvironment)
     } catch (error) {
-      console.error("Error creating environment:", error)
+      console.error(error)
     } finally {
       setLoading(false)
     }
@@ -187,6 +200,7 @@ export default function EnvironmentsCreateModal({
           <AttributesForm
             name={name}
             code={code}
+            error={error}
             onNameChange={handleNameChange}
             onCodeChange={handleCodeChange}
             onSubmit={handleAttributesSubmit}

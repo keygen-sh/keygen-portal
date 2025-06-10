@@ -42,6 +42,7 @@ type AttributesFormValues = z.infer<typeof attributesSchema>
 interface AttributesFormProps {
   name?: string | null
   code?: string | null
+  error?: string | null
   onNameChange?: (name: string) => void
   onCodeChange?: (code: string) => void
   onSubmit: (values: { name: string; code: string }) => void
@@ -52,6 +53,7 @@ interface AttributesFormProps {
 export default function AttributesForm({
   name,
   code,
+  error,
   onNameChange,
   onCodeChange,
   onSubmit,
@@ -145,7 +147,7 @@ export default function AttributesForm({
                         }}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage>{error || ""}</FormMessage>
                   </FormItem>
                 )}
               />

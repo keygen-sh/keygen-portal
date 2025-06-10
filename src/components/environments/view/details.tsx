@@ -61,9 +61,10 @@ export default function EnvironmentDetails({
               variant="clipboard"
               size="clipboard"
               onClick={() => copyToClipboard(environment.attributes.code)}
+              className="pb-0.5"
             >
               {environment.attributes.code}
-              <Copy className="size-3" />
+              <Copy className="size-3 pt-0.5" />
             </Button>
           </div>
         </div>

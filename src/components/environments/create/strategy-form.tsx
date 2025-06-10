@@ -136,8 +136,7 @@ export default function StrategyForm({
                               </PopoverTrigger>
                               <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
                                 The environment will be isolated from all other
-                                resources in other environments. This is
-                                effectively a separate Keygen account.
+                                resources in other environments.
                               </PopoverContent>
                             </Popover>
                           ) : (
@@ -147,8 +146,7 @@ export default function StrategyForm({
                               </TooltipTrigger>
                               <TooltipContent className="max-w-64 bg-background-4 text-content-muted">
                                 The environment will be isolated from all other
-                                resources in other environments. This is
-                                effectively a separate Keygen account.
+                                resources in other environments.
                               </TooltipContent>
                             </Tooltip>
                           )}

@@ -82,7 +82,7 @@ export default function EnvironmentEditForm({
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex h-full flex-col"
       >
-        <ScrollArea className="h-[60vh] md:h-[25vh]">
+        <ScrollArea className="h-[60vh] md:h-[30vh]">
           <div className="flex h-full flex-col justify-between p-4 pt-0">
             <FormField
               control={form.control}

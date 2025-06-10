@@ -45,6 +45,7 @@ type EditEnvironmentFormValues = z.infer<typeof editEnvironmentSchema>
 interface EnvironmentEditProps {
   name: string | null
   code: string | null
+  error: string | null
   onNameChange: (name: string) => void
   onCodeChange: (code: string) => void
   environment: Environment
@@ -56,6 +57,7 @@ interface EnvironmentEditProps {
 export default function EnvironmentEditForm({
   name,
   code,
+  error,
   onNameChange,
   onCodeChange,
   onSubmit,
@@ -159,7 +161,7 @@ export default function EnvironmentEditForm({
                           }}
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage>{error || ""}</FormMessage>
                       {isMobile ? (
                         <Popover>
                           <PopoverTrigger

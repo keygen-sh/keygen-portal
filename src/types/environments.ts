@@ -1,5 +1,9 @@
 import { APIResponse } from "@/types/api"
 
+export enum EnvironmentErrorCode {
+  CODE_TAKEN = "CODE_TAKEN",
+}
+
 export enum EnvironmentMode {
   VIEW = "view",
   EDIT = "edit",

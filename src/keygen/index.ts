@@ -13,8 +13,5 @@ export { verify }
 import * as environments from "./environments"
 export { environments }
 
-import { error, isAuthError } from "./errors"
-export { error, isAuthError }
-
 import { logout } from "./logout"
 export { logout }

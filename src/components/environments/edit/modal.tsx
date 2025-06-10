@@ -21,6 +21,7 @@ import {
   Environment,
   EnvironmentMode,
   IsolationStrategy,
+  EnvironmentErrorCode,
 } from "@/types/environments"
 
 import * as keygen from "@/keygen"
@@ -42,9 +43,10 @@ export default function EnvironmentsViewModal({
   onSelectEnvironment,
   onChangeMode,
 }: EnvironmentsViewModalProps) {
-  const [loading, setLoading] = useState(false)
   const [name, setName] = useState<string | null>(null)
   const [code, setCode] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (selectedEnvironment) {
@@ -75,20 +77,27 @@ export default function EnvironmentsViewModal({
         return
       }
 
-      const updatedEnvironment = (await keygen.environments.update({
+      const result = await keygen.environments.update({
         id: selectedEnvironment.id,
         name: updates.name ?? null,
         code: updates.code ?? null,
-      })) as Environment
+      })
 
-      if (!updatedEnvironment) {
-        throw new Error("Failed to update environment.")
+      if (result.errors) {
+        const errorCode = result.errors[0].code
+        if (errorCode === EnvironmentErrorCode.CODE_TAKEN) {
+          setError("Code already exists")
+        }
+
+        throw new Error(`${result.errors.map((e) => e.code).join(", ")}`)
       }
+
+      const updatedEnvironment = result as Environment
 
       onSelectEnvironment(updatedEnvironment)
       onChangeMode(EnvironmentMode.VIEW, updatedEnvironment)
     } catch (error) {
-      console.error("Error updating environment:", error)
+      console.error(error)
     } finally {
       setLoading(false)
     }
@@ -142,6 +151,7 @@ export default function EnvironmentsViewModal({
         <EditForm
           name={name}
           code={code}
+          error={error}
           onNameChange={handleNameChange}
           onCodeChange={handleCodeChange}
           environment={selectedEnvironment}

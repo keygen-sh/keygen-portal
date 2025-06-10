@@ -80,7 +80,7 @@ export default function AttributesForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <ScrollArea className="h-[60vh] md:h-[25vh]">
+        <ScrollArea className="h-[60vh] md:h-[30vh]">
           <div className="flex h-full flex-col justify-between p-4">
             <FormField
               control={form.control}

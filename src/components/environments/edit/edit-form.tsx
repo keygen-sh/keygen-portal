@@ -96,7 +96,7 @@ export default function EnvironmentEditForm({
                       {...field}
                       variant="title"
                       placeholder="Enter environment name..."
-                      className="my-4 border-none text-xl placeholder:text-content-subdued! md:text-2xl"
+                      className="mt-4 border-none text-xl placeholder:text-content-subdued! md:text-2xl"
                       autoComplete="off"
                       disabled={loading}
                       onChange={(e) => {
@@ -105,12 +105,12 @@ export default function EnvironmentEditForm({
                       }}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="ml-3" />
                 </FormItem>
               )}
             />
 
-            <Card className="rounded-sm bg-background p-0">
+            <Card className="mt-4 rounded-sm bg-background p-0">
               <CardHeader className="h-9 rounded-t-sm border-b border-accent bg-background-1 px-4 py-2">
                 <CardTitle className="text-sm text-content-loud">
                   Environment Attributes

@@ -92,7 +92,7 @@ export default function AttributesForm({
                       {...field}
                       variant="title"
                       placeholder="Enter environment name..."
-                      className="mb-4 border-none text-xl placeholder:text-content-subdued! md:text-2xl"
+                      className="border-none text-xl placeholder:text-content-subdued! md:text-2xl"
                       autoComplete="off"
                       disabled={loading}
                       onChange={(e) => {
@@ -106,7 +106,7 @@ export default function AttributesForm({
               )}
             />
 
-            <SectionCard title="Environment attributes">
+            <SectionCard title="Environment attributes" className="mt-4">
               <FormField
                 control={form.control}
                 name="code"

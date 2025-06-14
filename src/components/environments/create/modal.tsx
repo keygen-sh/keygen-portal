@@ -2,8 +2,6 @@ import { useState, useCallback } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import {
-  Dialog,
-  DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
@@ -19,6 +17,8 @@ import {
 
 import { Globe, GlobeLock } from "lucide-react"
 
+import { useSlide } from "@/hooks/use-slide"
+
 import {
   Environment,
   EnvironmentMode,
@@ -28,24 +28,21 @@ import {
 } from "@/types/environments"
 
 import * as keygen from "@/keygen"
-
+import * as Motion from "@/components/motion"
 import StrategyForm from "./strategy-form"
 import AttributesForm from "./attributes-form"
 
 interface EnvironmentsCreateModalProps {
-  open: boolean
-  onClose: () => void
   onSelectEnvironment: (env: Environment | null) => void
   onChangeMode: (mode: EnvironmentMode, env?: Environment) => void
 }
 
 export default function EnvironmentsCreateModal({
-  open,
-  onClose,
   onSelectEnvironment,
   onChangeMode,
 }: EnvironmentsCreateModalProps) {
-  const [step, setStep] = useState<0 | 1>(0)
+  const [step, direction, goTo] = useSlide([0, 1])
+
   const [loading, setLoading] = useState(false)
 
   const [name, setName] = useState<string | null>(null)
@@ -153,51 +150,50 @@ export default function EnvironmentsCreateModal({
   }, [description])
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="flex flex-col justify-between p-0 transition-all duration-300 md:min-w-[700px]">
-        <DialogHeader className="h-fit border-b border-accent p-2">
-          <DialogDescription className="flex h-5 items-center space-x-1 text-xs">
-            {renderDescription()}
-          </DialogDescription>
-          <DialogTitle>
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  {step === 0 ? (
-                    <BreadcrumbPage>Isolation strategy</BreadcrumbPage>
-                  ) : (
-                    <BreadcrumbLink onClick={() => setStep(0)}>
-                      Isolation strategy
-                    </BreadcrumbLink>
-                  )}
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  {step === 1 ? (
-                    <BreadcrumbPage>Attributes</BreadcrumbPage>
-                  ) : (
-                    <span className="text-sm font-medium break-words text-muted-foreground">
-                      Attributes
-                    </span>
-                  )}
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </DialogTitle>
-        </DialogHeader>
-
-        {step === 0 && (
+    <>
+      <DialogHeader className="h-fit border-b border-accent p-2">
+        <DialogDescription className="flex h-5 items-center space-x-1 text-xs">
+          {renderDescription()}
+        </DialogDescription>
+        <DialogTitle>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                {step === 0 ? (
+                  <BreadcrumbPage>Isolation strategy</BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink onClick={() => goTo(0)}>
+                    Isolation strategy
+                  </BreadcrumbLink>
+                )}
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                {step === 1 ? (
+                  <BreadcrumbPage>Attributes</BreadcrumbPage>
+                ) : (
+                  <span className="text-sm font-medium break-words text-muted-foreground">
+                    Attributes
+                  </span>
+                )}
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </DialogTitle>
+      </DialogHeader>
+      <Motion.Slide direction={direction}>
+        {step === 0 ? (
           <StrategyForm
+            key="strategy"
             isolationStrategy={isolationStrategy}
             onStrategyChange={handleStrategyChange}
             onDescriptionChange={handleDescriptionChange}
-            onSubmit={() => setStep(1)}
+            onSubmit={() => goTo(1)}
             onCancel={handleCancelCreate}
           />
-        )}
-
-        {step === 1 && (
+        ) : (
           <AttributesForm
+            key="attributes"
             name={name}
             code={code}
             error={error}
@@ -208,7 +204,7 @@ export default function EnvironmentsCreateModal({
             loading={loading}
           />
         )}
-      </DialogContent>
-    </Dialog>
+      </Motion.Slide>
+    </>
   )
 }

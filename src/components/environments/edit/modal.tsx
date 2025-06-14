@@ -2,8 +2,6 @@ import { useState, useEffect, useCallback } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import {
-  Dialog,
-  DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
@@ -25,20 +23,15 @@ import {
 } from "@/types/environments"
 
 import * as keygen from "@/keygen"
-
 import EditForm from "./edit-form"
 
 interface EnvironmentsViewModalProps {
-  open: boolean
-  onClose: () => void
   selectedEnvironment: Environment
   onSelectEnvironment: (env: Environment | null) => void
   onChangeMode: (mode: EnvironmentMode, env?: Environment) => void
 }
 
 export default function EnvironmentsViewModal({
-  open,
-  onClose,
   selectedEnvironment,
   onSelectEnvironment,
   onChangeMode,
@@ -116,50 +109,48 @@ export default function EnvironmentsViewModal({
   }, [])
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="flex flex-col justify-between p-0 transition-all duration-300 md:min-w-[700px]">
-        <DialogHeader className="h-fit border-b border-accent p-2">
-          <DialogDescription className="flex h-5 items-center space-x-1 text-xs text-content-normal">
-            Editing a
-            <Badge variant="secondary" className="mx-1">
-              {selectedEnvironment.attributes.isolationStrategy ===
-              IsolationStrategy.ISOLATED ? (
-                <>
-                  <GlobeLock />
-                  Isolated
-                </>
-              ) : (
-                <>
-                  <Globe />
-                  Shared
-                </>
-              )}
-            </Badge>
-            environment
-          </DialogDescription>
-          <DialogTitle>
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Update attributes</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </DialogTitle>
-        </DialogHeader>
+    <>
+      <DialogHeader className="h-fit border-b border-accent p-2">
+        <DialogDescription className="flex h-5 items-center space-x-1 text-xs text-content-normal">
+          Editing a
+          <Badge variant="secondary" className="mx-1">
+            {selectedEnvironment.attributes.isolationStrategy ===
+            IsolationStrategy.ISOLATED ? (
+              <>
+                <GlobeLock />
+                Isolated
+              </>
+            ) : (
+              <>
+                <Globe />
+                Shared
+              </>
+            )}
+          </Badge>
+          environment
+        </DialogDescription>
+        <DialogTitle>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbPage>Update attributes</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </DialogTitle>
+      </DialogHeader>
 
-        <EditForm
-          name={name}
-          code={code}
-          error={error}
-          onNameChange={handleNameChange}
-          onCodeChange={handleCodeChange}
-          environment={selectedEnvironment}
-          onSubmit={handleUpdateEnvironment}
-          onCancel={handleCancelUpdate}
-          loading={loading}
-        />
-      </DialogContent>
-    </Dialog>
+      <EditForm
+        name={name}
+        code={code}
+        error={error}
+        onNameChange={handleNameChange}
+        onCodeChange={handleCodeChange}
+        environment={selectedEnvironment}
+        onSubmit={handleUpdateEnvironment}
+        onCancel={handleCancelUpdate}
+        loading={loading}
+      />
+    </>
   )
 }

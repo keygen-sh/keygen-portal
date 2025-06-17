@@ -28,6 +28,7 @@ import {
 } from "@/types/environments"
 
 import * as keygen from "@/keygen"
+import { toast } from "@/lib/toast"
 import * as Motion from "@/components/motion"
 import StrategyForm from "./strategy-form"
 import AttributesForm from "./attributes-form"
@@ -58,7 +59,11 @@ export default function EnvironmentsCreateModal({
 
   const handleCreateEnvironment = useCallback(async () => {
     if (!name || !code) {
-      console.warn("Missing required fields.")
+      toast({
+        message: "Failed to create environment",
+        description: "Missing required fields.",
+        variant: "error",
+      })
       return
     }
 
@@ -82,10 +87,16 @@ export default function EnvironmentsCreateModal({
 
       const newEnvironment = result as Environment
 
+      toast({
+        message: "Environment created",
+        variant: "success",
+      })
+
       onSelectEnvironment(newEnvironment)
       onChangeMode(EnvironmentMode.VIEW, newEnvironment)
     } catch (error) {
       console.error(error)
+      toast({ message: "Failed to create environment", variant: "error" })
     } finally {
       setLoading(false)
     }

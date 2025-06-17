@@ -26,6 +26,7 @@ import {
 } from "@/types/environments"
 
 import * as keygen from "@/keygen"
+import { toast } from "@/lib/toast"
 import * as Motion from "@/components/motion"
 import EnvironmentsList from "./list"
 import EnvironmentDetails from "./details"
@@ -57,6 +58,10 @@ export default function EnvironmentsViewModal({
         setData(environments.data ?? [])
       } catch (error) {
         console.error("Error fetching environments:", error)
+        toast({
+          message: "Failed to fetch environments",
+          variant: "error",
+        })
       } finally {
         setFetching(false)
       }
@@ -96,11 +101,19 @@ export default function EnvironmentsViewModal({
       .remove({ id })
       .then(() => {
         setData((prev) => prev.filter((env) => env.id !== id))
+        toast({
+          message: "Environment deleted",
+          variant: "success",
+        })
         onSelectEnvironment(null)
         goTo(EnvironmentView.LIST)
       })
       .catch((error) => {
         console.error("Error deleting environment:", error)
+        toast({
+          message: "Failed to delete environment",
+          variant: "error",
+        })
       })
       .finally(() => {
         setLoading(false)

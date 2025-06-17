@@ -23,6 +23,7 @@ import {
 } from "@/types/environments"
 
 import * as keygen from "@/keygen"
+import { toast } from "@/lib/toast"
 import EditForm from "./edit-form"
 
 interface EnvironmentsViewModalProps {
@@ -65,6 +66,11 @@ export default function EnvironmentsViewModal({
 
       // Bail if no updates
       if (Object.keys(updates).length === 0) {
+        toast({
+          message: "No changes detected",
+          description: "No updates were made to the environment",
+          variant: "warning",
+        })
         setLoading(false)
         onChangeMode(EnvironmentMode.VIEW, selectedEnvironment)
         return
@@ -86,6 +92,11 @@ export default function EnvironmentsViewModal({
       }
 
       const updatedEnvironment = result as Environment
+
+      toast({
+        message: "Environment updated",
+        variant: "success",
+      })
 
       onSelectEnvironment(updatedEnvironment)
       onChangeMode(EnvironmentMode.VIEW, updatedEnvironment)

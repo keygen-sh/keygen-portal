@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Table,
   TableBody,
@@ -8,7 +9,6 @@ import {
 } from "@/components/ui/table"
 
 import { Environment } from "@/types/environments"
-import * as Loading from "@/components/loading"
 
 interface EnvironmentsListProps {
   data: Environment[]
@@ -49,8 +49,10 @@ export default function EnvironmentsList({
           </TableBody>
         </Table>
       ) : fetching ? (
-        <div className="flex h-[50vh] w-full items-center justify-center">
-          <Loading.Dots />
+        <div className="flex w-full flex-col items-start space-y-3 py-4 pr-8">
+          <Skeleton className="h-6 w-full" />
+          <Skeleton className="h-7 w-3/4" />
+          <Skeleton className="h-7 w-1/2" />
         </div>
       ) : (
         <p className="my-8 text-center text-sm text-content-subdued">

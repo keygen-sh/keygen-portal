@@ -1,8 +1,8 @@
 import { CircleCheckBig, AlertCircle, Info, X } from "lucide-react"
-import { toast } from "sonner"
+import { toast as sonnerToast } from "sonner"
 import { cn } from "@/lib/utils"
 
-type CustomOptions = Parameters<typeof toast.custom>[1]
+type CustomOptions = Parameters<typeof sonnerToast.custom>[1]
 
 const variants = {
   default: {
@@ -36,7 +36,7 @@ interface NotifyOptions {
   options?: CustomOptions
 }
 
-export function notify({
+export function toast({
   message,
   description,
   variant = "default",
@@ -47,7 +47,7 @@ export function notify({
   }
   const { icon, title, background } = variants[variant]
 
-  return toast.custom(
+  return sonnerToast.custom(
     (id) => (
       <div
         className={cn(
@@ -67,7 +67,7 @@ export function notify({
           )}
         </div>
         <button
-          onClick={() => toast.dismiss(id)}
+          onClick={() => sonnerToast.dismiss(id)}
           className="ml-2 size-4 text-content-normal transition-colors duration-200 hover:text-content-loud"
         >
           <X className="size-4" />

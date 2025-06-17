@@ -167,6 +167,11 @@
   }
 }
 
+/* Removes default fade from sonner/toaster */
+[data-sonner-toast] {
+  opacity: 1 !important;
+}
+
 /* Removes default autofill white background in input fields */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,

@@ -29,12 +29,19 @@ const variants = {
 
 type Variant = keyof typeof variants
 
-export function notify(
-  message: string,
-  description?: string,
-  variant?: Variant,
-  options?: CustomOptions,
-) {
+interface NotifyOptions {
+  message: string
+  description?: string
+  variant?: Variant
+  options?: CustomOptions
+}
+
+export function notify({
+  message,
+  description,
+  variant = "default",
+  ...options
+}: NotifyOptions) {
   if (!variant || !variants[variant]) {
     variant = "default"
   }

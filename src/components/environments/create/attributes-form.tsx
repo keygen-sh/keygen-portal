@@ -155,8 +155,8 @@ export default function AttributesForm({
           </div>
         </ScrollArea>
 
-        <p className="hidden flex-wrap items-center p-4 text-sm text-content-subdued md:flex">
-          To learn more about environments, see the&nbsp;
+        <p className="hidden flex-wrap items-center gap-1 p-4 text-sm text-content-subdued md:flex">
+          To learn more about environments, see the{" "}
           <Button asChild variant="link" size="link">
             <a
               href="https://keygen.sh/docs/api/environments/"
@@ -165,8 +165,8 @@ export default function AttributesForm({
             >
               documentation
             </a>
-          </Button>
-          &nbsp;for more information.
+          </Button>{" "}
+          for more information.
         </p>
 
         <DialogFooter className="flex flex-row gap-4 border-t border-accent p-4">

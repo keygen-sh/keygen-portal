@@ -15,14 +15,28 @@ export default function MotionSlide({
   children: ReactNode
 }) {
   const slide = {
-    enter: (d: 1 | -1) => ({ x: d * offset, opacity: 0 }),
-    center: { x: 0, opacity: 1 },
-    exit: (d: 1 | -1) => ({ x: d * -offset, opacity: 0 }),
+    enter: (d: 1 | -1) => ({
+      x: d * offset,
+      opacity: 0,
+      pointerEvents: "none" as const,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      pointerEvents: "auto" as const,
+    },
+    exit: (d: 1 | -1) => ({
+      x: d * -offset,
+      opacity: 0,
+      pointerEvents: "none" as const,
+      transitionEnd: { display: "none" },
+    }),
   }
 
   return (
     <div
       className={className ? `overflow-hidden ${className}` : "overflow-hidden"}
+      style={{ gridTemplate: "1fr / 1fr" }}
     >
       <AnimatePresence custom={direction} initial={false} mode="wait">
         <motion.div
@@ -33,6 +47,7 @@ export default function MotionSlide({
           animate="center"
           exit="exit"
           transition={{ duration, ease: [0.4, 0, 0.2, 1] }}
+          style={{ gridArea: "1 / 1 / 2 / 2" }}
         >
           {children}
         </motion.div>

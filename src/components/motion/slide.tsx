@@ -1,5 +1,6 @@
 import { ReactNode } from "react"
 import { AnimatePresence, motion } from "motion/react"
+import { cn } from "@/lib/utils"
 
 export default function MotionSlide({
   direction,
@@ -35,7 +36,7 @@ export default function MotionSlide({
 
   return (
     <div
-      className={className ? `overflow-hidden ${className}` : "overflow-hidden"}
+      className={cn("grid overflow-hidden", className)}
       style={{ gridTemplate: "1fr / 1fr" }}
     >
       <AnimatePresence custom={direction} initial={false} mode="wait">

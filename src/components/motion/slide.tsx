@@ -2,19 +2,21 @@ import { ReactNode } from "react"
 import { AnimatePresence, motion } from "motion/react"
 import { cn } from "@/lib/utils"
 
+interface MotionSlideProps {
+  direction: 1 | -1
+  duration?: number
+  offset?: number
+  className?: string
+  children: ReactNode
+}
+
 export default function MotionSlide({
   direction,
   duration = 0.25,
   offset = 80,
   className,
   children,
-}: {
-  direction: 1 | -1
-  duration?: number
-  offset?: number
-  className?: string
-  children: ReactNode
-}) {
+}: MotionSlideProps): React.ReactElement {
   const slide = {
     enter: (d: 1 | -1) => ({
       x: d * offset,

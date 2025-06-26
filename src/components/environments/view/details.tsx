@@ -105,7 +105,7 @@ export default function EnvironmentDetails({
                   {loading ? (
                     <Loading.Dots className="bg-background" />
                   ) : (
-                    "Create"
+                    "Delete"
                   )}
                 </Button>
               </AlertDialogFooter>

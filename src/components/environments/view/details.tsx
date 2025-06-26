@@ -18,7 +18,7 @@ import { Copy, Globe, GlobeLock } from "lucide-react"
 
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
-import Attribute from "@/components/attribute"
+import * as Attribute from "@/components/attribute"
 import * as Loading from "@/components/loading"
 
 import { Environment } from "@/types/environments"
@@ -121,8 +121,11 @@ export default function EnvironmentDetails({
             className="flex flex-col space-y-4 md:flex-row md:space-y-0"
           >
             <div className="flex-1 space-y-4">
-              <Attribute label="Code" value={environment.attributes.code} />
-              <Attribute
+              <Attribute.Field
+                label="Code"
+                value={environment.attributes.code}
+              />
+              <Attribute.Field
                 label="Isolation Strategy"
                 value={environment.attributes.isolationStrategy}
               />
@@ -131,7 +134,7 @@ export default function EnvironmentDetails({
               <Separator orientation="vertical" dashed={true} />
             </div>
             <div className="flex-1 space-y-4">
-              <Attribute
+              <Attribute.Field
                 label="Created"
                 value={environment.attributes.created}
               />

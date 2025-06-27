@@ -7,7 +7,7 @@ import {
 import { Info } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-type AttributeVariant = "default" | "outline" | "plain"
+type AttributeVariant = "default" | "outline" | "text"
 
 interface AttributeFieldProps {
   label: string
@@ -24,10 +24,10 @@ export default function AttributeField({
   tooltip,
   className,
 }: AttributeFieldProps): React.ReactElement {
-  const renderValue = () => {
+  const renderVariant = () => {
     switch (variant) {
-      case "plain":
         return <span className={cn("text-sm", className)}>{value}</span>
+      case "text":
       case "outline":
         return (
           <Badge variant="outline" className={cn("text-sm", className)}>
@@ -55,7 +55,7 @@ export default function AttributeField({
         )}
       </div>
 
-      {renderValue()}
+      {renderVariant()}
     </div>
   )
 }

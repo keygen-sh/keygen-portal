@@ -1,6 +1,8 @@
 import { useState, Fragment, Children } from "react"
+import { motion, AnimatePresence } from "motion/react"
 
 import { cn } from "@/lib/utils"
+
 import {
   Collapsible,
   CollapsibleTrigger,
@@ -8,6 +10,7 @@ import {
 } from "@/components/ui/collapsible"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+
 import { ChevronDown, ChevronUp } from "lucide-react"
 
 interface CollapsibleCardProps {
@@ -22,7 +25,7 @@ export default function CollapsibleCard({
   defaultOpen = true,
   children,
   className,
-}: CollapsibleCardProps): React.ReactElement {
+}: CollapsibleCardProps) {
   const [open, setOpen] = useState(defaultOpen)
 
   return (
@@ -45,18 +48,31 @@ export default function CollapsibleCard({
             </div>
           </CollapsibleTrigger>
         </CardHeader>
-        <CollapsibleContent className="py-4">
-          <CardContent className={cn("px-4", className)}>
-            {Children.map(children, (child, index) => (
-              <Fragment key={index}>
-                {child}
-                {index < Children.count(children) - 1 && (
-                  <Separator className="my-4" />
-                )}
-              </Fragment>
-            ))}
-          </CardContent>
-        </CollapsibleContent>
+
+        <AnimatePresence initial={false}>
+          {open && (
+            <CollapsibleContent asChild forceMount>
+              <motion.div
+                key="card-content"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden"
+              >
+                <CardContent className={cn("p-4", className)}>
+                  {Children.map(children, (child, index) => (
+                    <Fragment key={index}>
+                      {child}
+                      {index < Children.count(children) - 1 && (
+                        <Separator className="my-4" />
+                      )}
+                    </Fragment>
+                  ))}
+                </CardContent>
+              </motion.div>
+            </CollapsibleContent>
+          )}
+        </AnimatePresence>
       </Collapsible>
     </Card>
   )

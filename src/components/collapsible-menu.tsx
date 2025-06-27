@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { motion, AnimatePresence } from "motion/react"
 
 import { cn } from "@/lib/utils"
 
@@ -22,7 +23,7 @@ export default function CollapsibleMenu({
   defaultOpen = true,
   children,
   className,
-}: CollapsibleMenuProps): React.ReactElement {
+}: CollapsibleMenuProps) {
   const [open, setOpen] = useState(defaultOpen)
 
   return (
@@ -37,9 +38,22 @@ export default function CollapsibleMenu({
         </div>
         <span className="text-content-loud">{title}</span>
       </CollapsibleTrigger>
-      <CollapsibleContent className={cn("mt-4", className)}>
-        {children}
-      </CollapsibleContent>
+
+      <AnimatePresence initial={false}>
+        {open && (
+          <CollapsibleContent asChild forceMount>
+            <motion.div
+              key="menu-content"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <div className={cn("mt-4", className)}>{children}</div>
+            </motion.div>
+          </CollapsibleContent>
+        )}
+      </AnimatePresence>
     </Collapsible>
   )
 }

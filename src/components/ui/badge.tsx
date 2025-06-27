@@ -15,6 +15,7 @@ const badgeVariants = cva(
           "font-normal bg-destructive/20 text-destructive rounded-[3px]",
         warning: "font-normal bg-amber/20 text-amber rounded-[3px]",
         success: "font-normal bg-primary/20 text-primary rounded-[3px]",
+        outline: "border border-accent text-content-loud",
       },
     },
     defaultVariants: {

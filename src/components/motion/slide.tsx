@@ -32,7 +32,6 @@ export default function MotionSlide({
       x: d * -offset,
       opacity: 0,
       pointerEvents: "none" as const,
-      transitionEnd: { display: "none" },
     }),
   }
 

@@ -26,11 +26,14 @@ export default function AttributeField({
 }: AttributeFieldProps): React.ReactElement {
   const renderVariant = () => {
     switch (variant) {
-        return <span className={cn("text-sm", className)}>{value}</span>
       case "text":
+        return <span className={cn("px-2 text-sm", className)}>{value}</span>
       case "outline":
         return (
-          <Badge variant="outline" className={cn("text-sm", className)}>
+          <Badge
+            variant="outline"
+            className={cn("px-2 text-sm text-content-muted", className)}
+          >
             {value}
           </Badge>
         )
@@ -48,7 +51,7 @@ export default function AttributeField({
             <TooltipTrigger asChild>
               <Info className="mt-1 size-3.5 text-content-subdued" />
             </TooltipTrigger>
-            <TooltipContent className="max-w-80 bg-background-4 text-content-muted">
+            <TooltipContent className="max-w-80 bg-background-4 whitespace-pre-line text-content-muted">
               {tooltip}
             </TooltipContent>
           </Tooltip>

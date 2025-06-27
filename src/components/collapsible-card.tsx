@@ -57,6 +57,10 @@ export default function CollapsibleCard({
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
+                transition={{
+                  duration: 0.15,
+                  ease: [0.12, 0, 0.58, 1],
+                }}
                 className="overflow-hidden"
               >
                 <CardContent className={cn("p-4", className)}>

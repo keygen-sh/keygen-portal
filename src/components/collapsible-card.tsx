@@ -27,14 +27,21 @@ export default function CollapsibleCard({
   className,
 }: CollapsibleCardProps) {
   const [open, setOpen] = useState(defaultOpen)
+  const [transitioned, setTransitioned] = useState(!defaultOpen)
 
   return (
     <Card className="rounded-sm bg-background py-0">
-      <Collapsible open={open} onOpenChange={setOpen}>
+      <Collapsible
+        open={open}
+        onOpenChange={(value) => {
+          if (value) setTransitioned(false)
+          setOpen(value)
+        }}
+      >
         <CardHeader
           className={cn(
             "h-12 rounded-sm bg-background-1 p-0",
-            open && "rounded-b-none border-b border-accent",
+            (open || !transitioned) && "rounded-b-none border-b border-accent",
           )}
         >
           <CollapsibleTrigger className="group flex h-full w-full items-center justify-between p-3">
@@ -49,7 +56,10 @@ export default function CollapsibleCard({
           </CollapsibleTrigger>
         </CardHeader>
 
-        <AnimatePresence initial={false}>
+        <AnimatePresence
+          initial={false}
+          onExitComplete={() => setTransitioned(true)}
+        >
           {open && (
             <CollapsibleContent asChild forceMount>
               <motion.div
@@ -57,10 +67,7 @@ export default function CollapsibleCard({
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{
-                  duration: 0.15,
-                  ease: [0.12, 0, 0.58, 1],
-                }}
+                transition={{ duration: 0.2, ease: [0.42, 0, 0.58, 1] }}
                 className="overflow-hidden"
               >
                 <CardContent className={cn("p-4", className)}>

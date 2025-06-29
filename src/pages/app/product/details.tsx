@@ -1,0 +1,360 @@
+import { useState, useEffect, useCallback } from "react"
+import { useNavigate, useParams } from "@tanstack/react-router"
+
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Tabs, TabsContent } from "@/components/ui/tabs"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbPage,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogTrigger,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog"
+import {
+  Sidebar,
+  SidebarHeader,
+  SidebarContent,
+  SidebarFooter,
+} from "@/components/ui/sidebar"
+
+import {
+  Menu,
+  GitFork,
+  Copy,
+  Lock,
+  Unlock,
+  Award,
+  SquarePlus,
+  SquarePen,
+} from "lucide-react"
+
+import { Product, Products, DistributionStrategy } from "@/types/products"
+
+import { toast } from "@/lib/toast"
+import { copyToClipboard } from "@/lib/clipboard"
+import * as Loading from "@/components/loading"
+import * as Attribute from "@/components/attribute"
+import * as Property from "@/components/property"
+import TabsSwitch from "@/components/tabs-switch"
+import BackButton from "@/components/back-button"
+import CollapsibleCard from "@/components/collapsible-card"
+import CollapsibleMenu from "@/components/collapsible-menu"
+
+export default function ProductDetails() {
+  const { productId } = useParams({ from: "/$id/app/products/$productId" })
+  const navigate = useNavigate()
+
+  const [product, setProduct] = useState<Product | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      setLoading(true)
+      try {
+        const p = Products.find((p) => p.id === productId)
+
+        if (p) {
+          setTimeout(() => {
+            setProduct(p)
+            setLoading(false)
+          }, 1000)
+        } else {
+          throw new Error(`Product with ID ${productId} not found`)
+        }
+      } catch (error) {
+        console.error("Error fetching product:", error)
+        toast({
+          message: "Could not find product",
+          variant: "error",
+        })
+        setLoading(false)
+      }
+    }
+
+    fetchProduct()
+  }, [])
+
+  const handleDeleteProduct = useCallback(
+    async (_id: string) => {
+      setLoading(true)
+
+      setTimeout(() => {
+        setProduct(null)
+        navigate({ to: `..` })
+        toast({
+          message: "Product deleted",
+          variant: "success",
+        })
+        setLoading(false)
+      }, 1000)
+    },
+    [loading],
+  )
+
+  return (
+    <section className="flex h-screen w-full">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex items-center justify-between border-b border-accent p-4">
+          <Breadcrumb>
+            <BreadcrumbList className="text-base">
+              <BreadcrumbItem>
+                <BreadcrumbLink
+                  className="cursor-pointer"
+                  onClick={() => navigate({ to: `..` })}
+                >
+                  Products
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                {product ? (
+                  <BreadcrumbPage>{product.name}</BreadcrumbPage>
+                ) : (
+                  <Skeleton className="h-6 w-32" />
+                )}
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" onClick={() => {}} disabled={loading}>
+              Edit
+            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" disabled={loading}>
+                  Delete
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    the product and delete all associated policy, license and
+                    machine resources.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel asChild>
+                    <Button variant="outline" disabled={loading}>
+                      Cancel
+                    </Button>
+                  </AlertDialogCancel>
+                  <Button
+                    variant="destructive"
+                    disabled={loading}
+                    onClick={() => handleDeleteProduct(productId)}
+                  >
+                    {loading ? (
+                      <Loading.Dots className="bg-background" />
+                    ) : (
+                      "Delete"
+                    )}
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
+
+        {product ? (
+          <ScrollArea className="min-h-0 flex-1 overflow-y-auto">
+            <div className="px-10 py-8">
+              <BackButton path=".." className="mb-8" />
+              <div className="mb-2">
+                {product.distributionStrategy ===
+                DistributionStrategy.LICENSED ? (
+                  <Badge variant="secondary">
+                    <Award className="inline size-4" />
+                    Licensed
+                  </Badge>
+                ) : product.distributionStrategy ===
+                  DistributionStrategy.CLOSED ? (
+                  <Badge variant="secondary">
+                    <Lock className="inline size-4" />
+                    Closed
+                  </Badge>
+                ) : (
+                  <Badge variant="secondary">
+                    <Unlock className="inline size-4" />
+                    Open
+                  </Badge>
+                )}
+              </div>
+              <div className="flex items-center gap-3">
+                <h1 className="font-owners-wide text-2xl font-medium">
+                  {product.name}
+                </h1>
+                <Button
+                  variant="clipboard"
+                  size="clipboard"
+                  onClick={() => copyToClipboard(product.code)}
+                  className="pb-0.5"
+                >
+                  {product.id}
+                  <Copy className="size-3 pt-0.5" />
+                </Button>
+              </div>
+
+              <div className="mt-8 space-y-6">
+                <CollapsibleCard title="Attributes">
+                  <div className="flex flex-col space-y-4 md:flex-row md:space-y-0">
+                    <div className="flex-1 space-y-4">
+                      <Attribute.Field
+                        variant="outline"
+                        label="Code"
+                        value={product.code}
+                      />
+                      <Attribute.Field
+                        variant="text"
+                        label="URL"
+                        value={product.url || "--"}
+                      />
+                    </div>
+                    <div className="mx-4 hidden md:block">
+                      <Separator orientation="vertical" dashed={true} />
+                    </div>
+                    <div className="flex-1 space-y-4">
+                      <div className="flex items-center gap-2">
+                        <Attribute.Field
+                          label="Distribution Strategy"
+                          value={product.distributionStrategy}
+                          tooltip={`The distribution strategy for releases.
+                                    Licensed = only licensed users.
+                                    Open = anybody, no license required.
+                                    Closed = only admins.`}
+                        />
+                      </div>
+                      <Attribute.Array
+                        label="Platforms"
+                        array={product.platforms}
+                      />
+                    </div>
+                  </div>
+                  <CollapsibleMenu title="Permissions" defaultOpen={false}>
+                    {product.permissions.length > 0 ? (
+                      <div className="flex max-w-full flex-wrap gap-2">
+                        {product.permissions.map((permission, index) => (
+                          <Badge
+                            key={index}
+                            className="text-sm text-content-muted"
+                          >
+                            {permission}
+                          </Badge>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-content-muted">
+                        No permissions defined.
+                      </p>
+                    )}
+                  </CollapsibleMenu>
+                </CollapsibleCard>
+
+                <CollapsibleCard title="Relationships">
+                  <Attribute.Field variant="text" label="Tokens" value={"--"} />
+                </CollapsibleCard>
+
+                <CollapsibleCard title="Metadata">
+                  {product.metadata &&
+                  Object.keys(product.metadata).length > 0 ? (
+                    <div className="flex flex-col space-y-2">
+                      {Object.entries(product.metadata).map(([key, value]) => (
+                        <div key={key} className="flex items-center gap-2">
+                          <span className="text-sm text-content-normal">
+                            {key}:
+                          </span>
+                          <span className="text-sm text-content-muted">
+                            {typeof value === "object"
+                              ? JSON.stringify(value)
+                              : value}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-content-muted">{"{ }"}</p>
+                  )}
+                </CollapsibleCard>
+              </div>
+            </div>
+          </ScrollArea>
+        ) : (
+          <div className="space-y-4 px-10 py-8">
+            <Skeleton className="h-6 w-24" />
+            <Skeleton className="h-6 w-32" />
+            <div className="mb-8 flex items-center gap-4">
+              <Skeleton className="h-8 w-48" />
+              <Skeleton className="h-8 w-32" />
+            </div>
+
+            <div className="space-y-4">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+          </div>
+        )}
+      </div>
+
+      <Tabs defaultValue="overview">
+        <Sidebar className="w-64 shrink-0" side="right">
+          <SidebarHeader className="border-b border-accent pt-8 pb-0">
+            <TabsSwitch
+              className="border-b border-accent pt-8 pb-0"
+              options={[
+                { value: "overview", label: "Overview", icon: Menu },
+                { value: "events", label: "Events", icon: GitFork },
+              ]}
+            />
+          </SidebarHeader>
+          <SidebarContent>
+            <TabsContent value="overview" className="p-4">
+              <Property.Section title="Properties">
+                {product ? (
+                  <>
+                    <Property.Field
+                      icon={SquarePlus}
+                      label="Created at"
+                      value={new Date(product.created).toLocaleDateString()}
+                    />
+                    <Property.Field
+                      icon={SquarePen}
+                      label="Updated at"
+                      value={new Date(product.updated).toLocaleDateString()}
+                    />
+                  </>
+                ) : (
+                  <div className="flex flex-col space-y-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-4 w-1/3" />
+                  </div>
+                )}
+              </Property.Section>
+            </TabsContent>
+
+            <TabsContent value="events" className="p-4"></TabsContent>
+          </SidebarContent>
+          <SidebarFooter></SidebarFooter>
+        </Sidebar>
+      </Tabs>
+    </section>
+  )
+}

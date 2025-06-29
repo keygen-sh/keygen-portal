@@ -64,10 +64,18 @@ enum View {
 
 const VIEWS_LIST = Object.values(View) as View[]
 
-const options = linkOptions([
+const homeOptions = linkOptions([
   {
     to: "/$id/app/dashboard",
     label: "Metrics",
+    params: { id: keygen.config.id },
+  },
+])
+
+const licensingOptions = linkOptions([
+  {
+    to: "/$id/app/products",
+    label: "Products",
     params: { id: keygen.config.id },
   },
 ])
@@ -242,7 +250,7 @@ export default function SidebarPanel(): React.ReactElement {
                 )}
               </Button>
             </div>
-            <Command routes={options} />
+            <Command routes={homeOptions} />
           </SidebarGroup>
         </SidebarHeader>
 
@@ -296,7 +304,7 @@ function renderHome() {
   return (
     <SidebarMenu>
       <SidebarGroupLabel>Home</SidebarGroupLabel>
-      {options.map((option) => {
+      {homeOptions.map((option) => {
         return (
           <SidebarMenuItem key={option.to}>
             <SidebarMenuButton asChild>
@@ -318,17 +326,20 @@ function renderLicensing() {
   return (
     <SidebarMenu>
       <SidebarGroupLabel>Licensing</SidebarGroupLabel>
-      <SidebarMenuItem>
-        <SidebarMenuButton asChild>
-          <Link
-            disabled={true}
-            to="/$id/app/dashboard"
-            params={{ id: keygen.config.id }}
-          >
-            TO DO
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
+      {licensingOptions.map((option) => {
+        return (
+          <SidebarMenuItem key={option.to}>
+            <SidebarMenuButton asChild>
+              <Link
+                {...option}
+                activeProps={{ className: "bg-background-2 text-content-loud" }}
+              >
+                {option.label}
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        )
+      })}
     </SidebarMenu>
   )
 }

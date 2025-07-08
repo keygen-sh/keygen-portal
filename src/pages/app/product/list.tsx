@@ -36,7 +36,7 @@ import {
   ChevronsUpDown,
 } from "lucide-react"
 
-import { Product, Products } from "@/types/products"
+import { Product, ProductsData } from "@/types/products"
 
 import * as keygen from "@/keygen"
 import ClipboardButton from "@/components/clipboard-button"
@@ -131,7 +131,7 @@ export default function ProductsList() {
       setLoading(true)
       try {
         setTimeout(() => {
-          setProducts(Products ?? [])
+          setProducts(ProductsData ?? [])
           setLoading(false)
         }, 1000)
       } catch (error) {

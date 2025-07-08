@@ -214,7 +214,7 @@ export default function ProductDetails() {
                 <Button
                   variant="clipboard"
                   size="clipboard"
-                  onClick={() => copyToClipboard(product.code)}
+                  onClick={() => copyToClipboard(product.id)}
                   className="pb-0.5"
                 >
                   {product.id}

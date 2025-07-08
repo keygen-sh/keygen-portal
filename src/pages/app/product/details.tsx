@@ -31,6 +31,7 @@ import {
   SidebarContent,
   SidebarFooter,
 } from "@/components/ui/sidebar"
+import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import {
   Menu,
@@ -50,6 +51,7 @@ import { copyToClipboard } from "@/lib/clipboard"
 import * as Loading from "@/components/loading"
 import * as Attribute from "@/components/attribute"
 import * as Property from "@/components/property"
+import * as Products from "@/components/products"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import CollapsibleCard from "@/components/collapsible-card"
@@ -60,6 +62,7 @@ export default function ProductDetails() {
   const navigate = useNavigate()
 
   const [product, setProduct] = useState<Product | null>(null)
+  const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -132,11 +135,18 @@ export default function ProductDetails() {
           </Breadcrumb>
 
           <div className="flex items-center space-x-2">
-            <Button variant="outline" onClick={() => {}} disabled={loading}>
+            <Button
+              variant="outline"
+              disabled={loading}
+              onClick={() => setOpen(true)}
+            >
               Edit
             </Button>
+
+            <Products.Edit.Modal open={open} onClose={() => setOpen(false)} />
             <AlertDialog>
               <AlertDialogTrigger asChild>
+                {/* Throwing button cannot be descendent of button error */}
                 <Button variant="outline" disabled={loading}>
                   Delete
                 </Button>

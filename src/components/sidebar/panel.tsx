@@ -95,7 +95,7 @@ export default function SidebarPanel(): React.ReactElement {
       <Rail
         collapsible={"none"}
         className={cn(
-          "border-r transition-all duration-200",
+          "border-r bg-background transition-all duration-200",
           isMobile && !open ? "w-0" : isMobile && open ? "w-16" : "w-16",
         )}
       >

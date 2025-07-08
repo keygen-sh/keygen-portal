@@ -31,7 +31,6 @@ import {
   SidebarContent,
   SidebarFooter,
 } from "@/components/ui/sidebar"
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import {
   Menu,
@@ -146,7 +145,6 @@ export default function ProductDetails() {
             <Products.Edit.Modal open={open} onClose={() => setOpen(false)} />
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                {/* Throwing button cannot be descendent of button error */}
                 <Button variant="outline" disabled={loading}>
                   Delete
                 </Button>

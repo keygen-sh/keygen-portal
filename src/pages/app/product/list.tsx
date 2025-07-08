@@ -27,6 +27,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip"
+import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog"
 
 import {
   ChevronLeft,
@@ -40,10 +41,12 @@ import { Product, ProductsData } from "@/types/products"
 
 import * as keygen from "@/keygen"
 import ClipboardButton from "@/components/clipboard-button"
+import * as Products from "@/components/products"
 
 export default function ProductsList() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false)
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [pageSize] = useState(10)
@@ -147,9 +150,22 @@ export default function ProductsList() {
     <section className="w-full">
       <div className="flex items-center justify-between border-b border-accent p-4">
         <h1 className="text-base font-semibold text-content-muted">Products</h1>
-        <Button size="sm" onClick={() => {}} disabled={loading}>
-          Create product
-        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button size="sm" disabled={loading}>
+              Create product
+            </Button>
+          </DialogTrigger>
+
+          <Products.Create.Modal
+            onSelectProduct={(product) => {
+              if (product) {
+                setProducts((prev) => [product, ...prev])
+              }
+            }}
+            onChangeMode={() => setOpen(false)}
+          />
+        </Dialog>
       </div>
 
       {products.length > 0 ? (

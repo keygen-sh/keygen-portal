@@ -268,6 +268,53 @@ export default function AttributesForm({
                       </FormItem>
                     )}
                   />
+
+                  <FormField
+                    control={form.control}
+                    name="metadata"
+                    render={() => (
+                      <FormItem>
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <FormLabel>Metadata</FormLabel>
+
+                            {isMobile ? (
+                              <Popover>
+                                <PopoverTrigger
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <Info className="size-5 text-content-subdued" />
+                                </PopoverTrigger>
+                                <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
+                                  Store arbitrary key/value data on the product
+                                  for book keeping purposes, additional product
+                                  info, etc.
+                                </PopoverContent>
+                              </Popover>
+                            ) : (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Info className="size-4 pt-0.5 text-content-subdued" />
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-80 bg-background-4 text-content-muted">
+                                  Store arbitrary key/value data on the product
+                                  for book keeping purposes, additional product
+                                  info, etc.
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
+                          </div>
+                          <span className="text-xs text-content-subdued">
+                            Optional
+                          </span>
+                        </div>
+                        <FormControl>
+                          <MetaInput />
+                        </FormControl>
+                        <FormMessage>{error || ""}</FormMessage>
+                      </FormItem>
+                    )}
+                  />
                 </div>
               </div>
             </SectionCard>

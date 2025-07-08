@@ -43,7 +43,7 @@ import {
   SquarePen,
 } from "lucide-react"
 
-import { Product, Products, DistributionStrategy } from "@/types/products"
+import { Product, ProductsData, DistributionStrategy } from "@/types/products"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
@@ -66,7 +66,7 @@ export default function ProductDetails() {
     const fetchProduct = async () => {
       setLoading(true)
       try {
-        const p = Products.find((p) => p.id === productId)
+        const p = ProductsData.find((p) => p.id === productId)
 
         if (p) {
           setTimeout(() => {

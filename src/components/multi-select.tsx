@@ -1,0 +1,171 @@
+import { useState, useRef, KeyboardEvent, useMemo } from "react"
+import { useFormContext } from "react-hook-form"
+
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover"
+import {
+  Command,
+  CommandList,
+  CommandItem,
+  CommandEmpty,
+} from "@/components/ui/command"
+
+interface Option {
+  label: string
+  value: string
+}
+
+interface MultiSelectInputProps {
+  name: string
+  options: Option[]
+  wildcard?: string
+  placeholder?: string
+  disabled?: boolean
+}
+
+export default function MultiSelectInput({
+  name,
+  options,
+  wildcard,
+  placeholder = "Choose...",
+  disabled,
+}: MultiSelectInputProps) {
+  const { watch, setValue } = useFormContext()
+  const selected: string[] = watch(name) ?? []
+
+  const [query, setQuery] = useState("")
+  const [open, setOpen] = useState(false)
+
+  const inputRef = useRef<HTMLInputElement>(null)
+  const triggerRef = useRef<HTMLDivElement>(null)
+
+  const visibleOptions = useMemo(
+    () =>
+      options.filter(({ label }) =>
+        label.toLowerCase().includes(query.toLowerCase()),
+      ),
+    [query, options],
+  )
+
+  const toggle = (value: string, focus = true) => {
+    const isActive = selected.includes(value)
+    let next: string[]
+
+    if (wildcard && value === wildcard) {
+      next = []
+    } else {
+      next = isActive
+        ? selected.filter((v) => v !== value)
+        : [...selected, value]
+    }
+    setValue(name, next, { shouldValidate: true })
+    setQuery("")
+    if (focus) inputRef.current?.focus()
+  }
+
+  const remove = (value: string) => toggle(value, open)
+
+  return (
+    <Popover modal open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <div
+          ref={triggerRef}
+          onPointerDownCapture={(e) => {
+            if (
+              e.target !== triggerRef.current &&
+              e.target !== inputRef.current
+            )
+              return
+
+            e.stopPropagation()
+            inputRef.current?.focus()
+          }}
+          onClickCapture={(e) => {
+            if (
+              e.target !== triggerRef.current &&
+              e.target !== inputRef.current
+            )
+              return
+            e.stopPropagation()
+          }}
+          className="flex min-h-9 w-full flex-wrap space-y-2 space-x-2 rounded-md border px-2 pt-2 text-sm transition-colors duration-300 focus-within:border-content-subdued"
+        >
+          {selected.map((value) => (
+            <Badge
+              key={value}
+              className="cursor-pointer text-content-muted"
+              onClick={(e) => {
+                e.stopPropagation()
+                remove(value)
+              }}
+            >
+              {value} <span className="ml-1">&times;</span>
+            </Badge>
+          ))}
+
+          <Input
+            ref={inputRef}
+            value={query}
+            disabled={disabled}
+            placeholder={selected.length ? "" : placeholder}
+            fieldSize={"sm"}
+            className="max-h-6 flex-1 border-none p-0 leading-tight"
+            onChange={(e) => {
+              setQuery(e.target.value)
+              setOpen(true)
+            }}
+            onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+              if (e.key === "Backspace" && !query && selected.length) {
+                remove(selected[selected.length - 1])
+              } else if (e.key === "Escape") {
+                setOpen(false)
+                setQuery("")
+              }
+            }}
+            onFocus={() => setOpen(true)}
+          />
+        </div>
+      </PopoverTrigger>
+
+      <PopoverContent
+        align="start"
+        className="min-w-64 p-0"
+        onCloseAutoFocus={(e) => e.preventDefault()}
+      >
+        <Command shouldFilter={false}>
+          <CommandList>
+            <ScrollArea className="h-64">
+              {visibleOptions.map(({ label, value }) => (
+                <CommandItem
+                  key={value}
+                  onSelect={() => toggle(value)}
+                  className="cursor-pointer"
+                >
+                  <Checkbox
+                    checked={
+                      value === wildcard
+                        ? selected.length === 0
+                        : selected.includes(value)
+                    }
+                    onCheckedChange={() => toggle(value, false)}
+                    className="mr-2"
+                  />
+                  {label}
+                </CommandItem>
+              ))}
+            </ScrollArea>
+
+            <CommandEmpty>No results.</CommandEmpty>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  )
+}

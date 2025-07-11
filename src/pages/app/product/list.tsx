@@ -38,10 +38,12 @@ import {
 } from "lucide-react"
 
 import { Product, ProductsData } from "@/types/products"
+import { useMobile } from "@/hooks/use-mobile"
 
 import * as keygen from "@/keygen"
-import ClipboardButton from "@/components/clipboard-button"
 import * as Products from "@/components/products"
+import PageHeader from "@/components/page-header"
+import ClipboardButton from "@/components/clipboard-button"
 
 export default function ProductsList() {
   const [products, setProducts] = useState<Product[]>([])
@@ -51,9 +53,11 @@ export default function ProductsList() {
   const [sorting, setSorting] = useState<SortingState>([])
   const [pageSize] = useState(10)
 
+  const isMobile = useMobile()
   const navigate = useNavigate()
 
   const column = createColumnHelper<Product>()
+  const [columnVisibility, setColumnVisibility] = useState({})
 
   const columns = useMemo<ColumnDef<Product, any>[]>(
     () => [
@@ -121,13 +125,25 @@ export default function ProductsList() {
   const table = useReactTable({
     data: products,
     columns,
-    state: { sorting },
+    state: { sorting, columnVisibility },
     onSortingChange: setSorting,
+    onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     initialState: { pagination: { pageSize } },
   })
+
+  useEffect(() => {
+    setColumnVisibility({
+      id: !isMobile,
+      url: !isMobile,
+      created: !isMobile,
+      updated: !isMobile,
+      name: true,
+      code: true,
+    })
+  }, [isMobile])
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -147,13 +163,12 @@ export default function ProductsList() {
   }, [])
 
   return (
-    <section className="w-full">
-      <div className="flex items-center justify-between border-b border-accent p-4">
-        <h1 className="text-base font-semibold text-content-muted">Products</h1>
+    <section>
+      <PageHeader title="Products">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button size="sm" disabled={loading}>
-              Create product
+              Create Product
             </Button>
           </DialogTrigger>
 
@@ -166,7 +181,7 @@ export default function ProductsList() {
             onChangeMode={() => setOpen(false)}
           />
         </Dialog>
-      </div>
+      </PageHeader>
 
       {products.length > 0 ? (
         <div className="px-4">
@@ -181,7 +196,7 @@ export default function ProductsList() {
                       <TableHead
                         key={header.id}
                         onClick={header.column.getToggleSortingHandler()}
-                        className="text-xs"
+                        className="text-sm md:text-xs"
                       >
                         <div className="flex items-center gap-2 transition-colors duration-200 hover:text-content-muted">
                           {flexRender(
@@ -191,13 +206,13 @@ export default function ProductsList() {
                           {canSort && (
                             <>
                               {!sortDir && (
-                                <ChevronsUpDown className="h-3 w-3" />
+                                <ChevronsUpDown className="size-4 md:size-3" />
                               )}
                               {sortDir === "asc" && (
-                                <ChevronUp className="h-3 w-3 text-brand-primary" />
+                                <ChevronUp className="size-4 text-brand-primary md:size-3" />
                               )}
                               {sortDir === "desc" && (
-                                <ChevronDown className="h-3 w-3 text-brand-primary" />
+                                <ChevronDown className="size-4 text-brand-primary md:size-3" />
                               )}
                             </>
                           )}
@@ -209,7 +224,7 @@ export default function ProductsList() {
               ))}
             </TableHeader>
 
-            <TableBody>
+            <TableBody className="text-base md:text-sm">
               {table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -262,7 +277,7 @@ export default function ProductsList() {
           </div>
         </div>
       ) : (
-        <div className="flex w-full flex-col justify-center space-y-4 p-4 pr-12">
+        <div className="flex w-full flex-col justify-center space-y-4 p-4 md:pr-12">
           <Skeleton className="mb-4 h-6 w-full" />
           <Skeleton className="ml-4 h-8 w-3/4" />
           <Skeleton className="ml-4 h-8 w-1/2" />

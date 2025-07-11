@@ -16,21 +16,17 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogTrigger,
-  AlertDialogCancel,
-} from "@/components/ui/alert-dialog"
-import {
   Sidebar,
   SidebarHeader,
   SidebarContent,
   SidebarFooter,
 } from "@/components/ui/sidebar"
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu"
 
 import {
   Menu,
@@ -41,27 +37,34 @@ import {
   Award,
   SquarePlus,
   SquarePen,
+  EllipsisVertical,
 } from "lucide-react"
 
 import { Product, ProductsData, DistributionStrategy } from "@/types/products"
+import { useMobile } from "@/hooks/use-mobile"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
-import * as Loading from "@/components/loading"
 import * as Attribute from "@/components/attribute"
 import * as Property from "@/components/property"
 import * as Products from "@/components/products"
+import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
+import DeleteModal from "@/components/delete-modal"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
 
 export default function ProductDetails() {
   const { productId } = useParams({ from: "/$id/app/products/$productId" })
   const navigate = useNavigate()
+  const isMobile = useMobile()
 
   const [product, setProduct] = useState<Product | null>(null)
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState({
+    edit: false,
+    delete: false,
+  })
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -111,8 +114,8 @@ export default function ProductDetails() {
   return (
     <section className="flex h-screen w-full">
       <div className="flex min-w-0 flex-1 flex-col">
-        <div className="flex items-center justify-between border-b border-accent p-4">
-          <Breadcrumb>
+        <PageHeader>
+          <Breadcrumb className="flex-1">
             <BreadcrumbList className="text-base">
               <BreadcrumbItem>
                 <BreadcrumbLink
@@ -133,57 +136,64 @@ export default function ProductDetails() {
             </BreadcrumbList>
           </Breadcrumb>
 
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              disabled={loading}
-              onClick={() => setOpen(true)}
-            >
-              Edit
-            </Button>
-
-            <Products.Edit.Modal open={open} onClose={() => setOpen(false)} />
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="outline" disabled={loading}>
-                  Delete
+          {isMobile ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  disabled={loading}
+                  className="text-content-muted"
+                >
+                  <EllipsisVertical className="size-5" />
                 </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    the product and delete all associated policy, license and
-                    machine resources.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel asChild>
-                    <Button variant="outline" disabled={loading}>
-                      Cancel
-                    </Button>
-                  </AlertDialogCancel>
-                  <Button
-                    variant="destructive"
-                    disabled={loading}
-                    onClick={() => handleDeleteProduct(productId)}
-                  >
-                    {loading ? (
-                      <Loading.Dots className="bg-background" />
-                    ) : (
-                      "Delete"
-                    )}
-                  </Button>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="mr-4 p-0">
+                <DropdownMenuItem
+                  onClick={() => {
+                    setTimeout(() => {
+                      setOpen({ ...open, edit: true })
+                    }, 0)
+                  }}
+                  className="pb-2 text-base"
+                >
+                  Edit
+                </DropdownMenuItem>
+                <Separator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    setTimeout(() => {
+                      setOpen({ ...open, delete: true })
+                    }, 0)
+                  }}
+                  className="pb-2 text-base"
+                >
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                disabled={loading}
+                onClick={() => setOpen({ ...open, edit: true })}
+              >
+                Edit
+              </Button>
+              <Button
+                variant="outline"
+                disabled={loading}
+                onClick={() => setOpen({ ...open, delete: true })}
+              >
+                Delete
+              </Button>
+            </div>
+          )}
+        </PageHeader>
 
         {product ? (
           <ScrollArea className="min-h-0 flex-1 overflow-y-auto">
-            <div className="px-10 py-8">
+            <div className="px-4 py-6 md:px-10 md:py-8">
               <BackButton path=".." className="mb-8" />
               <div className="mb-2">
                 {product.distributionStrategy ===
@@ -205,7 +215,7 @@ export default function ProductDetails() {
                   </Badge>
                 )}
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center">
                 <h1 className="font-owners-wide text-2xl font-medium">
                   {product.name}
                 </h1>
@@ -213,14 +223,14 @@ export default function ProductDetails() {
                   variant="clipboard"
                   size="clipboard"
                   onClick={() => copyToClipboard(product.id)}
-                  className="pb-0.5"
+                  className="w-fit pb-0.5"
                 >
                   {product.id}
-                  <Copy className="size-3 pt-0.5" />
+                  <Copy className="size-4 pt-0.5 md:size-3" />
                 </Button>
               </div>
 
-              <div className="mt-8 space-y-6">
+              <div className="mt-6 space-y-6 md:mt-8">
                 <CollapsibleCard title="Attributes">
                   <div className="flex flex-col space-y-4 md:flex-row md:space-y-0">
                     <div className="flex-1 space-y-4">
@@ -300,11 +310,44 @@ export default function ProductDetails() {
                     <p className="text-sm text-content-muted">{"{ }"}</p>
                   )}
                 </CollapsibleCard>
+
+                {isMobile && (
+                  <CollapsibleCard title="Properties" className="space-y-2">
+                    {product ? (
+                      <>
+                        <Property.Field
+                          icon={SquarePlus}
+                          label="Created at"
+                          value={new Date(product.created).toLocaleDateString()}
+                        />
+                        <Property.Field
+                          icon={SquarePen}
+                          label="Updated at"
+                          value={new Date(product.updated).toLocaleDateString()}
+                        />
+                      </>
+                    ) : (
+                      <div className="flex flex-col space-y-2">
+                        <Skeleton className="h-4 w-3/4" />
+                        <Skeleton className="h-4 w-1/2" />
+                        <Skeleton className="h-4 w-1/3" />
+                      </div>
+                    )}
+                  </CollapsibleCard>
+                )}
+
+                {isMobile && (
+                  <CollapsibleCard title="Events">
+                    <p className="text-sm text-content-subdued">
+                      Nothing here yet.
+                    </p>
+                  </CollapsibleCard>
+                )}
               </div>
             </div>
           </ScrollArea>
         ) : (
-          <div className="space-y-4 px-10 py-8">
+          <div className="space-y-4 p-4 md:px-10 md:py-8">
             <Skeleton className="h-6 w-24" />
             <Skeleton className="h-6 w-32" />
             <div className="mb-8 flex items-center gap-4">
@@ -321,48 +364,64 @@ export default function ProductDetails() {
         )}
       </div>
 
-      <Tabs defaultValue="overview">
-        <Sidebar className="w-64 shrink-0" side="right">
-          <SidebarHeader className="border-b border-accent pt-8 pb-0">
-            <TabsSwitch
-              className="border-b border-accent pt-8 pb-0"
-              options={[
-                { value: "overview", label: "Overview", icon: Menu },
-                { value: "events", label: "Events", icon: GitFork },
-              ]}
-            />
-          </SidebarHeader>
-          <SidebarContent>
-            <TabsContent value="overview" className="p-4">
-              <Property.Section title="Properties">
-                {product ? (
-                  <>
-                    <Property.Field
-                      icon={SquarePlus}
-                      label="Created at"
-                      value={new Date(product.created).toLocaleDateString()}
-                    />
-                    <Property.Field
-                      icon={SquarePen}
-                      label="Updated at"
-                      value={new Date(product.updated).toLocaleDateString()}
-                    />
-                  </>
-                ) : (
-                  <div className="flex flex-col space-y-2">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                    <Skeleton className="h-4 w-1/3" />
-                  </div>
-                )}
-              </Property.Section>
-            </TabsContent>
+      {!isMobile && (
+        <Tabs defaultValue="overview">
+          <Sidebar className="w-64 shrink-0" side="right">
+            <SidebarHeader className="border-b border-accent pt-8 pb-0">
+              <TabsSwitch
+                className="border-b border-accent pt-8 pb-0"
+                options={[
+                  { value: "overview", label: "Overview", icon: Menu },
+                  { value: "events", label: "Events", icon: GitFork },
+                ]}
+              />
+            </SidebarHeader>
+            <SidebarContent>
+              <TabsContent value="overview" className="p-4">
+                <Property.Section title="Properties">
+                  {product ? (
+                    <>
+                      <Property.Field
+                        icon={SquarePlus}
+                        label="Created at"
+                        value={new Date(product.created).toLocaleDateString()}
+                      />
+                      <Property.Field
+                        icon={SquarePen}
+                        label="Updated at"
+                        value={new Date(product.updated).toLocaleDateString()}
+                      />
+                    </>
+                  ) : (
+                    <div className="flex flex-col space-y-2">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                      <Skeleton className="h-4 w-1/3" />
+                    </div>
+                  )}
+                </Property.Section>
+              </TabsContent>
 
-            <TabsContent value="events" className="p-4"></TabsContent>
-          </SidebarContent>
-          <SidebarFooter></SidebarFooter>
-        </Sidebar>
-      </Tabs>
+              <TabsContent value="events" className="p-4"></TabsContent>
+            </SidebarContent>
+            <SidebarFooter></SidebarFooter>
+          </Sidebar>
+        </Tabs>
+      )}
+
+      <Products.Edit.Modal
+        open={open.edit}
+        onClose={() => setOpen({ ...open, edit: false })}
+      />
+
+      <DeleteModal
+        title="Are you absolutely sure?"
+        description="This action cannot be undone. This will permanently delete the product and delete all associated policy, license and machine resources."
+        open={open.delete}
+        disabled={loading}
+        onClose={() => setOpen({ ...open, delete: false })}
+        onDelete={() => handleDeleteProduct(productId)}
+      />
     </section>
   )
 }

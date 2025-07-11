@@ -1,6 +1,8 @@
 import { useState, useRef, KeyboardEvent, useMemo } from "react"
 import { useFormContext } from "react-hook-form"
 
+import { cn } from "@/lib/utils"
+
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -75,7 +77,7 @@ export default function MultiSelectInput({
   return (
     <Popover modal open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <div
+        <ScrollArea
           ref={triggerRef}
           onPointerDownCapture={(e) => {
             if (
@@ -95,43 +97,50 @@ export default function MultiSelectInput({
               return
             e.stopPropagation()
           }}
-          className="flex min-h-9 w-full flex-wrap space-y-2 space-x-2 rounded-md border px-2 pt-2 text-sm transition-colors duration-300 focus-within:border-content-subdued"
+          type="always"
+          scrollHideDelay={0}
+          className={cn(
+            "max-h-48 overflow-y-auto rounded-md border border-accent transition-colors duration-300 focus-within:border-content-subdued",
+            "[&_[data-radix-scroll-area-thumb]]:bg-content-muted",
+          )}
         >
-          {selected.map((value) => (
-            <Badge
-              key={value}
-              className="cursor-pointer text-content-muted"
-              onClick={(e) => {
-                e.stopPropagation()
-                remove(value)
-              }}
-            >
-              {value} <span className="ml-1">&times;</span>
-            </Badge>
-          ))}
+          <div className="flex min-h-9 w-full flex-wrap space-y-2 space-x-2 px-2 pt-2 text-sm">
+            {selected.map((value) => (
+              <Badge
+                key={value}
+                className="cursor-pointer text-content-muted"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  remove(value)
+                }}
+              >
+                {value} <span className="ml-1">&times;</span>
+              </Badge>
+            ))}
 
-          <Input
-            ref={inputRef}
-            value={query}
-            disabled={disabled}
-            placeholder={selected.length ? "" : placeholder}
-            fieldSize={"sm"}
-            className="max-h-6 flex-1 border-none p-0 leading-tight"
-            onChange={(e) => {
-              setQuery(e.target.value)
-              setOpen(true)
-            }}
-            onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
-              if (e.key === "Backspace" && !query && selected.length) {
-                remove(selected[selected.length - 1])
-              } else if (e.key === "Escape") {
-                setOpen(false)
-                setQuery("")
-              }
-            }}
-            onFocus={() => setOpen(true)}
-          />
-        </div>
+            <Input
+              ref={inputRef}
+              value={query}
+              disabled={disabled}
+              placeholder={selected.length ? "" : placeholder}
+              fieldSize={"sm"}
+              className="max-h-6 flex-1 border-none p-0 leading-tight"
+              onChange={(e) => {
+                setQuery(e.target.value)
+                setOpen(true)
+              }}
+              onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === "Backspace" && !query && selected.length) {
+                  remove(selected[selected.length - 1])
+                } else if (e.key === "Escape") {
+                  setOpen(false)
+                  setQuery("")
+                }
+              }}
+              onFocus={() => setOpen(true)}
+            />
+          </div>
+        </ScrollArea>
       </PopoverTrigger>
 
       <PopoverContent

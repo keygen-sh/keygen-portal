@@ -34,7 +34,7 @@ const buttonVariants = cva(
         link: "h-6",
         rail: "size-10",
         command: "h-9 px-2",
-        clipboard: "h-5 px-2",
+        clipboard: "h-7 md:h-5 px-2",
       },
     },
     defaultVariants: {

@@ -17,7 +17,11 @@ import {
 
 import { Lock, Unlock, Award } from "lucide-react"
 
-import { DistributionStrategy, ProductDescription } from "@/types/products"
+import {
+  Product,
+  DistributionStrategy,
+  ProductDescription,
+} from "@/types/products"
 import { EditFormValues } from "./edit-form"
 
 import { toast } from "@/lib/toast"
@@ -26,11 +30,13 @@ import EditForm from "./edit-form"
 interface ProductsEditModalProps {
   open: boolean
   onClose: () => void
+  product: Product | null
 }
 
 export default function ProductsEditModal({
   open,
   onClose,
+  product,
 }: ProductsEditModalProps) {
   const [loading, setLoading] = useState(false)
   const [description, setDescription] = useState<ProductDescription>(
@@ -117,7 +123,8 @@ export default function ProductsEditModal({
         </DialogHeader>
 
         <EditForm
-          key="attributes"
+          key={product?.id ?? "new"}
+          product={product ?? null}
           loading={loading}
           onDescriptionChange={handleDescriptionChange}
           onSubmit={handleEditProduct}

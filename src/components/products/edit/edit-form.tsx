@@ -37,6 +37,7 @@ import {
 import { Info } from "lucide-react"
 
 import {
+  Product,
   KnownPlatforms,
   Permissions,
   DistributionStrategy,
@@ -70,6 +71,7 @@ export const editSchema = z.object({
 export type EditFormValues = z.infer<typeof editSchema>
 
 interface EditFormProps {
+  product: Product | null
   loading?: boolean
   onDescriptionChange?: (description: ProductDescription) => void
   onSubmit: (values: EditFormValues) => void
@@ -77,6 +79,7 @@ interface EditFormProps {
 }
 
 export default function EditForm({
+  product,
   loading,
   onDescriptionChange,
   onSubmit,
@@ -87,12 +90,13 @@ export default function EditForm({
   const form = useForm<EditFormValues>({
     resolver: zodResolver(editSchema),
     defaultValues: {
-      name: "",
-      code: "",
-      url: "",
-      distributionStrategy: DistributionStrategy.LICENSED,
-      platforms: [],
-      permissions: [],
+      name: product?.name ?? "",
+      code: product?.code ?? "",
+      url: product?.url ?? "",
+      distributionStrategy:
+        product?.distributionStrategy ?? DistributionStrategy.LICENSED,
+      platforms: product?.platforms ?? [],
+      permissions: product?.permissions ?? [],
       metadata: {},
     },
   })

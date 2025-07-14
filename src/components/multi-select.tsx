@@ -100,8 +100,8 @@ export default function MultiSelectInput({
           type="always"
           scrollHideDelay={0}
           className={cn(
-            "max-h-48 overflow-y-auto rounded-md border border-accent transition-colors duration-300 focus-within:border-content-subdued",
-            "[&_[data-radix-scroll-area-thumb]]:bg-content-muted",
+            "max-h-48 overflow-y-auto rounded-md border border-accent transition-colors duration-300",
+            "data-[state=open]:border-content-subdued [&_[data-radix-scroll-area-thumb]]:bg-content-muted",
           )}
         >
           <div className="flex min-h-9 w-full flex-wrap space-y-2 space-x-2 px-2 pt-2 text-sm">

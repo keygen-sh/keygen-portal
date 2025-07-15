@@ -9,7 +9,13 @@ import { AttributesFormValues } from "@/components/products/create/attributes-fo
 
 type Pair = { id: string; key: string; value: string }
 
-export default function MetaInput() {
+interface MetaInputProps {
+  disabled?: boolean
+}
+
+export default function MetaInput({
+  disabled,
+}: MetaInputProps): React.ReactElement {
   const { watch, setValue } = useFormContext<AttributesFormValues>()
   const saved = watch("metadata") ?? {}
 
@@ -57,6 +63,7 @@ export default function MetaInput() {
           variant="ghost"
           onClick={addRow}
           className="text-content-muted"
+          disabled={disabled}
         >
           + New Key/Value Pair
         </Button>
@@ -68,17 +75,20 @@ export default function MetaInput() {
                 placeholder="Key"
                 value={key}
                 onChange={(e) => updateRow(id, "key", e.target.value)}
+                disabled={disabled}
               />
               <Input
                 placeholder="Value"
                 value={value}
                 onChange={(e) => updateRow(id, "value", e.target.value)}
+                disabled={disabled}
               />
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
                 onClick={() => deleteRow(id)}
+                disabled={disabled}
               >
                 <X className="h-4 w-4 stroke-content-subdued" />
               </Button>

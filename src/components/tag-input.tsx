@@ -74,7 +74,11 @@ export default function TagInput({
   }
 
   return (
-    <Popover modal open={open} onOpenChange={(value) => setOpen(value)}>
+    <Popover
+      modal
+      open={!disabled && open}
+      onOpenChange={(value) => setOpen(value)}
+    >
       <PopoverTrigger asChild>
         <div
           ref={triggerRef}
@@ -86,6 +90,8 @@ export default function TagInput({
               className="cursor-pointer text-content-muted"
               onClick={(e) => {
                 e.stopPropagation()
+                if (disabled) return
+
                 remove(tag)
               }}
             >

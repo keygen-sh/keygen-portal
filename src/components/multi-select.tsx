@@ -75,7 +75,7 @@ export default function MultiSelectInput({
   const remove = (value: string) => toggle(value, open)
 
   return (
-    <Popover modal open={open} onOpenChange={setOpen}>
+    <Popover modal open={!disabled && open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <ScrollArea
           ref={triggerRef}

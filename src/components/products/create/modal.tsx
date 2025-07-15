@@ -65,15 +65,11 @@ export default function ProductsCreateModal({
       }
 
       setLoading(true)
-      try {
-        // await keygen.products.create(values);
+      setTimeout(() => {
         toast({ message: "Product created", variant: "success" })
-      } catch (err) {
-        console.error(err)
-        toast({ message: "Failed to create product", variant: "error" })
-      } finally {
+        onChangeMode(ProductMode.VIEW)
         setLoading(false)
-      }
+      }, 1000)
     },
     [onSelectProduct, onChangeMode],
   )

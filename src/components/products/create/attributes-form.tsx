@@ -214,6 +214,7 @@ export default function AttributesForm({
                           name="platforms"
                           placeholder=""
                           options={KnownPlatforms}
+                          disabled={loading}
                         />
                         <FormMessage>{error || ""}</FormMessage>
                       </FormItem>
@@ -263,6 +264,7 @@ export default function AttributesForm({
                           }))}
                           wildcard="*"
                           placeholder=""
+                          disabled={loading}
                         />
                         <FormMessage>{error || ""}</FormMessage>
                       </FormItem>
@@ -309,7 +311,7 @@ export default function AttributesForm({
                           </span>
                         </div>
                         <FormControl>
-                          <MetaInput />
+                          <MetaInput disabled={loading} />
                         </FormControl>
                         <FormMessage>{error || ""}</FormMessage>
                       </FormItem>

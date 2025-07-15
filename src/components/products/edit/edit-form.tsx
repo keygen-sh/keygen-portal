@@ -400,7 +400,7 @@ export default function EditForm({
                           </span>
                         </div>
                         <FormControl>
-                          <MetaInput />
+                          <MetaInput disabled={loading} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

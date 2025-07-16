@@ -91,14 +91,14 @@ export default function TagInput({
         <div
           ref={triggerRef}
           className={cn(
-            "flex min-h-9 w-full flex-wrap space-y-2 space-x-2 rounded-md border px-2 pt-2 text-sm transition-colors duration-300 focus-within:border-content-subdued",
+            "flex min-h-9 w-full flex-wrap gap-x-2 gap-y-2 rounded-md border p-2 text-sm transition-colors duration-300 focus-within:border-content-subdued",
             "data-[state=open]:border-content-subdued [&_[data-radix-scroll-area-thumb]]:bg-content-muted",
           )}
         >
           {tags.map((tag) => (
             <Badge
               key={tag}
-              className="cursor-pointer text-content-muted"
+              className="h-5 cursor-pointer text-content-muted"
               onClick={(e) => {
                 e.stopPropagation()
                 if (disabled) return
@@ -116,7 +116,7 @@ export default function TagInput({
             disabled={disabled}
             placeholder={tags.length ? "" : placeholder}
             fieldSize={"sm"}
-            className="max-h-6 flex-1 border-none p-0 leading-tight"
+            className="h-5 flex-1 border-none"
             onChange={(e) => {
               setDraft(e.target.value)
               if (!open) setOpen(true)
@@ -147,7 +147,7 @@ export default function TagInput({
             ))}
 
             {filtered.length === 0 && (
-              <CommandEmpty className="text flex px-2 py-3 text-xs text-nowrap">
+              <CommandEmpty className="flex px-2 py-3 text-xs text-nowrap">
                 <span>No matches. Press </span>
                 <kbd className="mx-2 rounded-[3px] border-t border-content-subdued bg-background-5 px-1 text-xs text-nowrap text-content-muted">
                   Enter

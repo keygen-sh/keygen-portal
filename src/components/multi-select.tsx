@@ -104,11 +104,11 @@ export default function MultiSelectInput({
             "data-[state=open]:border-content-subdued [&_[data-radix-scroll-area-thumb]]:bg-content-muted",
           )}
         >
-          <div className="flex min-h-9 w-full flex-wrap space-y-2 space-x-2 px-2 pt-2 text-sm">
+          <div className="flex min-h-9 w-full flex-wrap items-center gap-x-2 gap-y-2 p-2 text-sm">
             {selected.map((value) => (
               <Badge
                 key={value}
-                className="cursor-pointer text-content-muted"
+                className="h-5 cursor-pointer text-content-muted"
                 onClick={(e) => {
                   e.stopPropagation()
                   remove(value)
@@ -124,7 +124,7 @@ export default function MultiSelectInput({
               disabled={disabled}
               placeholder={selected.length ? "" : placeholder}
               fieldSize={"sm"}
-              className="max-h-6 flex-1 border-none p-0 leading-tight"
+              className="h-5 flex-1 border-none"
               onChange={(e) => {
                 setQuery(e.target.value)
                 setOpen(true)

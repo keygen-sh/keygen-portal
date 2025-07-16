@@ -129,6 +129,7 @@ export default function TagInput({
       <PopoverContent
         align="start"
         className="min-w-64 p-0"
+        onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
         <Command shouldFilter={false}>

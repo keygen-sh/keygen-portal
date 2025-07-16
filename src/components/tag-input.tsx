@@ -1,6 +1,8 @@
 import { useState, useRef, useMemo, KeyboardEvent } from "react"
 import { useFormContext } from "react-hook-form"
 
+import { cn } from "@/lib/utils"
+
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import {
@@ -65,9 +67,15 @@ export default function TagInput({
   }
 
   const handleKey = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (delimiters.includes(e.key)) {
+    if (delimiters.includes(e.key) && e.key !== "Tab") {
       e.preventDefault()
       add(draft)
+    } else if (e.key === "Tab") {
+      if (draft.trim()) {
+        e.preventDefault()
+        add(draft)
+      }
+      return
     } else if (e.key === "Backspace" && !draft && tags.length) {
       remove(tags[tags.length - 1])
     }
@@ -82,7 +90,10 @@ export default function TagInput({
       <PopoverTrigger asChild>
         <div
           ref={triggerRef}
-          className="flex min-h-9 w-full flex-wrap space-y-2 space-x-2 rounded-md border px-2 pt-2 text-sm transition-colors duration-300 focus-within:border-content-subdued"
+          className={cn(
+            "flex min-h-9 w-full flex-wrap space-y-2 space-x-2 rounded-md border px-2 pt-2 text-sm transition-colors duration-300 focus-within:border-content-subdued",
+            "data-[state=open]:border-content-subdued [&_[data-radix-scroll-area-thumb]]:bg-content-muted",
+          )}
         >
           {tags.map((tag) => (
             <Badge

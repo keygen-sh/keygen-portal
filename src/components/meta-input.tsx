@@ -60,10 +60,11 @@ export default function MetaInput({
       {rows.length === 0 ? (
         <Button
           size="sm"
+          type="button"
           variant="ghost"
           onClick={addRow}
-          className="text-content-muted"
           disabled={disabled}
+          className="text-content-muted"
         >
           + New Key/Value Pair
         </Button>
@@ -84,9 +85,9 @@ export default function MetaInput({
                 disabled={disabled}
               />
               <Button
+                size="icon"
                 type="button"
                 variant="ghost"
-                size="icon"
                 onClick={() => deleteRow(id)}
                 disabled={disabled}
               >
@@ -97,6 +98,7 @@ export default function MetaInput({
 
           <Button
             size="sm"
+            type="button"
             variant="ghost"
             onClick={addRow}
             disabled={!canAdd}

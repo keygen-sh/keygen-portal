@@ -1,14 +1,10 @@
-import { Skeleton } from "@/components/ui/skeleton"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import { useMemo } from "react"
+import { ColumnDef, createColumnHelper } from "@tanstack/react-table"
 
 import { Environment } from "@/types/environments"
+
+import DataTable from "@/components/data-table"
+import SkeletonTable from "@/components/skeleton-table"
 
 interface EnvironmentsListProps {
   data: Environment[]
@@ -21,44 +17,41 @@ export default function EnvironmentsList({
   fetching,
   onViewDetails,
 }: EnvironmentsListProps) {
+  const column = createColumnHelper<Environment>()
+  const columns = useMemo<ColumnDef<Environment, any>[]>(
+    () => [
+      column.accessor((row) => row.attributes.name, {
+        header: "Name",
+        id: "attributes.name",
+      }),
+      column.accessor((row) => row.attributes.code, {
+        header: "Code",
+        id: "attributes.code",
+      }),
+      column.accessor((row) => row.attributes.isolationStrategy, {
+        header: "Isolation Strategy",
+        id: "attributes.isolationStrategy",
+      }),
+    ],
+    [],
+  )
+
   return (
-    <div className="px-4">
+    <>
       {data && data.length > 0 ? (
-        <Table>
-          <TableHeader>
-            <TableRow className="pointer-events-none">
-              <TableHead className="w-48">Name</TableHead>
-              <TableHead className="w-12">Code</TableHead>
-              <TableHead className="w-32">Isolation Strategy</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {data.map((env) => (
-              <TableRow
-                key={env.id}
-                onClick={() => onViewDetails(env)}
-                className="cursor-pointer"
-              >
-                <TableCell className="font-medium">
-                  {env.attributes.name}
-                </TableCell>
-                <TableCell>{env.attributes.code}</TableCell>
-                <TableCell>{env.attributes.isolationStrategy}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <DataTable
+          data={data}
+          columns={columns}
+          onRowClick={onViewDetails}
+          hideOnMobile={["attributes.isolationStrategy"]}
+        />
       ) : fetching ? (
-        <div className="flex w-full flex-col items-start space-y-3 py-4 pr-8">
-          <Skeleton className="h-6 w-full" />
-          <Skeleton className="h-7 w-3/4" />
-          <Skeleton className="h-7 w-1/2" />
-        </div>
+        <SkeletonTable />
       ) : (
         <p className="my-8 text-center text-sm text-content-subdued">
           Looks empty. Create an environment to get started.
         </p>
       )}
-    </div>
+    </>
   )
 }

@@ -130,6 +130,11 @@ export default function MultiSelectInput({
                 setOpen(true)
               }}
               onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === "Tab") {
+                  setOpen(false)
+                  return
+                }
+
                 if (e.key === "Backspace" && !query && selected.length) {
                   remove(selected[selected.length - 1])
                 } else if (e.key === "Escape") {
@@ -155,6 +160,7 @@ export default function MultiSelectInput({
               {visibleOptions.map(({ label, value }) => (
                 <CommandItem
                   key={value}
+                  tabIndex={-1}
                   onSelect={() => toggle(value)}
                   className="cursor-pointer"
                 >

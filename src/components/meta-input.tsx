@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useFormContext } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
@@ -27,6 +27,8 @@ export default function MetaInput({
     })),
   )
 
+  const nextId = useRef<string>(null)
+
   const commit = (draft: Pair[]) => {
     const record: Record<string, string> = {}
     draft.forEach(({ key, value }) => {
@@ -36,7 +38,12 @@ export default function MetaInput({
   }
 
   const addRow = () => {
-    setRows([...rows, { id: crypto.randomUUID(), key: "", value: "" }])
+    nextId.current = crypto.randomUUID()
+    setRows([...rows, { id: nextId.current, key: "", value: "" }])
+
+    requestAnimationFrame(() =>
+      document.getElementById(`meta-key-${nextId.current}`)?.focus(),
+    )
   }
 
   const updateRow = (id: string, key: "key" | "value", value: string) => {
@@ -47,10 +54,14 @@ export default function MetaInput({
     commit(next)
   }
 
-  const deleteRow = (id: string) => {
+  const deleteRow = (id: string, usingKeys: boolean) => {
     const next = rows.filter((row) => row.id !== id)
     setRows(next)
     commit(next)
+
+    if (!usingKeys) return // If user clicked, i.e. not using keys to navigate form, don't focus 'add' button
+
+    requestAnimationFrame(() => document.getElementById("meta-add")?.focus())
   }
 
   const canAdd = rows.every(({ key, value }) => key.trim() && value.trim())
@@ -59,6 +70,7 @@ export default function MetaInput({
     <div className="space-y-2">
       {rows.length === 0 ? (
         <Button
+          id="meta-add"
           size="sm"
           type="button"
           variant="ghost"
@@ -73,6 +85,7 @@ export default function MetaInput({
           {rows.map(({ id, key, value }) => (
             <div key={id} className="flex items-center gap-2">
               <Input
+                id={`meta-key-${id}`}
                 placeholder="Key"
                 value={key}
                 onChange={(e) => updateRow(id, "key", e.target.value)}
@@ -88,7 +101,7 @@ export default function MetaInput({
                 size="icon"
                 type="button"
                 variant="ghost"
-                onClick={() => deleteRow(id)}
+                onClick={(e) => deleteRow(id, e.detail === 0)}
                 disabled={disabled}
               >
                 <X className="h-4 w-4 stroke-content-subdued" />
@@ -97,6 +110,7 @@ export default function MetaInput({
           ))}
 
           <Button
+            id="meta-add"
             size="sm"
             type="button"
             variant="ghost"

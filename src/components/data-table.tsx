@@ -36,7 +36,6 @@ export type DataTableProps<T> = {
   onRowClick?: (row: T) => void
   hideOnMobile?: string[]
   pageSize?: number
-  loading?: boolean
 }
 
 export default function DataTable<T>({

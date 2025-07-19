@@ -73,6 +73,8 @@ export default function AttributesForm({
 
   const form = useForm<AttributesFormValues>({
     resolver: zodResolver(attributesSchema),
+    mode: "onBlur",
+    reValidateMode: "onChange",
     defaultValues: {
       name: "",
       code: "",

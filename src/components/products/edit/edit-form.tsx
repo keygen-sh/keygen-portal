@@ -89,6 +89,8 @@ export default function EditForm({
 
   const form = useForm<EditFormValues>({
     resolver: zodResolver(editSchema),
+    mode: "onBlur",
+    reValidateMode: "onChange",
     defaultValues: {
       name: product?.name ?? "",
       code: product?.code ?? "",

@@ -54,15 +54,11 @@ export default function ProductsEditModal({
     }
 
     setLoading(true)
-    try {
-      // await keygen.products.update(values);
+    setTimeout(() => {
       toast({ message: "Product updated", variant: "success" })
-    } catch (err) {
-      console.error(err)
-      toast({ message: "Failed to update product", variant: "error" })
-    } finally {
+      onClose()
       setLoading(false)
-    }
+    }, 1000)
   }, [])
 
   const handleCancelEdit = useCallback(() => {

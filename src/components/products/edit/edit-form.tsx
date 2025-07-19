@@ -441,7 +441,7 @@ export default function EditForm({
             className="max-w-[12rem] flex-1 basis-1/2"
             disabled={loading}
           >
-            {loading ? <Loading.Dots className="bg-background" /> : "Create"}
+            {loading ? <Loading.Dots className="bg-background" /> : "Update"}
           </Button>
         </DialogFooter>
       </form>

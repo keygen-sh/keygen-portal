@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import {
   ColumnDef,
@@ -107,46 +107,59 @@ export default function DataTable<T>({
         </TableHeader>
 
         <TableBody className="text-base md:text-sm">
-          {table.getRowModel().rows.map((row) => (
-            <TableRow
-              key={row.id}
-              onClick={() => onRowClick?.(row.original)}
-              className={onRowClick ? "cursor-pointer" : undefined}
-            >
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
+          {table.getRowModel().rows.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                onClick={() => onRowClick?.(row.original)}
+                className={onRowClick ? "cursor-pointer" : undefined}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow className="pointer-events-none">
+              <TableCell
+                colSpan={table.getVisibleFlatColumns().length}
+                className="h-24 text-center text-content-subdued"
+              >
+                Nothing here yet.
+              </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
 
-      <div className="flex items-center justify-end space-x-4 p-4">
-        <span className="text-sm text-muted-foreground">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
-        </span>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+      {table.getRowModel().rows.length > 0 && (
+        <div className="flex items-center justify-end space-x-4 p-4">
+          <span className="text-sm text-muted-foreground">
+            Page {table.getState().pagination.pageIndex + 1} of{" "}
+            {table.getPageCount()}
+          </span>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

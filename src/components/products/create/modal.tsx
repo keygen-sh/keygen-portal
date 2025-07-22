@@ -22,12 +22,13 @@ import { useSlide } from "@/hooks/use-slide"
 
 import {
   Product,
-  ProductMode,
   DistributionStrategy,
   ProductDescription,
+  ProductErrorCode,
 } from "@/types/products"
 import { AttributesFormValues } from "./attributes-form"
 
+import * as keygen from "@/keygen"
 import { toast } from "@/lib/toast"
 import * as Motion from "@/components/motion"
 import StrategyForm from "./strategy-form"
@@ -35,12 +36,12 @@ import AttributesForm from "./attributes-form"
 
 interface ProductsCreateModalProps {
   onSelectProduct: (env: Product | null) => void
-  onChangeMode: (mode: ProductMode, env?: Product) => void
+  onClose: () => void
 }
 
 export default function ProductsCreateModal({
   onSelectProduct,
-  onChangeMode,
+  onClose,
 }: ProductsCreateModalProps) {
   const [step, direction, goTo] = useSlide([0, 1])
   const [loading, setLoading] = useState(false)
@@ -65,18 +66,41 @@ export default function ProductsCreateModal({
       }
 
       setLoading(true)
-      setTimeout(() => {
-        toast({ message: "Product created", variant: "success" })
-        onChangeMode(ProductMode.VIEW)
-        setLoading(false)
-      }, 1000)
-    },
-    [onSelectProduct, onChangeMode],
-  )
 
-  const handleCancelCreate = useCallback(() => {
-    onChangeMode(ProductMode.VIEW)
-  }, [onChangeMode])
+      try {
+        const { permissions, ...rest } = values
+
+        const payload = {
+          ...(permissions && permissions.length ? { permissions } : {}),
+          distributionStrategy,
+          ...rest,
+        }
+
+        const response = await keygen.products.create(payload)
+
+        if (response.errors) {
+          const error = response.errors[0]
+          if (error.code === ProductErrorCode.CODE_TAKEN) {
+            setError("Code already exists")
+          }
+
+          throw new Error(error.code)
+        }
+
+        const product = response.data as Product
+
+        toast({ message: "Product created", variant: "success" })
+        onSelectProduct(product)
+        onClose()
+      } catch (error) {
+        console.error(error)
+        toast({ message: "Failed to create product", variant: "error" })
+      } finally {
+        setLoading(false)
+      }
+    },
+    [onSelectProduct, onClose],
+  )
 
   const handleStrategyChange = useCallback(
     (newStrategy: DistributionStrategy) => {
@@ -160,7 +184,7 @@ export default function ProductsCreateModal({
             onStrategyChange={handleStrategyChange}
             onDescriptionChange={handleDescriptionChange}
             onSubmit={() => goTo(1)}
-            onCancel={handleCancelCreate}
+            onCancel={onClose}
           />
         ) : (
           <AttributesForm
@@ -168,7 +192,7 @@ export default function ProductsCreateModal({
             loading={loading}
             error={error}
             onSubmit={handleCreateProduct}
-            onCancel={handleCancelCreate}
+            onCancel={onClose}
           />
         )}
       </Motion.Slide>

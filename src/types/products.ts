@@ -56,15 +56,12 @@ export interface ProductRelationships {
 
 export interface Product {
   id: string
-  name: string
-  code: string
-  distributionStrategy: DistributionStrategy
-  url: string
-  platforms: string[]
-  permissions: string[]
-  metadata: Record<string, any>
-  created: string
-  updated: string
+  type: "products"
+  attributes: ProductAttributes
+  relationships: ProductRelationships
+  links: {
+    self: string
+  }
 }
 
 export type ProductResponse = APIResponse<Product>
@@ -72,7 +69,6 @@ export type ProductResponse = APIResponse<Product>
 export type ProductsListResponse = APIResponse<Product[]>
 
 export const Permissions = [
-  "*",
   "account.read",
   "arch.read",
   "artifact.create",

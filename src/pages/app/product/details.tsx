@@ -40,9 +40,10 @@ import {
   EllipsisVertical,
 } from "lucide-react"
 
-import { Product, ProductsData, DistributionStrategy } from "@/types/products"
+import { Product, DistributionStrategy } from "@/types/products"
 import { useMobile } from "@/hooks/use-mobile"
 
+import * as keygen from "@/keygen"
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
 import * as Attribute from "@/components/attribute"
@@ -69,15 +70,11 @@ export default function ProductDetails() {
 
   useEffect(() => {
     const fetchProduct = async () => {
-      setLoading(true)
       try {
-        const p = ProductsData.find((p) => p.id === productId)
+        const { data } = await keygen.products.get({ id: productId })
 
-        if (p) {
-          setTimeout(() => {
-            setProduct(p)
-            setLoading(false)
-          }, 1000)
+        if (data) {
+          setProduct(data)
         } else {
           throw new Error(`Product with ID ${productId} not found`)
         }
@@ -87,6 +84,7 @@ export default function ProductDetails() {
           message: "Could not find product",
           variant: "error",
         })
+      } finally {
         setLoading(false)
       }
     }
@@ -95,10 +93,18 @@ export default function ProductDetails() {
   }, [])
 
   const handleDeleteProduct = useCallback(
-    async (_id: string) => {
+    async (id: string) => {
       setLoading(true)
 
-      setTimeout(() => {
+      try {
+        await keygen.products.remove({ id })
+      } catch (error) {
+        console.error("Error deleting product:", error)
+        toast({
+          message: "Failed to delete product",
+          variant: "error",
+        })
+      } finally {
         setProduct(null)
         navigate({ to: `..` })
         toast({
@@ -106,7 +112,7 @@ export default function ProductDetails() {
           variant: "success",
         })
         setLoading(false)
-      }, 1000)
+      }
     },
     [loading],
   )
@@ -128,7 +134,7 @@ export default function ProductDetails() {
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 {product ? (
-                  <BreadcrumbPage>{product.name}</BreadcrumbPage>
+                  <BreadcrumbPage>{product.attributes.name}</BreadcrumbPage>
                 ) : (
                   <Skeleton className="h-6 w-32" />
                 )}
@@ -196,13 +202,13 @@ export default function ProductDetails() {
             <div className="px-4 py-6 md:px-10 md:py-8">
               <BackButton path=".." className="mb-8" />
               <div className="mb-2">
-                {product.distributionStrategy ===
+                {product.attributes.distributionStrategy ===
                 DistributionStrategy.LICENSED ? (
                   <Badge variant="secondary">
                     <Award className="inline size-4" />
                     Licensed
                   </Badge>
-                ) : product.distributionStrategy ===
+                ) : product.attributes.distributionStrategy ===
                   DistributionStrategy.CLOSED ? (
                   <Badge variant="secondary">
                     <Lock className="inline size-4" />
@@ -217,7 +223,7 @@ export default function ProductDetails() {
               </div>
               <div className="flex flex-col gap-3 md:flex-row md:items-center">
                 <h1 className="font-owners-wide text-2xl font-medium">
-                  {product.name}
+                  {product.attributes.name}
                 </h1>
                 <Button
                   variant="clipboard"
@@ -237,12 +243,12 @@ export default function ProductDetails() {
                       <Attribute.Field
                         variant="outline"
                         label="Code"
-                        value={product.code}
+                        value={product.attributes.code}
                       />
                       <Attribute.Field
                         variant="text"
                         label="URL"
-                        value={product.url || "--"}
+                        value={product.attributes.url || "--"}
                       />
                     </div>
                     <div className="mx-4 hidden md:block">
@@ -252,7 +258,7 @@ export default function ProductDetails() {
                       <div className="flex items-center gap-2">
                         <Attribute.Field
                           label="Distribution Strategy"
-                          value={product.distributionStrategy}
+                          value={product.attributes.distributionStrategy}
                           tooltip={`The distribution strategy for releases.
                                     Licensed = only licensed users.
                                     Open = anybody, no license required.
@@ -261,21 +267,23 @@ export default function ProductDetails() {
                       </div>
                       <Attribute.Array
                         label="Platforms"
-                        array={product.platforms}
+                        array={product.attributes.platforms || []}
                       />
                     </div>
                   </div>
                   <CollapsibleMenu title="Permissions" defaultOpen={false}>
-                    {product.permissions.length > 0 ? (
+                    {product.attributes.permissions?.length > 0 ? (
                       <div className="flex max-w-full flex-wrap gap-2">
-                        {product.permissions.map((permission, index) => (
-                          <Badge
-                            key={index}
-                            className="text-sm text-content-muted"
-                          >
-                            {permission}
-                          </Badge>
-                        ))}
+                        {product.attributes.permissions.map(
+                          (permission, index) => (
+                            <Badge
+                              key={index}
+                              className="text-sm text-content-muted"
+                            >
+                              {permission}
+                            </Badge>
+                          ),
+                        )}
                       </div>
                     ) : (
                       <p className="text-sm text-content-muted">
@@ -290,21 +298,23 @@ export default function ProductDetails() {
                 </CollapsibleCard>
 
                 <CollapsibleCard title="Metadata">
-                  {product.metadata &&
-                  Object.keys(product.metadata).length > 0 ? (
+                  {product.attributes.metadata &&
+                  Object.keys(product.attributes.metadata).length > 0 ? (
                     <div className="flex flex-col space-y-2">
-                      {Object.entries(product.metadata).map(([key, value]) => (
-                        <div key={key} className="flex items-center gap-2">
-                          <span className="text-sm text-content-normal">
-                            {key}:
-                          </span>
-                          <span className="text-sm text-content-muted">
-                            {typeof value === "object"
-                              ? JSON.stringify(value)
-                              : value}
-                          </span>
-                        </div>
-                      ))}
+                      {Object.entries(product.attributes.metadata).map(
+                        ([key, value]) => (
+                          <div key={key} className="flex items-center gap-2">
+                            <span className="text-sm text-content-normal">
+                              {key}:
+                            </span>
+                            <span className="text-sm text-content-muted">
+                              {typeof value === "object"
+                                ? JSON.stringify(value)
+                                : value}
+                            </span>
+                          </div>
+                        ),
+                      )}
                     </div>
                   ) : (
                     <p className="text-sm text-content-muted">{"{ }"}</p>
@@ -318,12 +328,16 @@ export default function ProductDetails() {
                         <Property.Field
                           icon={SquarePlus}
                           label="Created at"
-                          value={new Date(product.created).toLocaleDateString()}
+                          value={new Date(
+                            product.attributes.created,
+                          ).toLocaleDateString()}
                         />
                         <Property.Field
                           icon={SquarePen}
                           label="Updated at"
-                          value={new Date(product.updated).toLocaleDateString()}
+                          value={new Date(
+                            product.attributes.updated,
+                          ).toLocaleDateString()}
                         />
                       </>
                     ) : (
@@ -384,12 +398,16 @@ export default function ProductDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={new Date(product.created).toLocaleDateString()}
+                        value={new Date(
+                          product.attributes.created,
+                        ).toLocaleDateString()}
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={new Date(product.updated).toLocaleDateString()}
+                        value={new Date(
+                          product.attributes.updated,
+                        ).toLocaleDateString()}
                       />
                     </>
                   ) : (

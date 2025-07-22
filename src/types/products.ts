@@ -184,30 +184,3 @@ export const Permissions = [
 export const KnownPlatforms = ["Windows", "macOS", "Linux", "iOS", "Android"]
 
 export type Permission = (typeof Permissions)[number]
-
-export const ProductsData: Product[] = [
-  {
-    id: "31339351-b0c2-4f1e-8d3a-9f5c6b7d8e9f",
-    name: "MDR Cloud",
-    code: "mdr",
-    distributionStrategy: DistributionStrategy.LICENSED,
-    url: "https://cloud.lumon.industries/",
-    platforms: ["Windows", "macOS"],
-    permissions: Permissions,
-    metadata: {},
-    created: "2025-05-28T12:34:56.789Z",
-    updated: "2025-05-30T14:20:00.000Z",
-  },
-  {
-    id: "79a2ccb8-f1c3-4b2e-9d8a-5e6f7a8b9c0d",
-    name: "Waffle Party Planner",
-    code: "planner",
-    distributionStrategy: DistributionStrategy.OPEN,
-    url: "https://planner.lumon.industries/",
-    platforms: ["Linux", "macOS"],
-    permissions: Permissions,
-    metadata: {},
-    created: "2025-06-01T08:15:42.123Z",
-    updated: "2025-06-02T10:00:00.000Z",
-  },
-]

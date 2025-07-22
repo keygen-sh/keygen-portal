@@ -87,6 +87,13 @@ export default function ProductsList() {
     fetchProducts()
   }, [])
 
+  const handleSelectProduct = (product: Product) => {
+    if (!product) return
+
+    setProducts((prev) => [product, ...prev])
+    setOpen(false)
+  }
+
   return (
     <section>
       <PageHeader title="Products">
@@ -98,12 +105,8 @@ export default function ProductsList() {
           </DialogTrigger>
 
           <Products.Create.Modal
-            onSelectProduct={(product) => {
-              if (product) {
-                setProducts((prev) => [product, ...prev])
-              }
-            }}
-            onChangeMode={() => setOpen(false)}
+            onSelectProduct={(product) => handleSelectProduct(product!)}
+            onClose={() => setOpen(false)}
           />
         </Dialog>
       </PageHeader>

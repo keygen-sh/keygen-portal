@@ -13,5 +13,8 @@ export { verify }
 import * as environments from "./environments"
 export { environments }
 
+import * as products from "./products"
+export { products }
+
 import { logout } from "./logout"
 export { logout }

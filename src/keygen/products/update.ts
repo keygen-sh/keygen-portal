@@ -6,13 +6,13 @@ config.validate()
 
 interface UpdateProps {
   id: string
-  name: string | null
-  code: string | null
-  distributionStrategy: DistributionStrategy | null
-  url: string | null
-  platforms: string[] | null
-  permissions: string[] | null
-  metadata: Record<string, any> | null
+  name?: string | null
+  code?: string | null
+  distributionStrategy?: DistributionStrategy | null
+  url?: string | null
+  platforms?: string[] | null
+  permissions?: string[] | null
+  metadata?: Record<string, any> | null
 }
 
 export default async function update({

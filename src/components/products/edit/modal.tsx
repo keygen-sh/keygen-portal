@@ -24,42 +24,72 @@ import {
 } from "@/types/products"
 import { EditFormValues } from "./edit-form"
 
+import * as keygen from "@/keygen"
 import { toast } from "@/lib/toast"
+import { diff } from "@/lib/utils"
 import EditForm from "./edit-form"
 
 interface ProductsEditModalProps {
   open: boolean
   onClose: () => void
   product: Product | null
+  setProduct: (product: Product | null) => void
 }
 
 export default function ProductsEditModal({
   open,
   onClose,
   product,
+  setProduct,
 }: ProductsEditModalProps) {
   const [loading, setLoading] = useState(false)
   const [description, setDescription] = useState<ProductDescription>(
     ProductDescription.LICENSED_UPDATE,
   )
 
-  const handleEditProduct = useCallback(async (values: EditFormValues) => {
-    if (!values.name || !values.distributionStrategy) {
-      toast({
-        message: "Failed to update product",
-        description: "Missing required fields.",
-        variant: "error",
-      })
-      return
-    }
+  const handleEditProduct = useCallback(
+    async (values: EditFormValues) => {
+      if (!product) return
 
-    setLoading(true)
-    setTimeout(() => {
-      toast({ message: "Product updated", variant: "success" })
-      onClose()
-      setLoading(false)
-    }, 1000)
-  }, [])
+      setLoading(true)
+
+      try {
+        const changes = diff(product.attributes, {
+          ...values,
+          permissions:
+            values.permissions && values.permissions.length
+              ? values.permissions
+              : [],
+        })
+
+        // Bail if no changes were made
+        if (!Object.keys(changes).length) {
+          onClose()
+          return
+        }
+        const payload = { id: product.id, ...changes }
+
+        const response = await keygen.products.update(payload)
+
+        if (response.errors) {
+          const error = response.errors[0]
+          throw new Error(error.code)
+        }
+
+        const updatedProduct = response.data as Product
+
+        toast({ message: "Product updated", variant: "success" })
+        setProduct(updatedProduct)
+        onClose()
+      } catch (error) {
+        console.error(error)
+        toast({ message: "Failed to update product", variant: "error" })
+      } finally {
+        setLoading(false)
+      }
+    },
+    [product],
+  )
 
   const handleCancelEdit = useCallback(() => {
     onClose()

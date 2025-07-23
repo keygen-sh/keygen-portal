@@ -92,14 +92,15 @@ export default function EditForm({
     mode: "onBlur",
     reValidateMode: "onChange",
     defaultValues: {
-      name: product?.name ?? "",
-      code: product?.code ?? "",
-      url: product?.url ?? "",
+      name: product?.attributes.name ?? "",
+      code: product?.attributes.code ?? "",
+      url: product?.attributes.url ?? "",
       distributionStrategy:
-        product?.distributionStrategy ?? DistributionStrategy.LICENSED,
-      platforms: product?.platforms ?? [],
-      permissions: product?.permissions ?? [],
-      metadata: {},
+        product?.attributes.distributionStrategy ??
+        DistributionStrategy.LICENSED,
+      platforms: product?.attributes.platforms ?? [],
+      permissions: product?.attributes.permissions ?? [],
+      metadata: product?.attributes.metadata ?? {},
     },
   })
 

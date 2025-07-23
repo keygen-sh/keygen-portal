@@ -431,6 +431,7 @@ export default function ProductDetails() {
         open={open.edit}
         onClose={() => setOpen({ ...open, edit: false })}
         product={product}
+        setProduct={setProduct}
       />
 
       <DeleteModal

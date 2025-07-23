@@ -62,10 +62,10 @@ export const editSchema = z.object({
     .refine((v) => !v || z.string().url().safeParse(v).success, {
       message: "Must be a valid URL",
     }),
-  distributionStrategy: z.nativeEnum(DistributionStrategy).optional(),
-  platforms: z.array(z.string()).default([]),
-  permissions: z.array(z.string()).default([]),
-  metadata: z.record(z.string()).default({}),
+  distributionStrategy: z.nativeEnum(DistributionStrategy),
+  platforms: z.array(z.string()).default([]).optional(),
+  permissions: z.array(z.string()).default([]).optional(),
+  metadata: z.record(z.string()).default({}).optional(),
 })
 
 export type EditFormValues = z.infer<typeof editSchema>

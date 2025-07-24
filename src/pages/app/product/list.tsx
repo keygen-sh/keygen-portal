@@ -91,6 +91,10 @@ export default function ProductsList() {
     if (!product) return
 
     setProducts((prev) => [product, ...prev])
+    navigate({
+      to: "/$id/app/products/$productId",
+      params: { id: keygen.config.id, productId: product.id },
+    })
     setOpen(false)
   }
 

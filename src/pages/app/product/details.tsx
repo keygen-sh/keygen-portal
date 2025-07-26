@@ -74,7 +74,7 @@ export default function ProductDetails() {
     deleteProduct.mutate(undefined, {
       onSuccess: () => {
         toast({
-          message: "Product deleted successfully",
+          message: "Product deleted",
           variant: "success",
         })
         navigate({ to: ".." })

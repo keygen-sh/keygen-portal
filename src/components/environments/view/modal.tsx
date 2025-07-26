@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useCallback } from "react"
 
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/breadcrumb"
 
 import { useSlide } from "@/hooks/use-slide"
+import { useDeleteEnvironment } from "@/hooks/use-environment"
 
 import {
   Environment,
@@ -25,11 +26,10 @@ import {
   EnvironmentView,
 } from "@/types/environments"
 
-import * as keygen from "@/keygen"
-import { toast } from "@/lib/toast"
 import * as Motion from "@/components/motion"
 import EnvironmentsList from "./list"
 import EnvironmentDetails from "./details"
+import { toast } from "@/lib/toast"
 
 interface EnvironmentsViewModalProps {
   selectedEnvironment: Environment | null
@@ -42,33 +42,12 @@ export default function EnvironmentsViewModal({
   onSelectEnvironment,
   onChangeMode,
 }: EnvironmentsViewModalProps) {
+  const deleteEnvironment = useDeleteEnvironment(selectedEnvironment?.id ?? "")
+
   const [view, direction, goTo] = useSlide(
     [EnvironmentView.LIST, EnvironmentView.DETAILS],
     EnvironmentView.LIST,
   )
-
-  const [data, setData] = useState<Environment[]>([])
-  const [fetching, setFetching] = useState(true)
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    const fetchEnvironments = async () => {
-      try {
-        const environments = await keygen.environments.list({})
-        setData(environments.data ?? [])
-      } catch (error) {
-        console.error("Error fetching environments:", error)
-        toast({
-          message: "Failed to fetch environments",
-          variant: "error",
-        })
-      } finally {
-        setFetching(false)
-      }
-    }
-
-    fetchEnvironments()
-  }, [])
 
   const handleViewDetails = useCallback(
     (environment: Environment) => {
@@ -83,42 +62,18 @@ export default function EnvironmentsViewModal({
     goTo(EnvironmentView.LIST)
   }, [onSelectEnvironment])
 
-  const handleStartCreate = useCallback(() => {
-    onChangeMode(EnvironmentMode.CREATE)
-  }, [onChangeMode])
-
-  const handleStartEdit = useCallback(
-    (environment: Environment) => {
-      onSelectEnvironment(environment)
-      onChangeMode(EnvironmentMode.EDIT)
-    },
-    [onSelectEnvironment, onChangeMode],
-  )
-
-  const handleDeleteEnvironment = useCallback(async (id: string) => {
-    setLoading(true)
-    await keygen.environments
-      .remove({ id })
-      .then(() => {
-        setData((prev) => prev.filter((env) => env.id !== id))
+  const handleDeleteEnvironment = () => {
+    deleteEnvironment.mutate(undefined, {
+      onSuccess: () => {
         toast({
           message: "Environment deleted",
           variant: "success",
         })
         onSelectEnvironment(null)
         goTo(EnvironmentView.LIST)
-      })
-      .catch((error) => {
-        console.error("Error deleting environment:", error)
-        toast({
-          message: "Failed to delete environment",
-          variant: "error",
-        })
-      })
-      .finally(() => {
-        setLoading(false)
-      })
-  }, [])
+      },
+    })
+  }
 
   return (
     <>
@@ -160,20 +115,18 @@ export default function EnvironmentsViewModal({
         <Motion.Slide direction={direction}>
           {view === EnvironmentView.LIST ? (
             <EnvironmentsList
-              key="list"
-              data={data}
-              fetching={fetching}
+              key="environment-list"
               onViewDetails={handleViewDetails}
             />
           ) : (
             selectedEnvironment && (
               <EnvironmentDetails
-                key="details"
+                key="environment-details"
                 environment={selectedEnvironment}
-                onEditEnvironment={() => handleStartEdit(selectedEnvironment)}
-                loading={loading}
-                onDeleteEnvironment={() =>
-                  handleDeleteEnvironment(selectedEnvironment.id)
+                loading={deleteEnvironment.isPending}
+                onDeleteEnvironment={handleDeleteEnvironment}
+                onEditEnvironment={() =>
+                  onChangeMode(EnvironmentMode.EDIT, selectedEnvironment)
                 }
               />
             )
@@ -183,7 +136,9 @@ export default function EnvironmentsViewModal({
 
       <DialogFooter className="border-t border-accent p-4">
         {view === EnvironmentView.LIST && (
-          <Button onClick={handleStartCreate}>Create Environment</Button>
+          <Button onClick={() => onChangeMode(EnvironmentMode.CREATE)}>
+            Create Environment
+          </Button>
         )}
         {view === EnvironmentView.DETAILS && selectedEnvironment && (
           <Button variant="outline" onClick={handleBackToList}>

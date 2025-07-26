@@ -16,24 +16,24 @@ import { Badge } from "@/components/ui/badge"
 
 import { Copy, Globe, GlobeLock } from "lucide-react"
 
+import { Environment } from "@/types/environments"
+
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import * as Attribute from "@/components/attribute"
 import * as Loading from "@/components/loading"
 
-import { Environment } from "@/types/environments"
-
 interface EnvironmentDetailsProps {
   environment: Environment
-  onEditEnvironment: () => void
   loading: boolean
+  onEditEnvironment: () => void
   onDeleteEnvironment: () => void
 }
 
 export default function EnvironmentDetails({
   environment,
-  onEditEnvironment,
   loading,
+  onEditEnvironment,
   onDeleteEnvironment,
 }: EnvironmentDetailsProps) {
   return (

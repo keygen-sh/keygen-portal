@@ -40,43 +40,36 @@ const editEnvironmentSchema = z.object({
   code: z.string().min(1, "Code is required"),
 })
 
-type EditEnvironmentFormValues = z.infer<typeof editEnvironmentSchema>
+export type EditEnvironmentFormValues = z.infer<typeof editEnvironmentSchema>
 
 interface EnvironmentEditProps {
-  name: string | null
-  code: string | null
-  error: string | null
-  onNameChange: (name: string) => void
-  onCodeChange: (code: string) => void
   environment: Environment
-  onSubmit: () => void
+  onSubmit: (values: EditEnvironmentFormValues) => void
   onCancel: () => void
   loading: boolean
+  error: string | null
 }
 
 export default function EnvironmentEditForm({
-  name,
-  code,
-  error,
-  onNameChange,
-  onCodeChange,
+  environment,
   onSubmit,
   onCancel,
   loading,
+  error,
 }: EnvironmentEditProps) {
   const isMobile = useMobile()
 
   const form = useForm<EditEnvironmentFormValues>({
     resolver: zodResolver(editEnvironmentSchema),
     defaultValues: {
-      name: name || "",
-      code: code || "",
+      name: environment.attributes.name || "",
+      code: environment.attributes.code || "",
     },
   })
 
   const handleSubmit = useCallback(() => {
-    onSubmit()
-  }, [onSubmit])
+    onSubmit(form.getValues())
+  }, [onSubmit, form])
 
   return (
     <Form {...form}>
@@ -101,7 +94,6 @@ export default function EnvironmentEditForm({
                       disabled={loading}
                       onChange={(e) => {
                         field.onChange(e)
-                        onNameChange?.(e.target.value)
                       }}
                     />
                   </FormControl>
@@ -157,7 +149,6 @@ export default function EnvironmentEditForm({
                           disabled={loading}
                           onChange={(e) => {
                             field.onChange(e)
-                            onCodeChange?.(e.target.value)
                           }}
                         />
                       </FormControl>

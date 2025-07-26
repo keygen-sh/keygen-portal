@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useCallback } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import {
@@ -15,109 +15,60 @@ import {
 
 import { Globe, GlobeLock } from "lucide-react"
 
+import { useUpdateEnvironment } from "@/hooks/use-environment"
+
 import {
   Environment,
   EnvironmentMode,
   IsolationStrategy,
   EnvironmentErrorCode,
 } from "@/types/environments"
+import type { EditEnvironmentFormValues } from "./edit-form"
 
-import * as keygen from "@/keygen"
 import { toast } from "@/lib/toast"
 import EditForm from "./edit-form"
 
 interface EnvironmentsEditModalProps {
   selectedEnvironment: Environment
-  onSelectEnvironment: (env: Environment | null) => void
   onChangeMode: (mode: EnvironmentMode, env?: Environment) => void
 }
 
 export default function EnvironmentsEditModal({
   selectedEnvironment,
-  onSelectEnvironment,
   onChangeMode,
 }: EnvironmentsEditModalProps) {
-  const [name, setName] = useState<string | null>(null)
-  const [code, setCode] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+  const updateEnvironment = useUpdateEnvironment(selectedEnvironment.id)
+  const [formError, setFormError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (selectedEnvironment) {
-      setName(selectedEnvironment.attributes.name || null)
-      setCode(selectedEnvironment.attributes.code || null)
-    }
-  }, [selectedEnvironment])
+  const handleUpdateEnvironment = useCallback(
+    (values: EditEnvironmentFormValues) => {
+      setFormError(null)
 
-  const handleUpdateEnvironment = useCallback(async () => {
-    setLoading(true)
-
-    try {
-      const existingAttributes = selectedEnvironment.attributes
-      const updates: Partial<{ name: string | null; code: string | null }> = {}
-
-      if (name !== existingAttributes.name) {
-        updates.name = name
-      }
-
-      if (code !== existingAttributes.code) {
-        updates.code = code
-      }
-
-      // Bail if no updates
-      if (Object.keys(updates).length === 0) {
-        toast({
-          message: "No changes detected",
-          description: "No updates were made to the environment",
-          variant: "warning",
-        })
-        setLoading(false)
-        onChangeMode(EnvironmentMode.VIEW, selectedEnvironment)
-        return
-      }
-
-      const result = await keygen.environments.update({
-        id: selectedEnvironment.id,
-        name: updates.name ?? null,
-        code: updates.code ?? null,
+      updateEnvironment.mutate(values, {
+        onSuccess(updated) {
+          toast({ message: "Environment updated", variant: "success" })
+          onChangeMode(EnvironmentMode.VIEW, updated)
+        },
+        onError: (error) => {
+          if (
+            typeof error === "object" &&
+            error &&
+            "code" in error &&
+            error.code === EnvironmentErrorCode.CODE_TAKEN
+          ) {
+            setFormError("Code already exists")
+          }
+          toast({ message: "Failed to update environment", variant: "error" })
+        },
+        onSettled() {
+          if (!updateEnvironment.isError) {
+            onChangeMode(EnvironmentMode.VIEW)
+          }
+        },
       })
-
-      if (result.errors) {
-        const errorCode = result.errors[0].code
-        if (errorCode === EnvironmentErrorCode.CODE_TAKEN) {
-          setError("Code already exists")
-        }
-
-        throw new Error(`${result.errors.map((e) => e.code).join(", ")}`)
-      }
-
-      const updatedEnvironment = result as Environment
-
-      toast({
-        message: "Environment updated",
-        variant: "success",
-      })
-
-      onSelectEnvironment(updatedEnvironment)
-      onChangeMode(EnvironmentMode.VIEW, updatedEnvironment)
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setLoading(false)
-    }
-  }, [name, code, onSelectEnvironment, onChangeMode])
-
-  const handleCancelUpdate = useCallback(() => {
-    onChangeMode(EnvironmentMode.VIEW)
-  }, [onChangeMode])
-
-  const handleNameChange = useCallback((newName: string) => {
-    setName(newName)
-  }, [])
-
-  const handleCodeChange = useCallback((newCode: string) => {
-    setCode(newCode)
-  }, [])
+    },
+    [updateEnvironment, onChangeMode],
+  )
 
   return (
     <>
@@ -152,15 +103,11 @@ export default function EnvironmentsEditModal({
       </DialogHeader>
 
       <EditForm
-        name={name}
-        code={code}
-        error={error}
-        onNameChange={handleNameChange}
-        onCodeChange={handleCodeChange}
+        error={formError}
         environment={selectedEnvironment}
         onSubmit={handleUpdateEnvironment}
-        onCancel={handleCancelUpdate}
-        loading={loading}
+        onCancel={() => onChangeMode(EnvironmentMode.VIEW)}
+        loading={updateEnvironment.isPending}
       />
     </>
   )

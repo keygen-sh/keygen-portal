@@ -18,6 +18,7 @@ import {
 import { Globe, GlobeLock } from "lucide-react"
 
 import { useSlide } from "@/hooks/use-slide"
+import { useCreateEnvironment } from "@/hooks/use-environment"
 
 import {
   Environment,
@@ -27,7 +28,6 @@ import {
   EnvironmentErrorCode,
 } from "@/types/environments"
 
-import * as keygen from "@/keygen"
 import { toast } from "@/lib/toast"
 import * as Motion from "@/components/motion"
 import StrategyForm from "./strategy-form"
@@ -42,22 +42,22 @@ export default function EnvironmentsCreateModal({
   onSelectEnvironment,
   onChangeMode,
 }: EnvironmentsCreateModalProps) {
-  const [step, direction, goTo] = useSlide([0, 1])
+  const createEnvironment = useCreateEnvironment()
 
-  const [loading, setLoading] = useState(false)
+  const [step, direction, goTo] = useSlide([0, 1])
 
   const [name, setName] = useState<string | null>(null)
   const [code, setCode] = useState<string | null>(null)
   const [isolationStrategy, setIsolationStrategy] = useState<IsolationStrategy>(
     IsolationStrategy.ISOLATED,
   )
-  const [error, setError] = useState<string | null>(null)
-
   const [description, setDescription] = useState<EnvironmentDescription>(
     EnvironmentDescription.ISOLATED,
   )
 
-  const handleCreateEnvironment = useCallback(async () => {
+  const [formError, setFormError] = useState<string | null>(null)
+
+  const handleCreateEnvironment = useCallback(() => {
     if (!name || !code) {
       toast({
         message: "Failed to create environment",
@@ -67,39 +67,30 @@ export default function EnvironmentsCreateModal({
       return
     }
 
-    setLoading(true)
-
-    try {
-      const result = await keygen.environments.create({
-        name: name,
-        code: code,
-        isolationStrategy,
-      })
-
-      if (result.errors) {
-        const errorCode = result.errors[0].code
-        if (errorCode === EnvironmentErrorCode.CODE_TAKEN) {
-          setError("Code already exists")
-        }
-
-        throw new Error(`${result.errors.map((e) => e.code).join(", ")}`)
-      }
-
-      const newEnvironment = result as Environment
-
-      toast({
-        message: "Environment created",
-        variant: "success",
-      })
-
-      onSelectEnvironment(newEnvironment)
-      onChangeMode(EnvironmentMode.VIEW, newEnvironment)
-    } catch (error) {
-      console.error(error)
-      toast({ message: "Failed to create environment", variant: "error" })
-    } finally {
-      setLoading(false)
+    const payload = {
+      name,
+      code,
+      isolationStrategy,
     }
+
+    createEnvironment.mutate(payload, {
+      onSuccess: (environment) => {
+        toast({ message: "Environment created", variant: "success" })
+        onSelectEnvironment(environment)
+        onChangeMode(EnvironmentMode.VIEW, environment)
+      },
+      onError: (error) => {
+        if (
+          typeof error === "object" &&
+          error &&
+          "code" in error &&
+          error.code === EnvironmentErrorCode.CODE_TAKEN
+        ) {
+          setFormError("Code already exists")
+        }
+        toast({ message: "Failed to create environment", variant: "error" })
+      },
+    })
   }, [name, code, isolationStrategy, onSelectEnvironment, onChangeMode])
 
   const handleCancelCreate = useCallback(() => {
@@ -207,12 +198,12 @@ export default function EnvironmentsCreateModal({
             key="attributes"
             name={name}
             code={code}
-            error={error}
+            error={formError}
             onNameChange={handleNameChange}
             onCodeChange={handleCodeChange}
             onSubmit={handleAttributesSubmit}
             onCancel={handleCancelCreate}
-            loading={loading}
+            loading={createEnvironment.isPending}
           />
         )}
       </Motion.Slide>

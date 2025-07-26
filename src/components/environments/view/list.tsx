@@ -2,21 +2,20 @@ import { useMemo } from "react"
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table"
 
 import { Environment } from "@/types/environments"
+import { useEnvironments } from "@/hooks/use-environment"
 
 import DataTable from "@/components/data-table"
 import SkeletonTable from "@/components/skeleton-table"
 
 interface EnvironmentsListProps {
-  data: Environment[]
-  fetching: boolean
   onViewDetails: (environment: Environment) => void
 }
 
 export default function EnvironmentsList({
-  data,
-  fetching,
   onViewDetails,
 }: EnvironmentsListProps) {
+  const { data: environments = [], isLoading } = useEnvironments()
+
   const column = createColumnHelper<Environment>()
   const columns = useMemo<ColumnDef<Environment, any>[]>(
     () => [
@@ -38,14 +37,14 @@ export default function EnvironmentsList({
 
   return (
     <>
-      {data && data.length > 0 ? (
+      {environments && environments.length > 0 ? (
         <DataTable
-          data={data}
+          data={environments}
           columns={columns}
           onRowClick={onViewDetails}
           hideOnMobile={["attributes.isolationStrategy"]}
         />
-      ) : fetching ? (
+      ) : isLoading ? (
         <SkeletonTable />
       ) : (
         <p className="my-8 text-center text-sm text-content-subdued">

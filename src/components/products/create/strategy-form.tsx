@@ -3,12 +3,9 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { cn } from "@/lib/utils"
-
 import { Button } from "@/components/ui/button"
 import { DialogFooter } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import {
   Tooltip,
@@ -25,6 +22,8 @@ import { Award, Unlock, Lock, Info } from "lucide-react"
 
 import { useMobile } from "@/hooks/use-mobile"
 import { DistributionStrategy, ProductDescription } from "@/types/products"
+
+import { CardSelector, CardOption } from "@/components/card-selector"
 
 const strategySchema = z.object({
   distributionStrategy: z.enum([
@@ -59,6 +58,30 @@ export default function StrategyForm({
       distributionStrategy,
     },
   })
+
+  const strategyOptions: CardOption<DistributionStrategy>[] = [
+    {
+      value: DistributionStrategy.LICENSED,
+      label: "Licensed",
+      icon: <Award className="size-6 text-content-subdued md:size-5" />,
+      tooltip:
+        "Only licensed users, with a valid license, can access releases and release artifacts. API authentication is required.",
+    },
+    {
+      value: DistributionStrategy.OPEN,
+      label: "Open",
+      icon: <Unlock className="size-6 text-content-subdued md:size-5" />,
+      tooltip:
+        "Anybody can access releases. No API authentication required, so this is a great option for public downloads, open-source projects, or freemium products.",
+    },
+    {
+      value: DistributionStrategy.CLOSED,
+      label: "Closed",
+      icon: <Lock className="size-6 text-content-subdued md:size-5" />,
+      tooltip:
+        "Only admins can access releases. Download links must be generated server-side. API authentication is required.",
+    },
+  ]
 
   const handleSubmit = useCallback(
     (values: StrategyFormValues) => {
@@ -102,168 +125,15 @@ export default function StrategyForm({
               name="distributionStrategy"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex flex-col gap-4 md:flex-row">
-                    <Card
-                      className={cn(
-                        "w-full cursor-pointer rounded-lg bg-background p-0.5 transition-colors duration-200 md:w-60",
-                        field.value === DistributionStrategy.LICENSED
-                          ? "bg-gradient-to-r from-primary to-secondary"
-                          : "",
-                      )}
-                      onClick={() => {
-                        field.onChange(DistributionStrategy.LICENSED)
-                        onStrategyChange?.(DistributionStrategy.LICENSED)
-                        onDescriptionChange?.(ProductDescription.LICENSED)
-                      }}
-                    >
-                      <div className="space-y-4 rounded-[inherit] bg-background p-4">
-                        <CardHeader className="p-0">
-                          <CardTitle>
-                            <Award className="size-6 text-content-subdued md:size-5" />
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex items-center gap-2 p-0">
-                          <p className="text-lg font-medium text-content-loud md:text-base">
-                            Licensed
-                          </p>
-                          {isMobile ? (
-                            <Popover>
-                              <PopoverTrigger
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Info className="size-5 text-content-subdued" />
-                              </PopoverTrigger>
-                              <PopoverContent className="ml-2 max-w-60 bg-background-4 text-content-muted">
-                                Only licensed users, with a valid license, can
-                                access releases and release artifacts. API
-                                authentication is required.
-                              </PopoverContent>
-                            </Popover>
-                          ) : (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Info className="size-4 pt-0.5 text-content-subdued" />
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-60 bg-background-4 text-content-muted">
-                                Only licensed users, with a valid license, can
-                                access releases and release artifacts. API
-                                authentication is required.
-                              </TooltipContent>
-                            </Tooltip>
-                          )}
-                        </CardContent>
-                      </div>
-                    </Card>
-
-                    <Card
-                      className={cn(
-                        "w-full cursor-pointer rounded-lg bg-background p-0.5 transition-colors duration-200 md:w-60",
-                        field.value === DistributionStrategy.OPEN
-                          ? "bg-gradient-to-r from-primary to-secondary"
-                          : "",
-                      )}
-                      onClick={() => {
-                        field.onChange(DistributionStrategy.OPEN)
-                        onStrategyChange?.(DistributionStrategy.OPEN)
-                        onDescriptionChange?.(ProductDescription.OPEN)
-                      }}
-                    >
-                      <div className="space-y-4 rounded-[inherit] bg-background p-4">
-                        <CardHeader className="p-0">
-                          <CardTitle>
-                            <Unlock className="size-6 text-content-subdued md:size-5" />
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex items-center gap-2 p-0">
-                          <p className="text-lg font-medium text-content-loud md:text-base">
-                            Open
-                          </p>
-                          {isMobile ? (
-                            <Popover>
-                              <PopoverTrigger
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Info className="size-5 text-content-subdued" />
-                              </PopoverTrigger>
-                              <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
-                                Anybody can access releases. No API
-                                authentication required, so this is a great
-                                option for rendering releases on a public
-                                downloads page, open source projects, or
-                                freemium products.
-                              </PopoverContent>
-                            </Popover>
-                          ) : (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Info className="size-4 pt-0.5 text-content-subdued" />
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-64 bg-background-4 text-content-muted">
-                                Anybody can access releases. No API
-                                authentication required, so this is a great
-                                option for rendering releases on a public
-                                downloads page, open source projects, or
-                                freemium products.
-                              </TooltipContent>
-                            </Tooltip>
-                          )}
-                        </CardContent>
-                      </div>
-                    </Card>
-
-                    <Card
-                      className={cn(
-                        "w-full cursor-pointer rounded-lg bg-background p-0.5 transition-colors duration-200 md:w-60",
-                        field.value === DistributionStrategy.CLOSED
-                          ? "bg-gradient-to-r from-primary to-secondary"
-                          : "",
-                      )}
-                      onClick={() => {
-                        field.onChange(DistributionStrategy.CLOSED)
-                        onStrategyChange?.(DistributionStrategy.CLOSED)
-                        onDescriptionChange?.(ProductDescription.CLOSED)
-                      }}
-                    >
-                      <div className="space-y-4 rounded-[inherit] bg-background p-4">
-                        <CardHeader className="p-0">
-                          <CardTitle>
-                            <Lock className="size-6 text-content-subdued md:size-5" />
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex items-center gap-2 p-0">
-                          <p className="text-lg font-medium text-content-loud md:text-base">
-                            Closed
-                          </p>
-                          {isMobile ? (
-                            <Popover>
-                              <PopoverTrigger
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Info className="size-5 text-content-subdued" />
-                              </PopoverTrigger>
-                              <PopoverContent className="ml-2 max-w-60 bg-background-4 text-content-muted">
-                                Only admins can access releases. Download links
-                                will need to be generated server-side. API
-                                authentication is required.
-                              </PopoverContent>
-                            </Popover>
-                          ) : (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Info className="size-4 pt-0.5 text-content-subdued" />
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-60 bg-background-4 text-content-muted">
-                                Only admins can access releases. Download links
-                                will need to be generated server-side. API
-                                authentication is required.
-                              </TooltipContent>
-                            </Tooltip>
-                          )}
-                        </CardContent>
-                      </div>
-                    </Card>
-                  </div>
-
+                  <CardSelector
+                    options={strategyOptions}
+                    value={field.value}
+                    onChange={(value: DistributionStrategy) => {
+                      field.onChange(value)
+                      onStrategyChange?.(value)
+                      onDescriptionChange?.(ProductDescription[value])
+                    }}
+                  />
                   <FormMessage />
                 </FormItem>
               )}

@@ -19,6 +19,7 @@ import {
 import { Lock, Unlock, Award } from "lucide-react"
 
 import { useSlide } from "@/hooks/use-slide"
+import { useCreateProduct } from "@/hooks/use-product"
 
 import {
   Product,
@@ -28,14 +29,13 @@ import {
 } from "@/types/products"
 import { AttributesFormValues } from "./attributes-form"
 
-import * as keygen from "@/keygen"
 import { toast } from "@/lib/toast"
 import * as Motion from "@/components/motion"
 import StrategyForm from "./strategy-form"
 import AttributesForm from "./attributes-form"
 
 interface ProductsCreateModalProps {
-  onSelectProduct: (env: Product | null) => void
+  onSelectProduct: (product: Product | null) => void
   onClose: () => void
 }
 
@@ -43,16 +43,17 @@ export default function ProductsCreateModal({
   onSelectProduct,
   onClose,
 }: ProductsCreateModalProps) {
+  const createProduct = useCreateProduct()
+
   const [step, direction, goTo] = useSlide([0, 1])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   const [distributionStrategy, setDistributionStrategy] =
     useState<DistributionStrategy>(DistributionStrategy.LICENSED)
-
   const [description, setDescription] = useState<ProductDescription>(
     ProductDescription.OPEN,
   )
+
+  const [formError, setFormError] = useState<string | null>(null)
 
   const handleCreateProduct = useCallback(
     async (values: AttributesFormValues) => {
@@ -65,39 +66,32 @@ export default function ProductsCreateModal({
         return
       }
 
-      setLoading(true)
+      const { permissions, ...rest } = values
 
-      try {
-        const { permissions, ...rest } = values
-
-        const payload = {
-          ...(permissions && permissions.length ? { permissions } : {}),
-          distributionStrategy,
-          ...rest,
-        }
-
-        const response = await keygen.products.create(payload)
-
-        if (response.errors) {
-          const error = response.errors[0]
-          if (error.code === ProductErrorCode.CODE_TAKEN) {
-            setError("Code already exists")
-          }
-
-          throw new Error(error.code)
-        }
-
-        const product = response.data as Product
-
-        toast({ message: "Product created", variant: "success" })
-        onSelectProduct(product)
-        onClose()
-      } catch (error) {
-        console.error(error)
-        toast({ message: "Failed to create product", variant: "error" })
-      } finally {
-        setLoading(false)
+      const payload = {
+        ...(permissions && permissions.length ? { permissions } : {}),
+        distributionStrategy,
+        ...rest,
       }
+
+      createProduct.mutate(payload, {
+        onSuccess: (product) => {
+          toast({ message: "Product created", variant: "success" })
+          onSelectProduct(product)
+          onClose()
+        },
+        onError: (error) => {
+          if (
+            typeof error === "object" &&
+            error &&
+            "code" in error &&
+            error.code === ProductErrorCode.CODE_TAKEN
+          ) {
+            setFormError("Code already exists")
+          }
+          toast({ message: "Failed to create product", variant: "error" })
+        },
+      })
     },
     [onSelectProduct, onClose],
   )
@@ -189,8 +183,8 @@ export default function ProductsCreateModal({
         ) : (
           <AttributesForm
             key="attributes"
-            loading={loading}
-            error={error}
+            loading={createProduct.isPending}
+            error={formError}
             onSubmit={handleCreateProduct}
             onCancel={onClose}
           />

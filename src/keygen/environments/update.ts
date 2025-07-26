@@ -6,8 +6,8 @@ config.validate()
 
 interface UpdateProps {
   id: string
-  name: string | null
-  code: string | null
+  name?: string | null
+  code?: string | null
 }
 
 export default async function update({

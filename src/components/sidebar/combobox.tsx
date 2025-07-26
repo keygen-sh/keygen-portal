@@ -1,7 +1,9 @@
-import { useState, useMemo, Fragment } from "react"
-import { Check, ChevronsUpDown, Circle, LucideIcon } from "lucide-react"
+import { useState, useEffect, useMemo, Fragment } from "react"
+import { Check, ChevronsUpDown, Circle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Popover,
   PopoverContent,
@@ -19,50 +21,60 @@ import {
 
 import { Droplet } from "lucide-react"
 
+import { Product } from "@/types/products"
+import { Environment } from "@/types/environments"
+
+import { useProducts } from "@/hooks/use-product"
+import { useEnvironments } from "@/hooks/use-environment"
+
 import * as Environments from "@/components/environments"
 
-type Env = { id: string; label: string }
-type Prod = { id: string; name: string; icon: string | LucideIcon; envs: Env[] }
-
-// Dummy
-const products: Prod[] = [
-  {
-    id: "prd_001",
-    name: "MDR Cloud",
-    icon: Droplet,
-    envs: [
-      { id: "prd_001_dev", label: "Development" },
-      { id: "prd_001_prod", label: "Production" },
-    ],
-  },
-  {
-    id: "prd_002",
-    name: "Waffle Party Planner",
-    icon: Droplet,
-    envs: [
-      { id: "prd_002_dev", label: "Development" },
-      { id: "prd_002_stage", label: "Staging" },
-      { id: "prd_002_prod", label: "Production" },
-    ],
-  },
-]
-
-/**
- * Renders a combobox that allows users to select a product and environment.
- */
 export default function SidebarCombobox(): React.ReactElement {
-  const [open, setOpen] = useState(false)
-
-  const [productId, setProductId] = useState(products[0].id)
-  const [envId, setEnvId] = useState(products[0].envs[0].id)
-
   const [showEnvironmentsModal, setShowEnvironmentsModal] = useState(false)
+  const [open, setOpen] = useState(false)
+  const { data: products = [], isLoading: productsLoading } = useProducts()
+  const { data: environments = [], isLoading: environmentsLoading } =
+    useEnvironments()
 
-  const currentProduct = useMemo(
-    () => products.find((p) => p.id === productId)!,
-    [productId],
-  )
-  const currentEnvironment = currentProduct.envs.find((e) => e.id === envId)!
+  const productOptions = useMemo(() => {
+    return products.map((product: Product) => ({
+      id: product.id,
+      name: product.attributes.name,
+    }))
+  }, [products])
+
+  const environmentOptions = useMemo(() => {
+    return environments.map((env: Environment) => ({
+      id: env.id,
+      code: env.attributes.code,
+      name: env.attributes.name,
+    }))
+  }, [environments])
+
+  const [productId, setProductId] = useState<string | null>(null)
+  const [environmentId, setEnvironmentId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!productId && productOptions.length) setProductId(productOptions[0].id)
+  }, [productOptions, productId])
+
+  useEffect(() => {
+    if (!environmentId && environmentOptions.length)
+      setEnvironmentId(environmentOptions[0].id)
+  }, [environmentOptions, environmentId])
+
+  const currentProduct = productOptions.find((p) => p.id === productId)!
+  const currentEnvironment = environmentOptions.find(
+    (e) => e.id === environmentId,
+  )!
+
+  if (productsLoading || environmentsLoading || !productId || !environmentId) {
+    return (
+      <div className="flex h-9 w-full items-center pr-4">
+        <Skeleton className="h-7 w-full" />
+      </div>
+    )
+  }
 
   return (
     <>
@@ -74,18 +86,16 @@ export default function SidebarCombobox(): React.ReactElement {
             size="default"
             className="!px-1 !py-0"
           >
-            {typeof currentProduct.icon === "string" ? (
-              <img src={currentProduct.icon} />
-            ) : (
-              <currentProduct.icon className="mr-2 size-6 rounded-sm bg-content-loud p-1 text-background" />
-            )}
+            {/* TODO(cazden) Use company logo */}
+            <Droplet className="mr-2 size-6 rounded-sm bg-content-loud p-1 text-background" />
+
             <div className="flex max-w-32 flex-col text-left text-content-loud">
               <div className="flex items-center gap-2">
                 <span className="truncate">{currentProduct.name}</span>
                 <ChevronsUpDown className="size-3 opacity-60" />
               </div>
               <span className="text-xs font-normal text-content-normal">
-                {currentEnvironment.label}
+                {currentEnvironment.name}
               </span>
             </div>
           </Button>
@@ -95,46 +105,54 @@ export default function SidebarCombobox(): React.ReactElement {
           <Command>
             <CommandInput placeholder="Search..." />
             <CommandList>
-              <CommandEmpty>No match.</CommandEmpty>
+              <ScrollArea className="h-64">
+                <CommandEmpty>No match.</CommandEmpty>
 
-              {products.map((prod) => (
-                <Fragment key={prod.id}>
-                  <CommandGroup heading={prod.name}>
-                    {prod.envs.map((env) => {
-                      const selected = prod.id === productId && env.id === envId
-                      return (
-                        <CommandItem
-                          key={env.id}
-                          value={env.id}
-                          onSelect={() => {
-                            setProductId(prod.id)
-                            setEnvId(env.id)
-                            setOpen(false)
-                          }}
-                        >
-                          {selected ? (
-                            <Check className="mr-2 size-4" />
-                          ) : (
-                            <Circle className="mr-2 size-4 opacity-0" />
-                          )}
-                          {env.label}
-                        </CommandItem>
-                      )
-                    })}
-                  </CommandGroup>
-                  <CommandSeparator />
-                </Fragment>
-              ))}
-
-              <CommandItem
-                onSelect={() => {
-                  setShowEnvironmentsModal(true)
-                  setOpen(false)
-                }}
-                className="m-1 text-content-normal"
-              >
-                Manage Environments
-              </CommandItem>
+                {productOptions.map((product) => (
+                  <Fragment key={product.id}>
+                    <CommandGroup heading={product.name}>
+                      {environmentOptions.map((environment) => {
+                        const selected =
+                          product.id === productId &&
+                          environment.id === environmentId
+                        return (
+                          <CommandItem
+                            key={`${product.id}:${environment.id}`}
+                            value={`${product.id}:${environment.id}`}
+                            onSelect={() => {
+                              setProductId(product.id)
+                              setEnvironmentId(environment.id)
+                              setOpen(false)
+                            }}
+                          >
+                            {selected ? (
+                              <Check className="mr-2 size-4" />
+                            ) : (
+                              <Circle className="mr-2 size-4 opacity-0" />
+                            )}
+                            {environment.name}
+                          </CommandItem>
+                        )
+                      })}
+                    </CommandGroup>
+                    {product.id !==
+                      productOptions[productOptions.length - 1].id && (
+                      <CommandSeparator />
+                    )}
+                  </Fragment>
+                ))}
+              </ScrollArea>
+              <div className="border-t border-accent">
+                <CommandItem
+                  onSelect={() => {
+                    setShowEnvironmentsModal(true)
+                    setOpen(false)
+                  }}
+                  className="m-1 text-content-normal"
+                >
+                  Manage Environments
+                </CommandItem>
+              </div>
             </CommandList>
           </Command>
         </PopoverContent>

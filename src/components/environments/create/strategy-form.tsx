@@ -3,12 +3,9 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { cn } from "@/lib/utils"
-
 import { Button } from "@/components/ui/button"
 import { DialogFooter } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import {
   Tooltip,
@@ -25,6 +22,8 @@ import { GlobeLock, Globe, Info } from "lucide-react"
 
 import { useMobile } from "@/hooks/use-mobile"
 import { IsolationStrategy, EnvironmentDescription } from "@/types/environments"
+
+import { CardSelector, CardOption } from "@/components/card-selector"
 
 const strategySchema = z.object({
   isolationStrategy: z.enum([
@@ -58,6 +57,23 @@ export default function StrategyForm({
       isolationStrategy,
     },
   })
+
+  const strategyOptions: CardOption<IsolationStrategy>[] = [
+    {
+      value: IsolationStrategy.ISOLATED,
+      label: "Isolated",
+      icon: <GlobeLock className="size-6 text-content-subdued md:size-5" />,
+      tooltip:
+        "The environment will be isolated from all other resources in other environments.",
+    },
+    {
+      value: IsolationStrategy.SHARED,
+      label: "Shared",
+      icon: <Globe className="size-6 text-content-subdued md:size-5" />,
+      tooltip:
+        "The environment will be shared with the global environment. Resources in the global environment will be available as read-only resources.",
+    },
+  ]
 
   const handleSubmit = useCallback(
     (values: StrategyValues) => {
@@ -103,109 +119,15 @@ export default function StrategyForm({
               name="isolationStrategy"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex flex-col gap-4 md:flex-row">
-                    <Card
-                      className={cn(
-                        "w-full cursor-pointer rounded-lg bg-background p-0.5 transition-colors duration-200 md:w-60",
-                        field.value === IsolationStrategy.ISOLATED
-                          ? "bg-gradient-to-r from-primary to-secondary"
-                          : "",
-                      )}
-                      onClick={() => {
-                        field.onChange(IsolationStrategy.ISOLATED)
-                        onStrategyChange?.(IsolationStrategy.ISOLATED)
-                        onDescriptionChange?.(EnvironmentDescription.ISOLATED)
-                      }}
-                    >
-                      <div className="space-y-4 rounded-[inherit] bg-background p-4">
-                        <CardHeader className="p-0">
-                          <CardTitle>
-                            <GlobeLock className="size-6 text-content-subdued md:size-5" />
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex items-center gap-2 p-0">
-                          <p className="text-lg font-medium text-content-loud md:text-base">
-                            Isolated
-                          </p>
-                          {isMobile ? (
-                            <Popover>
-                              <PopoverTrigger
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Info className="size-5 text-content-subdued" />
-                              </PopoverTrigger>
-                              <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
-                                The environment will be isolated from all other
-                                resources in other environments.
-                              </PopoverContent>
-                            </Popover>
-                          ) : (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Info className="size-4 pt-0.5 text-content-subdued" />
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-64 bg-background-4 text-content-muted">
-                                The environment will be isolated from all other
-                                resources in other environments.
-                              </TooltipContent>
-                            </Tooltip>
-                          )}
-                        </CardContent>
-                      </div>
-                    </Card>
-
-                    <Card
-                      className={cn(
-                        "w-full cursor-pointer rounded-lg bg-background p-0.5 transition-colors duration-200 md:w-60",
-                        field.value === IsolationStrategy.SHARED
-                          ? "bg-gradient-to-r from-primary to-secondary"
-                          : "",
-                      )}
-                      onClick={() => {
-                        field.onChange(IsolationStrategy.SHARED)
-                        onStrategyChange?.(IsolationStrategy.SHARED)
-                        onDescriptionChange?.(EnvironmentDescription.SHARED)
-                      }}
-                    >
-                      <div className="space-y-4 rounded-[inherit] bg-background p-4">
-                        <CardHeader className="p-0">
-                          <CardTitle>
-                            <Globe className="size-6 text-content-subdued md:size-5" />
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex items-center gap-2 p-0">
-                          <p className="text-lg font-medium text-content-loud md:text-base">
-                            Shared
-                          </p>
-                          {isMobile ? (
-                            <Popover>
-                              <PopoverTrigger
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Info className="size-5 text-content-subdued" />
-                              </PopoverTrigger>
-                              <PopoverContent className="ml-2 max-w-60 bg-background-4 text-content-muted">
-                                The environment will be shared with the global
-                                environment. Resources in the global environment
-                                will be available as read-only resources.
-                              </PopoverContent>
-                            </Popover>
-                          ) : (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Info className="size-4 pt-0.5 text-content-subdued" />
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-60 bg-background-4 text-content-muted">
-                                The environment will be shared with the global
-                                environment. Resources in the global environment
-                                will be available as read-only resources.
-                              </TooltipContent>
-                            </Tooltip>
-                          )}
-                        </CardContent>
-                      </div>
-                    </Card>
-                  </div>
+                  <CardSelector
+                    options={strategyOptions}
+                    value={field.value}
+                    onChange={(value: IsolationStrategy) => {
+                      field.onChange(value)
+                      onStrategyChange?.(value)
+                      onDescriptionChange?.(EnvironmentDescription[value])
+                    }}
+                  />
 
                   <FormMessage />
                 </FormItem>

@@ -26,17 +26,17 @@ import * as keygen from "@/keygen"
 import { toast } from "@/lib/toast"
 import EditForm from "./edit-form"
 
-interface EnvironmentsViewModalProps {
+interface EnvironmentsEditModalProps {
   selectedEnvironment: Environment
   onSelectEnvironment: (env: Environment | null) => void
   onChangeMode: (mode: EnvironmentMode, env?: Environment) => void
 }
 
-export default function EnvironmentsViewModal({
+export default function EnvironmentsEditModal({
   selectedEnvironment,
   onSelectEnvironment,
   onChangeMode,
-}: EnvironmentsViewModalProps) {
+}: EnvironmentsEditModalProps) {
   const [name, setName] = useState<string | null>(null)
   const [code, setCode] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)

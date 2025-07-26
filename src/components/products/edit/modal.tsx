@@ -54,6 +54,11 @@ export default function ProductsEditModal({
       },
       onError: () =>
         toast({ message: "Failed to update product", variant: "error" }),
+      onSettled() {
+        if (!updateProduct.isError) {
+          onClose()
+        }
+      },
     })
   }
 

@@ -44,10 +44,10 @@ export default function SidebarCombobox(): React.ReactElement {
   }, [products])
 
   const environmentOptions = useMemo(() => {
-    return environments.map((env: Environment) => ({
-      id: env.id,
-      code: env.attributes.code,
-      name: env.attributes.name,
+    return environments.map((environment: Environment) => ({
+      id: environment.id,
+      code: environment.attributes.code,
+      name: environment.attributes.name,
     }))
   }, [environments])
 
@@ -55,12 +55,28 @@ export default function SidebarCombobox(): React.ReactElement {
   const [environmentId, setEnvironmentId] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!productId && productOptions.length) setProductId(productOptions[0].id)
+    if (productOptions.length === 0) {
+      setProductId(null)
+      return
+    }
+
+    if (!productId || !productOptions.some((p) => p.id === productId)) {
+      setProductId(productOptions[0].id)
+    }
   }, [productOptions, productId])
 
   useEffect(() => {
-    if (!environmentId && environmentOptions.length)
+    if (environmentOptions.length === 0) {
+      setEnvironmentId(null)
+      return
+    }
+
+    if (
+      !environmentId ||
+      !environmentOptions.some((e) => e.id === environmentId)
+    ) {
       setEnvironmentId(environmentOptions[0].id)
+    }
   }, [environmentOptions, environmentId])
 
   const currentProduct = productOptions.find((p) => p.id === productId)!
@@ -68,7 +84,12 @@ export default function SidebarCombobox(): React.ReactElement {
     (e) => e.id === environmentId,
   )!
 
-  if (productsLoading || environmentsLoading || !productId || !environmentId) {
+  if (
+    productsLoading ||
+    environmentsLoading ||
+    !currentProduct ||
+    !currentEnvironment
+  ) {
     return (
       <div className="flex h-9 w-full items-center pr-4">
         <Skeleton className="h-7 w-full" />
@@ -91,7 +112,7 @@ export default function SidebarCombobox(): React.ReactElement {
 
             <div className="flex max-w-32 flex-col text-left text-content-loud">
               <div className="flex items-center gap-2">
-                <span className="truncate">{currentProduct.name}</span>
+                <span className="truncate">{currentProduct?.name}</span>
                 <ChevronsUpDown className="size-3 opacity-60" />
               </div>
               <span className="text-xs font-normal text-content-normal">

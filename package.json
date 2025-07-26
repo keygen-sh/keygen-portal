@@ -13,6 +13,7 @@
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
     "@tailwindcss/vite": "^4.0.12",
+    "@tanstack/react-query": "^5.83.0",
     "@tanstack/react-router": "^1.114.15",
     "@tanstack/react-router-devtools": "^1.120.3",
     "@tanstack/react-table": "^8.21.3",

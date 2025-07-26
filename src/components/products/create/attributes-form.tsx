@@ -108,6 +108,7 @@ export default function AttributesForm({
                       variant="title"
                       placeholder="Enter product name..."
                       className="border-none text-xl placeholder:text-content-subdued! md:text-2xl"
+                      autoFocus
                       autoComplete="off"
                       disabled={loading}
                       onChange={(e) => {

@@ -51,7 +51,6 @@ export default function EnvironmentsModalManager({
             <Motion.Scale key="edit">
               <Edit.Modal
                 selectedEnvironment={selectedEnvironment}
-                onSelectEnvironment={handleSelectEnvironment}
                 onChangeMode={handleChangeMode}
               />
             </Motion.Scale>

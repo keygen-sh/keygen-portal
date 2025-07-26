@@ -45,7 +45,7 @@ export default function ProductsEditModal({
     ProductDescription.LICENSED_UPDATE,
   )
 
-  const handleSubmit = (values: EditFormValues) => {
+  const handleUpdateProduct = (values: EditFormValues) => {
     if (!product) return
     updateProduct.mutate(values, {
       onSuccess: () => {
@@ -115,7 +115,7 @@ export default function ProductsEditModal({
           product={product ?? null}
           loading={updateProduct.isPending}
           onDescriptionChange={handleDescriptionChange}
-          onSubmit={handleSubmit}
+          onSubmit={handleUpdateProduct}
           onCancel={onClose}
         />
       </DialogContent>

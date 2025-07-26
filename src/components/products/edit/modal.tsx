@@ -22,78 +22,40 @@ import {
   DistributionStrategy,
   ProductDescription,
 } from "@/types/products"
-import { EditFormValues } from "./edit-form"
+import type { EditFormValues } from "./edit-form"
 
-import * as keygen from "@/keygen"
+import { useUpdateProduct } from "@/hooks/use-product"
+
 import { toast } from "@/lib/toast"
-import { diff } from "@/lib/utils"
 import EditForm from "./edit-form"
 
 interface ProductsEditModalProps {
   open: boolean
   onClose: () => void
   product: Product | null
-  setProduct: (product: Product | null) => void
 }
 
 export default function ProductsEditModal({
   open,
   onClose,
   product,
-  setProduct,
 }: ProductsEditModalProps) {
-  const [loading, setLoading] = useState(false)
+  const updateProduct = useUpdateProduct(product?.id ?? "")
   const [description, setDescription] = useState<ProductDescription>(
     ProductDescription.LICENSED_UPDATE,
   )
 
-  const handleEditProduct = useCallback(
-    async (values: EditFormValues) => {
-      if (!product) return
-
-      setLoading(true)
-
-      try {
-        const changes = diff(product.attributes, {
-          ...values,
-          permissions:
-            values.permissions && values.permissions.length
-              ? values.permissions
-              : [],
-        })
-
-        // Bail if no changes were made
-        if (!Object.keys(changes).length) {
-          onClose()
-          return
-        }
-        const payload = { id: product.id, ...changes }
-
-        const response = await keygen.products.update(payload)
-
-        if (response.errors) {
-          const error = response.errors[0]
-          throw new Error(error.code)
-        }
-
-        const updatedProduct = response.data as Product
-
+  const handleSubmit = (values: EditFormValues) => {
+    if (!product) return
+    updateProduct.mutate(values, {
+      onSuccess: () => {
         toast({ message: "Product updated", variant: "success" })
-        setProduct(updatedProduct)
         onClose()
-      } catch (error) {
-        console.error(error)
-        toast({ message: "Failed to update product", variant: "error" })
-      } finally {
-        setLoading(false)
-      }
-    },
-    [product],
-  )
-
-  const handleCancelEdit = useCallback(() => {
-    onClose()
-  }, [])
+      },
+      onError: () =>
+        toast({ message: "Failed to update product", variant: "error" }),
+    })
+  }
 
   const handleDescriptionChange = useCallback(
     (newDescription: ProductDescription) => {
@@ -151,10 +113,10 @@ export default function ProductsEditModal({
         <EditForm
           key={product?.id ?? "new"}
           product={product ?? null}
-          loading={loading}
+          loading={updateProduct.isPending}
           onDescriptionChange={handleDescriptionChange}
-          onSubmit={handleEditProduct}
-          onCancel={handleCancelEdit}
+          onSubmit={handleSubmit}
+          onCancel={onClose}
         />
       </DialogContent>
     </Dialog>

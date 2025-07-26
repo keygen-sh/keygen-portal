@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState } from "react"
 import { useNavigate, useParams } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
@@ -40,10 +40,11 @@ import {
   EllipsisVertical,
 } from "lucide-react"
 
-import { Product, DistributionStrategy } from "@/types/products"
-import { useMobile } from "@/hooks/use-mobile"
+import { DistributionStrategy } from "@/types/products"
 
-import * as keygen from "@/keygen"
+import { useMobile } from "@/hooks/use-mobile"
+import { useProduct, useDeleteProduct } from "@/hooks/use-product"
+
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
 import * as Attribute from "@/components/attribute"
@@ -58,64 +59,28 @@ import CollapsibleMenu from "@/components/collapsible-menu"
 
 export default function ProductDetails() {
   const { productId } = useParams({ from: "/$id/app/products/$productId" })
-  const navigate = useNavigate()
-  const isMobile = useMobile()
+  const { data: product, isLoading } = useProduct(productId)
+  const deleteProduct = useDeleteProduct(productId)
 
-  const [product, setProduct] = useState<Product | null>(null)
+  const navigate = useNavigate()
+
+  const isMobile = useMobile()
   const [open, setOpen] = useState({
     edit: false,
     delete: false,
   })
-  const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const { data } = await keygen.products.get({ id: productId })
-
-        if (data) {
-          setProduct(data)
-        } else {
-          throw new Error(`Product with ID ${productId} not found`)
-        }
-      } catch (error) {
-        console.error("Error fetching product:", error)
+  const handleDeleteProduct = () => {
+    deleteProduct.mutate(undefined, {
+      onSuccess: () => {
         toast({
-          message: "Could not find product",
-          variant: "error",
-        })
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchProduct()
-  }, [])
-
-  const handleDeleteProduct = useCallback(
-    async (id: string) => {
-      setLoading(true)
-
-      try {
-        await keygen.products.remove({ id })
-      } catch (error) {
-        console.error("Error deleting product:", error)
-        toast({
-          message: "Failed to delete product",
-          variant: "error",
-        })
-      } finally {
-        setProduct(null)
-        navigate({ to: `..` })
-        toast({
-          message: "Product deleted",
+          message: "Product deleted successfully",
           variant: "success",
         })
-        setLoading(false)
-      }
-    },
-    [loading],
-  )
+        navigate({ to: ".." })
+      },
+    })
+  }
 
   return (
     <section className="flex h-screen w-full">
@@ -147,7 +112,7 @@ export default function ProductDetails() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  disabled={loading}
+                  disabled={isLoading}
                   className="text-content-muted"
                 >
                   <EllipsisVertical className="size-5" />
@@ -181,14 +146,14 @@ export default function ProductDetails() {
             <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
-                disabled={loading}
+                disabled={isLoading}
                 onClick={() => setOpen({ ...open, edit: true })}
               >
                 Edit
               </Button>
               <Button
                 variant="outline"
-                disabled={loading}
+                disabled={isLoading}
                 onClick={() => setOpen({ ...open, delete: true })}
               >
                 Delete
@@ -430,17 +395,16 @@ export default function ProductDetails() {
       <Products.Edit.Modal
         open={open.edit}
         onClose={() => setOpen({ ...open, edit: false })}
-        product={product}
-        setProduct={setProduct}
+        product={product!}
       />
 
       <DeleteModal
         title="Are you absolutely sure?"
         description="This action cannot be undone. This will permanently delete the product and delete all associated policy, license and machine resources."
         open={open.delete}
-        disabled={loading}
+        disabled={deleteProduct.isPending}
         onClose={() => setOpen({ ...open, delete: false })}
-        onDelete={() => handleDeleteProduct(productId)}
+        onDelete={handleDeleteProduct}
       />
     </section>
   )

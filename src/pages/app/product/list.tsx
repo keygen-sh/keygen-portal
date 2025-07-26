@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table"
 
@@ -7,20 +7,20 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { Product } from "@/types/products"
 
+import { useProducts } from "@/hooks/use-product"
+
 import * as keygen from "@/keygen"
 import * as Products from "@/components/products"
-import { toast } from "@/lib/toast"
 import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
 import SkeletonTable from "@/components/skeleton-table"
 import ClipboardButton from "@/components/clipboard-button"
 
 export default function ProductsList() {
-  const [products, setProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(false)
-  const [open, setOpen] = useState(false)
-
+  const { data: products = [], isLoading } = useProducts()
   const navigate = useNavigate()
+
+  const [open, setOpen] = useState(false)
 
   const column = createColumnHelper<Product>()
   const columns = useMemo<ColumnDef<Product, any>[]>(
@@ -68,29 +68,9 @@ export default function ProductsList() {
     [],
   )
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const products = await keygen.products.list({})
-        setProducts(products.data ?? [])
-      } catch (error) {
-        console.error("Error fetching products:", error)
-        toast({
-          message: "Failed to fetch products",
-          variant: "error",
-        })
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchProducts()
-  }, [])
-
-  const handleSelectProduct = (product: Product) => {
+  const handleSelectProduct = (product: Product | null) => {
     if (!product) return
 
-    setProducts((prev) => [product, ...prev])
     navigate({
       to: "/$id/app/products/$productId",
       params: { id: keygen.config.id, productId: product.id },
@@ -103,7 +83,7 @@ export default function ProductsList() {
       <PageHeader title="Products">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button size="sm" disabled={loading}>
+            <Button size="sm" disabled={isLoading}>
               Create Product
             </Button>
           </DialogTrigger>
@@ -115,7 +95,7 @@ export default function ProductsList() {
         </Dialog>
       </PageHeader>
 
-      {loading ? (
+      {isLoading ? (
         <SkeletonTable />
       ) : (
         <DataTable<Product>

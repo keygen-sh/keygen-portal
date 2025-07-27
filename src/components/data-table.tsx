@@ -36,6 +36,7 @@ export type DataTableProps<T> = {
   onRowClick?: (row: T) => void
   hideOnMobile?: string[]
   pageSize?: number
+  includePagination?: boolean
 }
 
 export default function DataTable<T>({
@@ -44,6 +45,7 @@ export default function DataTable<T>({
   onRowClick,
   hideOnMobile = [],
   pageSize = 10,
+  includePagination = true,
 }: DataTableProps<T>): React.ReactElement {
   const isMobile = useMobile()
   const [sorting, setSorting] = useState<SortingState>([])
@@ -134,7 +136,7 @@ export default function DataTable<T>({
         </TableBody>
       </Table>
 
-      {table.getRowModel().rows.length > 0 && (
+      {includePagination && table.getRowModel().rows.length > 0 && (
         <div className="flex items-center justify-end space-x-4 p-4">
           <span className="text-sm text-muted-foreground">
             Page {table.getState().pagination.pageIndex + 1} of{" "}

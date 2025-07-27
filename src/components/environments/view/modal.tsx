@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/breadcrumb"
 
 import { useSlide } from "@/hooks/use-slide"
-import { useDeleteEnvironment } from "@/hooks/use-environment"
+import { useDeleteEnvironment } from "@/hooks/use-query-environment"
 
 import {
   Environment,

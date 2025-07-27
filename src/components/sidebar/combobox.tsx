@@ -24,17 +24,17 @@ import { Droplet } from "lucide-react"
 import { Product } from "@/types/products"
 import { Environment } from "@/types/environments"
 
-import { useProducts } from "@/hooks/use-product"
-import { useEnvironments } from "@/hooks/use-environment"
+import { useQueryProducts } from "@/hooks/use-query-product"
+import { useQueryEnvironments } from "@/hooks/use-query-environment"
 
 import * as Environments from "@/components/environments"
 
 export default function SidebarCombobox(): React.ReactElement {
   const [showEnvironmentsModal, setShowEnvironmentsModal] = useState(false)
   const [open, setOpen] = useState(false)
-  const { data: products = [], isLoading: productsLoading } = useProducts()
+  const { data: products = [], isLoading: productsLoading } = useQueryProducts()
   const { data: environments = [], isLoading: environmentsLoading } =
-    useEnvironments()
+    useQueryEnvironments()
 
   const productOptions = useMemo(() => {
     return products.map((product: Product) => ({

@@ -18,7 +18,7 @@ import {
 import { Globe, GlobeLock } from "lucide-react"
 
 import { useSlide } from "@/hooks/use-slide"
-import { useCreateEnvironment } from "@/hooks/use-environment"
+import { useCreateEnvironment } from "@/hooks/use-query-environment"
 
 import {
   Environment,

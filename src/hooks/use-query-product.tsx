@@ -3,7 +3,7 @@ import { Product } from "@/types/products"
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
 
-export function useProduct(productId: string) {
+export function useQueryProduct(productId: string) {
   return useQuery({
     queryKey: ["product", productId],
     queryFn: () =>
@@ -13,7 +13,7 @@ export function useProduct(productId: string) {
   })
 }
 
-export function useProducts() {
+export function useQueryProducts() {
   return useQuery({
     queryKey: ["products"],
     queryFn: () =>

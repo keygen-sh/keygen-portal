@@ -19,7 +19,7 @@ import {
 import { Lock, Unlock, Award } from "lucide-react"
 
 import { useSlide } from "@/hooks/use-slide"
-import { useCreateProduct } from "@/hooks/use-product"
+import { useCreateProduct } from "@/hooks/use-query-product"
 
 import {
   Product,

@@ -3,7 +3,7 @@ import { Environment } from "@/types/environments"
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
 
-export function useEnvironment(environmentId: string) {
+export function useQueryEnvironment(environmentId: string) {
   return useQuery({
     queryKey: ["environment", environmentId],
     queryFn: () =>
@@ -13,7 +13,7 @@ export function useEnvironment(environmentId: string) {
   })
 }
 
-export function useEnvironments() {
+export function useQueryEnvironments() {
   return useQuery({
     queryKey: ["environments"],
     queryFn: () =>

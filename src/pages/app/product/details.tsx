@@ -43,7 +43,7 @@ import {
 import { DistributionStrategy } from "@/types/products"
 
 import { useMobile } from "@/hooks/use-mobile"
-import { useProduct, useDeleteProduct } from "@/hooks/use-product"
+import { useQueryProduct, useDeleteProduct } from "@/hooks/use-query-product"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
@@ -59,7 +59,7 @@ import CollapsibleMenu from "@/components/collapsible-menu"
 
 export default function ProductDetails() {
   const { productId } = useParams({ from: "/$id/app/products/$productId" })
-  const { data: product, isLoading } = useProduct(productId)
+  const { data: product, isLoading } = useQueryProduct(productId)
   const deleteProduct = useDeleteProduct(productId)
 
   const navigate = useNavigate()

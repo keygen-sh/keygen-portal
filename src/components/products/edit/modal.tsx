@@ -24,7 +24,7 @@ import {
 } from "@/types/products"
 import type { EditFormValues } from "./edit-form"
 
-import { useUpdateProduct } from "@/hooks/use-product"
+import { useUpdateProduct } from "@/hooks/use-query-product"
 
 import { toast } from "@/lib/toast"
 import EditForm from "./edit-form"

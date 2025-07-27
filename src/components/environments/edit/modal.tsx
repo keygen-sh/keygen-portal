@@ -15,7 +15,7 @@ import {
 
 import { Globe, GlobeLock } from "lucide-react"
 
-import { useUpdateEnvironment } from "@/hooks/use-environment"
+import { useUpdateEnvironment } from "@/hooks/use-query-environment"
 
 import {
   Environment,

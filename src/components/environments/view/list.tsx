@@ -43,6 +43,7 @@ export default function EnvironmentsList({
           columns={columns}
           onRowClick={onViewDetails}
           hideOnMobile={["attributes.isolationStrategy"]}
+          includePagination={false}
         />
       ) : isLoading ? (
         <SkeletonTable />

@@ -29,6 +29,7 @@ export default async function update({
     `/accounts/${config.id}/environments/${id}`,
     {
       method: "PATCH",
+      root: true,
       body: JSON.stringify(body),
     },
   )) as EnvironmentResponse

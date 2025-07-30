@@ -28,6 +28,7 @@ export default async function create({
 
   const result = (await client.request(`/accounts/${config.id}/environments`, {
     method: "POST",
+    root: true,
     body: JSON.stringify(body),
   })) as EnvironmentResponse
 

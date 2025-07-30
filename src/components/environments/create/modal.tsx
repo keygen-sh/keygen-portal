@@ -27,6 +27,7 @@ import {
   EnvironmentDescription,
   EnvironmentErrorCode,
 } from "@/types/environments"
+import type { AttributesFormValues } from "./attributes-form"
 
 import { toast } from "@/lib/toast"
 import * as Motion from "@/components/motion"
@@ -46,8 +47,6 @@ export default function EnvironmentsCreateModal({
 
   const [step, direction, goTo] = useSlide([0, 1])
 
-  const [name, setName] = useState<string | null>(null)
-  const [code, setCode] = useState<string | null>(null)
   const [isolationStrategy, setIsolationStrategy] = useState<IsolationStrategy>(
     IsolationStrategy.ISOLATED,
   )
@@ -57,66 +56,51 @@ export default function EnvironmentsCreateModal({
 
   const [formError, setFormError] = useState<string | null>(null)
 
-  const handleCreateEnvironment = useCallback(() => {
-    if (!name || !code) {
-      toast({
-        message: "Failed to create environment",
-        description: "Missing required fields.",
-        variant: "error",
+  const handleCreateEnvironment = useCallback(
+    (values: AttributesFormValues) => {
+      if (!values.name || !values.code) {
+        toast({
+          message: "Failed to create environment",
+          description: "Missing required fields.",
+          variant: "error",
+        })
+        return
+      }
+
+      const payload = {
+        name: values.name,
+        code: values.code,
+        isolationStrategy,
+      }
+
+      createEnvironment.mutate(payload, {
+        onSuccess: (environment) => {
+          toast({ message: "Environment created", variant: "success" })
+          onSelectEnvironment(environment)
+          onChangeMode(EnvironmentMode.VIEW, environment)
+        },
+        onError: (error) => {
+          if (
+            typeof error === "object" &&
+            error &&
+            "code" in error &&
+            error.code === EnvironmentErrorCode.CODE_TAKEN
+          ) {
+            setFormError("Code already exists")
+          }
+          toast({ message: "Failed to create environment", variant: "error" })
+        },
       })
-      return
-    }
-
-    const payload = {
-      name,
-      code,
-      isolationStrategy,
-    }
-
-    createEnvironment.mutate(payload, {
-      onSuccess: (environment) => {
-        toast({ message: "Environment created", variant: "success" })
-        onSelectEnvironment(environment)
-        onChangeMode(EnvironmentMode.VIEW, environment)
-      },
-      onError: (error) => {
-        if (
-          typeof error === "object" &&
-          error &&
-          "code" in error &&
-          error.code === EnvironmentErrorCode.CODE_TAKEN
-        ) {
-          setFormError("Code already exists")
-        }
-        toast({ message: "Failed to create environment", variant: "error" })
-      },
-    })
-  }, [name, code, isolationStrategy, onSelectEnvironment, onChangeMode])
+    },
+    [isolationStrategy, onSelectEnvironment, onChangeMode],
+  )
 
   const handleCancelCreate = useCallback(() => {
     onChangeMode(EnvironmentMode.VIEW)
   }, [onChangeMode])
 
-  const handleAttributesSubmit = useCallback(
-    (values: { name: string; code: string }) => {
-      setName(values.name)
-      setCode(values.code)
-
-      handleCreateEnvironment()
-    },
-    [handleCreateEnvironment],
-  )
-
   const handleStrategyChange = useCallback((newStrategy: IsolationStrategy) => {
     setIsolationStrategy(newStrategy)
-  }, [])
-
-  const handleNameChange = useCallback((newName: string) => {
-    setName(newName)
-  }, [])
-
-  const handleCodeChange = useCallback((newCode: string) => {
-    setCode(newCode)
   }, [])
 
   const handleDescriptionChange = useCallback(
@@ -195,15 +179,11 @@ export default function EnvironmentsCreateModal({
           />
         ) : (
           <AttributesForm
-            key="attributes"
-            name={name}
-            code={code}
-            error={formError}
-            onNameChange={handleNameChange}
-            onCodeChange={handleCodeChange}
-            onSubmit={handleAttributesSubmit}
-            onCancel={handleCancelCreate}
+            key="environment-attributes"
             loading={createEnvironment.isPending}
+            error={formError}
+            onSubmit={handleCreateEnvironment}
+            onCancel={handleCancelCreate}
           />
         )}
       </Motion.Slide>

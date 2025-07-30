@@ -265,21 +265,29 @@ export default function ProductDetails() {
                 <CollapsibleCard title="Metadata">
                   {product.attributes.metadata &&
                   Object.keys(product.attributes.metadata).length > 0 ? (
-                    <div className="flex flex-col space-y-2">
-                      {Object.entries(product.attributes.metadata).map(
-                        ([key, value]) => (
-                          <div key={key} className="flex items-center gap-2">
-                            <span className="text-sm text-content-normal">
-                              {key}:
-                            </span>
-                            <span className="text-sm text-content-muted">
-                              {typeof value === "object"
-                                ? JSON.stringify(value)
-                                : value}
-                            </span>
-                          </div>
-                        ),
-                      )}
+                    <div className="relative">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() =>
+                          copyToClipboard(
+                            JSON.stringify(
+                              product.attributes.metadata,
+                              null,
+                              2,
+                            ),
+                          )
+                        }
+                        className="absolute top-3 right-3 z-10 h-7 w-7"
+                      >
+                        <Copy className="size-3.5" />
+                      </Button>
+
+                      <ScrollArea className="max-h-64 rounded border border-accent">
+                        <pre className="p-3 font-mono text-sm leading-snug">
+                          {JSON.stringify(product.attributes.metadata, null, 2)}
+                        </pre>
+                      </ScrollArea>
                     </div>
                   ) : (
                     <p className="text-sm text-content-muted">{"{ }"}</p>

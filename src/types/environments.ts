@@ -1,4 +1,4 @@
-import { APIResponse } from "@/types/api"
+import { APIResponse, Writable } from "@/types/api"
 import { Relationships } from "@/types/relationships"
 
 export enum EnvironmentErrorCode {
@@ -45,5 +45,7 @@ export interface Environment {
 }
 
 export type EnvironmentResponse = APIResponse<Environment>
-
 export type EnvironmentsListResponse = APIResponse<Environment[]>
+
+export type CreateEnvironmentPayload = Writable<EnvironmentAttributes>
+export type UpdateEnvironmentPayload = Partial<Writable<EnvironmentAttributes>>

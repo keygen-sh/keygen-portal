@@ -12,7 +12,7 @@ import { ErrorResponse } from "@/types/api"
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
 
-export function useQueryProduct(productId: string) {
+export function useReadProduct(productId: string) {
   const { code } = useEnvironment()
 
   return useQuery({
@@ -31,7 +31,7 @@ export function useQueryProduct(productId: string) {
   })
 }
 
-export function useQueryProducts() {
+export function useReadProducts() {
   const { code } = useEnvironment()
 
   return useQuery({

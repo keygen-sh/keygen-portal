@@ -1,6 +1,14 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
+
 import { useEnvironment } from "@/hooks/use-environment"
-import { Product } from "@/types/products"
+
+import {
+  Product,
+  CreateProductPayload,
+  UpdateProductPayload,
+} from "@/types/products"
+import { ErrorResponse } from "@/types/api"
+
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
 
@@ -29,8 +37,8 @@ export function useQueryProducts() {
 export function useCreateProduct() {
   const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: (payload: any) =>
+  return useMutation<Product, ErrorResponse, CreateProductPayload>({
+    mutationFn: (payload) =>
       keygen.products
         .create(payload)
         .then((response) => response.data as Product),
@@ -48,12 +56,12 @@ export function useCreateProduct() {
 export function useUpdateProduct(productId: string) {
   const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: (values: any) =>
+  return useMutation<Product, ErrorResponse, UpdateProductPayload>({
+    mutationFn: (values) =>
       keygen.products.get({ id: productId }).then(async (response) => {
         const current = response.data as Product
-        const changes = diff(current.attributes, values)
 
+        const changes = diff(current.attributes, values) as UpdateProductPayload
         if (Object.keys(changes).length === 0) return current
 
         const updated = await keygen.products

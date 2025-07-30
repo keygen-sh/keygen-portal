@@ -1,5 +1,12 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
-import { Environment } from "@/types/environments"
+
+import {
+  Environment,
+  CreateEnvironmentPayload,
+  UpdateEnvironmentPayload,
+} from "@/types/environments"
+import { ErrorResponse } from "@/types/api"
+
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
 
@@ -24,8 +31,8 @@ export function useQueryEnvironments() {
 export function useCreateEnvironment() {
   const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: (payload: any) =>
+  return useMutation<Environment, ErrorResponse, CreateEnvironmentPayload>({
+    mutationFn: (payload) =>
       keygen.environments
         .create(payload)
         .then((response) => response.data as Environment),
@@ -46,12 +53,15 @@ export function useCreateEnvironment() {
 export function useUpdateEnvironment(environmentId: string) {
   const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: (values: any) =>
+  return useMutation<Environment, ErrorResponse, UpdateEnvironmentPayload>({
+    mutationFn: (values) =>
       keygen.environments.get({ id: environmentId }).then(async (response) => {
         const current = response.data as Environment
-        const changes = diff(current.attributes, values)
 
+        const changes = diff(
+          current.attributes,
+          values,
+        ) as UpdateEnvironmentPayload
         if (Object.keys(changes).length === 0) return current
 
         const updated = await keygen.environments

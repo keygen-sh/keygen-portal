@@ -258,8 +258,8 @@ export default function ProductDetails() {
                   </CollapsibleMenu>
                 </CollapsibleCard>
 
-                <CollapsibleCard title="Relationships">
-                  <Attribute.Field variant="text" label="Tokens" value={"--"} />
+                <CollapsibleCard title="Relationships" defaultOpen={false}>
+                  <Attribute.Field variant="text" label="TODO" value={"--"} />
                 </CollapsibleCard>
 
                 <CollapsibleCard title="Metadata">

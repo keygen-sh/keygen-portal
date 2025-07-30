@@ -15,6 +15,7 @@ export default async function get({
     `/accounts/${config.id}/environments/${id}`,
     {
       method: "GET",
+      root: true,
     },
   )) as EnvironmentResponse
 

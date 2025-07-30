@@ -30,6 +30,7 @@ export default async function list({
     `/accounts/${config.id}/environments?${params.toString()}`,
     {
       method: "GET",
+      root: true,
     },
   )) as EnvironmentsListResponse
 

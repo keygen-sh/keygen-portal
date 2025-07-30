@@ -1,4 +1,5 @@
 import { APIResponse } from "@/types/api"
+import { Relationships } from "@/types/relationships"
 
 export enum EnvironmentErrorCode {
   CODE_TAKEN = "CODE_TAKEN",
@@ -33,23 +34,11 @@ export interface EnvironmentAttributes {
   updated: string
 }
 
-export interface EnvironmentRelationships {
-  account: {
-    links: {
-      related: string
-    }
-    data: {
-      id: string
-      type: "accounts"
-    }
-  }
-}
-
 export interface Environment {
   id: string
   type: "environments"
   attributes: EnvironmentAttributes
-  relationships: EnvironmentRelationships
+  relationships: Relationships
   links: {
     self: string
   }

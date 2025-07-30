@@ -16,7 +16,7 @@ export function useReadProduct(productId: string) {
   const { code } = useEnvironment()
 
   return useQuery({
-    queryKey: ["product", productId, code],
+    queryKey: ["products", productId, { environment: code }],
     queryFn: async () => {
       const response = await keygen.products.get({ id: productId })
 
@@ -35,7 +35,7 @@ export function useReadProducts() {
   const { code } = useEnvironment()
 
   return useQuery({
-    queryKey: ["products", code],
+    queryKey: ["products", { environment: code }],
     queryFn: () =>
       keygen.products.list({}).then((response) => response.data ?? []),
   })
@@ -52,11 +52,15 @@ export function useCreateProduct() {
         .then((response) => response.data as Product),
 
     onSuccess: (newProduct) => {
-      queryClient.setQueryData<Product[]>(["products", code], (old) =>
-        old ? [newProduct, ...old] : [newProduct],
+      queryClient.setQueryData<Product[]>(
+        ["products", { environment: code }],
+        (old) => (old ? [newProduct, ...old] : [newProduct]),
       )
 
-      queryClient.setQueryData(["product", newProduct.id, code], newProduct)
+      queryClient.setQueryData(
+        ["products", newProduct.id, { environment: code }],
+        newProduct,
+      )
     },
   })
 }
@@ -81,8 +85,13 @@ export function useUpdateProduct(productId: string) {
       }),
 
     onSuccess: (updated) => {
-      queryClient.setQueryData(["product", productId, code], updated)
-      queryClient.invalidateQueries({ queryKey: ["products", code] })
+      queryClient.setQueryData(
+        ["products", productId, { environment: code }],
+        updated,
+      )
+      queryClient.invalidateQueries({
+        queryKey: ["products", { environment: code }],
+      })
     },
   })
 }
@@ -95,8 +104,12 @@ export function useDeleteProduct(productId: string) {
     mutationFn: () => keygen.products.remove({ id: productId }),
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products", code] })
-      queryClient.removeQueries({ queryKey: ["product", productId, code] })
+      queryClient.invalidateQueries({
+        queryKey: ["products", { environment: code }],
+      })
+      queryClient.removeQueries({
+        queryKey: ["products", productId, { environment: code }],
+      })
     },
   })
 }

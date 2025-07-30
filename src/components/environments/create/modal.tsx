@@ -17,9 +17,6 @@ import {
 
 import { Globe, GlobeLock } from "lucide-react"
 
-import { useSlide } from "@/hooks/use-slide"
-import { useCreateEnvironment } from "@/hooks/use-query-environment"
-
 import {
   Environment,
   EnvironmentMode,
@@ -28,6 +25,9 @@ import {
   EnvironmentErrorCode,
 } from "@/types/environments"
 import type { AttributesFormValues } from "./attributes-form"
+
+import { useCreateEnvironment } from "@/queries/environments"
+import { useSlide } from "@/hooks/use-slide"
 
 import { toast } from "@/lib/toast"
 import * as Motion from "@/components/motion"

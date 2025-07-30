@@ -18,9 +18,6 @@ import {
 
 import { Lock, Unlock, Award } from "lucide-react"
 
-import { useSlide } from "@/hooks/use-slide"
-import { useCreateProduct } from "@/hooks/use-query-product"
-
 import {
   Product,
   DistributionStrategy,
@@ -28,6 +25,9 @@ import {
   ProductErrorCode,
 } from "@/types/products"
 import { AttributesFormValues } from "./attributes-form"
+
+import { useCreateProduct } from "@/queries/products"
+import { useSlide } from "@/hooks/use-slide"
 
 import { toast } from "@/lib/toast"
 import * as Motion from "@/components/motion"

@@ -42,8 +42,8 @@ import {
 
 import { DistributionStrategy } from "@/types/products"
 
+import { useReadProduct, useDeleteProduct } from "@/queries/products"
 import { useMobile } from "@/hooks/use-mobile"
-import { useQueryProduct, useDeleteProduct } from "@/hooks/use-query-product"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
@@ -64,7 +64,7 @@ export default function ProductDetails() {
     isLoading,
     isFetching,
     isError,
-  } = useQueryProduct(productId)
+  } = useReadProduct(productId)
   const deleteProduct = useDeleteProduct(productId)
 
   const navigate = useNavigate()

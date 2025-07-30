@@ -15,8 +15,6 @@ import {
 
 import { Globe, GlobeLock } from "lucide-react"
 
-import { useUpdateEnvironment } from "@/hooks/use-query-environment"
-
 import {
   Environment,
   EnvironmentMode,
@@ -24,6 +22,8 @@ import {
   EnvironmentErrorCode,
 } from "@/types/environments"
 import type { EditEnvironmentFormValues } from "./edit-form"
+
+import { useUpdateEnvironment } from "@/queries/environments"
 
 import { toast } from "@/lib/toast"
 import EditForm from "./edit-form"

@@ -17,14 +17,14 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 
-import { useSlide } from "@/hooks/use-slide"
-import { useDeleteEnvironment } from "@/hooks/use-query-environment"
-
 import {
   Environment,
   EnvironmentMode,
   EnvironmentView,
 } from "@/types/environments"
+
+import { useDeleteEnvironment } from "@/queries/environments"
+import { useSlide } from "@/hooks/use-slide"
 
 import * as Motion from "@/components/motion"
 import EnvironmentsList from "./list"

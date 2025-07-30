@@ -10,7 +10,7 @@ import { ErrorResponse } from "@/types/api"
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
 
-export function useQueryEnvironment(environmentId: string) {
+export function useReadEnvironment(environmentId: string) {
   return useQuery({
     queryKey: ["environment", environmentId],
     queryFn: () =>
@@ -20,7 +20,7 @@ export function useQueryEnvironment(environmentId: string) {
   })
 }
 
-export function useQueryEnvironments() {
+export function useReadEnvironments() {
   return useQuery({
     queryKey: ["environments"],
     queryFn: () =>

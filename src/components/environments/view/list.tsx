@@ -2,7 +2,8 @@ import { useMemo } from "react"
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table"
 
 import { Environment } from "@/types/environments"
-import { useQueryEnvironments } from "@/hooks/use-query-environment"
+
+import { useReadEnvironments } from "@/queries/environments"
 
 import DataTable from "@/components/data-table"
 import SkeletonTable from "@/components/skeleton-table"
@@ -14,7 +15,7 @@ interface EnvironmentsListProps {
 export default function EnvironmentsList({
   onViewDetails,
 }: EnvironmentsListProps) {
-  const { data: environments = [], isLoading } = useQueryEnvironments()
+  const { data: environments = [], isLoading } = useReadEnvironments()
 
   const column = createColumnHelper<Environment>()
   const columns = useMemo<ColumnDef<Environment, any>[]>(

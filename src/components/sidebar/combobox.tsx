@@ -16,9 +16,10 @@ import {
 
 import { Droplet, Check, ChevronsUpDown, Circle } from "lucide-react"
 
-import { useQueryEnvironments } from "@/hooks/use-query-environment"
-import { useEnvironment } from "@/hooks/use-environment"
 import { Environment } from "@/types/environments"
+
+import { useReadEnvironments } from "@/queries/environments"
+import { useEnvironment } from "@/hooks/use-environment"
 
 import * as Environments from "@/components/environments"
 
@@ -33,8 +34,7 @@ export default function SidebarCombobox(): React.ReactElement {
 
   const [openModal, setOpenModal] = useState(false)
   const [openPopover, setOpenPopover] = useState(false)
-  const { data: environments = [], isLoading: environmentsLoading } =
-    useQueryEnvironments()
+  const { data: environments = [], isLoading } = useReadEnvironments()
 
   const environmentOptions = useMemo(() => {
     return [
@@ -82,7 +82,7 @@ export default function SidebarCombobox(): React.ReactElement {
     (e) => e.id === environmentId,
   )!
 
-  if (environmentsLoading || !currentEnvironment) {
+  if (isLoading || !currentEnvironment) {
     return (
       <div className="flex h-9 w-full items-center pr-4">
         <Skeleton className="h-7 w-full" />

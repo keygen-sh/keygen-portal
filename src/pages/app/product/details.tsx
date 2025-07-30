@@ -364,10 +364,10 @@ export default function ProductDetails() {
               />
             </SidebarHeader>
             <SidebarContent>
-              <TabsContent value="overview" className="p-4">
-                <Property.Section title="Properties">
-                  {product ? (
-                    <>
+              <TabsContent value="overview" className="space-y-4 p-4">
+                {product ? (
+                  <>
+                    <Property.Section title="Properties">
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
@@ -382,15 +382,15 @@ export default function ProductDetails() {
                           product.attributes.updated,
                         ).toLocaleDateString()}
                       />
-                    </>
-                  ) : (
-                    <div className="flex flex-col space-y-2">
-                      <Skeleton className="h-4 w-3/4" />
-                      <Skeleton className="h-4 w-1/2" />
-                      <Skeleton className="h-4 w-1/3" />
-                    </div>
-                  )}
-                </Property.Section>
+                    </Property.Section>
+                  </>
+                ) : (
+                  <div className="flex flex-col space-y-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-4 w-1/3" />
+                  </div>
+                )}
               </TabsContent>
 
               <TabsContent value="events" className="p-4"></TabsContent>

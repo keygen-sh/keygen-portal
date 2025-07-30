@@ -17,10 +17,17 @@ export function useQueryProduct(productId: string) {
 
   return useQuery({
     queryKey: ["product", productId, code],
-    queryFn: () =>
-      keygen.products
-        .get({ id: productId })
-        .then((response) => response.data as Product),
+    queryFn: async () => {
+      const response = await keygen.products.get({ id: productId })
+
+      if (!response.data) {
+        throw new Error("Product not found")
+      }
+
+      return response.data as Product
+    },
+    retry: (failures, error) =>
+      error.message !== "Product not found" && failures < 3,
   })
 }
 

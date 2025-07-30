@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate, useParams } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
@@ -59,7 +59,12 @@ import CollapsibleMenu from "@/components/collapsible-menu"
 
 export default function ProductDetails() {
   const { productId } = useParams({ from: "/$id/app/products/$productId" })
-  const { data: product, isLoading } = useQueryProduct(productId)
+  const {
+    data: product,
+    isLoading,
+    isFetching,
+    isError,
+  } = useQueryProduct(productId)
   const deleteProduct = useDeleteProduct(productId)
 
   const navigate = useNavigate()
@@ -69,6 +74,12 @@ export default function ProductDetails() {
     edit: false,
     delete: false,
   })
+
+  useEffect(() => {
+    if (isError && !isFetching) {
+      navigate({ to: ".." })
+    }
+  }, [isError, isFetching, navigate])
 
   const handleDeleteProduct = () => {
     deleteProduct.mutate(undefined, {

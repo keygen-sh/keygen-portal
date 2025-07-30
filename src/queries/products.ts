@@ -43,6 +43,7 @@ export function useReadProducts() {
 
 export function useCreateProduct() {
   const queryClient = useQueryClient()
+  const { code } = useEnvironment()
 
   return useMutation<Product, ErrorResponse, CreateProductPayload>({
     mutationFn: (payload) =>
@@ -51,17 +52,18 @@ export function useCreateProduct() {
         .then((response) => response.data as Product),
 
     onSuccess: (newProduct) => {
-      queryClient.setQueryData<Product[]>(["products"], (old) =>
+      queryClient.setQueryData<Product[]>(["products", code], (old) =>
         old ? [newProduct, ...old] : [newProduct],
       )
 
-      queryClient.setQueryData(["product", newProduct.id], newProduct)
+      queryClient.setQueryData(["product", newProduct.id, code], newProduct)
     },
   })
 }
 
 export function useUpdateProduct(productId: string) {
   const queryClient = useQueryClient()
+  const { code } = useEnvironment()
 
   return useMutation<Product, ErrorResponse, UpdateProductPayload>({
     mutationFn: (values) =>
@@ -79,21 +81,22 @@ export function useUpdateProduct(productId: string) {
       }),
 
     onSuccess: (updated) => {
-      queryClient.setQueryData(["product", productId], updated)
-      queryClient.invalidateQueries({ queryKey: ["products"] })
+      queryClient.setQueryData(["product", productId, code], updated)
+      queryClient.invalidateQueries({ queryKey: ["products", code] })
     },
   })
 }
 
 export function useDeleteProduct(productId: string) {
   const queryClient = useQueryClient()
+  const { code } = useEnvironment()
 
   return useMutation({
     mutationFn: () => keygen.products.remove({ id: productId }),
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] })
-      queryClient.removeQueries({ queryKey: ["product", productId] })
+      queryClient.invalidateQueries({ queryKey: ["products", code] })
+      queryClient.removeQueries({ queryKey: ["product", productId, code] })
     },
   })
 }

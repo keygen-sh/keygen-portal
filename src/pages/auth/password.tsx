@@ -91,7 +91,7 @@ export default function Password() {
           (data as { attributes: { token: string } }).attributes.token,
         )
         storage.setItem("tokenId", (data as { id: string }).id)
-        keygen.client.setToken(
+        keygen.client.setRootToken(
           (data as { attributes: { token: string } }).attributes.token,
         )
 

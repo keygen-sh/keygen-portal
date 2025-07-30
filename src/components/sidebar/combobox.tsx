@@ -1,9 +1,7 @@
-import { useState, useEffect, useMemo, Fragment } from "react"
-import { Check, ChevronsUpDown, Circle } from "lucide-react"
+import { useState, useEffect, useMemo } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Popover,
   PopoverContent,
@@ -12,58 +10,48 @@ import {
 import {
   Command,
   CommandGroup,
-  CommandItem,
-  CommandInput,
   CommandList,
-  CommandSeparator,
-  CommandEmpty,
+  CommandItem,
 } from "@/components/ui/command"
 
-import { Droplet } from "lucide-react"
+import { Droplet, Check, ChevronsUpDown, Circle } from "lucide-react"
 
-import { Product } from "@/types/products"
-import { Environment } from "@/types/environments"
-
-import { useQueryProducts } from "@/hooks/use-query-product"
 import { useQueryEnvironments } from "@/hooks/use-query-environment"
+import { useEnvironment } from "@/hooks/use-environment"
+import { Environment } from "@/types/environments"
 
 import * as Environments from "@/components/environments"
 
+const GLOBAL_ENVIRONMENT = {
+  id: "__global",
+  code: null,
+  name: "Global",
+}
+
 export default function SidebarCombobox(): React.ReactElement {
-  const [showEnvironmentsModal, setShowEnvironmentsModal] = useState(false)
-  const [open, setOpen] = useState(false)
-  const { data: products = [], isLoading: productsLoading } = useQueryProducts()
+  const { code, select } = useEnvironment()
+
+  const [openModal, setOpenModal] = useState(false)
+  const [openPopover, setOpenPopover] = useState(false)
   const { data: environments = [], isLoading: environmentsLoading } =
     useQueryEnvironments()
 
-  const productOptions = useMemo(() => {
-    return products.map((product: Product) => ({
-      id: product.id,
-      name: product.attributes.name,
-    }))
-  }, [products])
-
   const environmentOptions = useMemo(() => {
-    return environments.map((environment: Environment) => ({
-      id: environment.id,
-      code: environment.attributes.code,
-      name: environment.attributes.name,
-    }))
+    return [
+      GLOBAL_ENVIRONMENT,
+      ...environments.map((environment: Environment) => ({
+        id: environment.id,
+        code: environment.attributes.code,
+        name: environment.attributes.name,
+      })),
+    ]
   }, [environments])
 
-  const [productId, setProductId] = useState<string | null>(null)
-  const [environmentId, setEnvironmentId] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (productOptions.length === 0) {
-      setProductId(null)
-      return
-    }
-
-    if (!productId || !productOptions.some((p) => p.id === productId)) {
-      setProductId(productOptions[0].id)
-    }
-  }, [productOptions, productId])
+  const [environmentId, setEnvironmentId] = useState<string | null>(
+    () =>
+      environmentOptions.find((option) => option.code === code)?.id ??
+      "__global",
+  )
 
   useEffect(() => {
     if (environmentOptions.length === 0) {
@@ -79,17 +67,22 @@ export default function SidebarCombobox(): React.ReactElement {
     }
   }, [environmentOptions, environmentId])
 
-  const currentProduct = productOptions.find((p) => p.id === productId)!
+  const switchEnvironment = async (id: string, newCode: string | null) => {
+    if (newCode === code) {
+      setOpenPopover(false)
+      return
+    }
+    await select(id === "__global" ? null : id, newCode)
+    setEnvironmentId(id)
+
+    setOpenPopover(false)
+  }
+
   const currentEnvironment = environmentOptions.find(
     (e) => e.id === environmentId,
   )!
 
-  if (
-    productsLoading ||
-    environmentsLoading ||
-    !currentProduct ||
-    !currentEnvironment
-  ) {
+  if (environmentsLoading || !currentEnvironment) {
     return (
       <div className="flex h-9 w-full items-center pr-4">
         <Skeleton className="h-7 w-full" />
@@ -99,11 +92,11 @@ export default function SidebarCombobox(): React.ReactElement {
 
   return (
     <>
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={openPopover} onOpenChange={setOpenPopover}>
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
-            aria-expanded={open}
+            aria-expanded={openPopover}
             size="default"
             className="!px-1 !py-0"
           >
@@ -112,7 +105,8 @@ export default function SidebarCombobox(): React.ReactElement {
 
             <div className="flex max-w-32 flex-col text-left text-content-loud">
               <div className="flex items-center gap-2">
-                <span className="truncate">{currentProduct?.name}</span>
+                {/* TODO(cazden) Get company name */}
+                <span className="truncate">Umbral</span>
                 <ChevronsUpDown className="size-3 opacity-60" />
               </div>
               <span className="text-xs font-normal text-content-normal">
@@ -122,52 +116,36 @@ export default function SidebarCombobox(): React.ReactElement {
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="mt-1 w-60 p-0">
+        <PopoverContent align="start" className="w-48 p-0">
           <Command>
-            <CommandInput placeholder="Search..." />
             <CommandList>
-              <ScrollArea className="h-64">
-                <CommandEmpty>No match.</CommandEmpty>
+              <CommandGroup heading="Environments">
+                {environmentOptions.map((environment) => {
+                  const selected = environment.id === environmentId
 
-                {productOptions.map((product) => (
-                  <Fragment key={product.id}>
-                    <CommandGroup heading={product.name}>
-                      {environmentOptions.map((environment) => {
-                        const selected =
-                          product.id === productId &&
-                          environment.id === environmentId
-                        return (
-                          <CommandItem
-                            key={`${product.id}:${environment.id}`}
-                            value={`${product.id}:${environment.id}`}
-                            onSelect={() => {
-                              setProductId(product.id)
-                              setEnvironmentId(environment.id)
-                              setOpen(false)
-                            }}
-                          >
-                            {selected ? (
-                              <Check className="mr-2 size-4" />
-                            ) : (
-                              <Circle className="mr-2 size-4 opacity-0" />
-                            )}
-                            {environment.name}
-                          </CommandItem>
-                        )
-                      })}
-                    </CommandGroup>
-                    {product.id !==
-                      productOptions[productOptions.length - 1].id && (
-                      <CommandSeparator />
-                    )}
-                  </Fragment>
-                ))}
-              </ScrollArea>
+                  return (
+                    <CommandItem
+                      key={environment.id}
+                      value={environment.id}
+                      onSelect={() =>
+                        switchEnvironment(environment.id, environment.code)
+                      }
+                    >
+                      {selected ? (
+                        <Check className="mr-2 size-4" />
+                      ) : (
+                        <Circle className="mr-2 size-4 opacity-0" />
+                      )}
+                      {environment.name}
+                    </CommandItem>
+                  )
+                })}
+              </CommandGroup>
               <div className="border-t border-accent">
                 <CommandItem
                   onSelect={() => {
-                    setShowEnvironmentsModal(true)
-                    setOpen(false)
+                    setOpenModal(true)
+                    setOpenPopover(false)
                   }}
                   className="m-1 text-content-normal"
                 >
@@ -180,8 +158,8 @@ export default function SidebarCombobox(): React.ReactElement {
       </Popover>
 
       <Environments.Modal
-        open={showEnvironmentsModal}
-        onClose={() => setShowEnvironmentsModal(false)}
+        open={openModal}
+        onClose={() => setOpenModal(false)}
       />
     </>
   )

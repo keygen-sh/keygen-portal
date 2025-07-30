@@ -1,11 +1,14 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
+import { useEnvironment } from "@/hooks/use-environment"
 import { Product } from "@/types/products"
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
 
 export function useQueryProduct(productId: string) {
+  const { code } = useEnvironment()
+
   return useQuery({
-    queryKey: ["product", productId],
+    queryKey: ["product", productId, code],
     queryFn: () =>
       keygen.products
         .get({ id: productId })
@@ -14,8 +17,10 @@ export function useQueryProduct(productId: string) {
 }
 
 export function useQueryProducts() {
+  const { code } = useEnvironment()
+
   return useQuery({
-    queryKey: ["products"],
+    queryKey: ["products", code],
     queryFn: () =>
       keygen.products.list({}).then((response) => response.data ?? []),
   })

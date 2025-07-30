@@ -1,11 +1,12 @@
 import { Outlet } from "@tanstack/react-router"
-import { useSession } from "@/hooks/use-session"
-import { useSidebar } from "@/components/ui/sidebar"
-import { useMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 
-import { SidebarProvider } from "@/components/ui/sidebar"
+import { useSidebar, SidebarProvider } from "@/components/ui/sidebar"
 import { Toaster } from "@/components/ui/sonner"
+
+import { EnvironmentProvider } from "@/providers/environment-provider"
+import { useSession } from "@/hooks/use-session"
+import { useMobile } from "@/hooks/use-mobile"
 
 import * as Sidebar from "@/components/sidebar"
 import * as Loading from "@/components/loading"
@@ -26,9 +27,11 @@ export default function AppLayout() {
   }
 
   return (
-    <SidebarProvider>
-      <AppLayoutContent />
-    </SidebarProvider>
+    <EnvironmentProvider>
+      <SidebarProvider>
+        <AppLayoutContent />
+      </SidebarProvider>
+    </EnvironmentProvider>
   )
 }
 

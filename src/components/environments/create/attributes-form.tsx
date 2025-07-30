@@ -37,36 +37,29 @@ const attributesSchema = z.object({
   code: z.string().min(1, "Environment code is required"),
 })
 
-type AttributesFormValues = z.infer<typeof attributesSchema>
+export type AttributesFormValues = z.infer<typeof attributesSchema>
 
 interface AttributesFormProps {
-  name?: string | null
-  code?: string | null
+  loading?: boolean
   error?: string | null
-  onNameChange?: (name: string) => void
-  onCodeChange?: (code: string) => void
   onSubmit: (values: { name: string; code: string }) => void
   onCancel: () => void
-  loading?: boolean
 }
 
 export default function AttributesForm({
-  name,
-  code,
+  loading,
   error,
-  onNameChange,
-  onCodeChange,
   onSubmit,
   onCancel,
-  loading,
 }: AttributesFormProps) {
   const isMobile = useMobile()
 
   const form = useForm<AttributesFormValues>({
     resolver: zodResolver(attributesSchema),
+    mode: "onChange",
     defaultValues: {
-      name: name ?? "",
-      code: code ?? "",
+      name: "",
+      code: "",
     },
   })
 
@@ -98,7 +91,6 @@ export default function AttributesForm({
                       disabled={loading}
                       onChange={(e) => {
                         field.onChange(e)
-                        onNameChange?.(e.target.value)
                       }}
                     />
                   </FormControl>
@@ -144,7 +136,6 @@ export default function AttributesForm({
                         disabled={loading}
                         onChange={(e) => {
                           field.onChange(e)
-                          onCodeChange?.(e.target.value)
                         }}
                       />
                     </FormControl>

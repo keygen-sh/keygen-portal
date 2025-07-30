@@ -1,4 +1,5 @@
 import { APIResponse } from "@/types/api"
+import { Relationships } from "@/types/relationships"
 
 export enum ProductErrorCode {
   CODE_TAKEN = "CODE_TAKEN",
@@ -42,23 +43,11 @@ export interface ProductAttributes {
   updated: string
 }
 
-export interface ProductRelationships {
-  account: {
-    links: {
-      related: string
-    }
-    data: {
-      id: string
-      type: "accounts"
-    }
-  }
-}
-
 export interface Product {
   id: string
   type: "products"
   attributes: ProductAttributes
-  relationships: ProductRelationships
+  relationships: Relationships
   links: {
     self: string
   }

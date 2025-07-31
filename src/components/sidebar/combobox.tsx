@@ -18,7 +18,7 @@ import { Droplet, Check, ChevronsUpDown, Circle } from "lucide-react"
 
 import { Environment } from "@/types/environments"
 
-import { useReadEnvironments } from "@/queries/environments"
+import { useListEnvironments } from "@/queries/environments"
 import { useEnvironment } from "@/hooks/use-environment"
 
 import * as Environments from "@/components/environments"
@@ -34,7 +34,7 @@ export default function SidebarCombobox(): React.ReactElement {
 
   const [openModal, setOpenModal] = useState(false)
   const [openPopover, setOpenPopover] = useState(false)
-  const { data: environments = [], isLoading } = useReadEnvironments()
+  const { data: environments = [], isLoading } = useListEnvironments()
 
   const environmentOptions = useMemo(() => {
     return [

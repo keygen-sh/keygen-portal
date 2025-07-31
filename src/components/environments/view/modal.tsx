@@ -23,7 +23,7 @@ import {
   EnvironmentView,
 } from "@/types/environments"
 
-import { useDeleteEnvironment } from "@/queries/environments"
+import { useRemoveEnvironment } from "@/queries/environments"
 import { useSlide } from "@/hooks/use-slide"
 
 import * as Motion from "@/components/motion"
@@ -42,7 +42,7 @@ export default function EnvironmentsViewModal({
   onSelectEnvironment,
   onChangeMode,
 }: EnvironmentsViewModalProps) {
-  const deleteEnvironment = useDeleteEnvironment(selectedEnvironment?.id ?? "")
+  const deleteEnvironment = useRemoveEnvironment(selectedEnvironment?.id ?? "")
 
   const [view, direction, goTo] = useSlide(
     [EnvironmentView.LIST, EnvironmentView.DETAILS],

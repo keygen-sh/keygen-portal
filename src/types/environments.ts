@@ -1,5 +1,10 @@
-import { APIResponse, Writable } from "@/types/api"
-import { Relationships } from "@/types/relationships"
+import {
+  APIResponse,
+  Resource,
+  Relationship,
+  Linkage,
+  Writable,
+} from "@/types/api"
 
 export enum EnvironmentErrorCode {
   CODE_TAKEN = "CODE_TAKEN",
@@ -34,15 +39,15 @@ export interface EnvironmentAttributes {
   updated: string
 }
 
-export interface Environment {
-  id: string
-  type: "environments"
-  attributes: EnvironmentAttributes
-  relationships: Relationships
-  links: {
-    self: string
-  }
+export type EnvironmentRelationships = {
+  account: Relationship<Linkage<"accounts">>
 }
+
+export type Environment = Resource<
+  "environments",
+  EnvironmentAttributes,
+  EnvironmentRelationships
+>
 
 export type EnvironmentResponse = APIResponse<Environment>
 export type EnvironmentsListResponse = APIResponse<Environment[]>

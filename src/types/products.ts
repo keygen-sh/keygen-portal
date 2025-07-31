@@ -1,5 +1,11 @@
-import { APIResponse, Writable, OptionalExcept } from "@/types/api"
-import { Relationships } from "@/types/relationships"
+import {
+  APIResponse,
+  Resource,
+  Relationship,
+  Linkage,
+  Writable,
+  OptionalExcept,
+} from "@/types/api"
 
 export enum ProductErrorCode {
   CODE_TAKEN = "CODE_TAKEN",
@@ -43,15 +49,20 @@ export interface ProductAttributes {
   updated: string
 }
 
-export interface Product {
-  id: string
-  type: "products"
-  attributes: ProductAttributes
-  relationships: Relationships
-  links: {
-    self: string
-  }
+export type ProductRelationships = {
+  account: Relationship<Linkage<"accounts">>
+  policies: Relationship<Linkage<"policies">[]>
+  licenses: Relationship<Linkage<"licenses">[]>
+  machines: Relationship<Linkage<"machines">[]>
+  users: Relationship<Linkage<"users">[]>
+  tokens: Relationship<Linkage<"tokens">[]>
 }
+
+export type Product = Resource<
+  "products",
+  ProductAttributes,
+  ProductRelationships
+>
 
 export type ProductResponse = APIResponse<Product>
 export type ProductsListResponse = APIResponse<Product[]>

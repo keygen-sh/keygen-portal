@@ -7,7 +7,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { Product } from "@/types/products"
 
-import { useReadProducts } from "@/queries/products"
+import { useListProducts } from "@/queries/products"
 
 import * as keygen from "@/keygen"
 import * as Products from "@/components/products"
@@ -17,7 +17,7 @@ import SkeletonTable from "@/components/skeleton-table"
 import ClipboardButton from "@/components/clipboard-button"
 
 export default function ProductsList() {
-  const { data: products = [], isLoading } = useReadProducts()
+  const { data: products = [], isLoading } = useListProducts()
   const navigate = useNavigate()
 
   const [open, setOpen] = useState(false)

@@ -42,7 +42,7 @@ import {
 
 import { DistributionStrategy } from "@/types/products"
 
-import { useReadProduct, useDeleteProduct } from "@/queries/products"
+import { useGetProduct, useRemoveProduct } from "@/queries/products"
 import { useMobile } from "@/hooks/use-mobile"
 
 import { toast } from "@/lib/toast"
@@ -64,8 +64,8 @@ export default function ProductDetails() {
     isLoading,
     isFetching,
     isError,
-  } = useReadProduct(productId)
-  const deleteProduct = useDeleteProduct(productId)
+  } = useGetProduct(productId)
+  const deleteProduct = useRemoveProduct(productId)
 
   const navigate = useNavigate()
 

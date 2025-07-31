@@ -10,7 +10,7 @@ import { APIError } from "@/types/api"
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
 
-export function useReadEnvironment(environmentId: string) {
+export function useGetEnvironment(environmentId: string) {
   return useQuery({
     queryKey: ["environment", environmentId],
     queryFn: () =>
@@ -20,7 +20,7 @@ export function useReadEnvironment(environmentId: string) {
   })
 }
 
-export function useReadEnvironments() {
+export function useListEnvironments() {
   return useQuery({
     queryKey: ["environments"],
     queryFn: () =>
@@ -41,7 +41,6 @@ export function useCreateEnvironment() {
       queryClient.setQueryData<Environment[]>(["environments"], (old) =>
         old ? [newEnvironment, ...old] : [newEnvironment],
       )
-
       queryClient.setQueryData(
         ["environment", newEnvironment.id],
         newEnvironment,
@@ -78,7 +77,7 @@ export function useUpdateEnvironment(environmentId: string) {
   })
 }
 
-export function useDeleteEnvironment(environmentId: string) {
+export function useRemoveEnvironment(environmentId: string) {
   const queryClient = useQueryClient()
 
   return useMutation({

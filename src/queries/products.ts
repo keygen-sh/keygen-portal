@@ -12,7 +12,7 @@ import { APIError } from "@/types/api"
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
 
-export function useReadProduct(productId: string) {
+export function useGetProduct(productId: string) {
   const { code } = useEnvironment()
 
   return useQuery({
@@ -31,7 +31,7 @@ export function useReadProduct(productId: string) {
   })
 }
 
-export function useReadProducts() {
+export function useListProducts() {
   const { code } = useEnvironment()
 
   return useQuery({
@@ -56,7 +56,6 @@ export function useCreateProduct() {
         ["products", { environment: code }],
         (old) => (old ? [newProduct, ...old] : [newProduct]),
       )
-
       queryClient.setQueryData(
         ["products", newProduct.id, { environment: code }],
         newProduct,
@@ -96,7 +95,7 @@ export function useUpdateProduct(productId: string) {
   })
 }
 
-export function useDeleteProduct(productId: string) {
+export function useRemoveProduct(productId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 

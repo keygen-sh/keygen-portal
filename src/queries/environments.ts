@@ -5,7 +5,7 @@ import {
   CreateEnvironmentPayload,
   UpdateEnvironmentPayload,
 } from "@/types/environments"
-import { ErrorResponse } from "@/types/api"
+import { APIError } from "@/types/api"
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
@@ -31,7 +31,7 @@ export function useReadEnvironments() {
 export function useCreateEnvironment() {
   const queryClient = useQueryClient()
 
-  return useMutation<Environment, ErrorResponse, CreateEnvironmentPayload>({
+  return useMutation<Environment, APIError, CreateEnvironmentPayload>({
     mutationFn: (payload) =>
       keygen.environments
         .create(payload)
@@ -53,7 +53,7 @@ export function useCreateEnvironment() {
 export function useUpdateEnvironment(environmentId: string) {
   const queryClient = useQueryClient()
 
-  return useMutation<Environment, ErrorResponse, UpdateEnvironmentPayload>({
+  return useMutation<Environment, APIError, UpdateEnvironmentPayload>({
     mutationFn: (values) =>
       keygen.environments.get({ id: environmentId }).then(async (response) => {
         const current = response.data as Environment

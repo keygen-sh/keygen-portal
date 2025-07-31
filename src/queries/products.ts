@@ -7,7 +7,7 @@ import {
   CreateProductPayload,
   UpdateProductPayload,
 } from "@/types/products"
-import { ErrorResponse } from "@/types/api"
+import { APIError } from "@/types/api"
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
@@ -45,7 +45,7 @@ export function useCreateProduct() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Product, ErrorResponse, CreateProductPayload>({
+  return useMutation<Product, APIError, CreateProductPayload>({
     mutationFn: (payload) =>
       keygen.products
         .create(payload)
@@ -69,7 +69,7 @@ export function useUpdateProduct(productId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Product, ErrorResponse, UpdateProductPayload>({
+  return useMutation<Product, APIError, UpdateProductPayload>({
     mutationFn: (values) =>
       keygen.products.get({ id: productId }).then(async (response) => {
         const current = response.data as Product

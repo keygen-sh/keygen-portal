@@ -85,7 +85,7 @@ export default function DataTable<T>({
                   <TableHead
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
-                    className="text-sm md:text-xs"
+                    className="text-sm select-none md:text-xs"
                   >
                     <div className="flex items-center gap-2">
                       {flexRender(

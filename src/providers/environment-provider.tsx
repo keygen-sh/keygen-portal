@@ -1,10 +1,11 @@
-import { useState, useCallback, useMemo } from "react"
+import { useState, useMemo, useCallback } from "react"
 import { useQueryClient } from "@tanstack/react-query"
+
+import { EnvironmentContext } from "@/contexts/environment-context"
+import { useCreateEnvironmentToken } from "@/queries/tokens"
+
 import * as keygen from "@/keygen"
 import { toast } from "@/lib/toast"
-import { EnvironmentContext } from "@/contexts/environment-context"
-
-const cache: Record<string, string> = {}
 
 export function EnvironmentProvider({
   children,
@@ -13,64 +14,48 @@ export function EnvironmentProvider({
 }) {
   const [code, setCode] = useState<string | null>(null)
   const queryClient = useQueryClient()
+  const { mutateAsync: createEnvironmentToken } = useCreateEnvironmentToken()
 
-  const getEnvironmentToken = useCallback(async (id: string, code: string) => {
-    if (cache[id]) return cache[id]
+  const getEnvironmentToken = useCallback(
+    async (environmentId: string): Promise<string> => {
+      const cacheKey = ["token", "environment", environmentId]
 
-    keygen.client.setEnvironment(code)
+      const cached = queryClient.getQueryData<string>(cacheKey)
+      if (cached) return cached
 
-    const response: any = await keygen.client.request(
-      `/accounts/${keygen.config.id}/tokens`,
-      {
-        method: "POST",
-        root: true,
-        body: JSON.stringify({
-          data: {
-            type: "tokens",
-            relationships: {
-              environment: {
-                data: { type: "environments", id },
-              },
-            },
-          },
-        }),
-      },
-    )
-
-    const token = response?.data?.attributes?.token as string | undefined
-    if (!token) {
-      throw new Error("Failed to retrieve environment token")
-    }
-
-    cache[id] = token
-    return token
-  }, [])
+      const tokenResource = await createEnvironmentToken({
+        environmentId: environmentId,
+      })
+      return tokenResource.attributes.token!
+    },
+    [createEnvironmentToken, queryClient],
+  )
 
   const select = useCallback(
-    async (id: string | null, code: string | null) => {
+    async (environmentId: string | null, environmentCode: string | null) => {
       const previousToken = keygen.client["environmentToken"]
       const previousEnvironment = keygen.client["environment"]
 
       try {
-        if (code === null) {
+        if (environmentCode == null) {
           keygen.client.setEnvironmentToken(null)
           keygen.client.setEnvironment(null)
         } else {
-          const token = await getEnvironmentToken(id!, code)
-          keygen.client.setEnvironmentToken(token!)
-          keygen.client.setEnvironment(code)
+          const token = await getEnvironmentToken(environmentId!)
+
+          keygen.client.setEnvironmentToken(token)
+          keygen.client.setEnvironment(environmentCode)
         }
 
-        setCode(code)
-
+        setCode(environmentCode)
         queryClient.invalidateQueries({
           predicate: (q) => q.queryKey[0] !== "environments",
         })
-      } catch (e) {
+      } catch (error) {
         toast({ message: "Unauthorized", variant: "error" })
-        keygen.client.setEnvironmentToken(previousToken!)
-        keygen.client.setEnvironment(previousEnvironment!)
-        throw e
+        keygen.client.setEnvironmentToken(previousToken ?? null)
+        keygen.client.setEnvironment(previousEnvironment ?? null)
+        throw error
       }
     },
     [getEnvironmentToken, queryClient],

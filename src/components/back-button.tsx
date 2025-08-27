@@ -1,48 +1,50 @@
-import { Link } from "@tanstack/react-router"
-import { Button } from "@/components/ui/button"
+import * as React from "react"
+import { useNavigate } from "@tanstack/react-router"
+
 import { cn } from "@/lib/utils"
 
-import * as keygen from "@/keygen"
+import { Button } from "@/components/ui/button"
+
+import { ChevronLeft } from "lucide-react"
 
 interface BackProps {
   path: string
   label?: string
   className?: string
+  preferHistory?: boolean
 }
 
-/**
- * Renders a back button based on shadcn button, with a label and path to navigate back to.
- */
 export default function BackButton({
   path,
   label,
   className,
+  preferHistory = true,
 }: BackProps): React.ReactElement {
+  const navigate = useNavigate()
+
+  const handleClick = () => {
+    if (preferHistory && window.history.length > 1) {
+      window.history.back()
+      return
+    }
+    navigate({ to: path })
+  }
+
   return (
-    <Button
-      variant="link"
-      size="link"
-      className={cn("text-content-subdued", className)}
-      asChild
-    >
-      <Link to={path} params={{ id: keygen.config.id }} aria-label={label}>
-        <svg
-          className="mt-0.5 h-6 w-6"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 14 10"
-        >
-          <path
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-            d="M13 5H1m0 0 4 4M1 5l4-4"
-          />
-        </svg>
+    <div className={cn("group flex h-6 w-fit gap-2", className)}>
+      <div className="flex h-full items-center">
+        <ChevronLeft className="mt-0.5 size-3.5 text-content-subdued transition-all duration-200 group-hover:-translate-x-2 group-hover:text-brand-primary" />
+      </div>
+      <Button
+        type="button"
+        variant="link"
+        size="link"
+        onClick={handleClick}
+        className="text-content-subdued group-hover:text-content-muted"
+        aria-label={label || "Go Back"}
+      >
         {label || "Go Back"}
-      </Link>
-    </Button>
+      </Button>
+    </div>
   )
 }

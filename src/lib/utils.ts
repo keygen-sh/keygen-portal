@@ -53,3 +53,15 @@ export function diff<T extends object>(
   }
   return changed
 }
+
+export function formatDate(
+  input: string | number | Date,
+  options?: { timeZone?: string },
+): string {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: options?.timeZone,
+  }).format(new Date(input))
+}

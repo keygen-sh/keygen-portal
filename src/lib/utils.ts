@@ -54,6 +54,12 @@ export function diff<T extends object>(
   return changed
 }
 
+export function humanize(key: string) {
+  return key
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (character) => character.toUpperCase())
+}
+
 export function formatDate(
   input: string | number | Date,
   options?: { timeZone?: string },

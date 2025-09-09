@@ -7,9 +7,111 @@ import {
   OptionalExcept,
 } from "@/types/api"
 
+export enum PolicyMode {
+  CREATE = "create",
+  EDIT = "edit",
+  VIEW = "view",
+}
+
 export enum PolicyView {
   LIST = "list",
   DETAILS = "details",
+}
+
+export enum CheckInInterval {
+  DAY = "day",
+  WEEK = "week",
+  MONTH = "month",
+  YEAR = "year",
+}
+export enum AuthenticationStrategy {
+  TOKEN = "TOKEN",
+  LICENSE = "LICENSE",
+  MIXED = "MIXED",
+  NONE = "NONE",
+}
+export enum ExpirationStrategy {
+  RESTRICT_ACCESS = "RESTRICT_ACCESS",
+  REVOKE_ACCESS = "REVOKE_ACCESS",
+  MAINTAIN_ACCESS = "MAINTAIN_ACCESS",
+  ALLOW_ACCESS = "ALLOW_ACCESS",
+}
+export enum OverageStrategy {
+  NO_OVERAGE = "NO_OVERAGE",
+  ALWAYS_ALLOW_OVERAGE = "ALWAYS_ALLOW_OVERAGE",
+  ALLOW_1_25X_OVERAGE = "ALLOW_1_25X_OVERAGE",
+  ALLOW_1_5X_OVERAGE = "ALLOW_1_5X_OVERAGE",
+  ALLOW_2X_OVERAGE = "ALLOW_2X_OVERAGE",
+}
+export enum MachineUniquenessStrategy {
+  UNIQUE_PER_ACCOUNT = "UNIQUE_PER_ACCOUNT",
+  UNIQUE_PER_PRODUCT = "UNIQUE_PER_PRODUCT",
+  UNIQUE_PER_POLICY = "UNIQUE_PER_POLICY",
+  UNIQUE_PER_LICENSE = "UNIQUE_PER_LICENSE",
+}
+export enum MachineMatchingStrategy {
+  MATCH_ANY = "MATCH_ANY",
+  MATCH_TWO = "MATCH_TWO",
+  MATCH_MOST = "MATCH_MOST",
+  MATCH_ALL = "MATCH_ALL",
+}
+export enum ComponentUniquenessStrategy {
+  UNIQUE_PER_ACCOUNT = "UNIQUE_PER_ACCOUNT",
+  UNIQUE_PER_PRODUCT = "UNIQUE_PER_PRODUCT",
+  UNIQUE_PER_POLICY = "UNIQUE_PER_POLICY",
+  UNIQUE_PER_LICENSE = "UNIQUE_PER_LICENSE",
+  UNIQUE_PER_MACHINE = "UNIQUE_PER_MACHINE",
+}
+export enum ComponentMatchingStrategy {
+  MATCH_ANY = "MATCH_ANY",
+  MATCH_TWO = "MATCH_TWO",
+  MATCH_MOST = "MATCH_MOST",
+  MATCH_ALL = "MATCH_ALL",
+}
+export enum HeartbeatBasis {
+  FROM_CREATION = "FROM_CREATION",
+  FROM_FIRST_PING = "FROM_FIRST_PING",
+}
+export enum HeartbeatCullStrategy {
+  DEACTIVATE_DEAD = "DEACTIVATE_DEAD",
+  KEEP_DEAD = "KEEP_DEAD",
+}
+export enum HeartbeatResurrectionStrategy {
+  NO_REVIVE = "NO_REVIVE",
+  "1_MINUTE_REVIVE" = "1_MINUTE_REVIVE",
+  "2_MINUTE_REVIVE" = "2_MINUTE_REVIVE",
+  "5_MINUTE_REVIVE" = "5_MINUTE_REVIVE",
+  "10_MINUTE_REVIVE" = "10_MINUTE_REVIVE",
+  "15_MINUTE_REVIVE" = "15_MINUTE_REVIVE",
+  "ALWAYS_REVIVE" = "ALWAYS_REVIVE",
+}
+export enum MachineLeasingStrategy {
+  PER_LICENSE = "PER_LICENSE",
+  PER_USER = "PER_USER",
+}
+export enum ProcessLeasingStrategy {
+  PER_MACHINE = "PER_MACHINE",
+  PER_LICENSE = "PER_LICENSE",
+  PER_USER = "PER_USER",
+}
+export enum ExpirationBasis {
+  FROM_CREATION = "FROM_CREATION",
+  FROM_FIRST_VALIDATION = "FROM_FIRST_VALIDATION",
+  FROM_FIRST_ACTIVATION = "FROM_FIRST_ACTIVATION",
+  FROM_FIRST_DOWNLOAD = "FROM_FIRST_DOWNLOAD",
+  FROM_FIRST_USE = "FROM_FIRST_USE",
+}
+export enum RenewalBasis {
+  FROM_EXPIRY = "FROM_EXPIRY",
+  FROM_NOW = "FROM_NOW",
+  FROM_NOW_IF_EXPIRED = "FROM_NOW_IF_EXPIRED",
+}
+export enum TransferStrategy {
+  KEEP_EXPIRY = "KEEP_EXPIRY",
+  RESET_EXPIRY = "RESET_EXPIRY",
+}
+export enum RenewalStrategy {
+  AUTO_RENEW = "AUTO_RENEW",
 }
 
 export interface PolicyAttributes {
@@ -18,6 +120,7 @@ export interface PolicyAttributes {
   strict: boolean
   floating: boolean
   scheme: string | null
+
   requireProductScope: boolean
   requirePolicyScope: boolean
   requireMachineScope: boolean
@@ -26,73 +129,124 @@ export interface PolicyAttributes {
   requireUserScope: boolean
   requireChecksumScope: boolean
   requireVersionScope: boolean
+
   requireCheckIn: boolean
-  checkInInterval: string | null
+  checkInInterval: CheckInInterval | null
   checkInIntervalCount: number | null
+
   usePool: boolean
   maxMachines: number | null
   maxProcesses: number | null
   maxUsers: number | null
   maxCores: number | null
   maxUses: number | null
+
   encrypted: boolean
   protected: boolean
+
   requireHeartbeat: boolean
   heartbeatDuration: number | null
-  heartbeatCullStrategy: string
-  heartbeatResurrectionStrategy: string
-  heartbeatBasis: string
-  machineUniquenessStrategy: string
-  machineMatchingStrategy: string
-  componentUniquenessStrategy: string
-  componentMatchingStrategy: string
-  expirationStrategy: string
-  expirationBasis: string
-  renewalStrategy: string
-  renewalBasis: string
-  transferStrategy: string
-  authenticationStrategy: string
-  machineLeasingStrategy: string
-  processLeasingStrategy: string
-  overageStrategy: string
+  heartbeatCullStrategy: HeartbeatCullStrategy
+  heartbeatResurrectionStrategy: HeartbeatResurrectionStrategy
+  heartbeatBasis: HeartbeatBasis
+
+  machineUniquenessStrategy: MachineUniquenessStrategy
+  machineMatchingStrategy: MachineMatchingStrategy
+  componentUniquenessStrategy: ComponentUniquenessStrategy
+  componentMatchingStrategy: ComponentMatchingStrategy
+
+  expirationStrategy: ExpirationStrategy
+  expirationBasis: ExpirationBasis
+  renewalStrategy: RenewalStrategy
+  renewalBasis: RenewalBasis
+  transferStrategy: TransferStrategy
+
+  authenticationStrategy: AuthenticationStrategy
+  machineLeasingStrategy: MachineLeasingStrategy
+  processLeasingStrategy: ProcessLeasingStrategy
+  overageStrategy: OverageStrategy
+
   metadata: Record<string, any>
   created: string
   updated: string
 }
 
-export type CheckInInterval = "day" | "week" | "month" | "year"
-export type AuthenticationStrategy = "TOKEN" | "LICENSE" | "MIXED" | "NONE"
-export type ExpirationStrategy =
-  | "RESTRICT_ACCESS"
-  | "REVOKE_ACCESS"
-  | "MAINTAIN_ACCESS"
-  | "ALLOW_ACCESS"
-export type OverageStrategy =
-  | "NO_OVERAGE"
-  | "ALWAYS_ALLOW_OVERAGE"
-  | "ALLOW_1_25X_OVERAGE"
-  | "ALLOW_1_5X_OVERAGE"
-  | "ALLOW_2X_OVERAGE"
-
 export interface PolicyInput {
   name: string
   duration?: number | null
+  expirationStrategy?: ExpirationStrategy
+  expirationBasis?: ExpirationBasis
+  renewalStrategy?: RenewalStrategy
+  renewalBasis?: RenewalBasis
+  transferStrategy?: TransferStrategy
+
   strict?: boolean
   floating?: boolean
+  protected?: boolean
+  usePool?: boolean
+  scheme?: string | null
+  encrypted?: boolean
+
+  requireCheckIn?: boolean
   checkInInterval?: CheckInInterval | null
   checkInIntervalCount?: number | null
-  usePool?: boolean
+
+  requireProductScope?: boolean
+  requirePolicyScope?: boolean
+  requireMachineScope?: boolean
+  requireFingerprintScope?: boolean
+  requireComponentsScope?: boolean
+  requireUserScope?: boolean
+  requireChecksumScope?: boolean
+  requireVersionScope?: boolean
+
   maxMachines?: number | null
   maxProcesses?: number | null
   maxUsers?: number | null
   maxCores?: number | null
   maxUses?: number | null
+
   requireHeartbeat?: boolean
   heartbeatDuration?: number | null
-  authenticationStrategy?: AuthenticationStrategy
-  expirationStrategy?: ExpirationStrategy
+  heartbeatBasis?: HeartbeatBasis
+  heartbeatCullStrategy?: HeartbeatCullStrategy
+  heartbeatResurrectionStrategy?: HeartbeatResurrectionStrategy
+
+  machineUniquenessStrategy?: MachineUniquenessStrategy
+  machineMatchingStrategy?: MachineMatchingStrategy
+  componentUniquenessStrategy?: ComponentUniquenessStrategy
+  componentMatchingStrategy?: ComponentMatchingStrategy
+  machineLeasingStrategy?: MachineLeasingStrategy
+  processLeasingStrategy?: ProcessLeasingStrategy
   overageStrategy?: OverageStrategy
+
+  authenticationStrategy?: AuthenticationStrategy
+
   metadata?: Record<string, any>
+}
+
+export enum TimingParameters {
+  PERPETUAL = "PERPETUAL",
+  TIMED = "TIMED",
+  PERPETUAL_FALLBACK = "PERPETUAL_FALLBACK",
+}
+export enum AccessParameters {
+  NODE_LOCKED = "NODE_LOCKED",
+  USER_LOCKED = "USER_LOCKED",
+}
+export enum MeteredParameters {
+  PROCESS_BASED = "PROCESS_BASED",
+  LEASE_BASED = "LEASE_BASED",
+  FEATURE_BASED = "FEATURE_BASED",
+  USAGE_BASED = "USAGE_BASED",
+}
+
+export type PolicyParameterSelection = {
+  timing: TimingParameters | null
+  access: AccessParameters[]
+  metered: MeteredParameters[]
+  advanced?: boolean
+  offline?: boolean
 }
 
 export type CreatePolicyPayload = OptionalExcept<Writable<PolicyInput>, "name">
@@ -243,7 +397,7 @@ export const MockPolicies = [
       self: "/v1/accounts/{ACCOUNT}/policies/0b4b1a9a-e25a-4f14-a95e-d9dd378d6065",
     },
     attributes: {
-      name: "Premium Add-On",
+      name: "Premium",
       duration: 31536000,
       strict: false,
       floating: false,
@@ -269,38 +423,29 @@ export const MockPolicies = [
       protected: false,
       requireHeartbeat: true,
       heartbeatDuration: null,
-      heartbeatCullStrategy: "DEACTIVATE_DEAD",
-      heartbeatResurrectionStrategy: "NO_REVIVE",
-      heartbeatBasis: "FROM_FIRST_PING",
-      machineUniquenessStrategy: "UNIQUE_PER_LICENSE",
-      machineMatchingStrategy: "MATCH_ALL",
-      componentUniquenessStrategy: "UNIQUE_PER_MACHINE",
-      componentMatchingStrategy: "MATCH_ALL",
-      expirationStrategy: "RESTRICT_ACCESS",
-      expirationBasis: "FROM_CREATION",
-      renewalStrategy: "",
-      renewalBasis: "FROM_EXPIRY",
-      transferStrategy: "KEEP_EXPIRY",
-      authenticationStrategy: "TOKEN",
-      machineLeasingStrategy: "PER_LICENSE",
-      processLeasingStrategy: "PER_MACHINE",
-      overageStrategy: "NO_OVERAGE",
+      heartbeatCullStrategy: HeartbeatCullStrategy.DEACTIVATE_DEAD,
+      heartbeatResurrectionStrategy: HeartbeatResurrectionStrategy.NO_REVIVE,
+      heartbeatBasis: HeartbeatBasis.FROM_FIRST_PING,
+      machineUniquenessStrategy: MachineUniquenessStrategy.UNIQUE_PER_LICENSE,
+      machineMatchingStrategy: MachineMatchingStrategy.MATCH_ALL,
+      componentUniquenessStrategy:
+        ComponentUniquenessStrategy.UNIQUE_PER_MACHINE,
+      componentMatchingStrategy: ComponentMatchingStrategy.MATCH_ALL,
+      expirationStrategy: ExpirationStrategy.RESTRICT_ACCESS,
+      expirationBasis: ExpirationBasis.FROM_CREATION,
+      renewalStrategy: RenewalStrategy.AUTO_RENEW,
+      renewalBasis: RenewalBasis.FROM_EXPIRY,
+      transferStrategy: TransferStrategy.KEEP_EXPIRY,
+      authenticationStrategy: AuthenticationStrategy.TOKEN,
+      machineLeasingStrategy: MachineLeasingStrategy.PER_LICENSE,
+      processLeasingStrategy: ProcessLeasingStrategy.PER_MACHINE,
+      overageStrategy: OverageStrategy.NO_OVERAGE,
       metadata: {
         description: "This is a mock policy used for demonstration purposes.",
         tier: "premium",
         department: "macrodata refinement",
-        project: "alpha",
-        owner: "Helly R.",
-        contact: "helly.r@lumon.industries",
-        widget: "<Widget />",
-        notes: "This is a mock policy used for demonstration purposes.",
-        creator: "Helly R.",
-        quality: "High",
-        environment: "Production",
-        foreword: "This is a mock policy used for demonstration purposes.",
-        disclaimer: "This is a mock policy used for demonstration purposes.",
-        additionalInfo:
-          "This is a mock policy used for demonstration purposes.",
+        project: "cold harbor",
+        owner: "mark s.",
       },
       created: "2017-01-02T20:26:53.464Z",
       updated: "2017-01-02T20:26:53.464Z",

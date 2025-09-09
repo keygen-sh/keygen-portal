@@ -230,7 +230,7 @@ export default function AttributesForm({
                   <FormField
                     control={form.control}
                     name="permissions"
-                    render={() => (
+                    render={({ field }) => (
                       <FormItem>
                         <div className="flex items-center gap-2">
                           <FormLabel>Permissions</FormLabel>
@@ -259,7 +259,8 @@ export default function AttributesForm({
                           )}
                         </div>
                         <MultiSelect
-                          name="permissions"
+                          value={field.value ?? []}
+                          onChange={field.onChange}
                           options={Permissions.map((p) => ({
                             label: p === "*" ? "*" : p,
                             value: p,

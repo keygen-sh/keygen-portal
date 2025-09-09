@@ -54,10 +54,19 @@ export function diff<T extends object>(
   return changed
 }
 
-export function humanize(key: string) {
-  return key
-    .replace(/([A-Z])/g, " $1")
-    .replace(/^./, (character) => character.toUpperCase())
+export function humanize(input: string) {
+  if (!input) return ""
+  let string = input.replace(/[_\-\s]+/g, " ").trim()
+
+  if (/^[^a-z]*$/.test(input)) string = string.toLowerCase()
+
+  string = string
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+    .replace(/\s+/g, " ")
+    .trim()
+
+  return string.replace(/\b\w/g, (character) => character.toUpperCase())
 }
 
 export function formatDate(

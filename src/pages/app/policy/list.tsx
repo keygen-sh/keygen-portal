@@ -3,6 +3,7 @@ import { useNavigate } from "@tanstack/react-router"
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { Policy, MockPolicies } from "@/types/policies"
 
@@ -10,7 +11,7 @@ import { Policy, MockPolicies } from "@/types/policies"
 import { useListProducts } from "@/queries/products"
 
 import * as keygen from "@/keygen"
-// import * as Policies from "@/components/policies"
+import * as Policies from "@/components/policies"
 import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
 import SkeletonTable from "@/components/skeleton-table"
@@ -21,6 +22,8 @@ export default function PoliciesList() {
   const [policiesLoading, setPoliciesLoading] = useState(true)
   const { data: products = [], isLoading: productsLoading } = useListProducts()
   const navigate = useNavigate()
+
+  const [open, setOpen] = useState(false)
 
   const productNameById = useMemo(() => {
     const map = new Map<string, string>()
@@ -90,9 +93,19 @@ export default function PoliciesList() {
   return (
     <section>
       <PageHeader title="Policies">
-        <Button size="sm" disabled={policiesLoading || productsLoading}>
-          Create Policy
-        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button size="sm" disabled={policiesLoading || productsLoading}>
+              Create Policy
+            </Button>
+          </DialogTrigger>
+
+          <Policies.Create.Modal
+            onSelectPolicy={(policy) => handleSelectPolicy(policy!)}
+            open={open}
+            onClose={() => setOpen(false)}
+          />
+        </Dialog>
       </PageHeader>
 
       {policiesLoading || productsLoading ? (

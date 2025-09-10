@@ -104,11 +104,7 @@ export default function AdvancedDialog({
               >
                 <ScrollArea className="min-h-0 w-full min-w-0">
                   <div className="flex min-w-0 flex-col gap-2 p-2">
-                    <CollapsibleCard title="Attributes" contentClass="p-0">
-                      <div className="p-4">
-                        <Policies.AllAttributes policy={policy} />
-                      </div>
-                    </CollapsibleCard>
+                    <Policies.AllAttributes policy={policy} />
 
                     <CollapsibleCard title="Metadata" contentClass="p-0">
                       <div className="min-h-0 w-full min-w-0 overflow-x-auto">

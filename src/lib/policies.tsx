@@ -1,13 +1,5 @@
-import type { BadgeVariant } from "@/components/ui/badge"
-
-import { formatDate } from "@/lib/utils"
-
-import {
-  Policy,
-  PolicyDurations,
-  PolicyAttributeDescriptions,
-  ExpirationStrategy,
-} from "@/types/policies"
+import { AttributeType } from "@/components/attribute/value"
+import { Policy, ExpirationStrategy } from "@/types/policies"
 
 export function isPerpetual(policy: Policy): boolean {
   return policy.attributes.duration == null || policy.attributes.duration === 0
@@ -66,64 +58,58 @@ export function isUsageBased(policy: Policy): boolean {
   return typeof maxUses === "number" && maxUses > 0
 }
 
-export function policyDurationToString(seconds?: number | null): string {
-  if (seconds == null || seconds === 0) return "Unlimited"
-  const match = PolicyDurations.find((duration) => duration.seconds === seconds)
-  return match ? match.label : `${seconds}s`
-}
+export const policyAttributeTypeSchema: Record<
+  keyof Omit<Policy["attributes"], "metadata" | "created" | "updated">,
+  AttributeType
+> = {
+  name: "string",
+  duration: "duration",
+  strict: "boolean",
+  floating: "boolean",
+  scheme: "string",
 
-function policyAttributesTitle(value: string) {
-  return value
-    .replace(/_/g, " ")
-    .toLowerCase()
-    .replace(/\b\w/g, (character) => character.toUpperCase())
-}
+  requireProductScope: "boolean",
+  requirePolicyScope: "boolean",
+  requireMachineScope: "boolean",
+  requireFingerprintScope: "boolean",
+  requireComponentsScope: "boolean",
+  requireUserScope: "boolean",
+  requireChecksumScope: "boolean",
+  requireVersionScope: "boolean",
 
-export function policyLabel(
-  value?: string | null,
-  map?: Record<string, string>,
-) {
-  if (!value) return "--"
-  return (map && map[value]) || policyAttributesTitle(value)
-}
+  requireCheckIn: "boolean",
+  checkInInterval: "enum",
+  checkInIntervalCount: "number",
 
-export type Formatted = {
-  value: string
-  variant: BadgeVariant
-  tooltip?: string
-}
+  usePool: "boolean",
+  maxMachines: "number",
+  maxProcesses: "number",
+  maxUsers: "number",
+  maxCores: "number",
+  maxUses: "number",
 
-export function formatPolicyAttribute(
-  key: keyof Policy["attributes"],
-  raw: unknown,
-  options?: { forceDisabled?: boolean },
-): Formatted {
-  const isUnset =
-    raw === null || raw === undefined || (typeof raw === "string" && raw === "")
+  encrypted: "boolean",
+  protected: "boolean",
 
-  if (isUnset) {
-    return {
-      value: "Not set",
-      variant: "disabled",
-      tooltip: PolicyAttributeDescriptions[key],
-    }
-  }
+  requireHeartbeat: "boolean",
+  heartbeatDuration: "duration",
+  heartbeatCullStrategy: "enum",
+  heartbeatResurrectionStrategy: "enum",
+  heartbeatBasis: "enum",
 
-  let value: string
-  if (key === "duration") value = policyDurationToString(raw as number)
-  else if (key === "created" || key === "updated")
-    value = formatDate(String(raw))
-  else if (typeof raw === "boolean") value = raw ? "Enabled" : "Disabled"
-  else if (typeof raw === "string") value = policyLabel(raw)
-  else value = String(raw)
+  machineUniquenessStrategy: "enum",
+  machineMatchingStrategy: "enum",
+  componentUniquenessStrategy: "enum",
+  componentMatchingStrategy: "enum",
 
-  const variant: BadgeVariant = options?.forceDisabled
-    ? "disabled"
-    : typeof raw === "boolean"
-      ? raw
-        ? "success"
-        : "disabled"
-      : "default"
+  expirationStrategy: "enum",
+  expirationBasis: "enum",
+  renewalStrategy: "enum",
+  renewalBasis: "enum",
+  transferStrategy: "enum",
 
-  return { value, variant, tooltip: PolicyAttributeDescriptions[key] }
+  authenticationStrategy: "enum",
+  machineLeasingStrategy: "enum",
+  processLeasingStrategy: "enum",
+  overageStrategy: "enum",
 }

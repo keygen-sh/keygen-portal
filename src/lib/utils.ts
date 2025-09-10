@@ -79,4 +79,15 @@ export function formatDate(
     year: "numeric",
     timeZone: options?.timeZone,
   }).format(new Date(input))
+export function titleCase(s: string): string {
+  return s
+    .replace(/_/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
+export function labelize(value?: string | null, map?: Record<string, string>) {
+  if (!value) return "--"
+  return (map && map[value]) || titleCase(value)
+}
 }

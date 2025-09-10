@@ -13,66 +13,10 @@ import {
 import { X } from "lucide-react"
 
 import type { CreatePolicyFormValues } from "./modal"
+import { MockEntitlements } from "@/types/entitlements"
 
 import MultiSelect from "@/components/multi-select"
 import SectionCard from "@/components/section-card"
-
-const MockEntitlements = [
-  {
-    data: {
-      id: "db1ff21b-f42f-4623-952b-ca7f2600bded",
-      type: "entitlements",
-      attributes: {
-        name: "Example Feature 1",
-        code: "EXAMPLE_FEATURE_1",
-        metadata: {},
-        created: "2017-01-02T20:26:53.464Z",
-        updated: "2017-01-02T20:26:53.464Z",
-      },
-      relationships: {
-        account: {
-          links: {
-            related: "/v1/accounts/<account>",
-          },
-          data: {
-            type: "accounts",
-            id: "<account>",
-          },
-        },
-      },
-      links: {
-        self: "/v1/accounts/<account>/entitlements/db1ff21b-f42f-4623-952b-ca7f2600bded",
-      },
-    },
-  },
-  {
-    data: {
-      id: "kb23jkb-f42f-4623-952b-ca7f2600bded",
-      type: "entitlements",
-      attributes: {
-        name: "Example Feature 2",
-        code: "EXAMPLE_FEATURE_2",
-        metadata: {},
-        created: "2017-01-02T20:26:53.464Z",
-        updated: "2017-01-02T20:26:53.464Z",
-      },
-      relationships: {
-        account: {
-          links: {
-            related: "/v1/accounts/<account>",
-          },
-          data: {
-            type: "accounts",
-            id: "<account>",
-          },
-        },
-      },
-      links: {
-        self: "/v1/accounts/<account>/entitlements/kb23jkb-f42f-4623-952b-ca7f2600bded",
-      },
-    },
-  },
-]
 
 export default function FeatureBasedForm({ loading }: { loading?: boolean }) {
   const form = useFormContext<CreatePolicyFormValues>()

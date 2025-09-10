@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useNavigate, useParams } from "@tanstack/react-router"
+import { formatDate } from "date-fns"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -51,7 +52,6 @@ import { useGetProduct } from "@/queries/products"
 import { useMobile } from "@/hooks/use-mobile"
 
 // import { toast } from "@/lib/toast"
-import { formatDate } from "@/lib/utils"
 import { copyToClipboard } from "@/lib/clipboard"
 import {
   isPerpetual,
@@ -452,11 +452,17 @@ export default function PolicyDetails() {
                         >
                           <Attribute.Field
                             label="Created at"
-                            value={formatDate(policy.attributes.created)}
+                            value={formatDate(
+                              new Date(String(policy.attributes.created)),
+                              "PP",
+                            )}
                           />
                           <Attribute.Field
                             label="Updated at"
-                            value={formatDate(policy.attributes.updated)}
+                            value={formatDate(
+                              new Date(String(policy.attributes.updated)),
+                              "PP",
+                            )}
                           />
                         </CollapsibleMenu>
 
@@ -585,12 +591,18 @@ export default function PolicyDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatDate(policy.attributes.created)}
+                        value={formatDate(
+                          new Date(String(policy.attributes.created)),
+                          "PP",
+                        )}
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatDate(policy.attributes.updated)}
+                        value={formatDate(
+                          new Date(String(policy.attributes.updated)),
+                          "PP",
+                        )}
                       />
                     </Property.Section>
 

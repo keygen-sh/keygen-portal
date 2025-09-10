@@ -90,4 +90,31 @@ export function labelize(value?: string | null, map?: Record<string, string>) {
   if (!value) return "--"
   return (map && map[value]) || titleCase(value)
 }
+
+const MINUTE = 60
+const HOUR = 3600
+const DAY = 86400
+const WEEK = 604800
+const MONTH = 2592000
+const YEAR = 31536000
+
+export function secondsToParts(total?: number | null) {
+  if (total == null || total === 0) return null
+
+  let seconds = Math.max(0, Math.floor(total))
+
+  const years = Math.trunc(seconds / YEAR)
+  seconds -= years * YEAR
+  const months = Math.trunc(seconds / MONTH)
+  seconds -= months * MONTH
+  const weeks = Math.trunc(seconds / WEEK)
+  seconds -= weeks * WEEK
+  const days = Math.trunc(seconds / DAY)
+  seconds -= days * DAY
+  const hours = Math.trunc(seconds / HOUR)
+  seconds -= hours * HOUR
+  const minute = Math.trunc(seconds / MINUTE)
+  seconds -= minute * MINUTE
+
+  return { years, months, weeks, days, hours, minute, seconds }
 }

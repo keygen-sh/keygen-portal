@@ -39,7 +39,7 @@ export default function TimedForm() {
   const [showAdvanced, setShowAdvanced] = useState(false)
 
   return (
-    <SectionCard title="Timed policy attributes" className="m-4">
+    <SectionCard title="Timed policy attributes" className="m-4 mb-0">
       <FormField
         control={form.control}
         name="duration"

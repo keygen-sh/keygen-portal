@@ -33,7 +33,7 @@ export default function LeaseBasedForm({ loading }: { loading?: boolean }) {
   const form = useFormContext<CreatePolicyFormValues>()
 
   return (
-    <SectionCard title="Lease-based policy attributes" className="m-4">
+    <SectionCard title="Lease-based policy attributes" className="m-4 mb-0">
       <div className="flex flex-col space-y-4 md:flex-row md:space-y-0">
         <div className="flex-1 space-y-4">
           <FormField

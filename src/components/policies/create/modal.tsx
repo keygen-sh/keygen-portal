@@ -55,6 +55,7 @@ import { useSlide } from "@/hooks/use-slide"
 import { useMobile } from "@/hooks/use-mobile"
 
 import * as Motion from "@/components/motion"
+import DocumentationLink from "@/components/documentation-link"
 import CollapsedBreadcrumb from "@/components/collapsed-breadcrumb"
 
 import ParametersForm, { ParametersValues } from "./parameters-form"
@@ -453,6 +454,8 @@ export default function PoliciesCreateModal({
                     />
 
                     {current && <current.render />}
+
+                    <DocumentationLink page="policies" />
                   </ScrollArea>
                 </Motion.Slide>
 

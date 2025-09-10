@@ -18,7 +18,7 @@ export default function UserLockedForm({ loading }: { loading?: boolean }) {
   const form = useFormContext<CreatePolicyFormValues>()
 
   return (
-    <SectionCard title="User-locked policy attributes" className="m-4">
+    <SectionCard title="User-locked policy attributes" className="m-4 mb-0">
       <FormField
         control={form.control}
         name="maxUsers"

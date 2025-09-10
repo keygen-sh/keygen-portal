@@ -264,42 +264,6 @@ export type Policy = Resource<"policies", PolicyAttributes, PolicyRelationships>
 export type PolicyResponse = APIResponse<Policy>
 export type PoliciesListResponse = APIResponse<Policy[]>
 
-const SecondsPerDay = 86400
-const SecondsPerWeek = 604800
-const SecondsPerMonth = 2592000
-const SecondsPerYear = 31536000
-
-export const PolicyDurations = [
-  { seconds: null, label: "Unlimited" },
-  { seconds: SecondsPerDay * 1, label: "1 Day" },
-  { seconds: SecondsPerDay * 2, label: "2 Days" },
-  { seconds: SecondsPerDay * 3, label: "3 Days" },
-  { seconds: SecondsPerDay * 4, label: "4 Days" },
-  { seconds: SecondsPerDay * 5, label: "5 Days" },
-
-  { seconds: SecondsPerWeek * 1, label: "1 Week" },
-  { seconds: SecondsPerWeek * 2, label: "2 Weeks" },
-  { seconds: SecondsPerWeek * 3, label: "3 Weeks" },
-  { seconds: SecondsPerWeek * 4, label: "4 Weeks" },
-  { seconds: SecondsPerWeek * 5, label: "5 Weeks" },
-
-  { seconds: SecondsPerMonth * 1, label: "1 Month" },
-  { seconds: SecondsPerMonth + SecondsPerDay * 1, label: "31 Days" },
-  { seconds: SecondsPerMonth + SecondsPerDay * 2, label: "32 Days" },
-
-  { seconds: SecondsPerMonth * 2, label: "2 Months" },
-  { seconds: SecondsPerMonth * 3, label: "3 Months" },
-  { seconds: SecondsPerMonth * 4, label: "4 Months" },
-  { seconds: SecondsPerMonth * 5, label: "5 Months" },
-  { seconds: SecondsPerMonth * 6, label: "6 Months" },
-  { seconds: SecondsPerMonth * 9, label: "9 Months" },
-  { seconds: SecondsPerMonth * 13, label: "13 Months" },
-
-  { seconds: SecondsPerYear * 1, label: "1 Year" },
-  { seconds: SecondsPerYear * 2, label: "2 Years" },
-  { seconds: SecondsPerYear * 3, label: "3 Years" },
-]
-
 export const PolicyAttributeDescriptions: Readonly<
   Record<
     keyof Omit<PolicyAttributes, "created" | "updated" | "metadata">,

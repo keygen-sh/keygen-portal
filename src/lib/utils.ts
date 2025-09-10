@@ -69,16 +69,6 @@ export function humanize(input: string) {
   return string.replace(/\b\w/g, (character) => character.toUpperCase())
 }
 
-export function formatDate(
-  input: string | number | Date,
-  options?: { timeZone?: string },
-): string {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: options?.timeZone,
-  }).format(new Date(input))
 export function titleCase(s: string): string {
   return s
     .replace(/_/g, " ")

@@ -27,7 +27,10 @@ export default function FeatureBasedForm({ loading }: { loading?: boolean }) {
   })
 
   return (
-    <SectionCard title="Feature-based policy attributes" className="m-4 mb-0">
+    <SectionCard
+      title="Feature-based policy attributes"
+      className="m-4 md:mb-0"
+    >
       <FormField
         control={form.control}
         name="entitlements.link"

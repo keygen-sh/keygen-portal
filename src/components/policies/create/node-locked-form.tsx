@@ -50,7 +50,7 @@ export default function NodeLockedForm({ loading }: { loading?: boolean }) {
   }, [floating, maxMachines, form])
 
   return (
-    <SectionCard title="Node-locked policy attributes" className="m-4 mb-0">
+    <SectionCard title="Node-locked policy attributes" className="m-4 md:mb-0">
       <FormField
         control={form.control}
         name="maxMachines"

@@ -41,7 +41,7 @@ export default function AdvancedForm({
   const form = useFormContext<CreatePolicyFormValues>()
 
   return (
-    <SectionCard title="Advanced policy attributes" className="m-4 mb-0">
+    <SectionCard title="Advanced policy attributes" className="m-4 md:mb-0">
       <div className="flex flex-col space-y-4 md:w-1/2">
         <FormField
           control={form.control}

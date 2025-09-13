@@ -36,7 +36,10 @@ export default function ProcessBasedForm({ loading }: { loading?: boolean }) {
   const [showAdvanced, setShowAdvanced] = useState(false)
 
   return (
-    <SectionCard title="Process-based policy attributes" className="m-4 mb-0">
+    <SectionCard
+      title="Process-based policy attributes"
+      className="m-4 md:mb-0"
+    >
       <FormField
         control={form.control}
         name="maxProcesses"

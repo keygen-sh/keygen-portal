@@ -21,7 +21,7 @@ import {
 import { Award, Unlock, Lock, Info } from "lucide-react"
 
 import { useMobile } from "@/hooks/use-mobile"
-import { DistributionStrategy, ProductDescription } from "@/types/products"
+import { DistributionStrategy } from "@/types/products"
 
 import { CardSelector, CardOption } from "@/components/card-selector"
 
@@ -38,7 +38,6 @@ type StrategyFormValues = z.infer<typeof strategySchema>
 interface StrategyFormProps {
   distributionStrategy?: DistributionStrategy
   onStrategyChange?: (strategy: DistributionStrategy) => void
-  onDescriptionChange?: (desc: ProductDescription) => void
   onSubmit: (strategy: DistributionStrategy) => void
   onCancel: () => void
 }
@@ -46,7 +45,6 @@ interface StrategyFormProps {
 export default function StrategyForm({
   distributionStrategy,
   onStrategyChange,
-  onDescriptionChange,
   onSubmit,
   onCancel,
 }: StrategyFormProps) {
@@ -131,7 +129,6 @@ export default function StrategyForm({
                     onChange={(value: DistributionStrategy) => {
                       field.onChange(value)
                       onStrategyChange?.(value)
-                      onDescriptionChange?.(ProductDescription[value])
                     }}
                   />
                   <FormMessage />

@@ -26,11 +26,6 @@ export enum IsolationStrategy {
   SHARED = "SHARED",
 }
 
-export enum EnvironmentDescription {
-  ISOLATED = "Creating a new Isolated environment",
-  SHARED = "Creating a new Shared environment",
-}
-
 export interface EnvironmentAttributes {
   name: string
   code: string

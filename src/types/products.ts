@@ -28,15 +28,6 @@ export enum DistributionStrategy {
   CLOSED = "CLOSED",
 }
 
-export enum ProductDescription {
-  LICENSED = "Creating a new Licensed product",
-  OPEN = "Creating a new Open product",
-  CLOSED = "Creating a new Closed product",
-  LICENSED_UPDATE = "Updating a Licensed product",
-  OPEN_UPDATE = "Updating an Open product",
-  CLOSED_UPDATE = "Updating a Closed product",
-}
-
 export interface ProductAttributes {
   name: string
   code: string

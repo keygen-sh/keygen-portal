@@ -4,7 +4,6 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
@@ -23,7 +22,17 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
-import { Clock, ClockFading, Infinity, Hexagon, User } from "lucide-react"
+import {
+  Clock,
+  ClockFading,
+  Infinity,
+  Hexagon,
+  User,
+  Cpu,
+  Activity,
+  Binary,
+  Hash,
+} from "lucide-react"
 
 import {
   Policy,
@@ -54,6 +63,7 @@ import {
 import { useSlide } from "@/hooks/use-slide"
 import { useMobile } from "@/hooks/use-mobile"
 
+import { BadgeGroup, BadgeGroupItem } from "@/components/badge-group"
 import * as Motion from "@/components/motion"
 import DocumentationLink from "@/components/documentation-link"
 import CollapsedBreadcrumb from "@/components/collapsed-breadcrumb"
@@ -366,41 +376,71 @@ export default function PoliciesCreateModal({
             onTouchMoveCapture={(e) => e.stopPropagation()}
           >
             <DialogHeader className="h-fit items-start border-b border-accent p-2">
-              <DialogDescription className="flex space-x-1">
-                <span>Creating a</span>
-
-                {selection.timing === TimingParameters.PERPETUAL && (
-                  <Badge variant="secondary">
-                    <Infinity />
-                    Perpetual
-                  </Badge>
-                )}
-                {selection.timing === TimingParameters.TIMED && (
-                  <Badge variant="secondary">
-                    <Clock />
-                    Timed
-                  </Badge>
-                )}
-                {selection.timing === TimingParameters.PERPETUAL_FALLBACK && (
-                  <Badge variant="secondary">
-                    <ClockFading />
-                    Perpetual-fallback
-                  </Badge>
-                )}
-
-                {selection.access.includes(AccessParameters.NODE_LOCKED) && (
-                  <Badge variant="secondary">
-                    <Hexagon />
-                    Node-locked
-                  </Badge>
-                )}
-                {selection.access.includes(AccessParameters.USER_LOCKED) && (
-                  <Badge variant="secondary">
-                    <User />
-                    User-locked
-                  </Badge>
-                )}
-                <span>policy</span>
+              <DialogDescription>
+                <BadgeGroup prefix="Creating a" suffix="policy">
+                  {selection.timing === TimingParameters.PERPETUAL && (
+                    <BadgeGroupItem>
+                      <Infinity />
+                      Perpetual
+                    </BadgeGroupItem>
+                  )}
+                  {selection.timing === TimingParameters.TIMED && (
+                    <BadgeGroupItem>
+                      <Clock />
+                      Timed
+                    </BadgeGroupItem>
+                  )}
+                  {selection.timing === TimingParameters.PERPETUAL_FALLBACK && (
+                    <BadgeGroupItem>
+                      <ClockFading />
+                      Perpetual-fallback
+                    </BadgeGroupItem>
+                  )}
+                  {selection.access.includes(AccessParameters.NODE_LOCKED) && (
+                    <BadgeGroupItem>
+                      <Hexagon />
+                      Node-locked
+                    </BadgeGroupItem>
+                  )}
+                  {selection.access.includes(AccessParameters.USER_LOCKED) && (
+                    <BadgeGroupItem>
+                      <User />
+                      User-locked
+                    </BadgeGroupItem>
+                  )}
+                  {selection.metered.includes(
+                    MeteredParameters.PROCESS_BASED,
+                  ) && (
+                    <BadgeGroupItem>
+                      <Cpu />
+                      Process-based
+                    </BadgeGroupItem>
+                  )}
+                  {selection.metered.includes(
+                    MeteredParameters.LEASE_BASED,
+                  ) && (
+                    <BadgeGroupItem>
+                      <Activity />
+                      Lease-based
+                    </BadgeGroupItem>
+                  )}
+                  {selection.metered.includes(
+                    MeteredParameters.FEATURE_BASED,
+                  ) && (
+                    <BadgeGroupItem>
+                      <Binary />
+                      Feature-based
+                    </BadgeGroupItem>
+                  )}
+                  {selection.metered.includes(
+                    MeteredParameters.USAGE_BASED,
+                  ) && (
+                    <BadgeGroupItem>
+                      <Hash />
+                      Usage-based
+                    </BadgeGroupItem>
+                  )}
+                </BadgeGroup>
               </DialogDescription>
               <DialogTitle>
                 {!isMobile && (

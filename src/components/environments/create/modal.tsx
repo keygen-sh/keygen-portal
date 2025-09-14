@@ -1,6 +1,5 @@
 import { useState, useCallback } from "react"
 
-import { Badge } from "@/components/ui/badge"
 import {
   DialogHeader,
   DialogTitle,
@@ -21,7 +20,6 @@ import {
   Environment,
   EnvironmentMode,
   IsolationStrategy,
-  EnvironmentDescription,
   EnvironmentErrorCode,
 } from "@/types/environments"
 import type { AttributesFormValues } from "./attributes-form"
@@ -31,6 +29,7 @@ import { useSlide } from "@/hooks/use-slide"
 
 import { toast } from "@/lib/toast"
 import * as Motion from "@/components/motion"
+import { BadgeGroup, BadgeGroupItem } from "@/components/badge-group"
 import StrategyForm from "./strategy-form"
 import AttributesForm from "./attributes-form"
 
@@ -49,9 +48,6 @@ export default function EnvironmentsCreateModal({
 
   const [isolationStrategy, setIsolationStrategy] = useState<IsolationStrategy>(
     IsolationStrategy.ISOLATED,
-  )
-  const [description, setDescription] = useState<EnvironmentDescription>(
-    EnvironmentDescription.ISOLATED,
   )
 
   const [formError, setFormError] = useState<string | null>(null)
@@ -103,43 +99,27 @@ export default function EnvironmentsCreateModal({
     setIsolationStrategy(newStrategy)
   }, [])
 
-  const handleDescriptionChange = useCallback(
-    (newDescription: EnvironmentDescription) => {
-      setDescription(newDescription)
-    },
-    [],
-  )
-
-  const renderDescription = useCallback(() => {
-    const words = description.split(" ")
-    const tags = words.filter((word) =>
-      Object.values(IsolationStrategy).includes(
-        word.toUpperCase() as IsolationStrategy,
-      ),
-    )
-
-    return words.map((word, index) => {
-      if (tags.includes(word as IsolationStrategy)) {
-        return (
-          <Badge key={index} variant="secondary">
-            {(word as IsolationStrategy) === IsolationStrategy.ISOLATED ? (
-              <GlobeLock />
-            ) : (
-              <Globe />
-            )}
-            {word}
-          </Badge>
-        )
-      }
-      return <span key={index}>{word}</span>
-    })
-  }, [description])
-
   return (
     <>
       <DialogHeader className="h-fit border-b border-accent p-2">
         <DialogDescription className="flex h-5 items-center space-x-1 text-xs">
-          {renderDescription()}
+          <DialogDescription className="flex h-5 items-center text-xs">
+            <BadgeGroup prefix="Creating a new" suffix="environment">
+              <BadgeGroupItem>
+                {isolationStrategy === IsolationStrategy.ISOLATED ? (
+                  <>
+                    <GlobeLock />
+                    Isolated
+                  </>
+                ) : (
+                  <>
+                    <Globe />
+                    Shared
+                  </>
+                )}
+              </BadgeGroupItem>
+            </BadgeGroup>
+          </DialogDescription>
         </DialogDescription>
         <DialogTitle>
           <Breadcrumb>
@@ -173,7 +153,6 @@ export default function EnvironmentsCreateModal({
             key="strategy"
             isolationStrategy={isolationStrategy}
             onStrategyChange={handleStrategyChange}
-            onDescriptionChange={handleDescriptionChange}
             onSubmit={() => goTo(1)}
             onCancel={handleCancelCreate}
           />

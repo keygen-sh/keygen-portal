@@ -5,7 +5,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { DialogFooter } from "@/components/ui/dialog"
+import {
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import {
@@ -33,23 +38,30 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb"
 
-import { Info } from "lucide-react"
+import { Info, Award, Lock, Unlock } from "lucide-react"
 
 import {
   Product,
   KnownPlatforms,
   Permissions,
   DistributionStrategy,
-  ProductDescription,
 } from "@/types/products"
 
 import { useMobile } from "@/hooks/use-mobile"
-import SectionCard from "@/components/section-card"
+
 import * as Loading from "@/components/loading"
 import TagInput from "@/components/tag-input"
 import MetaInput from "@/components/meta-input"
 import MultiSelect from "@/components/multi-select"
+import SectionCard from "@/components/section-card"
+import { BadgeGroup, BadgeGroupItem } from "@/components/badge-group"
 
 export const editSchema = z.object({
   name: z.string().trim().min(1, "Product name is required"),
@@ -73,7 +85,6 @@ export type EditFormValues = z.infer<typeof editSchema>
 interface EditFormProps {
   product: Product | null
   loading?: boolean
-  onDescriptionChange?: (description: ProductDescription) => void
   onSubmit: (values: EditFormValues) => void
   onCancel: () => void
 }
@@ -81,7 +92,6 @@ interface EditFormProps {
 export default function EditForm({
   product,
   loading,
-  onDescriptionChange,
   onSubmit,
   onCancel,
 }: EditFormProps) {
@@ -104,6 +114,8 @@ export default function EditForm({
     },
   })
 
+  const strategy = form.watch("distributionStrategy")
+
   const handleSubmit = useCallback(
     (values: EditFormValues) => {
       onSubmit(values)
@@ -112,268 +124,78 @@ export default function EditForm({
   )
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <ScrollArea className="h-[60vh] md:h-fit md:w-3xl">
-          <div className="flex h-full flex-col justify-between p-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      variant="title"
-                      placeholder="Enter product name..."
-                      className="border-none text-xl placeholder:text-content-subdued! md:text-2xl"
-                      autoComplete="off"
-                      disabled={loading}
-                      onChange={(e) => {
-                        field.onChange(e)
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+    <>
+      <DialogHeader className="h-fit border-b border-accent p-2">
+        <DialogDescription className="flex h-5 items-center text-xs">
+          <BadgeGroup prefix="Updating a" suffix="product">
+            {strategy === DistributionStrategy.LICENSED && (
+              <BadgeGroupItem>
+                <Award />
+                Licensed
+              </BadgeGroupItem>
+            )}
+            {strategy === DistributionStrategy.OPEN && (
+              <BadgeGroupItem>
+                <Unlock />
+                Open
+              </BadgeGroupItem>
+            )}
+            {strategy === DistributionStrategy.CLOSED && (
+              <BadgeGroupItem>
+                <Lock />
+                Closed
+              </BadgeGroupItem>
+            )}
+          </BadgeGroup>
+        </DialogDescription>
 
-            <SectionCard title="Attributes" className="mt-4">
-              <div className="flex flex-col gap-4 md:flex-row">
-                <div className="flex-1 space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="code"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center gap-2">
-                          <FormLabel>Code</FormLabel>
-                          {isMobile ? (
-                            <Popover>
-                              <PopoverTrigger
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Info className="size-5 text-content-subdued" />
-                              </PopoverTrigger>
-                              <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
-                                This can be used to lookup the product by a
-                                human-readable identifier.
-                              </PopoverContent>
-                            </Popover>
-                          ) : (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Info className="size-4 pt-0.5 text-content-subdued" />
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-80 bg-background-4 text-content-muted">
-                                This can be used to lookup the product by a
-                                human-readable identifier.
-                              </TooltipContent>
-                            </Tooltip>
-                          )}
-                        </div>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="example"
-                            disabled={loading}
-                            onChange={(e) => {
-                              field.onChange(e)
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+        <DialogTitle>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbPage>Update product</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </DialogTitle>
+      </DialogHeader>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
+          <ScrollArea className="h-[60vh] md:h-fit md:w-3xl">
+            <div className="flex h-full flex-col justify-between p-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        variant="title"
+                        placeholder="Enter product name..."
+                        className="border-none text-xl placeholder:text-content-subdued! md:text-2xl"
+                        autoComplete="off"
+                        disabled={loading}
+                        onChange={(e) => {
+                          field.onChange(e)
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                  <FormField
-                    control={form.control}
-                    name="url"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center justify-between gap-2">
-                          <FormLabel>URL</FormLabel>
-                          <span className="text-xs text-content-subdued">
-                            Optional
-                          </span>
-                        </div>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="https://example.com"
-                            disabled={loading}
-                            onChange={(e) => {
-                              field.onChange(e)
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="distributionStrategy"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center gap-2">
-                          <FormLabel>Distribution Strategy</FormLabel>
-                          {isMobile ? (
-                            <Popover>
-                              <PopoverTrigger
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Info className="size-5 text-content-subdued" />
-                              </PopoverTrigger>
-                              <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
-                                The distribution strategy for releases.
-                              </PopoverContent>
-                            </Popover>
-                          ) : (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Info className="size-4 pt-0.5 text-content-subdued" />
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-80 bg-background-4 text-content-muted">
-                                The distribution strategy for releases.
-                              </TooltipContent>
-                            </Tooltip>
-                          )}
-                        </div>
-
-                        <Select
-                          value={field.value}
-                          disabled={loading}
-                          onValueChange={(value) => {
-                            field.onChange(value as DistributionStrategy)
-
-                            switch (value) {
-                              case DistributionStrategy.LICENSED:
-                                onDescriptionChange?.(
-                                  ProductDescription.LICENSED_UPDATE,
-                                )
-                                break
-                              case DistributionStrategy.OPEN:
-                                onDescriptionChange?.(
-                                  ProductDescription.OPEN_UPDATE,
-                                )
-                                break
-                              case DistributionStrategy.CLOSED:
-                                onDescriptionChange?.(
-                                  ProductDescription.CLOSED_UPDATE,
-                                )
-                                break
-                            }
-                          }}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="w-full">
-                              <SelectValue />
-                            </SelectTrigger>
-                          </FormControl>
-
-                          <SelectContent>
-                            <SelectItem value={DistributionStrategy.LICENSED}>
-                              Licensed
-                            </SelectItem>
-                            <SelectItem value={DistributionStrategy.OPEN}>
-                              Open
-                            </SelectItem>
-                            <SelectItem value={DistributionStrategy.CLOSED}>
-                              Closed
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="platforms"
-                    render={() => (
-                      <FormItem>
-                        <div className="flex items-center justify-between gap-2">
-                          <FormLabel>Platforms</FormLabel>
-                          <span className="text-xs text-content-subdued">
-                            Optional
-                          </span>
-                        </div>
-                        <TagInput
-                          name="platforms"
-                          placeholder=""
-                          options={KnownPlatforms}
-                        />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="mx-4 hidden md:block">
-                  <Separator orientation="vertical" dashed={true} />
-                </div>
-                <div className="flex-1 space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="permissions"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center gap-2">
-                          <FormLabel>Permissions</FormLabel>
-                          {isMobile ? (
-                            <Popover>
-                              <PopoverTrigger
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Info className="size-5 text-content-subdued" />
-                              </PopoverTrigger>
-                              <PopoverContent className="ml-2 max-w-72 bg-background-4 text-content-muted">
-                                The permissions for the product. Leave blank to
-                                use defaults.
-                              </PopoverContent>
-                            </Popover>
-                          ) : (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Info className="size-4 pt-0.5 text-content-subdued" />
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-52 bg-background-4 text-content-muted">
-                                The permissions for the product. Leave blank to
-                                use defaults.
-                              </TooltipContent>
-                            </Tooltip>
-                          )}
-                        </div>
-                        <MultiSelect
-                          value={field.value ?? []}
-                          onChange={field.onChange}
-                          options={Permissions.map((p) => ({
-                            label: p === "*" ? "*" : p,
-                            value: p,
-                          }))}
-                          wildcard="*"
-                          placeholder=""
-                          disabled={loading}
-                        />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="metadata"
-                    render={() => (
-                      <FormItem>
-                        <div className="flex items-center justify-between gap-2">
+              <SectionCard title="Attributes" className="mt-4">
+                <div className="flex flex-col gap-4 md:flex-row">
+                  <div className="flex-1 space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="code"
+                      render={({ field }) => (
+                        <FormItem>
                           <div className="flex items-center gap-2">
-                            <FormLabel>Metadata</FormLabel>
-
+                            <FormLabel>Code</FormLabel>
                             {isMobile ? (
                               <Popover>
                                 <PopoverTrigger
@@ -382,9 +204,8 @@ export default function EditForm({
                                   <Info className="size-5 text-content-subdued" />
                                 </PopoverTrigger>
                                 <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
-                                  Store arbitrary key/value data on the product
-                                  for book keeping purposes, additional product
-                                  info, etc.
+                                  This can be used to lookup the product by a
+                                  human-readable identifier.
                                 </PopoverContent>
                               </Popover>
                             ) : (
@@ -393,63 +214,272 @@ export default function EditForm({
                                   <Info className="size-4 pt-0.5 text-content-subdued" />
                                 </TooltipTrigger>
                                 <TooltipContent className="max-w-80 bg-background-4 text-content-muted">
-                                  Store arbitrary key/value data on the product
-                                  for book keeping purposes, additional product
-                                  info, etc.
+                                  This can be used to lookup the product by a
+                                  human-readable identifier.
                                 </TooltipContent>
                               </Tooltip>
                             )}
                           </div>
-                          <span className="text-xs text-content-subdued">
-                            Optional
-                          </span>
-                        </div>
-                        <FormControl>
-                          <MetaInput disabled={loading} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder="example"
+                              disabled={loading}
+                              onChange={(e) => {
+                                field.onChange(e)
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="url"
+                      render={({ field }) => (
+                        <FormItem>
+                          <div className="flex items-center justify-between gap-2">
+                            <FormLabel>URL</FormLabel>
+                            <span className="text-xs text-content-subdued">
+                              Optional
+                            </span>
+                          </div>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder="https://example.com"
+                              disabled={loading}
+                              onChange={(e) => {
+                                field.onChange(e)
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="distributionStrategy"
+                      render={({ field }) => (
+                        <FormItem>
+                          <div className="flex items-center gap-2">
+                            <FormLabel>Distribution Strategy</FormLabel>
+                            {isMobile ? (
+                              <Popover>
+                                <PopoverTrigger
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <Info className="size-5 text-content-subdued" />
+                                </PopoverTrigger>
+                                <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
+                                  The distribution strategy for releases.
+                                </PopoverContent>
+                              </Popover>
+                            ) : (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Info className="size-4 pt-0.5 text-content-subdued" />
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-80 bg-background-4 text-content-muted">
+                                  The distribution strategy for releases.
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
+                          </div>
+
+                          <Select
+                            value={field.value}
+                            disabled={loading}
+                            onValueChange={(value) => {
+                              field.onChange(value as DistributionStrategy)
+                            }}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="w-full">
+                                <SelectValue />
+                              </SelectTrigger>
+                            </FormControl>
+
+                            <SelectContent>
+                              <SelectItem value={DistributionStrategy.LICENSED}>
+                                Licensed
+                              </SelectItem>
+                              <SelectItem value={DistributionStrategy.OPEN}>
+                                Open
+                              </SelectItem>
+                              <SelectItem value={DistributionStrategy.CLOSED}>
+                                Closed
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="platforms"
+                      render={() => (
+                        <FormItem>
+                          <div className="flex items-center justify-between gap-2">
+                            <FormLabel>Platforms</FormLabel>
+                            <span className="text-xs text-content-subdued">
+                              Optional
+                            </span>
+                          </div>
+                          <TagInput
+                            name="platforms"
+                            placeholder=""
+                            options={KnownPlatforms}
+                          />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="mx-4 hidden md:block">
+                    <Separator orientation="vertical" dashed={true} />
+                  </div>
+                  <div className="flex-1 space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="permissions"
+                      render={({ field }) => (
+                        <FormItem>
+                          <div className="flex items-center gap-2">
+                            <FormLabel>Permissions</FormLabel>
+                            {isMobile ? (
+                              <Popover>
+                                <PopoverTrigger
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <Info className="size-5 text-content-subdued" />
+                                </PopoverTrigger>
+                                <PopoverContent className="ml-2 max-w-72 bg-background-4 text-content-muted">
+                                  The permissions for the product. Leave blank
+                                  to use defaults.
+                                </PopoverContent>
+                              </Popover>
+                            ) : (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Info className="size-4 pt-0.5 text-content-subdued" />
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-52 bg-background-4 text-content-muted">
+                                  The permissions for the product. Leave blank
+                                  to use defaults.
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
+                          </div>
+                          <MultiSelect
+                            value={field.value ?? []}
+                            onChange={field.onChange}
+                            options={Permissions.map((p) => ({
+                              label: p === "*" ? "*" : p,
+                              value: p,
+                            }))}
+                            wildcard="*"
+                            placeholder=""
+                            disabled={loading}
+                          />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="metadata"
+                      render={() => (
+                        <FormItem>
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <FormLabel>Metadata</FormLabel>
+
+                              {isMobile ? (
+                                <Popover>
+                                  <PopoverTrigger
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <Info className="size-5 text-content-subdued" />
+                                  </PopoverTrigger>
+                                  <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
+                                    Store arbitrary key/value data on the
+                                    product for book keeping purposes,
+                                    additional product info, etc.
+                                  </PopoverContent>
+                                </Popover>
+                              ) : (
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Info className="size-4 pt-0.5 text-content-subdued" />
+                                  </TooltipTrigger>
+                                  <TooltipContent className="max-w-80 bg-background-4 text-content-muted">
+                                    Store arbitrary key/value data on the
+                                    product for book keeping purposes,
+                                    additional product info, etc.
+                                  </TooltipContent>
+                                </Tooltip>
+                              )}
+                            </div>
+                            <span className="text-xs text-content-subdued">
+                              Optional
+                            </span>
+                          </div>
+                          <FormControl>
+                            <MetaInput disabled={loading} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
-              </div>
-            </SectionCard>
-          </div>
-        </ScrollArea>
+              </SectionCard>
+            </div>
+          </ScrollArea>
 
-        <p className="hidden flex-wrap items-center gap-1 p-4 text-sm text-content-subdued md:flex">
-          To learn more about products, see the{" "}
-          <Button asChild variant="link" size="link">
-            <a
-              href="https://keygen.sh/docs/api/products/"
-              target="_blank"
-              rel="noreferrer"
+          <p className="hidden flex-wrap items-center gap-1 p-4 text-sm text-content-subdued md:flex">
+            To learn more about products, see the{" "}
+            <Button asChild variant="link" size="link">
+              <a
+                href="https://keygen.sh/docs/api/products/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                documentation
+              </a>
+            </Button>{" "}
+            for more information.
+          </p>
+
+          <DialogFooter className="flex flex-row gap-4 border-t border-accent p-4">
+            <Button
+              variant="outline"
+              type="button"
+              onClick={onCancel}
+              disabled={loading}
+              className="max-w-[12rem] flex-1 basis-1/2"
             >
-              documentation
-            </a>
-          </Button>{" "}
-          for more information.
-        </p>
-
-        <DialogFooter className="flex flex-row gap-4 border-t border-accent p-4">
-          <Button
-            variant="outline"
-            type="button"
-            onClick={onCancel}
-            disabled={loading}
-            className="max-w-[12rem] flex-1 basis-1/2"
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            className="max-w-[12rem] flex-1 basis-1/2"
-            disabled={!form.formState.isValid || loading}
-          >
-            {loading ? <Loading.Dots className="bg-background" /> : "Update"}
-          </Button>
-        </DialogFooter>
-      </form>
-    </Form>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              className="max-w-[12rem] flex-1 basis-1/2"
+              disabled={!form.formState.isValid || loading}
+            >
+              {loading ? <Loading.Dots className="bg-background" /> : "Update"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </Form>
+    </>
   )
 }

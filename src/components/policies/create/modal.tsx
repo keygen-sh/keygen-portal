@@ -65,6 +65,7 @@ import { useMobile } from "@/hooks/use-mobile"
 
 import { BadgeGroup, BadgeGroupItem } from "@/components/badge-group"
 import * as Motion from "@/components/motion"
+import StepProgress from "@/components/step-progress"
 import DocumentationLink from "@/components/documentation-link"
 import CollapsedBreadcrumb from "@/components/collapsed-breadcrumb"
 
@@ -227,6 +228,7 @@ export default function PoliciesCreateModal({
     resolver: zodResolver(schema),
     mode: "onChange",
     defaultValues,
+    shouldUnregister: true,
   })
 
   const selectedParametersSteps = useMemo(
@@ -294,8 +296,8 @@ export default function PoliciesCreateModal({
 
     setCompletedStep((prev) => {
       const next = new Set<string>()
-      prev.forEach((k) => {
-        if (allowed.has(k)) next.add(k)
+      prev.forEach((key) => {
+        if (allowed.has(key)) next.add(key)
       })
 
       return next
@@ -318,6 +320,7 @@ export default function PoliciesCreateModal({
       }
 
       setSelection(newSelection)
+      setCompletedStep(new Set())
 
       form.reset(
         { name: "", ...defaultsFromSelection(newSelection) },
@@ -330,7 +333,7 @@ export default function PoliciesCreateModal({
     [form, goTo, setSelection],
   )
 
-  const handleCreate = useCallback((payload: CreatePolicyFormValues) => {
+  const handleCreatePolicy = useCallback((payload: CreatePolicyFormValues) => {
     console.log(payload)
 
     onSelectPolicy(null)
@@ -442,7 +445,8 @@ export default function PoliciesCreateModal({
                   )}
                 </BadgeGroup>
               </DialogDescription>
-              <DialogTitle>
+
+              <DialogTitle className="w-full">
                 {!isMobile && (
                   <CollapsedBreadcrumb
                     crumb={crumb}
@@ -451,8 +455,8 @@ export default function PoliciesCreateModal({
                     className="mt-1"
                   />
                 )}
-                {/* {isMobile && (
-                  <div className="mt-2">
+                {isMobile && (
+                  <div className="mt-2 w-full px-2">
                     <StepProgress
                       steps={crumb.map((step) => ({
                         key: step.key,
@@ -463,11 +467,11 @@ export default function PoliciesCreateModal({
                       orientation="horizontal"
                     />
                   </div>
-                )} */}
+                )}
               </DialogTitle>
             </DialogHeader>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleCreate)}>
+              <form onSubmit={form.handleSubmit(handleCreatePolicy)}>
                 <Motion.Slide direction={direction}>
                   <ScrollArea
                     key={current?.key ?? "attributes"}

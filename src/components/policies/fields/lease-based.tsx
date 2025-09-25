@@ -33,28 +33,31 @@ type Layout = "default" | "advanced"
 
 interface LeaseBasedFieldsProps {
   layout?: Layout
+  title?: string
   className?: string
 }
 
 export default function LeaseBasedFields({
   layout = "default",
+  title,
   className,
 }: LeaseBasedFieldsProps): React.ReactElement {
   return layout === "advanced" ? (
     <AdvancedLayout className={className} />
   ) : (
-    <DefaultLayout className={className} />
+    <DefaultLayout title={title} className={className} />
   )
 }
 
 function DefaultLayout({
+  title,
   className,
 }: Omit<LeaseBasedFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<PolicyFormValues>()
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
-      <h2 className="text-content-loud/90">Heartbeat attributes</h2>
+      {title && <h2 className="text-content-loud/90">{title}</h2>}
       <FormField
         control={form.control}
         name="requireHeartbeat"

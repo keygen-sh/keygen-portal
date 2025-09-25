@@ -37,27 +37,31 @@ type Layout = "default" | "advanced"
 
 interface TimedFieldsProps {
   layout?: Layout
+  title?: string
   className?: string
 }
 
 export default function TimedFields({
   layout = "default",
+  title,
   className,
 }: TimedFieldsProps): React.ReactElement {
   return layout === "advanced" ? (
     <AdvancedLayout className={className} />
   ) : (
-    <DefaultLayout className={className} />
+    <DefaultLayout title={title} className={className} />
   )
 }
 
 function DefaultLayout({
+  title,
   className,
 }: Omit<TimedFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<PolicyFormValues>()
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
+      {title && <h2 className="text-content-loud/90">{title}</h2>}
       <FormField
         control={form.control}
         name="duration"

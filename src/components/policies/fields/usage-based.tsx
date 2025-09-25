@@ -19,27 +19,31 @@ type Layout = "default" | "advanced"
 
 interface UsageBasedFieldsProps {
   layout?: Layout
+  title?: string
   className?: string
 }
 
 export default function UsageBasedFields({
   layout = "default",
+  title,
   className,
 }: UsageBasedFieldsProps): React.ReactElement {
   return layout === "advanced" ? (
     <AdvancedLayout className={className} />
   ) : (
-    <DefaultLayout className={className} />
+    <DefaultLayout title={title} className={className} />
   )
 }
 
 function DefaultLayout({
+  title,
   className,
 }: Omit<UsageBasedFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<PolicyFormValues>()
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
+      {title && <h2 className="text-content-loud/90">{title}</h2>}
       <FormField
         control={form.control}
         name="maxUses"

@@ -19,27 +19,31 @@ type Layout = "default" | "advanced"
 
 interface UserLockedFieldsProps {
   layout?: Layout
+  title?: string
   className?: string
 }
 
 export default function UserLockedFields({
   layout = "default",
+  title,
   className,
 }: UserLockedFieldsProps): React.ReactElement {
   return layout === "advanced" ? (
     <AdvancedLayout className={className} />
   ) : (
-    <Default className={className} />
+    <Default title={title} className={className} />
   )
 }
 
 function Default({
+  title,
   className,
 }: Omit<UserLockedFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<PolicyFormValues>()
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
+      {title && <h2 className="text-content-loud/90">{title}</h2>}
       <FormField
         control={form.control}
         name="maxUsers"

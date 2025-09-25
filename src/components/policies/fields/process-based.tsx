@@ -34,48 +34,51 @@ type ProcessBasedLayout = "default" | "advanced"
 
 interface ProcessBasedFieldsProps {
   layout?: ProcessBasedLayout
+  title?: string
   className?: string
 }
 
 export default function ProcessBasedFields({
   layout = "default",
+  title,
   className,
 }: ProcessBasedFieldsProps): React.ReactElement {
   return layout === "advanced" ? (
     <AdvancedLayout className={className} />
   ) : (
-    <DefaultLayout className={className} />
+    <DefaultLayout title={title} className={className} />
   )
 }
 
 function DefaultLayout({
+  title,
   className,
 }: Omit<ProcessBasedFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<PolicyFormValues>()
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
+      {title && <h2 className="text-content-loud/90">{title}</h2>}
       <FormField
         control={form.control}
         name="maxProcesses"
         render={({ field }) => (
           <FormItem>
-            <div className="mt-2 flex flex-col pr-4 md:w-1/2 md:flex-row md:items-center md:justify-between">
-              <Field.Header
-                label="Max processes"
-                tooltip={PolicyAttributeDescriptions.maxProcesses}
-              >
-                <FormControl>
-                  <Input
-                    type="number"
-                    min={1}
-                    placeholder="e.g. 1"
-                    {...field}
-                    value={field.value ?? ""}
-                  />
-                </FormControl>
-              </Field.Header>
-            </div>
+            <Field.Header
+              label="Max processes"
+              variant="stacking"
+              tooltip={PolicyAttributeDescriptions.maxProcesses}
+            >
+              <FormControl>
+                <Input
+                  type="number"
+                  min={1}
+                  placeholder="e.g. 1"
+                  {...field}
+                  value={field.value ?? ""}
+                />
+              </FormControl>
+            </Field.Header>
             <FormMessage />
           </FormItem>
         )}
@@ -88,6 +91,7 @@ function DefaultLayout({
           <FormItem>
             <Field.Header
               label="Machine leasing strategy"
+              variant="stacking"
               tooltip={PolicyAttributeDescriptions.machineLeasingStrategy}
             >
               <Select
@@ -128,6 +132,7 @@ function DefaultLayout({
           <FormItem className="flex">
             <Field.Header
               label="Process leasing strategy"
+              variant="stacking"
               tooltip={PolicyAttributeDescriptions.processLeasingStrategy}
             >
               <Select

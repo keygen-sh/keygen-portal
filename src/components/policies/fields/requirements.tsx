@@ -35,6 +35,7 @@ type Layout = "default" | "advanced"
 
 interface RequirementsFieldsProps {
   layout?: Layout
+  title?: string
   includeMeta?: boolean
   includeAuthStrategy?: boolean
   className?: string
@@ -42,26 +43,29 @@ interface RequirementsFieldsProps {
 
 export default function RequirementsFields({
   layout = "default",
+  title,
   includeMeta = true,
   includeAuthStrategy = true,
   className,
 }: RequirementsFieldsProps): React.ReactElement {
   return layout === "advanced" ? (
     <AdvancedLayout
-      className={className}
       includeMeta={includeMeta}
       includeAuthStrategy={includeAuthStrategy}
+      className={className}
     />
   ) : (
     <DefaultLayout
-      className={className}
+      title={title}
       includeMeta={includeMeta}
       includeAuthStrategy={includeAuthStrategy}
+      className={className}
     />
   )
 }
 
 function DefaultLayout({
+  title,
   includeMeta = true,
   includeAuthStrategy = true,
   className,
@@ -70,6 +74,7 @@ function DefaultLayout({
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
+      {title && <h2 className="text-content-loud/90">{title}</h2>}
       <FormField
         control={form.control}
         name="strict"

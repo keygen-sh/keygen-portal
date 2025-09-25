@@ -10,16 +10,19 @@ import { PolicyFormValues, PolicyAttributeDescriptions } from "@/types/policies"
 import * as Field from "@/components/field"
 
 interface ScopeFieldsProps {
+  title?: string
   className?: string
 }
 
 export default function ScopeFields({
+  title,
   className,
 }: ScopeFieldsProps): React.ReactElement {
   const form = useFormContext<PolicyFormValues>()
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
+      {title && <h2 className="text-content-loud/90">{title}</h2>}
       <FormField
         control={form.control}
         name="requireProductScope"

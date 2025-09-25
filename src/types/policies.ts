@@ -249,6 +249,13 @@ export type PolicyParameterSelection = {
   offline?: boolean
 }
 
+export type PolicyFormValues = Writable<PolicyInput> & {
+  entitlements?: {
+    link?: string[]
+    create?: { name: string; code: string; metadata?: Record<string, string> }[]
+  }
+}
+
 export type CreatePolicyPayload = OptionalExcept<Writable<PolicyInput>, "name">
 export type UpdatePolicyPayload = Partial<Writable<PolicyInput>>
 

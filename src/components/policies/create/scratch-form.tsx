@@ -105,7 +105,12 @@ export default function PoliciesScratchForm({
           "checkInInterval",
           "checkInIntervalCount",
         ],
-        render: () => <Policies.Fields.Requirements includeMeta={false} />,
+        render: () => (
+          <Policies.Fields.Requirements
+            includeMeta={false}
+            includeAuthStrategy={false}
+          />
+        ),
       },
       {
         key: "scope",

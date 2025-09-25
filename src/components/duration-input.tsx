@@ -178,7 +178,7 @@ export default function DurationInput({
             }
           }}
         >
-          <ScrollArea className="h-64">
+          <ScrollArea type="always" className="h-64">
             <label className="ml-1 font-owners-text text-sm font-medium text-content-subdued">
               Presets
             </label>

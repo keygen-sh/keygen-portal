@@ -35,8 +35,8 @@ import { useMobile } from "@/hooks/use-mobile"
 import SectionCard from "@/components/section-card"
 import * as Loading from "@/components/loading"
 import TagInput from "@/components/tag-input"
-import MetaInput from "@/components/meta-input"
 import MultiSelect from "@/components/multi-select"
+import KeyValueInput from "@/components/key-value-input"
 
 export const attributesSchema = z.object({
   name: z.string().trim().min(1, "Product name is required"),
@@ -314,7 +314,10 @@ export default function AttributesForm({
                           </span>
                         </div>
                         <FormControl>
-                          <MetaInput disabled={loading} />
+                          <KeyValueInput<AttributesFormValues>
+                            name="metadata"
+                            disabled={loading}
+                          />
                         </FormControl>
                         <FormMessage>{error || ""}</FormMessage>
                       </FormItem>

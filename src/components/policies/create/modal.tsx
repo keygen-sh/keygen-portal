@@ -35,6 +35,7 @@ import {
 } from "lucide-react"
 
 import {
+  PolicyFormValues,
   Policy,
   TimingParameters,
   AccessParameters,
@@ -65,25 +66,17 @@ import { useMobile } from "@/hooks/use-mobile"
 
 import { BadgeGroup, BadgeGroupItem } from "@/components/badge-group"
 import * as Motion from "@/components/motion"
+import * as Policies from "@/components/policies"
 import StepProgress from "@/components/step-progress"
 import DocumentationLink from "@/components/documentation-link"
 import CollapsedBreadcrumb from "@/components/collapsed-breadcrumb"
 
 import ScratchForm from "./scratch-form"
 import ParametersForm, { ParametersValues } from "./parameters-form"
-import TimedForm from "./timed-form"
-import PerpetualFallbackForm from "./perpetual-fallback-form"
-import NodeLockedForm from "./node-locked-form"
-import UserLockedForm from "./user-locked-form"
-import ProcessBasedForm from "./process-based-form"
-import LeaseBasedForm from "./lease-based-form"
-import FeatureBasedForm from "./feature-based-form"
-import UsageBasedForm from "./usage-based-form"
-import AdvancedForm from "./advanced-form"
 
-const BaseSchema: z.ZodType<CreatePolicyFormValues> = z
+export const BaseSchema: z.ZodType<PolicyFormValues> = z
   .object({
-    name: z.string().trim().min(1),
+    name: z.string().trim().min(1, "Policy name is required."),
 
     duration: z.coerce
       .number()
@@ -98,6 +91,7 @@ const BaseSchema: z.ZodType<CreatePolicyFormValues> = z
     renewalStrategy: z.nativeEnum(RenewalStrategy).optional(),
     renewalBasis: z.nativeEnum(RenewalBasis).optional(),
     transferStrategy: z.nativeEnum(TransferStrategy).optional(),
+
     maxMachines: z.coerce
       .number()
       .int()
@@ -106,8 +100,6 @@ const BaseSchema: z.ZodType<CreatePolicyFormValues> = z
       .optional()
       .transform((value) => (value === 0 ? null : value)),
 
-    requireFingerprintScope: z.boolean().optional(),
-    requireUserScope: z.boolean().optional(),
     machineUniquenessStrategy: z
       .nativeEnum(MachineUniquenessStrategy)
       .optional(),
@@ -121,6 +113,7 @@ const BaseSchema: z.ZodType<CreatePolicyFormValues> = z
       .nativeEnum(ComponentMatchingStrategy)
       .optional(),
     overageStrategy: z.nativeEnum(OverageStrategy).optional(),
+
     maxUsers: z.coerce
       .number()
       .int()
@@ -136,8 +129,9 @@ const BaseSchema: z.ZodType<CreatePolicyFormValues> = z
       .optional()
       .transform((value) => (value === 0 ? null : value)),
     maxUses: z.coerce.number().int().positive().nullable().optional(),
+
     requireHeartbeat: z.boolean().optional(),
-    heartbeatDuration: z.coerce.number().int().min(60).nullable().optional(),
+    heartbeatDuration: z.coerce.number().int().nullable().optional(),
     heartbeatBasis: z.nativeEnum(HeartbeatBasis).optional(),
     heartbeatCullStrategy: z.nativeEnum(HeartbeatCullStrategy).optional(),
     heartbeatResurrectionStrategy: z
@@ -156,7 +150,17 @@ const BaseSchema: z.ZodType<CreatePolicyFormValues> = z
       .max(365)
       .nullable()
       .optional(),
+
     authenticationStrategy: z.nativeEnum(AuthenticationStrategy).optional(),
+
+    requireProductScope: z.boolean().optional(),
+    requirePolicyScope: z.boolean().optional(),
+    requireMachineScope: z.boolean().optional(),
+    requireFingerprintScope: z.boolean().optional(),
+    requireComponentsScope: z.boolean().optional(),
+    requireUserScope: z.boolean().optional(),
+    requireChecksumScope: z.boolean().optional(),
+    requireVersionScope: z.boolean().optional(),
 
     entitlements: z
       .object({
@@ -177,17 +181,10 @@ const BaseSchema: z.ZodType<CreatePolicyFormValues> = z
   })
   .strict()
 
-export type CreatePolicyFormValues = CreatePolicyPayload & {
-  entitlements?: {
-    link?: string[]
-    create?: { name: string; code: string; metadata?: Record<string, string> }[]
-  }
-}
-
 type Step = {
   key: string
   title: string
-  fields?: FieldPath<CreatePolicyFormValues>[]
+  fields?: FieldPath<PolicyFormValues>[]
   render: () => React.ReactElement
 }
 
@@ -222,16 +219,15 @@ export default function PoliciesCreateModal({
     [selection],
   )
 
-  const defaultValues: DeepPartial<CreatePolicyFormValues> = useMemo(
-    () => ({ name: "", ...defaultsFromSelection(selection) }),
+  const defaultValues: DeepPartial<PolicyFormValues> = useMemo(
+    () => ({ name: "", ...getFormDefaults(selection) }),
     [selection],
   )
 
-  const form = useForm<CreatePolicyFormValues>({
+  const form = useForm<PolicyFormValues>({
     resolver: zodResolver(schema),
     mode: "onChange",
     defaultValues,
-    shouldUnregister: true,
   })
 
   const selectedParametersSteps = useMemo(
@@ -326,7 +322,7 @@ export default function PoliciesCreateModal({
       setCompletedStep(new Set())
 
       form.reset(
-        { name: "", ...defaultsFromSelection(newSelection) },
+        { name: "", ...getFormDefaults(newSelection) },
         { keepDefaultValues: false },
       )
 
@@ -336,7 +332,7 @@ export default function PoliciesCreateModal({
     [form, goTo, setSelection],
   )
 
-  const handleCreatePolicy = useCallback((payload: CreatePolicyFormValues) => {
+  const handleCreatePolicy = useCallback((payload: PolicyFormValues) => {
     console.log(payload)
 
     onSelectPolicy(null)
@@ -633,7 +629,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
         "renewalBasis",
         "transferStrategy",
       ],
-      render: () => <TimedForm />,
+      render: () => <Policies.Fields.Timed layout="advanced" />,
     })
   }
 
@@ -647,7 +643,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
         "renewalBasis",
         "transferStrategy",
       ],
-      render: () => <PerpetualFallbackForm />,
+      render: () => <Policies.Fields.Timed layout="advanced" />,
     })
   }
 
@@ -669,7 +665,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
         "componentMatchingStrategy",
         "overageStrategy",
       ],
-      render: () => <NodeLockedForm />,
+      render: () => <Policies.Fields.NodeLocked layout="advanced" />,
     })
   }
 
@@ -678,7 +674,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
       key: "userLocked",
       title: "User‑locked configuration",
       fields: ["maxUsers", "requireUserScope"],
-      render: () => <UserLockedForm />,
+      render: () => <Policies.Fields.UserLocked layout="advanced" />,
     })
   }
 
@@ -691,7 +687,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
         "machineLeasingStrategy",
         "processLeasingStrategy",
       ],
-      render: () => <ProcessBasedForm />,
+      render: () => <Policies.Fields.ProcessBased layout="advanced" />,
     })
   }
 
@@ -705,7 +701,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
         "heartbeatCullStrategy",
         "heartbeatResurrectionStrategy",
       ],
-      render: () => <LeaseBasedForm />,
+      render: () => <Policies.Fields.LeaseBased layout="advanced" />,
     })
   }
 
@@ -714,7 +710,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
       key: "featureBased",
       title: "Feature‑based configuration",
       fields: ["entitlements.link", "entitlements.create"],
-      render: () => <FeatureBasedForm />,
+      render: () => <Policies.Fields.FeatureBased layout="advanced" />,
     })
   }
 
@@ -723,7 +719,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
       key: "usageBased",
       title: "Usage‑based configuration",
       fields: ["maxUses"],
-      render: () => <UsageBasedForm />,
+      render: () => <Policies.Fields.UsageBased layout="advanced" />,
     })
   }
 
@@ -740,7 +736,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
         "authenticationStrategy",
         "metadata",
       ],
-      render: () => <AdvancedForm />,
+      render: () => <Policies.Fields.Requirements layout="advanced" />,
     })
   }
 
@@ -759,7 +755,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
   return steps
 }
 
-function defaultsFromSelection(selection: PolicyParameterSelection) {
+export function getFormDefaults(selection?: PolicyParameterSelection) {
   const base: Partial<CreatePolicyPayload> = {
     authenticationStrategy: AuthenticationStrategy.MIXED,
     renewalBasis: RenewalBasis.FROM_NOW_IF_EXPIRED,
@@ -768,6 +764,8 @@ function defaultsFromSelection(selection: PolicyParameterSelection) {
     floating: true,
     strict: true,
   }
+
+  if (!selection) return base // Scratch flow
 
   if (selection.timing === TimingParameters.PERPETUAL) base.duration = null
 

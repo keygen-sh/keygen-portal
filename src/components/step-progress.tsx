@@ -17,6 +17,7 @@ export default function StepProgress({
   currentIndex,
   completedSteps,
   orientation = "horizontal",
+  showLabels = false,
   className,
 }: StepProgressProps): React.ReactElement | null {
   const completed = new Set(
@@ -39,6 +40,11 @@ export default function StepProgress({
           isHorizontal ? "w-full items-center" : "flex-col items-start",
         )}
       >
+        {!isHorizontal && (
+          <span className="mb-4 font-owners-text text-sm font-medium text-content-subdued">
+            Step {currentIndex + 1}/{steps.length}
+          </span>
+        )}
         {steps.map((step, i) => {
           const isCurrent = i === currentIndex
           const isDone = completed.has(step.key)
@@ -50,7 +56,7 @@ export default function StepProgress({
               className={cn(
                 isHorizontal
                   ? "flex min-w-0 items-center"
-                  : "flex flex-col items-start",
+                  : "ml-1 flex flex-col items-start",
                 isHorizontal && showConnector ? "flex-1" : "flex-none",
               )}
             >
@@ -92,7 +98,7 @@ export default function StepProgress({
                 </>
               ) : (
                 <>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <span
                       className={cn(
                         "inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-colors duration-200",
@@ -112,10 +118,20 @@ export default function StepProgress({
                         )}
                       />
                     </span>
+                    {showLabels && (
+                      <span
+                        className={cn(
+                          "pb-1 text-sm text-nowrap text-content-muted transition-colors duration-300",
+                          isCurrent && "text-content-loud",
+                        )}
+                      >
+                        {step.label}
+                      </span>
+                    )}
                   </div>
 
                   {showConnector && (
-                    <div className="relative my-1 h-6 w-0.5 overflow-hidden">
+                    <div className="relative my-1 ml-[9px] h-6 w-0.5 overflow-hidden">
                       <div className="absolute inset-0 rounded bg-accent" />
                       <div
                         className="absolute inset-0 origin-top rounded bg-primary transition-transform duration-300 ease-out"

@@ -24,13 +24,15 @@ type Step = {
   render: () => React.ReactElement
 }
 
-export default function ScratchForm({
-  onClose,
-  onCreate,
-}: {
+interface PoliciesScratchFormProps {
   onClose: () => void
   onCreate: (payload: PolicyFormValues) => void
-}) {
+}
+
+export default function PoliciesScratchForm({
+  onClose,
+  onCreate,
+}: PoliciesScratchFormProps): React.ReactElement {
   const isMobile = useMobile()
 
   const schema = useMemo(() => createSchemaFromValues(), [])

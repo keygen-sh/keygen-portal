@@ -72,12 +72,12 @@ export default function PoliciesScratchForm({
         key: "nodeLocked",
         title: "Node‑locked attributes",
         fields: [
-          "maxMachines",
           "requireHeartbeat",
           "heartbeatDuration",
           "heartbeatBasis",
           "heartbeatCullStrategy",
           "heartbeatResurrectionStrategy",
+          "maxProcesses",
           "machineUniquenessStrategy",
           "machineMatchingStrategy",
           "componentUniquenessStrategy",
@@ -88,8 +88,11 @@ export default function PoliciesScratchForm({
         ],
         render: () => (
           <div className="mt-8 space-y-8 md:mb-48">
-            <Policies.Fields.LeaseBased />
-            <Policies.Fields.NodeLocked />
+            <Policies.Fields.LeaseBased title="Heartbeat attributes" />
+            <div className="space-y-6">
+              <Policies.Fields.NodeLocked title="Strategies" />
+              <Policies.Fields.ProcessBased />
+            </div>
           </div>
         ),
       },
@@ -101,15 +104,21 @@ export default function PoliciesScratchForm({
           "floating",
           "protected",
           "usePool",
-          "requireCheckIn",
           "checkInInterval",
           "checkInIntervalCount",
+          "maxUses",
+          "maxUsers",
+          "maxMachines",
         ],
         render: () => (
-          <Policies.Fields.Requirements
-            includeMeta={false}
-            includeAuthStrategy={false}
-          />
+          <div className="mt-8 space-y-6 md:mb-48">
+            <Policies.Fields.UsageBased />
+            <Policies.Fields.UserLocked />
+            <Policies.Fields.Requirements
+              includeMeta={false}
+              includeAuthStrategy={false}
+            />
+          </div>
         ),
       },
       {

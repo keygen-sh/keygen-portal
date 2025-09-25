@@ -164,7 +164,7 @@ export const BaseSchema: z.ZodType<PolicyFormValues> = z
 
     entitlements: z
       .object({
-        attach: z.array(z.string()).optional(),
+        link: z.array(z.string()).optional(),
         create: z
           .array(
             z.object({

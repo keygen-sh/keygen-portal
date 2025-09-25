@@ -69,6 +69,7 @@ import StepProgress from "@/components/step-progress"
 import DocumentationLink from "@/components/documentation-link"
 import CollapsedBreadcrumb from "@/components/collapsed-breadcrumb"
 
+import ScratchForm from "./scratch-form"
 import ParametersForm, { ParametersValues } from "./parameters-form"
 import TimedForm from "./timed-form"
 import PerpetualFallbackForm from "./perpetual-fallback-form"
@@ -203,9 +204,11 @@ export default function PoliciesCreateModal({
 }: PoliciesCreateModalProps) {
   const isMobile = useMobile()
 
-  const [completedStep, setCompletedStep] = useState<Set<string>>(new Set())
   const [isParametersOpen, setIsParametersOpen] = useState(false)
   const [isAttributesOpen, setIsAttributesOpen] = useState(false)
+  const [isScratchOpen, setIsScratchOpen] = useState(false)
+
+  const [completedStep, setCompletedStep] = useState<Set<string>>(new Set())
   const [selection, setSelection] = useState<PolicyParameterSelection>({
     timing: null,
     access: [],
@@ -348,12 +351,29 @@ export default function PoliciesCreateModal({
       </DialogHeader>
 
       {/* Nested dialogs are used here for smooth transition animations between container sizes */}
-      {step === 0 ? (
+      {isScratchOpen ? (
+        <Dialog
+          open={isScratchOpen}
+          onOpenChange={() => setIsScratchOpen(false)}
+        >
+          <DialogContent
+            disableOverlay
+            className="min-h-screen min-w-screen"
+            onWheelCapture={(e) => e.stopPropagation()} // Prevents parent dialog from absorbing scroll events
+            onTouchMoveCapture={(e) => e.stopPropagation()}
+          >
+            <ScratchForm
+              onClose={() => setIsScratchOpen(false)}
+              onCreate={handleCreatePolicy}
+            />
+          </DialogContent>
+        </Dialog>
+      ) : step === 0 ? (
         <Dialog open={isParametersOpen} onOpenChange={onClose}>
           <DialogContent
             disableOverlay
             className="min-w-fit"
-            onWheelCapture={(e) => e.stopPropagation()} // Prevents parent dialog from absorbing scroll events
+            onWheelCapture={(e) => e.stopPropagation()}
             onTouchMoveCapture={(e) => e.stopPropagation()}
           >
             <DialogHeader className="h-fit items-start border-b border-accent p-4">
@@ -367,6 +387,9 @@ export default function PoliciesCreateModal({
             <ParametersForm
               key="parameters-form"
               onSubmit={handleSubmitParameters}
+              onStartScratch={() => {
+                setIsScratchOpen(true)
+              }}
             />
           </DialogContent>
         </Dialog>

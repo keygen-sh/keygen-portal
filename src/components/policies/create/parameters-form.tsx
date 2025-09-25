@@ -62,11 +62,13 @@ export type ParametersValues = z.infer<typeof schema>
 type ParametersFormProps = {
   initial?: Partial<PolicyParameterSelection>
   onSubmit: (values: ParametersValues) => void
+  onStartScratch?: () => void
 }
 
 export default function ParametersForm({
   initial,
   onSubmit,
+  onStartScratch,
 }: ParametersFormProps) {
   const isMobile = useMobile()
 
@@ -310,7 +312,7 @@ export default function ParametersForm({
             <Button
               variant="outline"
               type="button"
-              disabled={true}
+              onClick={onStartScratch}
               className="max-w-[12rem] flex-1 basis-1/2"
             >
               Start from scratch

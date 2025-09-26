@@ -10,6 +10,7 @@ import { Entitlement, MockEntitlements } from "@/types/entitlements"
 // import { useListEntitlements } from "@/queries/entitlements"
 
 import * as keygen from "@/keygen"
+import * as Entitlements from "@/components/entitlements"
 import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
 import SkeletonTable from "@/components/skeleton-table"
@@ -80,11 +81,12 @@ export default function PoliciesList() {
             </Button>
           </DialogTrigger>
 
-          {/* <Entitlements.Create.Modal
-            onSelectEntitlement={(entitlement) => handleSelectEntitlement(entitlement!)}
-            open={open}
+          <Entitlements.Create.Modal
+            onSelectEntitlement={(entitlement) =>
+              handleSelectEntitlement(entitlement!)
+            }
             onClose={() => setOpen(false)}
-          /> */}
+          />
         </Dialog>
       </PageHeader>
 

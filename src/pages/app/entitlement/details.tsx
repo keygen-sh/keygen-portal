@@ -45,8 +45,9 @@ import { useMobile } from "@/hooks/use-mobile"
 // import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
 
-import * as Attribute from "@/components/attribute"
 import * as Property from "@/components/property"
+import * as Attribute from "@/components/attribute"
+import * as Entitlements from "@/components/entitlements"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
@@ -68,8 +69,8 @@ export default function EntitlementDetails() {
 
   const isMobile = useMobile()
   const [open, setOpen] = useState({
+    edit: false,
     delete: false,
-    attributes: false,
   })
 
   useEffect(() => {
@@ -87,8 +88,8 @@ export default function EntitlementDetails() {
 
   const handleOpen = (key: keyof typeof open) => {
     setOpen({
+      edit: false,
       delete: false,
-      attributes: false,
       [key]: !open[key],
     })
   }
@@ -147,7 +148,7 @@ export default function EntitlementDetails() {
                 <DropdownMenuItem
                   onClick={() => {
                     setTimeout(() => {
-                      console.log("Edit entitlement pressed.")
+                      handleOpen("edit")
                     }, 0)
                   }}
                   className="pb-2 text-base"
@@ -172,7 +173,7 @@ export default function EntitlementDetails() {
               <Button
                 variant="outline"
                 disabled={entitlementLoading}
-                onClick={() => console.log("Edit entitlement clicked.")}
+                onClick={() => handleOpen("edit")}
               >
                 Edit
               </Button>
@@ -322,6 +323,12 @@ export default function EntitlementDetails() {
           </Sidebar>
         </Tabs>
       )}
+
+      <Entitlements.Edit.Modal
+        open={open.edit}
+        onClose={() => setOpen({ ...open, edit: false })}
+        entitlement={entitlement!}
+      />
 
       <DeleteModal
         title={`Delete ${entitlement?.attributes.name}`}

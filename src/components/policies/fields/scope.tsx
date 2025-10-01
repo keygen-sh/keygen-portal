@@ -30,7 +30,7 @@ export default function ScopeFields({
           <FormItem className="flex items-center">
             <Field.Header
               label="Require product scope"
-              variant="stacking"
+              variant="inline"
               tooltip={PolicyAttributeDescriptions.requireProductScope}
             >
               <FormControl>
@@ -52,7 +52,7 @@ export default function ScopeFields({
           <FormItem className="flex items-center">
             <Field.Header
               label="Require policy scope"
-              variant="stacking"
+              variant="inline"
               tooltip={PolicyAttributeDescriptions.requirePolicyScope}
             >
               <FormControl>
@@ -74,7 +74,7 @@ export default function ScopeFields({
           <FormItem className="flex items-center">
             <Field.Header
               label="Require machine scope"
-              variant="stacking"
+              variant="inline"
               tooltip={PolicyAttributeDescriptions.requireMachineScope}
             >
               <FormControl>
@@ -96,7 +96,7 @@ export default function ScopeFields({
           <FormItem className="flex items-center">
             <Field.Header
               label="Require fingerprint scope"
-              variant="stacking"
+              variant="inline"
               tooltip={PolicyAttributeDescriptions.requireFingerprintScope}
             >
               <FormControl>
@@ -118,7 +118,7 @@ export default function ScopeFields({
           <FormItem className="flex items-center">
             <Field.Header
               label="Require components scope"
-              variant="stacking"
+              variant="inline"
               tooltip={PolicyAttributeDescriptions.requireComponentsScope}
             >
               <FormControl>
@@ -135,34 +135,12 @@ export default function ScopeFields({
 
       <FormField
         control={form.control}
-        name="requireProductScope"
-        render={({ field }) => (
-          <FormItem className="flex items-center">
-            <Field.Header
-              label="Require product scope"
-              variant="stacking"
-              tooltip={PolicyAttributeDescriptions.requireProductScope}
-            >
-              <FormControl>
-                <Checkbox
-                  id="requireProductScope"
-                  checked={!!field.value}
-                  onCheckedChange={(value) => field.onChange(!!value)}
-                />
-              </FormControl>
-            </Field.Header>
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={form.control}
         name="requireUserScope"
         render={({ field }) => (
           <FormItem className="flex items-center">
             <Field.Header
               label="Require user scope"
-              variant="stacking"
+              variant="inline"
               tooltip={PolicyAttributeDescriptions.requireUserScope}
             >
               <FormControl>
@@ -184,7 +162,7 @@ export default function ScopeFields({
           <FormItem className="flex items-center">
             <Field.Header
               label="Require checksum scope"
-              variant="stacking"
+              variant="inline"
               tooltip={PolicyAttributeDescriptions.requireChecksumScope}
             >
               <FormControl>
@@ -206,7 +184,7 @@ export default function ScopeFields({
           <FormItem className="flex items-center">
             <Field.Header
               label="Require version scope"
-              variant="stacking"
+              variant="inline"
               tooltip={PolicyAttributeDescriptions.requireVersionScope}
             >
               <FormControl>

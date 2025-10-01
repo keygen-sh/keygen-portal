@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils"
 
 import { useMobile } from "@/hooks/use-mobile"
 
-type FieldHeaderVariant = "row" | "stacking" | "none"
+type FieldHeaderVariant = "row" | "stacking" | "inline" | "none"
 
 interface FieldHeaderProps {
   label: string
@@ -39,6 +39,7 @@ export default function FieldHeader({
       className={cn(
         variant !== "none" && "flex w-full flex-col gap-2",
         variant === "row" && "md:flex-row md:items-center md:justify-between",
+        variant === "inline" && "flex-row items-center justify-between",
         className,
       )}
     >
@@ -70,6 +71,7 @@ export default function FieldHeader({
         className={cn(
           variant !== "none" && "w-full",
           variant === "row" && "md:max-w-48 md:min-w-48",
+          variant === "inline" && "w-auto",
         )}
       >
         {children}

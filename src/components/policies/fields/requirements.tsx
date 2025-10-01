@@ -281,71 +281,6 @@ function AdvancedLayout({
       title="Advanced policy attributes"
       className={cn("m-4 md:mb-0", className)}
     >
-      <div className="flex flex-col space-y-4 md:w-1/2">
-        <FormField
-          control={form.control}
-          name="strict"
-          render={({ field }) => (
-            <FormItem className="flex items-center">
-              <Field.Header
-                label="Strict"
-                tooltip={PolicyAttributeDescriptions.strict}
-              >
-                <FormControl>
-                  <Checkbox
-                    id="strict"
-                    checked={!!field.value}
-                    onCheckedChange={(value) => field.onChange(!!value)}
-                  />
-                </FormControl>
-              </Field.Header>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="floating"
-          render={({ field }) => (
-            <FormItem className="flex items-center">
-              <Field.Header
-                label="Floating"
-                tooltip={PolicyAttributeDescriptions.floating}
-              >
-                <FormControl>
-                  <Checkbox
-                    id="floating"
-                    checked={!!field.value}
-                    onCheckedChange={(value) => field.onChange(!!value)}
-                  />
-                </FormControl>
-              </Field.Header>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="usePool"
-          render={({ field }) => (
-            <FormItem className="flex items-center">
-              <Field.Header
-                label="Use pool"
-                tooltip={PolicyAttributeDescriptions.usePool}
-              >
-                <FormControl>
-                  <Checkbox
-                    id="usePool"
-                    checked={!!field.value}
-                    onCheckedChange={(value) => field.onChange(!!value)}
-                  />
-                </FormControl>
-              </Field.Header>
-            </FormItem>
-          )}
-        />
-      </div>
-
       <div className="flex flex-col space-y-4 md:flex-row md:space-y-0">
         <div className="flex-1 space-y-4">
           <FormField
@@ -380,6 +315,31 @@ function AdvancedLayout({
                       )}
                     </SelectContent>
                   </Select>
+                </Field.Header>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="checkInIntervalCount"
+            render={({ field }) => (
+              <FormItem>
+                <Field.Header
+                  label="Check-in interval count"
+                  tooltip={PolicyAttributeDescriptions.checkInIntervalCount}
+                >
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={365}
+                      placeholder="1 - 365"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
+                  </FormControl>
                 </Field.Header>
                 <FormMessage />
               </FormItem>
@@ -440,25 +400,69 @@ function AdvancedLayout({
         <div className="flex-1 space-y-4">
           <FormField
             control={form.control}
-            name="checkInIntervalCount"
+            name="strict"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex items-center">
                 <Field.Header
-                  label="Check-in interval count"
-                  tooltip={PolicyAttributeDescriptions.checkInIntervalCount}
+                  label="Strict"
+                  variant="none"
+                  tooltip={PolicyAttributeDescriptions.strict}
+                  className="flex w-full flex-col gap-2 md:flex-row md:items-center md:justify-between"
                 >
                   <FormControl>
-                    <Input
-                      type="number"
-                      min={1}
-                      max={365}
-                      placeholder="1 - 365"
-                      {...field}
-                      value={field.value ?? ""}
+                    <Checkbox
+                      id="strict"
+                      checked={!!field.value}
+                      onCheckedChange={(value) => field.onChange(!!value)}
                     />
                   </FormControl>
                 </Field.Header>
-                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="floating"
+            render={({ field }) => (
+              <FormItem className="flex items-center">
+                <Field.Header
+                  label="Floating"
+                  variant="none"
+                  tooltip={PolicyAttributeDescriptions.floating}
+                  className="flex w-full flex-col gap-2 md:flex-row md:items-center md:justify-between"
+                >
+                  <FormControl>
+                    <Checkbox
+                      id="floating"
+                      checked={!!field.value}
+                      onCheckedChange={(value) => field.onChange(!!value)}
+                    />
+                  </FormControl>
+                </Field.Header>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="usePool"
+            render={({ field }) => (
+              <FormItem className="flex items-center">
+                <Field.Header
+                  label="Use pool"
+                  variant="none"
+                  tooltip={PolicyAttributeDescriptions.usePool}
+                  className="flex w-full flex-col gap-2 md:flex-row md:items-center md:justify-between"
+                >
+                  <FormControl>
+                    <Checkbox
+                      id="usePool"
+                      checked={!!field.value}
+                      onCheckedChange={(value) => field.onChange(!!value)}
+                    />
+                  </FormControl>
+                </Field.Header>
               </FormItem>
             )}
           />

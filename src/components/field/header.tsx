@@ -42,7 +42,7 @@ export default function FieldHeader({
         className,
       )}
     >
-      <div className="flex items-center gap-2">
+      <div className="group flex items-center gap-2">
         <label className="text-sm text-content-muted">{label}</label>
         {isMobile && tooltip ? (
           <Popover>
@@ -57,7 +57,7 @@ export default function FieldHeader({
           tooltip && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <Info className="size-4 pt-0.5 text-content-subdued" />
+                <Info className="pointer-events-none size-4 translate-x-2 pt-0.5 text-content-subdued opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:translate-x-0 group-hover:opacity-100 data-[state=delayed-open]:pointer-events-auto data-[state=delayed-open]:translate-x-0 data-[state=delayed-open]:opacity-100 data-[state=open]:pointer-events-auto data-[state=open]:translate-x-0 data-[state=open]:opacity-100" />
               </TooltipTrigger>
               <TooltipContent className="max-w-80 bg-background-4 text-pretty text-content-muted">
                 {tooltip}

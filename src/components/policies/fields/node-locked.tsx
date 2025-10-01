@@ -21,6 +21,7 @@ import {
 import {
   PolicyFormValues,
   PolicyAttributeDescriptions,
+  PolicyOptionLabels,
   MachineUniquenessStrategy,
   MachineMatchingStrategy,
   ComponentUniquenessStrategy,
@@ -28,7 +29,7 @@ import {
   OverageStrategy,
 } from "@/types/policies"
 
-import { cn, humanize } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 
 import * as Field from "@/components/field"
 import SectionCard from "@/components/section-card"
@@ -116,7 +117,7 @@ function DefaultLayout({
                   {Object.values(MachineUniquenessStrategy).map(
                     (strategy: MachineUniquenessStrategy) => (
                       <SelectItem key={strategy} value={strategy}>
-                        {humanize(String(strategy))}
+                        {PolicyOptionLabels.machineUniquenessStrategy[strategy]}
                       </SelectItem>
                     ),
                   )}
@@ -157,7 +158,11 @@ function DefaultLayout({
                   {Object.values(ComponentUniquenessStrategy).map(
                     (strategy: ComponentUniquenessStrategy) => (
                       <SelectItem key={strategy} value={strategy}>
-                        {humanize(String(strategy))}
+                        {
+                          PolicyOptionLabels.componentUniquenessStrategy[
+                            strategy
+                          ]
+                        }
                       </SelectItem>
                     ),
                   )}
@@ -196,7 +201,7 @@ function DefaultLayout({
                   {Object.values(OverageStrategy).map(
                     (basis: OverageStrategy) => (
                       <SelectItem key={basis} value={basis}>
-                        {humanize(String(basis))}
+                        {PolicyOptionLabels.overageStrategy[basis]}
                       </SelectItem>
                     ),
                   )}
@@ -237,7 +242,7 @@ function DefaultLayout({
                   {Object.values(MachineMatchingStrategy).map(
                     (strategy: MachineMatchingStrategy) => (
                       <SelectItem key={strategy} value={strategy}>
-                        {humanize(String(strategy))}
+                        {PolicyOptionLabels.machineMatchingStrategy[strategy]}
                       </SelectItem>
                     ),
                   )}
@@ -279,7 +284,7 @@ function DefaultLayout({
                   {Object.values(ComponentMatchingStrategy).map(
                     (basis: ComponentMatchingStrategy) => (
                       <SelectItem key={basis} value={basis}>
-                        {humanize(String(basis))}
+                        {PolicyOptionLabels.componentMatchingStrategy[basis]}
                       </SelectItem>
                     ),
                   )}
@@ -373,7 +378,11 @@ function AdvancedLayout({
                           {Object.values(MachineUniquenessStrategy).map(
                             (strategy: MachineUniquenessStrategy) => (
                               <SelectItem key={strategy} value={strategy}>
-                                {humanize(String(strategy))}
+                                {
+                                  PolicyOptionLabels.machineUniquenessStrategy[
+                                    strategy
+                                  ]
+                                }
                               </SelectItem>
                             ),
                           )}
@@ -415,7 +424,10 @@ function AdvancedLayout({
                           {Object.values(ComponentUniquenessStrategy).map(
                             (strategy: ComponentUniquenessStrategy) => (
                               <SelectItem key={strategy} value={strategy}>
-                                {humanize(String(strategy))}
+                                {
+                                  PolicyOptionLabels
+                                    .componentUniquenessStrategy[strategy]
+                                }
                               </SelectItem>
                             ),
                           )}
@@ -453,9 +465,9 @@ function AdvancedLayout({
                         </FormControl>
                         <SelectContent>
                           {Object.values(OverageStrategy).map(
-                            (basis: OverageStrategy) => (
-                              <SelectItem key={basis} value={basis}>
-                                {humanize(String(basis))}
+                            (strategy: OverageStrategy) => (
+                              <SelectItem key={strategy} value={strategy}>
+                                {PolicyOptionLabels.overageStrategy[strategy]}
                               </SelectItem>
                             ),
                           )}
@@ -503,7 +515,11 @@ function AdvancedLayout({
                           {Object.values(MachineMatchingStrategy).map(
                             (strategy: MachineMatchingStrategy) => (
                               <SelectItem key={strategy} value={strategy}>
-                                {humanize(String(strategy))}
+                                {
+                                  PolicyOptionLabels.machineMatchingStrategy[
+                                    strategy
+                                  ]
+                                }
                               </SelectItem>
                             ),
                           )}
@@ -548,7 +564,11 @@ function AdvancedLayout({
                           {Object.values(ComponentMatchingStrategy).map(
                             (basis: ComponentMatchingStrategy) => (
                               <SelectItem key={basis} value={basis}>
-                                {humanize(String(basis))}
+                                {
+                                  PolicyOptionLabels.componentMatchingStrategy[
+                                    basis
+                                  ]
+                                }
                               </SelectItem>
                             ),
                           )}

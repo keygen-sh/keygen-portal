@@ -18,11 +18,12 @@ import {
   SelectItem,
 } from "@/components/ui/select"
 
-import { cn, humanize } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 
 import {
   PolicyFormValues,
   PolicyAttributeDescriptions,
+  PolicyOptionLabels,
   MachineLeasingStrategy,
   ProcessLeasingStrategy,
 } from "@/types/policies"
@@ -113,7 +114,7 @@ function DefaultLayout({
                   {Object.values(MachineLeasingStrategy).map(
                     (strategy: MachineLeasingStrategy) => (
                       <SelectItem key={strategy} value={strategy}>
-                        {humanize(String(strategy))}
+                        {PolicyOptionLabels.machineLeasingStrategy[strategy]}
                       </SelectItem>
                     ),
                   )}
@@ -154,7 +155,7 @@ function DefaultLayout({
                   {Object.values(ProcessLeasingStrategy).map(
                     (strategy: ProcessLeasingStrategy) => (
                       <SelectItem key={strategy} value={strategy}>
-                        {humanize(String(strategy))}
+                        {PolicyOptionLabels.processLeasingStrategy[strategy]}
                       </SelectItem>
                     ),
                   )}
@@ -249,7 +250,11 @@ function AdvancedLayout({
                           {Object.values(MachineLeasingStrategy).map(
                             (strategy: MachineLeasingStrategy) => (
                               <SelectItem key={strategy} value={strategy}>
-                                {humanize(String(strategy))}
+                                {
+                                  PolicyOptionLabels.machineLeasingStrategy[
+                                    strategy
+                                  ]
+                                }
                               </SelectItem>
                             ),
                           )}
@@ -297,7 +302,11 @@ function AdvancedLayout({
                           {Object.values(ProcessLeasingStrategy).map(
                             (strategy: ProcessLeasingStrategy) => (
                               <SelectItem key={strategy} value={strategy}>
-                                {humanize(String(strategy))}
+                                {
+                                  PolicyOptionLabels.processLeasingStrategy[
+                                    strategy
+                                  ]
+                                }
                               </SelectItem>
                             ),
                           )}

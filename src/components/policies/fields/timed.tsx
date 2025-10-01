@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useFormContext } from "react-hook-form"
 
-import { cn, humanize } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 
 import {
   FormField,
@@ -25,12 +25,13 @@ import DurationInput from "@/components/duration-input"
 
 import {
   PolicyFormValues,
+  PolicyAttributeDescriptions,
+  PolicyOptionLabels,
   ExpirationBasis,
   ExpirationStrategy,
   RenewalStrategy,
   RenewalBasis,
   TransferStrategy,
-  PolicyAttributeDescriptions,
 } from "@/types/policies"
 
 type Layout = "default" | "advanced"
@@ -110,7 +111,7 @@ function DefaultLayout({
                 <SelectContent>
                   {Object.values(ExpirationStrategy).map((strategy) => (
                     <SelectItem key={strategy} value={strategy}>
-                      {humanize(String(strategy))}
+                      {PolicyOptionLabels.expirationStrategy[strategy]}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -147,7 +148,7 @@ function DefaultLayout({
                 <SelectContent>
                   {Object.values(ExpirationBasis).map((basis) => (
                     <SelectItem key={basis} value={basis}>
-                      {humanize(String(basis))}
+                      {PolicyOptionLabels.expirationBasis[basis]}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -185,7 +186,7 @@ function DefaultLayout({
                 <SelectContent>
                   {Object.values(RenewalStrategy).map((strategy) => (
                     <SelectItem key={strategy} value={strategy}>
-                      {humanize(String(strategy))}
+                      {PolicyOptionLabels.renewalStrategy[strategy]}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -222,7 +223,7 @@ function DefaultLayout({
                 <SelectContent>
                   {Object.values(RenewalBasis).map((basis) => (
                     <SelectItem key={basis} value={basis}>
-                      {humanize(String(basis))}
+                      {PolicyOptionLabels.renewalBasis[basis]}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -259,7 +260,7 @@ function DefaultLayout({
                 <SelectContent>
                   {Object.values(TransferStrategy).map((strategy) => (
                     <SelectItem key={strategy} value={strategy}>
-                      {humanize(String(strategy))}
+                      {PolicyOptionLabels.transferStrategy[strategy]}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -345,7 +346,7 @@ function AdvancedLayout({
                         <SelectContent>
                           {Object.values(TransferStrategy).map((strategy) => (
                             <SelectItem key={strategy} value={strategy}>
-                              {humanize(String(strategy))}
+                              {PolicyOptionLabels.transferStrategy[strategy]}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -383,7 +384,7 @@ function AdvancedLayout({
                         <SelectContent>
                           {Object.values(ExpirationStrategy).map((strategy) => (
                             <SelectItem key={strategy} value={strategy}>
-                              {humanize(String(strategy))}
+                              {PolicyOptionLabels.expirationStrategy[strategy]}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -422,7 +423,7 @@ function AdvancedLayout({
                         <SelectContent>
                           {Object.values(RenewalStrategy).map((strategy) => (
                             <SelectItem key={strategy} value={strategy}>
-                              {humanize(String(strategy))}
+                              {PolicyOptionLabels.renewalStrategy[strategy]}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -468,7 +469,7 @@ function AdvancedLayout({
                         <SelectContent>
                           {Object.values(ExpirationBasis).map((basis) => (
                             <SelectItem key={basis} value={basis}>
-                              {humanize(String(basis))}
+                              {PolicyOptionLabels.expirationBasis[basis]}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -504,7 +505,7 @@ function AdvancedLayout({
                         <SelectContent>
                           {Object.values(RenewalBasis).map((basis) => (
                             <SelectItem key={basis} value={basis}>
-                              {humanize(String(basis))}
+                              {PolicyOptionLabels.renewalBasis[basis]}
                             </SelectItem>
                           ))}
                         </SelectContent>

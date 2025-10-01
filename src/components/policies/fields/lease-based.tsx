@@ -16,7 +16,7 @@ import {
   SelectItem,
 } from "@/components/ui/select"
 
-import { cn, humanize } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 
 import {
   PolicyFormValues,
@@ -24,6 +24,7 @@ import {
   HeartbeatCullStrategy,
   HeartbeatResurrectionStrategy,
   PolicyAttributeDescriptions,
+  PolicyOptionLabels,
 } from "@/types/policies"
 
 import * as Field from "@/components/field"
@@ -149,7 +150,7 @@ function DefaultLayout({
                   {Object.values(HeartbeatCullStrategy).map(
                     (strategy: HeartbeatCullStrategy) => (
                       <SelectItem key={strategy} value={strategy}>
-                        {humanize(String(strategy))}
+                        {PolicyOptionLabels.heartbeatCullStrategy[strategy]}
                       </SelectItem>
                     ),
                   )}
@@ -188,7 +189,7 @@ function DefaultLayout({
                   {Object.values(HeartbeatBasis).map(
                     (basis: HeartbeatBasis) => (
                       <SelectItem key={basis} value={basis}>
-                        {humanize(String(basis))}
+                        {PolicyOptionLabels.heartbeatBasis[basis]}
                       </SelectItem>
                     ),
                   )}
@@ -232,7 +233,11 @@ function DefaultLayout({
                   {Object.values(HeartbeatResurrectionStrategy).map(
                     (strategy: HeartbeatResurrectionStrategy) => (
                       <SelectItem key={strategy} value={strategy}>
-                        {humanize(String(strategy))}
+                        {
+                          PolicyOptionLabels.heartbeatResurrectionStrategy[
+                            strategy
+                          ]
+                        }
                       </SelectItem>
                     ),
                   )}
@@ -312,7 +317,7 @@ function AdvancedLayout({
                       {Object.values(HeartbeatCullStrategy).map(
                         (strategy: HeartbeatCullStrategy) => (
                           <SelectItem key={strategy} value={strategy}>
-                            {humanize(String(strategy))}
+                            {PolicyOptionLabels.heartbeatCullStrategy[strategy]}
                           </SelectItem>
                         ),
                       )}
@@ -356,7 +361,7 @@ function AdvancedLayout({
                       {Object.values(HeartbeatBasis).map(
                         (basis: HeartbeatBasis) => (
                           <SelectItem key={basis} value={basis}>
-                            {humanize(String(basis))}
+                            {PolicyOptionLabels.heartbeatBasis[basis]}
                           </SelectItem>
                         ),
                       )}
@@ -401,7 +406,11 @@ function AdvancedLayout({
                       {Object.values(HeartbeatResurrectionStrategy).map(
                         (strategy: HeartbeatResurrectionStrategy) => (
                           <SelectItem key={strategy} value={strategy}>
-                            {humanize(String(strategy))}
+                            {
+                              PolicyOptionLabels.heartbeatResurrectionStrategy[
+                                strategy
+                              ]
+                            }
                           </SelectItem>
                         ),
                       )}

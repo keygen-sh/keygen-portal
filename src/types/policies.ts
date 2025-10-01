@@ -360,6 +360,104 @@ export const PolicyAttributeDescriptions: Readonly<
     "The strategy used for a license's overage allowance, affecting max machines, max cores and max processes.",
 } as const
 
+export const PolicyOptionLabels = {
+  checkInInterval: {
+    [CheckInInterval.DAY]: "Daily",
+    [CheckInInterval.WEEK]: "Weekly",
+    [CheckInInterval.MONTH]: "Monthly",
+    [CheckInInterval.YEAR]: "Yearly",
+  },
+  authenticationStrategy: {
+    [AuthenticationStrategy.TOKEN]: "Token",
+    [AuthenticationStrategy.LICENSE]: "License",
+    [AuthenticationStrategy.MIXED]: "Mixed",
+    [AuthenticationStrategy.NONE]: "None",
+  },
+  expirationStrategy: {
+    [ExpirationStrategy.RESTRICT_ACCESS]: "Restrict Access",
+    [ExpirationStrategy.REVOKE_ACCESS]: "Revoke Access",
+    [ExpirationStrategy.MAINTAIN_ACCESS]: "Maintain Access",
+    [ExpirationStrategy.ALLOW_ACCESS]: "Allow Access",
+  },
+  overageStrategy: {
+    [OverageStrategy.NO_OVERAGE]: "No Overage",
+    [OverageStrategy.ALWAYS_ALLOW_OVERAGE]: "Always Allow Overage",
+    [OverageStrategy.ALLOW_1_25X_OVERAGE]: "Allow 1.25x Overage",
+    [OverageStrategy.ALLOW_1_5X_OVERAGE]: "Allow 1.5x Overage",
+    [OverageStrategy.ALLOW_2X_OVERAGE]: "Allow 2x Overage",
+  },
+  machineUniquenessStrategy: {
+    [MachineUniquenessStrategy.UNIQUE_PER_ACCOUNT]: "Unique Per-Account",
+    [MachineUniquenessStrategy.UNIQUE_PER_PRODUCT]: "Unique Per-Product",
+    [MachineUniquenessStrategy.UNIQUE_PER_POLICY]: "Unique Per-Policy",
+    [MachineUniquenessStrategy.UNIQUE_PER_LICENSE]: "Unique Per-License",
+  },
+  machineMatchingStrategy: {
+    [MachineMatchingStrategy.MATCH_ANY]: "Match Any",
+    [MachineMatchingStrategy.MATCH_TWO]: "Match Two",
+    [MachineMatchingStrategy.MATCH_MOST]: "Match Most",
+    [MachineMatchingStrategy.MATCH_ALL]: "Match All",
+  },
+  componentUniquenessStrategy: {
+    [ComponentUniquenessStrategy.UNIQUE_PER_ACCOUNT]: "Unique Per-Account",
+    [ComponentUniquenessStrategy.UNIQUE_PER_PRODUCT]: "Unique Per-Product",
+    [ComponentUniquenessStrategy.UNIQUE_PER_POLICY]: "Unique Per-Policy",
+    [ComponentUniquenessStrategy.UNIQUE_PER_LICENSE]: "Unique Per-License",
+    [ComponentUniquenessStrategy.UNIQUE_PER_MACHINE]: "Unique Per-Machine",
+  },
+  componentMatchingStrategy: {
+    [ComponentMatchingStrategy.MATCH_ANY]: "Match Any",
+    [ComponentMatchingStrategy.MATCH_TWO]: "Match Two",
+    [ComponentMatchingStrategy.MATCH_MOST]: "Match Most",
+    [ComponentMatchingStrategy.MATCH_ALL]: "Match All",
+  },
+  heartbeatBasis: {
+    [HeartbeatBasis.FROM_CREATION]: "From Creation",
+    [HeartbeatBasis.FROM_FIRST_PING]: "From First Ping",
+  },
+  heartbeatCullStrategy: {
+    [HeartbeatCullStrategy.DEACTIVATE_DEAD]: "Deactivate Dead",
+    [HeartbeatCullStrategy.KEEP_DEAD]: "Keep Dead",
+  },
+  heartbeatResurrectionStrategy: {
+    [HeartbeatResurrectionStrategy.NO_REVIVE]: "No Revive",
+    [HeartbeatResurrectionStrategy["1_MINUTE_REVIVE"]]: "1 Minute Revive",
+    [HeartbeatResurrectionStrategy["2_MINUTE_REVIVE"]]: "2 Minute Revive",
+    [HeartbeatResurrectionStrategy["5_MINUTE_REVIVE"]]: "5 Minute Revive",
+    [HeartbeatResurrectionStrategy["10_MINUTE_REVIVE"]]: "10 Minute Revive",
+    [HeartbeatResurrectionStrategy["15_MINUTE_REVIVE"]]: "15 Minute Revive",
+    [HeartbeatResurrectionStrategy.ALWAYS_REVIVE]: "Always Revive",
+  },
+  machineLeasingStrategy: {
+    [MachineLeasingStrategy.PER_LICENSE]: "Per License",
+    [MachineLeasingStrategy.PER_USER]: "Per User",
+  },
+  processLeasingStrategy: {
+    [ProcessLeasingStrategy.PER_MACHINE]: "Per Machine",
+    [ProcessLeasingStrategy.PER_LICENSE]: "Per License",
+    [ProcessLeasingStrategy.PER_USER]: "Per User",
+  },
+  expirationBasis: {
+    [ExpirationBasis.FROM_CREATION]: "From Creation",
+    [ExpirationBasis.FROM_FIRST_VALIDATION]: "From First Validation",
+    [ExpirationBasis.FROM_FIRST_ACTIVATION]: "From First Activation",
+    [ExpirationBasis.FROM_FIRST_DOWNLOAD]: "From First Download",
+    [ExpirationBasis.FROM_FIRST_USE]: "From First Use",
+  },
+  renewalBasis: {
+    [RenewalBasis.FROM_EXPIRY]: "From Expiry",
+    [RenewalBasis.FROM_NOW]: "From Now",
+    [RenewalBasis.FROM_NOW_IF_EXPIRED]: "From Now If Expired",
+  },
+  transferStrategy: {
+    [TransferStrategy.KEEP_EXPIRY]: "Keep Expiry",
+    [TransferStrategy.RESET_EXPIRY]: "Reset Expiry",
+  },
+  renewalStrategy: {
+    [RenewalStrategy.AUTO_RENEW]: "Auto Renew",
+  },
+} as const
+
 export const MockPolicies = [
   {
     id: "0b4b1a9a-e25a-4f14-a95e-d9dd378d6065",

@@ -15,11 +15,10 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
-import { humanize } from "@/lib/utils"
-
 import {
   PolicyFormValues,
   PolicyAttributeDescriptions,
+  PolicyOptionLabels,
   AuthenticationStrategy,
 } from "@/types/policies"
 
@@ -78,7 +77,7 @@ export default function GeneralFields(): React.ReactElement {
                 <SelectContent>
                   {Object.values(AuthenticationStrategy).map((strategy) => (
                     <SelectItem key={strategy} value={strategy}>
-                      {humanize(String(strategy))}
+                      {PolicyOptionLabels.authenticationStrategy[strategy]}
                     </SelectItem>
                   ))}
                 </SelectContent>

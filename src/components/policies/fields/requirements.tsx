@@ -18,11 +18,12 @@ import {
   SelectItem,
 } from "@/components/ui/select"
 
-import { cn, humanize } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 
 import {
   PolicyFormValues,
   PolicyAttributeDescriptions,
+  PolicyOptionLabels,
   CheckInInterval,
   AuthenticationStrategy,
 } from "@/types/policies"
@@ -168,7 +169,7 @@ function DefaultLayout({
                   {Object.values(CheckInInterval).map(
                     (interval: CheckInInterval) => (
                       <SelectItem key={interval} value={interval}>
-                        {humanize(String(interval))}
+                        {PolicyOptionLabels.checkInInterval[interval]}
                       </SelectItem>
                     ),
                   )}
@@ -210,7 +211,7 @@ function DefaultLayout({
                     {Object.values(AuthenticationStrategy).map(
                       (strategy: AuthenticationStrategy) => (
                         <SelectItem key={strategy} value={strategy}>
-                          {humanize(String(strategy))}
+                          {PolicyOptionLabels.authenticationStrategy[strategy]}
                         </SelectItem>
                       ),
                     )}
@@ -373,7 +374,7 @@ function AdvancedLayout({
                       {Object.values(CheckInInterval).map(
                         (interval: CheckInInterval) => (
                           <SelectItem key={interval} value={interval}>
-                            {humanize(String(interval))}
+                            {PolicyOptionLabels.checkInInterval[interval]}
                           </SelectItem>
                         ),
                       )}
@@ -414,7 +415,11 @@ function AdvancedLayout({
                         {Object.values(AuthenticationStrategy).map(
                           (strategy: AuthenticationStrategy) => (
                             <SelectItem key={strategy} value={strategy}>
-                              {humanize(String(strategy))}
+                              {
+                                PolicyOptionLabels.authenticationStrategy[
+                                  strategy
+                                ]
+                              }
                             </SelectItem>
                           ),
                         )}

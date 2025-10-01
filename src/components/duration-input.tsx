@@ -205,7 +205,7 @@ export default function DurationInput({
             type="button"
             variant="outline"
             disabled={disabled}
-            className="min-w-24 rounded-l-none border-l-0 bg-background-1 text-content-muted"
+            className="rounded-l-none border-l-0 bg-background-1 text-content-muted"
           >
             {unit.label}
           </Button>

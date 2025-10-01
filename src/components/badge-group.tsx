@@ -40,7 +40,7 @@ export function BadgeGroup({
   const overflow = hidden.length
 
   return (
-    <div className={cn("flex flex-wrap items-center gap-1", className)}>
+    <span className={cn("flex flex-wrap items-center gap-1", className)}>
       {prefix != null && <span>{prefix}</span>}
 
       {visible.map((child, i) => (
@@ -70,7 +70,7 @@ export function BadgeGroup({
       )}
 
       {suffix != null && <span>{suffix}</span>}
-    </div>
+    </span>
   )
 }
 

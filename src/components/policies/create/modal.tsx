@@ -507,7 +507,7 @@ export default function PoliciesCreateModal({
                               variant="title"
                               placeholder="Enter policy name..."
                               className="border-none text-xl placeholder:text-content-subdued! md:text-2xl"
-                              autoFocus
+                              autoFocus={field.value.length === 0}
                               autoComplete="off"
                             />
                           </FormControl>

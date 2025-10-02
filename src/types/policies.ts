@@ -458,7 +458,7 @@ export const PolicyOptionLabels = {
   },
 } as const
 
-export const MockPolicies = [
+export const MockPolicies: Policy[] = [
   {
     id: "0b4b1a9a-e25a-4f14-a95e-d9dd378d6065",
     type: "policies",

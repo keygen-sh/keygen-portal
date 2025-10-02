@@ -59,7 +59,10 @@ import {
   HeartbeatBasis,
   HeartbeatCullStrategy,
   HeartbeatResurrectionStrategy,
+  MockPolicies,
 } from "@/types/policies"
+
+import { toast } from "@/lib/toast"
 
 import { useSlide } from "@/hooks/use-slide"
 import { useMobile } from "@/hooks/use-mobile"
@@ -332,11 +335,19 @@ export default function PoliciesCreateModal({
     [form, goTo, setSelection],
   )
 
-  const handleCreatePolicy = useCallback((payload: PolicyFormValues) => {
-    console.log(payload)
+  // TODO(cazden) Replace with API call
+  const handleCreatePolicy = useCallback(
+    (payload: PolicyFormValues) => {
+      const policy = buildMockPolicy(payload, selection)
+      MockPolicies.push(policy)
 
-    onSelectPolicy(null)
-  }, [])
+      toast({ message: "Policy created", variant: "success" })
+
+      onClose()
+      onSelectPolicy(policy)
+    },
+    [onSelectPolicy, selection],
+  )
 
   return (
     <DialogContent className="min-w-fit">
@@ -822,4 +833,108 @@ export function getFormDefaults(selection?: PolicyParameterSelection) {
     base.authenticationStrategy = AuthenticationStrategy.LICENSE
 
   return base
+}
+
+const buildMockPolicy = (
+  input: PolicyFormValues,
+  selection: PolicyParameterSelection,
+): Policy => {
+  const id = crypto.randomUUID()
+  const now = new Date().toISOString()
+  const base = getFormDefaults(selection)
+
+  const attributes = {
+    name: input.name,
+    duration: input.duration ?? null,
+    strict: input.strict ?? base.strict ?? false,
+    floating: input.floating ?? base.floating ?? false,
+    scheme: input.scheme ?? null,
+    requireProductScope: input.requireProductScope ?? false,
+    requirePolicyScope: input.requirePolicyScope ?? false,
+    requireMachineScope: input.requireMachineScope ?? false,
+    requireFingerprintScope: input.requireFingerprintScope ?? false,
+    requireComponentsScope: input.requireComponentsScope ?? false,
+    requireUserScope: input.requireUserScope ?? false,
+    requireChecksumScope: input.requireChecksumScope ?? false,
+    requireVersionScope: input.requireVersionScope ?? false,
+    requireCheckIn: input.requireCheckIn ?? false,
+    checkInInterval: input.checkInInterval ?? null,
+    checkInIntervalCount: input.checkInIntervalCount ?? null,
+    usePool: input.usePool ?? false,
+    maxMachines: input.maxMachines ?? null,
+    maxProcesses: input.maxProcesses ?? null,
+    maxUsers: input.maxUsers ?? null,
+    maxCores: input.maxCores ?? null,
+    maxUses: input.maxUses ?? null,
+    encrypted: input.encrypted ?? false,
+    protected: input.protected ?? base.protected ?? false,
+    requireHeartbeat: input.requireHeartbeat ?? false,
+    heartbeatDuration: input.heartbeatDuration ?? null,
+    heartbeatCullStrategy:
+      input.heartbeatCullStrategy ?? HeartbeatCullStrategy.DEACTIVATE_DEAD,
+    heartbeatResurrectionStrategy:
+      input.heartbeatResurrectionStrategy ??
+      HeartbeatResurrectionStrategy.NO_REVIVE,
+    heartbeatBasis: input.heartbeatBasis ?? HeartbeatBasis.FROM_CREATION,
+    machineUniquenessStrategy:
+      input.machineUniquenessStrategy ??
+      MachineUniquenessStrategy.UNIQUE_PER_LICENSE,
+    machineMatchingStrategy:
+      input.machineMatchingStrategy ?? MachineMatchingStrategy.MATCH_ANY,
+    componentUniquenessStrategy:
+      input.componentUniquenessStrategy ??
+      ComponentUniquenessStrategy.UNIQUE_PER_MACHINE,
+    componentMatchingStrategy:
+      input.componentMatchingStrategy ?? ComponentMatchingStrategy.MATCH_ANY,
+    expirationStrategy:
+      input.expirationStrategy ?? ExpirationStrategy.RESTRICT_ACCESS,
+    expirationBasis: input.expirationBasis ?? ExpirationBasis.FROM_CREATION,
+    renewalStrategy: input.renewalStrategy ?? RenewalStrategy.AUTO_RENEW,
+    renewalBasis:
+      input.renewalBasis ?? base.renewalBasis ?? RenewalBasis.FROM_EXPIRY,
+    transferStrategy:
+      input.transferStrategy ??
+      base.transferStrategy ??
+      TransferStrategy.KEEP_EXPIRY,
+    authenticationStrategy:
+      input.authenticationStrategy ??
+      base.authenticationStrategy ??
+      AuthenticationStrategy.MIXED,
+    machineLeasingStrategy:
+      input.machineLeasingStrategy ?? MachineLeasingStrategy.PER_LICENSE,
+    processLeasingStrategy:
+      input.processLeasingStrategy ?? ProcessLeasingStrategy.PER_MACHINE,
+    overageStrategy: input.overageStrategy ?? OverageStrategy.NO_OVERAGE,
+    metadata: input.metadata ?? {},
+    created: now,
+    updated: now,
+  }
+
+  return {
+    id,
+    type: "policies",
+    links: { self: `/v1/accounts/{ACCOUNT}/policies/${id}` },
+    attributes,
+    relationships: {
+      account: {
+        links: { related: "/v1/accounts/{ACCOUNT}" },
+        data: { type: "accounts", id: "{ACCOUNT}" },
+      },
+      product: {
+        links: { related: `/v1/accounts/{ACCOUNT}/policies/${id}/product` },
+        data: { type: "products", id: "80dca7f1-e939-4927-8e47-8a4c84c8ac71" },
+      },
+      pool: {
+        links: { related: `/v1/accounts/{ACCOUNT}/policies/${id}/pool` },
+      },
+      licenses: {
+        links: { related: `/v1/accounts/{ACCOUNT}/policies/${id}/licenses` },
+      },
+      entitlements: {
+        links: {
+          related: `/v1/accounts/{ACCOUNT}/policies/${id}/entitlements`,
+        },
+      },
+    },
+  }
 }

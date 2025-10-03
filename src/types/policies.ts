@@ -251,7 +251,7 @@ export type PolicyParameterSelection = {
 
 export type PolicyFormValues = Writable<PolicyInput> & {
   entitlements?: {
-    link?: string[]
+    attach?: string[]
     create?: { name: string; code: string; metadata?: Record<string, string> }[]
   }
 }

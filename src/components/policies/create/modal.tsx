@@ -61,6 +61,7 @@ import {
   HeartbeatResurrectionStrategy,
   MockPolicies,
 } from "@/types/policies"
+import { Entitlement, MockEntitlements } from "@/types/entitlements"
 
 import { toast } from "@/lib/toast"
 
@@ -167,7 +168,7 @@ export const BaseSchema: z.ZodType<PolicyFormValues> = z
 
     entitlements: z
       .object({
-        link: z.array(z.string()).optional(),
+        attach: z.array(z.string()).optional(),
         create: z
           .array(
             z.object({
@@ -338,7 +339,24 @@ export default function PoliciesCreateModal({
   // TODO(cazden) Replace with API call
   const handleCreatePolicy = useCallback(
     (payload: PolicyFormValues) => {
-      const policy = buildMockPolicy(payload, selection)
+      const attachIds = payload.entitlements?.attach ?? []
+      const toCreate = payload.entitlements?.create ?? []
+
+      const created: Entitlement[] = toCreate.map((e) =>
+        buildMockEntitlement({
+          name: e.name,
+          code: e.code,
+          metadata: e.metadata,
+        }),
+      )
+
+      if (created.length) MockEntitlements.unshift(...created)
+
+      const entitlementIds = Array.from(
+        new Set([...attachIds, ...created.map((e) => e.id)]),
+      )
+
+      const policy = buildMockPolicy(payload, selection, entitlementIds)
       MockPolicies.push(policy)
 
       toast({ message: "Policy created", variant: "success" })
@@ -720,7 +738,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
     steps.push({
       key: "featureBased",
       title: "Feature‑based configuration",
-      fields: ["entitlements.link", "entitlements.create"],
+      fields: ["entitlements.attach", "entitlements.create"],
       render: () => <Policies.Fields.FeatureBased layout="advanced" />,
     })
   }
@@ -838,6 +856,7 @@ export function getFormDefaults(selection?: PolicyParameterSelection) {
 const buildMockPolicy = (
   input: PolicyFormValues,
   selection: PolicyParameterSelection,
+  entitlementIds: string[] = [],
 ): Policy => {
   const id = crypto.randomUUID()
   const now = new Date().toISOString()
@@ -934,6 +953,35 @@ const buildMockPolicy = (
         links: {
           related: `/v1/accounts/{ACCOUNT}/policies/${id}/entitlements`,
         },
+        data: entitlementIds.map((eid) => ({ type: "entitlements", id: eid })),
+      },
+    },
+  }
+}
+
+const buildMockEntitlement = (input: {
+  name: string
+  code: string
+  metadata?: Record<string, string>
+}): Entitlement => {
+  const id = crypto.randomUUID()
+  const now = new Date().toISOString()
+
+  return {
+    id,
+    type: "entitlements",
+    links: { self: `/v1/accounts/{ACCOUNT}/entitlements/${id}` },
+    attributes: {
+      name: input.name,
+      code: input.code,
+      metadata: input.metadata ?? {},
+      created: now,
+      updated: now,
+    },
+    relationships: {
+      account: {
+        links: { related: "/v1/accounts/{ACCOUNT}" },
+        data: { type: "accounts", id: "{ACCOUNT}" },
       },
     },
   }

@@ -52,7 +52,7 @@ function DefaultLayout({
       {title && <h2 className="text-content-loud/90">{title}</h2>}
       <FormField
         control={form.control}
-        name="entitlements.link"
+        name="entitlements.attach"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Link existing entitlements</FormLabel>
@@ -61,8 +61,8 @@ function DefaultLayout({
                 value={field.value ?? []}
                 onChange={field.onChange}
                 options={MockEntitlements.map((e) => ({
-                  label: e.data.attributes.name,
-                  value: e.data.id,
+                  label: e.attributes.name,
+                  value: e.id,
                 }))}
                 placeholder="Search entitlements"
               />
@@ -102,7 +102,7 @@ function AdvancedLayout({
     >
       <FormField
         control={form.control}
-        name="entitlements.link"
+        name="entitlements.attach"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Link existing entitlements</FormLabel>
@@ -111,8 +111,8 @@ function AdvancedLayout({
                 value={field.value ?? []}
                 onChange={field.onChange}
                 options={MockEntitlements.map((e) => ({
-                  label: e.data.attributes.name,
-                  value: e.data.id,
+                  label: e.attributes.name,
+                  value: e.id,
                 }))}
                 placeholder="Search entitlements"
               />

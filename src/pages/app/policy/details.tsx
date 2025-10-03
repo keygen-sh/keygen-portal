@@ -327,7 +327,6 @@ export default function PolicyDetails() {
                     keys={[
                       "duration",
                       "expirationStrategy",
-                      "renewalStrategy",
                       "transferStrategy",
                       "expirationBasis",
                       "renewalBasis",

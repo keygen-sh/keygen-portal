@@ -63,7 +63,6 @@ export default function PoliciesScratchForm({
           "transferStrategy",
           "expirationStrategy",
           "expirationBasis",
-          "renewalStrategy",
           "renewalBasis",
         ],
         render: () => <Policies.Fields.Timed />,

@@ -110,9 +110,6 @@ export enum TransferStrategy {
   KEEP_EXPIRY = "KEEP_EXPIRY",
   RESET_EXPIRY = "RESET_EXPIRY",
 }
-export enum RenewalStrategy {
-  AUTO_RENEW = "AUTO_RENEW",
-}
 
 export interface PolicyAttributes {
   name: string
@@ -157,7 +154,6 @@ export interface PolicyAttributes {
 
   expirationStrategy: ExpirationStrategy
   expirationBasis: ExpirationBasis
-  renewalStrategy: RenewalStrategy
   renewalBasis: RenewalBasis
   transferStrategy: TransferStrategy
 
@@ -176,7 +172,6 @@ export interface PolicyInput {
   duration?: number | null
   expirationStrategy?: ExpirationStrategy
   expirationBasis?: ExpirationBasis
-  renewalStrategy?: RenewalStrategy
   renewalBasis?: RenewalBasis
   transferStrategy?: TransferStrategy
 
@@ -348,7 +343,6 @@ export const PolicyAttributeDescriptions: Readonly<
     "The strategy for expired licenses during a license validation and release access.",
   expirationBasis:
     "The event that causes a license's expiry to be set, e.g. on creation.",
-  renewalStrategy: "The strategy for renewing licenses when they expire.",
   renewalBasis:
     "The event that causes a license's initial expiry to be set, e.g. on creation.",
   transferStrategy:
@@ -456,9 +450,6 @@ export const PolicyOptionLabels = {
     [TransferStrategy.KEEP_EXPIRY]: "Keep Expiry",
     [TransferStrategy.RESET_EXPIRY]: "Reset Expiry",
   },
-  renewalStrategy: {
-    [RenewalStrategy.AUTO_RENEW]: "Auto Renew",
-  },
 } as const
 
 export const MockPolicies: Policy[] = [
@@ -505,7 +496,6 @@ export const MockPolicies: Policy[] = [
       componentMatchingStrategy: ComponentMatchingStrategy.MATCH_ALL,
       expirationStrategy: ExpirationStrategy.RESTRICT_ACCESS,
       expirationBasis: ExpirationBasis.FROM_CREATION,
-      renewalStrategy: RenewalStrategy.AUTO_RENEW,
       renewalBasis: RenewalBasis.FROM_EXPIRY,
       transferStrategy: TransferStrategy.KEEP_EXPIRY,
       authenticationStrategy: AuthenticationStrategy.TOKEN,

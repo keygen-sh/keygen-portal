@@ -107,7 +107,6 @@ export const policyAttributeTypeSchema: Record<
 
   expirationStrategy: "enum",
   expirationBasis: "enum",
-  renewalStrategy: "enum",
   renewalBasis: "enum",
   transferStrategy: "enum",
 

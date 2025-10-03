@@ -40,7 +40,6 @@ import {
   ExpirationStrategy,
   OverageStrategy,
   ExpirationBasis,
-  RenewalStrategy,
   RenewalBasis,
   TransferStrategy,
   MachineUniquenessStrategy,
@@ -85,7 +84,6 @@ export const BaseSchema: z.ZodType<PolicyFormValues> = z
 
     expirationStrategy: z.nativeEnum(ExpirationStrategy).optional(),
     expirationBasis: z.nativeEnum(ExpirationBasis).optional(),
-    renewalStrategy: z.nativeEnum(RenewalStrategy).optional(),
     renewalBasis: z.nativeEnum(RenewalBasis).optional(),
     transferStrategy: z.nativeEnum(TransferStrategy).optional(),
 
@@ -897,7 +895,6 @@ const buildMockPolicy = (
     expirationStrategy:
       input.expirationStrategy ?? ExpirationStrategy.RESTRICT_ACCESS,
     expirationBasis: input.expirationBasis ?? ExpirationBasis.FROM_CREATION,
-    renewalStrategy: input.renewalStrategy ?? RenewalStrategy.AUTO_RENEW,
     renewalBasis:
       input.renewalBasis ?? base.renewalBasis ?? RenewalBasis.FROM_EXPIRY,
     transferStrategy:

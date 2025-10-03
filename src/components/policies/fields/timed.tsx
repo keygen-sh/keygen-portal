@@ -29,7 +29,6 @@ import {
   PolicyOptionLabels,
   ExpirationBasis,
   ExpirationStrategy,
-  RenewalStrategy,
   RenewalBasis,
   TransferStrategy,
 } from "@/types/policies"
@@ -149,44 +148,6 @@ function DefaultLayout({
                   {Object.values(ExpirationBasis).map((basis) => (
                     <SelectItem key={basis} value={basis}>
                       {PolicyOptionLabels.expirationBasis[basis]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field.Header>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={form.control}
-        name="renewalStrategy"
-        render={({ field }) => (
-          <FormItem>
-            <Field.Header
-              label="Renewal strategy"
-              variant="stacking"
-              tooltip={PolicyAttributeDescriptions.renewalStrategy}
-            >
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(value) =>
-                  field.onChange(
-                    value === "" ? undefined : (value as RenewalStrategy),
-                  )
-                }
-                disabled
-              >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select one..." />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(RenewalStrategy).map((strategy) => (
-                    <SelectItem key={strategy} value={strategy}>
-                      {PolicyOptionLabels.renewalStrategy[strategy]}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -385,45 +346,6 @@ function AdvancedLayout({
                           {Object.values(ExpirationStrategy).map((strategy) => (
                             <SelectItem key={strategy} value={strategy}>
                               {PolicyOptionLabels.expirationStrategy[strategy]}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </Field.Header>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="renewalStrategy"
-                render={({ field }) => (
-                  <FormItem>
-                    <Field.Header
-                      label="Renewal strategy"
-                      tooltip={PolicyAttributeDescriptions.renewalStrategy}
-                    >
-                      <Select
-                        value={field.value ?? ""}
-                        onValueChange={(value) =>
-                          field.onChange(
-                            value === ""
-                              ? undefined
-                              : (value as RenewalStrategy),
-                          )
-                        }
-                        disabled
-                      >
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select one..." />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(RenewalStrategy).map((strategy) => (
-                            <SelectItem key={strategy} value={strategy}>
-                              {PolicyOptionLabels.renewalStrategy[strategy]}
                             </SelectItem>
                           ))}
                         </SelectContent>

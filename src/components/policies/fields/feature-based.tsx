@@ -55,7 +55,7 @@ function DefaultLayout({
         name="entitlements.attach"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Link existing entitlements</FormLabel>
+            <FormLabel>Attach existing entitlements</FormLabel>
             <FormControl>
               <MultiSelect
                 value={field.value ?? []}

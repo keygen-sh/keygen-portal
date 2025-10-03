@@ -33,7 +33,7 @@ import KeyValueInput from "@/components/key-value-input"
 type Layout = "default" | "advanced"
 
 interface GeneralFieldsProps {
-  layout: Layout
+  layout?: Layout
   title?: string
   includeMeta?: boolean
   includeAuthStrategy?: boolean

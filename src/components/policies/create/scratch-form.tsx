@@ -139,7 +139,7 @@ export default function PoliciesScratchForm({
       {
         key: "entitlements",
         title: "Entitlements",
-        fields: ["entitlements.link", "entitlements.create"],
+        fields: ["entitlements.attach", "entitlements.create"],
         render: () => <Policies.Fields.FeatureBased />,
       },
     ],

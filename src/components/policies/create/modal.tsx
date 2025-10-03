@@ -3,7 +3,6 @@ import { useForm, DeepPartial, FieldPath } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
@@ -14,13 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog"
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormControl,
-  FormMessage,
-} from "@/components/ui/form"
+import { Form } from "@/components/ui/form"
 
 import {
   Clock,
@@ -180,6 +173,9 @@ export const BaseSchema: z.ZodType<PolicyFormValues> = z
           .optional(),
       })
       .optional(),
+    product: z.object({
+      attach: z.string().min(1, "Product is required."),
+    }),
 
     metadata: z.record(z.string()).default({}),
   })
@@ -525,26 +521,6 @@ export default function PoliciesCreateModal({
                     key={current?.key ?? "attributes"}
                     className="flex h-[calc(100vh-11rem)] flex-col justify-between md:h-[50vh] md:w-4xl"
                   >
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem className="m-4 md:my-6">
-                          <FormControl>
-                            <Input
-                              {...field}
-                              variant="title"
-                              placeholder="Enter policy name..."
-                              className="border-none text-xl placeholder:text-content-subdued! md:text-2xl"
-                              autoFocus={field.value.length === 0}
-                              autoComplete="off"
-                            />
-                          </FormControl>
-                          <FormMessage className="ml-2" />
-                        </FormItem>
-                      )}
-                    />
-
                     {current && <current.render />}
 
                     <DocumentationLink page="policies" />
@@ -646,6 +622,19 @@ function createSchemaFromSelection(selection: PolicyParameterSelection) {
 
 function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
   const steps: Step[] = []
+
+  steps.push({
+    key: "general",
+    title: "General configuration",
+    fields: ["name", "product.attach"],
+    render: () => (
+      <Policies.Fields.General
+        layout="advanced"
+        includeAuthStrategy={false}
+        includeMeta={false}
+      />
+    ),
+  })
 
   if (selection.timing === TimingParameters.TIMED) {
     steps.push({
@@ -941,7 +930,7 @@ const buildMockPolicy = (
       },
       product: {
         links: { related: `/v1/accounts/{ACCOUNT}/policies/${id}/product` },
-        data: { type: "products", id: "80dca7f1-e939-4927-8e47-8a4c84c8ac71" },
+        data: { type: "products", id: input.product.attach },
       },
       pool: {
         links: { related: `/v1/accounts/{ACCOUNT}/policies/${id}/pool` },

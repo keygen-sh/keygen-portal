@@ -4,19 +4,13 @@ import { useFormContext } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
+import { SelectItem } from "@/components/ui/select"
 import {
   FormField,
   FormItem,
   FormControl,
   FormMessage,
 } from "@/components/ui/form"
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select"
 
 import {
   PolicyFormValues,
@@ -33,6 +27,7 @@ import { cn } from "@/lib/utils"
 
 import * as Field from "@/components/field"
 import SectionCard from "@/components/section-card"
+import NullableSelect from "@/components/nullable-select"
 
 type Layout = "default" | "advanced"
 
@@ -98,31 +93,16 @@ function DefaultLayout({
               variant="stacking"
               tooltip={PolicyAttributeDescriptions.machineUniquenessStrategy}
             >
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(value) =>
-                  field.onChange(
-                    value === ""
-                      ? undefined
-                      : (value as MachineUniquenessStrategy),
-                  )
-                }
+              <NullableSelect<MachineUniquenessStrategy>
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
               >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select one..." />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(MachineUniquenessStrategy).map(
-                    (strategy: MachineUniquenessStrategy) => (
-                      <SelectItem key={strategy} value={strategy}>
-                        {PolicyOptionLabels.machineUniquenessStrategy[strategy]}
-                      </SelectItem>
-                    ),
-                  )}
-                </SelectContent>
-              </Select>
+                {Object.values(MachineUniquenessStrategy).map((strategy) => (
+                  <SelectItem key={strategy} value={strategy}>
+                    {PolicyOptionLabels.machineUniquenessStrategy[strategy]}
+                  </SelectItem>
+                ))}
+              </NullableSelect>
             </Field.Header>
             <FormMessage />
           </FormItem>
@@ -139,35 +119,16 @@ function DefaultLayout({
               variant="stacking"
               tooltip={PolicyAttributeDescriptions.componentUniquenessStrategy}
             >
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(value) =>
-                  field.onChange(
-                    value === ""
-                      ? undefined
-                      : (value as ComponentUniquenessStrategy),
-                  )
-                }
+              <NullableSelect<ComponentUniquenessStrategy>
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
               >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select one..." />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(ComponentUniquenessStrategy).map(
-                    (strategy: ComponentUniquenessStrategy) => (
-                      <SelectItem key={strategy} value={strategy}>
-                        {
-                          PolicyOptionLabels.componentUniquenessStrategy[
-                            strategy
-                          ]
-                        }
-                      </SelectItem>
-                    ),
-                  )}
-                </SelectContent>
-              </Select>
+                {Object.values(ComponentUniquenessStrategy).map((strategy) => (
+                  <SelectItem key={strategy} value={strategy}>
+                    {PolicyOptionLabels.componentUniquenessStrategy[strategy]}
+                  </SelectItem>
+                ))}
+              </NullableSelect>
             </Field.Header>
             <FormMessage />
           </FormItem>
@@ -184,29 +145,16 @@ function DefaultLayout({
               variant="stacking"
               tooltip={PolicyAttributeDescriptions.overageStrategy}
             >
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(value) =>
-                  field.onChange(
-                    value === "" ? undefined : (value as OverageStrategy),
-                  )
-                }
+              <NullableSelect<OverageStrategy>
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
               >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select one..." />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(OverageStrategy).map(
-                    (basis: OverageStrategy) => (
-                      <SelectItem key={basis} value={basis}>
-                        {PolicyOptionLabels.overageStrategy[basis]}
-                      </SelectItem>
-                    ),
-                  )}
-                </SelectContent>
-              </Select>
+                {Object.values(OverageStrategy).map((strategy) => (
+                  <SelectItem key={strategy} value={strategy}>
+                    {PolicyOptionLabels.overageStrategy[strategy]}
+                  </SelectItem>
+                ))}
+              </NullableSelect>
             </Field.Header>
             <FormMessage />
           </FormItem>
@@ -223,31 +171,16 @@ function DefaultLayout({
               variant="stacking"
               tooltip={PolicyAttributeDescriptions.machineMatchingStrategy}
             >
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(value) =>
-                  field.onChange(
-                    value === ""
-                      ? undefined
-                      : (value as MachineMatchingStrategy),
-                  )
-                }
+              <NullableSelect<MachineMatchingStrategy>
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
               >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select one..." />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(MachineMatchingStrategy).map(
-                    (strategy: MachineMatchingStrategy) => (
-                      <SelectItem key={strategy} value={strategy}>
-                        {PolicyOptionLabels.machineMatchingStrategy[strategy]}
-                      </SelectItem>
-                    ),
-                  )}
-                </SelectContent>
-              </Select>
+                {Object.values(MachineMatchingStrategy).map((strategy) => (
+                  <SelectItem key={strategy} value={strategy}>
+                    {PolicyOptionLabels.machineMatchingStrategy[strategy]}
+                  </SelectItem>
+                ))}
+              </NullableSelect>
             </Field.Header>
 
             <FormMessage />
@@ -265,31 +198,16 @@ function DefaultLayout({
               variant="stacking"
               tooltip={PolicyAttributeDescriptions.componentMatchingStrategy}
             >
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(value) =>
-                  field.onChange(
-                    value === ""
-                      ? undefined
-                      : (value as ComponentMatchingStrategy),
-                  )
-                }
+              <NullableSelect<ComponentMatchingStrategy>
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
               >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder={field.value ?? "Select one..."} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(ComponentMatchingStrategy).map(
-                    (basis: ComponentMatchingStrategy) => (
-                      <SelectItem key={basis} value={basis}>
-                        {PolicyOptionLabels.componentMatchingStrategy[basis]}
-                      </SelectItem>
-                    ),
-                  )}
-                </SelectContent>
-              </Select>
+                {Object.values(ComponentMatchingStrategy).map((strategy) => (
+                  <SelectItem key={strategy} value={strategy}>
+                    {PolicyOptionLabels.componentMatchingStrategy[strategy]}
+                  </SelectItem>
+                ))}
+              </NullableSelect>
             </Field.Header>
             <FormMessage />
           </FormItem>
@@ -359,35 +277,22 @@ function AdvancedLayout({
                         PolicyAttributeDescriptions.machineUniquenessStrategy
                       }
                     >
-                      <Select
-                        value={field.value ?? ""}
-                        onValueChange={(value) =>
-                          field.onChange(
-                            value === ""
-                              ? undefined
-                              : (value as MachineUniquenessStrategy),
-                          )
-                        }
+                      <NullableSelect<MachineUniquenessStrategy>
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
                       >
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(MachineUniquenessStrategy).map(
-                            (strategy: MachineUniquenessStrategy) => (
-                              <SelectItem key={strategy} value={strategy}>
-                                {
-                                  PolicyOptionLabels.machineUniquenessStrategy[
-                                    strategy
-                                  ]
-                                }
-                              </SelectItem>
-                            ),
-                          )}
-                        </SelectContent>
-                      </Select>
+                        {Object.values(MachineUniquenessStrategy).map(
+                          (strategy) => (
+                            <SelectItem key={strategy} value={strategy}>
+                              {
+                                PolicyOptionLabels.machineUniquenessStrategy[
+                                  strategy
+                                ]
+                              }
+                            </SelectItem>
+                          ),
+                        )}
+                      </NullableSelect>
                     </Field.Header>
                     <FormMessage />
                   </FormItem>
@@ -405,34 +310,22 @@ function AdvancedLayout({
                         PolicyAttributeDescriptions.componentUniquenessStrategy
                       }
                     >
-                      <Select
-                        value={field.value ?? ""}
-                        onValueChange={(value) =>
-                          field.onChange(
-                            value === ""
-                              ? undefined
-                              : (value as ComponentUniquenessStrategy),
-                          )
-                        }
+                      <NullableSelect<ComponentUniquenessStrategy>
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
                       >
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select one..." />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(ComponentUniquenessStrategy).map(
-                            (strategy: ComponentUniquenessStrategy) => (
-                              <SelectItem key={strategy} value={strategy}>
-                                {
-                                  PolicyOptionLabels
-                                    .componentUniquenessStrategy[strategy]
-                                }
-                              </SelectItem>
-                            ),
-                          )}
-                        </SelectContent>
-                      </Select>
+                        {Object.values(ComponentUniquenessStrategy).map(
+                          (strategy) => (
+                            <SelectItem key={strategy} value={strategy}>
+                              {
+                                PolicyOptionLabels.componentUniquenessStrategy[
+                                  strategy
+                                ]
+                              }
+                            </SelectItem>
+                          ),
+                        )}
+                      </NullableSelect>
                     </Field.Header>
                     <FormMessage />
                   </FormItem>
@@ -448,31 +341,16 @@ function AdvancedLayout({
                       label="Overage strategy"
                       tooltip={PolicyAttributeDescriptions.overageStrategy}
                     >
-                      <Select
-                        value={field.value ?? ""}
-                        onValueChange={(value) =>
-                          field.onChange(
-                            value === ""
-                              ? undefined
-                              : (value as OverageStrategy),
-                          )
-                        }
+                      <NullableSelect<OverageStrategy>
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
                       >
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select one..." />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(OverageStrategy).map(
-                            (strategy: OverageStrategy) => (
-                              <SelectItem key={strategy} value={strategy}>
-                                {PolicyOptionLabels.overageStrategy[strategy]}
-                              </SelectItem>
-                            ),
-                          )}
-                        </SelectContent>
-                      </Select>
+                        {Object.values(OverageStrategy).map((strategy) => (
+                          <SelectItem key={strategy} value={strategy}>
+                            {PolicyOptionLabels.overageStrategy[strategy]}
+                          </SelectItem>
+                        ))}
+                      </NullableSelect>
                     </Field.Header>
                     <FormMessage />
                   </FormItem>
@@ -496,35 +374,22 @@ function AdvancedLayout({
                         PolicyAttributeDescriptions.machineMatchingStrategy
                       }
                     >
-                      <Select
-                        value={field.value ?? ""}
-                        onValueChange={(value) =>
-                          field.onChange(
-                            value === ""
-                              ? undefined
-                              : (value as MachineMatchingStrategy),
-                          )
-                        }
+                      <NullableSelect<MachineMatchingStrategy>
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
                       >
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select one..." />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(MachineMatchingStrategy).map(
-                            (strategy: MachineMatchingStrategy) => (
-                              <SelectItem key={strategy} value={strategy}>
-                                {
-                                  PolicyOptionLabels.machineMatchingStrategy[
-                                    strategy
-                                  ]
-                                }
-                              </SelectItem>
-                            ),
-                          )}
-                        </SelectContent>
-                      </Select>
+                        {Object.values(MachineMatchingStrategy).map(
+                          (strategy) => (
+                            <SelectItem key={strategy} value={strategy}>
+                              {
+                                PolicyOptionLabels.machineMatchingStrategy[
+                                  strategy
+                                ]
+                              }
+                            </SelectItem>
+                          ),
+                        )}
+                      </NullableSelect>
                     </Field.Header>
 
                     <FormMessage />
@@ -543,37 +408,22 @@ function AdvancedLayout({
                         PolicyAttributeDescriptions.componentMatchingStrategy
                       }
                     >
-                      <Select
-                        value={field.value ?? ""}
-                        onValueChange={(value) =>
-                          field.onChange(
-                            value === ""
-                              ? undefined
-                              : (value as ComponentMatchingStrategy),
-                          )
-                        }
+                      <NullableSelect<ComponentMatchingStrategy>
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
                       >
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue
-                              placeholder={field.value ?? "Select one..."}
-                            />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(ComponentMatchingStrategy).map(
-                            (basis: ComponentMatchingStrategy) => (
-                              <SelectItem key={basis} value={basis}>
-                                {
-                                  PolicyOptionLabels.componentMatchingStrategy[
-                                    basis
-                                  ]
-                                }
-                              </SelectItem>
-                            ),
-                          )}
-                        </SelectContent>
-                      </Select>
+                        {Object.values(ComponentMatchingStrategy).map(
+                          (strategy) => (
+                            <SelectItem key={strategy} value={strategy}>
+                              {
+                                PolicyOptionLabels.componentMatchingStrategy[
+                                  strategy
+                                ]
+                              }
+                            </SelectItem>
+                          ),
+                        )}
+                      </NullableSelect>
                     </Field.Header>
                     <FormMessage />
                   </FormItem>

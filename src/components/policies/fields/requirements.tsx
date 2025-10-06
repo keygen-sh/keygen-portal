@@ -3,6 +3,7 @@ import { useFormContext } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
+import { SelectItem } from "@/components/ui/select"
 import {
   FormField,
   FormItem,
@@ -10,13 +11,6 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form"
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select"
 
 import { cn } from "@/lib/utils"
 
@@ -31,6 +25,7 @@ import {
 import * as Field from "@/components/field"
 import SectionCard from "@/components/section-card"
 import KeyValueInput from "@/components/key-value-input"
+import NullableSelect from "@/components/nullable-select"
 
 type Layout = "default" | "advanced"
 
@@ -86,29 +81,16 @@ function DefaultLayout({
               variant="stacking"
               tooltip={PolicyAttributeDescriptions.checkInInterval}
             >
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(value) =>
-                  field.onChange(
-                    value === "" ? undefined : (value as CheckInInterval),
-                  )
-                }
+              <NullableSelect<CheckInInterval>
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
               >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(CheckInInterval).map(
-                    (interval: CheckInInterval) => (
-                      <SelectItem key={interval} value={interval}>
-                        {PolicyOptionLabels.checkInInterval[interval]}
-                      </SelectItem>
-                    ),
-                  )}
-                </SelectContent>
-              </Select>
+                {Object.values(CheckInInterval).map((interval) => (
+                  <SelectItem key={interval} value={interval}>
+                    {PolicyOptionLabels.checkInInterval[interval]}
+                  </SelectItem>
+                ))}
+              </NullableSelect>
             </Field.Header>
             <FormMessage />
           </FormItem>
@@ -152,31 +134,16 @@ function DefaultLayout({
                 variant="stacking"
                 tooltip={PolicyAttributeDescriptions.authenticationStrategy}
               >
-                <Select
-                  value={field.value ?? ""}
-                  onValueChange={(value) =>
-                    field.onChange(
-                      value === ""
-                        ? undefined
-                        : (value as AuthenticationStrategy),
-                    )
-                  }
+                <NullableSelect<AuthenticationStrategy>
+                  value={field.value}
+                  onChange={(value) => field.onChange(value)}
                 >
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select one..." />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {Object.values(AuthenticationStrategy).map(
-                      (strategy: AuthenticationStrategy) => (
-                        <SelectItem key={strategy} value={strategy}>
-                          {PolicyOptionLabels.authenticationStrategy[strategy]}
-                        </SelectItem>
-                      ),
-                    )}
-                  </SelectContent>
-                </Select>
+                  {Object.values(AuthenticationStrategy).map((strategy) => (
+                    <SelectItem key={strategy} value={strategy}>
+                      {PolicyOptionLabels.authenticationStrategy[strategy]}
+                    </SelectItem>
+                  ))}
+                </NullableSelect>
               </Field.Header>
               <FormMessage />
             </FormItem>
@@ -292,29 +259,16 @@ function AdvancedLayout({
                   label="Check-in interval"
                   tooltip={PolicyAttributeDescriptions.checkInInterval}
                 >
-                  <Select
-                    value={field.value ?? ""}
-                    onValueChange={(value) =>
-                      field.onChange(
-                        value === "" ? undefined : (value as CheckInInterval),
-                      )
-                    }
+                  <NullableSelect<CheckInInterval>
+                    value={field.value}
+                    onChange={(value) => field.onChange(value)}
                   >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {Object.values(CheckInInterval).map(
-                        (interval: CheckInInterval) => (
-                          <SelectItem key={interval} value={interval}>
-                            {PolicyOptionLabels.checkInInterval[interval]}
-                          </SelectItem>
-                        ),
-                      )}
-                    </SelectContent>
-                  </Select>
+                    {Object.values(CheckInInterval).map((interval) => (
+                      <SelectItem key={interval} value={interval}>
+                        {PolicyOptionLabels.checkInInterval[interval]}
+                      </SelectItem>
+                    ))}
+                  </NullableSelect>
                 </Field.Header>
                 <FormMessage />
               </FormItem>
@@ -356,35 +310,16 @@ function AdvancedLayout({
                     label="Authentication strategy"
                     tooltip={PolicyAttributeDescriptions.authenticationStrategy}
                   >
-                    <Select
-                      value={field.value ?? ""}
-                      onValueChange={(value) =>
-                        field.onChange(
-                          value === ""
-                            ? undefined
-                            : (value as AuthenticationStrategy),
-                        )
-                      }
+                    <NullableSelect<AuthenticationStrategy>
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
                     >
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select one..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {Object.values(AuthenticationStrategy).map(
-                          (strategy: AuthenticationStrategy) => (
-                            <SelectItem key={strategy} value={strategy}>
-                              {
-                                PolicyOptionLabels.authenticationStrategy[
-                                  strategy
-                                ]
-                              }
-                            </SelectItem>
-                          ),
-                        )}
-                      </SelectContent>
-                    </Select>
+                      {Object.values(AuthenticationStrategy).map((strategy) => (
+                        <SelectItem key={strategy} value={strategy}>
+                          {PolicyOptionLabels.authenticationStrategy[strategy]}
+                        </SelectItem>
+                      ))}
+                    </NullableSelect>
                   </Field.Header>
                   <FormMessage />
                 </FormItem>

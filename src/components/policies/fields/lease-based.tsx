@@ -29,6 +29,7 @@ import {
 
 import * as Field from "@/components/field"
 import SectionCard from "@/components/section-card"
+import NullableSelect from "@/components/nullable-select"
 
 type Layout = "default" | "advanced"
 
@@ -133,29 +134,16 @@ function DefaultLayout({
               variant="stacking"
               tooltip={PolicyAttributeDescriptions.heartbeatCullStrategy}
             >
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(value) =>
-                  field.onChange(
-                    value === "" ? undefined : (value as HeartbeatCullStrategy),
-                  )
-                }
+              <NullableSelect<HeartbeatCullStrategy>
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
               >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select one..." />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(HeartbeatCullStrategy).map(
-                    (strategy: HeartbeatCullStrategy) => (
-                      <SelectItem key={strategy} value={strategy}>
-                        {PolicyOptionLabels.heartbeatCullStrategy[strategy]}
-                      </SelectItem>
-                    ),
-                  )}
-                </SelectContent>
-              </Select>
+                {Object.values(HeartbeatCullStrategy).map((strategy) => (
+                  <SelectItem key={strategy} value={strategy}>
+                    {PolicyOptionLabels.heartbeatCullStrategy[strategy]}
+                  </SelectItem>
+                ))}
+              </NullableSelect>
             </Field.Header>
             <FormMessage />
           </FormItem>
@@ -166,35 +154,22 @@ function DefaultLayout({
         control={form.control}
         name="heartbeatBasis"
         render={({ field }) => (
-          <FormItem className="flex">
+          <FormItem>
             <Field.Header
               label="Heartbeat basis"
               variant="stacking"
               tooltip={PolicyAttributeDescriptions.heartbeatBasis}
             >
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(value) =>
-                  field.onChange(
-                    value === "" ? undefined : (value as HeartbeatBasis),
-                  )
-                }
+              <NullableSelect<HeartbeatBasis>
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
               >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select one..." />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(HeartbeatBasis).map(
-                    (basis: HeartbeatBasis) => (
-                      <SelectItem key={basis} value={basis}>
-                        {PolicyOptionLabels.heartbeatBasis[basis]}
-                      </SelectItem>
-                    ),
-                  )}
-                </SelectContent>
-              </Select>
+                {Object.values(HeartbeatBasis).map((basis) => (
+                  <SelectItem key={basis} value={basis}>
+                    {PolicyOptionLabels.heartbeatBasis[basis]}
+                  </SelectItem>
+                ))}
+              </NullableSelect>
             </Field.Header>
 
             <FormMessage />
@@ -214,35 +189,22 @@ function DefaultLayout({
                 PolicyAttributeDescriptions.heartbeatResurrectionStrategy
               }
             >
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(value) =>
-                  field.onChange(
-                    value === ""
-                      ? undefined
-                      : (value as HeartbeatResurrectionStrategy),
-                  )
-                }
+              <NullableSelect<HeartbeatResurrectionStrategy>
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
               >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder={field.value ?? "Select one..."} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(HeartbeatResurrectionStrategy).map(
-                    (strategy: HeartbeatResurrectionStrategy) => (
-                      <SelectItem key={strategy} value={strategy}>
-                        {
-                          PolicyOptionLabels.heartbeatResurrectionStrategy[
-                            strategy
-                          ]
-                        }
-                      </SelectItem>
-                    ),
-                  )}
-                </SelectContent>
-              </Select>
+                {Object.values(HeartbeatResurrectionStrategy).map(
+                  (strategy) => (
+                    <SelectItem key={strategy} value={strategy}>
+                      {
+                        PolicyOptionLabels.heartbeatResurrectionStrategy[
+                          strategy
+                        ]
+                      }
+                    </SelectItem>
+                  ),
+                )}
+              </NullableSelect>
             </Field.Header>
             <FormMessage />
           </FormItem>
@@ -298,31 +260,16 @@ function AdvancedLayout({
                   label="Heartbeat cull strategy"
                   tooltip={PolicyAttributeDescriptions.heartbeatCullStrategy}
                 >
-                  <Select
-                    value={field.value ?? ""}
-                    onValueChange={(value) =>
-                      field.onChange(
-                        value === ""
-                          ? undefined
-                          : (value as HeartbeatCullStrategy),
-                      )
-                    }
+                  <NullableSelect<HeartbeatCullStrategy>
+                    value={field.value}
+                    onChange={(value) => field.onChange(value)}
                   >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {Object.values(HeartbeatCullStrategy).map(
-                        (strategy: HeartbeatCullStrategy) => (
-                          <SelectItem key={strategy} value={strategy}>
-                            {PolicyOptionLabels.heartbeatCullStrategy[strategy]}
-                          </SelectItem>
-                        ),
-                      )}
-                    </SelectContent>
-                  </Select>
+                    {Object.values(HeartbeatCullStrategy).map((strategy) => (
+                      <SelectItem key={strategy} value={strategy}>
+                        {PolicyOptionLabels.heartbeatCullStrategy[strategy]}
+                      </SelectItem>
+                    ))}
+                  </NullableSelect>
                 </Field.Header>
                 <FormMessage />
               </FormItem>
@@ -339,36 +286,22 @@ function AdvancedLayout({
             control={form.control}
             name="heartbeatBasis"
             render={({ field }) => (
-              <FormItem className="flex">
+              <FormItem>
                 <Field.Header
                   label="Heartbeat basis"
                   tooltip={PolicyAttributeDescriptions.heartbeatBasis}
                 >
-                  <Select
-                    value={field.value ?? ""}
-                    onValueChange={(value) =>
-                      field.onChange(
-                        value === "" ? undefined : (value as HeartbeatBasis),
-                      )
-                    }
+                  <NullableSelect<HeartbeatBasis>
+                    value={field.value}
+                    onChange={(value) => field.onChange(value)}
                   >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select one..." />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {Object.values(HeartbeatBasis).map(
-                        (basis: HeartbeatBasis) => (
-                          <SelectItem key={basis} value={basis}>
-                            {PolicyOptionLabels.heartbeatBasis[basis]}
-                          </SelectItem>
-                        ),
-                      )}
-                    </SelectContent>
-                  </Select>
+                    {Object.values(HeartbeatBasis).map((basis) => (
+                      <SelectItem key={basis} value={basis}>
+                        {PolicyOptionLabels.heartbeatBasis[basis]}
+                      </SelectItem>
+                    ))}
+                  </NullableSelect>
                 </Field.Header>
-
                 <FormMessage />
               </FormItem>
             )}
@@ -385,37 +318,22 @@ function AdvancedLayout({
                     PolicyAttributeDescriptions.heartbeatResurrectionStrategy
                   }
                 >
-                  <Select
-                    value={field.value ?? ""}
-                    onValueChange={(value) =>
-                      field.onChange(
-                        value === ""
-                          ? undefined
-                          : (value as HeartbeatResurrectionStrategy),
-                      )
-                    }
+                  <NullableSelect<HeartbeatResurrectionStrategy>
+                    value={field.value}
+                    onChange={(value) => field.onChange(value)}
                   >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue
-                          placeholder={field.value ?? "Select one..."}
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {Object.values(HeartbeatResurrectionStrategy).map(
-                        (strategy: HeartbeatResurrectionStrategy) => (
-                          <SelectItem key={strategy} value={strategy}>
-                            {
-                              PolicyOptionLabels.heartbeatResurrectionStrategy[
-                                strategy
-                              ]
-                            }
-                          </SelectItem>
-                        ),
-                      )}
-                    </SelectContent>
-                  </Select>
+                    {Object.values(HeartbeatResurrectionStrategy).map(
+                      (strategy) => (
+                        <SelectItem key={strategy} value={strategy}>
+                          {
+                            PolicyOptionLabels.heartbeatResurrectionStrategy[
+                              strategy
+                            ]
+                          }
+                        </SelectItem>
+                      ),
+                    )}
+                  </NullableSelect>
                 </Field.Header>
                 <FormMessage />
               </FormItem>

@@ -29,6 +29,7 @@ import {
 import * as Field from "@/components/field"
 import SectionCard from "@/components/section-card"
 import KeyValueInput from "@/components/key-value-input"
+import NullableSelect from "@/components/nullable-select"
 
 type Layout = "default" | "advanced"
 
@@ -118,17 +119,11 @@ function DefaultLayout({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {products.length === 0 ? (
-                    <SelectItem value="" disabled>
-                      {productsLoading ? "Loading…" : "No products found"}
+                  {products.map((product) => (
+                    <SelectItem key={product.id} value={product.id}>
+                      {product.attributes.name}
                     </SelectItem>
-                  ) : (
-                    products.map((product) => (
-                      <SelectItem key={product.id} value={product.id}>
-                        {product.attributes.name}
-                      </SelectItem>
-                    ))
-                  )}
+                  ))}
                 </SelectContent>
               </Select>
             </Field.Header>
@@ -148,29 +143,16 @@ function DefaultLayout({
                 variant="stacking"
                 tooltip={PolicyAttributeDescriptions.authenticationStrategy}
               >
-                <Select
-                  value={field.value ?? ""}
-                  onValueChange={(value) =>
-                    field.onChange(
-                      value === ""
-                        ? undefined
-                        : (value as AuthenticationStrategy),
-                    )
-                  }
+                <NullableSelect<AuthenticationStrategy>
+                  value={field.value}
+                  onChange={(value) => field.onChange(value)}
                 >
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select one..." />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {Object.values(AuthenticationStrategy).map((strategy) => (
-                      <SelectItem key={strategy} value={strategy}>
-                        {PolicyOptionLabels.authenticationStrategy[strategy]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  {Object.values(AuthenticationStrategy).map((strategy) => (
+                    <SelectItem key={strategy} value={strategy}>
+                      {PolicyOptionLabels.authenticationStrategy[strategy]}
+                    </SelectItem>
+                  ))}
+                </NullableSelect>
               </Field.Header>
               <FormMessage />
             </FormItem>
@@ -254,17 +236,11 @@ function AdvancedLayout({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {products.length === 0 ? (
-                        <SelectItem value="" disabled>
-                          {productsLoading ? "Loading..." : "No products found"}
+                      {products.map((product) => (
+                        <SelectItem key={product.id} value={product.id}>
+                          {product.attributes.name}
                         </SelectItem>
-                      ) : (
-                        products.map((product) => (
-                          <SelectItem key={product.id} value={product.id}>
-                            {product.attributes.name}
-                          </SelectItem>
-                        ))
-                      )}
+                      ))}
                     </SelectContent>
                   </Select>
                 </Field.Header>
@@ -284,35 +260,16 @@ function AdvancedLayout({
                     variant="stacking"
                     tooltip={PolicyAttributeDescriptions.authenticationStrategy}
                   >
-                    <Select
-                      value={field.value ?? ""}
-                      onValueChange={(value) =>
-                        field.onChange(
-                          value === ""
-                            ? undefined
-                            : (value as AuthenticationStrategy),
-                        )
-                      }
+                    <NullableSelect<AuthenticationStrategy>
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
                     >
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select one..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {Object.values(AuthenticationStrategy).map(
-                          (strategy) => (
-                            <SelectItem key={strategy} value={strategy}>
-                              {
-                                PolicyOptionLabels.authenticationStrategy[
-                                  strategy
-                                ]
-                              }
-                            </SelectItem>
-                          ),
-                        )}
-                      </SelectContent>
-                    </Select>
+                      {Object.values(AuthenticationStrategy).map((strategy) => (
+                        <SelectItem key={strategy} value={strategy}>
+                          {PolicyOptionLabels.authenticationStrategy[strategy]}
+                        </SelectItem>
+                      ))}
+                    </NullableSelect>
                   </Field.Header>
                   <FormMessage />
                 </FormItem>

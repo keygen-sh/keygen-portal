@@ -1,27 +1,17 @@
 import { useState } from "react"
 import { useFormContext } from "react-hook-form"
 
-import { cn } from "@/lib/utils"
-
+import { Switch } from "@/components/ui/switch"
+import { Separator } from "@/components/ui/separator"
+import { SelectItem } from "@/components/ui/select"
 import {
   FormField,
   FormItem,
   FormControl,
   FormMessage,
 } from "@/components/ui/form"
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
-import { Separator } from "@/components/ui/separator"
 
-import * as Field from "@/components/field"
-import SectionCard from "@/components/section-card"
-import DurationInput from "@/components/duration-input"
+import { cn } from "@/lib/utils"
 
 import {
   PolicyFormValues,
@@ -32,6 +22,11 @@ import {
   RenewalBasis,
   TransferStrategy,
 } from "@/types/policies"
+
+import * as Field from "@/components/field"
+import SectionCard from "@/components/section-card"
+import DurationInput from "@/components/duration-input"
+import NullableSelect from "@/components/nullable-select"
 
 type Layout = "default" | "advanced"
 
@@ -94,27 +89,16 @@ function DefaultLayout({
               variant="stacking"
               tooltip={PolicyAttributeDescriptions.expirationStrategy}
             >
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(value) =>
-                  field.onChange(
-                    value === "" ? undefined : (value as ExpirationStrategy),
-                  )
-                }
+              <NullableSelect<ExpirationStrategy>
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
               >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select one..." />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(ExpirationStrategy).map((strategy) => (
-                    <SelectItem key={strategy} value={strategy}>
-                      {PolicyOptionLabels.expirationStrategy[strategy]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                {Object.values(ExpirationStrategy).map((strategy) => (
+                  <SelectItem key={strategy} value={strategy}>
+                    {PolicyOptionLabels.expirationStrategy[strategy]}
+                  </SelectItem>
+                ))}
+              </NullableSelect>
             </Field.Header>
             <FormMessage />
           </FormItem>
@@ -131,27 +115,16 @@ function DefaultLayout({
               variant="stacking"
               tooltip={PolicyAttributeDescriptions.expirationBasis}
             >
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(value) =>
-                  field.onChange(
-                    value === "" ? undefined : (value as ExpirationBasis),
-                  )
-                }
+              <NullableSelect<ExpirationBasis>
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
               >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder={field.value ?? "Select one..."} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(ExpirationBasis).map((basis) => (
-                    <SelectItem key={basis} value={basis}>
-                      {PolicyOptionLabels.expirationBasis[basis]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                {Object.values(ExpirationBasis).map((basis) => (
+                  <SelectItem key={basis} value={basis}>
+                    {PolicyOptionLabels.expirationBasis[basis]}
+                  </SelectItem>
+                ))}
+              </NullableSelect>
             </Field.Header>
             <FormMessage />
           </FormItem>
@@ -168,27 +141,16 @@ function DefaultLayout({
               variant="stacking"
               tooltip={PolicyAttributeDescriptions.renewalBasis}
             >
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(value) =>
-                  field.onChange(
-                    value === "" ? undefined : (value as RenewalBasis),
-                  )
-                }
+              <NullableSelect<RenewalBasis>
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
               >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="None" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(RenewalBasis).map((basis) => (
-                    <SelectItem key={basis} value={basis}>
-                      {PolicyOptionLabels.renewalBasis[basis]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                {Object.values(RenewalBasis).map((basis) => (
+                  <SelectItem key={basis} value={basis}>
+                    {PolicyOptionLabels.renewalBasis[basis]}
+                  </SelectItem>
+                ))}
+              </NullableSelect>
             </Field.Header>
             <FormMessage />
           </FormItem>
@@ -205,27 +167,16 @@ function DefaultLayout({
               variant="stacking"
               tooltip={PolicyAttributeDescriptions.transferStrategy}
             >
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(value) =>
-                  field.onChange(
-                    value === "" ? undefined : (value as TransferStrategy),
-                  )
-                }
+              <NullableSelect<TransferStrategy>
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
               >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(TransferStrategy).map((strategy) => (
-                    <SelectItem key={strategy} value={strategy}>
-                      {PolicyOptionLabels.transferStrategy[strategy]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                {Object.values(TransferStrategy).map((strategy) => (
+                  <SelectItem key={strategy} value={strategy}>
+                    {PolicyOptionLabels.transferStrategy[strategy]}
+                  </SelectItem>
+                ))}
+              </NullableSelect>
             </Field.Header>
             <FormMessage />
           </FormItem>
@@ -289,29 +240,16 @@ function AdvancedLayout({
                       label="Transfer strategy"
                       tooltip={PolicyAttributeDescriptions.transferStrategy}
                     >
-                      <Select
-                        value={field.value ?? ""}
-                        onValueChange={(value) =>
-                          field.onChange(
-                            value === ""
-                              ? undefined
-                              : (value as TransferStrategy),
-                          )
-                        }
+                      <NullableSelect<TransferStrategy>
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
                       >
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(TransferStrategy).map((strategy) => (
-                            <SelectItem key={strategy} value={strategy}>
-                              {PolicyOptionLabels.transferStrategy[strategy]}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        {Object.values(TransferStrategy).map((strategy) => (
+                          <SelectItem key={strategy} value={strategy}>
+                            {PolicyOptionLabels.transferStrategy[strategy]}
+                          </SelectItem>
+                        ))}
+                      </NullableSelect>
                     </Field.Header>
                     <FormMessage />
                   </FormItem>
@@ -327,29 +265,16 @@ function AdvancedLayout({
                       label="Expiration strategy"
                       tooltip={PolicyAttributeDescriptions.expirationStrategy}
                     >
-                      <Select
-                        value={field.value ?? ""}
-                        onValueChange={(value) =>
-                          field.onChange(
-                            value === ""
-                              ? undefined
-                              : (value as ExpirationStrategy),
-                          )
-                        }
+                      <NullableSelect<ExpirationStrategy>
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
                       >
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select one..." />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(ExpirationStrategy).map((strategy) => (
-                            <SelectItem key={strategy} value={strategy}>
-                              {PolicyOptionLabels.expirationStrategy[strategy]}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        {Object.values(ExpirationStrategy).map((strategy) => (
+                          <SelectItem key={strategy} value={strategy}>
+                            {PolicyOptionLabels.expirationStrategy[strategy]}
+                          </SelectItem>
+                        ))}
+                      </NullableSelect>
                     </Field.Header>
                     <FormMessage />
                   </FormItem>
@@ -371,31 +296,16 @@ function AdvancedLayout({
                       label="Expiration basis"
                       tooltip={PolicyAttributeDescriptions.expirationBasis}
                     >
-                      <Select
-                        value={field.value ?? ""}
-                        onValueChange={(value) =>
-                          field.onChange(
-                            value === ""
-                              ? undefined
-                              : (value as ExpirationBasis),
-                          )
-                        }
+                      <NullableSelect<ExpirationBasis>
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
                       >
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue
-                              placeholder={field.value ?? "Select one..."}
-                            />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(ExpirationBasis).map((basis) => (
-                            <SelectItem key={basis} value={basis}>
-                              {PolicyOptionLabels.expirationBasis[basis]}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        {Object.values(ExpirationBasis).map((basis) => (
+                          <SelectItem key={basis} value={basis}>
+                            {PolicyOptionLabels.expirationBasis[basis]}
+                          </SelectItem>
+                        ))}
+                      </NullableSelect>
                     </Field.Header>
                     <FormMessage />
                   </FormItem>
@@ -411,27 +321,16 @@ function AdvancedLayout({
                       label="Renewal basis"
                       tooltip={PolicyAttributeDescriptions.renewalBasis}
                     >
-                      <Select
-                        value={field.value ?? ""}
-                        onValueChange={(value) =>
-                          field.onChange(
-                            value === "" ? undefined : (value as RenewalBasis),
-                          )
-                        }
+                      <NullableSelect<RenewalBasis>
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
                       >
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="None" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(RenewalBasis).map((basis) => (
-                            <SelectItem key={basis} value={basis}>
-                              {PolicyOptionLabels.renewalBasis[basis]}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        {Object.values(RenewalBasis).map((basis) => (
+                          <SelectItem key={basis} value={basis}>
+                            {PolicyOptionLabels.renewalBasis[basis]}
+                          </SelectItem>
+                        ))}
+                      </NullableSelect>
                     </Field.Header>
                     <FormMessage />
                   </FormItem>

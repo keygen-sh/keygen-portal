@@ -4,19 +4,13 @@ import { useFormContext } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
+import { SelectItem } from "@/components/ui/select"
 import {
   FormField,
   FormItem,
   FormControl,
   FormMessage,
 } from "@/components/ui/form"
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select"
 
 import { cn } from "@/lib/utils"
 
@@ -30,6 +24,7 @@ import {
 
 import * as Field from "@/components/field"
 import SectionCard from "@/components/section-card"
+import NullableSelect from "@/components/nullable-select"
 
 type ProcessBasedLayout = "default" | "advanced"
 
@@ -95,31 +90,16 @@ function DefaultLayout({
               variant="stacking"
               tooltip={PolicyAttributeDescriptions.machineLeasingStrategy}
             >
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(value) =>
-                  field.onChange(
-                    value === ""
-                      ? undefined
-                      : (value as MachineLeasingStrategy),
-                  )
-                }
+              <NullableSelect<MachineLeasingStrategy>
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
               >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(MachineLeasingStrategy).map(
-                    (strategy: MachineLeasingStrategy) => (
-                      <SelectItem key={strategy} value={strategy}>
-                        {PolicyOptionLabels.machineLeasingStrategy[strategy]}
-                      </SelectItem>
-                    ),
-                  )}
-                </SelectContent>
-              </Select>
+                {Object.values(MachineLeasingStrategy).map((strategy) => (
+                  <SelectItem key={strategy} value={strategy}>
+                    {PolicyOptionLabels.machineLeasingStrategy[strategy]}
+                  </SelectItem>
+                ))}
+              </NullableSelect>
             </Field.Header>
             <FormMessage />
           </FormItem>
@@ -136,31 +116,16 @@ function DefaultLayout({
               variant="stacking"
               tooltip={PolicyAttributeDescriptions.processLeasingStrategy}
             >
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(value) =>
-                  field.onChange(
-                    value === ""
-                      ? undefined
-                      : (value as ProcessLeasingStrategy),
-                  )
-                }
+              <NullableSelect<ProcessLeasingStrategy>
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
               >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select one..." />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(ProcessLeasingStrategy).map(
-                    (strategy: ProcessLeasingStrategy) => (
-                      <SelectItem key={strategy} value={strategy}>
-                        {PolicyOptionLabels.processLeasingStrategy[strategy]}
-                      </SelectItem>
-                    ),
-                  )}
-                </SelectContent>
-              </Select>
+                {Object.values(ProcessLeasingStrategy).map((strategy) => (
+                  <SelectItem key={strategy} value={strategy}>
+                    {PolicyOptionLabels.processLeasingStrategy[strategy]}
+                  </SelectItem>
+                ))}
+              </NullableSelect>
             </Field.Header>
 
             <FormMessage />
@@ -231,35 +196,22 @@ function AdvancedLayout({
                         PolicyAttributeDescriptions.machineLeasingStrategy
                       }
                     >
-                      <Select
-                        value={field.value ?? ""}
-                        onValueChange={(value) =>
-                          field.onChange(
-                            value === ""
-                              ? undefined
-                              : (value as MachineLeasingStrategy),
-                          )
-                        }
+                      <NullableSelect<MachineLeasingStrategy>
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
                       >
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(MachineLeasingStrategy).map(
-                            (strategy: MachineLeasingStrategy) => (
-                              <SelectItem key={strategy} value={strategy}>
-                                {
-                                  PolicyOptionLabels.machineLeasingStrategy[
-                                    strategy
-                                  ]
-                                }
-                              </SelectItem>
-                            ),
-                          )}
-                        </SelectContent>
-                      </Select>
+                        {Object.values(MachineLeasingStrategy).map(
+                          (strategy) => (
+                            <SelectItem key={strategy} value={strategy}>
+                              {
+                                PolicyOptionLabels.machineLeasingStrategy[
+                                  strategy
+                                ]
+                              }
+                            </SelectItem>
+                          ),
+                        )}
+                      </NullableSelect>
                     </Field.Header>
                     <FormMessage />
                   </FormItem>
@@ -283,35 +235,22 @@ function AdvancedLayout({
                         PolicyAttributeDescriptions.processLeasingStrategy
                       }
                     >
-                      <Select
-                        value={field.value ?? ""}
-                        onValueChange={(value) =>
-                          field.onChange(
-                            value === ""
-                              ? undefined
-                              : (value as ProcessLeasingStrategy),
-                          )
-                        }
+                      <NullableSelect<ProcessLeasingStrategy>
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
                       >
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select one..." />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(ProcessLeasingStrategy).map(
-                            (strategy: ProcessLeasingStrategy) => (
-                              <SelectItem key={strategy} value={strategy}>
-                                {
-                                  PolicyOptionLabels.processLeasingStrategy[
-                                    strategy
-                                  ]
-                                }
-                              </SelectItem>
-                            ),
-                          )}
-                        </SelectContent>
-                      </Select>
+                        {Object.values(ProcessLeasingStrategy).map(
+                          (strategy) => (
+                            <SelectItem key={strategy} value={strategy}>
+                              {
+                                PolicyOptionLabels.processLeasingStrategy[
+                                  strategy
+                                ]
+                              }
+                            </SelectItem>
+                          ),
+                        )}
+                      </NullableSelect>
                     </Field.Header>
 
                     <FormMessage />

@@ -31,7 +31,7 @@ export default function KeyValueInput<
   valuePlaceholder = "Value",
   disabled,
 }: KeyValueInputProps<TFormValues>): React.ReactElement {
-  const { setValue } = useFormContext<TFormValues>()
+  const { register, getValues, setValue } = useFormContext<TFormValues>()
 
   const saved = useWatch({ name }) as Record<string, string> | undefined
 
@@ -51,6 +51,17 @@ export default function KeyValueInput<
       initialized.current = true
     }
   }, [saved])
+
+  useEffect(() => {
+    register(name as any)
+    const v = getValues(name as any)
+    if (v == null || typeof v !== "object" || Array.isArray(v)) {
+      setValue(name, {} as PathValue<TFormValues, typeof name>, {
+        shouldValidate: true,
+        shouldDirty: false,
+      })
+    }
+  }, [name, register, getValues, setValue])
 
   const nextId = useRef<string | null>(null)
 

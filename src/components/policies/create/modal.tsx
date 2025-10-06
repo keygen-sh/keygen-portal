@@ -137,7 +137,7 @@ export const BaseSchema: z.ZodType<PolicyFormValues> = z
     floating: z.boolean().optional(),
     protected: z.boolean().optional(),
     usePool: z.boolean().optional(),
-    checkInInterval: z.nativeEnum(CheckInInterval).nullable().optional(),
+    checkInInterval: z.nativeEnum(CheckInInterval).optional(),
     checkInIntervalCount: z.coerce
       .number()
       .int()

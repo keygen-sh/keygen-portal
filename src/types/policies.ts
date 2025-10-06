@@ -183,7 +183,7 @@ export interface PolicyInput {
   encrypted?: boolean
 
   requireCheckIn?: boolean
-  checkInInterval?: CheckInInterval | null
+  checkInInterval?: CheckInInterval
   checkInIntervalCount?: number | null
 
   requireProductScope?: boolean

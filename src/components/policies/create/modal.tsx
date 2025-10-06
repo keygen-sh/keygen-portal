@@ -261,6 +261,8 @@ export default function PoliciesCreateModal({
   const [step, direction, goTo] = useSlide(steps.map((_, i) => i))
 
   const current = steps[step]
+  const last = step === steps.length - 1
+
   const crumb = steps.slice(1)
 
   const next = useCallback(async () => {
@@ -513,7 +515,7 @@ export default function PoliciesCreateModal({
               </DialogTitle>
             </DialogHeader>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleCreatePolicy)}>
+              <form onSubmit={(e) => e.preventDefault()}>
                 <Motion.Slide direction={direction}>
                   <ScrollArea
                     key={current?.key ?? "attributes"}
@@ -535,23 +537,17 @@ export default function PoliciesCreateModal({
                     Back
                   </Button>
 
-                  {step < steps.length - 1 ? (
-                    <Button
-                      type="button"
-                      onClick={next}
-                      className="max-w-[12rem] flex-1 basis-1/2"
-                    >
-                      Next step
-                    </Button>
-                  ) : (
-                    <Button
-                      type="submit"
-                      className="max-w-[12rem] flex-1 basis-1/2"
-                      disabled={!form.formState.isValid}
-                    >
-                      Create
-                    </Button>
-                  )}
+                  <Button
+                    key={last ? "create" : "next"}
+                    type="button"
+                    onClick={
+                      last ? form.handleSubmit(handleCreatePolicy) : next
+                    }
+                    className="max-w-[12rem] flex-1 basis-1/2"
+                    disabled={last && !form.formState.isValid}
+                  >
+                    {last ? "Create" : "Next step"}
+                  </Button>
                 </DialogFooter>
               </form>
             </Form>

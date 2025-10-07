@@ -83,7 +83,7 @@ function DefaultLayout({
       <FormField
         control={form.control}
         name="machineLeasingStrategy"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <FormItem>
             <Field.Header
               label="Machine leasing strategy"
@@ -93,6 +93,7 @@ function DefaultLayout({
               <NullableSelect<MachineLeasingStrategy>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                invalid={!!fieldState.error}
               >
                 {Object.values(MachineLeasingStrategy).map((strategy) => (
                   <SelectItem key={strategy} value={strategy}>
@@ -109,7 +110,7 @@ function DefaultLayout({
       <FormField
         control={form.control}
         name="processLeasingStrategy"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <FormItem className="flex">
             <Field.Header
               label="Process leasing strategy"
@@ -119,6 +120,7 @@ function DefaultLayout({
               <NullableSelect<ProcessLeasingStrategy>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                invalid={!!fieldState.error}
               >
                 {Object.values(ProcessLeasingStrategy).map((strategy) => (
                   <SelectItem key={strategy} value={strategy}>
@@ -188,7 +190,7 @@ function AdvancedLayout({
               <FormField
                 control={form.control}
                 name="machineLeasingStrategy"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <Field.Header
                       label="Machine leasing strategy"
@@ -199,6 +201,7 @@ function AdvancedLayout({
                       <NullableSelect<MachineLeasingStrategy>
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
+                        invalid={!!fieldState.error}
                       >
                         {Object.values(MachineLeasingStrategy).map(
                           (strategy) => (
@@ -227,7 +230,7 @@ function AdvancedLayout({
               <FormField
                 control={form.control}
                 name="processLeasingStrategy"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem className="flex">
                     <Field.Header
                       label="Process leasing strategy"
@@ -238,6 +241,7 @@ function AdvancedLayout({
                       <NullableSelect<ProcessLeasingStrategy>
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
+                        invalid={!!fieldState.error}
                       >
                         {Object.values(ProcessLeasingStrategy).map(
                           (strategy) => (

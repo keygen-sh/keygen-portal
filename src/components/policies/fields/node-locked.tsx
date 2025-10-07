@@ -86,7 +86,7 @@ function DefaultLayout({
       <FormField
         control={form.control}
         name="machineUniquenessStrategy"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <FormItem>
             <Field.Header
               label="Machine uniqueness strategy"
@@ -96,6 +96,7 @@ function DefaultLayout({
               <NullableSelect<MachineUniquenessStrategy>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                invalid={!!fieldState.error}
               >
                 {Object.values(MachineUniquenessStrategy).map((strategy) => (
                   <SelectItem key={strategy} value={strategy}>
@@ -112,7 +113,7 @@ function DefaultLayout({
       <FormField
         control={form.control}
         name="componentUniquenessStrategy"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <FormItem>
             <Field.Header
               label="Component uniqueness strategy"
@@ -122,6 +123,7 @@ function DefaultLayout({
               <NullableSelect<ComponentUniquenessStrategy>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                invalid={!!fieldState.error}
               >
                 {Object.values(ComponentUniquenessStrategy).map((strategy) => (
                   <SelectItem key={strategy} value={strategy}>
@@ -138,7 +140,7 @@ function DefaultLayout({
       <FormField
         control={form.control}
         name="overageStrategy"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <FormItem>
             <Field.Header
               label="Overage strategy"
@@ -148,6 +150,7 @@ function DefaultLayout({
               <NullableSelect<OverageStrategy>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                invalid={!!fieldState.error}
               >
                 {Object.values(OverageStrategy).map((strategy) => (
                   <SelectItem key={strategy} value={strategy}>
@@ -164,7 +167,7 @@ function DefaultLayout({
       <FormField
         control={form.control}
         name="machineMatchingStrategy"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <FormItem>
             <Field.Header
               label="Machine matching strategy"
@@ -174,6 +177,7 @@ function DefaultLayout({
               <NullableSelect<MachineMatchingStrategy>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                invalid={!!fieldState.error}
               >
                 {Object.values(MachineMatchingStrategy).map((strategy) => (
                   <SelectItem key={strategy} value={strategy}>
@@ -191,7 +195,7 @@ function DefaultLayout({
       <FormField
         control={form.control}
         name="componentMatchingStrategy"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <FormItem>
             <Field.Header
               label="Component matching strategy"
@@ -201,6 +205,7 @@ function DefaultLayout({
               <NullableSelect<ComponentMatchingStrategy>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                invalid={!!fieldState.error}
               >
                 {Object.values(ComponentMatchingStrategy).map((strategy) => (
                   <SelectItem key={strategy} value={strategy}>
@@ -269,7 +274,7 @@ function AdvancedLayout({
               <FormField
                 control={form.control}
                 name="machineUniquenessStrategy"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <Field.Header
                       label="Machine uniqueness strategy"
@@ -280,6 +285,7 @@ function AdvancedLayout({
                       <NullableSelect<MachineUniquenessStrategy>
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
+                        invalid={!!fieldState.error}
                       >
                         {Object.values(MachineUniquenessStrategy).map(
                           (strategy) => (
@@ -302,7 +308,7 @@ function AdvancedLayout({
               <FormField
                 control={form.control}
                 name="componentUniquenessStrategy"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <Field.Header
                       label="Component uniqueness strategy"
@@ -313,6 +319,7 @@ function AdvancedLayout({
                       <NullableSelect<ComponentUniquenessStrategy>
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
+                        invalid={!!fieldState.error}
                       >
                         {Object.values(ComponentUniquenessStrategy).map(
                           (strategy) => (
@@ -335,7 +342,7 @@ function AdvancedLayout({
               <FormField
                 control={form.control}
                 name="overageStrategy"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <Field.Header
                       label="Overage strategy"
@@ -344,6 +351,7 @@ function AdvancedLayout({
                       <NullableSelect<OverageStrategy>
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
+                        invalid={!!fieldState.error}
                       >
                         {Object.values(OverageStrategy).map((strategy) => (
                           <SelectItem key={strategy} value={strategy}>
@@ -366,7 +374,7 @@ function AdvancedLayout({
               <FormField
                 control={form.control}
                 name="machineMatchingStrategy"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <Field.Header
                       label="Machine matching strategy"
@@ -377,6 +385,7 @@ function AdvancedLayout({
                       <NullableSelect<MachineMatchingStrategy>
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
+                        invalid={!!fieldState.error}
                       >
                         {Object.values(MachineMatchingStrategy).map(
                           (strategy) => (
@@ -400,7 +409,7 @@ function AdvancedLayout({
               <FormField
                 control={form.control}
                 name="componentMatchingStrategy"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <Field.Header
                       label="Component matching strategy"
@@ -411,6 +420,7 @@ function AdvancedLayout({
                       <NullableSelect<ComponentMatchingStrategy>
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
+                        invalid={!!fieldState.error}
                       >
                         {Object.values(ComponentMatchingStrategy).map(
                           (strategy) => (

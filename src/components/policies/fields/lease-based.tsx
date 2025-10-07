@@ -157,7 +157,7 @@ function DefaultLayout({
       <FormField
         control={form.control}
         name="heartbeatCullStrategy"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <FormItem>
             <Field.Header
               label="Heartbeat cull strategy"
@@ -167,6 +167,7 @@ function DefaultLayout({
               <NullableSelect<HeartbeatCullStrategy>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                invalid={!!fieldState.error}
                 disabled={!requireHeartbeat}
               >
                 {Object.values(HeartbeatCullStrategy).map((strategy) => (
@@ -184,7 +185,7 @@ function DefaultLayout({
       <FormField
         control={form.control}
         name="heartbeatBasis"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <FormItem>
             <Field.Header
               label="Heartbeat basis"
@@ -194,6 +195,7 @@ function DefaultLayout({
               <NullableSelect<HeartbeatBasis>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                invalid={!!fieldState.error}
                 disabled={!requireHeartbeat}
               >
                 {Object.values(HeartbeatBasis).map((basis) => (
@@ -212,7 +214,7 @@ function DefaultLayout({
       <FormField
         control={form.control}
         name="heartbeatResurrectionStrategy"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <FormItem>
             <Field.Header
               label="Heartbeat resurrection strategy"
@@ -224,6 +226,7 @@ function DefaultLayout({
               <NullableSelect<HeartbeatResurrectionStrategy>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                invalid={!!fieldState.error}
                 disabled={!requireHeartbeat}
               >
                 {Object.values(HeartbeatResurrectionStrategy).map(
@@ -287,7 +290,7 @@ function AdvancedLayout({
           <FormField
             control={form.control}
             name="heartbeatCullStrategy"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem>
                 <Field.Header
                   label="Heartbeat cull strategy"
@@ -296,6 +299,7 @@ function AdvancedLayout({
                   <NullableSelect<HeartbeatCullStrategy>
                     value={field.value}
                     onChange={(value) => field.onChange(value)}
+                    invalid={!!fieldState.error}
                   >
                     {Object.values(HeartbeatCullStrategy).map((strategy) => (
                       <SelectItem key={strategy} value={strategy}>
@@ -318,7 +322,7 @@ function AdvancedLayout({
           <FormField
             control={form.control}
             name="heartbeatBasis"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem>
                 <Field.Header
                   label="Heartbeat basis"
@@ -327,6 +331,7 @@ function AdvancedLayout({
                   <NullableSelect<HeartbeatBasis>
                     value={field.value}
                     onChange={(value) => field.onChange(value)}
+                    invalid={!!fieldState.error}
                   >
                     {Object.values(HeartbeatBasis).map((basis) => (
                       <SelectItem key={basis} value={basis}>
@@ -343,7 +348,7 @@ function AdvancedLayout({
           <FormField
             control={form.control}
             name="heartbeatResurrectionStrategy"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem>
                 <Field.Header
                   label="Heartbeat resurrection strategy"
@@ -354,6 +359,7 @@ function AdvancedLayout({
                   <NullableSelect<HeartbeatResurrectionStrategy>
                     value={field.value}
                     onChange={(value) => field.onChange(value)}
+                    invalid={!!fieldState.error}
                   >
                     {Object.values(HeartbeatResurrectionStrategy).map(
                       (strategy) => (

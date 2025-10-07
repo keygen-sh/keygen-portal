@@ -107,7 +107,7 @@ function DefaultLayout({
       <FormField
         control={form.control}
         name="expirationStrategy"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <FormItem>
             <Field.Header
               label="Expiration strategy"
@@ -117,6 +117,7 @@ function DefaultLayout({
               <NullableSelect<ExpirationStrategy>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                invalid={!!fieldState.error}
                 disabled={!duration}
               >
                 {Object.values(ExpirationStrategy).map((strategy) => (
@@ -134,7 +135,7 @@ function DefaultLayout({
       <FormField
         control={form.control}
         name="expirationBasis"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <FormItem>
             <Field.Header
               label="Expiration basis"
@@ -144,6 +145,7 @@ function DefaultLayout({
               <NullableSelect<ExpirationBasis>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                invalid={!!fieldState.error}
                 disabled={!duration}
               >
                 {Object.values(ExpirationBasis).map((basis) => (
@@ -161,7 +163,7 @@ function DefaultLayout({
       <FormField
         control={form.control}
         name="renewalBasis"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <FormItem>
             <Field.Header
               label="Renewal basis"
@@ -171,6 +173,7 @@ function DefaultLayout({
               <NullableSelect<RenewalBasis>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                invalid={!!fieldState.error}
                 disabled={!duration}
               >
                 {Object.values(RenewalBasis).map((basis) => (
@@ -188,7 +191,7 @@ function DefaultLayout({
       <FormField
         control={form.control}
         name="transferStrategy"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <FormItem>
             <Field.Header
               label="Transfer strategy"
@@ -198,6 +201,7 @@ function DefaultLayout({
               <NullableSelect<TransferStrategy>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                invalid={!!fieldState.error}
                 disabled={!duration}
               >
                 {Object.values(TransferStrategy).map((strategy) => (
@@ -263,7 +267,7 @@ function AdvancedLayout({
               <FormField
                 control={form.control}
                 name="transferStrategy"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <Field.Header
                       label="Transfer strategy"
@@ -272,6 +276,7 @@ function AdvancedLayout({
                       <NullableSelect<TransferStrategy>
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
+                        invalid={!!fieldState.error}
                       >
                         {Object.values(TransferStrategy).map((strategy) => (
                           <SelectItem key={strategy} value={strategy}>
@@ -288,7 +293,7 @@ function AdvancedLayout({
               <FormField
                 control={form.control}
                 name="expirationStrategy"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <Field.Header
                       label="Expiration strategy"
@@ -297,6 +302,7 @@ function AdvancedLayout({
                       <NullableSelect<ExpirationStrategy>
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
+                        invalid={!!fieldState.error}
                       >
                         {Object.values(ExpirationStrategy).map((strategy) => (
                           <SelectItem key={strategy} value={strategy}>
@@ -319,7 +325,7 @@ function AdvancedLayout({
               <FormField
                 control={form.control}
                 name="expirationBasis"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <Field.Header
                       label="Expiration basis"
@@ -328,6 +334,7 @@ function AdvancedLayout({
                       <NullableSelect<ExpirationBasis>
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
+                        invalid={!!fieldState.error}
                       >
                         {Object.values(ExpirationBasis).map((basis) => (
                           <SelectItem key={basis} value={basis}>
@@ -344,7 +351,7 @@ function AdvancedLayout({
               <FormField
                 control={form.control}
                 name="renewalBasis"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <Field.Header
                       label="Renewal basis"
@@ -353,6 +360,7 @@ function AdvancedLayout({
                       <NullableSelect<RenewalBasis>
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
+                        invalid={!!fieldState.error}
                       >
                         {Object.values(RenewalBasis).map((basis) => (
                           <SelectItem key={basis} value={basis}>

@@ -136,7 +136,7 @@ function DefaultLayout({
         <FormField
           control={form.control}
           name="authenticationStrategy"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <FormItem>
               <Field.Header
                 label="Authentication strategy"
@@ -146,6 +146,7 @@ function DefaultLayout({
                 <NullableSelect<AuthenticationStrategy>
                   value={field.value}
                   onChange={(value) => field.onChange(value)}
+                  invalid={!!fieldState.error}
                 >
                   {Object.values(AuthenticationStrategy).map((strategy) => (
                     <SelectItem key={strategy} value={strategy}>
@@ -253,7 +254,7 @@ function AdvancedLayout({
             <FormField
               control={form.control}
               name="authenticationStrategy"
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <FormItem>
                   <Field.Header
                     label="Authentication strategy"
@@ -263,6 +264,7 @@ function AdvancedLayout({
                     <NullableSelect<AuthenticationStrategy>
                       value={field.value}
                       onChange={(value) => field.onChange(value)}
+                      invalid={!!fieldState.error}
                     >
                       {Object.values(AuthenticationStrategy).map((strategy) => (
                         <SelectItem key={strategy} value={strategy}>

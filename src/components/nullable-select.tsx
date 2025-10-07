@@ -14,6 +14,7 @@ const CLEAR = "__CLEAR__" as const
 type NullableSelectProps<T extends string> = {
   value: T | null | undefined
   onChange: (v: T | null) => void
+  invalid: boolean
   clearLabel?: string
   placeholder?: string
   className?: string
@@ -24,6 +25,7 @@ type NullableSelectProps<T extends string> = {
 export default function NullableSelect<T extends string>({
   value,
   onChange,
+  invalid,
   clearLabel = "Clear",
   placeholder = "Select one...",
   className,
@@ -37,7 +39,10 @@ export default function NullableSelect<T extends string>({
       value={rendered}
       onValueChange={(v) => onChange(v === CLEAR || v === "" ? null : (v as T))}
     >
-      <SelectTrigger className={cn("w-full", className)} disabled={disabled}>
+      <SelectTrigger
+        className={cn("w-full", invalid && "!border-destructive", className)}
+        disabled={disabled}
+      >
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

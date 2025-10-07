@@ -170,10 +170,10 @@ export interface PolicyAttributes {
 export interface PolicyInput {
   name: string
   duration?: number | null
-  expirationStrategy?: ExpirationStrategy
-  expirationBasis?: ExpirationBasis
-  renewalBasis?: RenewalBasis
-  transferStrategy?: TransferStrategy
+  expirationStrategy?: ExpirationStrategy | null
+  expirationBasis?: ExpirationBasis | null
+  renewalBasis?: RenewalBasis | null
+  transferStrategy?: TransferStrategy | null
 
   strict?: boolean
   floating?: boolean
@@ -183,7 +183,7 @@ export interface PolicyInput {
   encrypted?: boolean
 
   requireCheckIn?: boolean
-  checkInInterval?: CheckInInterval
+  checkInInterval?: CheckInInterval | null
   checkInIntervalCount?: number | null
 
   requireProductScope?: boolean
@@ -203,19 +203,19 @@ export interface PolicyInput {
 
   requireHeartbeat?: boolean
   heartbeatDuration?: number | null
-  heartbeatBasis?: HeartbeatBasis
-  heartbeatCullStrategy?: HeartbeatCullStrategy
-  heartbeatResurrectionStrategy?: HeartbeatResurrectionStrategy
+  heartbeatBasis?: HeartbeatBasis | null
+  heartbeatCullStrategy?: HeartbeatCullStrategy | null
+  heartbeatResurrectionStrategy?: HeartbeatResurrectionStrategy | null
 
-  machineUniquenessStrategy?: MachineUniquenessStrategy
-  machineMatchingStrategy?: MachineMatchingStrategy
-  componentUniquenessStrategy?: ComponentUniquenessStrategy
-  componentMatchingStrategy?: ComponentMatchingStrategy
-  machineLeasingStrategy?: MachineLeasingStrategy
-  processLeasingStrategy?: ProcessLeasingStrategy
-  overageStrategy?: OverageStrategy
+  machineUniquenessStrategy?: MachineUniquenessStrategy | null
+  machineMatchingStrategy?: MachineMatchingStrategy | null
+  componentUniquenessStrategy?: ComponentUniquenessStrategy | null
+  componentMatchingStrategy?: ComponentMatchingStrategy | null
+  machineLeasingStrategy?: MachineLeasingStrategy | null
+  processLeasingStrategy?: ProcessLeasingStrategy | null
+  overageStrategy?: OverageStrategy | null
 
-  authenticationStrategy?: AuthenticationStrategy
+  authenticationStrategy?: AuthenticationStrategy | null
 
   metadata?: Record<string, any>
 }

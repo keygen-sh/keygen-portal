@@ -82,10 +82,10 @@ export const BaseSchema: z.ZodType<PolicyFormValues> = z
       .optional()
       .transform((value) => (value === 0 ? null : value)),
 
-    expirationStrategy: z.nativeEnum(ExpirationStrategy).optional(),
-    expirationBasis: z.nativeEnum(ExpirationBasis).optional(),
-    renewalBasis: z.nativeEnum(RenewalBasis).optional(),
-    transferStrategy: z.nativeEnum(TransferStrategy).optional(),
+    expirationStrategy: z.nativeEnum(ExpirationStrategy).nullable().optional(),
+    expirationBasis: z.nativeEnum(ExpirationBasis).nullable().optional(),
+    renewalBasis: z.nativeEnum(RenewalBasis).nullable().optional(),
+    transferStrategy: z.nativeEnum(TransferStrategy).nullable().optional(),
 
     maxMachines: z.coerce
       .number()
@@ -97,17 +97,29 @@ export const BaseSchema: z.ZodType<PolicyFormValues> = z
 
     machineUniquenessStrategy: z
       .nativeEnum(MachineUniquenessStrategy)
+      .nullable()
       .optional(),
-    machineMatchingStrategy: z.nativeEnum(MachineMatchingStrategy).optional(),
-    machineLeasingStrategy: z.nativeEnum(MachineLeasingStrategy).optional(),
-    processLeasingStrategy: z.nativeEnum(ProcessLeasingStrategy).optional(),
+    machineMatchingStrategy: z
+      .nativeEnum(MachineMatchingStrategy)
+      .nullable()
+      .optional(),
+    machineLeasingStrategy: z
+      .nativeEnum(MachineLeasingStrategy)
+      .nullable()
+      .optional(),
+    processLeasingStrategy: z
+      .nativeEnum(ProcessLeasingStrategy)
+      .nullable()
+      .optional(),
     componentUniquenessStrategy: z
       .nativeEnum(ComponentUniquenessStrategy)
+      .nullable()
       .optional(),
     componentMatchingStrategy: z
       .nativeEnum(ComponentMatchingStrategy)
+      .nullable()
       .optional(),
-    overageStrategy: z.nativeEnum(OverageStrategy).optional(),
+    overageStrategy: z.nativeEnum(OverageStrategy).nullable().optional(),
 
     maxUsers: z.coerce
       .number()
@@ -127,17 +139,21 @@ export const BaseSchema: z.ZodType<PolicyFormValues> = z
 
     requireHeartbeat: z.boolean().optional(),
     heartbeatDuration: z.coerce.number().int().nullable().optional(),
-    heartbeatBasis: z.nativeEnum(HeartbeatBasis).optional(),
-    heartbeatCullStrategy: z.nativeEnum(HeartbeatCullStrategy).optional(),
+    heartbeatBasis: z.nativeEnum(HeartbeatBasis).nullable().optional(),
+    heartbeatCullStrategy: z
+      .nativeEnum(HeartbeatCullStrategy)
+      .nullable()
+      .optional(),
     heartbeatResurrectionStrategy: z
       .nativeEnum(HeartbeatResurrectionStrategy)
+      .nullable()
       .optional(),
 
     strict: z.boolean().optional(),
     floating: z.boolean().optional(),
     protected: z.boolean().optional(),
     usePool: z.boolean().optional(),
-    checkInInterval: z.nativeEnum(CheckInInterval).optional(),
+    checkInInterval: z.nativeEnum(CheckInInterval).nullable().optional(),
     checkInIntervalCount: z.coerce
       .number()
       .int()
@@ -146,7 +162,10 @@ export const BaseSchema: z.ZodType<PolicyFormValues> = z
       .nullable()
       .optional(),
 
-    authenticationStrategy: z.nativeEnum(AuthenticationStrategy).optional(),
+    authenticationStrategy: z
+      .nativeEnum(AuthenticationStrategy)
+      .nullable()
+      .optional(),
 
     requireProductScope: z.boolean().optional(),
     requirePolicyScope: z.boolean().optional(),

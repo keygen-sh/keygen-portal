@@ -12,8 +12,8 @@ import React from "react"
 const CLEAR = "__CLEAR__" as const
 
 type NullableSelectProps<T extends string> = {
-  value: T | undefined
-  onChange: (v: T | undefined) => void
+  value: T | null | undefined
+  onChange: (v: T | null) => void
   clearLabel?: string
   placeholder?: string
   className?: string
@@ -35,7 +35,7 @@ export default function NullableSelect<T extends string>({
   return (
     <Select
       value={rendered}
-      onValueChange={(v) => onChange(v === CLEAR ? undefined : (v as T))}
+      onValueChange={(v) => onChange(v === CLEAR || v === "" ? null : (v as T))}
     >
       <SelectTrigger className={cn("w-full", className)} disabled={disabled}>
         <SelectValue placeholder={placeholder} />

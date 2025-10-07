@@ -34,6 +34,14 @@ export default function FieldHeader({
 }: FieldHeaderProps) {
   const isMobile = useMobile()
 
+  function splitLastWord(s: string): { head: string; tail: string } {
+    const i = s.trimEnd().lastIndexOf(" ")
+    if (i === -1) return { head: "", tail: s }
+    return { head: s.slice(0, i), tail: s.slice(i + 1) }
+  }
+
+  const { head, tail } = splitLastWord(label)
+
   return (
     <div
       className={cn(
@@ -43,30 +51,36 @@ export default function FieldHeader({
         className,
       )}
     >
-      <div className="group flex items-center gap-2">
-        <label className="text-sm text-content-muted">{label}</label>
-        {isMobile && tooltip ? (
-          <Popover>
-            <PopoverTrigger onClick={(e) => e.stopPropagation()}>
-              <Info className="size-5 text-content-subdued" />
-            </PopoverTrigger>
-            <PopoverContent className="ml-2 max-w-64 bg-background-4 text-pretty text-content-muted">
-              {tooltip}
-            </PopoverContent>
-          </Popover>
-        ) : (
-          tooltip && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Info className="pointer-events-none size-4 translate-x-2 pt-0.5 text-content-subdued opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:translate-x-0 group-hover:opacity-100 data-[state=delayed-open]:pointer-events-auto data-[state=delayed-open]:translate-x-0 data-[state=delayed-open]:opacity-100 data-[state=open]:pointer-events-auto data-[state=open]:translate-x-0 data-[state=open]:opacity-100" />
-              </TooltipTrigger>
-              <TooltipContent className="max-w-80 bg-background-4 text-pretty text-content-muted">
-                {tooltip}
-              </TooltipContent>
-            </Tooltip>
-          )
-        )}
+      <div className="group">
+        <label className="inline text-sm text-content-muted">
+          {head && <>{head} </>}
+          <span className="inline-flex gap-2 whitespace-nowrap">
+            {tail}
+            {isMobile && tooltip ? (
+              <Popover>
+                <PopoverTrigger onClick={(e) => e.stopPropagation()} asChild>
+                  <Info className="inline size-5 text-content-subdued" />
+                </PopoverTrigger>
+                <PopoverContent className="m-1 max-w-64 bg-background-4 text-pretty text-content-muted">
+                  {tooltip}
+                </PopoverContent>
+              </Popover>
+            ) : (
+              tooltip && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="inline size-4 translate-x-2 self-center text-content-subdued opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 data-[state=delayed-open]:translate-x-0 data-[state=delayed-open]:opacity-100 data-[state=open]:translate-x-0 data-[state=open]:opacity-100" />
+                  </TooltipTrigger>
+                  <TooltipContent className="m-1 max-w-80 bg-background-4 text-pretty text-content-muted">
+                    {tooltip}
+                  </TooltipContent>
+                </Tooltip>
+              )
+            )}
+          </span>
+        </label>
       </div>
+
       <div
         className={cn(
           variant !== "none" && "w-full",

@@ -308,7 +308,6 @@ export default function ParametersForm({
             />
           </div>
           <div className="flex justify-between gap-4 border-t border-accent p-4">
-            {/* TODO(cazden) Add scratch flow and enable button */}
             <Button
               variant="outline"
               type="button"

@@ -1,4 +1,5 @@
-import { useFormContext } from "react-hook-form"
+import { useEffect } from "react"
+import { useFormContext, useWatch } from "react-hook-form"
 
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -67,6 +68,28 @@ function DefaultLayout({
   className,
 }: Omit<RequirementsFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<PolicyFormValues>()
+
+  const checkInInterval = useWatch({
+    control: form.control,
+    name: "checkInInterval",
+  })
+
+  useEffect(() => {
+    if (checkInInterval !== null) return
+
+    let changed = false
+    const field = "checkInIntervalCount"
+
+    if (form.getValues(field) !== null || form.formState.errors[field]) {
+      form.setValue(field, null, { shouldDirty: true, shouldValidate: false })
+      changed = true
+    }
+
+    if (changed) {
+      form.clearErrors(field)
+      form.trigger(field)
+    }
+  }, [checkInInterval])
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
@@ -242,6 +265,28 @@ function AdvancedLayout({
   className,
 }: Omit<RequirementsFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<PolicyFormValues>()
+
+  const checkInInterval = useWatch({
+    control: form.control,
+    name: "checkInInterval",
+  })
+
+  useEffect(() => {
+    if (checkInInterval !== null) return
+
+    let changed = false
+    const field = "checkInIntervalCount"
+
+    if (form.getValues(field) !== null || form.formState.errors[field]) {
+      form.setValue(field, null, { shouldDirty: true, shouldValidate: false })
+      changed = true
+    }
+
+    if (changed) {
+      form.clearErrors(field)
+      form.trigger(field)
+    }
+  }, [checkInInterval])
 
   return (
     <SectionCard

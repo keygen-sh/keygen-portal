@@ -19,7 +19,6 @@ import { MockEntitlements } from "@/types/entitlements"
 
 import MultiSelect from "@/components/multi-select"
 import SectionCard from "@/components/section-card"
-import KeyValueInput from "@/components/key-value-input"
 
 type Layout = "default" | "advanced"
 
@@ -46,6 +45,11 @@ function DefaultLayout({
   className,
 }: Omit<FeatureBasedFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<PolicyFormValues>()
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "entitlements.create" as const,
+  })
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
@@ -74,12 +78,51 @@ function DefaultLayout({
 
       <div className="mt-2 space-y-3">
         <FormLabel>Create entitlements</FormLabel>
-        <KeyValueInput<PolicyFormValues>
-          name="entitlements.create"
-          addLabel="New enitlement"
-          keyPlaceholder="Enter name..."
-          valuePlaceholder="Enter code..."
-        />
+        {fields.map((f, i) => (
+          <div key={f.id} className="grid gap-2 md:grid-cols-3">
+            <FormField
+              control={form.control}
+              name={`entitlements.create.${i}.name` as const}
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Enter name..." {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={`entitlements.create.${i}.code` as const}
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Enter code..." {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <div className="flex items-center">
+              <Button
+                size="icon"
+                type="button"
+                variant="ghost"
+                onClick={() => remove(i)}
+              >
+                <X className="h-4 w-4 text-content-subdued" />
+              </Button>
+            </div>
+          </div>
+        ))}
+        <Button
+          size="sm"
+          type="button"
+          variant="ghost"
+          onClick={() => append({ name: "", code: "" })}
+          className="text-content-muted"
+        >
+          + New entitlement
+        </Button>
       </div>
     </div>
   )

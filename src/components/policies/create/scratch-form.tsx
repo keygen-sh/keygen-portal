@@ -52,7 +52,12 @@ export default function PoliciesScratchForm({
       {
         key: "general",
         title: "General information",
-        fields: ["name", "authenticationStrategy", "metadata"],
+        fields: [
+          "name",
+          "product.attach",
+          "authenticationStrategy",
+          "metadata",
+        ],
         render: () => <Policies.Fields.General />,
       },
       {
@@ -192,12 +197,7 @@ export default function PoliciesScratchForm({
             >
               Back
             </Button>
-            <Button
-              type="button"
-              disabled={!form.formState.isValid && last}
-              onClick={next}
-              className="z-10"
-            >
+            <Button type="button" onClick={next} className="z-10">
               {last ? "Create" : "Next step"}
             </Button>
           </div>
@@ -254,11 +254,7 @@ export default function PoliciesScratchForm({
             >
               Back
             </Button>
-            <Button
-              type="button"
-              disabled={!form.formState.isValid && last}
-              onClick={next}
-            >
+            <Button type="button" onClick={next}>
               {last ? "Create" : "Next step"}
             </Button>
           </div>
@@ -270,12 +266,65 @@ export default function PoliciesScratchForm({
 
 function createSchemaFromValues() {
   return BaseSchema.superRefine((values, context) => {
-    if (values.requireHeartbeat === true) {
+    if (values.duration != null) {
+      if (values.expirationStrategy == null) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["expirationStrategy"],
+          message: "Select an expiration strategy.",
+        })
+      }
+      if (values.expirationBasis == null) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["expirationBasis"],
+          message: "Select an expiration basis.",
+        })
+      }
+      if (values.renewalBasis == null) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["renewalBasis"],
+          message: "Select a renewal basis.",
+        })
+      }
+      if (values.transferStrategy == null) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["transferStrategy"],
+          message: "Select a transfer strategy.",
+        })
+      }
+    }
+
+    if (values.requireHeartbeat == true) {
       if (values.heartbeatDuration == null || values.heartbeatDuration < 60) {
         context.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["heartbeatDuration"],
-          message: "Heartbeat duration is required and must be >= 60s.",
+          message: "Must be greater than or equal to 60 seconds.",
+          params: { minimum: 60 },
+        })
+      }
+      if (values.heartbeatBasis == null) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["heartbeatBasis"],
+          message: "Select a heartbeat basis.",
+        })
+      }
+      if (values.heartbeatCullStrategy == null) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["heartbeatCullStrategy"],
+          message: "Select a heartbeat cull strategy.",
+        })
+      }
+      if (values.heartbeatResurrectionStrategy == null) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["heartbeatResurrectionStrategy"],
+          message: "Select a heartbeat resurrection strategy.",
         })
       }
     }
@@ -308,6 +357,20 @@ function createSchemaFromValues() {
               "Max machines must equal 1 when the policy is not floating.",
           })
         }
+      }
+    }
+
+    if (values.checkInInterval != null) {
+      if (
+        values.checkInIntervalCount == null ||
+        values.checkInIntervalCount < 1 ||
+        values.checkInIntervalCount > 365
+      ) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["checkInIntervalCount"],
+          message: "Must be a number between 1 and 365.",
+        })
       }
     }
   })

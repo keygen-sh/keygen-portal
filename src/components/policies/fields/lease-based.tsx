@@ -1,4 +1,5 @@
-import { useFormContext } from "react-hook-form"
+import { useEffect } from "react"
+import { useFormContext, useWatch } from "react-hook-form"
 
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
@@ -56,6 +57,34 @@ function DefaultLayout({
   className,
 }: Omit<LeaseBasedFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<PolicyFormValues>()
+
+  const requireHeartbeat = useWatch({
+    control: form.control,
+    name: "requireHeartbeat",
+  })
+
+  useEffect(() => {
+    if (requireHeartbeat) return
+
+    const fields = [
+      "heartbeatDuration",
+      "heartbeatCullStrategy",
+      "heartbeatBasis",
+      "heartbeatResurrectionStrategy",
+    ] as const
+
+    let changed = false
+    for (const field of fields) {
+      if (form.getValues(field) !== null || form.formState.errors[field]) {
+        form.setValue(field, null, { shouldDirty: true, shouldValidate: false })
+        changed = true
+      }
+    }
+    if (changed) {
+      form.clearErrors(fields)
+      form.trigger(fields)
+    }
+  }, [requireHeartbeat])
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
@@ -115,6 +144,7 @@ function DefaultLayout({
                   placeholder="e.g. 60"
                   {...field}
                   value={field.value ?? ""}
+                  disabled={!requireHeartbeat}
                 />
               </FormControl>
             </Field.Header>
@@ -137,6 +167,7 @@ function DefaultLayout({
               <NullableSelect<HeartbeatCullStrategy>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                disabled={!requireHeartbeat}
               >
                 {Object.values(HeartbeatCullStrategy).map((strategy) => (
                   <SelectItem key={strategy} value={strategy}>
@@ -163,6 +194,7 @@ function DefaultLayout({
               <NullableSelect<HeartbeatBasis>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                disabled={!requireHeartbeat}
               >
                 {Object.values(HeartbeatBasis).map((basis) => (
                   <SelectItem key={basis} value={basis}>
@@ -192,6 +224,7 @@ function DefaultLayout({
               <NullableSelect<HeartbeatResurrectionStrategy>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                disabled={!requireHeartbeat}
               >
                 {Object.values(HeartbeatResurrectionStrategy).map(
                   (strategy) => (

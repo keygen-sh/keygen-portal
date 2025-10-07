@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { useFormContext } from "react-hook-form"
+import { useState, useEffect } from "react"
+import { useFormContext, useWatch } from "react-hook-form"
 
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
@@ -54,6 +54,31 @@ function DefaultLayout({
 }: Omit<TimedFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<PolicyFormValues>()
 
+  const duration = useWatch({ control: form.control, name: "duration" })
+
+  useEffect(() => {
+    if (duration !== null) return
+
+    const fields = [
+      "expirationStrategy",
+      "expirationBasis",
+      "renewalBasis",
+      "transferStrategy",
+    ] as const
+
+    let changed = false
+    for (const field of fields) {
+      if (form.getValues(field) !== null || form.formState.errors[field]) {
+        form.setValue(field, null, { shouldDirty: true, shouldValidate: false })
+        changed = true
+      }
+    }
+    if (changed) {
+      form.clearErrors(fields)
+      form.trigger(fields)
+    }
+  }, [duration])
+
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
       {title && <h2 className="text-content-loud/90">{title}</h2>}
@@ -83,7 +108,7 @@ function DefaultLayout({
         control={form.control}
         name="expirationStrategy"
         render={({ field }) => (
-          <FormItem className="flex">
+          <FormItem>
             <Field.Header
               label="Expiration strategy"
               variant="stacking"
@@ -92,6 +117,7 @@ function DefaultLayout({
               <NullableSelect<ExpirationStrategy>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                disabled={!duration}
               >
                 {Object.values(ExpirationStrategy).map((strategy) => (
                   <SelectItem key={strategy} value={strategy}>
@@ -118,6 +144,7 @@ function DefaultLayout({
               <NullableSelect<ExpirationBasis>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                disabled={!duration}
               >
                 {Object.values(ExpirationBasis).map((basis) => (
                   <SelectItem key={basis} value={basis}>
@@ -144,6 +171,7 @@ function DefaultLayout({
               <NullableSelect<RenewalBasis>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                disabled={!duration}
               >
                 {Object.values(RenewalBasis).map((basis) => (
                   <SelectItem key={basis} value={basis}>
@@ -170,6 +198,7 @@ function DefaultLayout({
               <NullableSelect<TransferStrategy>
                 value={field.value}
                 onChange={(value) => field.onChange(value)}
+                disabled={!duration}
               >
                 {Object.values(TransferStrategy).map((strategy) => (
                   <SelectItem key={strategy} value={strategy}>
@@ -260,7 +289,7 @@ function AdvancedLayout({
                 control={form.control}
                 name="expirationStrategy"
                 render={({ field }) => (
-                  <FormItem className="flex">
+                  <FormItem>
                     <Field.Header
                       label="Expiration strategy"
                       tooltip={PolicyAttributeDescriptions.expirationStrategy}

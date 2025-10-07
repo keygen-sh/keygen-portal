@@ -191,7 +191,11 @@ export const BaseSchema: z.ZodType<PolicyFormValues> = z
       })
       .optional(),
     product: z.object({
-      attach: z.string().min(1, "Product is required."),
+      attach: z
+        .string({
+          required_error: "Product is required.",
+        })
+        .min(1, "Product is required."),
     }),
 
     metadata: z.record(z.string()).default({}),
@@ -563,7 +567,6 @@ export default function PoliciesCreateModal({
                       last ? form.handleSubmit(handleCreatePolicy) : next
                     }
                     className="max-w-[12rem] flex-1 basis-1/2"
-                    disabled={last && !form.formState.isValid}
                   >
                     {last ? "Create" : "Next step"}
                   </Button>
@@ -590,6 +593,34 @@ function createSchemaFromSelection(selection: PolicyParameterSelection) {
           message: "Duration is required for a timed policy.",
         })
       }
+      if (values.expirationStrategy == null) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["expirationStrategy"],
+          message: "Select an expiration strategy.",
+        })
+      }
+      if (values.expirationBasis == null) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["expirationBasis"],
+          message: "Select an expiration basis.",
+        })
+      }
+      if (values.renewalBasis == null) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["renewalBasis"],
+          message: "Select a renewal basis.",
+        })
+      }
+      if (values.transferStrategy == null) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["transferStrategy"],
+          message: "Select a transfer strategy.",
+        })
+      }
     }
 
     if (selection.access.includes(AccessParameters.USER_LOCKED)) {
@@ -602,11 +633,12 @@ function createSchemaFromSelection(selection: PolicyParameterSelection) {
       }
     }
 
-    if (
+    const requiresNodeLocked =
       selection.access.includes(AccessParameters.NODE_LOCKED) ||
       selection.metered.includes(MeteredParameters.PROCESS_BASED) ||
       selection.metered.includes(MeteredParameters.LEASE_BASED)
-    ) {
+
+    if (requiresNodeLocked) {
       const floating = values.floating === true
       const maxMachines = values.maxMachines
 
@@ -628,6 +660,88 @@ function createSchemaFromSelection(selection: PolicyParameterSelection) {
               "Max machines must equal 1 when the policy is not floating.",
           })
         }
+      }
+
+      if (values.machineUniquenessStrategy == null) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["machineUniquenessStrategy"],
+          message: "Select a machine uniqueness strategy.",
+        })
+      }
+      if (values.machineMatchingStrategy == null) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["machineMatchingStrategy"],
+          message: "Select a machine matching strategy.",
+        })
+      }
+      if (values.componentUniquenessStrategy == null) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["componentUniquenessStrategy"],
+          message: "Select a component uniqueness strategy.",
+        })
+      }
+      if (values.componentMatchingStrategy == null) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["componentMatchingStrategy"],
+          message: "Select a component matching strategy.",
+        })
+      }
+      if (values.overageStrategy == null) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["overageStrategy"],
+          message: "Select an overage strategy.",
+        })
+      }
+
+      if (selection.metered.includes(MeteredParameters.LEASE_BASED)) {
+        if (values.heartbeatDuration == null || values.heartbeatDuration < 60) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["heartbeatDuration"],
+            message: "Must be greater than or equal to 60 seconds.",
+            params: { minimum: 60 },
+          })
+        }
+        if (values.heartbeatBasis == null) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["heartbeatBasis"],
+            message: "Select a heartbeat basis.",
+          })
+        }
+        if (values.heartbeatCullStrategy == null) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["heartbeatCullStrategy"],
+            message: "Select a heartbeat cull strategy.",
+          })
+        }
+        if (values.heartbeatResurrectionStrategy == null) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["heartbeatResurrectionStrategy"],
+            message: "Select a heartbeat resurrection strategy.",
+          })
+        }
+      }
+    }
+
+    if (values.checkInInterval != null) {
+      if (
+        values.checkInIntervalCount == null ||
+        values.checkInIntervalCount < 1 ||
+        values.checkInIntervalCount > 365
+      ) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["checkInIntervalCount"],
+          message: "Must be a number between 1 and 365.",
+        })
       }
     }
   })

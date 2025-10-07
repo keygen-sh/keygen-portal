@@ -165,7 +165,7 @@ function DefaultLayout({
         control={form.control}
         name="machineMatchingStrategy"
         render={({ field }) => (
-          <FormItem className="flex">
+          <FormItem>
             <Field.Header
               label="Machine matching strategy"
               variant="stacking"
@@ -367,7 +367,7 @@ function AdvancedLayout({
                 control={form.control}
                 name="machineMatchingStrategy"
                 render={({ field }) => (
-                  <FormItem className="flex">
+                  <FormItem>
                     <Field.Header
                       label="Machine matching strategy"
                       tooltip={

@@ -310,7 +310,7 @@ export default function PolicyDetails() {
                         })
                       }}
                     >
-                      {product?.attributes.name} ({productId?.slice(0, 8)})
+                      {product?.attributes.name}
                     </Button>
                     <ChevronRight className="mt-0.5 size-3.5 transition-all duration-200 group-hover:translate-x-2 group-hover:text-brand-primary" />
                   </div>

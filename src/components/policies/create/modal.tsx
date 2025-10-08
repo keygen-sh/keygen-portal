@@ -191,7 +191,7 @@ export const BaseSchema: z.ZodType<PolicyFormValues> = z
       })
       .optional(),
     product: z.object({
-      attach: z
+      id: z
         .string({
           required_error: "Product is required.",
         })
@@ -749,7 +749,7 @@ function createStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
   steps.push({
     key: "general",
     title: "General configuration",
-    fields: ["name", "product.attach"],
+    fields: ["name", "product.id"],
     render: () => (
       <Policies.Fields.General
         layout="advanced"
@@ -1052,7 +1052,7 @@ const buildMockPolicy = (
       },
       product: {
         links: { related: `/v1/accounts/{ACCOUNT}/policies/${id}/product` },
-        data: { type: "products", id: input.product.attach },
+        data: { type: "products", id: input.product.id },
       },
       pool: {
         links: { related: `/v1/accounts/{ACCOUNT}/policies/${id}/pool` },

@@ -98,7 +98,7 @@ function DefaultLayout({
 
       <FormField
         control={form.control}
-        name="product.attach"
+        name="product.id"
         render={({ field }) => (
           <FormItem>
             <Field.Header
@@ -216,7 +216,7 @@ function AdvancedLayout({
         <>
           <FormField
             control={form.control}
-            name="product.attach"
+            name="product.id"
             render={({ field }) => (
               <FormItem>
                 <Field.Header

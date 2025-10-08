@@ -246,7 +246,7 @@ export type PolicyTemplateSelection = {
 
 export type PolicyFormValues = Writable<PolicyInput> & {
   product: {
-    attach: string
+    id: string
   }
   entitlements?: {
     attach?: string[]

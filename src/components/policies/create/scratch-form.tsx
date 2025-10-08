@@ -52,12 +52,7 @@ export default function PoliciesScratchForm({
       {
         key: "general",
         title: "General information",
-        fields: [
-          "name",
-          "product.attach",
-          "authenticationStrategy",
-          "metadata",
-        ],
+        fields: ["name", "product.id", "authenticationStrategy", "metadata"],
         render: () => <Policies.Fields.General />,
       },
       {

@@ -108,3 +108,9 @@ export function secondsToParts(total?: number | null) {
 
   return { years, months, weeks, days, hours, minute, seconds }
 }
+
+export function splitLastWord(s: string): { head: string; tail: string } {
+  const i = s.trimEnd().lastIndexOf(" ")
+  if (i === -1) return { head: "", tail: s }
+  return { head: s.slice(0, i), tail: s.slice(i + 1) }
+}

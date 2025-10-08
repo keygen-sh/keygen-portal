@@ -11,7 +11,7 @@ import {
 
 import { Info } from "lucide-react"
 
-import { cn } from "@/lib/utils"
+import { cn, splitLastWord } from "@/lib/utils"
 
 import { useMobile } from "@/hooks/use-mobile"
 
@@ -33,12 +33,6 @@ export default function FieldHeader({
   className,
 }: FieldHeaderProps) {
   const isMobile = useMobile()
-
-  function splitLastWord(s: string): { head: string; tail: string } {
-    const i = s.trimEnd().lastIndexOf(" ")
-    if (i === -1) return { head: "", tail: s }
-    return { head: s.slice(0, i), tail: s.slice(i + 1) }
-  }
 
   const { head, tail } = splitLastWord(label)
 

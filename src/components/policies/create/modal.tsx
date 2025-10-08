@@ -30,10 +30,10 @@ import {
 import {
   PolicyFormValues,
   Policy,
-  TimingParameters,
-  AccessParameters,
-  MeteredParameters,
-  PolicyParameterSelection,
+  TimingTemplates,
+  AccessTemplates,
+  MeteredTemplates,
+  PolicyTemplateSelection,
   CreatePolicyPayload,
   CheckInInterval,
   AuthenticationStrategy,
@@ -68,7 +68,7 @@ import DocumentationLink from "@/components/documentation-link"
 import CollapsedBreadcrumb from "@/components/collapsed-breadcrumb"
 
 import ScratchForm from "./scratch-form"
-import ParametersForm, { ParametersValues } from "./parameters-form"
+import TemplatesForm, { TemplatesValues } from "./templates-form"
 
 export const BaseSchema: z.ZodType<PolicyFormValues> = z
   .object({
@@ -222,12 +222,12 @@ export default function PoliciesCreateModal({
 }: PoliciesCreateModalProps) {
   const isMobile = useMobile()
 
-  const [isParametersOpen, setIsParametersOpen] = useState(false)
+  const [isTemplatesOpen, setIsTemplatesOpen] = useState(false)
   const [isAttributesOpen, setIsAttributesOpen] = useState(false)
   const [isScratchOpen, setIsScratchOpen] = useState(false)
 
   const [completedStep, setCompletedStep] = useState<Set<string>>(new Set())
-  const [selection, setSelection] = useState<PolicyParameterSelection>({
+  const [selection, setSelection] = useState<PolicyTemplateSelection>({
     timing: null,
     access: [],
     metered: [],
@@ -251,7 +251,7 @@ export default function PoliciesCreateModal({
     defaultValues,
   })
 
-  const selectedParametersSteps = useMemo(
+  const selectedTemplatesSteps = useMemo(
     () => createStepsFromSelection(selection),
     [selection],
   )
@@ -259,10 +259,10 @@ export default function PoliciesCreateModal({
   const steps: Step[] = useMemo(
     () => [
       {
-        key: "parameters",
+        key: "templates",
         title: "",
         render: () => (
-          <ParametersForm
+          <TemplatesForm
             onSubmit={(values) => {
               setSelection({
                 timing: values.timing ?? null,
@@ -272,14 +272,14 @@ export default function PoliciesCreateModal({
                 offline: !!values.offline,
               })
 
-              handleSubmitParameters(values)
+              handleSubmitTemplates(values)
             }}
           />
         ),
       },
-      ...selectedParametersSteps,
+      ...selectedTemplatesSteps,
     ],
-    [selectedParametersSteps, setSelection],
+    [selectedTemplatesSteps, setSelection],
   )
   const [step, direction, goTo] = useSlide(steps.map((_, i) => i))
 
@@ -327,13 +327,13 @@ export default function PoliciesCreateModal({
   }, [steps])
 
   useEffect(() => {
-    setIsParametersOpen(step === 0 && open)
+    setIsTemplatesOpen(step === 0 && open)
     setIsAttributesOpen(step > 0 && open)
   }, [open, step])
 
-  const handleSubmitParameters = useCallback(
-    (values: ParametersValues) => {
-      const newSelection: PolicyParameterSelection = {
+  const handleSubmitTemplates = useCallback(
+    (values: TemplatesValues) => {
+      const newSelection: PolicyTemplateSelection = {
         timing: values.timing ?? null,
         access: values.access ?? [],
         metered: values.metered ?? [],
@@ -413,7 +413,7 @@ export default function PoliciesCreateModal({
           </DialogContent>
         </Dialog>
       ) : step === 0 ? (
-        <Dialog open={isParametersOpen} onOpenChange={onClose}>
+        <Dialog open={isTemplatesOpen} onOpenChange={onClose}>
           <DialogContent
             disableOverlay
             className="min-w-fit"
@@ -428,9 +428,9 @@ export default function PoliciesCreateModal({
                 </span>
               </DialogDescription>
             </DialogHeader>
-            <ParametersForm
-              key="parameters-form"
-              onSubmit={handleSubmitParameters}
+            <TemplatesForm
+              key="templates-form"
+              onSubmit={handleSubmitTemplates}
               onStartScratch={() => {
                 setIsScratchOpen(true)
               }}
@@ -448,63 +448,59 @@ export default function PoliciesCreateModal({
             <DialogHeader className="h-fit items-start border-b border-accent p-2">
               <DialogDescription>
                 <BadgeGroup prefix="Creating a" suffix="policy">
-                  {selection.timing === TimingParameters.PERPETUAL && (
+                  {selection.timing === TimingTemplates.PERPETUAL && (
                     <BadgeGroupItem>
                       <Infinity />
                       Perpetual
                     </BadgeGroupItem>
                   )}
-                  {selection.timing === TimingParameters.TIMED && (
+                  {selection.timing === TimingTemplates.TIMED && (
                     <BadgeGroupItem>
                       <Clock />
                       Timed
                     </BadgeGroupItem>
                   )}
-                  {selection.timing === TimingParameters.PERPETUAL_FALLBACK && (
+                  {selection.timing === TimingTemplates.PERPETUAL_FALLBACK && (
                     <BadgeGroupItem>
                       <ClockFading />
                       Perpetual-fallback
                     </BadgeGroupItem>
                   )}
-                  {selection.access.includes(AccessParameters.NODE_LOCKED) && (
+                  {selection.access.includes(AccessTemplates.NODE_LOCKED) && (
                     <BadgeGroupItem>
                       <Hexagon />
                       Node-locked
                     </BadgeGroupItem>
                   )}
-                  {selection.access.includes(AccessParameters.USER_LOCKED) && (
+                  {selection.access.includes(AccessTemplates.USER_LOCKED) && (
                     <BadgeGroupItem>
                       <User />
                       User-locked
                     </BadgeGroupItem>
                   )}
                   {selection.metered.includes(
-                    MeteredParameters.PROCESS_BASED,
+                    MeteredTemplates.PROCESS_BASED,
                   ) && (
                     <BadgeGroupItem>
                       <Cpu />
                       Process-based
                     </BadgeGroupItem>
                   )}
-                  {selection.metered.includes(
-                    MeteredParameters.LEASE_BASED,
-                  ) && (
+                  {selection.metered.includes(MeteredTemplates.LEASE_BASED) && (
                     <BadgeGroupItem>
                       <Activity />
                       Lease-based
                     </BadgeGroupItem>
                   )}
                   {selection.metered.includes(
-                    MeteredParameters.FEATURE_BASED,
+                    MeteredTemplates.FEATURE_BASED,
                   ) && (
                     <BadgeGroupItem>
                       <Binary />
                       Feature-based
                     </BadgeGroupItem>
                   )}
-                  {selection.metered.includes(
-                    MeteredParameters.USAGE_BASED,
-                  ) && (
+                  {selection.metered.includes(MeteredTemplates.USAGE_BASED) && (
                     <BadgeGroupItem>
                       <Hash />
                       Usage-based
@@ -580,11 +576,11 @@ export default function PoliciesCreateModal({
   )
 }
 
-function createSchemaFromSelection(selection: PolicyParameterSelection) {
+function createSchemaFromSelection(selection: PolicyTemplateSelection) {
   return BaseSchema.superRefine((values, context) => {
     if (
-      selection.timing === TimingParameters.TIMED ||
-      selection.timing === TimingParameters.PERPETUAL_FALLBACK
+      selection.timing === TimingTemplates.TIMED ||
+      selection.timing === TimingTemplates.PERPETUAL_FALLBACK
     ) {
       if (values.duration == null) {
         context.addIssue({
@@ -623,7 +619,7 @@ function createSchemaFromSelection(selection: PolicyParameterSelection) {
       }
     }
 
-    if (selection.access.includes(AccessParameters.USER_LOCKED)) {
+    if (selection.access.includes(AccessTemplates.USER_LOCKED)) {
       if (values.maxUsers == null) {
         context.addIssue({
           code: z.ZodIssueCode.custom,
@@ -634,9 +630,9 @@ function createSchemaFromSelection(selection: PolicyParameterSelection) {
     }
 
     const requiresNodeLocked =
-      selection.access.includes(AccessParameters.NODE_LOCKED) ||
-      selection.metered.includes(MeteredParameters.PROCESS_BASED) ||
-      selection.metered.includes(MeteredParameters.LEASE_BASED)
+      selection.access.includes(AccessTemplates.NODE_LOCKED) ||
+      selection.metered.includes(MeteredTemplates.PROCESS_BASED) ||
+      selection.metered.includes(MeteredTemplates.LEASE_BASED)
 
     if (requiresNodeLocked) {
       const floating = values.floating === true
@@ -698,7 +694,7 @@ function createSchemaFromSelection(selection: PolicyParameterSelection) {
         })
       }
 
-      if (selection.metered.includes(MeteredParameters.LEASE_BASED)) {
+      if (selection.metered.includes(MeteredTemplates.LEASE_BASED)) {
         if (values.heartbeatDuration == null || values.heartbeatDuration < 60) {
           context.addIssue({
             code: z.ZodIssueCode.custom,
@@ -747,7 +743,7 @@ function createSchemaFromSelection(selection: PolicyParameterSelection) {
   })
 }
 
-function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
+function createStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
   const steps: Step[] = []
 
   steps.push({
@@ -763,7 +759,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
     ),
   })
 
-  if (selection.timing === TimingParameters.TIMED) {
+  if (selection.timing === TimingTemplates.TIMED) {
     steps.push({
       key: "timed",
       title: "Timed configuration",
@@ -778,7 +774,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
     })
   }
 
-  if (selection.timing === TimingParameters.PERPETUAL_FALLBACK) {
+  if (selection.timing === TimingTemplates.PERPETUAL_FALLBACK) {
     steps.push({
       key: "perpetualFallback",
       title: "Perpetual‑fallback configuration",
@@ -793,9 +789,9 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
   }
 
   const requiresNodeLocked =
-    selection.access.includes(AccessParameters.NODE_LOCKED) ||
-    selection.metered.includes(MeteredParameters.PROCESS_BASED) ||
-    selection.metered.includes(MeteredParameters.LEASE_BASED)
+    selection.access.includes(AccessTemplates.NODE_LOCKED) ||
+    selection.metered.includes(MeteredTemplates.PROCESS_BASED) ||
+    selection.metered.includes(MeteredTemplates.LEASE_BASED)
 
   if (requiresNodeLocked) {
     steps.push({
@@ -814,7 +810,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
     })
   }
 
-  if (selection.access.includes(AccessParameters.USER_LOCKED)) {
+  if (selection.access.includes(AccessTemplates.USER_LOCKED)) {
     steps.push({
       key: "userLocked",
       title: "User‑locked configuration",
@@ -823,7 +819,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
     })
   }
 
-  if (selection.metered.includes(MeteredParameters.PROCESS_BASED)) {
+  if (selection.metered.includes(MeteredTemplates.PROCESS_BASED)) {
     steps.push({
       key: "processBased",
       title: "Process‑based configuration",
@@ -836,7 +832,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
     })
   }
 
-  if (selection.metered.includes(MeteredParameters.LEASE_BASED)) {
+  if (selection.metered.includes(MeteredTemplates.LEASE_BASED)) {
     steps.push({
       key: "leaseBased",
       title: "Lease‑based configuration",
@@ -850,7 +846,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
     })
   }
 
-  if (selection.metered.includes(MeteredParameters.FEATURE_BASED)) {
+  if (selection.metered.includes(MeteredTemplates.FEATURE_BASED)) {
     steps.push({
       key: "featureBased",
       title: "Feature‑based configuration",
@@ -859,7 +855,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
     })
   }
 
-  if (selection.metered.includes(MeteredParameters.USAGE_BASED)) {
+  if (selection.metered.includes(MeteredTemplates.USAGE_BASED)) {
     steps.push({
       key: "usageBased",
       title: "Usage‑based configuration",
@@ -900,7 +896,7 @@ function createStepsFromSelection(selection: PolicyParameterSelection): Step[] {
   return steps
 }
 
-export function getFormDefaults(selection?: PolicyParameterSelection) {
+export function getFormDefaults(selection?: PolicyTemplateSelection) {
   const base: Partial<CreatePolicyPayload> = {
     authenticationStrategy: AuthenticationStrategy.MIXED,
     renewalBasis: RenewalBasis.FROM_NOW_IF_EXPIRED,
@@ -912,16 +908,16 @@ export function getFormDefaults(selection?: PolicyParameterSelection) {
 
   if (!selection) return base // Scratch flow
 
-  if (selection.timing === TimingParameters.PERPETUAL) base.duration = null
+  if (selection.timing === TimingTemplates.PERPETUAL) base.duration = null
 
-  if (selection.timing === TimingParameters.TIMED) {
+  if (selection.timing === TimingTemplates.TIMED) {
     base.expirationStrategy = ExpirationStrategy.RESTRICT_ACCESS
     base.expirationBasis = ExpirationBasis.FROM_CREATION
 
     if (base.duration == null) base.duration = 86400 * 14
   }
 
-  if (selection.timing === TimingParameters.PERPETUAL_FALLBACK) {
+  if (selection.timing === TimingTemplates.PERPETUAL_FALLBACK) {
     base.expirationStrategy = ExpirationStrategy.MAINTAIN_ACCESS
     base.expirationBasis = ExpirationBasis.FROM_CREATION
 
@@ -929,9 +925,9 @@ export function getFormDefaults(selection?: PolicyParameterSelection) {
   }
 
   const requiresNodeLocked =
-    selection.access.includes(AccessParameters.NODE_LOCKED) ||
-    selection.metered.includes(MeteredParameters.PROCESS_BASED) ||
-    selection.metered.includes(MeteredParameters.LEASE_BASED)
+    selection.access.includes(AccessTemplates.NODE_LOCKED) ||
+    selection.metered.includes(MeteredTemplates.PROCESS_BASED) ||
+    selection.metered.includes(MeteredTemplates.LEASE_BASED)
 
   if (requiresNodeLocked) {
     base.requireFingerprintScope = true
@@ -944,12 +940,12 @@ export function getFormDefaults(selection?: PolicyParameterSelection) {
     base.componentMatchingStrategy = ComponentMatchingStrategy.MATCH_ANY
     base.overageStrategy = OverageStrategy.NO_OVERAGE
 
-    if (selection.metered.includes(MeteredParameters.PROCESS_BASED)) {
+    if (selection.metered.includes(MeteredTemplates.PROCESS_BASED)) {
       base.machineLeasingStrategy = MachineLeasingStrategy.PER_LICENSE
       base.processLeasingStrategy = ProcessLeasingStrategy.PER_MACHINE
     }
 
-    if (selection.metered.includes(MeteredParameters.LEASE_BASED)) {
+    if (selection.metered.includes(MeteredTemplates.LEASE_BASED)) {
       base.requireHeartbeat = true
       base.heartbeatDuration = 60
       base.heartbeatBasis = HeartbeatBasis.FROM_CREATION
@@ -959,7 +955,7 @@ export function getFormDefaults(selection?: PolicyParameterSelection) {
     }
   }
 
-  if (selection.access.includes(AccessParameters.USER_LOCKED)) {
+  if (selection.access.includes(AccessTemplates.USER_LOCKED)) {
     base.requireUserScope = true
   }
 
@@ -971,7 +967,7 @@ export function getFormDefaults(selection?: PolicyParameterSelection) {
 
 const buildMockPolicy = (
   input: PolicyFormValues,
-  selection: PolicyParameterSelection,
+  selection: PolicyTemplateSelection,
   entitlementIds: string[] = [],
 ): Policy => {
   const id = crypto.randomUUID()

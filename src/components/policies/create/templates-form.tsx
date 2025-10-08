@@ -41,38 +41,38 @@ import {
 } from "lucide-react"
 
 import {
-  TimingParameters,
-  AccessParameters,
-  MeteredParameters,
-  PolicyParameterSelection,
+  TimingTemplates,
+  AccessTemplates,
+  MeteredTemplates,
+  PolicyTemplateSelection,
 } from "@/types/policies"
 
 import { useMobile } from "@/hooks/use-mobile"
 
 const schema = z.object({
-  timing: z.nativeEnum(TimingParameters).nullable().optional(),
-  access: z.array(z.nativeEnum(AccessParameters)).default([]),
-  metered: z.array(z.nativeEnum(MeteredParameters)).default([]),
+  timing: z.nativeEnum(TimingTemplates).nullable().optional(),
+  access: z.array(z.nativeEnum(AccessTemplates)).default([]),
+  metered: z.array(z.nativeEnum(MeteredTemplates)).default([]),
   advanced: z.boolean().default(true),
   offline: z.boolean().default(false),
 })
 
-export type ParametersValues = z.infer<typeof schema>
+export type TemplatesValues = z.infer<typeof schema>
 
-type ParametersFormProps = {
-  initial?: Partial<PolicyParameterSelection>
-  onSubmit: (values: ParametersValues) => void
+type TemplatesFormProps = {
+  initial?: Partial<PolicyTemplateSelection>
+  onSubmit: (values: TemplatesValues) => void
   onStartScratch?: () => void
 }
 
-export default function ParametersForm({
+export default function TemplatesForm({
   initial,
   onSubmit,
   onStartScratch,
-}: ParametersFormProps) {
+}: TemplatesFormProps) {
   const isMobile = useMobile()
 
-  const form = useForm<ParametersValues>({
+  const form = useForm<TemplatesValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       timing: initial?.timing ?? null,
@@ -84,70 +84,70 @@ export default function ParametersForm({
   })
 
   // TODO(cazden) Add parameter tooltip descriptions
-  const timingOptions: CardOption<TimingParameters>[] = [
+  const timingOptions: CardOption<TimingTemplates>[] = [
     {
-      value: TimingParameters.PERPETUAL,
+      value: TimingTemplates.PERPETUAL,
       label: "Perpetual",
       icon: <Infinity className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
     },
     {
-      value: TimingParameters.TIMED,
+      value: TimingTemplates.TIMED,
       label: "Timed",
       icon: <Clock className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
     },
     {
-      value: TimingParameters.PERPETUAL_FALLBACK,
+      value: TimingTemplates.PERPETUAL_FALLBACK,
       label: "Perpetual‑fallback",
       icon: <ClockFading className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
     },
   ]
 
-  const accessOptions: CardOption<AccessParameters>[] = [
+  const accessOptions: CardOption<AccessTemplates>[] = [
     {
-      value: AccessParameters.NODE_LOCKED,
+      value: AccessTemplates.NODE_LOCKED,
       label: "Node‑locked",
       icon: <Hexagon className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
     },
     {
-      value: AccessParameters.USER_LOCKED,
+      value: AccessTemplates.USER_LOCKED,
       label: "User‑locked",
       icon: <User className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
     },
   ]
 
-  const meteredOptions: CardOption<MeteredParameters>[] = [
+  const meteredOptions: CardOption<MeteredTemplates>[] = [
     {
-      value: MeteredParameters.PROCESS_BASED,
+      value: MeteredTemplates.PROCESS_BASED,
       label: "Process‑based",
       icon: <Cpu className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
     },
     {
-      value: MeteredParameters.LEASE_BASED,
+      value: MeteredTemplates.LEASE_BASED,
       label: "Lease‑based",
       icon: <Activity className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
     },
     {
-      value: MeteredParameters.FEATURE_BASED,
+      value: MeteredTemplates.FEATURE_BASED,
       label: "Feature‑based",
       icon: <Binary className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
     },
     {
-      value: MeteredParameters.USAGE_BASED,
+      value: MeteredTemplates.USAGE_BASED,
       label: "Usage‑based",
       icon: <Hash className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
     },
   ]
 
-  const submit = useCallback((v: ParametersValues) => onSubmit(v), [onSubmit])
+  const submit = useCallback((v: TemplatesValues) => onSubmit(v), [onSubmit])
 
   return (
     <Form {...form}>

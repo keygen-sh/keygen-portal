@@ -220,26 +220,26 @@ export interface PolicyInput {
   metadata?: Record<string, any>
 }
 
-export enum TimingParameters {
+export enum TimingTemplates {
   PERPETUAL = "PERPETUAL",
   TIMED = "TIMED",
   PERPETUAL_FALLBACK = "PERPETUAL_FALLBACK",
 }
-export enum AccessParameters {
+export enum AccessTemplates {
   NODE_LOCKED = "NODE_LOCKED",
   USER_LOCKED = "USER_LOCKED",
 }
-export enum MeteredParameters {
+export enum MeteredTemplates {
   PROCESS_BASED = "PROCESS_BASED",
   LEASE_BASED = "LEASE_BASED",
   FEATURE_BASED = "FEATURE_BASED",
   USAGE_BASED = "USAGE_BASED",
 }
 
-export type PolicyParameterSelection = {
-  timing: TimingParameters | null
-  access: AccessParameters[]
-  metered: MeteredParameters[]
+export type PolicyTemplateSelection = {
+  timing: TimingTemplates | null
+  access: AccessTemplates[]
+  metered: MeteredTemplates[]
   advanced?: boolean
   offline?: boolean
 }

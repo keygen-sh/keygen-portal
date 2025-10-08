@@ -78,12 +78,12 @@ export enum HeartbeatCullStrategy {
 }
 export enum HeartbeatResurrectionStrategy {
   NO_REVIVE = "NO_REVIVE",
-  "1_MINUTE_REVIVE" = "1_MINUTE_REVIVE",
-  "2_MINUTE_REVIVE" = "2_MINUTE_REVIVE",
-  "5_MINUTE_REVIVE" = "5_MINUTE_REVIVE",
-  "10_MINUTE_REVIVE" = "10_MINUTE_REVIVE",
-  "15_MINUTE_REVIVE" = "15_MINUTE_REVIVE",
-  "ALWAYS_REVIVE" = "ALWAYS_REVIVE",
+  ONE_MINUTE_REVIVE = "1_MINUTE_REVIVE",
+  TWO_MINUTE_REVIVE = "2_MINUTE_REVIVE",
+  FIVE_MINUTE_REVIVE = "5_MINUTE_REVIVE",
+  TEN_MINUTE_REVIVE = "10_MINUTE_REVIVE",
+  FIFTEEN_MINUTE_REVIVE = "15_MINUTE_REVIVE",
+  ALWAYS_REVIVE = "ALWAYS_REVIVE",
 }
 export enum MachineLeasingStrategy {
   PER_LICENSE = "PER_LICENSE",
@@ -418,11 +418,11 @@ export const PolicyOptionLabels = {
   },
   heartbeatResurrectionStrategy: {
     [HeartbeatResurrectionStrategy.NO_REVIVE]: "No Revive",
-    [HeartbeatResurrectionStrategy["1_MINUTE_REVIVE"]]: "1 Minute Revive",
-    [HeartbeatResurrectionStrategy["2_MINUTE_REVIVE"]]: "2 Minute Revive",
-    [HeartbeatResurrectionStrategy["5_MINUTE_REVIVE"]]: "5 Minute Revive",
-    [HeartbeatResurrectionStrategy["10_MINUTE_REVIVE"]]: "10 Minute Revive",
-    [HeartbeatResurrectionStrategy["15_MINUTE_REVIVE"]]: "15 Minute Revive",
+    [HeartbeatResurrectionStrategy.ONE_MINUTE_REVIVE]: "1 Minute Revive",
+    [HeartbeatResurrectionStrategy.TWO_MINUTE_REVIVE]: "2 Minute Revive",
+    [HeartbeatResurrectionStrategy.FIVE_MINUTE_REVIVE]: "5 Minute Revive",
+    [HeartbeatResurrectionStrategy.TEN_MINUTE_REVIVE]: "10 Minute Revive",
+    [HeartbeatResurrectionStrategy.FIFTEEN_MINUTE_REVIVE]: "15 Minute Revive",
     [HeartbeatResurrectionStrategy.ALWAYS_REVIVE]: "Always Revive",
   },
   machineLeasingStrategy: {

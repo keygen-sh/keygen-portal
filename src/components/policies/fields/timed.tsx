@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useFormContext, useWatch } from "react-hook-form"
+import { useFormContext, useFormState, useWatch } from "react-hook-form"
 
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
@@ -223,7 +223,22 @@ function AdvancedLayout({
   className,
 }: Omit<TimedFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<PolicyFormValues>()
+
   const [showAdvanced, setShowAdvanced] = useState(false)
+
+  const advancedFields: (keyof PolicyFormValues)[] = [
+    "expirationStrategy",
+    "expirationBasis",
+    "renewalBasis",
+    "transferStrategy",
+  ]
+
+  const { errors } = useFormState({
+    control: form.control,
+    name: advancedFields,
+  })
+
+  const open = showAdvanced || advancedFields.some((field) => !!errors[field])
 
   return (
     <SectionCard
@@ -255,13 +270,13 @@ function AdvancedLayout({
 
       <div className="flex flex-col space-y-4">
         <div className="flex items-center">
-          <Switch checked={showAdvanced} onCheckedChange={setShowAdvanced} />
+          <Switch checked={open} onCheckedChange={setShowAdvanced} />
           <span className="ml-2 font-owners-text text-sm font-medium text-content-muted">
             Advanced configuration
           </span>
         </div>
 
-        {showAdvanced && (
+        {open && (
           <div className="flex flex-col space-y-4 md:flex-row md:space-y-0">
             <div className="flex-1 space-y-4">
               <FormField

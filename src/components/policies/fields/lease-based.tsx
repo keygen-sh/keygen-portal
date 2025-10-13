@@ -1,7 +1,6 @@
 import { useEffect } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
 
-import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import {
   FormField,
@@ -28,6 +27,7 @@ import {
   PolicyOptionLabels,
 } from "@/types/policies"
 
+import DurationInput, { HeartbeatPresets } from "@/components/duration-input"
 import * as Field from "@/components/field"
 import SectionCard from "@/components/section-card"
 import NullableSelect from "@/components/nullable-select"
@@ -138,13 +138,11 @@ function DefaultLayout({
               tooltip={PolicyAttributeDescriptions.heartbeatDuration}
             >
               <FormControl>
-                <Input
-                  type="number"
-                  min={1}
-                  placeholder="e.g. 60"
-                  {...field}
-                  value={field.value ?? ""}
-                  disabled={!requireHeartbeat}
+                <DurationInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  units={["seconds", "minutes", "hours", "days"]}
+                  presets={HeartbeatPresets}
                 />
               </FormControl>
             </Field.Header>
@@ -272,12 +270,11 @@ function AdvancedLayout({
                   tooltip={PolicyAttributeDescriptions.heartbeatDuration}
                 >
                   <FormControl>
-                    <Input
-                      type="number"
-                      min={1}
-                      placeholder="e.g. 1"
-                      {...field}
-                      value={field.value ?? ""}
+                    <DurationInput
+                      value={field.value}
+                      onChange={field.onChange}
+                      units={["seconds", "minutes", "hours", "days"]}
+                      presets={HeartbeatPresets}
                     />
                   </FormControl>
                 </Field.Header>

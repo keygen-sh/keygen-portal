@@ -291,7 +291,7 @@ export default function PoliciesCreateModal({
               <DialogTitle className="mb-1 text-base">New policy</DialogTitle>
               <DialogDescription>
                 <span className="text-sm">
-                  Select all parameters that apply to your license
+                  Select all parameters that apply to the policy
                 </span>
               </DialogDescription>
             </DialogHeader>

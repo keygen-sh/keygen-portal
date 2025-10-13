@@ -96,6 +96,7 @@ function DefaultLayout({
                 <DurationInput
                   value={field.value}
                   onChange={(value) => field.onChange(value)}
+                  units={["unlimited", "days", "weeks", "months", "years"]}
                 />
               </FormControl>
             </Field.Header>
@@ -259,6 +260,7 @@ function AdvancedLayout({
                   <DurationInput
                     value={field.value}
                     onChange={(value) => field.onChange(value)}
+                    units={["unlimited", "days", "weeks", "months", "years"]}
                   />
                 </FormControl>
               </Field.Header>

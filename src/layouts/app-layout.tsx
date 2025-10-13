@@ -1,8 +1,9 @@
 import { Outlet } from "@tanstack/react-router"
 import { cn } from "@/lib/utils"
 
-import { useSidebar, SidebarProvider } from "@/components/ui/sidebar"
 import { Toaster } from "@/components/ui/sonner"
+import { useSidebar, SidebarProvider } from "@/components/ui/sidebar"
+import { TooltipProvider } from "@/components/ui/tooltip"
 
 import { EnvironmentProvider } from "@/providers/environment-provider"
 import { useSession } from "@/hooks/use-session"
@@ -28,9 +29,15 @@ export default function AppLayout() {
 
   return (
     <EnvironmentProvider>
-      <SidebarProvider>
-        <AppLayoutContent />
-      </SidebarProvider>
+      <TooltipProvider
+        delayDuration={120}
+        skipDelayDuration={400}
+        disableHoverableContent
+      >
+        <SidebarProvider>
+          <AppLayoutContent />
+        </SidebarProvider>
+      </TooltipProvider>
     </EnvironmentProvider>
   )
 }

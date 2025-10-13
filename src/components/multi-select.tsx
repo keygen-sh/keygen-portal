@@ -1,8 +1,5 @@
 import { useState, useRef, KeyboardEvent, useMemo } from "react"
-import { useFormContext } from "react-hook-form"
-
 import { cn } from "@/lib/utils"
-
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -23,53 +20,57 @@ interface Option {
   label: string
   value: string
 }
-
-interface MultiSelectInputProps {
-  name: string
+interface MultiSelectProps {
+  value: string[]
+  onChange: (value: string[]) => void
   options: Option[]
   wildcard?: string
   placeholder?: string
   disabled?: boolean
 }
 
-export default function MultiSelectInput({
-  name,
+export default function MultiSelect({
+  value,
+  onChange,
   options,
   wildcard,
   placeholder = "Choose...",
   disabled,
-}: MultiSelectInputProps) {
-  const { watch, setValue } = useFormContext()
-  const selected: string[] = watch(name) ?? []
-
+}: MultiSelectProps) {
+  const selected = value ?? []
   const [query, setQuery] = useState("")
   const [open, setOpen] = useState(false)
 
   const inputRef = useRef<HTMLInputElement>(null)
   const triggerRef = useRef<HTMLDivElement>(null)
 
+  const labelMap = useMemo(
+    () => new Map(options.map((o) => [o.value, o.label])),
+    [options],
+  )
   const visibleOptions = useMemo(
     () =>
-      options.filter(({ label }) =>
-        label.toLowerCase().includes(query.toLowerCase()),
+      options.filter((option) =>
+        option.label.toLowerCase().includes(query.toLowerCase()),
       ),
     [query, options],
   )
 
-  const toggle = (value: string, focus = true) => {
-    const isActive = selected.includes(value)
-    let next: string[]
-
-    if (wildcard && value === wildcard) {
-      next = []
-    } else {
-      next = isActive
-        ? selected.filter((v) => v !== value)
-        : [...selected, value]
-    }
-    setValue(name, next, { shouldValidate: true })
+  const setSelected = (next: string[], focus = true) => {
+    onChange(next)
     setQuery("")
     if (focus) inputRef.current?.focus()
+  }
+
+  const toggle = (value: string, focus = true) => {
+    const isActive = selected.includes(value)
+    const next =
+      wildcard && value === wildcard
+        ? []
+        : isActive
+          ? selected.filter((v) => v !== value)
+          : [...selected, value]
+    setSelected(next, focus)
   }
 
   const remove = (value: string) => toggle(value, open)
@@ -114,7 +115,8 @@ export default function MultiSelectInput({
                   remove(value)
                 }}
               >
-                {value} <span className="ml-1">&times;</span>
+                {labelMap.get(value) ?? value}{" "}
+                <span className="ml-1">&times;</span>
               </Badge>
             ))}
 
@@ -123,7 +125,7 @@ export default function MultiSelectInput({
               value={query}
               disabled={disabled}
               placeholder={selected.length ? "" : placeholder}
-              fieldSize={"sm"}
+              fieldSize="sm"
               className="h-5 flex-1 border-none"
               onChange={(e) => {
                 setQuery(e.target.value)
@@ -166,12 +168,11 @@ export default function MultiSelectInput({
                 >
                   <Checkbox
                     checked={
-                      value === wildcard
+                      wildcard && value === wildcard
                         ? selected.length === 0
                         : selected.includes(value)
                     }
-                    onCheckedChange={() => toggle(value, false)}
-                    className="mr-2"
+                    className="pointer-events-none mr-2"
                   />
                   {label}
                 </CommandItem>

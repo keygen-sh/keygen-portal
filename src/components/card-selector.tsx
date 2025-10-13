@@ -24,36 +24,88 @@ export interface CardOption<T> {
   tooltip?: string
 }
 
+type SingleProps<T> = {
+  options: CardOption<T>[]
+  value: T | undefined
+  onChange: (value: T) => void
+  multiple?: false
+  columns?: number
+  horizontal?: boolean
+  className?: string
+}
+type MultipleProps<T> = {
+  options: CardOption<T>[]
+  value: T[]
+  onChange: (value: T[]) => void
+  multiple: true
+  columns?: number
+  horizontal?: boolean
+  className?: string
+}
+type CardSelectorProps<T> = SingleProps<T> | MultipleProps<T>
+
 export function CardSelector<T>({
   options,
   value,
+  columns = 3,
   onChange,
+  multiple = false,
   horizontal = true,
   className,
-}: {
-  options: CardOption<T>[]
-  value: T | undefined
-  onChange: (v: T) => void
-  horizontal?: boolean
-  className?: string
-}) {
+}: CardSelectorProps<T>): React.ReactElement {
   const isMobile = useMobile()
   const refs = useRef<(HTMLDivElement | null)[]>([])
-  const index = options.findIndex((o) => o.value === value)
+
+  const index = multiple
+    ? (() => {
+        const array = Array.isArray(value) ? (value as T[]) : []
+        if (array.length === 0) return -1
+        return options.findIndex((option) => array.includes(option.value))
+      })()
+    : options.findIndex((option) => option.value === (value as T | undefined))
 
   const move = useCallback(
     (direction: number) => {
-      if (index === -1) return
+      if (index === -1) {
+        const start = direction > 0 ? 0 : options.length - 1
+        refs.current[start]?.focus()
+        return
+      }
       const next = (index + direction + options.length) % options.length
       refs.current[next]?.focus()
     },
     [index, options.length],
   )
 
+  const isSelected = useCallback(
+    (option: T) =>
+      multiple
+        ? Array.isArray(value) && (value as T[]).includes(option)
+        : (value as T | undefined) === option,
+    [multiple, value],
+  )
+
+  const handleSelect = useCallback(
+    (option: T) => {
+      if (!multiple) {
+        ;(onChange as (value: T) => void)(option)
+        return
+      }
+      const current = Array.isArray(value) ? (value as T[]) : []
+      const set = new Set(current)
+      set.has(option) ? set.delete(option) : set.add(option)
+      ;(onChange as (value: T[]) => void)(Array.from(set))
+    },
+    [multiple, onChange, value],
+  )
+
   return (
     <div
-      role="radiogroup"
-      className={cn("flex flex-col gap-4 md:flex-row", className)}
+      role={multiple ? "group" : "radiogroup"}
+      className={cn("grid grid-cols-1 gap-4 md:grid-cols-3", className)}
+      style={{
+        gridTemplateColumns: `repeat(${isMobile ? 1 : columns}, minmax(0,1fr))`,
+      }}
       onKeyDown={(e) => {
         if (
           (horizontal && (e.key === "ArrowRight" || e.key === "ArrowLeft")) ||
@@ -64,62 +116,72 @@ export function CardSelector<T>({
         }
       }}
     >
-      {options.map((option, i) => (
-        <SelectableCard
-          key={String(option.value)}
-          ref={(element) => {
-            refs.current[i] = element
-          }}
-          selected={value === option.value}
-          onSelect={() => onChange(option.value)}
-        >
-          <div className="space-y-4 rounded-[inherit] bg-background p-4">
-            {option.icon && (
-              <CardHeader className="p-0">
-                <CardTitle>{option.icon}</CardTitle>
-              </CardHeader>
-            )}
+      {options.map((option, i) => {
+        const selected = isSelected(option.value)
 
-            <CardContent className="flex items-center gap-2 p-0">
-              <p className="text-lg font-medium text-content-loud md:text-base">
-                {option.label}
-              </p>
-
-              {option.tooltip && (
-                <>
-                  {isMobile ? (
-                    <Popover>
-                      <PopoverTrigger onClick={(e) => e.stopPropagation()}>
-                        <Info className="size-5 text-content-subdued" />
-                      </PopoverTrigger>
-                      <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
-                        {option.tooltip}
-                      </PopoverContent>
-                    </Popover>
-                  ) : (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info className="size-4 pt-0.5 text-content-subdued" />
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-64 bg-background-4 text-content-muted">
-                        {option.tooltip}
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-                </>
+        return (
+          <SelectableCard
+            key={String(option.value)}
+            ref={(element) => {
+              refs.current[i] = element
+            }}
+            role={multiple ? "checkbox" : "radio"}
+            selected={selected}
+            onSelect={() => handleSelect(option.value)}
+          >
+            <div className="space-y-4 rounded-[inherit] bg-background p-4">
+              {option.icon && (
+                <CardHeader className="p-0">
+                  <CardTitle>{option.icon}</CardTitle>
+                </CardHeader>
               )}
-            </CardContent>
-          </div>
-        </SelectableCard>
-      ))}
+
+              <CardContent className="flex items-center gap-2 p-0">
+                <p className="text-lg font-medium text-content-loud md:text-base">
+                  {option.label}
+                </p>
+
+                {option.tooltip && (
+                  <>
+                    {isMobile ? (
+                      <Popover>
+                        <PopoverTrigger onClick={(e) => e.stopPropagation()}>
+                          <Info className="size-5 text-content-subdued" />
+                        </PopoverTrigger>
+                        <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
+                          {option.tooltip}
+                        </PopoverContent>
+                      </Popover>
+                    ) : (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="size-4 pt-0.5 text-content-subdued" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-64 bg-background-4 text-content-muted">
+                          {option.tooltip}
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                  </>
+                )}
+              </CardContent>
+            </div>
+          </SelectableCard>
+        )
+      })}
     </div>
   )
 }
 
 const SelectableCard = React.forwardRef<
   HTMLDivElement,
-  { selected: boolean; onSelect: () => void; children: React.ReactNode }
->(({ selected, onSelect, children }, ref) => {
+  {
+    role?: "radio" | "checkbox"
+    selected: boolean
+    onSelect: () => void
+    children: React.ReactNode
+  }
+>(({ role = "radio", selected, onSelect, children }, ref) => {
   const activate = (e: React.MouseEvent | React.KeyboardEvent) => {
     if ("key" in e && e.key !== " " && e.key !== "Enter") return
     e.preventDefault()
@@ -129,15 +191,17 @@ const SelectableCard = React.forwardRef<
   return (
     <Card
       ref={ref}
-      role="radio"
+      role={role}
+      aria-checked={selected}
       tabIndex={0}
       onClick={activate}
       onKeyDown={activate}
       className={cn(
-        "w-full cursor-pointer rounded-lg bg-background p-0.5 transition-colors duration-200 md:w-60",
+        "w-full min-w-0 cursor-pointer rounded-lg bg-background p-0.5 transition-colors duration-200",
         "focus-visible:ring-2 focus-visible:ring-content-subdued focus-visible:outline-none",
         selected && "bg-gradient-to-r from-primary to-secondary",
       )}
+      data-selected={selected ? "true" : "false"}
     >
       {children}
     </Card>

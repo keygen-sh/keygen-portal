@@ -17,20 +17,27 @@ interface CollapsibleCardProps {
   title: string
   defaultOpen?: boolean
   children?: React.ReactNode
-  className?: string
+  containerClass?: string
+  contentClass?: string
 }
 
 export default function CollapsibleCard({
   title,
   defaultOpen = true,
   children,
-  className,
+  containerClass,
+  contentClass,
 }: CollapsibleCardProps) {
   const [open, setOpen] = useState(defaultOpen)
   const [transitioned, setTransitioned] = useState(!defaultOpen)
 
   return (
-    <Card className="rounded-sm bg-background py-0">
+    <Card
+      className={cn(
+        "flex min-h-0 w-full min-w-0 flex-col rounded-sm bg-background py-0",
+        containerClass,
+      )}
+    >
       <Collapsible
         open={open}
         onOpenChange={(value) => {
@@ -70,7 +77,7 @@ export default function CollapsibleCard({
                 transition={{ duration: 0.2, ease: [0.42, 0, 0.58, 1] }}
                 className="overflow-hidden"
               >
-                <CardContent className={cn("p-4", className)}>
+                <CardContent className={cn("p-4", contentClass)}>
                   {Children.map(children, (child, index) => (
                     <Fragment key={index}>
                       {child}

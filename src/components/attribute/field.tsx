@@ -7,7 +7,7 @@ import {
 import { Info } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-type AttributeVariant = "default" | "outline" | "text"
+type AttributeVariant = "default" | "outline" | "text" | "none"
 
 interface AttributeFieldProps {
   label: string
@@ -26,6 +26,8 @@ export default function AttributeField({
 }: AttributeFieldProps): React.ReactElement {
   const renderVariant = () => {
     switch (variant) {
+      case "none":
+        return value
       case "text":
         return <span className={cn("px-2 text-sm", className)}>{value}</span>
       case "outline":

@@ -37,16 +37,16 @@ export default function PropertyField({
             )}
             {isEmpty(value) ? (
               <>
-                <p className="text-sm text-content-normal">{emptyLabel}</p>
+                <p className="text-xs text-content-normal">{emptyLabel}</p>
               </>
             ) : (
               <>
                 <span
-                  className={cn("mr-1 text-sm text-content-loud", className)}
+                  className={cn("mr-1 text-xs text-content-loud", className)}
                 >
                   {value}
                 </span>
-                <p className="text-sm text-content-muted">{label}</p>
+                <p className="text-xs text-content-muted">{label}</p>
               </>
             )}
           </div>
@@ -59,18 +59,18 @@ export default function PropertyField({
             )}
             {isEmpty(value) ? (
               <>
-                <p className="text-sm text-content-muted">{label}</p>
+                <p className="text-xs text-content-muted">{label}</p>
                 <span
-                  className={cn("ml-1 text-sm text-content-loud", className)}
+                  className={cn("ml-1 text-xs text-content-loud", className)}
                 >
                   {value}
                 </span>
               </>
             ) : (
               <>
-                <p className="text-sm text-content-muted">{label}</p>
+                <p className="text-xs text-content-muted">{label}</p>
                 <span
-                  className={cn("ml-1 text-sm text-content-loud", className)}
+                  className={cn("ml-1 text-xs text-content-loud", className)}
                 >
                   {value}
                 </span>

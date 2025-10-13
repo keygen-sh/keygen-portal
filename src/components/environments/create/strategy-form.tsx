@@ -21,7 +21,7 @@ import {
 import { GlobeLock, Globe, Info } from "lucide-react"
 
 import { useMobile } from "@/hooks/use-mobile"
-import { IsolationStrategy, EnvironmentDescription } from "@/types/environments"
+import { IsolationStrategy } from "@/types/environments"
 
 import { CardSelector, CardOption } from "@/components/card-selector"
 
@@ -37,7 +37,6 @@ type StrategyValues = z.infer<typeof strategySchema>
 interface StrategyFormProps {
   isolationStrategy?: IsolationStrategy
   onStrategyChange?: (strategy: IsolationStrategy) => void
-  onDescriptionChange?: (desc: EnvironmentDescription) => void
   onSubmit: (strategy: IsolationStrategy) => void
   onCancel: () => void
 }
@@ -45,7 +44,6 @@ interface StrategyFormProps {
 export default function StrategyForm({
   isolationStrategy,
   onStrategyChange,
-  onDescriptionChange,
   onSubmit,
   onCancel,
 }: StrategyFormProps) {
@@ -125,7 +123,6 @@ export default function StrategyForm({
                     onChange={(value: IsolationStrategy) => {
                       field.onChange(value)
                       onStrategyChange?.(value)
-                      onDescriptionChange?.(EnvironmentDescription[value])
                     }}
                   />
 

@@ -306,7 +306,7 @@ export default function ProductDetails() {
                 </CollapsibleCard>
 
                 {isMobile && (
-                  <CollapsibleCard title="Properties" className="space-y-2">
+                  <CollapsibleCard title="Properties" contentClass="space-y-2">
                     {product ? (
                       <>
                         <Property.Field

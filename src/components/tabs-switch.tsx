@@ -6,6 +6,7 @@ import React, {
 } from "react"
 
 import { cn } from "@/lib/utils"
+
 import { TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 type Option = {
@@ -17,39 +18,47 @@ type Option = {
 interface TabsSwitchProps
   extends React.ComponentPropsWithoutRef<typeof TabsList> {
   options: Option[]
+  active?: string
 }
 
 const TabsSwitch = React.forwardRef<HTMLDivElement, TabsSwitchProps>(
-  ({ options, className, ...props }, ref) => {
+  ({ options, className, active, ...props }, ref) => {
+    const wrapRef = useRef<HTMLDivElement>(null)
     const listRef = useRef<HTMLDivElement>(null)
     const barRef = useRef<HTMLSpanElement>(null)
 
     useImperativeHandle(ref, () => listRef.current as HTMLDivElement, [])
 
-    const placeBar = (el: HTMLElement | null) => {
-      if (!el || !barRef.current) return
-      barRef.current.style.left = `${el.offsetLeft}px`
-      barRef.current.style.width = `${el.offsetWidth}px`
+    const placeBar = (element: HTMLElement | null) => {
+      if (!element || !barRef.current) return
+      barRef.current.style.left = `${element.offsetLeft}px`
+      barRef.current.style.width = `${element.offsetWidth}px`
     }
 
-    useLayoutEffect(() => {
-      if (listRef.current) {
-        const firstTrigger =
-          listRef.current.querySelector<HTMLElement>('[role="tab"]')
-        placeBar(firstTrigger)
-      }
-    }, [])
+    const moveToActive = () => {
+      if (!listRef.current) return
+      const active = listRef.current.querySelector<HTMLElement>(
+        '[data-state="active"]',
+      )
+      placeBar(active)
+    }
+
+    useLayoutEffect(moveToActive, [])
+    useEffect(moveToActive, [active])
 
     useEffect(() => {
-      const handleResize = () => {
-        if (!listRef.current) return
-        const active = listRef.current.querySelector<HTMLElement>(
-          '[data-state="active"]',
-        )
-        placeBar(active)
+      const onResize = () => moveToActive()
+      window.addEventListener("resize", onResize)
+
+      const resizeObserver = listRef.current
+        ? new ResizeObserver(() => moveToActive())
+        : null
+      if (listRef.current && resizeObserver)
+        resizeObserver.observe(listRef.current)
+      return () => {
+        window.removeEventListener("resize", onResize)
+        resizeObserver?.disconnect()
       }
-      window.addEventListener("resize", handleResize)
-      return () => window.removeEventListener("resize", handleResize)
     }, [])
 
     const handleClick = (e: React.MouseEvent<HTMLElement>) => {
@@ -57,28 +66,39 @@ const TabsSwitch = React.forwardRef<HTMLDivElement, TabsSwitchProps>(
     }
 
     return (
-      <TabsList
-        ref={listRef}
-        className={cn("relative flex gap-4", className)}
-        {...props}
-      >
-        <span
-          ref={barRef}
-          className="pointer-events-none absolute bottom-0 left-0 h-px bg-primary transition-[left,width] duration-200"
-        />
+      <div ref={wrapRef} className="relative w-full p-4 pb-0">
+        <span className="pointer-events-none absolute inset-x-0 bottom-px h-[0.5px] bg-accent" />
+        <TabsList
+          ref={listRef}
+          className={cn(
+            "relative flex gap-4",
+            "!justify-start !p-0",
+            className,
+          )}
+          {...props}
+        >
+          <span
+            ref={barRef}
+            className="pointer-events-none absolute bottom-px left-0 h-px bg-primary transition-[left,width] duration-200"
+          />
 
-        {options.map(({ value, label, icon: Icon }) => (
-          <TabsTrigger
-            key={value}
-            value={value}
-            onClick={handleClick}
-            className="flex items-center gap-1.5 p-0 pb-8"
-          >
-            {Icon && <Icon className="h-3 w-3" />}
-            {label}
-          </TabsTrigger>
-        ))}
-      </TabsList>
+          {options.map(({ value, label, icon: Icon }) => (
+            <TabsTrigger
+              key={value}
+              value={value}
+              onClick={handleClick}
+              className={cn(
+                "p-0 pb-4 hover:text-content-loud",
+                "data-[state=active]:bg-transparent data-[state=active]:shadow-none dark:data-[state=active]:bg-transparent",
+                "[&_svg]:transition-colors [&[data-state=active]_svg]:text-brand-primary",
+              )}
+            >
+              {Icon && <Icon className="h-3 w-3" />}
+              {label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </div>
     )
   },
 )

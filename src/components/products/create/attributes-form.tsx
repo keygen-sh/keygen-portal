@@ -35,8 +35,8 @@ import { useMobile } from "@/hooks/use-mobile"
 import SectionCard from "@/components/section-card"
 import * as Loading from "@/components/loading"
 import TagInput from "@/components/tag-input"
-import MetaInput from "@/components/meta-input"
 import MultiSelect from "@/components/multi-select"
+import KeyValueInput from "@/components/key-value-input"
 
 export const attributesSchema = z.object({
   name: z.string().trim().min(1, "Product name is required"),
@@ -230,7 +230,7 @@ export default function AttributesForm({
                   <FormField
                     control={form.control}
                     name="permissions"
-                    render={() => (
+                    render={({ field }) => (
                       <FormItem>
                         <div className="flex items-center gap-2">
                           <FormLabel>Permissions</FormLabel>
@@ -259,7 +259,8 @@ export default function AttributesForm({
                           )}
                         </div>
                         <MultiSelect
-                          name="permissions"
+                          value={field.value ?? []}
+                          onChange={field.onChange}
                           options={Permissions.map((p) => ({
                             label: p === "*" ? "*" : p,
                             value: p,
@@ -313,7 +314,10 @@ export default function AttributesForm({
                           </span>
                         </div>
                         <FormControl>
-                          <MetaInput disabled={loading} />
+                          <KeyValueInput<AttributesFormValues>
+                            name="metadata"
+                            disabled={loading}
+                          />
                         </FormControl>
                         <FormMessage>{error || ""}</FormMessage>
                       </FormItem>

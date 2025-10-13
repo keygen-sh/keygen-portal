@@ -1,6 +1,5 @@
 import { useState, useCallback } from "react"
 
-import { Badge } from "@/components/ui/badge"
 import {
   DialogContent,
   DialogHeader,
@@ -21,7 +20,6 @@ import { Lock, Unlock, Award } from "lucide-react"
 import {
   Product,
   DistributionStrategy,
-  ProductDescription,
   ProductErrorCode,
 } from "@/types/products"
 import { AttributesFormValues } from "./attributes-form"
@@ -33,6 +31,7 @@ import { toast } from "@/lib/toast"
 import * as Motion from "@/components/motion"
 import StrategyForm from "./strategy-form"
 import AttributesForm from "./attributes-form"
+import { BadgeGroup, BadgeGroupItem } from "@/components/badge-group"
 
 interface ProductsCreateModalProps {
   onSelectProduct: (product: Product | null) => void
@@ -49,9 +48,6 @@ export default function ProductsCreateModal({
 
   const [distributionStrategy, setDistributionStrategy] =
     useState<DistributionStrategy>(DistributionStrategy.LICENSED)
-  const [description, setDescription] = useState<ProductDescription>(
-    ProductDescription.OPEN,
-  )
 
   const [formError, setFormError] = useState<string | null>(null)
 
@@ -103,46 +99,32 @@ export default function ProductsCreateModal({
     [],
   )
 
-  const handleDescriptionChange = useCallback(
-    (newDescription: ProductDescription) => {
-      setDescription(newDescription)
-    },
-    [],
-  )
-
-  const renderDescription = useCallback(() => {
-    const words = description.split(" ")
-    const tags = words.filter((word) =>
-      Object.values(DistributionStrategy).includes(
-        word.toUpperCase() as DistributionStrategy,
-      ),
-    )
-
-    return words.map((word, index) => {
-      if (tags.includes(word as DistributionStrategy)) {
-        const w = word.toUpperCase() as DistributionStrategy
-        return (
-          <Badge key={index} variant="secondary">
-            {w === DistributionStrategy.LICENSED ? (
-              <Award />
-            ) : w === DistributionStrategy.OPEN ? (
-              <Unlock />
-            ) : (
-              <Lock />
-            )}
-            {word}
-          </Badge>
-        )
-      }
-      return <span key={index}>{word}</span>
-    })
-  }, [description])
-
   return (
     <DialogContent className="md:min-w-4xl">
       <DialogHeader className="h-fit border-b border-accent p-2">
         <DialogDescription className="flex h-5 items-center space-x-1 text-xs">
-          {renderDescription()}
+          <DialogDescription className="flex h-5 items-center text-xs">
+            <BadgeGroup prefix="Creating a new" suffix="product">
+              {distributionStrategy === DistributionStrategy.LICENSED && (
+                <BadgeGroupItem>
+                  <Award />
+                  Licensed
+                </BadgeGroupItem>
+              )}
+              {distributionStrategy === DistributionStrategy.OPEN && (
+                <BadgeGroupItem>
+                  <Unlock />
+                  Open
+                </BadgeGroupItem>
+              )}
+              {distributionStrategy === DistributionStrategy.CLOSED && (
+                <BadgeGroupItem>
+                  <Lock />
+                  Closed
+                </BadgeGroupItem>
+              )}
+            </BadgeGroup>
+          </DialogDescription>
         </DialogDescription>
         <DialogTitle>
           <Breadcrumb>
@@ -176,7 +158,6 @@ export default function ProductsCreateModal({
             key="strategy"
             distributionStrategy={distributionStrategy}
             onStrategyChange={handleStrategyChange}
-            onDescriptionChange={handleDescriptionChange}
             onSubmit={() => goTo(1)}
             onCancel={onClose}
           />

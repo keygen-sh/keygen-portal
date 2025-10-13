@@ -463,6 +463,25 @@ export const ProcessBasedShape = z.object({
     .default(ProcessLeasingStrategy.PER_MACHINE),
 })
 
+export const ProcessBasedRules = (
+  schema: z.ZodType<PolicyFormValues>,
+): z.ZodType<PolicyFormValues> =>
+  schema
+    .refine(
+      (values: PolicyFormValues) => values.machineLeasingStrategy != null,
+      {
+        path: ["machineLeasingStrategy"],
+        message: "Required for Process-based policies",
+      },
+    )
+    .refine(
+      (values: PolicyFormValues) => values.processLeasingStrategy != null,
+      {
+        path: ["processLeasingStrategy"],
+        message: "Required for Process-based policies",
+      },
+    )
+
 export const LeaseBasedShape = z.object({
   requireHeartbeat: z.boolean().default(true),
   heartbeatDuration: z
@@ -569,6 +588,9 @@ export function composePolicySchema(selection: {
   }
   if (requiresNodeLocked) {
     schema = NodeLockedRules(schema)
+  }
+  if (metered.includes(MeteredTemplates.PROCESS_BASED)) {
+    schema = ProcessBasedRules(schema)
   }
   if (metered.includes(MeteredTemplates.LEASE_BASED)) {
     schema = LeaseBasedRules(schema)

@@ -1,14 +1,13 @@
 import { useState, useMemo, useCallback } from "react"
 import { useForm, FieldPath, FormProvider } from "react-hook-form"
-import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Form } from "@/components/ui/form"
 
-import { BaseSchema, getFormDefaults } from "./modal"
 import { PolicyFormValues } from "@/types/policies"
+import { BaseSchema, getSchemaDefaults } from "@/components/policies/schema"
 
 import { useSlide } from "@/hooks/use-slide"
 import { useMobile } from "@/hooks/use-mobile"
@@ -35,16 +34,12 @@ export default function PoliciesScratchForm({
 }: PoliciesScratchFormProps): React.ReactElement {
   const isMobile = useMobile()
 
-  const schema = useMemo(() => createSchemaFromValues(), [])
+  const schema = BaseSchema
 
   const form = useForm<PolicyFormValues>({
     resolver: zodResolver(schema),
     mode: "onChange",
-    defaultValues: {
-      name: "",
-      ...getFormDefaults(),
-      metadata: {},
-    },
+    defaultValues: getSchemaDefaults(BaseSchema),
   })
 
   const steps: Step[] = useMemo(
@@ -257,116 +252,4 @@ export default function PoliciesScratchForm({
       )}
     </div>
   )
-}
-
-function createSchemaFromValues() {
-  return BaseSchema.superRefine((values, context) => {
-    if (values.duration != null) {
-      if (values.expirationStrategy == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["expirationStrategy"],
-          message: "Select an expiration strategy.",
-        })
-      }
-      if (values.expirationBasis == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["expirationBasis"],
-          message: "Select an expiration basis.",
-        })
-      }
-      if (values.renewalBasis == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["renewalBasis"],
-          message: "Select a renewal basis.",
-        })
-      }
-      if (values.transferStrategy == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["transferStrategy"],
-          message: "Select a transfer strategy.",
-        })
-      }
-    }
-
-    if (values.requireHeartbeat == true) {
-      if (values.heartbeatDuration == null || values.heartbeatDuration < 60) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["heartbeatDuration"],
-          message: "Must be greater than or equal to 60 seconds.",
-          params: { minimum: 60 },
-        })
-      }
-      if (values.heartbeatBasis == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["heartbeatBasis"],
-          message: "Select a heartbeat basis.",
-        })
-      }
-      if (values.heartbeatCullStrategy == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["heartbeatCullStrategy"],
-          message: "Select a heartbeat cull strategy.",
-        })
-      }
-      if (values.heartbeatResurrectionStrategy == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["heartbeatResurrectionStrategy"],
-          message: "Select a heartbeat resurrection strategy.",
-        })
-      }
-    }
-
-    const requiresNodeLocked =
-      !!(
-        values.maxMachines != null ||
-        values.machineUniquenessStrategy ||
-        values.componentUniquenessStrategy
-      ) || false
-
-    const floating = values.floating === true
-
-    if (requiresNodeLocked) {
-      if (floating) {
-        if (values.maxMachines != null && values.maxMachines <= 0) {
-          context.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ["maxMachines"],
-            message:
-              "Provide a number > 0 or leave blank for unlimited when floating.",
-          })
-        }
-      } else {
-        if (values.maxMachines !== 1) {
-          context.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ["maxMachines"],
-            message:
-              "Max machines must equal 1 when the policy is not floating.",
-          })
-        }
-      }
-    }
-
-    if (values.checkInInterval != null) {
-      if (
-        values.checkInIntervalCount == null ||
-        values.checkInIntervalCount < 1 ||
-        values.checkInIntervalCount > 365
-      ) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["checkInIntervalCount"],
-          message: "Must be a number between 1 and 365.",
-        })
-      }
-    }
-  })
 }

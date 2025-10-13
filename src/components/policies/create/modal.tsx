@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useCallback, useState } from "react"
-import { useForm, DeepPartial, FieldPath } from "react-hook-form"
-import { z } from "zod"
+import { useForm, FieldPath } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
@@ -34,8 +33,6 @@ import {
   AccessTemplates,
   MeteredTemplates,
   PolicyTemplateSelection,
-  CreatePolicyPayload,
-  CheckInInterval,
   AuthenticationStrategy,
   ExpirationStrategy,
   OverageStrategy,
@@ -60,147 +57,19 @@ import { toast } from "@/lib/toast"
 import { useSlide } from "@/hooks/use-slide"
 import { useMobile } from "@/hooks/use-mobile"
 
-import { BadgeGroup, BadgeGroupItem } from "@/components/badge-group"
 import * as Motion from "@/components/motion"
 import * as Policies from "@/components/policies"
 import StepProgress from "@/components/step-progress"
 import DocumentationLink from "@/components/documentation-link"
 import CollapsedBreadcrumb from "@/components/collapsed-breadcrumb"
+import { BadgeGroup, BadgeGroupItem } from "@/components/badge-group"
+import {
+  getSchemaDefaults,
+  composePolicySchema,
+} from "@/components/policies/schema"
 
 import ScratchForm from "./scratch-form"
 import TemplatesForm, { TemplatesValues } from "./templates-form"
-
-export const BaseSchema: z.ZodType<PolicyFormValues> = z
-  .object({
-    name: z.string().trim().min(1, "Policy name is required."),
-
-    duration: z.coerce
-      .number()
-      .int()
-      .min(0)
-      .nullable()
-      .optional()
-      .transform((value) => (value === 0 ? null : value)),
-
-    expirationStrategy: z.nativeEnum(ExpirationStrategy).nullable().optional(),
-    expirationBasis: z.nativeEnum(ExpirationBasis).nullable().optional(),
-    renewalBasis: z.nativeEnum(RenewalBasis).nullable().optional(),
-    transferStrategy: z.nativeEnum(TransferStrategy).nullable().optional(),
-
-    maxMachines: z.coerce
-      .number()
-      .int()
-      .min(0)
-      .nullable()
-      .optional()
-      .transform((value) => (value === 0 ? null : value)),
-
-    machineUniquenessStrategy: z
-      .nativeEnum(MachineUniquenessStrategy)
-      .nullable()
-      .optional(),
-    machineMatchingStrategy: z
-      .nativeEnum(MachineMatchingStrategy)
-      .nullable()
-      .optional(),
-    machineLeasingStrategy: z
-      .nativeEnum(MachineLeasingStrategy)
-      .nullable()
-      .optional(),
-    processLeasingStrategy: z
-      .nativeEnum(ProcessLeasingStrategy)
-      .nullable()
-      .optional(),
-    componentUniquenessStrategy: z
-      .nativeEnum(ComponentUniquenessStrategy)
-      .nullable()
-      .optional(),
-    componentMatchingStrategy: z
-      .nativeEnum(ComponentMatchingStrategy)
-      .nullable()
-      .optional(),
-    overageStrategy: z.nativeEnum(OverageStrategy).nullable().optional(),
-
-    maxUsers: z.coerce
-      .number()
-      .int()
-      .min(0)
-      .nullable()
-      .optional()
-      .transform((value) => (value === 0 ? null : value)),
-    maxProcesses: z.coerce
-      .number()
-      .int()
-      .min(0)
-      .nullable()
-      .optional()
-      .transform((value) => (value === 0 ? null : value)),
-    maxUses: z.coerce.number().int().positive().nullable().optional(),
-
-    requireHeartbeat: z.boolean().optional(),
-    heartbeatDuration: z.coerce.number().int().nullable().optional(),
-    heartbeatBasis: z.nativeEnum(HeartbeatBasis).nullable().optional(),
-    heartbeatCullStrategy: z
-      .nativeEnum(HeartbeatCullStrategy)
-      .nullable()
-      .optional(),
-    heartbeatResurrectionStrategy: z
-      .nativeEnum(HeartbeatResurrectionStrategy)
-      .nullable()
-      .optional(),
-
-    strict: z.boolean().optional(),
-    floating: z.boolean().optional(),
-    protected: z.boolean().optional(),
-    usePool: z.boolean().optional(),
-    checkInInterval: z.nativeEnum(CheckInInterval).nullable().optional(),
-    checkInIntervalCount: z.coerce
-      .number()
-      .int()
-      .min(1)
-      .max(365)
-      .nullable()
-      .optional(),
-
-    authenticationStrategy: z
-      .nativeEnum(AuthenticationStrategy)
-      .nullable()
-      .optional(),
-
-    requireProductScope: z.boolean().optional(),
-    requirePolicyScope: z.boolean().optional(),
-    requireMachineScope: z.boolean().optional(),
-    requireFingerprintScope: z.boolean().optional(),
-    requireComponentsScope: z.boolean().optional(),
-    requireUserScope: z.boolean().optional(),
-    requireChecksumScope: z.boolean().optional(),
-    requireVersionScope: z.boolean().optional(),
-
-    entitlements: z
-      .object({
-        attach: z.array(z.string()).optional(),
-        create: z
-          .array(
-            z.object({
-              name: z.string().min(1),
-              code: z.string().min(1),
-              metadata: z.record(z.string()).optional(),
-            }),
-          )
-          .optional(),
-      })
-      .optional(),
-    product: z.object({
-      id: z
-        .string({
-          required_error: "Product is required.",
-        })
-        .min(1, "Product is required."),
-    }),
-
-    metadata: z.record(z.string()).default({}),
-  })
-  .strict()
 
 type Step = {
   key: string
@@ -236,23 +105,23 @@ export default function PoliciesCreateModal({
   })
 
   const schema = useMemo(
-    () => createSchemaFromSelection(selection),
-    [selection],
-  )
-
-  const defaultValues: DeepPartial<PolicyFormValues> = useMemo(
-    () => ({ name: "", ...getFormDefaults(selection) }),
+    () =>
+      composePolicySchema({
+        timing: selection.timing,
+        access: selection.access,
+        metered: selection.metered,
+        offline: selection.offline,
+      }),
     [selection],
   )
 
   const form = useForm<PolicyFormValues>({
     resolver: zodResolver(schema),
-    mode: "onChange",
-    defaultValues,
+    defaultValues: getSchemaDefaults(schema),
   })
 
   const selectedTemplatesSteps = useMemo(
-    () => createStepsFromSelection(selection),
+    () => composeStepsFromSelection(selection),
     [selection],
   )
 
@@ -344,12 +213,10 @@ export default function PoliciesCreateModal({
       setSelection(newSelection)
       setCompletedStep(new Set())
 
-      form.reset(
-        { name: "", ...getFormDefaults(newSelection) },
-        { keepDefaultValues: false },
-      )
+      const newSchema = composePolicySchema(newSelection)
+      form.reset(getSchemaDefaults(newSchema), { keepDefaultValues: false })
 
-      const nextSteps = createStepsFromSelection(newSelection)
+      const nextSteps = composeStepsFromSelection(newSelection)
       if (nextSteps.length > 0) goTo(1)
     },
     [form, goTo, setSelection],
@@ -576,174 +443,7 @@ export default function PoliciesCreateModal({
   )
 }
 
-function createSchemaFromSelection(selection: PolicyTemplateSelection) {
-  return BaseSchema.superRefine((values, context) => {
-    if (
-      selection.timing === TimingTemplates.TIMED ||
-      selection.timing === TimingTemplates.PERPETUAL_FALLBACK
-    ) {
-      if (values.duration == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["duration"],
-          message: "Duration is required for a timed policy.",
-        })
-      }
-      if (values.expirationStrategy == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["expirationStrategy"],
-          message: "Select an expiration strategy.",
-        })
-      }
-      if (values.expirationBasis == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["expirationBasis"],
-          message: "Select an expiration basis.",
-        })
-      }
-      if (values.renewalBasis == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["renewalBasis"],
-          message: "Select a renewal basis.",
-        })
-      }
-      if (values.transferStrategy == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["transferStrategy"],
-          message: "Select a transfer strategy.",
-        })
-      }
-    }
-
-    if (selection.access.includes(AccessTemplates.USER_LOCKED)) {
-      if (values.maxUsers == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["maxUsers"],
-          message: "Please provide a value for max users.",
-        })
-      }
-    }
-
-    const requiresNodeLocked =
-      selection.access.includes(AccessTemplates.NODE_LOCKED) ||
-      selection.metered.includes(MeteredTemplates.PROCESS_BASED) ||
-      selection.metered.includes(MeteredTemplates.LEASE_BASED)
-
-    if (requiresNodeLocked) {
-      const floating = values.floating === true
-      const maxMachines = values.maxMachines
-
-      if (floating) {
-        if (maxMachines != null && maxMachines <= 0) {
-          context.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ["maxMachines"],
-            message:
-              "Provide a number > 0 or leave blank for unlimited when floating.",
-          })
-        }
-      } else {
-        if (maxMachines !== 1) {
-          context.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ["maxMachines"],
-            message:
-              "Max machines must equal 1 when the policy is not floating.",
-          })
-        }
-      }
-
-      if (values.machineUniquenessStrategy == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["machineUniquenessStrategy"],
-          message: "Select a machine uniqueness strategy.",
-        })
-      }
-      if (values.machineMatchingStrategy == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["machineMatchingStrategy"],
-          message: "Select a machine matching strategy.",
-        })
-      }
-      if (values.componentUniquenessStrategy == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["componentUniquenessStrategy"],
-          message: "Select a component uniqueness strategy.",
-        })
-      }
-      if (values.componentMatchingStrategy == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["componentMatchingStrategy"],
-          message: "Select a component matching strategy.",
-        })
-      }
-      if (values.overageStrategy == null) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["overageStrategy"],
-          message: "Select an overage strategy.",
-        })
-      }
-
-      if (selection.metered.includes(MeteredTemplates.LEASE_BASED)) {
-        if (values.heartbeatDuration == null || values.heartbeatDuration < 60) {
-          context.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ["heartbeatDuration"],
-            message: "Must be greater than or equal to 60 seconds.",
-            params: { minimum: 60 },
-          })
-        }
-        if (values.heartbeatBasis == null) {
-          context.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ["heartbeatBasis"],
-            message: "Select a heartbeat basis.",
-          })
-        }
-        if (values.heartbeatCullStrategy == null) {
-          context.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ["heartbeatCullStrategy"],
-            message: "Select a heartbeat cull strategy.",
-          })
-        }
-        if (values.heartbeatResurrectionStrategy == null) {
-          context.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ["heartbeatResurrectionStrategy"],
-            message: "Select a heartbeat resurrection strategy.",
-          })
-        }
-      }
-    }
-
-    if (values.checkInInterval != null) {
-      if (
-        values.checkInIntervalCount == null ||
-        values.checkInIntervalCount < 1 ||
-        values.checkInIntervalCount > 365
-      ) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["checkInIntervalCount"],
-          message: "Must be a number between 1 and 365.",
-        })
-      }
-    }
-  })
-}
-
-function createStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
+function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
   const steps: Step[] = []
 
   steps.push({
@@ -896,75 +596,6 @@ function createStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
   return steps
 }
 
-export function getFormDefaults(selection?: PolicyTemplateSelection) {
-  const base: Partial<CreatePolicyPayload> = {
-    authenticationStrategy: AuthenticationStrategy.MIXED,
-    renewalBasis: RenewalBasis.FROM_NOW_IF_EXPIRED,
-    transferStrategy: TransferStrategy.RESET_EXPIRY,
-    protected: true,
-    floating: true,
-    strict: true,
-  }
-
-  if (!selection) return base // Scratch flow
-
-  if (selection.timing === TimingTemplates.PERPETUAL) base.duration = null
-
-  if (selection.timing === TimingTemplates.TIMED) {
-    base.expirationStrategy = ExpirationStrategy.RESTRICT_ACCESS
-    base.expirationBasis = ExpirationBasis.FROM_CREATION
-
-    if (base.duration == null) base.duration = 86400 * 14
-  }
-
-  if (selection.timing === TimingTemplates.PERPETUAL_FALLBACK) {
-    base.expirationStrategy = ExpirationStrategy.MAINTAIN_ACCESS
-    base.expirationBasis = ExpirationBasis.FROM_CREATION
-
-    if (base.duration == null) base.duration = 86400 * 14
-  }
-
-  const requiresNodeLocked =
-    selection.access.includes(AccessTemplates.NODE_LOCKED) ||
-    selection.metered.includes(MeteredTemplates.PROCESS_BASED) ||
-    selection.metered.includes(MeteredTemplates.LEASE_BASED)
-
-  if (requiresNodeLocked) {
-    base.requireFingerprintScope = true
-
-    base.machineUniquenessStrategy =
-      MachineUniquenessStrategy.UNIQUE_PER_LICENSE
-    base.machineMatchingStrategy = MachineMatchingStrategy.MATCH_ANY
-    base.componentUniquenessStrategy =
-      ComponentUniquenessStrategy.UNIQUE_PER_MACHINE
-    base.componentMatchingStrategy = ComponentMatchingStrategy.MATCH_ANY
-    base.overageStrategy = OverageStrategy.NO_OVERAGE
-
-    if (selection.metered.includes(MeteredTemplates.PROCESS_BASED)) {
-      base.machineLeasingStrategy = MachineLeasingStrategy.PER_LICENSE
-      base.processLeasingStrategy = ProcessLeasingStrategy.PER_MACHINE
-    }
-
-    if (selection.metered.includes(MeteredTemplates.LEASE_BASED)) {
-      base.requireHeartbeat = true
-      base.heartbeatDuration = 60
-      base.heartbeatBasis = HeartbeatBasis.FROM_CREATION
-      base.heartbeatCullStrategy = HeartbeatCullStrategy.DEACTIVATE_DEAD
-      base.heartbeatResurrectionStrategy =
-        HeartbeatResurrectionStrategy.NO_REVIVE
-    }
-  }
-
-  if (selection.access.includes(AccessTemplates.USER_LOCKED)) {
-    base.requireUserScope = true
-  }
-
-  if (selection.offline)
-    base.authenticationStrategy = AuthenticationStrategy.LICENSE
-
-  return base
-}
-
 const buildMockPolicy = (
   input: PolicyFormValues,
   selection: PolicyTemplateSelection,
@@ -972,7 +603,8 @@ const buildMockPolicy = (
 ): Policy => {
   const id = crypto.randomUUID()
   const now = new Date().toISOString()
-  const base = getFormDefaults(selection)
+
+  const base = getSchemaDefaults(composePolicySchema(selection))
 
   const attributes = {
     name: input.name,

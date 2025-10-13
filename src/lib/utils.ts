@@ -103,10 +103,10 @@ export function secondsToParts(total?: number | null) {
   seconds -= days * DAY
   const hours = Math.trunc(seconds / HOUR)
   seconds -= hours * HOUR
-  const minute = Math.trunc(seconds / MINUTE)
-  seconds -= minute * MINUTE
+  const minutes = Math.trunc(seconds / MINUTE)
+  seconds -= minutes * MINUTE
 
-  return { years, months, weeks, days, hours, minute, seconds }
+  return { years, months, weeks, days, hours, minutes, seconds }
 }
 
 export function splitLastWord(s: string): { head: string; tail: string } {

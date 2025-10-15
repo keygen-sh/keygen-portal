@@ -7,12 +7,14 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 
-import { Entitlement } from "@/types/entitlements"
+import { Entitlement, MockEntitlements } from "@/types/entitlements"
 import { AttributesFormValues } from "./attributes-form"
 
 // import { useCreateEntitlement } from "@/queries/entitlements"
 
 import { toast } from "@/lib/toast"
+import { buildMockEntitlement } from "@/lib/entitlements"
+
 import AttributesForm from "./attributes-form"
 
 interface EntitlementsCreateModalProps {
@@ -59,6 +61,18 @@ export default function EntitlementsCreateModal({
       //       toast({ message: "Failed to create entitlement", variant: "error" })
       //     },
       //   })
+
+      const mockEntitlement = buildMockEntitlement({
+        name: values.name,
+        code: values.code,
+        metadata: values.metadata,
+      })
+
+      MockEntitlements.push(mockEntitlement)
+
+      toast({ message: "Entitlement created", variant: "success" })
+      onSelectEntitlement(mockEntitlement)
+      onClose()
     },
     [onSelectEntitlement, onClose],
   )

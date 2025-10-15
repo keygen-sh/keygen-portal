@@ -15,6 +15,7 @@ import { ChevronDown, ChevronUp } from "lucide-react"
 
 interface CollapsibleCardProps {
   title: string
+  subtitle?: React.ReactNode
   defaultOpen?: boolean
   children?: React.ReactNode
   containerClass?: string
@@ -23,6 +24,7 @@ interface CollapsibleCardProps {
 
 export default function CollapsibleCard({
   title,
+  subtitle,
   defaultOpen = true,
   children,
   containerClass,
@@ -52,7 +54,10 @@ export default function CollapsibleCard({
           )}
         >
           <CollapsibleTrigger className="group flex h-full w-full items-center justify-between p-3">
-            <CardTitle className="text-content-loud">{title}</CardTitle>
+            <CardTitle className="text-content-loud">
+              {title} {subtitle && subtitle}
+            </CardTitle>
+
             <div className="rounded-full bg-background-2 p-0.5 text-content-normal transition-colors duration-200 group-hover:bg-background-3 group-hover:text-content-loud">
               {open ? (
                 <ChevronUp className="size-4" />

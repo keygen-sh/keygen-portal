@@ -66,7 +66,7 @@ export default function EntitlementsCreateModal({
   return (
     <DialogContent className="md:min-w-4xl">
       <DialogHeader className="h-fit border-b border-accent p-2">
-        <DialogDescription className="flex h-5 items-center space-x-1 text-xs">
+        <DialogDescription className="flex h-8 items-center space-x-1 text-xs">
           Creating a new entitlement
         </DialogDescription>
         <DialogTitle className="sr-only" />

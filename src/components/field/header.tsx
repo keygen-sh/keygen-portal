@@ -48,29 +48,34 @@ export default function FieldHeader({
       )}
     >
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-content-muted">{label}</label>
-          {isMobile && tooltip ? (
-            <Popover>
-              <PopoverTrigger onClick={(e) => e.stopPropagation()}>
-                <Info className="size-5 text-content-subdued" />
-              </PopoverTrigger>
-              <PopoverContent className="ml-2 max-w-64 bg-background-4 text-pretty text-content-muted">
-                {tooltip}
-              </PopoverContent>
-            </Popover>
-          ) : (
-            tooltip && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="size-4 pt-0.5 text-content-subdued" />
-                </TooltipTrigger>
-                <TooltipContent className="max-w-80 bg-background-4 text-pretty text-content-muted">
-                  {tooltip}
-                </TooltipContent>
-              </Tooltip>
-            )
-          )}
+        <div className="group flex items-center gap-2">
+          <label className="inline text-sm text-content-muted">
+            {head && <>{head} </>}
+            <span className="inline-flex gap-2 whitespace-nowrap">
+              {tail}
+              {isMobile && tooltip ? (
+                <Popover>
+                  <PopoverTrigger onClick={(e) => e.stopPropagation()} asChild>
+                    <Info className="inline size-5 text-content-subdued" />
+                  </PopoverTrigger>
+                  <PopoverContent className="m-1 max-w-64 bg-background-4 text-pretty text-content-muted">
+                    {tooltip}
+                  </PopoverContent>
+                </Popover>
+              ) : (
+                tooltip && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="inline size-4 translate-x-2 self-center text-content-subdued opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 data-[state=delayed-open]:translate-x-0 data-[state=delayed-open]:opacity-100 data-[state=open]:translate-x-0 data-[state=open]:opacity-100" />
+                    </TooltipTrigger>
+                    <TooltipContent className="m-1 max-w-80 bg-background-4 text-pretty text-content-muted">
+                      {tooltip}
+                    </TooltipContent>
+                  </Tooltip>
+                )
+              )}
+            </span>
+          </label>
         </div>
         {optional && (isMobile || variant === "stacking") && (
           <span className="text-xs text-content-subdued">Optional</span>

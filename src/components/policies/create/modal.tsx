@@ -53,6 +53,7 @@ import {
 import { Entitlement, MockEntitlements } from "@/types/entitlements"
 
 import { toast } from "@/lib/toast"
+import { buildMockEntitlement } from "@/lib/entitlements"
 
 import { useSlide } from "@/hooks/use-slide"
 import { useMobile } from "@/hooks/use-mobile"
@@ -697,34 +698,6 @@ const buildMockPolicy = (
           related: `/v1/accounts/{ACCOUNT}/policies/${id}/entitlements`,
         },
         data: entitlementIds.map((eid) => ({ type: "entitlements", id: eid })),
-      },
-    },
-  }
-}
-
-const buildMockEntitlement = (input: {
-  name: string
-  code: string
-  metadata?: Record<string, string>
-}): Entitlement => {
-  const id = crypto.randomUUID()
-  const now = new Date().toISOString()
-
-  return {
-    id,
-    type: "entitlements",
-    links: { self: `/v1/accounts/{ACCOUNT}/entitlements/${id}` },
-    attributes: {
-      name: input.name,
-      code: input.code,
-      metadata: input.metadata ?? {},
-      created: now,
-      updated: now,
-    },
-    relationships: {
-      account: {
-        links: { related: "/v1/accounts/{ACCOUNT}" },
-        data: { type: "accounts", id: "{ACCOUNT}" },
       },
     },
   }

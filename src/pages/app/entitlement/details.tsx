@@ -42,7 +42,7 @@ import { MockEntitlements } from "@/types/entitlements"
 // import { useGetEntitlement, useRemoveEnitlement } from "@/queries/entitlements"
 import { useMobile } from "@/hooks/use-mobile"
 
-// import { toast } from "@/lib/toast"
+import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
 
 import * as Property from "@/components/property"
@@ -95,7 +95,16 @@ export default function EntitlementDetails() {
   }
 
   const handleDeleteEntitlement = () => {
-    console.log("Entitlement deleted.")
+    if (!entitlement) return
+
+    const index = MockEntitlements.findIndex((e) => e.id === entitlement.id)
+    if (index === -1) {
+      toast({ message: "Entitlement not found", variant: "error" })
+      return
+    }
+    MockEntitlements.splice(index, 1)
+    toast({ message: "Entitlement deleted", variant: "success" })
+    navigate({ to: ".." })
 
     // deleteEntitlement.mutate(undefined, {
     //   onSuccess: () => {

@@ -46,6 +46,7 @@ import {
 } from "lucide-react"
 
 import { MockPolicies } from "@/types/policies"
+import { MockEntitlements } from "@/types/entitlements"
 
 // import { useGetPolicy, useRemovePolicy } from "@/queries/policies"
 import { useGetProduct } from "@/queries/products"
@@ -93,6 +94,12 @@ export default function PolicyDetails() {
     isFetching: productFetching,
     isError: productError,
   } = useGetProduct(productId)
+
+  const entitlements = (policy?.relationships.entitlements?.data ?? [])
+    .map((e) => MockEntitlements.find((entitlement) => e.id === entitlement.id))
+    .filter((entitlement): entitlement is (typeof MockEntitlements)[number] =>
+      Boolean(entitlement),
+    )
 
   const navigate = useNavigate()
 
@@ -295,11 +302,11 @@ export default function PolicyDetails() {
                 <Package className="mr-2 size-4 pt-0.5" />
                 <span>Product:</span>
                 {product ? (
-                  <div className="group flex items-center gap-1">
+                  <div className="flex items-center gap-1">
                     <Button
                       variant="link"
                       size="link"
-                      className="ml-3 text-content-muted"
+                      className="peer ml-3 text-content-muted"
                       onClick={() => {
                         navigate({
                           to: "/$id/app/products/$productId",
@@ -312,7 +319,7 @@ export default function PolicyDetails() {
                     >
                       {product?.attributes.name}
                     </Button>
-                    <ChevronRight className="mt-0.5 size-3.5 transition-all duration-200 group-hover:translate-x-2 group-hover:text-brand-primary" />
+                    <ChevronRight className="mt-0.5 size-3.5 transition-all duration-200 peer-hover:translate-x-2 peer-hover:text-brand-primary" />
                   </div>
                 ) : (
                   <Skeleton className="mt-1 ml-3 h-6 w-48" />
@@ -364,9 +371,54 @@ export default function PolicyDetails() {
                   />
                 )}
 
-                <CollapsibleCard title="Entitlements">
-                  <Attribute.Field variant="text" label="TODO" value={"--"} />
+                <CollapsibleCard
+                  title="Entitlements"
+                  subtitle={
+                    <Badge className="ml-2 min-h-5 min-w-5 text-sm text-content-muted">
+                      {entitlements.length}
+                    </Badge>
+                  }
+                >
+                  {entitlements.length > 0 ? (
+                    entitlements.map((entitlement) => (
+                      <div key={entitlement.id} className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="link"
+                              size="link"
+                              className="peer text-content-muted"
+                              onClick={() =>
+                                navigate({
+                                  to: "/$id/app/entitlements/$entitlementId",
+                                  params: {
+                                    id: keygen.config.id,
+                                    entitlementId: entitlement.id,
+                                  },
+                                })
+                              }
+                            >
+                              {entitlement.attributes.name}
+                            </Button>
+                            <ChevronRight className="mt-0.5 size-3.5 transition-all duration-200 peer-hover:translate-x-2 peer-hover:text-brand-primary" />
+                          </div>
+
+                          <Badge className="bg-background-3 px-2 py-1 text-content-muted">
+                            {entitlement.attributes.code}
+                          </Badge>
+                        </div>
+
+                        {/* TODO(cazden) Implement usage tracking when meters is implemented */}
+                        <div className="text-xs text-content-normal">
+                          <span>No uses</span>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <Attribute.Field variant="text" label="None" value="--" />
+                  )}
                 </CollapsibleCard>
+
                 <CollapsibleCard title="Licenses">
                   <Attribute.Field variant="text" label="TODO" value={"--"} />
                 </CollapsibleCard>

@@ -14,7 +14,8 @@ import {
   CommandItem,
 } from "@/components/ui/command"
 
-import { Droplet, Check, ChevronsUpDown, Circle } from "lucide-react"
+import Oni from "@/assets/oni.svg?react"
+import { Check, ChevronsUpDown, Circle } from "lucide-react"
 
 import { Environment } from "@/types/environments"
 
@@ -101,12 +102,14 @@ export default function SidebarCombobox(): React.ReactElement {
             className="!px-1 !py-0"
           >
             {/* TODO(cazden) Use company logo */}
-            <Droplet className="mr-2 size-6 rounded-sm bg-content-loud p-1 text-background" />
+            <div className="rounded bg-background-2 p-1">
+              <Oni className="size-7" />
+            </div>
 
             <div className="flex max-w-32 flex-col text-left text-content-loud">
               <div className="flex items-center gap-2">
                 {/* TODO(cazden) Get company name */}
-                <span className="truncate">Umbral</span>
+                <span className="truncate">ONI</span>
                 <ChevronsUpDown className="size-3 opacity-60" />
               </div>
               <span className="text-xs font-normal text-content-normal">

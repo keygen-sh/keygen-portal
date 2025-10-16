@@ -7,7 +7,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 
-import { Entitlement, MockEntitlements } from "@/types/entitlements"
+import { Entitlement } from "@/types/entitlements"
+import { MockEntitlements } from "@/mock/entitlements"
 import { AttributesFormValues } from "./attributes-form"
 
 // import { useCreateEntitlement } from "@/queries/entitlements"

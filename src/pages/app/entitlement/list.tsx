@@ -5,7 +5,9 @@ import { ColumnDef, createColumnHelper } from "@tanstack/react-table"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
-import { Entitlement, MockEntitlements } from "@/types/entitlements"
+import { Entitlement } from "@/types/entitlements"
+
+import { MockEntitlements } from "@/mock/entitlements"
 
 // import { useListEntitlements } from "@/queries/entitlements"
 

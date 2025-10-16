@@ -15,7 +15,8 @@ import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 import { PolicyFormValues } from "@/types/policies"
-import { MockEntitlements } from "@/types/entitlements"
+
+import { MockEntitlements } from "@/mock/entitlements"
 
 import MultiSelect from "@/components/multi-select"
 import SectionCard from "@/components/section-card"

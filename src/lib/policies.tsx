@@ -1,6 +1,6 @@
 import { AttributeType } from "@/components/attribute/value"
 import { Policy, ExpirationStrategy } from "@/types/policies"
-import { MockEntitlements } from "@/types/entitlements"
+import { MockEntitlements } from "@/mock/entitlements"
 
 export function isPerpetual(policy: Policy): boolean {
   return policy.attributes.duration == null || policy.attributes.duration === 0

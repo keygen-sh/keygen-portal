@@ -37,7 +37,7 @@ import {
   EllipsisVertical,
 } from "lucide-react"
 
-import { MockEntitlements } from "@/types/entitlements"
+import { MockEntitlements } from "@/mock/entitlements"
 
 // import { useGetEntitlement, useRemoveEnitlement } from "@/queries/entitlements"
 import { useMobile } from "@/hooks/use-mobile"

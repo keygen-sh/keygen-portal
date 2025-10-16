@@ -8,7 +8,8 @@ import {
 
 import { toast } from "@/lib/toast"
 
-import { Entitlement, MockEntitlements } from "@/types/entitlements"
+import { Entitlement } from "@/types/entitlements"
+import { MockEntitlements } from "@/mock/entitlements"
 import type { EditFormValues } from "./edit-form"
 
 // import { useUpdateEntitlement } from "@/queries/entitlements"

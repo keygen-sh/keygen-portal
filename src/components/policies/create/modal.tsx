@@ -48,9 +48,11 @@ import {
   HeartbeatBasis,
   HeartbeatCullStrategy,
   HeartbeatResurrectionStrategy,
-  MockPolicies,
 } from "@/types/policies"
-import { Entitlement, MockEntitlements } from "@/types/entitlements"
+import { Entitlement } from "@/types/entitlements"
+
+import { MockPolicies } from "@/mock/policies"
+import { MockEntitlements } from "@/mock/entitlements"
 
 import { toast } from "@/lib/toast"
 import { buildMockEntitlement } from "@/lib/entitlements"

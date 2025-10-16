@@ -13,7 +13,7 @@ import {
 
 import { Text, CurlyBraces, Copy } from "lucide-react"
 
-import { MockPolicies } from "@/types/policies"
+import { MockPolicies } from "@/mock/policies"
 
 // import { useGetPolicy } from "@/queries/policies"
 

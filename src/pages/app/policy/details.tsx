@@ -45,8 +45,8 @@ import {
   Users,
 } from "lucide-react"
 
-import { MockPolicies } from "@/types/policies"
-import { MockEntitlements } from "@/types/entitlements"
+import { MockPolicies } from "@/mock/policies"
+import { MockEntitlements } from "@/mock/entitlements"
 
 // import { useGetPolicy, useRemovePolicy } from "@/queries/policies"
 import { useGetProduct } from "@/queries/products"

@@ -5,7 +5,8 @@ import { ColumnDef, createColumnHelper } from "@tanstack/react-table"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
-import { Policy, MockPolicies } from "@/types/policies"
+import { Policy } from "@/types/policies"
+import { MockPolicies } from "@/mock/policies"
 
 // import { useListPolicies } from "@/queries/policies"
 import { useListProducts } from "@/queries/products"

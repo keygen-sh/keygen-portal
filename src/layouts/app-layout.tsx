@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react"
 import { Outlet } from "@tanstack/react-router"
 import { cn } from "@/lib/utils"
 
@@ -11,6 +12,8 @@ import { useMobile } from "@/hooks/use-mobile"
 
 import * as Sidebar from "@/components/sidebar"
 import * as Loading from "@/components/loading"
+
+import * as Developer from "@/developer"
 
 /**
  * Render provider first then delegate the rest of the component,
@@ -46,6 +49,26 @@ function AppLayoutContent() {
   const { open } = useSidebar()
   const isMobile = useMobile()
 
+  const [showSeeder, setShowSeeder] = useState(false)
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement | null)?.tagName
+      const isTyping =
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        (e.target as HTMLElement | null)?.isContentEditable
+      if (isTyping) return
+      const ctrlOrMeta = e.ctrlKey || e.metaKey
+      if (ctrlOrMeta && e.altKey && (e.key === "s" || e.key === "S")) {
+        e.preventDefault()
+        setShowSeeder((v) => !v)
+      }
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [])
+
   return (
     <div className="flex h-screen w-screen overflow-hidden">
       <Sidebar.Panel />
@@ -57,6 +80,10 @@ function AppLayoutContent() {
       >
         <Outlet />
       </main>
+      <Developer.Overlay
+        open={showSeeder}
+        onClose={() => setShowSeeder(false)}
+      />
       <Toaster />
     </div>
   )

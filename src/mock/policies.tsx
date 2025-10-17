@@ -116,6 +116,10 @@ export const SamplePolicies: Policy[] = [
           related:
             "/v1/accounts/0a000c3f-21ce-4a6c-87c2-3018ab6ce66f/policies/f9e2d7c4-5f0f-4f2c-a7ab-1c6e1f7b9a10/entitlements",
         },
+        data: [
+          { type: "entitlements", id: "2c6c4b2a-2f2a-4a7a-8c9f-6b4b3a8b6f11" }, // Armor Tuning Module
+          { type: "entitlements", id: "4a0b9d7e-9bd8-4c6a-9d2a-0d6e4e9a3f22" }, // Secure Boot
+        ],
       },
     },
   },
@@ -216,6 +220,10 @@ export const SamplePolicies: Policy[] = [
           related:
             "/v1/accounts/0a000c3f-21ce-4a6c-87c2-3018ab6ce66f/policies/0bd5b3a3-6a2d-4a63-9b71-1fd4b2c5e1aa/entitlements",
         },
+        data: [
+          { type: "entitlements", id: "b06a77b8-b57a-4e0a-96df-2c260d21cbbb" }, // Slipspace Networking
+          { type: "entitlements", id: "d13b21cc-a13a-459d-9cf2-f68e40c40439" }, // Fireteam Synchronization
+        ],
       },
     },
   },
@@ -315,6 +323,10 @@ export const SamplePolicies: Policy[] = [
           related:
             "/v1/accounts/0a000c3f-21ce-4a6c-87c2-3018ab6ce66f/policies/6f4f3a2b-8f0c-4d21-8f7e-9c1d5f2b3a77/entitlements",
         },
+        data: [
+          { type: "entitlements", id: "e07ce5f4-51f2-41a7-8d62-cb8e26ef1e91" }, // Cortex Analytics
+          { type: "entitlements", id: "7f8a3b6b-1b9a-4f32-9c69-2a3e8d5c9d44" }, // AI Companion
+        ],
       },
     },
   },

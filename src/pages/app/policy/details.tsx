@@ -419,7 +419,7 @@ export default function PolicyDetails() {
                   )}
                 </CollapsibleCard>
 
-                <CollapsibleCard title="Licenses">
+                <CollapsibleCard title="Licenses" defaultOpen={false}>
                   <Attribute.Field variant="text" label="TODO" value={"--"} />
                 </CollapsibleCard>
 

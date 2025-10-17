@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table"
 
@@ -20,7 +20,6 @@ import ClipboardButton from "@/components/clipboard-button"
 
 export default function PoliciesList() {
   // const { data: policies = [], isLoading: policiesLoading } = useListPolicies()
-  const [policiesLoading, setPoliciesLoading] = useState(true)
   const { data: products = [], isLoading: productsLoading } = useListProducts()
   const navigate = useNavigate()
 
@@ -84,19 +83,12 @@ export default function PoliciesList() {
     })
   }
 
-  // Mock API call
-  useEffect(() => {
-    setTimeout(() => {
-      setPoliciesLoading(false)
-    }, 1000)
-  }, [])
-
   return (
     <section>
       <PageHeader title="Policies">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button size="sm" disabled={policiesLoading || productsLoading}>
+            <Button size="sm" disabled={productsLoading}>
               Create Policy
             </Button>
           </DialogTrigger>
@@ -109,7 +101,7 @@ export default function PoliciesList() {
         </Dialog>
       </PageHeader>
 
-      {policiesLoading || productsLoading ? (
+      {productsLoading ? (
         <SkeletonTable />
       ) : (
         <DataTable<Policy>

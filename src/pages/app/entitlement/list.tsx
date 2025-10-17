@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table"
 
@@ -15,12 +15,10 @@ import * as keygen from "@/keygen"
 import * as Entitlements from "@/components/entitlements"
 import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
-import SkeletonTable from "@/components/skeleton-table"
 import ClipboardButton from "@/components/clipboard-button"
 
 export default function PoliciesList() {
   // const { data: entitlements = [], isLoading: entitlementsLoading } = useListEntitlements()
-  const [entitlementsLoading, setEntitlementsLoading] = useState(true)
   const navigate = useNavigate()
 
   const [open, setOpen] = useState(false)
@@ -66,21 +64,12 @@ export default function PoliciesList() {
     })
   }
 
-  // Mock API call
-  useEffect(() => {
-    setTimeout(() => {
-      setEntitlementsLoading(false)
-    }, 1000)
-  }, [])
-
   return (
     <section>
       <PageHeader title="Entitlements">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button size="sm" disabled={entitlementsLoading}>
-              Create Entitlement
-            </Button>
+            <Button size="sm">Create Entitlement</Button>
           </DialogTrigger>
 
           <Entitlements.Create.Modal
@@ -92,22 +81,18 @@ export default function PoliciesList() {
         </Dialog>
       </PageHeader>
 
-      {entitlementsLoading ? (
-        <SkeletonTable />
-      ) : (
-        <DataTable<Entitlement>
-          data={MockEntitlements}
-          columns={columns}
-          hideOnMobile={[
-            "attributes.id",
-            "attributes.code",
-            "attributes.url",
-            "attributes.created",
-            "attributes.updated",
-          ]}
-          onRowClick={(p) => handleSelectEntitlement(p)}
-        />
-      )}
+      <DataTable<Entitlement>
+        data={MockEntitlements}
+        columns={columns}
+        hideOnMobile={[
+          "attributes.id",
+          "attributes.code",
+          "attributes.url",
+          "attributes.created",
+          "attributes.updated",
+        ]}
+        onRowClick={(p) => handleSelectEntitlement(p)}
+      />
     </section>
   )
 }

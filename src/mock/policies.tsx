@@ -142,7 +142,7 @@ export const SamplePolicies: Policy[] = [
       requireMachineScope: true,
       requireFingerprintScope: true,
       requireComponentsScope: false,
-      requireUserScope: true,
+      requireUserScope: false,
       requireChecksumScope: false,
       requireVersionScope: false,
 
@@ -160,7 +160,7 @@ export const SamplePolicies: Policy[] = [
       encrypted: false,
       protected: false,
 
-      requireHeartbeat: true,
+      requireHeartbeat: false,
       heartbeatDuration: 300,
       heartbeatCullStrategy: HeartbeatCullStrategy.DEACTIVATE_DEAD,
       heartbeatResurrectionStrategy: HeartbeatResurrectionStrategy.NO_REVIVE,

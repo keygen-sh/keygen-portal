@@ -69,8 +69,9 @@ function AppLayoutContent() {
     return () => window.removeEventListener("keydown", onKey)
   }, [])
 
+  // DEMO: Add bottom border to keep browser anchor tooltips from showing up in media
   return (
-    <div className="flex h-screen w-screen overflow-hidden">
+    <div className="flex h-screen w-screen overflow-hidden border-b-24 border-black">
       <Sidebar.Panel />
       <main
         className={cn(

@@ -364,7 +364,8 @@ export default function ProductDetails() {
 
       {!isMobile && (
         <Tabs defaultValue="overview">
-          <Sidebar className="w-64 shrink-0" side="right">
+          {/* DEMO: Add bottom border to keep browser anchor tooltips from showing up in media */}
+          <Sidebar className="w-64 shrink-0 pb-6" side="right">
             <SidebarHeader className="border-b border-accent pt-8 pb-0">
               <TabsSwitch
                 className="border-b border-accent pt-8 pb-0"

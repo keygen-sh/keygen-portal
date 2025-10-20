@@ -284,7 +284,8 @@ export default function EntitlementDetails() {
 
       {!isMobile && (
         <Tabs defaultValue="overview">
-          <Sidebar className="w-64 shrink-0" side="right">
+          {/* DEMO: Add bottom border to keep browser anchor tooltips from showing up in media */}
+          <Sidebar className="w-64 shrink-0 pb-6" side="right">
             <SidebarHeader className="p-0 pt-4">
               <TabsSwitch
                 options={[

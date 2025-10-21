@@ -84,8 +84,28 @@ const licensingOptions = linkOptions([
     params: { id: keygen.config.id },
   },
   {
+    to: "/$id/app/groups",
+    label: "Groups",
+    params: { id: keygen.config.id },
+  },
+  {
     to: "/$id/app/policies",
     label: "Policies",
+    params: { id: keygen.config.id },
+  },
+  {
+    to: "/$id/app/licenses",
+    label: "Licenses",
+    params: { id: keygen.config.id },
+  },
+  {
+    to: "/$id/app/machines",
+    label: "Machines",
+    params: { id: keygen.config.id },
+  },
+  {
+    to: "/$id/app/users",
+    label: "Users",
     params: { id: keygen.config.id },
   },
 ])

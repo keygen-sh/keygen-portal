@@ -46,6 +46,16 @@ import {
   CardFooter,
 } from "@/components/ui/card"
 
+import {
+  Home,
+  Award,
+  Package,
+  Zap,
+  Webhook,
+  KeyRound,
+  Shield,
+} from "lucide-react"
+
 import * as keygen from "@/keygen"
 import { useMobile } from "@/hooks/use-mobile"
 import Icon from "@/components/icon"
@@ -62,7 +72,21 @@ enum View {
   Security = "security",
 }
 
-const VIEWS_LIST = Object.values(View) as View[]
+const VIEWS_LIST = [
+  { view: View.HOME, Icon: Home },
+  {
+    view: View.LICENSING,
+    Icon: Award,
+  },
+  {
+    view: View.DISTRIBUTION,
+    Icon: Package,
+  },
+  { view: View.AUTOMATE, Icon: Zap },
+  { view: View.WEBHOOKS, Icon: Webhook },
+  { view: View.ACCESS, Icon: KeyRound },
+  { view: View.SECURITY, Icon: Shield },
+]
 
 const homeOptions = linkOptions([
   {
@@ -134,7 +158,7 @@ export default function SidebarPanel(): React.ReactElement {
           )}
         >
           <RailGroup className="flex flex-col items-center">
-            {VIEWS_LIST.map((view) => (
+            {VIEWS_LIST.map(({ view, Icon }) => (
               <Tooltip key={view} delayDuration={300}>
                 <TooltipTrigger asChild>
                   <Button
@@ -147,7 +171,6 @@ export default function SidebarPanel(): React.ReactElement {
                     }}
                   >
                     <Icon
-                      name={view}
                       className={cn(
                         "size-6 md:size-5",
                         selectedView === view

@@ -92,7 +92,7 @@ const homeOptions = linkOptions([
   {
     to: "/$id/app/dashboard",
     label: "Metrics",
-    params: { id: keygen.config.id },
+    params: { id: keygen.config.demoId },
   },
 ])
 
@@ -100,37 +100,37 @@ const licensingOptions = linkOptions([
   {
     to: "/$id/app/products",
     label: "Products",
-    params: { id: keygen.config.id },
+    params: { id: keygen.config.demoId },
   },
   {
     to: "/$id/app/entitlements",
     label: "Entitlements",
-    params: { id: keygen.config.id },
+    params: { id: keygen.config.demoId },
   },
   {
     to: "/$id/app/groups",
     label: "Groups",
-    params: { id: keygen.config.id },
+    params: { id: keygen.config.demoId },
   },
   {
     to: "/$id/app/policies",
     label: "Policies",
-    params: { id: keygen.config.id },
+    params: { id: keygen.config.demoId },
   },
   {
     to: "/$id/app/licenses",
     label: "Licenses",
-    params: { id: keygen.config.id },
+    params: { id: keygen.config.demoId },
   },
   {
     to: "/$id/app/machines",
     label: "Machines",
-    params: { id: keygen.config.id },
+    params: { id: keygen.config.demoId },
   },
   {
     to: "/$id/app/users",
     label: "Users",
-    params: { id: keygen.config.id },
+    params: { id: keygen.config.demoId },
   },
 ])
 
@@ -406,7 +406,7 @@ function renderDistribution() {
           <Link
             disabled={true}
             to="/$id/app/dashboard"
-            params={{ id: keygen.config.id }}
+            params={{ id: keygen.config.demoId }}
           >
             TO DO
           </Link>
@@ -425,7 +425,7 @@ function renderAutomate() {
           <Link
             disabled={true}
             to="/$id/app/dashboard"
-            params={{ id: keygen.config.id }}
+            params={{ id: keygen.config.demoId }}
           >
             TO DO
           </Link>
@@ -444,7 +444,7 @@ function renderWebhooks() {
           <Link
             disabled={true}
             to="/$id/app/dashboard"
-            params={{ id: keygen.config.id }}
+            params={{ id: keygen.config.demoId }}
           >
             TO DO
           </Link>
@@ -463,7 +463,7 @@ function renderAccess() {
           <Link
             disabled={true}
             to="/$id/app/dashboard"
-            params={{ id: keygen.config.id }}
+            params={{ id: keygen.config.demoId }}
           >
             TO DO
           </Link>
@@ -482,7 +482,7 @@ function renderSecurity() {
           <Link
             disabled={true}
             to="/$id/app/dashboard"
-            params={{ id: keygen.config.id }}
+            params={{ id: keygen.config.demoId }}
           >
             TO DO
           </Link>

@@ -3,6 +3,7 @@ const config = {
   mode: import.meta.env.VITE_KEYGEN_MODE,
   version: import.meta.env.VITE_KEYGEN_VERSION,
   id: import.meta.env.VITE_KEYGEN_ACCOUNT_ID,
+  demoId: import.meta.env.VITE_KEYGEN_ACCOUNT_DEMO_ID || "keygen",
 
   validate(): void {
     const missing: string[] = []

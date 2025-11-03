@@ -158,7 +158,7 @@ export default function MultiSelect({
       >
         <Command shouldFilter={false}>
           <CommandList>
-            <ScrollArea className="h-64">
+            <ScrollArea className={cn(visibleOptions.length > 5 && "h-48")}>
               {visibleOptions.map(({ label, value }) => (
                 <CommandItem
                   key={value}

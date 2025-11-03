@@ -105,6 +105,7 @@ export default function PolicyDetails() {
 
   const isMobile = useMobile()
   const [open, setOpen] = useState({
+    edit: false,
     delete: false,
     attributes: false,
   })
@@ -124,6 +125,7 @@ export default function PolicyDetails() {
 
   const handleOpen = (key: keyof typeof open) => {
     setOpen({
+      edit: false,
       delete: false,
       attributes: false,
       [key]: !open[key],
@@ -184,7 +186,7 @@ export default function PolicyDetails() {
                 <DropdownMenuItem
                   onClick={() => {
                     setTimeout(() => {
-                      console.log("Edit policy pressed.")
+                      handleOpen("edit")
                     }, 0)
                   }}
                   className="pb-2 text-base"
@@ -209,7 +211,7 @@ export default function PolicyDetails() {
               <Button
                 variant="outline"
                 disabled={policyLoading}
-                onClick={() => console.log("Edit policy clicked.")}
+                onClick={() => handleOpen("edit")}
               >
                 Edit
               </Button>
@@ -717,6 +719,11 @@ export default function PolicyDetails() {
         id={policy!.id}
         open={open.attributes}
         onOpenChange={() => handleOpen("attributes")}
+      />
+
+      <Policies.Edit.Modal
+        open={open.edit}
+        onOpenChange={() => handleOpen("edit")}
       />
 
       <DeleteModal

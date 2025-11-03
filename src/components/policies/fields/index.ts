@@ -1,3 +1,4 @@
+export { default as All } from "./all"
 export { default as FeatureBased } from "./feature-based"
 export { default as General } from "./general"
 export { default as LeaseBased } from "./lease-based"

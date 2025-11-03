@@ -1,6 +1,7 @@
 import { z } from "zod"
 
 import {
+  Policy,
   PolicyFormValues,
   TimingTemplates,
   AccessTemplates,
@@ -608,4 +609,64 @@ export function getSchemaDefaults<S extends z.ZodTypeAny>(
   parsed.product.id = ""
 
   return parsed as z.infer<S>
+}
+
+export function getFormValuesFromPolicy(policy: Policy): PolicyFormValues {
+  return {
+    name: policy.attributes.name,
+    product: { id: policy.relationships.product?.data?.id ?? "" },
+    metadata: policy.attributes.metadata ?? {},
+
+    duration: policy.attributes.duration,
+    expirationStrategy: policy.attributes.expirationStrategy,
+    expirationBasis: policy.attributes.expirationBasis,
+    renewalBasis: policy.attributes.renewalBasis,
+    transferStrategy: policy.attributes.transferStrategy,
+
+    strict: policy.attributes.strict,
+    floating: policy.attributes.floating,
+    protected: policy.attributes.protected,
+    usePool: policy.attributes.usePool,
+
+    requireCheckIn: policy.attributes.requireCheckIn,
+    checkInInterval: policy.attributes.checkInInterval,
+    checkInIntervalCount: policy.attributes.checkInIntervalCount,
+
+    maxMachines: policy.attributes.maxMachines,
+    maxProcesses: policy.attributes.maxProcesses,
+    maxUsers: policy.attributes.maxUsers,
+    maxUses: policy.attributes.maxUses,
+    maxCores: policy.attributes.maxCores,
+
+    requireProductScope: policy.attributes.requireProductScope,
+    requirePolicyScope: policy.attributes.requirePolicyScope,
+    requireMachineScope: policy.attributes.requireMachineScope,
+    requireFingerprintScope: policy.attributes.requireFingerprintScope,
+    requireComponentsScope: policy.attributes.requireComponentsScope,
+    requireUserScope: policy.attributes.requireUserScope,
+    requireChecksumScope: policy.attributes.requireChecksumScope,
+    requireVersionScope: policy.attributes.requireVersionScope,
+
+    requireHeartbeat: policy.attributes.requireHeartbeat,
+    heartbeatDuration: policy.attributes.heartbeatDuration,
+    heartbeatBasis: policy.attributes.heartbeatBasis,
+    heartbeatCullStrategy: policy.attributes.heartbeatCullStrategy,
+    heartbeatResurrectionStrategy:
+      policy.attributes.heartbeatResurrectionStrategy,
+
+    machineUniquenessStrategy: policy.attributes.machineUniquenessStrategy,
+    machineMatchingStrategy: policy.attributes.machineMatchingStrategy,
+    componentUniquenessStrategy: policy.attributes.componentUniquenessStrategy,
+    componentMatchingStrategy: policy.attributes.componentMatchingStrategy,
+
+    authenticationStrategy: policy.attributes.authenticationStrategy,
+    machineLeasingStrategy: policy.attributes.machineLeasingStrategy,
+    processLeasingStrategy: policy.attributes.processLeasingStrategy,
+    overageStrategy: policy.attributes.overageStrategy,
+
+    entitlements: {
+      attach: (policy.relationships?.entitlements?.data ?? []).map((e) => e.id),
+      create: [],
+    },
+  }
 }

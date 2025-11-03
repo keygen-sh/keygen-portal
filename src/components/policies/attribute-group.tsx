@@ -49,7 +49,7 @@ export default function AttributeGroup({
     <CollapsibleCard title={title} contentClass={className}>
       <div className="md:grid md:grid-cols-2 md:gap-x-6 md:divide-x md:divide-dashed">
         <div className="space-y-4 md:pr-3">{left.map(row)}</div>
-        <div className="space-y-4 md:pl-3">{right.map(row)}</div>
+        <div className="mt-4 space-y-4 md:mt-0 md:pl-3">{right.map(row)}</div>
       </div>
     </CollapsibleCard>
   )

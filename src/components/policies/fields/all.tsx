@@ -4,6 +4,7 @@ import { useFormContext, useFieldArray, useWatch } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Separator } from "@/components/ui/separator"
 import {
   Select,
@@ -176,41 +177,49 @@ export default function AllFields({
         </div>
 
         <div className="mt-4 w-full space-y-6 md:mt-0">
-          <FormField
-            control={form.control}
-            name="product.id"
-            render={({ field }) => (
-              <FormItem>
-                <Field.Header
-                  label="Product relationship"
-                  variant="stacking"
-                  tooltip="The product to which this policy belongs."
-                >
-                  <Select
-                    value={field.value ?? ""}
-                    onValueChange={(value) =>
-                      field.onChange(value === "" ? undefined : value)
-                    }
-                    disabled={productsLoading}
+          {productsLoading ? (
+            <div className="flex flex-col gap-2">
+              <label className="text-sm text-content-muted">
+                Product relationship
+              </label>
+              <Skeleton className="h-9 w-full" />
+            </div>
+          ) : (
+            <FormField
+              control={form.control}
+              name="product.id"
+              render={({ field }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Product relationship"
+                    variant="stacking"
+                    tooltip="The product to which this policy belongs."
                   >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select product..." />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {products.map((product) => (
-                        <SelectItem key={product.id} value={product.id}>
-                          {product.attributes.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                    <Select
+                      value={field.value ?? ""}
+                      onValueChange={(value) =>
+                        field.onChange(value === "" ? undefined : value)
+                      }
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select product..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {products.map((product) => (
+                          <SelectItem key={product.id} value={product.id}>
+                            {product.attributes.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
         </div>
       </section>
 

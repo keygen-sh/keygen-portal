@@ -32,6 +32,7 @@ export default function EditForm({
     mode: "onBlur",
     reValidateMode: "onChange",
     defaultValues: getFormValuesFromPolicy(policy),
+    shouldUnregister: true,
   })
 
   const handleSubmit = useCallback(
@@ -42,7 +43,7 @@ export default function EditForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <ScrollArea className="h-[calc(100dvh-8rem)]">
+        <ScrollArea type="always" className="h-[calc(100dvh-8rem)]">
           <Policies.Fields.All />
 
           <DocumentationLink page="policies" />

@@ -124,6 +124,7 @@ export default function PolicyDetails() {
   }, [])
 
   const handleOpen = (key: keyof typeof open) => {
+  // FIXME(cazden) Opening/closing dialogs has performance issues
     setOpen({
       edit: false,
       delete: false,

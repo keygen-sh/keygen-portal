@@ -173,7 +173,12 @@ export default function PoliciesEditModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="min-h-screen min-w-screen rounded-none border-none">
+      <DialogContent
+        forceMount
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        onCloseAutoFocus={(e) => e.preventDefault()}
+        className="min-h-screen min-w-screen rounded-none border-none"
+      >
         <DialogHeader className="h-fit border-b border-accent p-2">
           <DialogDescription className="flex h-8 items-center space-x-1 text-xs">
             Updating an existing policy

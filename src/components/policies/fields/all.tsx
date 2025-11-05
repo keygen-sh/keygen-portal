@@ -86,7 +86,7 @@ export default function AllFields({
 
     let changed = false
     for (const field of fields) {
-      if (form.getValues(field) !== null || form.formState.errors[field]) {
+      if (form.getValues(field) != null) {
         form.setValue(field, null, { shouldDirty: true, shouldValidate: false })
         changed = true
       }
@@ -108,7 +108,7 @@ export default function AllFields({
     let changed = false
     const field = "checkInIntervalCount"
 
-    if (form.getValues(field) !== null || form.formState.errors[field]) {
+    if (form.getValues(field) != null) {
       form.setValue(field, null, { shouldDirty: true, shouldValidate: false })
       changed = true
     }
@@ -136,7 +136,7 @@ export default function AllFields({
 
     let changed = false
     for (const field of fields) {
-      if (form.getValues(field) !== null || form.formState.errors[field]) {
+      if (form.getValues(field) != null) {
         form.setValue(field, null, { shouldDirty: true, shouldValidate: false })
         changed = true
       }

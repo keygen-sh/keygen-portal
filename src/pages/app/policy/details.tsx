@@ -126,9 +126,7 @@ export default function PolicyDetails() {
   const toggleOpen = (key: keyof typeof open) => {
     // FIXME(cazden) Opening/closing dialogs has performance issues
     setOpen({
-      edit: false,
-      delete: false,
-      attributes: false,
+      ...open,
       [key]: !open[key],
     })
   }

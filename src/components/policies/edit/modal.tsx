@@ -21,7 +21,7 @@ import * as Loading from "@/components/loading"
 
 interface PoliciesEditModalProps {
   open: boolean
-  onOpenChange: () => void
+  onOpenChange: (value: boolean) => void
 }
 
 export default function PoliciesEditModal({
@@ -168,7 +168,7 @@ export default function PoliciesEditModal({
     MockPolicies[index] = updated
 
     toast({ message: "Policy updated", variant: "success" })
-    onOpenChange()
+    onOpenChange(false)
   }
 
   return (
@@ -197,7 +197,7 @@ export default function PoliciesEditModal({
           <EditForm
             policy={policy!}
             onSubmit={handleUpdatePolicy}
-            onCancel={onOpenChange}
+            onCancel={() => onOpenChange(false)}
           />
         )}
       </DialogContent>

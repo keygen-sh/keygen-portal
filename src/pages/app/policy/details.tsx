@@ -123,12 +123,8 @@ export default function PolicyDetails() {
     }, 1000)
   }, [])
 
-  const toggleOpen = (key: keyof typeof open) => {
-    // FIXME(cazden) Opening/closing dialogs has performance issues
-    setOpen({
-      ...open,
-      [key]: !open[key],
-    })
+  const toggleOpen = (key: keyof typeof open, value: boolean) => {
+    setOpen((prev) => ({ ...prev, [key]: value }))
   }
 
   const handleDeletePolicy = () => {
@@ -184,7 +180,7 @@ export default function PolicyDetails() {
               <DropdownMenuContent className="mr-4 p-0">
                 <DropdownMenuItem
                   onClick={(e) => {
-                    toggleOpen("edit")
+                    toggleOpen("edit", true)
                     e.currentTarget.blur()
                   }}
                   className="pb-2 text-base"
@@ -194,7 +190,7 @@ export default function PolicyDetails() {
                 <Separator />
                 <DropdownMenuItem
                   onClick={(e) => {
-                    toggleOpen("delete")
+                    toggleOpen("delete", true)
                     e.currentTarget.blur()
                   }}
                   className="pb-2 text-base"
@@ -208,14 +204,14 @@ export default function PolicyDetails() {
               <Button
                 variant="outline"
                 disabled={policyLoading}
-                onClick={() => toggleOpen("edit")}
+                onClick={() => toggleOpen("edit", true)}
               >
                 Edit
               </Button>
               <Button
                 variant="outline"
                 disabled={policyLoading}
-                onClick={() => toggleOpen("delete")}
+                onClick={() => toggleOpen("delete", true)}
               >
                 Delete
               </Button>
@@ -594,7 +590,7 @@ export default function PolicyDetails() {
                 {isMobile && (
                   <Button
                     variant="outline"
-                    onClick={() => toggleOpen("attributes")}
+                    onClick={() => toggleOpen("attributes", true)}
                     className="w-full text-content-muted"
                   >
                     <Logs className="mt-0.5 size-4 text-content-normal" />
@@ -701,7 +697,7 @@ export default function PolicyDetails() {
             <SidebarFooter className="p-4">
               <Button
                 variant="outline"
-                onClick={() => toggleOpen("attributes")}
+                onClick={() => toggleOpen("attributes", true)}
                 className="w-full text-content-muted"
               >
                 <Logs className="mt-0.5 size-4 text-content-normal" />
@@ -715,12 +711,12 @@ export default function PolicyDetails() {
       <Policies.AdvancedDialog
         id={policy!.id}
         open={open.attributes}
-        onOpenChange={() => toggleOpen("attributes")}
+        onOpenChange={() => toggleOpen("attributes", false)}
       />
 
       <Policies.Edit.Modal
         open={open.edit}
-        onOpenChange={() => toggleOpen("edit")}
+        onOpenChange={(value) => toggleOpen("edit", value)}
       />
 
       <DeleteModal
@@ -728,7 +724,7 @@ export default function PolicyDetails() {
         description="Are you sure you want to delete this policy?"
         open={open.delete}
         disabled={policyLoading || productLoading}
-        onClose={() => toggleOpen("delete")}
+        onClose={() => toggleOpen("delete", false)}
         onDelete={handleDeletePolicy}
       />
     </section>

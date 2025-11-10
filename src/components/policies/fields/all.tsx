@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useState, useEffect } from "react"
 import { useFormContext, useFieldArray, useWatch } from "react-hook-form"
 
 import { Input } from "@/components/ui/input"
@@ -72,8 +72,13 @@ export default function AllFields({
     name: "entitlements.create" as const,
   })
 
-  const duration = useWatch({ control: form.control, name: "duration" })
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setMounted(true))
+    return () => cancelAnimationFrame(id)
+  }, [])
 
+  const duration = useWatch({ control: form.control, name: "duration" })
   useEffect(() => {
     if (duration !== null) return
 
@@ -101,7 +106,6 @@ export default function AllFields({
     control: form.control,
     name: "checkInInterval",
   })
-
   useEffect(() => {
     if (checkInInterval !== null) return
 
@@ -123,7 +127,6 @@ export default function AllFields({
     control: form.control,
     name: "requireHeartbeat",
   })
-
   useEffect(() => {
     if (requireHeartbeat) return
 
@@ -146,6 +149,71 @@ export default function AllFields({
       form.trigger(fields)
     }
   }, [requireHeartbeat])
+
+  if (!mounted || productsLoading) {
+    return (
+      <div className={cn("p-4", className)}>
+        <h2 className="text-content-loud/90">General</h2>
+        <section className="mt-4 flex flex-col md:flex-row">
+          <div className="w-full space-y-3">
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-9 w-3/5" />
+          </div>
+
+          <div className="mx-8 hidden md:block">
+            <Separator orientation="vertical" dashed />
+          </div>
+
+          <div className="mt-4 w-full space-y-3 md:mt-0">
+            <Skeleton className="h-5 w-36" />
+            <Skeleton className="h-9 w-3/4" />
+          </div>
+        </section>
+
+        <Separator className="my-6" />
+
+        <h2 className="text-content-loud/90">Attributes</h2>
+        <section className="mt-4 flex flex-col md:flex-row">
+          <div className="w-full space-y-6">
+            <Skeleton className="h-9 w-3/4" />
+            <Skeleton className="h-9 w-full" />
+            <div className="flex w-full justify-between">
+              <Skeleton className="h-9 w-1/2" />
+              <Skeleton className="h-9 w-9" />
+            </div>
+          </div>
+
+          <div className="mx-8 hidden md:block">
+            <Separator orientation="vertical" dashed />
+          </div>
+
+          <div className="mt-6 w-full space-y-6 md:mt-0">
+            <Skeleton className="hidden h-9 w-3/5 md:block" />
+            <Skeleton className="hidden h-9 w-1/3 md:block" />
+            <Skeleton className="hidden h-9 w-1/2 md:block" />
+          </div>
+        </section>
+
+        <Separator className="my-6" />
+
+        <section className="mt-4 flex flex-col md:flex-row">
+          <div className="w-full space-y-6">
+            <Skeleton className="h-9 w-4/5" />
+            <Skeleton className="h-9 w-1/3" />
+          </div>
+
+          <div className="mx-8 hidden md:block">
+            <Separator orientation="vertical" dashed />
+          </div>
+
+          <div className="w-full space-y-6">
+            <Skeleton className="hidden h-9 w-full md:block" />
+            <Skeleton className="hidden h-9 w-1/3 md:block" />
+          </div>
+        </section>
+      </div>
+    )
+  }
 
   return (
     <div className={cn("p-4", className)}>
@@ -177,49 +245,40 @@ export default function AllFields({
         </div>
 
         <div className="mt-4 w-full space-y-6 md:mt-0">
-          {productsLoading ? (
-            <div className="flex flex-col gap-2">
-              <label className="text-sm text-content-muted">
-                Product relationship
-              </label>
-              <Skeleton className="h-9 w-full" />
-            </div>
-          ) : (
-            <FormField
-              control={form.control}
-              name="product.id"
-              render={({ field }) => (
-                <FormItem>
-                  <Field.Header
-                    label="Product relationship"
-                    variant="stacking"
-                    tooltip="The product to which this policy belongs."
+          <FormField
+            control={form.control}
+            name="product.id"
+            render={({ field }) => (
+              <FormItem>
+                <Field.Header
+                  label="Product relationship"
+                  variant="stacking"
+                  tooltip="The product to which this policy belongs."
+                >
+                  <Select
+                    value={field.value ?? ""}
+                    onValueChange={(value) =>
+                      field.onChange(value === "" ? undefined : value)
+                    }
                   >
-                    <Select
-                      value={field.value ?? ""}
-                      onValueChange={(value) =>
-                        field.onChange(value === "" ? undefined : value)
-                      }
-                    >
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select product..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {products.map((product) => (
-                          <SelectItem key={product.id} value={product.id}>
-                            {product.attributes.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </Field.Header>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )}
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select product..." />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {products.map((product) => (
+                        <SelectItem key={product.id} value={product.id}>
+                          {product.attributes.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field.Header>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
       </section>
 

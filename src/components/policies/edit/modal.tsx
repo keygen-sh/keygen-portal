@@ -39,6 +39,9 @@ export default function PoliciesEditModal({
 
   const handleUpdatePolicy = (values: PolicyFormValues) => {
     if (!policy) return
+
+    onOpenChange(false)
+
     // updatePolicy.mutate(values, {
     //   onSuccess: () => {
     //     toast({ message: "Policy updated", variant: "success" })
@@ -168,13 +171,11 @@ export default function PoliciesEditModal({
     MockPolicies[index] = updated
 
     toast({ message: "Policy updated", variant: "success" })
-    onOpenChange(false)
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        forceMount
         onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => e.preventDefault()}
         className="min-h-screen min-w-screen rounded-none border-none"
@@ -194,11 +195,13 @@ export default function PoliciesEditModal({
             Failed to load policy.
           </p>
         ) : (
-          <EditForm
-            policy={policy!}
-            onSubmit={handleUpdatePolicy}
-            onCancel={() => onOpenChange(false)}
-          />
+          open && (
+            <EditForm
+              policy={policy!}
+              onSubmit={handleUpdatePolicy}
+              onCancel={() => onOpenChange(false)}
+            />
+          )
         )}
       </DialogContent>
     </Dialog>

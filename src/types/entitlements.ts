@@ -45,7 +45,7 @@ export type EntitlementListResponse = APIResponse<Entitlement[]>
 
 export type CreateEntitlementPayload = OptionalExcept<
   Writable<EntitlementAttributes>,
-  "name" & "code"
+  "name" | "code"
 >
 export type UpdateEntitlementPayload = Partial<Writable<EntitlementAttributes>>
 

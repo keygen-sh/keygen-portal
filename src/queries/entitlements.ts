@@ -1,0 +1,117 @@
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
+
+import { useEnvironment } from "@/hooks/use-environment"
+
+import {
+  Entitlement,
+  CreateEntitlementPayload,
+  UpdateEntitlementPayload,
+} from "@/types/entitlements"
+import { APIError } from "@/types/api"
+
+import * as keygen from "@/keygen"
+import { diff } from "@/lib/utils"
+
+export function useGetEntitlement(entitlementId: string) {
+  const { code } = useEnvironment()
+
+  return useQuery({
+    queryKey: ["entitlements", entitlementId, { environment: code }],
+    queryFn: async () => {
+      const response = await keygen.entitlements.get({ id: entitlementId })
+
+      if (!response.data) {
+        throw new Error("Entitlement not found")
+      }
+
+      return response.data as Entitlement
+    },
+    retry: (failures, error) =>
+      error.message !== "Entitlement not found" && failures < 3,
+  })
+}
+
+export function useListEntitlements() {
+  const { code } = useEnvironment()
+
+  return useQuery({
+    queryKey: ["entitlements", { environment: code }],
+    queryFn: () =>
+      keygen.entitlements.list({}).then((response) => response.data ?? []),
+  })
+}
+
+export function useCreateEntitlement() {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<Entitlement, APIError, CreateEntitlementPayload>({
+    mutationFn: (payload) =>
+      keygen.entitlements
+        .create(payload)
+        .then((response) => response.data as Entitlement),
+
+    onSuccess: (newEntitlement) => {
+      queryClient.setQueryData<Entitlement[]>(
+        ["entitlements", { environment: code }],
+        (old) => (old ? [newEntitlement, ...old] : [newEntitlement]),
+      )
+      queryClient.setQueryData(
+        ["entitlements", newEntitlement.id, { environment: code }],
+        newEntitlement,
+      )
+    },
+  })
+}
+
+export function useUpdateEntitlement(entitlementId: string) {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<Entitlement, APIError, UpdateEntitlementPayload>({
+    mutationFn: (values) =>
+      keygen.entitlements.get({ id: entitlementId }).then(async (response) => {
+        const current = response.data as Entitlement
+
+        const changes = diff(
+          current.attributes,
+          values,
+        ) as UpdateEntitlementPayload
+        if (Object.keys(changes).length === 0) return current
+
+        const updated = await keygen.entitlements
+          .update({ id: entitlementId, ...changes })
+          .then((response) => response.data as Entitlement)
+
+        return updated
+      }),
+
+    onSuccess: (updated) => {
+      queryClient.setQueryData(
+        ["entitlements", entitlementId, { environment: code }],
+        updated,
+      )
+      queryClient.invalidateQueries({
+        queryKey: ["entitlements", { environment: code }],
+      })
+    },
+  })
+}
+
+export function useRemoveEntitlement(entitlementId: string) {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation({
+    mutationFn: () => keygen.entitlements.remove({ id: entitlementId }),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["entitlements", { environment: code }],
+      })
+      queryClient.removeQueries({
+        queryKey: ["entitlements", entitlementId, { environment: code }],
+      })
+    },
+  })
+}

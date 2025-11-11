@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
-import { Entitlement, MockEntitlements } from "@/types/entitlements"
+import { Entitlement } from "@/types/entitlements"
 
-// import { useListEntitlements } from "@/queries/entitlements"
+import { useListEntitlements } from "@/queries/entitlements"
 
 import * as keygen from "@/keygen"
 import * as Entitlements from "@/components/entitlements"
@@ -17,8 +17,9 @@ import SkeletonTable from "@/components/skeleton-table"
 import ClipboardButton from "@/components/clipboard-button"
 
 export default function PoliciesList() {
-  // const { data: entitlements = [], isLoading: entitlementsLoading } = useListEntitlements()
-  const [entitlementsLoading, setEntitlementsLoading] = useState(true)
+  const { data: entitlements = [], isLoading: entitlementsLoading } =
+    useListEntitlements()
+
   const navigate = useNavigate()
 
   const [open, setOpen] = useState(false)
@@ -64,13 +65,6 @@ export default function PoliciesList() {
     })
   }
 
-  // Mock API call
-  useEffect(() => {
-    setTimeout(() => {
-      setEntitlementsLoading(false)
-    }, 1000)
-  }, [])
-
   return (
     <section>
       <PageHeader title="Entitlements">
@@ -94,7 +88,7 @@ export default function PoliciesList() {
         <SkeletonTable />
       ) : (
         <DataTable<Entitlement>
-          data={MockEntitlements}
+          data={entitlements}
           columns={columns}
           hideOnMobile={[
             "attributes.id",

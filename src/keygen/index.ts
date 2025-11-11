@@ -16,6 +16,9 @@ export { environments }
 import * as products from "./products"
 export { products }
 
+import * as entitlements from "./entitlements"
+export { entitlements }
+
 import * as tokens from "./tokens"
 export { tokens }
 

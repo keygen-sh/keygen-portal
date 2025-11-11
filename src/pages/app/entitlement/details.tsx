@@ -39,7 +39,7 @@ import {
 
 import { MockEntitlements } from "@/types/entitlements"
 
-// import { useGetEntitlement, useRemoveEnitlement } from "@/queries/entitlements"
+import { useGetEntitlement, useRemoveEntitlement } from "@/queries/entitlements"
 import { useMobile } from "@/hooks/use-mobile"
 
 import { toast } from "@/lib/toast"
@@ -58,12 +58,14 @@ export default function EntitlementDetails() {
   const { entitlementId } = useParams({
     from: "/$id/app/entitlements/$entitlementId",
   })
-  // const { data: entitlement, isLoading: entitlementLoading, isFetching: entitlementFetching, isError: entitlementError } = useGetEntitlement(entitlementId)
-  const entitlement = MockEntitlements.find((e) => e.id === entitlementId)
-  const [entitlementLoading, setEntitlementLoading] = useState(true)
-  const [entitlementFetching, setEntitlementFetching] = useState(true)
-  const entitlementError = false
-  // const deleteEntitlement = useRemoveEntitlement(entitlementId)
+  const {
+    data: entitlement,
+    isLoading: entitlementLoading,
+    isFetching: entitlementFetching,
+    isError: entitlementError,
+  } = useGetEntitlement(entitlementId)
+
+  const deleteEntitlement = useRemoveEntitlement(entitlementId)
 
   const navigate = useNavigate()
 
@@ -78,13 +80,6 @@ export default function EntitlementDetails() {
       navigate({ to: ".." })
     }
   }, [entitlementError, entitlementFetching, navigate])
-
-  useEffect(() => {
-    setTimeout(() => {
-      setEntitlementLoading(false)
-      setEntitlementFetching(false)
-    }, 1000)
-  }, [])
 
   const handleOpen = (key: keyof typeof open) => {
     setOpen({
@@ -106,15 +101,15 @@ export default function EntitlementDetails() {
     toast({ message: "Entitlement deleted", variant: "success" })
     navigate({ to: ".." })
 
-    // deleteEntitlement.mutate(undefined, {
-    //   onSuccess: () => {
-    //     toast({
-    //       message: "Entitlement deleted",
-    //       variant: "success",
-    //     })
-    //     navigate({ to: ".." })
-    //   },
-    // })
+    deleteEntitlement.mutate(undefined, {
+      onSuccess: () => {
+        toast({
+          message: "Entitlement deleted",
+          variant: "success",
+        })
+        navigate({ to: ".." })
+      },
+    })
   }
 
   return (

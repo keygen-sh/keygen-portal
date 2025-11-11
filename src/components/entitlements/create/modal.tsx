@@ -7,13 +7,12 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 
-import { Entitlement, MockEntitlements } from "@/types/entitlements"
 import { AttributesFormValues } from "./attributes-form"
+import { Entitlement, EntitlementErrorCode } from "@/types/entitlements"
 
-// import { useCreateEntitlement } from "@/queries/entitlements"
+import { useCreateEntitlement } from "@/queries/entitlements"
 
 import { toast } from "@/lib/toast"
-import { buildMockEntitlement } from "@/lib/entitlements"
 
 import AttributesForm from "./attributes-form"
 
@@ -26,9 +25,9 @@ export default function EntitlementsCreateModal({
   onSelectEntitlement,
   onClose,
 }: EntitlementsCreateModalProps) {
-  // const createEntitlement = useCreateEntitlement()
+  const createEntitlement = useCreateEntitlement()
 
-  const [formError, _setFormError] = useState<string | null>(null)
+  const [formError, setFormError] = useState<string | null>(null)
 
   const handleCreateEntitlement = useCallback(
     (values: AttributesFormValues) => {
@@ -41,38 +40,26 @@ export default function EntitlementsCreateModal({
         return
       }
 
-      //   const _payload = values
+      const payload = values
 
-      //   createEntitlement.mutate(payload, {
-      //     onSuccess: (entitlement) => {
-      //       toast({ message: "Entitlement created", variant: "success" })
-      //       onSelectEntitlement(entitlement)
-      //       onClose()
-      //     },
-      //     onError: (error) => {
-      //       if (
-      //         typeof error === "object" &&
-      //         error &&
-      //         "code" in error &&
-      //         error.code === EntitlementErrorCode.CODE_TAKEN
-      //       ) {
-      //         setFormError("Code already exists")
-      //       }
-      //       toast({ message: "Failed to create entitlement", variant: "error" })
-      //     },
-      //   })
-
-      const mockEntitlement = buildMockEntitlement({
-        name: values.name,
-        code: values.code,
-        metadata: values.metadata,
+      createEntitlement.mutate(payload, {
+        onSuccess: (entitlement) => {
+          toast({ message: "Entitlement created", variant: "success" })
+          onSelectEntitlement(entitlement)
+          onClose()
+        },
+        onError: (error) => {
+          if (
+            typeof error === "object" &&
+            error &&
+            "code" in error &&
+            error.code === EntitlementErrorCode.CODE_TAKEN
+          ) {
+            setFormError("Code already exists")
+          }
+          toast({ message: "Failed to create entitlement", variant: "error" })
+        },
       })
-
-      MockEntitlements.push(mockEntitlement)
-
-      toast({ message: "Entitlement created", variant: "success" })
-      onSelectEntitlement(mockEntitlement)
-      onClose()
     },
     [onSelectEntitlement, onClose],
   )

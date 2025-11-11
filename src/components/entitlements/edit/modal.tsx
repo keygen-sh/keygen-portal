@@ -8,10 +8,10 @@ import {
 
 import { toast } from "@/lib/toast"
 
-import { Entitlement, MockEntitlements } from "@/types/entitlements"
+import { Entitlement } from "@/types/entitlements"
 import type { EditFormValues } from "./edit-form"
 
-// import { useUpdateEntitlement } from "@/queries/entitlements"
+import { useUpdateEntitlement } from "@/queries/entitlements"
 
 import EditForm from "./edit-form"
 
@@ -26,45 +26,23 @@ export default function EntitlementsEditModal({
   onClose,
   entitlement,
 }: EntitlementsEditModalProps) {
-  // const updateEntitlement = useUpdateEntitlement(Entitlement?.id ?? "")
+  const updateEntitlement = useUpdateEntitlement(entitlement?.id ?? "")
 
   const handleUpdateEntitlement = (values: EditFormValues) => {
     if (!entitlement) return
-    // updateEntitlement.mutate(values, {
-    //   onSuccess: () => {
-    //     toast({ message: "Entitlement updated", variant: "success" })
-    //     onClose()
-    //   },
-    //   onError: () =>
-    //     toast({ message: "Failed to update entitlement", variant: "error" }),
-    //   onSettled() {
-    //     if (!updateEntitlement.isError) {
-    //       onClose()
-    //     }
-    //   },
-    // })
-
-    const index = MockEntitlements.findIndex((e) => e.id === entitlement.id)
-    if (index === -1) {
-      toast({ message: "Entitlement not found", variant: "error" })
-      return
-    }
-
-    const prev = MockEntitlements[index]
-    const updated: Entitlement = {
-      ...prev,
-      attributes: {
-        ...prev.attributes,
-        name: values.name ?? prev.attributes.name,
-        code: values.code ?? prev.attributes.code,
-        metadata: values.metadata ?? prev.attributes.metadata ?? {},
-        updated: new Date().toISOString(),
+    updateEntitlement.mutate(values, {
+      onSuccess: () => {
+        toast({ message: "Entitlement updated", variant: "success" })
+        onClose()
       },
-    }
-
-    MockEntitlements[index] = updated
-    toast({ message: "Entitlement updated", variant: "success" })
-    onClose()
+      onError: () =>
+        toast({ message: "Failed to update entitlement", variant: "error" }),
+      onSettled() {
+        if (!updateEntitlement.isError) {
+          onClose()
+        }
+      },
+    })
   }
 
   return (

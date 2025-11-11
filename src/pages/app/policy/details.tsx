@@ -107,6 +107,7 @@ export default function PolicyDetails() {
   const [open, setOpen] = useState({
     edit: false,
     delete: false,
+    duplicate: false,
     attributes: false,
   })
 
@@ -180,6 +181,15 @@ export default function PolicyDetails() {
               <DropdownMenuContent className="mr-4 p-0">
                 <DropdownMenuItem
                   onClick={(e) => {
+                    toggleOpen("duplicate", true)
+                    e.currentTarget.blur()
+                  }}
+                  className="pb-2 text-base"
+                >
+                  Duplicate
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => {
                     toggleOpen("edit", true)
                     e.currentTarget.blur()
                   }}
@@ -201,6 +211,13 @@ export default function PolicyDetails() {
             </DropdownMenu>
           ) : (
             <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                disabled={policyLoading}
+                onClick={() => toggleOpen("duplicate", true)}
+              >
+                Duplicate
+              </Button>
               <Button
                 variant="outline"
                 disabled={policyLoading}
@@ -717,6 +734,11 @@ export default function PolicyDetails() {
       <Policies.Edit.Modal
         open={open.edit}
         onOpenChange={(value) => toggleOpen("edit", value)}
+      />
+
+      <Policies.Duplicate.Modal
+        open={open.duplicate}
+        onOpenChange={(value) => toggleOpen("duplicate", value)}
       />
 
       <DeleteModal

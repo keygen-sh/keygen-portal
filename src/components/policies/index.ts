@@ -8,5 +8,8 @@ export { Create }
 import * as Edit from "./edit"
 export { Edit }
 
+import * as Duplicate from "./duplicate"
+export { Duplicate }
+
 import * as Fields from "./fields"
 export { Fields }

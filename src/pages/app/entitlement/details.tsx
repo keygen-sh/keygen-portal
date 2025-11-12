@@ -37,8 +37,6 @@ import {
   EllipsisVertical,
 } from "lucide-react"
 
-import { MockEntitlements } from "@/types/entitlements"
-
 import { useGetEntitlement, useRemoveEntitlement } from "@/queries/entitlements"
 import { useMobile } from "@/hooks/use-mobile"
 
@@ -91,15 +89,6 @@ export default function EntitlementDetails() {
 
   const handleDeleteEntitlement = () => {
     if (!entitlement) return
-
-    const index = MockEntitlements.findIndex((e) => e.id === entitlement.id)
-    if (index === -1) {
-      toast({ message: "Entitlement not found", variant: "error" })
-      return
-    }
-    MockEntitlements.splice(index, 1)
-    toast({ message: "Entitlement deleted", variant: "success" })
-    navigate({ to: ".." })
 
     deleteEntitlement.mutate(undefined, {
       onSuccess: () => {

@@ -1,6 +1,5 @@
 import { AttributeType } from "@/components/attribute/value"
 import { Policy, ExpirationStrategy } from "@/types/policies"
-import { MockEntitlements } from "@/types/entitlements"
 
 export function isPerpetual(policy: Policy): boolean {
   return policy.attributes.duration == null || policy.attributes.duration === 0
@@ -51,8 +50,8 @@ export function isFeatureBased(policy: Policy): boolean {
   const entitlementsUrl = policy.relationships?.entitlements?.links?.related
   if (!entitlementsUrl) return false
 
-  // TODO(cazden) Replace with real entitlements data
-  return MockEntitlements.length > 0
+  // TODO(cazden) Fix this once policy API is implemented
+  return entitlementsUrl.length > 0
 }
 
 export function isUsageBased(policy: Policy): boolean {

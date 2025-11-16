@@ -264,63 +264,73 @@ export default function PoliciesCreateModal({
         ),
       )
 
-      const failed = entitlementsResults.filter(
-        (result) => result.status === "rejected",
-      )
+      const failed = entitlementsResults
+        .map((result, index) => (result.status === "rejected" ? index : -1))
+        .filter((index) => index !== -1)
+      const succeeded = entitlementsResults
+        .map((result, index) => (result.status === "fulfilled" ? index : -1))
+        .filter((index) => index !== -1)
 
       if (failed.length > 0) {
-        if (isScratchOpen) {
-          const errors: {
-            path: `entitlements.create.${number}.code`
-            message: string
-          }[] = []
+        const createdEntitlements = succeeded.map(
+          (index) =>
+            (entitlementsResults[index] as PromiseFulfilledResult<Entitlement>)
+              .value,
+        )
 
-          entitlementsResults.forEach((result, index) => {
-            if (result.status !== "rejected") return
+        const nextAttach = Array.from(
+          new Set([...attachIds, ...createdEntitlements.map((e) => e.id)]),
+        )
 
-            const message =
-              result.reason?.code === EntitlementErrorCode.CODE_TAKEN
-                ? "Code already exists"
-                : "Field is invalid"
+        const nextCreate = failed.map((index) => toCreate[index])
 
-            errors.push({
-              path: `entitlements.create.${index}.code`,
-              message,
-            })
-          })
+        const fieldErrors: {
+          path: `entitlements.create.${number}.code`
+          message: string
+        }[] = failed.map((index, newIndex) => {
+          const result = entitlementsResults[index]
 
-          toast({
-            message: "Failed to create entitlement(s)",
-            variant: "error",
-          })
-
-          // Throw to render error messages in scratch form
-          throw {
-            kind: "entitlements-validation",
-            errors,
+          let message = ""
+          if (result.status === "rejected") {
+            if (result.reason?.code === EntitlementErrorCode.CODE_TAKEN) {
+              message = "Code already exists"
+            } else {
+              message = "Field is invalid"
+            }
           }
-        } else {
-          goToStep(Steps.FEATURE_BASED)
 
-          entitlementsResults.forEach((result, index) => {
-            if (result.status !== "rejected") return
-
-            const message =
-              result.reason?.code === EntitlementErrorCode.CODE_TAKEN
-                ? "Code already exists"
-                : "Field is invalid"
-
-            form.setError(`entitlements.create.${index}.code`, {
-              type: "validate",
-              message,
-            })
-          })
-        }
+          return {
+            path: `entitlements.create.${newIndex}.code`,
+            message,
+          }
+        })
 
         toast({
           message: "Failed to create entitlement(s)",
           variant: "error",
         })
+
+        if (isScratchOpen) {
+          // Throw to render error messages in scratch form
+          throw {
+            kind: "entitlements-validation",
+            fieldErrors,
+            nextAttach,
+            nextCreate,
+          }
+        } else {
+          goToStep(Steps.FEATURE_BASED)
+
+          form.setValue("entitlements.attach", nextAttach)
+          form.setValue("entitlements.create", nextCreate)
+
+          fieldErrors.forEach((fieldError) => {
+            form.setError(fieldError.path, {
+              type: "validate",
+              message: fieldError.message,
+            })
+          })
+        }
 
         return
       }

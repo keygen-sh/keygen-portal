@@ -1,7 +1,9 @@
+import { useMemo } from "react"
 import { useFormContext, useFieldArray } from "react-hook-form"
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   FormField,
   FormItem,
@@ -14,8 +16,10 @@ import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+import { useListEntitlements } from "@/queries/entitlements"
+
+import { Entitlement } from "@/types/entitlements"
 import { PolicyFormValues } from "@/types/policies"
-import { MockEntitlements } from "@/types/entitlements"
 
 import MultiSelect from "@/components/multi-select"
 import SectionCard from "@/components/section-card"
@@ -28,22 +32,49 @@ interface FeatureBasedFieldsProps {
   className?: string
 }
 
+interface LayoutProps extends Omit<FeatureBasedFieldsProps, "layout"> {
+  entitlements: Entitlement[]
+  entitlementsLoading: boolean
+}
+
 export default function FeatureBasedFields({
   layout = "default",
   title,
   className,
 }: FeatureBasedFieldsProps): React.ReactElement {
+  const { data: entitlementsData = [], isLoading: entitlementsLoading } =
+    useListEntitlements()
+
+  const entitlements = useMemo(
+    () =>
+      (entitlementsData ?? []).filter((e): e is Entitlement =>
+        Boolean(e && e.id && e.attributes && e.attributes.name),
+      ),
+    [entitlementsData],
+  )
+
   return layout === "advanced" ? (
-    <AdvancedLayout className={className} />
+    <AdvancedLayout
+      entitlements={entitlements}
+      entitlementsLoading={entitlementsLoading}
+      className={className}
+    />
   ) : (
-    <DefaultLayout title={title} className={className} />
+    <DefaultLayout
+      title={title}
+      entitlements={entitlements}
+      entitlementsLoading={entitlementsLoading}
+      className={className}
+    />
   )
 }
 
 function DefaultLayout({
   title,
+  entitlements,
+  entitlementsLoading,
   className,
-}: Omit<FeatureBasedFieldsProps, "layout">): React.ReactElement {
+}: LayoutProps): React.ReactElement {
   const form = useFormContext<PolicyFormValues>()
 
   const { fields, append, remove } = useFieldArray({
@@ -54,32 +85,39 @@ function DefaultLayout({
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
       {title && <h2 className="text-content-loud/90">{title}</h2>}
-      <FormField
-        control={form.control}
-        name="entitlements.attach"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Attach existing entitlements</FormLabel>
-            <FormControl>
-              <MultiSelect
-                value={field.value ?? []}
-                onChange={field.onChange}
-                options={MockEntitlements.map((e) => ({
-                  label: e.attributes.name,
-                  value: e.id,
-                }))}
-                placeholder="Search entitlements"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      {entitlementsLoading ? (
+        <div className="space-y-2">
+          <Skeleton className="h-5 w-48 rounded-sm" />
+          <Skeleton className="h-8 w-3/4" />
+        </div>
+      ) : (
+        <FormField
+          control={form.control}
+          name="entitlements.attach"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Attach existing entitlements</FormLabel>
+              <FormControl>
+                <MultiSelect
+                  value={field.value ?? []}
+                  onChange={field.onChange}
+                  options={entitlements.map((e) => ({
+                    label: e.attributes.name,
+                    value: e.id,
+                  }))}
+                  placeholder="Search entitlements"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
 
       <div className="mt-2 space-y-3">
         <FormLabel>Create entitlements</FormLabel>
         {fields.map((f, i) => (
-          <div key={f.id} className="grid gap-2 md:grid-cols-3">
+          <div key={f.id} className="flex items-start gap-2">
             <FormField
               control={form.control}
               name={`entitlements.create.${i}.name` as const}
@@ -88,6 +126,7 @@ function DefaultLayout({
                   <FormControl>
                     <Input placeholder="Enter name..." {...field} />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -99,6 +138,7 @@ function DefaultLayout({
                   <FormControl>
                     <Input placeholder="Enter code..." {...field} />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -129,8 +169,10 @@ function DefaultLayout({
 }
 
 function AdvancedLayout({
+  entitlements,
+  entitlementsLoading,
   className,
-}: Omit<FeatureBasedFieldsProps, "layout">): React.ReactElement {
+}: LayoutProps): React.ReactElement {
   const form = useFormContext<PolicyFormValues>()
 
   const { fields, append, remove } = useFieldArray({
@@ -143,32 +185,39 @@ function AdvancedLayout({
       title="Feature-based policy attributes"
       className={cn("m-4 md:mb-0", className)}
     >
-      <FormField
-        control={form.control}
-        name="entitlements.attach"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Link existing entitlements</FormLabel>
-            <FormControl>
-              <MultiSelect
-                value={field.value ?? []}
-                onChange={field.onChange}
-                options={MockEntitlements.map((e) => ({
-                  label: e.attributes.name,
-                  value: e.id,
-                }))}
-                placeholder="Search entitlements"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      {entitlementsLoading ? (
+        <div className="space-y-2">
+          <Skeleton className="h-5 w-48 rounded-sm" />
+          <Skeleton className="h-8 w-3/4" />
+        </div>
+      ) : (
+        <FormField
+          control={form.control}
+          name="entitlements.attach"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Attach existing entitlements</FormLabel>
+              <FormControl>
+                <MultiSelect
+                  value={field.value ?? []}
+                  onChange={field.onChange}
+                  options={entitlements.map((e) => ({
+                    label: e.attributes.name,
+                    value: e.id,
+                  }))}
+                  placeholder="Search entitlements"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
 
       <div className="mt-2 space-y-3">
         <FormLabel>Create entitlements</FormLabel>
         {fields.map((f, i) => (
-          <div key={f.id} className="grid gap-2 md:grid-cols-3">
+          <div key={f.id} className="flex items-start gap-2">
             <FormField
               control={form.control}
               name={`entitlements.create.${i}.name` as const}
@@ -177,6 +226,7 @@ function AdvancedLayout({
                   <FormControl>
                     <Input placeholder="Enter name..." {...field} />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -188,6 +238,7 @@ function AdvancedLayout({
                   <FormControl>
                     <Input placeholder="Enter code..." {...field} />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />

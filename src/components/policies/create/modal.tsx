@@ -50,10 +50,11 @@ import {
   HeartbeatResurrectionStrategy,
   MockPolicies,
 } from "@/types/policies"
-import { Entitlement, MockEntitlements } from "@/types/entitlements"
+import { Entitlement, EntitlementErrorCode } from "@/types/entitlements"
 
 import { toast } from "@/lib/toast"
-import { buildMockEntitlement } from "@/lib/entitlements"
+
+import { useCreateEntitlement } from "@/queries/entitlements"
 
 import { useSlide } from "@/hooks/use-slide"
 import { useMobile } from "@/hooks/use-mobile"
@@ -72,8 +73,25 @@ import {
 import ScratchForm from "./scratch-form"
 import TemplatesForm, { TemplatesValues } from "./templates-form"
 
+enum Steps {
+  TEMPLATES = "templates",
+  GENERAL = "general",
+  TIMED = "timed",
+  PERPETUAL_FALLBACK = "perpetualFallback",
+  NODE_LOCKED = "nodeLocked",
+  USER_LOCKED = "userLocked",
+  PROCESS_BASED = "processBased",
+  LEASE_BASED = "leaseBased",
+  FEATURE_BASED = "featureBased",
+  USAGE_BASED = "usageBased",
+  ADVANCED = "advanced",
+  NO_ATTRIBUTES = "noAttributes",
+}
+
+type StepKey = (typeof Steps)[keyof typeof Steps]
+
 type Step = {
-  key: string
+  key: StepKey
   title: string
   fields?: FieldPath<PolicyFormValues>[]
   render: () => React.ReactElement
@@ -91,6 +109,8 @@ export default function PoliciesCreateModal({
   onClose,
 }: PoliciesCreateModalProps) {
   const isMobile = useMobile()
+
+  const createEntitlement = useCreateEntitlement()
 
   const [isTemplatesOpen, setIsTemplatesOpen] = useState(false)
   const [isAttributesOpen, setIsAttributesOpen] = useState(false)
@@ -129,7 +149,7 @@ export default function PoliciesCreateModal({
   const steps: Step[] = useMemo(
     () => [
       {
-        key: "templates",
+        key: Steps.TEMPLATES,
         title: "",
         render: () => (
           <TemplatesForm
@@ -183,8 +203,13 @@ export default function PoliciesCreateModal({
     if (step > 0) goTo(step - 1)
   }, [step, goTo])
 
+  const goToStep = (key: StepKey) => {
+    const index = steps.findIndex((s) => s.key === key)
+    if (index !== -1) goTo(index)
+  }
+
   useEffect(() => {
-    const allowed = new Set(steps.map((step) => step.key))
+    const allowed = new Set<string>(steps.map((step) => step.key))
 
     setCompletedStep((prev) => {
       const next = new Set<string>()
@@ -212,7 +237,7 @@ export default function PoliciesCreateModal({
       }
 
       setSelection(newSelection)
-      setCompletedStep(new Set())
+      setCompletedStep(new Set<string>())
 
       const newSchema = composePolicySchema(newSelection)
       form.reset(getSchemaDefaults(newSchema), { keepDefaultValues: false })
@@ -225,22 +250,87 @@ export default function PoliciesCreateModal({
 
   // TODO(cazden) Replace with API call
   const handleCreatePolicy = useCallback(
-    (payload: PolicyFormValues) => {
+    async (payload: PolicyFormValues) => {
       const attachIds = payload.entitlements?.attach ?? []
       const toCreate = payload.entitlements?.create ?? []
 
-      const created: Entitlement[] = toCreate.map((e) =>
-        buildMockEntitlement({
-          name: e.name,
-          code: e.code,
-          metadata: e.metadata,
-        }),
+      const entitlementsResults = await Promise.allSettled(
+        toCreate.map((e) =>
+          createEntitlement.mutateAsync({
+            name: e.name,
+            code: e.code,
+            metadata: e.metadata ?? {},
+          }),
+        ),
       )
 
-      if (created.length) MockEntitlements.unshift(...created)
+      const failed = entitlementsResults.filter(
+        (result) => result.status === "rejected",
+      )
+
+      if (failed.length > 0) {
+        if (isScratchOpen) {
+          const errors: {
+            path: `entitlements.create.${number}.code`
+            message: string
+          }[] = []
+
+          entitlementsResults.forEach((result, index) => {
+            if (result.status !== "rejected") return
+
+            const message =
+              result.reason?.code === EntitlementErrorCode.CODE_TAKEN
+                ? "Code already exists"
+                : "Field is invalid"
+
+            errors.push({
+              path: `entitlements.create.${index}.code`,
+              message,
+            })
+          })
+
+          toast({
+            message: "Failed to create entitlement(s)",
+            variant: "error",
+          })
+
+          // Throw to render error messages in scratch form
+          throw {
+            kind: "entitlements-validation",
+            errors,
+          }
+        } else {
+          goToStep(Steps.FEATURE_BASED)
+
+          entitlementsResults.forEach((result, index) => {
+            if (result.status !== "rejected") return
+
+            const message =
+              result.reason?.code === EntitlementErrorCode.CODE_TAKEN
+                ? "Code already exists"
+                : "Field is invalid"
+
+            form.setError(`entitlements.create.${index}.code`, {
+              type: "validate",
+              message,
+            })
+          })
+        }
+
+        toast({
+          message: "Failed to create entitlement(s)",
+          variant: "error",
+        })
+
+        return
+      }
+
+      const createdEntitlements = (
+        entitlementsResults as PromiseFulfilledResult<Entitlement>[]
+      ).map((result) => result.value)
 
       const entitlementIds = Array.from(
-        new Set([...attachIds, ...created.map((e) => e.id)]),
+        new Set([...attachIds, ...createdEntitlements.map((e) => e.id)]),
       )
 
       const policy = buildMockPolicy(payload, selection, entitlementIds)
@@ -251,7 +341,7 @@ export default function PoliciesCreateModal({
       onClose()
       onSelectPolicy(policy)
     },
-    [onSelectPolicy, selection],
+    [onSelectPolicy, selection, isScratchOpen],
   )
 
   return (
@@ -448,7 +538,7 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
   const steps: Step[] = []
 
   steps.push({
-    key: "general",
+    key: Steps.GENERAL,
     title: "General configuration",
     fields: ["name", "product.id"],
     render: () => (
@@ -462,7 +552,7 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
 
   if (selection.timing === TimingTemplates.TIMED) {
     steps.push({
-      key: "timed",
+      key: Steps.TIMED,
       title: "Timed configuration",
       fields: [
         "duration",
@@ -477,7 +567,7 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
 
   if (selection.timing === TimingTemplates.PERPETUAL_FALLBACK) {
     steps.push({
-      key: "perpetualFallback",
+      key: Steps.PERPETUAL_FALLBACK,
       title: "Perpetual‑fallback configuration",
       fields: [
         "duration",
@@ -496,7 +586,7 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
 
   if (requiresNodeLocked) {
     steps.push({
-      key: "nodeLocked",
+      key: Steps.NODE_LOCKED,
       title: "Node‑locked configuration",
       fields: [
         "maxMachines",
@@ -513,7 +603,7 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
 
   if (selection.access.includes(AccessTemplates.USER_LOCKED)) {
     steps.push({
-      key: "userLocked",
+      key: Steps.USER_LOCKED,
       title: "User‑locked configuration",
       fields: ["maxUsers", "requireUserScope"],
       render: () => <Policies.Fields.UserLocked layout="advanced" />,
@@ -522,7 +612,7 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
 
   if (selection.metered.includes(MeteredTemplates.PROCESS_BASED)) {
     steps.push({
-      key: "processBased",
+      key: Steps.PROCESS_BASED,
       title: "Process‑based configuration",
       fields: [
         "maxProcesses",
@@ -535,7 +625,7 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
 
   if (selection.metered.includes(MeteredTemplates.LEASE_BASED)) {
     steps.push({
-      key: "leaseBased",
+      key: Steps.LEASE_BASED,
       title: "Lease‑based configuration",
       fields: [
         "heartbeatDuration",
@@ -549,7 +639,7 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
 
   if (selection.metered.includes(MeteredTemplates.FEATURE_BASED)) {
     steps.push({
-      key: "featureBased",
+      key: Steps.FEATURE_BASED,
       title: "Feature‑based configuration",
       fields: ["entitlements.attach", "entitlements.create"],
       render: () => <Policies.Fields.FeatureBased layout="advanced" />,
@@ -558,7 +648,7 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
 
   if (selection.metered.includes(MeteredTemplates.USAGE_BASED)) {
     steps.push({
-      key: "usageBased",
+      key: Steps.USAGE_BASED,
       title: "Usage‑based configuration",
       fields: ["maxUses"],
       render: () => <Policies.Fields.UsageBased layout="advanced" />,
@@ -567,7 +657,7 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
 
   if (selection.advanced) {
     steps.push({
-      key: "advanced",
+      key: Steps.ADVANCED,
       title: "Advanced configuration",
       fields: [
         "strict",
@@ -584,7 +674,7 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
 
   if (steps.length === 0) {
     steps.push({
-      key: "noAttributes",
+      key: Steps.NO_ATTRIBUTES,
       title: "Attributes configuration",
       render: () => (
         <div className="text-sm text-content-subdued">

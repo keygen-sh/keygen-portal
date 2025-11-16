@@ -26,6 +26,7 @@ import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 import { useListProducts } from "@/queries/products"
+import { useListEntitlements } from "@/queries/entitlements"
 
 import {
   PolicyFormValues,
@@ -48,7 +49,6 @@ import {
   RenewalBasis,
   TransferStrategy,
 } from "@/types/policies"
-import { MockEntitlements } from "@/types/entitlements"
 
 import * as Field from "@/components/field"
 import MultiSelect from "@/components/multi-select"
@@ -66,6 +66,8 @@ export default function AllFields({
   const form = useFormContext<PolicyFormValues>()
 
   const { data: products = [], isLoading: productsLoading } = useListProducts()
+  const { data: entitlements = [], isLoading: entitlementsLoading } =
+    useListEntitlements()
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -1297,32 +1299,39 @@ export default function AllFields({
         </div>
 
         <div className="w-full">
-          <FormField
-            control={form.control}
-            name="entitlements.attach"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Attach existing entitlements</FormLabel>
-                <FormControl>
-                  <MultiSelect
-                    value={field.value ?? []}
-                    onChange={field.onChange}
-                    options={MockEntitlements.map((e) => ({
-                      label: e.attributes.name,
-                      value: e.id,
-                    }))}
-                    placeholder="Search entitlements"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {entitlementsLoading ? (
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-48 rounded-sm" />
+              <Skeleton className="h-8 w-3/4" />
+            </div>
+          ) : (
+            <FormField
+              control={form.control}
+              name="entitlements.attach"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Attach existing entitlements</FormLabel>
+                  <FormControl>
+                    <MultiSelect
+                      value={field.value ?? []}
+                      onChange={field.onChange}
+                      options={entitlements.map((e) => ({
+                        label: e.attributes.name,
+                        value: e.id,
+                      }))}
+                      placeholder="Search entitlements"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           <div className="mt-2 space-y-3">
             <FormLabel>Create entitlements</FormLabel>
             {fields.map((f, i) => (
-              <div key={f.id} className="grid gap-2 md:grid-cols-3">
+              <div key={f.id} className="flex items-start gap-2">
                 <FormField
                   control={form.control}
                   name={`entitlements.create.${i}.name` as const}
@@ -1331,6 +1340,7 @@ export default function AllFields({
                       <FormControl>
                         <Input placeholder="Enter name..." {...field} />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -1342,6 +1352,7 @@ export default function AllFields({
                       <FormControl>
                         <Input placeholder="Enter code..." {...field} />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />

@@ -46,10 +46,11 @@ import {
 } from "lucide-react"
 
 import { MockPolicies } from "@/types/policies"
-import { MockEntitlements } from "@/types/entitlements"
 
-// import { useGetPolicy, useRemovePolicy } from "@/queries/policies"
 import { useGetProduct } from "@/queries/products"
+import { useListEntitlements } from "@/queries/entitlements"
+// import { useGetPolicy, useRemovePolicy } from "@/queries/policies"
+
 import { useMobile } from "@/hooks/use-mobile"
 
 // import { toast } from "@/lib/toast"
@@ -95,11 +96,22 @@ export default function PolicyDetails() {
     isError: productError,
   } = useGetProduct(productId)
 
-  const entitlements = (policy?.relationships.entitlements?.data ?? [])
-    .map((e) => MockEntitlements.find((entitlement) => e.id === entitlement.id))
-    .filter((entitlement): entitlement is (typeof MockEntitlements)[number] =>
-      Boolean(entitlement),
+  const {
+    data: entitlementsData = [],
+    isLoading: entitlementsLoading,
+    isFetching: entitlementsFetching,
+    isError: entitlementsError,
+  } = useListEntitlements()
+
+  // TODO(cazden) Derive entitlements properly once policy API is implemented
+  const entitlementIds = (policy?.relationships.entitlements?.data ?? [])
+    .map((entitlement: any) =>
+      "id" in entitlement ? entitlement.id : entitlement,
     )
+    .filter(Boolean)
+  const entitlements = entitlementIds.length
+    ? entitlementsData.filter((e) => entitlementIds.includes(e.id))
+    : []
 
   const navigate = useNavigate()
 
@@ -391,7 +403,14 @@ export default function PolicyDetails() {
                     </Badge>
                   }
                 >
-                  {entitlements.length > 0 ? (
+                  {entitlementsError ? (
+                    <Badge variant="destructive">ERROR</Badge>
+                  ) : entitlementsLoading || entitlementsFetching ? (
+                    <div className="flex w-full justify-between">
+                      <Skeleton className="h-5 w-48 rounded-sm" />
+                      <Skeleton className="h-5 w-24 rounded-sm" />
+                    </div>
+                  ) : entitlements.length > 0 ? (
                     entitlements.map((entitlement) => (
                       <div key={entitlement.id} className="space-y-1.5">
                         <div className="flex items-center justify-between">
@@ -444,7 +463,7 @@ export default function PolicyDetails() {
                         productError ? (
                           <Badge variant="destructive">ERROR</Badge>
                         ) : productLoading || productFetching ? (
-                          <Skeleton className="h-5 w-32" />
+                          <Skeleton className="h-5 w-32 rounded-sm" />
                         ) : product ? (
                           <button
                             className="text-primary underline-offset-4 hover:underline"

@@ -157,8 +157,24 @@ export default function PoliciesScratchForm({
       goTo(step + 1)
     } else {
       const payload = form.getValues()
-      onCreate(payload)
-      onClose()
+
+      try {
+        await onCreate(payload)
+      } catch (error: any) {
+        if (error && error.kind === "entitlements-validation") {
+          error.errors.forEach(
+            (fieldError: {
+              path: `entitlements.create.${number}.code`
+              message: string
+            }) => {
+              form.setError(fieldError.path, {
+                type: "validate",
+                message: fieldError.message,
+              })
+            },
+          )
+        }
+      }
     }
   }, [step, steps, form, last, onCreate, onClose, goTo])
 

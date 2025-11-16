@@ -46,12 +46,19 @@ export function useCreateEntitlement() {
   const { code } = useEnvironment()
 
   return useMutation<Entitlement, APIError, CreateEntitlementPayload>({
-    mutationFn: (payload) =>
-      keygen.entitlements
-        .create(payload)
-        .then((response) => response.data as Entitlement),
+    mutationFn: async (payload) => {
+      const response = await keygen.entitlements.create(payload)
+
+      if (response.errors && response.errors.length > 0) {
+        throw response.errors[0] as APIError
+      }
+
+      return response?.data as Entitlement
+    },
 
     onSuccess: (newEntitlement) => {
+      if (!newEntitlement || !newEntitlement.id) return
+
       queryClient.setQueryData<Entitlement[]>(
         ["entitlements", { environment: code }],
         (old) => (old ? [newEntitlement, ...old] : [newEntitlement]),

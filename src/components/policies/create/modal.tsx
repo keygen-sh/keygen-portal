@@ -271,13 +271,13 @@ export default function PoliciesCreateModal({
         .map((result, index) => (result.status === "fulfilled" ? index : -1))
         .filter((index) => index !== -1)
 
-      if (failed.length > 0) {
-        const createdEntitlements = succeeded.map(
-          (index) =>
-            (entitlementsResults[index] as PromiseFulfilledResult<Entitlement>)
-              .value,
-        )
+      const createdEntitlements = succeeded.map(
+        (index) =>
+          (entitlementsResults[index] as PromiseFulfilledResult<Entitlement>)
+            .value,
+      )
 
+      if (failed.length > 0) {
         const nextAttach = Array.from(
           new Set([...attachIds, ...createdEntitlements.map((e) => e.id)]),
         )
@@ -334,10 +334,6 @@ export default function PoliciesCreateModal({
 
         return
       }
-
-      const createdEntitlements = (
-        entitlementsResults as PromiseFulfilledResult<Entitlement>[]
-      ).map((result) => result.value)
 
       const entitlementIds = Array.from(
         new Set([...attachIds, ...createdEntitlements.map((e) => e.id)]),

@@ -31,8 +31,10 @@ export default function PoliciesDuplicateModal({
 
   const navigate = useNavigate()
 
-  const handleCreatePolicy = (values: PolicyFormValues) => {
+  const handleCreatePolicy = (payload: PolicyFormValues) => {
     if (!policy) return
+
+    const entitlementIds = payload.entitlements?.attach ?? []
 
     onOpenChange(false)
 
@@ -45,88 +47,89 @@ export default function PoliciesDuplicateModal({
       links: { self: `/v1/accounts/{ACCOUNT}/policies/${newId}` },
       attributes: {
         ...policy.attributes,
-        name: values.name ?? "",
+        name: payload.name ?? "",
         created: now,
         updated: now,
-        metadata: values.metadata ?? policy.attributes.metadata ?? {},
-        duration: values.duration ?? null,
+        metadata: payload.metadata ?? policy.attributes.metadata ?? {},
+        duration: payload.duration ?? null,
         expirationStrategy:
-          values.expirationStrategy ?? policy.attributes.expirationStrategy,
+          payload.expirationStrategy ?? policy.attributes.expirationStrategy,
         expirationBasis:
-          values.expirationBasis ?? policy.attributes.expirationBasis,
-        renewalBasis: values.renewalBasis ?? policy.attributes.renewalBasis,
+          payload.expirationBasis ?? policy.attributes.expirationBasis,
+        renewalBasis: payload.renewalBasis ?? policy.attributes.renewalBasis,
         transferStrategy:
-          values.transferStrategy ?? policy.attributes.transferStrategy,
-        strict: values.strict ?? policy.attributes.strict,
-        floating: values.floating ?? policy.attributes.floating,
-        protected: values.protected ?? policy.attributes.protected,
-        usePool: values.usePool ?? policy.attributes.usePool,
-        checkInInterval: values.checkInInterval ?? null,
-        checkInIntervalCount: values.checkInIntervalCount ?? null,
-        maxMachines: values.maxMachines ?? null,
-        maxProcesses: values.maxProcesses ?? null,
-        maxUsers: values.maxUsers ?? null,
-        maxUses: values.maxUses ?? null,
-        maxCores: values.maxCores ?? null,
+          payload.transferStrategy ?? policy.attributes.transferStrategy,
+        strict: payload.strict ?? policy.attributes.strict,
+        floating: payload.floating ?? policy.attributes.floating,
+        protected: payload.protected ?? policy.attributes.protected,
+        usePool: payload.usePool ?? policy.attributes.usePool,
+        checkInInterval: payload.checkInInterval ?? null,
+        checkInIntervalCount: payload.checkInIntervalCount ?? null,
+        maxMachines: payload.maxMachines ?? null,
+        maxProcesses: payload.maxProcesses ?? null,
+        maxUsers: payload.maxUsers ?? null,
+        maxUses: payload.maxUses ?? null,
+        maxCores: payload.maxCores ?? null,
         requireCheckIn:
-          values.requireCheckIn ?? policy.attributes.requireCheckIn,
+          payload.requireCheckIn ?? policy.attributes.requireCheckIn,
         requireProductScope:
-          values.requireProductScope ?? policy.attributes.requireProductScope,
+          payload.requireProductScope ?? policy.attributes.requireProductScope,
         requirePolicyScope:
-          values.requirePolicyScope ?? policy.attributes.requirePolicyScope,
+          payload.requirePolicyScope ?? policy.attributes.requirePolicyScope,
         requireMachineScope:
-          values.requireMachineScope ?? policy.attributes.requireMachineScope,
+          payload.requireMachineScope ?? policy.attributes.requireMachineScope,
         requireFingerprintScope:
-          values.requireFingerprintScope ??
+          payload.requireFingerprintScope ??
           policy.attributes.requireFingerprintScope,
         requireComponentsScope:
-          values.requireComponentsScope ??
+          payload.requireComponentsScope ??
           policy.attributes.requireComponentsScope,
         requireUserScope:
-          values.requireUserScope ?? policy.attributes.requireUserScope,
+          payload.requireUserScope ?? policy.attributes.requireUserScope,
         requireChecksumScope:
-          values.requireChecksumScope ?? policy.attributes.requireChecksumScope,
+          payload.requireChecksumScope ??
+          policy.attributes.requireChecksumScope,
         requireVersionScope:
-          values.requireVersionScope ?? policy.attributes.requireVersionScope,
+          payload.requireVersionScope ?? policy.attributes.requireVersionScope,
 
         machineUniquenessStrategy:
-          values.machineUniquenessStrategy ??
+          payload.machineUniquenessStrategy ??
           policy.attributes.machineUniquenessStrategy,
         machineMatchingStrategy:
-          values.machineMatchingStrategy ??
+          payload.machineMatchingStrategy ??
           policy.attributes.machineMatchingStrategy,
         componentUniquenessStrategy:
-          values.componentUniquenessStrategy ??
+          payload.componentUniquenessStrategy ??
           policy.attributes.componentUniquenessStrategy,
         componentMatchingStrategy:
-          values.componentMatchingStrategy ??
+          payload.componentMatchingStrategy ??
           policy.attributes.componentMatchingStrategy,
         overageStrategy:
-          values.overageStrategy ?? policy.attributes.overageStrategy,
+          payload.overageStrategy ?? policy.attributes.overageStrategy,
 
         requireHeartbeat:
-          values.requireHeartbeat ?? policy.attributes.requireHeartbeat,
-        heartbeatDuration: values.heartbeatDuration ?? null,
+          payload.requireHeartbeat ?? policy.attributes.requireHeartbeat,
+        heartbeatDuration: payload.heartbeatDuration ?? null,
         heartbeatBasis:
-          values.heartbeatBasis ?? policy.attributes.heartbeatBasis,
+          payload.heartbeatBasis ?? policy.attributes.heartbeatBasis,
         heartbeatCullStrategy:
-          values.heartbeatCullStrategy ??
+          payload.heartbeatCullStrategy ??
           policy.attributes.heartbeatCullStrategy,
         heartbeatResurrectionStrategy:
-          values.heartbeatResurrectionStrategy ??
+          payload.heartbeatResurrectionStrategy ??
           policy.attributes.heartbeatResurrectionStrategy,
         machineLeasingStrategy:
-          values.machineLeasingStrategy ??
+          payload.machineLeasingStrategy ??
           policy.attributes.machineLeasingStrategy,
         processLeasingStrategy:
-          values.processLeasingStrategy ??
+          payload.processLeasingStrategy ??
           policy.attributes.processLeasingStrategy,
 
         authenticationStrategy:
-          values.authenticationStrategy ??
+          payload.authenticationStrategy ??
           policy.attributes.authenticationStrategy,
-        scheme: values.scheme ?? policy.attributes.scheme ?? null,
-        encrypted: values.encrypted ?? policy.attributes.encrypted,
+        scheme: payload.scheme ?? policy.attributes.scheme ?? null,
+        encrypted: payload.encrypted ?? policy.attributes.encrypted,
       },
       relationships: {
         ...policy.relationships,
@@ -134,12 +137,12 @@ export default function PoliciesDuplicateModal({
           ...policy.relationships.product,
           data: {
             type: "products",
-            id: values.product?.id ?? policy.relationships.product?.data?.id!,
+            id: payload.product?.id ?? policy.relationships.product?.data?.id!,
           },
         },
         entitlements: {
           ...policy.relationships.entitlements,
-          data: (values.entitlements?.attach ?? []).map((eid) => ({
+          data: entitlementIds.map((eid) => ({
             type: "entitlements",
             id: eid,
           })),
@@ -186,7 +189,7 @@ export default function PoliciesDuplicateModal({
           open && (
             <DuplicateForm
               policy={policy!}
-              onSubmit={handleCreatePolicy}
+              onCreate={handleCreatePolicy}
               onCancel={() => onOpenChange(false)}
             />
           )

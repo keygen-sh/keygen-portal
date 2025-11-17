@@ -161,15 +161,17 @@ export default function PoliciesScratchForm({
       try {
         await onCreate(payload)
       } catch (error: any) {
-        if (error && error.kind === "entitlements-validation") {
-          if (Array.isArray(error.nextAttach)) {
-            form.setValue("entitlements.attach", error.nextAttach)
+        if (error?.kind === "entitlements-validation") {
+          const { nextAttach, nextCreate, fieldErrors } = error
+
+          if (nextAttach) {
+            form.setValue("entitlements.attach", nextAttach)
           }
-          if (Array.isArray(error.nextCreate)) {
-            form.setValue("entitlements.create", error.nextCreate)
+          if (nextCreate) {
+            form.setValue("entitlements.create", nextCreate)
           }
 
-          error.fieldErrors.forEach(
+          fieldErrors.forEach(
             (fieldError: {
               path: `entitlements.create.${number}.code`
               message: string

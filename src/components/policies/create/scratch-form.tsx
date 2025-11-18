@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Form } from "@/components/ui/form"
 
 import { PolicyFormValues } from "@/types/policies"
+import { CreateEntitlementValidationError } from "@/types/entitlements"
 import { BaseSchema, getSchemaDefaults } from "@/components/policies/schema"
 
 import { useSlide } from "@/hooks/use-slide"
@@ -160,8 +161,8 @@ export default function PoliciesScratchForm({
 
       try {
         await onCreate(payload)
-      } catch (error: any) {
-        if (error?.kind === "entitlements-validation") {
+      } catch (error: unknown) {
+        if (error instanceof CreateEntitlementValidationError) {
           const { nextAttach, nextCreate, fieldErrors } = error
 
           if (nextAttach) {
@@ -171,17 +172,12 @@ export default function PoliciesScratchForm({
             form.setValue("entitlements.create", nextCreate)
           }
 
-          fieldErrors.forEach(
-            (fieldError: {
-              path: `entitlements.create.${number}.code`
-              message: string
-            }) => {
-              form.setError(fieldError.path, {
-                type: "validate",
-                message: fieldError.message,
-              })
-            },
-          )
+          fieldErrors.forEach((fieldError) => {
+            form.setError(fieldError.path, {
+              type: "validate",
+              message: fieldError.message,
+            })
+          })
         }
       }
     }

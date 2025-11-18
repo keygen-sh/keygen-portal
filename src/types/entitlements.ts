@@ -6,6 +6,8 @@ import {
   Writable,
   OptionalExcept,
 } from "@/types/api"
+import { FormFieldError } from "@/types/forms"
+import { PolicyFormValues } from "@/types/policies"
 
 export enum EntitlementErrorCode {
   CODE_TAKEN = "CODE_TAKEN",
@@ -48,3 +50,14 @@ export type CreateEntitlementPayload = OptionalExcept<
   "name" | "code"
 >
 export type UpdateEntitlementPayload = Partial<Writable<EntitlementAttributes>>
+
+export class CreateEntitlementValidationError extends Error {
+  constructor(
+    public nextAttach: string[],
+    public nextCreate: NonNullable<PolicyFormValues["entitlements"]>["create"],
+    public fieldErrors: FormFieldError<PolicyFormValues>[],
+  ) {
+    super("Failed to create entitlement(s)")
+    this.name = "CreateEntitlementValidationError"
+  }
+}

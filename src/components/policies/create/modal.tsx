@@ -50,7 +50,12 @@ import {
   HeartbeatResurrectionStrategy,
   MockPolicies,
 } from "@/types/policies"
-import { Entitlement, EntitlementErrorCode } from "@/types/entitlements"
+import { FormFieldError } from "@/types/forms"
+import {
+  Entitlement,
+  EntitlementErrorCode,
+  CreateEntitlementValidationError,
+} from "@/types/entitlements"
 
 import { toast } from "@/lib/toast"
 
@@ -264,11 +269,11 @@ export default function PoliciesCreateModal({
         ),
       )
 
-      const failed = entitlementsResults
-        .map((result, index) => (result.status === "rejected" ? index : -1))
-        .filter((index) => index !== -1)
       const succeeded = entitlementsResults
         .map((result, index) => (result.status === "fulfilled" ? index : -1))
+        .filter((index) => index !== -1)
+      const failed = entitlementsResults
+        .map((result, index) => (result.status === "rejected" ? index : -1))
         .filter((index) => index !== -1)
 
       const createdEntitlements = succeeded.map(
@@ -281,29 +286,27 @@ export default function PoliciesCreateModal({
         const nextAttach = Array.from(
           new Set([...attachIds, ...createdEntitlements.map((e) => e.id)]),
         )
-
         const nextCreate = failed.map((index) => toCreate[index])
 
-        const fieldErrors: {
-          path: `entitlements.create.${number}.code`
-          message: string
-        }[] = failed.map((index, newIndex) => {
-          const result = entitlementsResults[index]
+        const fieldErrors: FormFieldError<PolicyFormValues>[] = failed.map(
+          (index, newIndex) => {
+            const result = entitlementsResults[index]
 
-          let message = ""
-          if (result.status === "rejected") {
-            if (result.reason?.code === EntitlementErrorCode.CODE_TAKEN) {
-              message = "Code already exists"
-            } else {
-              message = "Field is invalid"
+            let message = ""
+            if (result.status === "rejected") {
+              if (result.reason?.code === EntitlementErrorCode.CODE_TAKEN) {
+                message = "Code already exists"
+              } else {
+                message = "Field is invalid"
+              }
             }
-          }
 
-          return {
-            path: `entitlements.create.${newIndex}.code`,
-            message,
-          }
-        })
+            return {
+              path: `entitlements.create.${newIndex}.code`,
+              message,
+            }
+          },
+        )
 
         toast({
           message: "Failed to create entitlement(s)",
@@ -312,12 +315,11 @@ export default function PoliciesCreateModal({
 
         if (isScratchOpen) {
           // Throw to render error messages in scratch form
-          throw {
-            kind: "entitlements-validation",
-            fieldErrors,
+          throw new CreateEntitlementValidationError(
             nextAttach,
             nextCreate,
-          }
+            fieldErrors,
+          )
         } else {
           goToStep(Steps.FEATURE_BASED)
 

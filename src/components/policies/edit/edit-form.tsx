@@ -10,7 +10,7 @@ import { DialogFooter } from "@/components/ui/dialog"
 import { toast } from "@/lib/toast"
 
 import { useCreateEntitlement } from "@/queries/entitlements"
-import { partitionMutations } from "@/queries/utils"
+import { settleMutations } from "@/queries/utils"
 
 import { Policy, PolicyFormValues } from "@/types/policies"
 import { Entitlement, EntitlementErrorCode } from "@/types/entitlements"
@@ -46,13 +46,11 @@ export default function EditForm({
       const attachIds = payload.entitlements?.attach ?? []
       const toCreate = payload.entitlements?.create ?? []
 
-      const results = await Promise.allSettled(
+      const [entitlements, errors] = await settleMutations<Entitlement>(
         toCreate.map(attrs =>
           createEntitlement.mutateAsync(attrs),
         ),
       )
-
-      const [entitlements, errors] = partitionMutations<Entitlement>(results)
       const entitlementIds = Array.from(
         new Set([...attachIds, ...entitlements.map((e) => e.id)]),
       )

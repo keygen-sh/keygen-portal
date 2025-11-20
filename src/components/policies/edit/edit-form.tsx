@@ -10,6 +10,7 @@ import { DialogFooter } from "@/components/ui/dialog"
 import { toast } from "@/lib/toast"
 
 import { useCreateEntitlement } from "@/queries/entitlements"
+import { partitionMutations } from "@/queries/utils"
 
 import { Policy, PolicyFormValues } from "@/types/policies"
 import { Entitlement, EntitlementErrorCode } from "@/types/entitlements"
@@ -45,52 +46,33 @@ export default function EditForm({
       const attachIds = payload.entitlements?.attach ?? []
       const toCreate = payload.entitlements?.create ?? []
 
-      const entitlementsResults = await Promise.allSettled(
-        toCreate.map((e) =>
-          createEntitlement.mutateAsync({
-            name: e.name,
-            code: e.code,
-            metadata: e.metadata ?? {},
-          }),
+      const results = await Promise.allSettled(
+        toCreate.map(attrs =>
+          createEntitlement.mutateAsync(attrs),
         ),
       )
 
-      const succeeded = entitlementsResults
-        .map((result, index) => (result.status === "fulfilled" ? index : -1))
-        .filter((index) => index !== -1)
-      const failed = entitlementsResults
-        .map((result, index) => (result.status === "rejected" ? index : -1))
-        .filter((index) => index !== -1)
-
-      const createdEntitlements = succeeded.map(
-        (index) =>
-          (entitlementsResults[index] as PromiseFulfilledResult<Entitlement>)
-            .value,
+      const [entitlements, errors] = partitionMutations<Entitlement>(results)
+      const entitlementIds = Array.from(
+        new Set([...attachIds, ...entitlements.map((e) => e.id)]),
       )
 
-      if (failed.length > 0) {
-        const nextAttach = Array.from(
-          new Set([...attachIds, ...createdEntitlements.map((e) => e.id)]),
-        )
-        const nextCreate = failed.map((index) => toCreate[index])
+      if (errors.length > 0) {
+        const nextAttach = [...entitlementIds]
+        const nextCreate = errors.map(({ index }) => toCreate[index]) // to retry
 
         form.setValue("entitlements.attach", nextAttach)
         form.setValue("entitlements.create", nextCreate)
 
-        failed.forEach((index, newIndex) => {
-          const result = entitlementsResults[index]
-
+        errors.forEach((error, index) => {
           let message = ""
-          if (
-            result.status === "rejected" &&
-            result.reason?.code === EntitlementErrorCode.CODE_TAKEN
-          ) {
+          if (error.reason.code === EntitlementErrorCode.CODE_TAKEN) {
             message = "Code already exists"
           } else {
             message = "Field is invalid"
           }
 
-          form.setError(`entitlements.create.${newIndex}.code`, {
+          form.setError(`entitlements.create.${index}.code`, {
             type: "validate",
             message,
           })
@@ -103,10 +85,6 @@ export default function EditForm({
 
         return
       }
-
-      const entitlementIds = Array.from(
-        new Set([...attachIds, ...createdEntitlements.map((e) => e.id)]),
-      )
 
       await onUpdate({
         ...payload,

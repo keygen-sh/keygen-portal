@@ -274,20 +274,21 @@ export default function PoliciesCreateModal({
       form.setValue("entitlements.create", nextCreate)
 
       if (errors.length > 0) {
-        const fieldErrors: FormFieldError<PolicyFormValues>[] = []
-        errors.forEach((error, index) => {
-          let message = ""
-          if (error.reason.code === EntitlementErrorCode.CODE_TAKEN) {
-            message = "Code already exists"
-          } else {
-            message = "Field is invalid"
-          }
+        const fieldErrors: FormFieldError<PolicyFormValues>[] = errors.map(
+          (error, index) => {
+            let message = ""
+            if (error.reason?.code === EntitlementErrorCode.CODE_TAKEN) {
+              message = "Code already exists"
+            } else {
+              message = "Field is invalid"
+            }
 
-          form.setError(`entitlements.create.${index}.code`, {
-            type: "validate",
-            message,
-          })
-        })
+            return {
+              path: `entitlements.create.${index}.code`,
+              message,
+            }
+          },
+        )
 
         toast({
           message: "Failed to create entitlement(s)",

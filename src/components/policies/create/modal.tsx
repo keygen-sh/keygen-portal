@@ -277,7 +277,7 @@ export default function PoliciesCreateModal({
         const fieldErrors: FormFieldError<PolicyFormValues>[] = errors.map(
           (error, index) => {
             let message = ""
-            if (error.reason?.code === EntitlementErrorCode.CODE_TAKEN) {
+            if (error.reason.code === EntitlementErrorCode.CODE_TAKEN) {
               message = "Code already exists"
             } else {
               message = "Field is invalid"

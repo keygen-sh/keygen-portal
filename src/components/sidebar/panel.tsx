@@ -54,11 +54,11 @@ import {
   Webhook,
   KeyRound,
   Shield,
+  User,
 } from "lucide-react"
 
 import * as keygen from "@/keygen"
 import { useMobile } from "@/hooks/use-mobile"
-import Icon from "@/components/icon"
 import Combobox from "./combobox"
 import Command from "./command"
 
@@ -196,10 +196,7 @@ export default function SidebarPanel(): React.ReactElement {
             <DropdownMenuTrigger asChild>
               {open && (
                 <Button variant="rail" size="rail">
-                  <Icon
-                    name="user"
-                    className="size-6 group-hover:text-primary md:size-5"
-                  />
+                  <User className="size-6 group-hover:text-primary md:size-5" />
                 </Button>
               )}
             </DropdownMenuTrigger>

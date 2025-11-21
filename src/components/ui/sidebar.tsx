@@ -15,7 +15,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-import Icon from "@/components/icon"
+import { PanelLeftOpen, PanelLeftClose } from "lucide-react"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -220,7 +220,7 @@ function SidebarTrigger({
   onClick,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, open } = useSidebar()
 
   return (
     <Button
@@ -235,10 +235,11 @@ function SidebarTrigger({
       }}
       {...props}
     >
-      <Icon
-        name="sidebar"
-        className="size-6 group-hover:text-content-loud md:size-5"
-      />
+      {open ? (
+        <PanelLeftClose className="size-6 md:size-5" />
+      ) : (
+        <PanelLeftOpen className="size-6 md:size-5" />
+      )}
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )

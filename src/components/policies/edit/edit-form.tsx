@@ -47,9 +47,7 @@ export default function EditForm({
       const toCreate = payload.entitlements?.create ?? []
 
       const [entitlements, errors] = await settleMutations<Entitlement>(
-        toCreate.map(attrs =>
-          createEntitlement.mutateAsync(attrs),
-        ),
+        toCreate.map((attrs) => createEntitlement.mutateAsync(attrs)),
       )
       const entitlementIds = Array.from(
         new Set([...attachIds, ...entitlements.map((e) => e.id)]),
@@ -92,15 +90,15 @@ export default function EditForm({
         },
       })
     },
-    [form, onUpdate],
+    [createEntitlement, form, onUpdate],
   )
 
   return (
     <Form {...form}>
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault()
-          form.handleSubmit(update)()
+          await form.handleSubmit(update)()
         }}
       >
         <ScrollArea type="always" className="h-[calc(100dvh-8rem)]">

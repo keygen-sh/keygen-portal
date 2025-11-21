@@ -9,6 +9,7 @@ import { DialogFooter } from "@/components/ui/dialog"
 
 import { toast } from "@/lib/toast"
 
+import { settleMutations } from "@/queries/utils"
 import { useCreateEntitlement } from "@/queries/entitlements"
 
 import { Policy, PolicyFormValues } from "@/types/policies"
@@ -23,7 +24,7 @@ import {
 
 interface DuplicateFormProps {
   policy: Policy
-  onCreate: (values: PolicyFormValues) => void
+  onCreate: (values: PolicyFormValues) => Promise<void> | void
   onCancel: () => void
 }
 
@@ -48,57 +49,34 @@ export default function DuplicateForm({
 
   const createEntitlement = useCreateEntitlement()
 
-  const handleSubmit = useCallback(
+  const create = useCallback(
     async (payload: PolicyFormValues) => {
       const attachIds = payload.entitlements?.attach ?? []
       const toCreate = payload.entitlements?.create ?? []
 
-      const entitlementsResults = await Promise.allSettled(
-        toCreate.map((e) =>
-          createEntitlement.mutateAsync({
-            name: e.name,
-            code: e.code,
-            metadata: e.metadata ?? {},
-          }),
-        ),
+      const [entitlements, errors] = await settleMutations<Entitlement>(
+        toCreate.map((attrs) => createEntitlement.mutateAsync(attrs)),
+      )
+      const entitlementIds = Array.from(
+        new Set([...attachIds, ...entitlements.map((e) => e.id)]),
       )
 
-      const succeeded = entitlementsResults
-        .map((result, index) => (result.status === "fulfilled" ? index : -1))
-        .filter((index) => index !== -1)
-      const failed = entitlementsResults
-        .map((result, index) => (result.status === "rejected" ? index : -1))
-        .filter((index) => index !== -1)
-
-      const createdEntitlements = succeeded.map(
-        (index) =>
-          (entitlementsResults[index] as PromiseFulfilledResult<Entitlement>)
-            .value,
-      )
-
-      if (failed.length > 0) {
-        const nextAttach = Array.from(
-          new Set([...attachIds, ...createdEntitlements.map((e) => e.id)]),
-        )
-        const nextCreate = failed.map((index) => toCreate[index])
+      if (errors.length > 0) {
+        const nextAttach = [...entitlementIds]
+        const nextCreate = errors.map(({ index }) => toCreate[index])
 
         form.setValue("entitlements.attach", nextAttach)
         form.setValue("entitlements.create", nextCreate)
 
-        failed.forEach((index, newIndex) => {
-          const result = entitlementsResults[index]
-
+        errors.forEach((error, index) => {
           let message = ""
-          if (
-            result.status === "rejected" &&
-            result.reason?.code === EntitlementErrorCode.CODE_TAKEN
-          ) {
+          if (error.reason.code === EntitlementErrorCode.CODE_TAKEN) {
             message = "Code already exists"
           } else {
             message = "Field is invalid"
           }
 
-          form.setError(`entitlements.create.${newIndex}.code`, {
+          form.setError(`entitlements.create.${index}.code`, {
             type: "validate",
             message,
           })
@@ -112,10 +90,6 @@ export default function DuplicateForm({
         return
       }
 
-      const entitlementIds = Array.from(
-        new Set([...attachIds, ...createdEntitlements.map((e) => e.id)]),
-      )
-
       await onCreate({
         ...payload,
         entitlements: {
@@ -124,15 +98,15 @@ export default function DuplicateForm({
         },
       })
     },
-    [form, onCreate],
+    [createEntitlement, form, onCreate],
   )
 
   return (
     <Form {...form}>
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault()
-          form.handleSubmit(handleSubmit)()
+          await form.handleSubmit(create)()
         }}
       >
         <ScrollArea type="always" className="h-[calc(100dvh-8rem)]">

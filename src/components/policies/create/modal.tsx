@@ -58,6 +58,7 @@ import {
 } from "@/types/entitlements"
 
 import { toast } from "@/lib/toast"
+import { settleMutations } from "@/queries/utils"
 
 import { useCreateEntitlement } from "@/queries/entitlements"
 
@@ -259,54 +260,34 @@ export default function PoliciesCreateModal({
       const attachIds = payload.entitlements?.attach ?? []
       const toCreate = payload.entitlements?.create ?? []
 
-      const entitlementsResults = await Promise.allSettled(
-        toCreate.map((e) =>
-          createEntitlement.mutateAsync({
-            name: e.name,
-            code: e.code,
-            metadata: e.metadata ?? {},
-          }),
-        ),
+      const [entitlements, errors] = await settleMutations<Entitlement>(
+        toCreate.map((attrs) => createEntitlement.mutateAsync(attrs)),
+      )
+      const entitlementIds = Array.from(
+        new Set([...attachIds, ...entitlements.map((e) => e.id)]),
       )
 
-      const succeeded = entitlementsResults
-        .map((result, index) => (result.status === "fulfilled" ? index : -1))
-        .filter((index) => index !== -1)
-      const failed = entitlementsResults
-        .map((result, index) => (result.status === "rejected" ? index : -1))
-        .filter((index) => index !== -1)
+      const nextAttach = [...entitlementIds]
+      const nextCreate = errors.map(({ index }) => toCreate[index])
 
-      const createdEntitlements = succeeded.map(
-        (index) =>
-          (entitlementsResults[index] as PromiseFulfilledResult<Entitlement>)
-            .value,
-      )
+      form.setValue("entitlements.attach", nextAttach)
+      form.setValue("entitlements.create", nextCreate)
 
-      if (failed.length > 0) {
-        const nextAttach = Array.from(
-          new Set([...attachIds, ...createdEntitlements.map((e) => e.id)]),
-        )
-        const nextCreate = failed.map((index) => toCreate[index])
+      if (errors.length > 0) {
+        const fieldErrors: FormFieldError<PolicyFormValues>[] = []
+        errors.forEach((error, index) => {
+          let message = ""
+          if (error.reason.code === EntitlementErrorCode.CODE_TAKEN) {
+            message = "Code already exists"
+          } else {
+            message = "Field is invalid"
+          }
 
-        const fieldErrors: FormFieldError<PolicyFormValues>[] = failed.map(
-          (index, newIndex) => {
-            const result = entitlementsResults[index]
-
-            let message = ""
-            if (result.status === "rejected") {
-              if (result.reason?.code === EntitlementErrorCode.CODE_TAKEN) {
-                message = "Code already exists"
-              } else {
-                message = "Field is invalid"
-              }
-            }
-
-            return {
-              path: `entitlements.create.${newIndex}.code`,
-              message,
-            }
-          },
-        )
+          form.setError(`entitlements.create.${index}.code`, {
+            type: "validate",
+            message,
+          })
+        })
 
         toast({
           message: "Failed to create entitlement(s)",
@@ -337,11 +318,7 @@ export default function PoliciesCreateModal({
         return
       }
 
-      const entitlementIds = Array.from(
-        new Set([...attachIds, ...createdEntitlements.map((e) => e.id)]),
-      )
-
-      const policy = buildMockPolicy(payload, selection, entitlementIds)
+      const policy = buildMockPolicy(payload, selection, nextAttach)
       MockPolicies.push(policy)
 
       toast({ message: "Policy created", variant: "success" })

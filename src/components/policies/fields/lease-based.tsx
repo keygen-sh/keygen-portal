@@ -84,7 +84,7 @@ function DefaultLayout({
       form.clearErrors(fields)
       form.trigger(fields)
     }
-  }, [requireHeartbeat])
+  }, [requireHeartbeat, form])
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>

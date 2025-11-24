@@ -89,7 +89,7 @@ function DefaultLayout({
       form.clearErrors(field)
       form.trigger(field)
     }
-  }, [checkInInterval])
+  }, [checkInInterval, form])
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
@@ -288,7 +288,7 @@ function AdvancedLayout({
       form.clearErrors(field)
       form.trigger(field)
     }
-  }, [checkInInterval])
+  }, [checkInInterval, form])
 
   return (
     <SectionCard

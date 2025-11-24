@@ -77,7 +77,7 @@ function DefaultLayout({
       form.clearErrors(fields)
       form.trigger(fields)
     }
-  }, [duration])
+  }, [duration, form])
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>

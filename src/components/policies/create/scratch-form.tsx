@@ -138,7 +138,7 @@ export default function PoliciesScratchForm({
         render: () => <Policies.Fields.FeatureBased />,
       },
     ],
-    [form.control],
+    [],
   )
 
   const [step, direction, goTo] = useSlide(steps.map((_, i) => i))

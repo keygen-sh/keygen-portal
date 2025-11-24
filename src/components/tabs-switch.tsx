@@ -1,6 +1,7 @@
 import React, {
   useRef,
   useEffect,
+  useCallback,
   useLayoutEffect,
   useImperativeHandle,
 } from "react"
@@ -35,16 +36,16 @@ const TabsSwitch = React.forwardRef<HTMLDivElement, TabsSwitchProps>(
       barRef.current.style.width = `${element.offsetWidth}px`
     }
 
-    const moveToActive = () => {
+    const moveToActive = useCallback(() => {
       if (!listRef.current) return
       const active = listRef.current.querySelector<HTMLElement>(
         '[data-state="active"]',
       )
       placeBar(active)
-    }
+    }, [])
 
-    useLayoutEffect(moveToActive, [])
-    useEffect(moveToActive, [active])
+    useLayoutEffect(moveToActive, [moveToActive])
+    useEffect(moveToActive, [moveToActive])
 
     useEffect(() => {
       const onResize = () => moveToActive()
@@ -59,7 +60,7 @@ const TabsSwitch = React.forwardRef<HTMLDivElement, TabsSwitchProps>(
         window.removeEventListener("resize", onResize)
         resizeObserver?.disconnect()
       }
-    }, [])
+    }, [moveToActive])
 
     const handleClick = (e: React.MouseEvent<HTMLElement>) => {
       placeBar(e.currentTarget as HTMLElement)

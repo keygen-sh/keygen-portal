@@ -56,7 +56,7 @@ export default function EntitlementsCreateModal({
         },
       })
     },
-    [onSelectEntitlement, onClose],
+    [createEntitlement, onSelectEntitlement, onClose],
   )
 
   return (

@@ -102,7 +102,7 @@ export default function AllFields({
       form.clearErrors(fields)
       form.trigger(fields)
     }
-  }, [duration])
+  }, [duration, form])
 
   const checkInInterval = useWatch({
     control: form.control,
@@ -123,7 +123,7 @@ export default function AllFields({
       form.clearErrors(field)
       form.trigger(field)
     }
-  }, [checkInInterval])
+  }, [checkInInterval, form])
 
   const requireHeartbeat = useWatch({
     control: form.control,
@@ -150,7 +150,7 @@ export default function AllFields({
       form.clearErrors(fields)
       form.trigger(fields)
     }
-  }, [requireHeartbeat])
+  }, [requireHeartbeat, form])
 
   if (!mounted || productsLoading) {
     return (

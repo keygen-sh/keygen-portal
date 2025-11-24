@@ -88,7 +88,7 @@ export default function EnvironmentsCreateModal({
         },
       })
     },
-    [isolationStrategy, onSelectEnvironment, onChangeMode],
+    [isolationStrategy, createEnvironment, onSelectEnvironment, onChangeMode],
   )
 
   const handleCancelCreate = useCallback(() => {

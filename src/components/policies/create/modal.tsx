@@ -147,6 +147,28 @@ export default function PoliciesCreateModal({
     defaultValues: getSchemaDefaults(schema),
   })
 
+  const handleSubmitTemplates = useCallback(
+    (values: TemplatesValues) => {
+      const newSelection: PolicyTemplateSelection = {
+        timing: values.timing ?? null,
+        access: values.access ?? [],
+        metered: values.metered ?? [],
+        advanced: !!values.advanced,
+        offline: !!values.offline,
+      }
+
+      setSelection(newSelection)
+      setCompletedStep(new Set<string>())
+
+      const newSchema = composePolicySchema(newSelection)
+      form.reset(getSchemaDefaults(newSchema), { keepDefaultValues: false })
+
+      const nextSteps = composeStepsFromSelection(newSelection)
+      if (nextSteps.length > 0) goTo(1)
+    }, // eslint-disable-next-line react-hooks/exhaustive-deps
+    [form, setSelection], // Omit goTo to avoid circular dependency
+  )
+
   const selectedTemplatesSteps = useMemo(
     () => composeStepsFromSelection(selection),
     [selection],
@@ -175,7 +197,7 @@ export default function PoliciesCreateModal({
       },
       ...selectedTemplatesSteps,
     ],
-    [selectedTemplatesSteps, setSelection],
+    [handleSubmitTemplates, selectedTemplatesSteps],
   )
   const [step, direction, goTo] = useSlide(steps.map((_, i) => i))
 
@@ -209,10 +231,13 @@ export default function PoliciesCreateModal({
     if (step > 0) goTo(step - 1)
   }, [step, goTo])
 
-  const goToStep = (key: StepKey) => {
-    const index = steps.findIndex((s) => s.key === key)
-    if (index !== -1) goTo(index)
-  }
+  const goToStep = useCallback(
+    (key: StepKey) => {
+      const index = steps.findIndex((s) => s.key === key)
+      if (index !== -1) goTo(index)
+    },
+    [steps, goTo],
+  )
 
   useEffect(() => {
     const allowed = new Set<string>(steps.map((step) => step.key))
@@ -231,28 +256,6 @@ export default function PoliciesCreateModal({
     setIsTemplatesOpen(step === 0 && open)
     setIsAttributesOpen(step > 0 && open)
   }, [open, step])
-
-  const handleSubmitTemplates = useCallback(
-    (values: TemplatesValues) => {
-      const newSelection: PolicyTemplateSelection = {
-        timing: values.timing ?? null,
-        access: values.access ?? [],
-        metered: values.metered ?? [],
-        advanced: !!values.advanced,
-        offline: !!values.offline,
-      }
-
-      setSelection(newSelection)
-      setCompletedStep(new Set<string>())
-
-      const newSchema = composePolicySchema(newSelection)
-      form.reset(getSchemaDefaults(newSchema), { keepDefaultValues: false })
-
-      const nextSteps = composeStepsFromSelection(newSelection)
-      if (nextSteps.length > 0) goTo(1)
-    },
-    [form, goTo, setSelection],
-  )
 
   // TODO(cazden) Replace with API call
   const handleCreatePolicy = useCallback(
@@ -327,7 +330,15 @@ export default function PoliciesCreateModal({
       onClose()
       onSelectPolicy(policy)
     },
-    [onSelectPolicy, selection, isScratchOpen],
+    [
+      form,
+      selection,
+      onClose,
+      onSelectPolicy,
+      createEntitlement,
+      isScratchOpen,
+      goToStep,
+    ],
   )
 
   return (

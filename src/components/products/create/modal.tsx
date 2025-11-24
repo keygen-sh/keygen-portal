@@ -89,7 +89,7 @@ export default function ProductsCreateModal({
         },
       })
     },
-    [distributionStrategy, onSelectProduct, onClose],
+    [distributionStrategy, createProduct, onSelectProduct, onClose],
   )
 
   const handleStrategyChange = useCallback(

@@ -54,7 +54,7 @@ export default function EnvironmentsViewModal({
       onSelectEnvironment(environment)
       goTo(EnvironmentView.Details)
     },
-    [onSelectEnvironment],
+    [goTo, onSelectEnvironment],
   )
 
   const handleBackToList = useCallback(() => {

@@ -11,7 +11,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "format": "prettier --write .",
+    "format": "prettier --write ./src",
+    "format:check": "prettier --check ./src",
     "preview": "vite preview"
   },
   "dependencies": {

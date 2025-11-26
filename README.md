@@ -57,7 +57,7 @@ If you discover an issue, or are interested in a new feature, please open an
 issue. If you want to contribute code, feel free to open a pull request. If the
 PR is substantial, it may be beneficial to open an issue beforehand to discuss.
 
-The CLA is available [here](https://keygen.sh/cla/).
+The CLA is available [here][cla].
 
 ## Security
 
@@ -72,12 +72,8 @@ file.
 
 [Yes.](https://news.ycombinator.com/item?id=3067434)
 
-[keygen-cloud]: https://keygen.sh
-[self-hosting]: https://keygen.sh/docs/self-hosting/
-[sponsor]: https://github.com/sponsors/ezekg
 [support]: mailto:support@keygen.sh
 [discord]: https://discord.gg/TRrhSaWSsN
-[forum]: https://github.com/keygen-sh/community/discussions
-[license]: https://keygen.sh/license/
 [sales]: mailto:sales@keygen.sh
 [alv2]: https://github.com/keygen-sh/keygen-portal/blob/master/LICENSE.md
+[cla]: https://keygen.sh/cla/

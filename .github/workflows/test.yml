@@ -1,0 +1,47 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+concurrency:
+  group: ${{github.workflow}}-${{github.event.pull_request.number || github.ref}}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        edition:
+          - CE
+          - EE
+        mode:
+          - singleplayer
+          - multiplayer
+    env:
+      VITE_KEYGEN_EDITION: ${{matrix.edition}}
+      VITE_KEYGEN_MODE: ${{matrix.mode}}
+      VITE_KEYGEN_HOST: api.keygen.test
+      VITE_KEYGEN_VERSION: "1.8"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm run lint
+      - name: Format
+        run: pnpm run format:check
+      - name: Test
+        run: pnpm run test

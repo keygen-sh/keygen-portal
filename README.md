@@ -48,7 +48,8 @@ pnpm run test
 ## License
 
 Portal is licensed under the [Apache 2.0][alv2] license. "Keygen" and related
-marks are trademarks of Keygen LLC.
+marks are trademarks of Keygen LLC, and therefore, use of them is not allowed
+in forked repositories.
 
 ## Contributing
 

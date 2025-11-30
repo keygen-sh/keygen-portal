@@ -1,6 +1,6 @@
 import { useMemo } from "react"
-import { ColumnDef, createColumnHelper } from "@tanstack/react-table"
 
+import { createResourceColumnHelper } from "@/lib/tables"
 import { Environment } from "@/types/environments"
 
 import { useListEnvironments } from "@/queries/environments"
@@ -17,20 +17,18 @@ export default function EnvironmentsList({
 }: EnvironmentsListProps) {
   const { data: environments = [], isLoading } = useListEnvironments()
 
-  const column = createColumnHelper<Environment>()
-  const columns = useMemo<ColumnDef<Environment, any>[]>(
+  const column = createResourceColumnHelper<Environment>()
+  const columns = useMemo(
     () => [
-      column.accessor((row) => row.attributes.name, {
+      column.id( { header: "ID" }),
+      column.attr("name", {
         header: "Name",
-        id: "attributes.name",
       }),
-      column.accessor((row) => row.attributes.code, {
+      column.attr("code", {
         header: "Code",
-        id: "attributes.code",
       }),
-      column.accessor((row) => row.attributes.isolationStrategy, {
+      column.attr("isolationStrategy", {
         header: "Isolation Strategy",
-        id: "attributes.isolationStrategy",
       }),
     ],
     [],

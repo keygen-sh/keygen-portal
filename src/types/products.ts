@@ -35,7 +35,7 @@ export interface ProductAttributes {
   url: string
   platforms: string[]
   permissions: string[]
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
   created: string
   updated: string
 }

@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
-import { ColumnDef, createColumnHelper } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
+import { createResourceColumnHelper } from "@/lib/tables"
 import { Policy, MockPolicies } from "@/types/policies"
 
 // import { useListPolicies } from "@/queries/policies"
@@ -31,44 +31,36 @@ export default function PoliciesList() {
     return map
   }, [products])
 
-  const column = createColumnHelper<Policy>()
-  const columns = useMemo<ColumnDef<Policy, any>[]>(
+  const column = createResourceColumnHelper<Policy>()
+  const columns = useMemo(
     () => [
-      column.accessor((row) => row.id, {
-        id: "attributes.id",
+      column.id({
         header: "ID",
         cell: (info) => <ClipboardButton value={info.getValue()} />,
       }),
-      column.accessor((row) => row.attributes.name, {
+      column.attr("name", {
         header: "Name",
-        id: "attributes.name",
       }),
-      column.accessor(
-        (row) => {
-          const productId = row.relationships.product?.data?.id ?? ""
-          return productNameById.get(productId) ?? ""
+      column.rel("product", {
+        sortingFn: "alphanumeric",
+        header: "Product",
+        cell: (info) => {
+          const productId = info.getValue()?.data?.id ?? ""
+
+          return productNameById.get(productId) ?? (
+            <span className="text-muted-foreground">--</span>
+          )
         },
-        {
-          id: "relationships.product",
-          header: "Product",
-          cell: (info) =>
-            info.getValue() || (
-              <span className="text-muted-foreground">--</span>
-            ),
-          sortingFn: "alphanumeric",
-        },
-      ),
-      column.accessor((row) => row.attributes.created, {
-        id: "attributes.created",
+      }),
+      column.attr("created", {
+        sortingFn: "datetime",
         header: "Created",
         cell: (info) => new Date(info.getValue()).toLocaleDateString(),
-        sortingFn: "datetime",
       }),
-      column.accessor((row) => row.attributes.updated, {
-        id: "attributes.updated",
+      column.attr("updated", {
+        sortingFn: "datetime",
         header: "Updated",
         cell: (info) => new Date(info.getValue()).toLocaleDateString(),
-        sortingFn: "datetime",
       }),
     ],
     [productNameById],

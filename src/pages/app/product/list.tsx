@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
-import { ColumnDef, createColumnHelper } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
-import { Product } from "@/types/products"
+import { createResourceColumnHelper } from "@/lib/tables"
+import { Product, } from "@/types/products"
 
 import { useListProducts } from "@/queries/products"
 
@@ -22,24 +22,20 @@ export default function ProductsList() {
 
   const [open, setOpen] = useState(false)
 
-  const column = createColumnHelper<Product>()
-  const columns = useMemo<ColumnDef<Product, any>[]>(
+  const column = createResourceColumnHelper<Product>()
+  const columns = useMemo(
     () => [
-      column.accessor((row) => row.id, {
-        id: "attributes.id",
+      column.id({
         header: "ID",
         cell: (info) => <ClipboardButton value={info.getValue()} />,
       }),
-      column.accessor((row) => row.attributes.name, {
+      column.attr("name", {
         header: "Name",
-        id: "attributes.name",
       }),
-      column.accessor((row) => row.attributes.code, {
+      column.attr("code", {
         header: "Code",
-        id: "attributes.code",
       }),
-      column.accessor((row) => row.attributes.url, {
-        id: "attributes.url",
+      column.attr("url", {
         header: "URL",
         cell: (info) => (
           <a
@@ -52,14 +48,12 @@ export default function ProductsList() {
           </a>
         ),
       }),
-      column.accessor((row) => row.attributes.created, {
-        id: "attributes.created",
+      column.attr("created", {
         header: "Created",
         cell: (info) => new Date(info.getValue()).toLocaleDateString(),
         sortingFn: "datetime",
       }),
-      column.accessor((row) => row.attributes.updated, {
-        id: "attributes.updated",
+      column.attr("updated", {
         header: "Updated",
         cell: (info) => new Date(info.getValue()).toLocaleDateString(),
         sortingFn: "datetime",

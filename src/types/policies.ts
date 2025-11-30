@@ -111,7 +111,7 @@ export enum TransferStrategy {
   ResetExpiry = "RESET_EXPIRY",
 }
 
-export interface PolicyAttributes {
+export type PolicyAttributes = {
   name: string
   duration: number | null
   strict: boolean

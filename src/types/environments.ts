@@ -26,7 +26,7 @@ export enum IsolationStrategy {
   Shared = "SHARED",
 }
 
-export interface EnvironmentAttributes {
+export type EnvironmentAttributes = {
   name: string
   code: string
   isolationStrategy: IsolationStrategy

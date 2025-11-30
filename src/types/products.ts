@@ -28,7 +28,7 @@ export enum DistributionStrategy {
   Closed = "CLOSED",
 }
 
-export interface ProductAttributes {
+export type ProductAttributes = {
   name: string
   code: string
   distributionStrategy: DistributionStrategy

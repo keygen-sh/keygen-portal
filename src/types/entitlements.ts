@@ -24,7 +24,7 @@ export enum EntitlementView {
   Details = "details",
 }
 
-export interface EntitlementAttributes {
+export type EntitlementAttributes = {
   name: string
   code: string
   metadata: Record<string, unknown>

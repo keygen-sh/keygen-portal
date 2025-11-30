@@ -49,3 +49,4 @@ export type EnvironmentsListResponse = APIResponse<Environment[]>
 
 export type CreateEnvironmentPayload = Writable<EnvironmentAttributes>
 export type UpdateEnvironmentPayload = Partial<Writable<EnvironmentAttributes>>
+

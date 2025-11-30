@@ -162,7 +162,7 @@ export interface PolicyAttributes {
   processLeasingStrategy: ProcessLeasingStrategy
   overageStrategy: OverageStrategy
 
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
   created: string
   updated: string
 }
@@ -217,7 +217,7 @@ export interface PolicyInput {
 
   authenticationStrategy?: AuthenticationStrategy | null
 
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export enum TimingTemplates {

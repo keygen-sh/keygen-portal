@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
-import { ColumnDef, createColumnHelper } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
+import { createResourceColumnHelper } from "@/lib/tables"
 import { Entitlement } from "@/types/entitlements"
 
 import { useListEntitlements } from "@/queries/entitlements"
@@ -24,33 +24,28 @@ export default function PoliciesList() {
 
   const [open, setOpen] = useState(false)
 
-  const column = createColumnHelper<Entitlement>()
-  const columns = useMemo<ColumnDef<Entitlement, any>[]>(
+  const column = createResourceColumnHelper<Entitlement>()
+  const columns = useMemo(
     () => [
-      column.accessor((row) => row.id, {
-        id: "attributes.id",
+      column.id({
         header: "ID",
         cell: (info) => <ClipboardButton value={info.getValue()} />,
       }),
-      column.accessor((row) => row.attributes.name, {
+      column.attr("name", {
         header: "Name",
-        id: "attributes.name",
       }),
-      column.accessor((row) => row.attributes.code, {
+      column.attr("code", {
         header: "Code",
-        id: "attributes.code",
       }),
-      column.accessor((row) => row.attributes.created, {
-        id: "attributes.created",
+      column.attr("created", {
+        sortingFn: "datetime",
         header: "Created",
         cell: (info) => new Date(info.getValue()).toLocaleDateString(),
-        sortingFn: "datetime",
       }),
-      column.accessor((row) => row.attributes.updated, {
-        id: "attributes.updated",
+      column.attr("updated", {
+        sortingFn: "datetime",
         header: "Updated",
         cell: (info) => new Date(info.getValue()).toLocaleDateString(),
-        sortingFn: "datetime",
       }),
     ],
     [],

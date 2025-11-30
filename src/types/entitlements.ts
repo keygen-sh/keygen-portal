@@ -27,7 +27,7 @@ export enum EntitlementView {
 export interface EntitlementAttributes {
   name: string
   code: string
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
   created: string
   updated: string
 }

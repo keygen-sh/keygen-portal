@@ -83,63 +83,63 @@ export const BaseShape = z.object({
   heartbeatCullStrategy: z
     .nativeEnum(HeartbeatCullStrategy)
     .nullish()
-    .default(HeartbeatCullStrategy.DEACTIVATE_DEAD),
+    .default(HeartbeatCullStrategy.DeactivateDead),
   heartbeatResurrectionStrategy: z
     .nativeEnum(HeartbeatResurrectionStrategy)
     .nullish()
-    .default(HeartbeatResurrectionStrategy.NO_REVIVE),
+    .default(HeartbeatResurrectionStrategy.NoRevive),
   heartbeatBasis: z
     .nativeEnum(HeartbeatBasis)
     .nullish()
-    .default(HeartbeatBasis.FROM_FIRST_PING),
+    .default(HeartbeatBasis.FromFirstPing),
   machineUniquenessStrategy: z
     .nativeEnum(MachineUniquenessStrategy)
     .nullish()
-    .default(MachineUniquenessStrategy.UNIQUE_PER_LICENSE),
+    .default(MachineUniquenessStrategy.UniquePerLicense),
   machineMatchingStrategy: z
     .nativeEnum(MachineMatchingStrategy)
     .nullish()
-    .default(MachineMatchingStrategy.MATCH_ANY),
+    .default(MachineMatchingStrategy.MatchAny),
   componentUniquenessStrategy: z
     .nativeEnum(ComponentUniquenessStrategy)
     .nullish()
-    .default(ComponentUniquenessStrategy.UNIQUE_PER_MACHINE),
+    .default(ComponentUniquenessStrategy.UniquePerMachine),
   componentMatchingStrategy: z
     .nativeEnum(ComponentMatchingStrategy)
     .nullish()
-    .default(ComponentMatchingStrategy.MATCH_ANY),
+    .default(ComponentMatchingStrategy.MatchAny),
   expirationStrategy: z
     .nativeEnum(ExpirationStrategy)
     .nullish()
-    .default(ExpirationStrategy.RESTRICT_ACCESS),
+    .default(ExpirationStrategy.RestrictAccess),
   expirationBasis: z
     .nativeEnum(ExpirationBasis)
     .nullish()
-    .default(ExpirationBasis.FROM_CREATION),
+    .default(ExpirationBasis.FromCreation),
   renewalBasis: z
     .nativeEnum(RenewalBasis)
     .nullish()
-    .default(RenewalBasis.FROM_EXPIRY),
+    .default(RenewalBasis.FromExpiry),
   transferStrategy: z
     .nativeEnum(TransferStrategy)
     .nullish()
-    .default(TransferStrategy.KEEP_EXPIRY),
+    .default(TransferStrategy.KeepExpiry),
   authenticationStrategy: z
     .nativeEnum(AuthenticationStrategy)
     .nullish()
-    .default(AuthenticationStrategy.MIXED),
+    .default(AuthenticationStrategy.Mixed),
   machineLeasingStrategy: z
     .nativeEnum(MachineLeasingStrategy)
     .nullish()
-    .default(MachineLeasingStrategy.PER_LICENSE),
+    .default(MachineLeasingStrategy.PerLicense),
   processLeasingStrategy: z
     .nativeEnum(ProcessLeasingStrategy)
     .nullish()
-    .default(ProcessLeasingStrategy.PER_MACHINE),
+    .default(ProcessLeasingStrategy.PerMachine),
   overageStrategy: z
     .nativeEnum(OverageStrategy)
     .nullish()
-    .default(OverageStrategy.NO_OVERAGE),
+    .default(OverageStrategy.NoOverage),
   metadata: z.record(z.string()).default({}),
 
   product: z.object({
@@ -308,11 +308,11 @@ export const TimedShape = z.object({
   renewalBasis: z
     .nativeEnum(RenewalBasis)
     .nullish()
-    .default(RenewalBasis.FROM_NOW_IF_EXPIRED),
+    .default(RenewalBasis.FromNowIfExpired),
   transferStrategy: z
     .nativeEnum(TransferStrategy)
     .nullish()
-    .default(TransferStrategy.RESET_EXPIRY),
+    .default(TransferStrategy.ResetExpiry),
 })
 
 export const TimedRules = (
@@ -360,7 +360,7 @@ export const PerpetualFallbackShape = z.object({
   expirationStrategy: z
     .nativeEnum(ExpirationStrategy)
     .nullish()
-    .default(ExpirationStrategy.MAINTAIN_ACCESS),
+    .default(ExpirationStrategy.MaintainAccess),
 })
 
 export const NodeLockedShape = z.object({
@@ -457,11 +457,11 @@ export const ProcessBasedShape = z.object({
   machineLeasingStrategy: z
     .nativeEnum(MachineLeasingStrategy)
     .nullish()
-    .default(MachineLeasingStrategy.PER_LICENSE),
+    .default(MachineLeasingStrategy.PerLicense),
   processLeasingStrategy: z
     .nativeEnum(ProcessLeasingStrategy)
     .nullish()
-    .default(ProcessLeasingStrategy.PER_MACHINE),
+    .default(ProcessLeasingStrategy.PerMachine),
 })
 
 export const ProcessBasedRules = (
@@ -491,15 +491,15 @@ export const LeaseBasedShape = z.object({
   heartbeatBasis: z
     .nativeEnum(HeartbeatBasis)
     .nullish()
-    .default(HeartbeatBasis.FROM_CREATION),
+    .default(HeartbeatBasis.FromCreation),
   heartbeatCullStrategy: z
     .nativeEnum(HeartbeatCullStrategy)
     .nullish()
-    .default(HeartbeatCullStrategy.DEACTIVATE_DEAD),
+    .default(HeartbeatCullStrategy.DeactivateDead),
   heartbeatResurrectionStrategy: z
     .nativeEnum(HeartbeatResurrectionStrategy)
     .nullish()
-    .default(HeartbeatResurrectionStrategy.NO_REVIVE),
+    .default(HeartbeatResurrectionStrategy.NoRevive),
 })
 
 export const LeaseBasedRules = (
@@ -542,7 +542,7 @@ export const OfflineShape = z.object({
   authenticationStrategy: z
     .nativeEnum(AuthenticationStrategy)
     .nullish()
-    .default(AuthenticationStrategy.LICENSE),
+    .default(AuthenticationStrategy.License),
 })
 
 export function composePolicySchema(selection: {
@@ -554,46 +554,46 @@ export function composePolicySchema(selection: {
   const access = selection.access ?? []
   const metered = selection.metered ?? []
   const requiresNodeLocked =
-    access.includes(AccessTemplates.NODE_LOCKED) ||
-    metered.includes(MeteredTemplates.PROCESS_BASED) ||
-    metered.includes(MeteredTemplates.LEASE_BASED)
+    access.includes(AccessTemplates.NodeLocked) ||
+    metered.includes(MeteredTemplates.ProcessBased) ||
+    metered.includes(MeteredTemplates.LeaseBased)
 
   let shape: z.ZodObject<z.ZodRawShape> = BaseShape
 
-  if (selection.timing === TimingTemplates.TIMED) {
+  if (selection.timing === TimingTemplates.Timed) {
     shape = shape.merge(TimedShape)
-  } else if (selection.timing === TimingTemplates.PERPETUAL) {
+  } else if (selection.timing === TimingTemplates.Perpetual) {
     shape = shape.merge(PerpetualShape)
-  } else if (selection.timing === TimingTemplates.PERPETUAL_FALLBACK) {
+  } else if (selection.timing === TimingTemplates.PerpetualFallback) {
     shape = shape.merge(TimedShape).merge(PerpetualFallbackShape)
   }
   if (requiresNodeLocked) shape = shape.merge(NodeLockedShape)
-  if (access.includes(AccessTemplates.USER_LOCKED))
+  if (access.includes(AccessTemplates.UserLocked))
     shape = shape.merge(UserLockedShape)
-  if (metered.includes(MeteredTemplates.PROCESS_BASED))
+  if (metered.includes(MeteredTemplates.ProcessBased))
     shape = shape.merge(ProcessBasedShape)
-  if (metered.includes(MeteredTemplates.LEASE_BASED))
+  if (metered.includes(MeteredTemplates.LeaseBased))
     shape = shape.merge(LeaseBasedShape)
   if (selection.offline) shape = shape.merge(OfflineShape)
 
   let schema: z.ZodType<PolicyFormValues> =
     shape as unknown as z.ZodType<PolicyFormValues>
-  if (selection.timing === TimingTemplates.TIMED) {
+  if (selection.timing === TimingTemplates.Timed) {
     schema = TimedRules(schema)
   }
-  if (selection.timing === TimingTemplates.PERPETUAL) {
+  if (selection.timing === TimingTemplates.Perpetual) {
     schema = PerpetualRules(schema)
   }
-  if (selection.timing === TimingTemplates.PERPETUAL_FALLBACK) {
+  if (selection.timing === TimingTemplates.PerpetualFallback) {
     schema = TimedRules(schema)
   }
   if (requiresNodeLocked) {
     schema = NodeLockedRules(schema)
   }
-  if (metered.includes(MeteredTemplates.PROCESS_BASED)) {
+  if (metered.includes(MeteredTemplates.ProcessBased)) {
     schema = ProcessBasedRules(schema)
   }
-  if (metered.includes(MeteredTemplates.LEASE_BASED)) {
+  if (metered.includes(MeteredTemplates.LeaseBased)) {
     schema = LeaseBasedRules(schema)
   }
 

@@ -7,23 +7,23 @@ import {
 } from "@/types/api"
 
 export enum EnvironmentErrorCode {
-  CODE_TAKEN = "CODE_TAKEN",
+  CodeTaken = "CODE_TAKEN",
 }
 
 export enum EnvironmentMode {
-  VIEW = "view",
-  EDIT = "edit",
-  CREATE = "create",
+  View = "view",
+  Edit = "edit",
+  Create = "create",
 }
 
 export enum EnvironmentView {
-  LIST = "list",
-  DETAILS = "details",
+  List = "list",
+  Details = "details",
 }
 
 export enum IsolationStrategy {
-  ISOLATED = "ISOLATED",
-  SHARED = "SHARED",
+  Isolated = "ISOLATED",
+  Shared = "SHARED",
 }
 
 export interface EnvironmentAttributes {

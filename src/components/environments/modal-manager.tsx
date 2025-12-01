@@ -19,7 +19,7 @@ export default function EnvironmentsModalManager({
   open,
   onClose,
 }: EnvironmentsModalManagerProps): React.ReactElement {
-  const [mode, setMode] = useState<EnvironmentMode>(EnvironmentMode.VIEW)
+  const [mode, setMode] = useState<EnvironmentMode>(EnvironmentMode.View)
   const [selectedEnvironment, setSelectedEnvironment] =
     useState<Environment | null>(null)
 
@@ -38,7 +38,7 @@ export default function EnvironmentsModalManager({
     <AnimatePresence mode="wait">
       <Dialog open={open} onOpenChange={onClose}>
         <DialogContent className="flex flex-col justify-between p-0 transition-all duration-300 md:min-w-[700px]">
-          {mode === EnvironmentMode.VIEW && (
+          {mode === EnvironmentMode.View && (
             <Motion.Scale key="view">
               <View.Modal
                 selectedEnvironment={selectedEnvironment}
@@ -47,7 +47,7 @@ export default function EnvironmentsModalManager({
               />
             </Motion.Scale>
           )}
-          {mode === EnvironmentMode.EDIT && selectedEnvironment && (
+          {mode === EnvironmentMode.Edit && selectedEnvironment && (
             <Motion.Scale key="edit">
               <Edit.Modal
                 selectedEnvironment={selectedEnvironment}
@@ -55,7 +55,7 @@ export default function EnvironmentsModalManager({
               />
             </Motion.Scale>
           )}
-          {mode === EnvironmentMode.CREATE && (
+          {mode === EnvironmentMode.Create && (
             <Motion.Scale key="create">
               <Create.Modal
                 onSelectEnvironment={handleSelectEnvironment}

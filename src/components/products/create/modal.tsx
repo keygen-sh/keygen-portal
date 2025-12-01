@@ -47,7 +47,7 @@ export default function ProductsCreateModal({
   const [step, direction, goTo] = useSlide([0, 1])
 
   const [distributionStrategy, setDistributionStrategy] =
-    useState<DistributionStrategy>(DistributionStrategy.LICENSED)
+    useState<DistributionStrategy>(DistributionStrategy.Licensed)
 
   const [formError, setFormError] = useState<string | null>(null)
 
@@ -81,7 +81,7 @@ export default function ProductsCreateModal({
             typeof error === "object" &&
             error &&
             "code" in error &&
-            error.code === ProductErrorCode.CODE_TAKEN
+            error.code === ProductErrorCode.CodeTaken
           ) {
             setFormError("Code already exists")
           }
@@ -105,19 +105,19 @@ export default function ProductsCreateModal({
         <DialogDescription className="flex h-5 items-center space-x-1 text-xs">
           <DialogDescription className="flex h-5 items-center text-xs">
             <BadgeGroup prefix="Creating a new" suffix="product">
-              {distributionStrategy === DistributionStrategy.LICENSED && (
+              {distributionStrategy === DistributionStrategy.Licensed && (
                 <BadgeGroupItem>
                   <Award />
                   Licensed
                 </BadgeGroupItem>
               )}
-              {distributionStrategy === DistributionStrategy.OPEN && (
+              {distributionStrategy === DistributionStrategy.Open && (
                 <BadgeGroupItem>
                   <Unlock />
                   Open
                 </BadgeGroupItem>
               )}
-              {distributionStrategy === DistributionStrategy.CLOSED && (
+              {distributionStrategy === DistributionStrategy.Closed && (
                 <BadgeGroupItem>
                   <Lock />
                   Closed

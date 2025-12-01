@@ -179,13 +179,13 @@ export default function ProductDetails() {
               <BackButton path=".." className="mb-8" />
               <div className="mb-2">
                 {product.attributes.distributionStrategy ===
-                DistributionStrategy.LICENSED ? (
+                DistributionStrategy.Licensed ? (
                   <Badge variant="secondary">
                     <Award className="inline size-4" />
                     Licensed
                   </Badge>
                 ) : product.attributes.distributionStrategy ===
-                  DistributionStrategy.CLOSED ? (
+                  DistributionStrategy.Closed ? (
                   <Badge variant="secondary">
                     <Lock className="inline size-4" />
                     Closed

@@ -86,19 +86,19 @@ export default function TemplatesForm({
   // TODO(cazden) Add parameter tooltip descriptions
   const timingOptions: CardOption<TimingTemplates>[] = [
     {
-      value: TimingTemplates.PERPETUAL,
+      value: TimingTemplates.Perpetual,
       label: "Perpetual",
       icon: <Infinity className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
     },
     {
-      value: TimingTemplates.TIMED,
+      value: TimingTemplates.Timed,
       label: "Timed",
       icon: <Clock className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
     },
     {
-      value: TimingTemplates.PERPETUAL_FALLBACK,
+      value: TimingTemplates.PerpetualFallback,
       label: "Perpetual‑fallback",
       icon: <ClockFading className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
@@ -107,13 +107,13 @@ export default function TemplatesForm({
 
   const accessOptions: CardOption<AccessTemplates>[] = [
     {
-      value: AccessTemplates.NODE_LOCKED,
+      value: AccessTemplates.NodeLocked,
       label: "Node‑locked",
       icon: <Hexagon className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
     },
     {
-      value: AccessTemplates.USER_LOCKED,
+      value: AccessTemplates.UserLocked,
       label: "User‑locked",
       icon: <User className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
@@ -122,25 +122,25 @@ export default function TemplatesForm({
 
   const meteredOptions: CardOption<MeteredTemplates>[] = [
     {
-      value: MeteredTemplates.PROCESS_BASED,
+      value: MeteredTemplates.ProcessBased,
       label: "Process‑based",
       icon: <Cpu className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
     },
     {
-      value: MeteredTemplates.LEASE_BASED,
+      value: MeteredTemplates.LeaseBased,
       label: "Lease‑based",
       icon: <Activity className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
     },
     {
-      value: MeteredTemplates.FEATURE_BASED,
+      value: MeteredTemplates.FeatureBased,
       label: "Feature‑based",
       icon: <Binary className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
     },
     {
-      value: MeteredTemplates.USAGE_BASED,
+      value: MeteredTemplates.UsageBased,
       label: "Usage‑based",
       icon: <Hash className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",

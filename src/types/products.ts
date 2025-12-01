@@ -8,24 +8,24 @@ import {
 } from "@/types/api"
 
 export enum ProductErrorCode {
-  CODE_TAKEN = "CODE_TAKEN",
+  CodeTaken = "CODE_TAKEN",
 }
 
 export enum ProductMode {
-  VIEW = "view",
-  EDIT = "edit",
-  CREATE = "create",
+  View = "view",
+  Edit = "edit",
+  Create = "create",
 }
 
 export enum ProductView {
-  LIST = "list",
-  DETAILS = "details",
+  List = "list",
+  Details = "details",
 }
 
 export enum DistributionStrategy {
-  LICENSED = "LICENSED",
-  OPEN = "OPEN",
-  CLOSED = "CLOSED",
+  Licensed = "LICENSED",
+  Open = "OPEN",
+  Closed = "CLOSED",
 }
 
 export interface ProductAttributes {

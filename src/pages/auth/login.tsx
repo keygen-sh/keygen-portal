@@ -68,10 +68,10 @@ export default function Login() {
       auth.setEmail(email)
 
       switch (code) {
-        case AuthErrorCode.PASSWORD_REQUIRED:
+        case AuthErrorCode.PasswordRequired:
           void navigate({ to: `/${keygen.config.id}/auth/password` })
           break
-        case AuthErrorCode.OTP_REQUIRED:
+        case AuthErrorCode.OtpRequired:
           setError("Invalid email. Please try again.")
           break
         default:

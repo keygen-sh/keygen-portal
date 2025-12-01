@@ -108,7 +108,7 @@ export default function EditForm({
       url: product?.attributes.url ?? "",
       distributionStrategy:
         product?.attributes.distributionStrategy ??
-        DistributionStrategy.LICENSED,
+        DistributionStrategy.Licensed,
       platforms: product?.attributes.platforms ?? [],
       permissions: product?.attributes.permissions ?? [],
       metadata: product?.attributes.metadata ?? {},
@@ -129,19 +129,19 @@ export default function EditForm({
       <DialogHeader className="h-fit border-b border-accent p-2">
         <DialogDescription className="flex h-5 items-center text-xs">
           <BadgeGroup prefix="Updating a" suffix="product">
-            {strategy === DistributionStrategy.LICENSED && (
+            {strategy === DistributionStrategy.Licensed && (
               <BadgeGroupItem>
                 <Award />
                 Licensed
               </BadgeGroupItem>
             )}
-            {strategy === DistributionStrategy.OPEN && (
+            {strategy === DistributionStrategy.Open && (
               <BadgeGroupItem>
                 <Unlock />
                 Open
               </BadgeGroupItem>
             )}
-            {strategy === DistributionStrategy.CLOSED && (
+            {strategy === DistributionStrategy.Closed && (
               <BadgeGroupItem>
                 <Lock />
                 Closed
@@ -306,13 +306,13 @@ export default function EditForm({
                             </FormControl>
 
                             <SelectContent>
-                              <SelectItem value={DistributionStrategy.LICENSED}>
+                              <SelectItem value={DistributionStrategy.Licensed}>
                                 Licensed
                               </SelectItem>
-                              <SelectItem value={DistributionStrategy.OPEN}>
+                              <SelectItem value={DistributionStrategy.Open}>
                                 Open
                               </SelectItem>
-                              <SelectItem value={DistributionStrategy.CLOSED}>
+                              <SelectItem value={DistributionStrategy.Closed}>
                                 Closed
                               </SelectItem>
                             </SelectContent>

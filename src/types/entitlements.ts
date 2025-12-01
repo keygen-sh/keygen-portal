@@ -10,18 +10,18 @@ import { FormFieldError } from "@/types/forms"
 import { PolicyFormValues } from "@/types/policies"
 
 export enum EntitlementErrorCode {
-  CODE_TAKEN = "CODE_TAKEN",
+  CodeTaken = "CODE_TAKEN",
 }
 
 export enum EntitlementMode {
-  VIEW = "view",
-  EDIT = "edit",
-  CREATE = "create",
+  View = "view",
+  Edit = "edit",
+  Create = "create",
 }
 
 export enum EntitlementView {
-  LIST = "list",
-  DETAILS = "details",
+  List = "list",
+  Details = "details",
 }
 
 export interface EntitlementAttributes {

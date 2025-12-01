@@ -79,12 +79,12 @@ export default function Verify() {
           const { code } = errors[0] as unknown as { code: AuthErrorCode }
 
           switch (code) {
-            case AuthErrorCode.OTP_INVALID:
+            case AuthErrorCode.OtpInvalid:
               setError("The code you entered is incorrect. Please try again.")
               setLoading(false)
               reset()
               break
-            case AuthErrorCode.PASSWORD_INVALID:
+            case AuthErrorCode.PasswordInvalid:
               auth.setError("Invalid password. Please try again.")
               void navigate({
                 to: "/$id/auth/password",

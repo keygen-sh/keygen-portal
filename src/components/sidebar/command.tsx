@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/command"
 
 enum Mode {
-  ACTION = "action",
-  SEARCH = "search",
+  Action = "action",
+  Search = "search",
 }
 
 interface Route {
@@ -34,14 +34,14 @@ export default function SidebarCommand({
   routes,
 }: CommandMenuProps): React.ReactElement {
   const [open, setOpen] = useState(false)
-  const [mode, setMode] = useState<Mode>(Mode.ACTION)
+  const [mode, setMode] = useState<Mode>(Mode.Action)
   const navigate = useNavigate()
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault()
-        setMode(Mode.ACTION)
+        setMode(Mode.Action)
         setOpen((prev) => !prev)
       }
 
@@ -50,7 +50,7 @@ export default function SidebarCommand({
         !/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName)
       ) {
         e.preventDefault()
-        setMode(Mode.SEARCH)
+        setMode(Mode.Search)
         setOpen(true)
       }
     }
@@ -64,14 +64,14 @@ export default function SidebarCommand({
       <CommandInput
         autoFocus
         placeholder={
-          mode === Mode.ACTION ? "Type a command..." : "Search application..."
+          mode === Mode.Action ? "Type a command..." : "Search application..."
         }
       />
 
       <CommandList>
         <CommandEmpty>No results.</CommandEmpty>
 
-        {mode === Mode.ACTION && (
+        {mode === Mode.Action && (
           <>
             <CommandGroup heading="Suggestions">
               <CommandItem>
@@ -91,7 +91,7 @@ export default function SidebarCommand({
           </>
         )}
 
-        {mode === Mode.SEARCH && (
+        {mode === Mode.Search && (
           <CommandGroup heading="Pages">
             {routes.map((r) => (
               <CommandItem

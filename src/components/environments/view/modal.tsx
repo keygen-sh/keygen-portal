@@ -45,21 +45,21 @@ export default function EnvironmentsViewModal({
   const deleteEnvironment = useRemoveEnvironment(selectedEnvironment?.id ?? "")
 
   const [view, direction, goTo] = useSlide(
-    [EnvironmentView.LIST, EnvironmentView.DETAILS],
-    EnvironmentView.LIST,
+    [EnvironmentView.List, EnvironmentView.Details],
+    EnvironmentView.List,
   )
 
   const handleViewDetails = useCallback(
     (environment: Environment) => {
       onSelectEnvironment(environment)
-      goTo(EnvironmentView.DETAILS)
+      goTo(EnvironmentView.Details)
     },
     [onSelectEnvironment],
   )
 
   const handleBackToList = useCallback(() => {
     onSelectEnvironment(null)
-    goTo(EnvironmentView.LIST)
+    goTo(EnvironmentView.List)
   }, [onSelectEnvironment])
 
   const handleDeleteEnvironment = () => {
@@ -70,7 +70,7 @@ export default function EnvironmentsViewModal({
           variant: "success",
         })
         onSelectEnvironment(null)
-        goTo(EnvironmentView.LIST)
+        goTo(EnvironmentView.List)
       },
     })
   }
@@ -85,7 +85,7 @@ export default function EnvironmentsViewModal({
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                {view === EnvironmentView.LIST ? (
+                {view === EnvironmentView.List ? (
                   <BreadcrumbPage>Manage Environments</BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink
@@ -96,7 +96,7 @@ export default function EnvironmentsViewModal({
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>
-              {view === EnvironmentView.DETAILS && selectedEnvironment && (
+              {view === EnvironmentView.Details && selectedEnvironment && (
                 <>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
@@ -113,7 +113,7 @@ export default function EnvironmentsViewModal({
 
       <ScrollArea className="h-[60vh] md:h-[40vh]">
         <Motion.Slide direction={direction}>
-          {view === EnvironmentView.LIST ? (
+          {view === EnvironmentView.List ? (
             <EnvironmentsList
               key="environment-list"
               onViewDetails={handleViewDetails}
@@ -126,7 +126,7 @@ export default function EnvironmentsViewModal({
                 loading={deleteEnvironment.isPending}
                 onDeleteEnvironment={handleDeleteEnvironment}
                 onEditEnvironment={() =>
-                  onChangeMode(EnvironmentMode.EDIT, selectedEnvironment)
+                  onChangeMode(EnvironmentMode.Edit, selectedEnvironment)
                 }
               />
             )
@@ -135,12 +135,12 @@ export default function EnvironmentsViewModal({
       </ScrollArea>
 
       <DialogFooter className="border-t border-accent p-4">
-        {view === EnvironmentView.LIST && (
-          <Button onClick={() => onChangeMode(EnvironmentMode.CREATE)}>
+        {view === EnvironmentView.List && (
+          <Button onClick={() => onChangeMode(EnvironmentMode.Create)}>
             Create Environment
           </Button>
         )}
-        {view === EnvironmentView.DETAILS && selectedEnvironment && (
+        {view === EnvironmentView.Details && selectedEnvironment && (
           <Button variant="outline" onClick={handleBackToList}>
             Back to List
           </Button>

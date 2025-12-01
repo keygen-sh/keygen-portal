@@ -70,7 +70,7 @@ export default function DuplicateForm({
 
         errors.forEach((error, index) => {
           let message = ""
-          if (error.reason.code === EntitlementErrorCode.CODE_TAKEN) {
+          if (error.reason.code === EntitlementErrorCode.CodeTaken) {
             message = "Code already exists"
           } else {
             message = "Field is invalid"

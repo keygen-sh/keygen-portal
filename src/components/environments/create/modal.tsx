@@ -47,7 +47,7 @@ export default function EnvironmentsCreateModal({
   const [step, direction, goTo] = useSlide([0, 1])
 
   const [isolationStrategy, setIsolationStrategy] = useState<IsolationStrategy>(
-    IsolationStrategy.ISOLATED,
+    IsolationStrategy.Isolated,
   )
 
   const [formError, setFormError] = useState<string | null>(null)
@@ -73,14 +73,14 @@ export default function EnvironmentsCreateModal({
         onSuccess: (environment) => {
           toast({ message: "Environment created", variant: "success" })
           onSelectEnvironment(environment)
-          onChangeMode(EnvironmentMode.VIEW, environment)
+          onChangeMode(EnvironmentMode.View, environment)
         },
         onError: (error) => {
           if (
             typeof error === "object" &&
             error &&
             "code" in error &&
-            error.code === EnvironmentErrorCode.CODE_TAKEN
+            error.code === EnvironmentErrorCode.CodeTaken
           ) {
             setFormError("Code already exists")
           }
@@ -92,7 +92,7 @@ export default function EnvironmentsCreateModal({
   )
 
   const handleCancelCreate = useCallback(() => {
-    onChangeMode(EnvironmentMode.VIEW)
+    onChangeMode(EnvironmentMode.View)
   }, [onChangeMode])
 
   const handleStrategyChange = useCallback((newStrategy: IsolationStrategy) => {
@@ -106,7 +106,7 @@ export default function EnvironmentsCreateModal({
           <DialogDescription className="flex h-5 items-center text-xs">
             <BadgeGroup prefix="Creating a new" suffix="environment">
               <BadgeGroupItem>
-                {isolationStrategy === IsolationStrategy.ISOLATED ? (
+                {isolationStrategy === IsolationStrategy.Isolated ? (
                   <>
                     <GlobeLock />
                     Isolated

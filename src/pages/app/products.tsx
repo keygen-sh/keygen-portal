@@ -8,15 +8,15 @@ import * as Page from "@/pages"
 export default function Products() {
   const { productId } = useParams({ strict: false })
 
-  const view = productId ? ProductView.DETAILS : ProductView.LIST
+  const view = productId ? ProductView.Details : ProductView.List
 
-  const direction: 1 | -1 = view === ProductView.DETAILS ? 1 : -1
+  const direction: 1 | -1 = view === ProductView.Details ? 1 : -1
 
-  const key = view === ProductView.LIST ? "list" : `details-${productId}`
+  const key = view === ProductView.List ? "list" : `details-${productId}`
 
   return (
     <Motion.Slide direction={direction}>
-      {view === ProductView.LIST ? (
+      {view === ProductView.List ? (
         <Page.App.Product.List key={key} />
       ) : (
         <Outlet key={key} />

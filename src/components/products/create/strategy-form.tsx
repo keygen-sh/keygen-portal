@@ -27,9 +27,9 @@ import { CardSelector, CardOption } from "@/components/card-selector"
 
 const strategySchema = z.object({
   distributionStrategy: z.enum([
-    DistributionStrategy.LICENSED,
-    DistributionStrategy.OPEN,
-    DistributionStrategy.CLOSED,
+    DistributionStrategy.Licensed,
+    DistributionStrategy.Open,
+    DistributionStrategy.Closed,
   ]),
 })
 
@@ -59,21 +59,21 @@ export default function StrategyForm({
 
   const strategyOptions: CardOption<DistributionStrategy>[] = [
     {
-      value: DistributionStrategy.LICENSED,
+      value: DistributionStrategy.Licensed,
       label: "Licensed",
       icon: <Award className="size-6 text-content-subdued md:size-5" />,
       tooltip:
         "Only licensed users, with a valid license, can access releases and release artifacts. API authentication is required.",
     },
     {
-      value: DistributionStrategy.OPEN,
+      value: DistributionStrategy.Open,
       label: "Open",
       icon: <Unlock className="size-6 text-content-subdued md:size-5" />,
       tooltip:
         "Anybody can access releases. No API authentication required, so this is a great option for public downloads, open-source projects, or freemium products.",
     },
     {
-      value: DistributionStrategy.CLOSED,
+      value: DistributionStrategy.Closed,
       label: "Closed",
       icon: <Lock className="size-6 text-content-subdued md:size-5" />,
       tooltip:

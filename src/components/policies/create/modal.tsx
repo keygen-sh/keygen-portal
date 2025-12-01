@@ -80,18 +80,18 @@ import ScratchForm from "./scratch-form"
 import TemplatesForm, { TemplatesValues } from "./templates-form"
 
 enum Steps {
-  TEMPLATES = "templates",
-  GENERAL = "general",
-  TIMED = "timed",
-  PERPETUAL_FALLBACK = "perpetualFallback",
-  NODE_LOCKED = "nodeLocked",
-  USER_LOCKED = "userLocked",
-  PROCESS_BASED = "processBased",
-  LEASE_BASED = "leaseBased",
-  FEATURE_BASED = "featureBased",
-  USAGE_BASED = "usageBased",
-  ADVANCED = "advanced",
-  NO_ATTRIBUTES = "noAttributes",
+  Templates = "templates",
+  General = "general",
+  Timed = "timed",
+  PerpetualFallback = "perpetualFallback",
+  NodeLocked = "nodeLocked",
+  UserLocked = "userLocked",
+  ProcessBased = "processBased",
+  LeaseBased = "leaseBased",
+  FeatureBased = "featureBased",
+  UsageBased = "usageBased",
+  Advanced = "advanced",
+  NoAttributes = "noAttributes",
 }
 
 type StepKey = (typeof Steps)[keyof typeof Steps]
@@ -155,7 +155,7 @@ export default function PoliciesCreateModal({
   const steps: Step[] = useMemo(
     () => [
       {
-        key: Steps.TEMPLATES,
+        key: Steps.Templates,
         title: "",
         render: () => (
           <TemplatesForm
@@ -277,7 +277,7 @@ export default function PoliciesCreateModal({
         const fieldErrors: FormFieldError<PolicyFormValues>[] = errors.map(
           (error, index) => {
             let message = ""
-            if (error.reason.code === EntitlementErrorCode.CODE_TAKEN) {
+            if (error.reason.code === EntitlementErrorCode.CodeTaken) {
               message = "Code already exists"
             } else {
               message = "Field is invalid"
@@ -303,7 +303,7 @@ export default function PoliciesCreateModal({
             fieldErrors,
           )
         } else {
-          goToStep(Steps.FEATURE_BASED)
+          goToStep(Steps.FeatureBased)
 
           form.setValue("entitlements.attach", nextAttach)
           form.setValue("entitlements.create", nextCreate)
@@ -392,59 +392,59 @@ export default function PoliciesCreateModal({
             <DialogHeader className="h-fit items-start border-b border-accent p-2">
               <DialogDescription>
                 <BadgeGroup prefix="Creating a" suffix="policy">
-                  {selection.timing === TimingTemplates.PERPETUAL && (
+                  {selection.timing === TimingTemplates.Perpetual && (
                     <BadgeGroupItem>
                       <Infinity />
                       Perpetual
                     </BadgeGroupItem>
                   )}
-                  {selection.timing === TimingTemplates.TIMED && (
+                  {selection.timing === TimingTemplates.Timed && (
                     <BadgeGroupItem>
                       <Clock />
                       Timed
                     </BadgeGroupItem>
                   )}
-                  {selection.timing === TimingTemplates.PERPETUAL_FALLBACK && (
+                  {selection.timing === TimingTemplates.PerpetualFallback && (
                     <BadgeGroupItem>
                       <ClockFading />
                       Perpetual-fallback
                     </BadgeGroupItem>
                   )}
-                  {selection.access.includes(AccessTemplates.NODE_LOCKED) && (
+                  {selection.access.includes(AccessTemplates.NodeLocked) && (
                     <BadgeGroupItem>
                       <Hexagon />
                       Node-locked
                     </BadgeGroupItem>
                   )}
-                  {selection.access.includes(AccessTemplates.USER_LOCKED) && (
+                  {selection.access.includes(AccessTemplates.UserLocked) && (
                     <BadgeGroupItem>
                       <User />
                       User-locked
                     </BadgeGroupItem>
                   )}
                   {selection.metered.includes(
-                    MeteredTemplates.PROCESS_BASED,
+                    MeteredTemplates.ProcessBased,
                   ) && (
                     <BadgeGroupItem>
                       <Cpu />
                       Process-based
                     </BadgeGroupItem>
                   )}
-                  {selection.metered.includes(MeteredTemplates.LEASE_BASED) && (
+                  {selection.metered.includes(MeteredTemplates.LeaseBased) && (
                     <BadgeGroupItem>
                       <Activity />
                       Lease-based
                     </BadgeGroupItem>
                   )}
                   {selection.metered.includes(
-                    MeteredTemplates.FEATURE_BASED,
+                    MeteredTemplates.FeatureBased,
                   ) && (
                     <BadgeGroupItem>
                       <Binary />
                       Feature-based
                     </BadgeGroupItem>
                   )}
-                  {selection.metered.includes(MeteredTemplates.USAGE_BASED) && (
+                  {selection.metered.includes(MeteredTemplates.UsageBased) && (
                     <BadgeGroupItem>
                       <Hash />
                       Usage-based
@@ -524,7 +524,7 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
   const steps: Step[] = []
 
   steps.push({
-    key: Steps.GENERAL,
+    key: Steps.General,
     title: "General configuration",
     fields: ["name", "product.id"],
     render: () => (
@@ -536,9 +536,9 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
     ),
   })
 
-  if (selection.timing === TimingTemplates.TIMED) {
+  if (selection.timing === TimingTemplates.Timed) {
     steps.push({
-      key: Steps.TIMED,
+      key: Steps.Timed,
       title: "Timed configuration",
       fields: [
         "duration",
@@ -551,9 +551,9 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
     })
   }
 
-  if (selection.timing === TimingTemplates.PERPETUAL_FALLBACK) {
+  if (selection.timing === TimingTemplates.PerpetualFallback) {
     steps.push({
-      key: Steps.PERPETUAL_FALLBACK,
+      key: Steps.PerpetualFallback,
       title: "Perpetual‑fallback configuration",
       fields: [
         "duration",
@@ -566,13 +566,13 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
   }
 
   const requiresNodeLocked =
-    selection.access.includes(AccessTemplates.NODE_LOCKED) ||
-    selection.metered.includes(MeteredTemplates.PROCESS_BASED) ||
-    selection.metered.includes(MeteredTemplates.LEASE_BASED)
+    selection.access.includes(AccessTemplates.NodeLocked) ||
+    selection.metered.includes(MeteredTemplates.ProcessBased) ||
+    selection.metered.includes(MeteredTemplates.LeaseBased)
 
   if (requiresNodeLocked) {
     steps.push({
-      key: Steps.NODE_LOCKED,
+      key: Steps.NodeLocked,
       title: "Node‑locked configuration",
       fields: [
         "maxMachines",
@@ -587,18 +587,18 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
     })
   }
 
-  if (selection.access.includes(AccessTemplates.USER_LOCKED)) {
+  if (selection.access.includes(AccessTemplates.UserLocked)) {
     steps.push({
-      key: Steps.USER_LOCKED,
+      key: Steps.UserLocked,
       title: "User‑locked configuration",
       fields: ["maxUsers", "requireUserScope"],
       render: () => <Policies.Fields.UserLocked layout="advanced" />,
     })
   }
 
-  if (selection.metered.includes(MeteredTemplates.PROCESS_BASED)) {
+  if (selection.metered.includes(MeteredTemplates.ProcessBased)) {
     steps.push({
-      key: Steps.PROCESS_BASED,
+      key: Steps.ProcessBased,
       title: "Process‑based configuration",
       fields: [
         "maxProcesses",
@@ -609,9 +609,9 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
     })
   }
 
-  if (selection.metered.includes(MeteredTemplates.LEASE_BASED)) {
+  if (selection.metered.includes(MeteredTemplates.LeaseBased)) {
     steps.push({
-      key: Steps.LEASE_BASED,
+      key: Steps.LeaseBased,
       title: "Lease‑based configuration",
       fields: [
         "heartbeatDuration",
@@ -623,18 +623,18 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
     })
   }
 
-  if (selection.metered.includes(MeteredTemplates.FEATURE_BASED)) {
+  if (selection.metered.includes(MeteredTemplates.FeatureBased)) {
     steps.push({
-      key: Steps.FEATURE_BASED,
+      key: Steps.FeatureBased,
       title: "Feature‑based configuration",
       fields: ["entitlements.attach", "entitlements.create"],
       render: () => <Policies.Fields.FeatureBased layout="advanced" />,
     })
   }
 
-  if (selection.metered.includes(MeteredTemplates.USAGE_BASED)) {
+  if (selection.metered.includes(MeteredTemplates.UsageBased)) {
     steps.push({
-      key: Steps.USAGE_BASED,
+      key: Steps.UsageBased,
       title: "Usage‑based configuration",
       fields: ["maxUses"],
       render: () => <Policies.Fields.UsageBased layout="advanced" />,
@@ -643,7 +643,7 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
 
   if (selection.advanced) {
     steps.push({
-      key: Steps.ADVANCED,
+      key: Steps.Advanced,
       title: "Advanced configuration",
       fields: [
         "strict",
@@ -660,7 +660,7 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
 
   if (steps.length === 0) {
     steps.push({
-      key: Steps.NO_ATTRIBUTES,
+      key: Steps.NoAttributes,
       title: "Attributes configuration",
       render: () => (
         <div className="text-sm text-content-subdued">
@@ -711,39 +711,39 @@ const buildMockPolicy = (
     requireHeartbeat: input.requireHeartbeat ?? false,
     heartbeatDuration: input.heartbeatDuration ?? null,
     heartbeatCullStrategy:
-      input.heartbeatCullStrategy ?? HeartbeatCullStrategy.DEACTIVATE_DEAD,
+      input.heartbeatCullStrategy ?? HeartbeatCullStrategy.DeactivateDead,
     heartbeatResurrectionStrategy:
       input.heartbeatResurrectionStrategy ??
-      HeartbeatResurrectionStrategy.NO_REVIVE,
-    heartbeatBasis: input.heartbeatBasis ?? HeartbeatBasis.FROM_CREATION,
+      HeartbeatResurrectionStrategy.NoRevive,
+    heartbeatBasis: input.heartbeatBasis ?? HeartbeatBasis.FromCreation,
     machineUniquenessStrategy:
       input.machineUniquenessStrategy ??
-      MachineUniquenessStrategy.UNIQUE_PER_LICENSE,
+      MachineUniquenessStrategy.UniquePerLicense,
     machineMatchingStrategy:
-      input.machineMatchingStrategy ?? MachineMatchingStrategy.MATCH_ANY,
+      input.machineMatchingStrategy ?? MachineMatchingStrategy.MatchAny,
     componentUniquenessStrategy:
       input.componentUniquenessStrategy ??
-      ComponentUniquenessStrategy.UNIQUE_PER_MACHINE,
+      ComponentUniquenessStrategy.UniquePerMachine,
     componentMatchingStrategy:
-      input.componentMatchingStrategy ?? ComponentMatchingStrategy.MATCH_ANY,
+      input.componentMatchingStrategy ?? ComponentMatchingStrategy.MatchAny,
     expirationStrategy:
-      input.expirationStrategy ?? ExpirationStrategy.RESTRICT_ACCESS,
-    expirationBasis: input.expirationBasis ?? ExpirationBasis.FROM_CREATION,
+      input.expirationStrategy ?? ExpirationStrategy.RestrictAccess,
+    expirationBasis: input.expirationBasis ?? ExpirationBasis.FromCreation,
     renewalBasis:
-      input.renewalBasis ?? base.renewalBasis ?? RenewalBasis.FROM_EXPIRY,
+      input.renewalBasis ?? base.renewalBasis ?? RenewalBasis.FromExpiry,
     transferStrategy:
       input.transferStrategy ??
       base.transferStrategy ??
-      TransferStrategy.KEEP_EXPIRY,
+      TransferStrategy.KeepExpiry,
     authenticationStrategy:
       input.authenticationStrategy ??
       base.authenticationStrategy ??
-      AuthenticationStrategy.MIXED,
+      AuthenticationStrategy.Mixed,
     machineLeasingStrategy:
-      input.machineLeasingStrategy ?? MachineLeasingStrategy.PER_LICENSE,
+      input.machineLeasingStrategy ?? MachineLeasingStrategy.PerLicense,
     processLeasingStrategy:
-      input.processLeasingStrategy ?? ProcessLeasingStrategy.PER_MACHINE,
-    overageStrategy: input.overageStrategy ?? OverageStrategy.NO_OVERAGE,
+      input.processLeasingStrategy ?? ProcessLeasingStrategy.PerMachine,
+    overageStrategy: input.overageStrategy ?? OverageStrategy.NoOverage,
     metadata: input.metadata ?? {},
     created: now,
     updated: now,

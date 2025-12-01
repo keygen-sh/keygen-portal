@@ -49,7 +49,7 @@ export default function EntitlementsCreateModal({
           onClose()
         },
         onError: (error) => {
-          if (error.code === EntitlementErrorCode.CODE_TAKEN) {
+          if (error.code === EntitlementErrorCode.CodeTaken) {
             setFormError("Code already exists")
           }
           toast({ message: "Failed to create entitlement", variant: "error" })

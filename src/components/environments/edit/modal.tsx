@@ -47,14 +47,14 @@ export default function EnvironmentsEditModal({
       updateEnvironment.mutate(values, {
         onSuccess(updated) {
           toast({ message: "Environment updated", variant: "success" })
-          onChangeMode(EnvironmentMode.VIEW, updated)
+          onChangeMode(EnvironmentMode.View, updated)
         },
         onError: (error) => {
           if (
             typeof error === "object" &&
             error &&
             "code" in error &&
-            error.code === EnvironmentErrorCode.CODE_TAKEN
+            error.code === EnvironmentErrorCode.CodeTaken
           ) {
             setFormError("Code already exists")
           }
@@ -62,7 +62,7 @@ export default function EnvironmentsEditModal({
         },
         onSettled() {
           if (!updateEnvironment.isError) {
-            onChangeMode(EnvironmentMode.VIEW)
+            onChangeMode(EnvironmentMode.View)
           }
         },
       })
@@ -77,7 +77,7 @@ export default function EnvironmentsEditModal({
           Editing a
           <Badge variant="secondary" className="mx-1">
             {selectedEnvironment.attributes.isolationStrategy ===
-            IsolationStrategy.ISOLATED ? (
+            IsolationStrategy.Isolated ? (
               <>
                 <GlobeLock />
                 Isolated
@@ -106,7 +106,7 @@ export default function EnvironmentsEditModal({
         error={formError}
         environment={selectedEnvironment}
         onSubmit={handleUpdateEnvironment}
-        onCancel={() => onChangeMode(EnvironmentMode.VIEW)}
+        onCancel={() => onChangeMode(EnvironmentMode.View)}
         loading={updateEnvironment.isPending}
       />
     </>

@@ -14,7 +14,7 @@ export function isTimed(policy: Policy): boolean {
 export function isPerpetualFallback(policy: Policy): boolean {
   return (
     isTimed(policy) &&
-    policy.attributes.expirationStrategy === ExpirationStrategy.MAINTAIN_ACCESS
+    policy.attributes.expirationStrategy === ExpirationStrategy.MaintainAccess
   )
 }
 

@@ -27,8 +27,8 @@ import { CardSelector, CardOption } from "@/components/card-selector"
 
 const strategySchema = z.object({
   isolationStrategy: z.enum([
-    IsolationStrategy.ISOLATED,
-    IsolationStrategy.SHARED,
+    IsolationStrategy.Isolated,
+    IsolationStrategy.Shared,
   ]),
 })
 
@@ -58,14 +58,14 @@ export default function StrategyForm({
 
   const strategyOptions: CardOption<IsolationStrategy>[] = [
     {
-      value: IsolationStrategy.ISOLATED,
+      value: IsolationStrategy.Isolated,
       label: "Isolated",
       icon: <GlobeLock className="size-6 text-content-subdued md:size-5" />,
       tooltip:
         "The environment will be isolated from all other resources in other environments.",
     },
     {
-      value: IsolationStrategy.SHARED,
+      value: IsolationStrategy.Shared,
       label: "Shared",
       icon: <Globe className="size-6 text-content-subdued md:size-5" />,
       tooltip:

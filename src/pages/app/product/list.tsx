@@ -4,7 +4,7 @@ import { useNavigate } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
-import { createResourceColumnHelper } from "@/lib/tables"
+import { createTableColumnHelper } from "@/lib/tables"
 import { Product, } from "@/types/products"
 
 import { useListProducts } from "@/queries/products"
@@ -22,7 +22,7 @@ export default function ProductsList() {
 
   const [open, setOpen] = useState(false)
 
-  const column = createResourceColumnHelper<Product>()
+  const column = createTableColumnHelper<Product>()
   const columns = useMemo(
     () => [
       column.id({

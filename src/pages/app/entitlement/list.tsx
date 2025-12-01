@@ -4,7 +4,7 @@ import { useNavigate } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
-import { createResourceColumnHelper } from "@/lib/tables"
+import { createTableColumnHelper } from "@/lib/tables"
 import { Entitlement } from "@/types/entitlements"
 
 import { useListEntitlements } from "@/queries/entitlements"
@@ -24,7 +24,8 @@ export default function PoliciesList() {
 
   const [open, setOpen] = useState(false)
 
-  const column = createResourceColumnHelper<Entitlement>()
+  // TODO(ezekg) extract all this out into e.g. useEntitlementTableColumns so it can be used elsewhere?
+  const column = createTableColumnHelper<Entitlement>()
   const columns = useMemo(
     () => [
       column.id({

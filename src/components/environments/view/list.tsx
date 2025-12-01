@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 
-import { createResourceColumnHelper } from "@/lib/tables"
+import { createTableColumnHelper } from "@/lib/tables"
 import { Environment } from "@/types/environments"
 
 import { useListEnvironments } from "@/queries/environments"
@@ -17,7 +17,7 @@ export default function EnvironmentsList({
 }: EnvironmentsListProps) {
   const { data: environments = [], isLoading } = useListEnvironments()
 
-  const column = createResourceColumnHelper<Environment>()
+  const column = createTableColumnHelper<Environment>()
   const columns = useMemo(
     () => [
       column.id( { header: "ID" }),

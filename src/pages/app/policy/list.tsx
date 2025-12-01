@@ -4,7 +4,7 @@ import { useNavigate } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
-import { createResourceColumnHelper } from "@/lib/tables"
+import { createTableColumnHelper } from "@/lib/tables"
 import { Policy, MockPolicies } from "@/types/policies"
 
 // import { useListPolicies } from "@/queries/policies"
@@ -31,7 +31,7 @@ export default function PoliciesList() {
     return map
   }, [products])
 
-  const column = createResourceColumnHelper<Policy>()
+  const column = createTableColumnHelper<Policy>()
   const columns = useMemo(
     () => [
       column.id({

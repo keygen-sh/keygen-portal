@@ -6,7 +6,7 @@ interface TableResource {
   relationships: Record<string, unknown>
 }
 
-export function createResourceColumnHelper<T extends TableResource>() {
+export function createTableColumnHelper<T extends TableResource>() {
   const helper = createColumnHelper<T>()
 
   return {

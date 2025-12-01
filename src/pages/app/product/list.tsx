@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { createTableColumnHelper } from "@/lib/tables"
-import { Product, } from "@/types/products"
+import { Product } from "@/types/products"
 
 import { useListProducts } from "@/queries/products"
 

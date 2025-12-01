@@ -2,8 +2,8 @@ import { ColumnDef, createColumnHelper } from "@tanstack/react-table"
 
 interface TableResource {
   id: string
-  attributes: Record<string, unknown>
-  relationships: Record<string, unknown>
+  attributes: Record<PropertyKey, unknown>
+  relationships: Record<PropertyKey, unknown>
 }
 
 export function createTableColumnHelper<T extends TableResource>() {
@@ -15,7 +15,7 @@ export function createTableColumnHelper<T extends TableResource>() {
     ): ColumnDef<T, T["id"]> {
       return helper.accessor(row => row.id, { id: "id", ...def })
     },
-    attr<K extends string & keyof T["attributes"]>(
+    attr<K extends PropertyKey & keyof T["attributes"]>(
       key: K,
       def: Omit<ColumnDef<T, T["attributes"][K]>, "accessorKey" | "accessorFn"> = {},
     ): ColumnDef<T, T["attributes"][K]> {
@@ -24,7 +24,7 @@ export function createTableColumnHelper<T extends TableResource>() {
         ...def,
       })
     },
-    rel<K extends string & keyof T["relationships"]>(
+    rel<K extends PropertyKey & keyof T["relationships"]>(
       key: K,
       def: Omit<ColumnDef<T, T["relationships"][K]>, "accessorKey" | "accessorFn"> = {},
     ): ColumnDef<T, T["relationships"][K]> {

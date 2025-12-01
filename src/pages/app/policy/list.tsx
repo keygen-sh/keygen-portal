@@ -47,8 +47,10 @@ export default function PoliciesList() {
         cell: (info) => {
           const productId = info.getValue()?.data?.id ?? ""
 
-          return productNameById.get(productId) ?? (
-            <span className="text-muted-foreground">--</span>
+          return (
+            productNameById.get(productId) ?? (
+              <span className="text-muted-foreground">--</span>
+            )
           )
         },
       }),

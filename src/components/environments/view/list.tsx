@@ -20,7 +20,7 @@ export default function EnvironmentsList({
   const column = createTableColumnHelper<Environment>()
   const columns = useMemo(
     () => [
-      column.id( { header: "ID" }),
+      column.id({ header: "ID" }),
       column.attr("name", {
         header: "Name",
       }),

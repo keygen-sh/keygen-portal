@@ -33,7 +33,7 @@ export default function TagInput({
   disabled,
 }: TagInputProps) {
   const { watch, setValue } = useFormContext()
-  const tags: string[] = watch(name) ?? []
+  const tags = useMemo(() => (watch(name) as string[]) ?? [], [watch, name])
 
   const [draft, setDraft] = useState("")
   const [open, setOpen] = useState(false)

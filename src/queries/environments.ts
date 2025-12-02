@@ -1,10 +1,7 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 
-import {
-  Environment,
-  CreateEnvironmentPayload,
-  UpdateEnvironmentPayload,
-} from "@/types/environments"
+import * as Forms from "@/forms"
+import { Environment } from "@/types/environments"
 import { APIError } from "@/types/api"
 
 import * as keygen from "@/keygen"
@@ -31,7 +28,7 @@ export function useListEnvironments() {
 export function useCreateEnvironment() {
   const queryClient = useQueryClient()
 
-  return useMutation<Environment, APIError, CreateEnvironmentPayload>({
+  return useMutation<Environment, APIError, Forms.Environments.CreatePayload>({
     mutationFn: (payload) =>
       keygen.environments
         .create(payload)
@@ -52,7 +49,7 @@ export function useCreateEnvironment() {
 export function useUpdateEnvironment(environmentId: string) {
   const queryClient = useQueryClient()
 
-  return useMutation<Environment, APIError, UpdateEnvironmentPayload>({
+  return useMutation<Environment, APIError, Forms.Environments.UpdatePayload>({
     mutationFn: (values) =>
       keygen.environments.get({ id: environmentId }).then(async (response) => {
         const current = response.data as Environment
@@ -60,7 +57,7 @@ export function useUpdateEnvironment(environmentId: string) {
         const changes = diff(
           current.attributes,
           values,
-        ) as UpdateEnvironmentPayload
+        ) as Forms.Environments.UpdatePayload
         if (Object.keys(changes).length === 0) return current
 
         const updated = await keygen.environments
@@ -70,9 +67,9 @@ export function useUpdateEnvironment(environmentId: string) {
         return updated
       }),
 
-    onSuccess: (updated) => {
+    onSuccess: async (updated) => {
       queryClient.setQueryData(["environment", environmentId], updated)
-      queryClient.invalidateQueries({ queryKey: ["environments"] })
+      await queryClient.invalidateQueries({ queryKey: ["environments"] })
     },
   })
 }
@@ -83,8 +80,8 @@ export function useRemoveEnvironment(environmentId: string) {
   return useMutation({
     mutationFn: () => keygen.environments.remove({ id: environmentId }),
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["environments"] })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["environments"] })
       queryClient.removeQueries({ queryKey: ["environment", environmentId] })
     },
   })

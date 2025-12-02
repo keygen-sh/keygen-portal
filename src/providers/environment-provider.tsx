@@ -48,7 +48,7 @@ export function EnvironmentProvider({
         }
 
         setCode(environmentCode)
-        queryClient.invalidateQueries({
+        await queryClient.invalidateQueries({
           predicate: (q) => q.queryKey[0] !== "environments",
         })
       } catch (error) {

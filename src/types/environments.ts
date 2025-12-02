@@ -1,10 +1,4 @@
-import {
-  APIResponse,
-  Resource,
-  Relationship,
-  Linkage,
-  Writable,
-} from "@/types/api"
+import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
 
 export enum EnvironmentErrorCode {
   CodeTaken = "CODE_TAKEN",
@@ -46,7 +40,3 @@ export type Environment = Resource<
 
 export type EnvironmentResponse = APIResponse<Environment>
 export type EnvironmentsListResponse = APIResponse<Environment[]>
-
-export type CreateEnvironmentPayload = Writable<EnvironmentAttributes>
-export type UpdateEnvironmentPayload = Partial<Writable<EnvironmentAttributes>>
-

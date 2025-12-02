@@ -58,7 +58,7 @@ export function CardSelector<T>({
 
   const index = multiple
     ? (() => {
-        const array = Array.isArray(value) ? (value as T[]) : []
+        const array = Array.isArray(value) ? value : []
         if (array.length === 0) return -1
         return options.findIndex((option) => array.includes(option.value))
       })()
@@ -80,7 +80,7 @@ export function CardSelector<T>({
   const isSelected = useCallback(
     (option: T) =>
       multiple
-        ? Array.isArray(value) && (value as T[]).includes(option)
+        ? Array.isArray(value) && value.includes(option)
         : (value as T | undefined) === option,
     [multiple, value],
   )
@@ -91,9 +91,13 @@ export function CardSelector<T>({
         ;(onChange as (value: T) => void)(option)
         return
       }
-      const current = Array.isArray(value) ? (value as T[]) : []
+      const current = Array.isArray(value) ? value : []
       const set = new Set(current)
-      set.has(option) ? set.delete(option) : set.add(option)
+      if (set.has(option)) {
+        set.delete(option)
+      } else {
+        set.add(option)
+      }
       ;(onChange as (value: T[]) => void)(Array.from(set))
     },
     [multiple, onChange, value],

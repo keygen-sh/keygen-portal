@@ -42,7 +42,7 @@ export default function MotionSlide({
     >
       <AnimatePresence custom={direction} initial={false} mode="wait">
         <motion.div
-          key={(children as any)?.key ?? "slide"}
+          key={(children as React.ReactElement)?.key ?? "slide"}
           custom={direction}
           variants={slide}
           initial="enter"

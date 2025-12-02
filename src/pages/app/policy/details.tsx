@@ -105,9 +105,7 @@ export default function PolicyDetails() {
 
   // TODO(cazden) Derive entitlements properly once policy API is implemented
   const entitlementIds = (policy?.relationships.entitlements?.data ?? [])
-    .map((entitlement: any) =>
-      "id" in entitlement ? entitlement.id : entitlement,
-    )
+    .map((entitlement: { id: string }) => entitlement.id || entitlement)
     .filter(Boolean)
   const entitlements = entitlementIds.length
     ? entitlementsData.filter((e) => entitlementIds.includes(e.id))
@@ -124,9 +122,11 @@ export default function PolicyDetails() {
   })
 
   useEffect(() => {
-    if (policyError && !policyFetching) {
-      navigate({ to: ".." })
-    }
+    ;(async () => {
+      if (policyError && !policyFetching) {
+        await navigate({ to: ".." })
+      }
+    })()
   }, [policyError, policyFetching, navigate])
 
   useEffect(() => {
@@ -331,8 +331,8 @@ export default function PolicyDetails() {
                       variant="link"
                       size="link"
                       className="peer ml-3 text-content-muted"
-                      onClick={() => {
-                        navigate({
+                      onClick={async () => {
+                        await navigate({
                           to: "/$id/app/products/$productId",
                           params: {
                             id: keygen.config.id,

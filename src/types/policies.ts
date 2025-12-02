@@ -1,11 +1,4 @@
-import {
-  APIResponse,
-  Resource,
-  Relationship,
-  Linkage,
-  Writable,
-  OptionalExcept,
-} from "@/types/api"
+import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
 
 export enum PolicyMode {
   Create = "create",
@@ -143,24 +136,24 @@ export type PolicyAttributes = {
 
   requireHeartbeat: boolean
   heartbeatDuration: number | null
-  heartbeatCullStrategy: HeartbeatCullStrategy
-  heartbeatResurrectionStrategy: HeartbeatResurrectionStrategy
-  heartbeatBasis: HeartbeatBasis
+  heartbeatCullStrategy: HeartbeatCullStrategy | null
+  heartbeatResurrectionStrategy: HeartbeatResurrectionStrategy | null
+  heartbeatBasis: HeartbeatBasis | null
 
-  machineUniquenessStrategy: MachineUniquenessStrategy
-  machineMatchingStrategy: MachineMatchingStrategy
-  componentUniquenessStrategy: ComponentUniquenessStrategy
-  componentMatchingStrategy: ComponentMatchingStrategy
+  machineUniquenessStrategy: MachineUniquenessStrategy | null
+  machineMatchingStrategy: MachineMatchingStrategy | null
+  componentUniquenessStrategy: ComponentUniquenessStrategy | null
+  componentMatchingStrategy: ComponentMatchingStrategy | null
 
-  expirationStrategy: ExpirationStrategy
-  expirationBasis: ExpirationBasis
-  renewalBasis: RenewalBasis
-  transferStrategy: TransferStrategy
+  expirationStrategy: ExpirationStrategy | null
+  expirationBasis: ExpirationBasis | null
+  renewalBasis: RenewalBasis | null
+  transferStrategy: TransferStrategy | null
 
-  authenticationStrategy: AuthenticationStrategy
-  machineLeasingStrategy: MachineLeasingStrategy
-  processLeasingStrategy: ProcessLeasingStrategy
-  overageStrategy: OverageStrategy
+  authenticationStrategy: AuthenticationStrategy | null
+  machineLeasingStrategy: MachineLeasingStrategy | null
+  processLeasingStrategy: ProcessLeasingStrategy | null
+  overageStrategy: OverageStrategy | null
 
   metadata: Record<string, unknown>
   created: string
@@ -217,23 +210,23 @@ export interface PolicyInput {
 
   authenticationStrategy?: AuthenticationStrategy | null
 
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, any>
 }
 
 export enum TimingTemplates {
-  Perpetual = "PERPETUAL",
-  Timed = "TIMED",
-  PerpetualFallback = "PERPETUAL_FALLBACK",
+  PERPETUAL = "PERPETUAL",
+  TIMED = "TIMED",
+  PERPETUAL_FALLBACK = "PERPETUAL_FALLBACK",
 }
 export enum AccessTemplates {
-  NodeLocked = "NODE_LOCKED",
-  UserLocked = "USER_LOCKED",
+  NODE_LOCKED = "NODE_LOCKED",
+  USER_LOCKED = "USER_LOCKED",
 }
 export enum MeteredTemplates {
-  ProcessBased = "PROCESS_BASED",
-  LeaseBased = "LEASE_BASED",
-  FeatureBased = "FEATURE_BASED",
-  UsageBased = "USAGE_BASED",
+  PROCESS_BASED = "PROCESS_BASED",
+  LEASE_BASED = "LEASE_BASED",
+  FEATURE_BASED = "FEATURE_BASED",
+  USAGE_BASED = "USAGE_BASED",
 }
 
 export type PolicyTemplateSelection = {
@@ -491,8 +484,7 @@ export const MockPolicies: Policy[] = [
       heartbeatBasis: HeartbeatBasis.FromFirstPing,
       machineUniquenessStrategy: MachineUniquenessStrategy.UniquePerLicense,
       machineMatchingStrategy: MachineMatchingStrategy.MatchAll,
-      componentUniquenessStrategy:
-        ComponentUniquenessStrategy.UniquePerMachine,
+      componentUniquenessStrategy: ComponentUniquenessStrategy.UniquePerMachine,
       componentMatchingStrategy: ComponentMatchingStrategy.MatchAll,
       expirationStrategy: ExpirationStrategy.RestrictAccess,
       expirationBasis: ExpirationBasis.FromCreation,

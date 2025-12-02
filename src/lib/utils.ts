@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function deepEqual(a: any, b: any): boolean {
+export function deepEqual(a: unknown, b: unknown): boolean {
   if (a === b) return true
 
   if (
@@ -33,7 +33,14 @@ export function deepEqual(a: any, b: any): boolean {
   if (keysA.length !== keysB.length) return false
 
   for (const k of keysA) {
-    if (!keysB.includes(k) || !deepEqual(a[k], b[k])) return false
+    if (
+      !keysB.includes(k) ||
+      !deepEqual(
+        (a as Record<string, unknown>)[k],
+        (b as Record<string, unknown>)[k],
+      )
+    )
+      return false
   }
   return true
 }
@@ -47,8 +54,8 @@ export function diff<T extends object>(
   for (const [key, value] of Object.entries(edited)) {
     if (value === undefined) continue
 
-    if (!deepEqual(value, (original as any)[key])) {
-      ;(changed as any)[key] = value
+    if (!deepEqual(value, original[key as keyof T])) {
+      changed[key as keyof T] = value as T[keyof T]
     }
   }
   return changed

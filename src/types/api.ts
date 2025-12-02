@@ -20,13 +20,31 @@ export interface ErrorSource {
   parameter?: string
 }
 
-export interface APIError {
+export class APIError extends Error {
   title: string
   detail?: string
   code?: string
   source?: ErrorSource
   links?: Link
   meta?: Record<string, unknown>
+
+  constructor(error: {
+    title: string
+    detail?: string
+    code?: string
+    source?: ErrorSource
+    links?: Link
+    meta?: Record<string, unknown>
+  }) {
+    super(error.detail ?? error.title)
+    this.name = "APIError"
+    this.title = error.title
+    this.detail = error.detail
+    this.code = error.code
+    this.source = error.source
+    this.links = error.links
+    this.meta = error.meta
+  }
 }
 
 export interface Link {

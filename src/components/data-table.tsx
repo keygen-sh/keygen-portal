@@ -30,23 +30,23 @@ import {
 
 import { useMobile } from "@/hooks/use-mobile"
 
-export type DataTableProps<T> = {
+export type DataTableProps<T, TValue = string> = {
   data: T[]
-  columns: ColumnDef<T, any>[]
+  columns: ColumnDef<T, TValue>[]
   onRowClick?: (row: T) => void
   hideOnMobile?: string[]
   pageSize?: number
   includePagination?: boolean
 }
 
-export default function DataTable<T>({
+export default function DataTable<T, TValue = string>({
   data,
   columns,
   onRowClick,
   hideOnMobile = [],
   pageSize = 10,
   includePagination = true,
-}: DataTableProps<T>): React.ReactElement {
+}: DataTableProps<T, TValue>): React.ReactElement {
   const isMobile = useMobile()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] = useState<

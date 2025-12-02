@@ -16,7 +16,7 @@ import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
 import SkeletonTable from "@/components/skeleton-table"
 
-export default function PoliciesList() {
+export default function EntitlementsList() {
   const { data: entitlements = [], isLoading: entitlementsLoading } =
     useListEntitlements()
   const columns = useEntitlementTableColumns()
@@ -28,7 +28,7 @@ export default function PoliciesList() {
   const handleSelectEntitlement = (entitlement: Entitlement | null) => {
     if (!entitlement) return
 
-    navigate({
+    await navigate({
       to: "/$id/app/entitlements/$entitlementId",
       params: { id: keygen.config.id, entitlementId: entitlement.id },
     })
@@ -46,7 +46,7 @@ export default function PoliciesList() {
 
           <Entitlements.Create.Modal
             onSelectEntitlement={(entitlement) =>
-              handleSelectEntitlement(entitlement!)
+              handleSelectEntitlement(entitlement)
             }
             onClose={() => setOpen(false)}
           />
@@ -66,7 +66,7 @@ export default function PoliciesList() {
             "attributes.created",
             "attributes.updated",
           ]}
-          onRowClick={(p) => handleSelectEntitlement(p)}
+          onRowClick={(entitlement) => handleSelectEntitlement(entitlement)}
         />
       )}
     </section>

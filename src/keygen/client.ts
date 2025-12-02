@@ -1,5 +1,7 @@
 import config from "@/keygen/config"
 
+import { APIResponse, APIError } from "@/types/api"
+
 export class Client {
   private url = `https://${config.host}/v1`
 
@@ -31,7 +33,7 @@ export class Client {
   async request<T = unknown>(
     endpoint: string,
     options: RequestInit & { root?: boolean; signal?: AbortSignal } = {},
-  ): Promise<T | { errors: unknown[] }> {
+  ): Promise<APIResponse<T>> {
     const defaultHeaders = {
       Accept: "application/vnd.api+json",
       "Content-Type": "application/vnd.api+json",
@@ -52,16 +54,17 @@ export class Client {
     }
 
     const { root, ...fetchOptions } = options
+    void root
 
     const response = await fetch(`${this.url}${endpoint}`, {
       ...fetchOptions,
       headers,
     })
 
-    const data = await response.json().catch(() => ({}))
+    const data = (await response.json().catch(() => ({}))) as APIResponse<T>
 
     // Server error, i.e. "PASSWORD_REQUIRED"
-    if (data?.errors?.length) {
+    if ("errors" in data) {
       return data
     }
 
@@ -69,12 +72,11 @@ export class Client {
     if (!response.ok) {
       return {
         errors: [
-          {
+          new APIError({
             title: "Request Error",
-            detail:
-              data?.errors?.[0]?.detail || `Request failed: ${response.status}`,
+            detail: `Request failed: ${response.status}`,
             code: "CLIENT_ERROR",
-          },
+          }),
         ],
       }
     }

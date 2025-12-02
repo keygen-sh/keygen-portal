@@ -22,12 +22,12 @@ export default function BackButton({
 }: BackProps): React.ReactElement {
   const navigate = useNavigate()
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (preferHistory && window.history.length > 1) {
       window.history.back()
       return
     }
-    navigate({ to: path })
+    await navigate({ to: path })
   }
 
   return (

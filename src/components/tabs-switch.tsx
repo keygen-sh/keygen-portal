@@ -19,11 +19,10 @@ type Option = {
 interface TabsSwitchProps
   extends React.ComponentPropsWithoutRef<typeof TabsList> {
   options: Option[]
-  active?: string
 }
 
 const TabsSwitch = React.forwardRef<HTMLDivElement, TabsSwitchProps>(
-  ({ options, className, active, ...props }, ref) => {
+  ({ options, className, ...props }, ref) => {
     const wrapRef = useRef<HTMLDivElement>(null)
     const listRef = useRef<HTMLDivElement>(null)
     const barRef = useRef<HTMLSpanElement>(null)

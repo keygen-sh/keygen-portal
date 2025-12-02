@@ -2,11 +2,8 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
-import {
-  Product,
-  CreateProductPayload,
-  UpdateProductPayload,
-} from "@/types/products"
+import * as Forms from "@/forms"
+import { Product } from "@/types/products"
 import { APIError } from "@/types/api"
 
 import * as keygen from "@/keygen"
@@ -24,7 +21,7 @@ export function useGetProduct(productId: string) {
         throw new Error("Product not found")
       }
 
-      return response.data as Product
+      return response.data
     },
     retry: (failures, error) =>
       error.message !== "Product not found" && failures < 3,
@@ -45,7 +42,7 @@ export function useCreateProduct() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Product, APIError, CreateProductPayload>({
+  return useMutation<Product, APIError, Forms.Products.CreatePayload>({
     mutationFn: (payload) =>
       keygen.products
         .create(payload)
@@ -68,12 +65,15 @@ export function useUpdateProduct(productId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Product, APIError, UpdateProductPayload>({
+  return useMutation<Product, APIError, Forms.Products.UpdatePayload>({
     mutationFn: (values) =>
       keygen.products.get({ id: productId }).then(async (response) => {
         const current = response.data as Product
 
-        const changes = diff(current.attributes, values) as UpdateProductPayload
+        const changes = diff(
+          current.attributes,
+          values,
+        ) as Forms.Products.UpdatePayload
         if (Object.keys(changes).length === 0) return current
 
         const updated = await keygen.products
@@ -83,12 +83,12 @@ export function useUpdateProduct(productId: string) {
         return updated
       }),
 
-    onSuccess: (updated) => {
+    onSuccess: async (updated) => {
       queryClient.setQueryData(
         ["products", productId, { environment: code }],
         updated,
       )
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: ["products", { environment: code }],
       })
     },
@@ -102,8 +102,8 @@ export function useRemoveProduct(productId: string) {
   return useMutation({
     mutationFn: () => keygen.products.remove({ id: productId }),
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
         queryKey: ["products", { environment: code }],
       })
       queryClient.removeQueries({

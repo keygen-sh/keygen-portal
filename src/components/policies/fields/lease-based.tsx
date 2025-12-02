@@ -82,7 +82,7 @@ function DefaultLayout({
     }
     if (changed) {
       form.clearErrors(fields)
-      form.trigger(fields)
+      void form.trigger(fields)
     }
   }, [requireHeartbeat, form])
 

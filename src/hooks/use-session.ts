@@ -7,7 +7,7 @@ export function useSession() {
   const [initializing, setInitializing] = useState(true)
 
   useEffect(() => {
-    async function verify() {
+    ;(async () => {
       const [token, tokenId] = STORAGE_KEYS.map(
         (key) => localStorage.getItem(key) ?? sessionStorage.getItem(key),
       )
@@ -30,9 +30,7 @@ export function useSession() {
       } finally {
         setInitializing(false)
       }
-    }
-
-    verify()
+    })()
   }, [])
 
   useEffect(() => {

@@ -12,7 +12,7 @@ interface UpdateProps {
   url?: string | null
   platforms?: string[] | null
   permissions?: string[] | null
-  metadata?: Record<string, any> | null
+  metadata?: Record<string, string> | null
 }
 
 export default async function update({

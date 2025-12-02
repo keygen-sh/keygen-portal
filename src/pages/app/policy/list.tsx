@@ -27,7 +27,7 @@ export default function PoliciesList() {
   const handleSelectPolicy = (policy: Policy | null) => {
     if (!policy) return
 
-    navigate({
+    await navigate({
       to: "/$id/app/policies/$policyId",
       params: { id: keygen.config.id, policyId: policy.id },
     })
@@ -51,7 +51,7 @@ export default function PoliciesList() {
           </DialogTrigger>
 
           <Policies.Create.Modal
-            onSelectPolicy={(policy) => handleSelectPolicy(policy!)}
+            onSelectPolicy={(policy) => handleSelectPolicy(policy)}
             open={open}
             onClose={() => setOpen(false)}
           />

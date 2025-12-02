@@ -34,6 +34,7 @@ export default function EnvironmentsModalManager({
     setMode(newMode)
   }, [])
 
+  // TODO(cazden) Standardize Motion.Scale usage across modals or remove this case
   return (
     <AnimatePresence mode="wait">
       <Dialog open={open} onOpenChange={onClose}>

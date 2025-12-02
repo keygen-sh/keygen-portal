@@ -14,8 +14,8 @@ import {
 
 import { cn } from "@/lib/utils"
 
+import * as Forms from "@/forms"
 import {
-  PolicyFormValues,
   PolicyAttributeDescriptions,
   PolicyOptionLabels,
   MachineLeasingStrategy,
@@ -50,7 +50,7 @@ function DefaultLayout({
   title,
   className,
 }: Omit<ProcessBasedFieldsProps, "layout">): React.ReactElement {
-  const form = useFormContext<PolicyFormValues>()
+  const form = useFormContext<Forms.Policies.BaseValues>()
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
@@ -141,11 +141,11 @@ function DefaultLayout({
 function AdvancedLayout({
   className,
 }: Omit<ProcessBasedFieldsProps, "layout">): React.ReactElement {
-  const form = useFormContext<PolicyFormValues>()
+  const form = useFormContext<Forms.Policies.BaseValues>()
 
   const [showAdvanced, setShowAdvanced] = useState(false)
 
-  const advancedFields: (keyof PolicyFormValues)[] = [
+  const advancedFields: (keyof Forms.Policies.BaseValues)[] = [
     "machineLeasingStrategy",
     "processLeasingStrategy",
   ]

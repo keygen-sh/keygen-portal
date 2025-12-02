@@ -17,12 +17,12 @@ import {
 
 import { Lock, Unlock, Award } from "lucide-react"
 
+import * as Forms from "@/forms"
 import {
   Product,
   DistributionStrategy,
   ProductErrorCode,
 } from "@/types/products"
-import { AttributesFormValues } from "./attributes-form"
 
 import { useCreateProduct } from "@/queries/products"
 import { useSlide } from "@/hooks/use-slide"
@@ -52,7 +52,7 @@ export default function ProductsCreateModal({
   const [formError, setFormError] = useState<string | null>(null)
 
   const handleCreateProduct = useCallback(
-    (values: AttributesFormValues) => {
+    (values: Forms.Products.CreatePayload) => {
       if (!values.name || !distributionStrategy) {
         toast({
           message: "Failed to create product",

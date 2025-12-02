@@ -1,6 +1,5 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
@@ -21,18 +20,11 @@ import {
 import { GlobeLock, Globe, Info } from "lucide-react"
 
 import { useMobile } from "@/hooks/use-mobile"
+
+import * as Forms from "@/forms"
 import { IsolationStrategy } from "@/types/environments"
 
 import { CardSelector, CardOption } from "@/components/card-selector"
-
-const strategySchema = z.object({
-  isolationStrategy: z.enum([
-    IsolationStrategy.Isolated,
-    IsolationStrategy.Shared,
-  ]),
-})
-
-type StrategyValues = z.infer<typeof strategySchema>
 import DocumentationLink from "@/components/documentation-link"
 
 interface StrategyFormProps {
@@ -50,8 +42,8 @@ export default function StrategyForm({
 }: StrategyFormProps) {
   const isMobile = useMobile()
 
-  const form = useForm<StrategyValues>({
-    resolver: zodResolver(strategySchema),
+  const form = useForm<Forms.Environments.StrategyValues>({
+    resolver: zodResolver(Forms.Environments.StrategySchema),
     defaultValues: {
       isolationStrategy,
     },
@@ -75,7 +67,7 @@ export default function StrategyForm({
   ]
 
   const handleSubmit = useCallback(
-    (values: StrategyValues) => {
+    (values: Forms.Environments.StrategyValues) => {
       onSubmit(values.isolationStrategy)
     },
     [onSubmit],

@@ -18,8 +18,8 @@ import { cn } from "@/lib/utils"
 
 import { useListEntitlements } from "@/queries/entitlements"
 
+import * as Forms from "@/forms"
 import { Entitlement } from "@/types/entitlements"
-import { PolicyFormValues } from "@/types/policies"
 
 import MultiSelect from "@/components/multi-select"
 import SectionCard from "@/components/section-card"
@@ -75,7 +75,7 @@ function DefaultLayout({
   entitlementsLoading,
   className,
 }: LayoutProps): React.ReactElement {
-  const form = useFormContext<PolicyFormValues>()
+  const form = useFormContext<Forms.Policies.BaseValues>()
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -173,7 +173,7 @@ function AdvancedLayout({
   entitlementsLoading,
   className,
 }: LayoutProps): React.ReactElement {
-  const form = useFormContext<PolicyFormValues>()
+  const form = useFormContext<Forms.Policies.BaseValues>()
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,

@@ -1,6 +1,5 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
@@ -16,24 +15,18 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
+import * as Forms from "@/forms"
+
 import * as Field from "@/components/field"
 import * as Loading from "@/components/loading"
 import SectionCard from "@/components/section-card"
 import KeyValueInput from "@/components/key-value-input"
 import DocumentationLink from "@/components/documentation-link"
 
-export const attributesSchema = z.object({
-  name: z.string().trim().min(1, "Entitlement name is required"),
-  code: z.string().trim().min(1, "Entitlement code is required"),
-  metadata: z.record(z.string()).default({}),
-})
-
-export type AttributesFormValues = z.infer<typeof attributesSchema>
-
 interface AttributesFormProps {
   loading?: boolean
   error?: string | null
-  onSubmit: (values: AttributesFormValues) => void
+  onSubmit: (values: Forms.Entitlements.BaseValues) => void
   onCancel: () => void
 }
 
@@ -43,8 +36,8 @@ export default function AttributesForm({
   onSubmit,
   onCancel,
 }: AttributesFormProps) {
-  const form = useForm<AttributesFormValues>({
-    resolver: zodResolver(attributesSchema),
+  const form = useForm<Forms.Entitlements.BaseValues>({
+    resolver: zodResolver(Forms.Entitlements.BaseSchema),
     mode: "onChange",
     defaultValues: {
       name: "",
@@ -54,7 +47,7 @@ export default function AttributesForm({
   })
 
   const handleSubmit = useCallback(
-    (values: AttributesFormValues) => {
+    (values: Forms.Entitlements.BaseValues) => {
       onSubmit(values)
     },
     [onSubmit],
@@ -137,7 +130,7 @@ export default function AttributesForm({
                                   supplemental entitlement data, etc."
                         >
                           <FormControl>
-                            <KeyValueInput<AttributesFormValues> name="metadata" />
+                            <KeyValueInput<Forms.Entitlements.BaseValues> name="metadata" />
                           </FormControl>
                         </Field.Header>
                         <FormMessage />

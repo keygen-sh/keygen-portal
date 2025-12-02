@@ -1,6 +1,5 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
@@ -21,20 +20,12 @@ import {
 import { Award, Unlock, Lock, Info } from "lucide-react"
 
 import { useMobile } from "@/hooks/use-mobile"
+
+import * as Forms from "@/forms"
 import { DistributionStrategy } from "@/types/products"
 
 import DocumentationLink from "@/components/documentation-link"
 import { CardSelector, CardOption } from "@/components/card-selector"
-
-const strategySchema = z.object({
-  distributionStrategy: z.enum([
-    DistributionStrategy.Licensed,
-    DistributionStrategy.Open,
-    DistributionStrategy.Closed,
-  ]),
-})
-
-type StrategyFormValues = z.infer<typeof strategySchema>
 
 interface StrategyFormProps {
   distributionStrategy?: DistributionStrategy
@@ -51,8 +42,8 @@ export default function StrategyForm({
 }: StrategyFormProps) {
   const isMobile = useMobile()
 
-  const form = useForm<StrategyFormValues>({
-    resolver: zodResolver(strategySchema),
+  const form = useForm<Forms.Products.StrategyValues>({
+    resolver: zodResolver(Forms.Products.StrategySchema),
     defaultValues: {
       distributionStrategy,
     },
@@ -83,7 +74,7 @@ export default function StrategyForm({
   ]
 
   const handleSubmit = useCallback(
-    (values: StrategyFormValues) => {
+    (values: Forms.Products.StrategyValues) => {
       onSubmit(values.distributionStrategy)
     },
     [onSubmit],

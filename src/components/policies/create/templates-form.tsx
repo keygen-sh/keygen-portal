@@ -45,7 +45,7 @@ import {
   AccessTemplates,
   MeteredTemplates,
   PolicyTemplateSelection,
-} from "@/types/policies"
+} from "@/forms/policies"
 
 import { useMobile } from "@/hooks/use-mobile"
 

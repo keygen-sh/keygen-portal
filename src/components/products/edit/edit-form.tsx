@@ -1,6 +1,5 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
@@ -47,6 +46,7 @@ import {
 
 import { Info, Award, Lock, Unlock } from "lucide-react"
 
+import * as Forms from "@/forms"
 import {
   Product,
   KnownPlatforms,
@@ -63,31 +63,11 @@ import SectionCard from "@/components/section-card"
 import KeyValueInput from "@/components/key-value-input"
 import DocumentationLink from "@/components/documentation-link"
 import { BadgeGroup, BadgeGroupItem } from "@/components/badge-group"
-import { AttributesFormValues } from "../create/attributes-form"
-
-export const editSchema = z.object({
-  name: z.string().trim().min(1, "Product name is required"),
-  code: z.string().optional(),
-  url: z
-    .string()
-    .trim()
-    .optional()
-    .transform((v) => (v === "" ? undefined : v))
-    .refine((v) => !v || z.string().url().safeParse(v).success, {
-      message: "Must be a valid URL",
-    }),
-  distributionStrategy: z.nativeEnum(DistributionStrategy),
-  platforms: z.array(z.string()).default([]).optional(),
-  permissions: z.array(z.string()).default([]).optional(),
-  metadata: z.record(z.string()).default({}).optional(),
-})
-
-export type EditFormValues = z.infer<typeof editSchema>
 
 interface EditFormProps {
   product: Product | null
   loading?: boolean
-  onSubmit: (values: EditFormValues) => void
+  onSubmit: (values: Forms.Products.BaseValues) => void
   onCancel: () => void
 }
 
@@ -99,8 +79,8 @@ export default function EditForm({
 }: EditFormProps) {
   const isMobile = useMobile()
 
-  const form = useForm<EditFormValues>({
-    resolver: zodResolver(editSchema),
+  const form = useForm<Forms.Products.BaseValues>({
+    resolver: zodResolver(Forms.Products.BaseSchema),
     mode: "onBlur",
     reValidateMode: "onChange",
     defaultValues: {
@@ -119,7 +99,7 @@ export default function EditForm({
   const strategy = form.watch("distributionStrategy")
 
   const handleSubmit = useCallback(
-    (values: EditFormValues) => {
+    (values: Forms.Products.BaseValues) => {
       onSubmit(values)
     },
     [onSubmit],
@@ -436,7 +416,7 @@ export default function EditForm({
                             </span>
                           </div>
                           <FormControl>
-                            <KeyValueInput<AttributesFormValues>
+                            <KeyValueInput<Forms.Products.BaseValues>
                               name="metadata"
                               disabled={loading}
                             />

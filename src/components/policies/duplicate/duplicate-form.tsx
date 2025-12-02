@@ -12,19 +12,16 @@ import { toast } from "@/lib/toast"
 import { settleMutations } from "@/queries/utils"
 import { useCreateEntitlement } from "@/queries/entitlements"
 
-import { Policy, PolicyFormValues } from "@/types/policies"
+import * as Forms from "@/forms"
+import { Policy } from "@/types/policies"
 import { Entitlement, EntitlementErrorCode } from "@/types/entitlements"
 
 import * as Policies from "@/components/policies"
 import DocumentationLink from "@/components/documentation-link"
-import {
-  BaseSchema,
-  getFormValuesFromPolicy,
-} from "@/components/policies/schema"
 
 interface DuplicateFormProps {
   policy: Policy
-  onCreate: (values: PolicyFormValues) => Promise<void> | void
+  onCreate: (values: Forms.Policies.BaseValues) => Promise<void> | void
   onCancel: () => void
 }
 
@@ -34,15 +31,15 @@ export default function DuplicateForm({
   onCancel,
 }: DuplicateFormProps) {
   const defaultValues = useMemo(() => {
-    const values = getFormValuesFromPolicy(policy)
+    const values = Forms.Policies.getFormValuesFromPolicy(policy)
     return {
       ...values,
       name: `${values.name} (dup)`,
     }
   }, [policy])
 
-  const form = useForm<PolicyFormValues>({
-    resolver: zodResolver(BaseSchema),
+  const form = useForm<Forms.Policies.BaseValues>({
+    resolver: zodResolver(Forms.Policies.BaseSchema),
     mode: "onChange",
     defaultValues,
   })
@@ -50,7 +47,7 @@ export default function DuplicateForm({
   const createEntitlement = useCreateEntitlement()
 
   const create = useCallback(
-    async (payload: PolicyFormValues) => {
+    async (payload: Forms.Policies.BaseValues) => {
       const attachIds = payload.entitlements?.attach ?? []
       const toCreate = payload.entitlements?.create ?? []
 

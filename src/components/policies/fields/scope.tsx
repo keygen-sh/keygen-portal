@@ -5,7 +5,8 @@ import { FormField, FormItem, FormControl } from "@/components/ui/form"
 
 import { cn } from "@/lib/utils"
 
-import { PolicyFormValues, PolicyAttributeDescriptions } from "@/types/policies"
+import * as Forms from "@/forms"
+import { PolicyAttributeDescriptions } from "@/types/policies"
 
 import * as Field from "@/components/field"
 
@@ -18,7 +19,7 @@ export default function ScopeFields({
   title,
   className,
 }: ScopeFieldsProps): React.ReactElement {
-  const form = useFormContext<PolicyFormValues>()
+  const form = useFormContext<Forms.Policies.BaseValues>()
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>

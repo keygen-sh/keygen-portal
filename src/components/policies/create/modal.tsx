@@ -27,12 +27,7 @@ import {
 } from "lucide-react"
 
 import {
-  PolicyFormValues,
   Policy,
-  TimingTemplates,
-  AccessTemplates,
-  MeteredTemplates,
-  PolicyTemplateSelection,
   AuthenticationStrategy,
   ExpirationStrategy,
   OverageStrategy,
@@ -51,11 +46,15 @@ import {
   MockPolicies,
 } from "@/types/policies"
 import { FormFieldError } from "@/types/forms"
+import { Entitlement, EntitlementErrorCode } from "@/types/entitlements"
+
+import * as Forms from "@/forms"
 import {
-  Entitlement,
-  EntitlementErrorCode,
-  CreateEntitlementValidationError,
-} from "@/types/entitlements"
+  PolicyTemplateSelection,
+  TimingTemplates,
+  AccessTemplates,
+  MeteredTemplates,
+} from "@/forms/policies"
 
 import { toast } from "@/lib/toast"
 import { settleMutations } from "@/queries/utils"
@@ -71,10 +70,6 @@ import StepProgress from "@/components/step-progress"
 import DocumentationLink from "@/components/documentation-link"
 import CollapsedBreadcrumb from "@/components/collapsed-breadcrumb"
 import { BadgeGroup, BadgeGroupItem } from "@/components/badge-group"
-import {
-  getSchemaDefaults,
-  composePolicySchema,
-} from "@/components/policies/schema"
 
 import ScratchForm from "./scratch-form"
 import TemplatesForm, { TemplatesValues } from "./templates-form"
@@ -96,10 +91,11 @@ enum Steps {
 
 type StepKey = (typeof Steps)[keyof typeof Steps]
 
+// TODO(cazden) Move to shared location; 'Step' is being declared in multiple places
 type Step = {
   key: StepKey
   title: string
-  fields?: FieldPath<PolicyFormValues>[]
+  fields?: FieldPath<Forms.Policies.BaseValues>[]
   render: () => React.ReactElement
 }
 
@@ -133,7 +129,7 @@ export default function PoliciesCreateModal({
 
   const schema = useMemo(
     () =>
-      composePolicySchema({
+      Forms.Policies.composePolicySchema({
         timing: selection.timing,
         access: selection.access,
         metered: selection.metered,
@@ -142,9 +138,9 @@ export default function PoliciesCreateModal({
     [selection],
   )
 
-  const form = useForm<PolicyFormValues>({
+  const form = useForm<Forms.Policies.BaseValues>({
     resolver: zodResolver(schema),
-    defaultValues: getSchemaDefaults(schema),
+    defaultValues: Forms.Policies.getSchemaDefaults(schema),
   })
 
   const handleSubmitTemplates = useCallback(
@@ -160,8 +156,10 @@ export default function PoliciesCreateModal({
       setSelection(newSelection)
       setCompletedStep(new Set<string>())
 
-      const newSchema = composePolicySchema(newSelection)
-      form.reset(getSchemaDefaults(newSchema), { keepDefaultValues: false })
+      const newSchema = Forms.Policies.composePolicySchema(newSelection)
+      form.reset(Forms.Policies.getSchemaDefaults(newSchema), {
+        keepDefaultValues: false,
+      })
 
       const nextSteps = composeStepsFromSelection(newSelection)
       if (nextSteps.length > 0) goTo(1)
@@ -259,7 +257,7 @@ export default function PoliciesCreateModal({
 
   // TODO(cazden) Replace with API call
   const handleCreatePolicy = useCallback(
-    async (payload: PolicyFormValues) => {
+    async (payload: Forms.Policies.CreatePayload) => {
       const attachIds = payload.entitlements?.attach ?? []
       const toCreate = payload.entitlements?.create ?? []
 
@@ -277,8 +275,8 @@ export default function PoliciesCreateModal({
       form.setValue("entitlements.create", nextCreate)
 
       if (errors.length > 0) {
-        const fieldErrors: FormFieldError<PolicyFormValues>[] = errors.map(
-          (error, index) => {
+        const fieldErrors: FormFieldError<Forms.Policies.BaseValues>[] =
+          errors.map((error, index) => {
             let message = ""
             if (error.reason.code === EntitlementErrorCode.CodeTaken) {
               message = "Code already exists"
@@ -290,8 +288,7 @@ export default function PoliciesCreateModal({
               path: `entitlements.create.${index}.code`,
               message,
             }
-          },
-        )
+          })
 
         toast({
           message: "Failed to create entitlement(s)",
@@ -300,7 +297,7 @@ export default function PoliciesCreateModal({
 
         if (isScratchOpen) {
           // Throw to render error messages in scratch form
-          throw new CreateEntitlementValidationError(
+          throw new Forms.Entitlements.CreateValidationError(
             nextAttach,
             nextCreate,
             fieldErrors,
@@ -685,14 +682,16 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
 }
 
 const buildMockPolicy = (
-  input: PolicyFormValues,
+  input: Forms.Policies.BaseValues,
   selection: PolicyTemplateSelection,
   entitlementIds: string[] = [],
 ): Policy => {
   const id = crypto.randomUUID()
   const now = new Date().toISOString()
 
-  const base = getSchemaDefaults(composePolicySchema(selection))
+  const base = Forms.Policies.getSchemaDefaults(
+    Forms.Policies.composePolicySchema(selection),
+  )
 
   const attributes = {
     name: input.name,

@@ -18,8 +18,8 @@ import {
 
 import { cn } from "@/lib/utils"
 
+import * as Forms from "@/forms"
 import {
-  PolicyFormValues,
   HeartbeatBasis,
   HeartbeatCullStrategy,
   HeartbeatResurrectionStrategy,
@@ -56,7 +56,7 @@ function DefaultLayout({
   title,
   className,
 }: Omit<LeaseBasedFieldsProps, "layout">): React.ReactElement {
-  const form = useFormContext<PolicyFormValues>()
+  const form = useFormContext<Forms.Policies.BaseValues>()
 
   const requireHeartbeat = useWatch({
     control: form.control,
@@ -251,7 +251,7 @@ function DefaultLayout({
 function AdvancedLayout({
   className,
 }: Omit<LeaseBasedFieldsProps, "layout">): React.ReactElement {
-  const form = useFormContext<PolicyFormValues>()
+  const form = useFormContext<Forms.Policies.BaseValues>()
 
   return (
     <SectionCard

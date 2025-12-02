@@ -1,6 +1,5 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
@@ -29,38 +28,22 @@ import {
 
 import { Info } from "lucide-react"
 
+import * as Forms from "@/forms"
 import { KnownPlatforms, Permissions } from "@/types/products"
 
 import { useMobile } from "@/hooks/use-mobile"
-import SectionCard from "@/components/section-card"
+
 import * as Loading from "@/components/loading"
 import TagInput from "@/components/tag-input"
 import MultiSelect from "@/components/multi-select"
+import SectionCard from "@/components/section-card"
 import KeyValueInput from "@/components/key-value-input"
-
-export const attributesSchema = z.object({
-  name: z.string().trim().min(1, "Product name is required"),
-  permissions: z.array(z.string()).default([]),
-  code: z.string().optional(),
-  url: z
-    .string()
-    .trim()
-    .optional()
-    .transform((v) => (v === "" ? undefined : v))
-    .refine((v) => !v || z.string().url().safeParse(v).success, {
-      message: "Must be a valid URL",
-    }),
-  platforms: z.array(z.string()).default([]),
-  metadata: z.record(z.string()).default({}),
-})
-
-export type AttributesFormValues = z.infer<typeof attributesSchema>
 import DocumentationLink from "@/components/documentation-link"
 
 interface AttributesFormProps {
   loading?: boolean
   error?: string | null
-  onSubmit: (values: AttributesFormValues) => void
+  onSubmit: (values: Forms.Products.AttributesValues) => void
   onCancel: () => void
 }
 
@@ -72,8 +55,8 @@ export default function AttributesForm({
 }: AttributesFormProps) {
   const isMobile = useMobile()
 
-  const form = useForm<AttributesFormValues>({
-    resolver: zodResolver(attributesSchema),
+  const form = useForm<Forms.Products.AttributesValues>({
+    resolver: zodResolver(Forms.Products.AttributesSchema),
     mode: "onChange",
     defaultValues: {
       name: "",
@@ -86,7 +69,7 @@ export default function AttributesForm({
   })
 
   const handleSubmit = useCallback(
-    (values: AttributesFormValues) => {
+    (values: Forms.Products.AttributesValues) => {
       onSubmit(values)
     },
     [onSubmit],
@@ -315,7 +298,7 @@ export default function AttributesForm({
                           </span>
                         </div>
                         <FormControl>
-                          <KeyValueInput<AttributesFormValues>
+                          <KeyValueInput<Forms.Products.AttributesValues>
                             name="metadata"
                             disabled={loading}
                           />

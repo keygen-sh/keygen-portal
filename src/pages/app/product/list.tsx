@@ -12,9 +12,10 @@ import { useListProducts } from "@/queries/products"
 
 import * as keygen from "@/keygen"
 import * as Products from "@/components/products"
+import * as Skeletons from "@/components/skeletons"
 import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
-import SkeletonTable from "@/components/skeleton-table"
+import ClipboardButton from "@/components/clipboard-button"
 
 export default function ProductsList() {
   const { data: products = [], isLoading } = useListProducts()
@@ -52,7 +53,7 @@ export default function ProductsList() {
       </PageHeader>
 
       {isLoading ? (
-        <SkeletonTable />
+        <Skeletons.Table />
       ) : (
         <DataTable<Product>
           data={products}

@@ -5,7 +5,7 @@ import { useListEnvironments } from "@/queries/environments"
 import { useEnvironmentTableColumns } from "@/hooks/use-environment-table-columns"
 
 import DataTable from "@/components/data-table"
-import SkeletonTable from "@/components/skeleton-table"
+import * as Skeletons from "@/components/skeletons"
 
 interface EnvironmentsListProps {
   onViewDetails: (environment: Environment) => void
@@ -28,7 +28,7 @@ export default function EnvironmentsList({
           includePagination={false}
         />
       ) : isLoading ? (
-        <SkeletonTable />
+        <Skeletons.Table />
       ) : (
         <p className="my-8 text-center text-sm text-content-subdued">
           Looks empty. Create an environment to get started.

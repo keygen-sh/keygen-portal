@@ -11,10 +11,11 @@ import { Entitlement } from "@/types/entitlements"
 import { useListEntitlements } from "@/queries/entitlements"
 
 import * as keygen from "@/keygen"
+import * as Skeletons from "@/components/skeletons"
 import * as Entitlements from "@/components/entitlements"
 import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
-import SkeletonTable from "@/components/skeleton-table"
+import ClipboardButton from "@/components/clipboard-button"
 
 export default function EntitlementsList() {
   const { data: entitlements = [], isLoading: entitlementsLoading } =
@@ -54,7 +55,7 @@ export default function EntitlementsList() {
       </PageHeader>
 
       {entitlementsLoading ? (
-        <SkeletonTable />
+        <Skeletons.Table />
       ) : (
         <DataTable<Entitlement>
           data={entitlements}

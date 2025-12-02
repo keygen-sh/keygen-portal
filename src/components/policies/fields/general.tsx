@@ -19,8 +19,8 @@ import { cn } from "@/lib/utils"
 
 import { useListProducts } from "@/queries/products"
 
+import * as Forms from "@/forms"
 import {
-  PolicyFormValues,
   PolicyAttributeDescriptions,
   PolicyOptionLabels,
   AuthenticationStrategy,
@@ -70,7 +70,7 @@ function DefaultLayout({
   includeAuthStrategy = true,
   className,
 }: Omit<GeneralFieldsProps, "layout">): React.ReactElement {
-  const form = useFormContext<PolicyFormValues>()
+  const form = useFormContext<Forms.Policies.BaseValues>()
 
   const { data: products = [], isLoading: productsLoading } = useListProducts()
 
@@ -169,7 +169,7 @@ function DefaultLayout({
             <FormItem>
               <Field.Header label="Metadata" variant="stacking">
                 <FormControl>
-                  <KeyValueInput<PolicyFormValues> name="metadata" />
+                  <KeyValueInput<Forms.Policies.BaseValues> name="metadata" />
                 </FormControl>
               </Field.Header>
               <FormMessage />
@@ -186,7 +186,7 @@ function AdvancedLayout({
   includeAuthStrategy = true,
   className,
 }: Omit<GeneralFieldsProps, "layout" | "title">): React.ReactElement {
-  const form = useFormContext<PolicyFormValues>()
+  const form = useFormContext<Forms.Policies.BaseValues>()
 
   const { data: products = [], isLoading: productsLoading } = useListProducts()
 
@@ -287,7 +287,7 @@ function AdvancedLayout({
                 <FormItem>
                   <Field.Header label="Metadata" variant="stacking">
                     <FormControl>
-                      <KeyValueInput<PolicyFormValues> name="metadata" />
+                      <KeyValueInput<Forms.Policies.BaseValues> name="metadata" />
                     </FormControl>
                   </Field.Header>
                   <FormMessage />

@@ -12,19 +12,16 @@ import { toast } from "@/lib/toast"
 import { useCreateEntitlement } from "@/queries/entitlements"
 import { settleMutations } from "@/queries/utils"
 
-import { Policy, PolicyFormValues } from "@/types/policies"
+import * as Forms from "@/forms"
+import { Policy } from "@/types/policies"
 import { Entitlement, EntitlementErrorCode } from "@/types/entitlements"
 
 import * as Policies from "@/components/policies"
 import DocumentationLink from "@/components/documentation-link"
-import {
-  BaseSchema,
-  getFormValuesFromPolicy,
-} from "@/components/policies/schema"
 
 interface EditFormProps {
   policy: Policy
-  onUpdate: (values: PolicyFormValues) => Promise<void> | void
+  onUpdate: (values: Forms.Policies.BaseValues) => Promise<void> | void
   onCancel: () => void
 }
 
@@ -33,16 +30,16 @@ export default function EditForm({
   onUpdate,
   onCancel,
 }: EditFormProps) {
-  const form = useForm<PolicyFormValues>({
-    resolver: zodResolver(BaseSchema),
+  const form = useForm<Forms.Policies.BaseValues>({
+    resolver: zodResolver(Forms.Policies.BaseSchema),
     mode: "onChange",
-    defaultValues: getFormValuesFromPolicy(policy),
+    defaultValues: Forms.Policies.getFormValuesFromPolicy(policy),
   })
 
   const createEntitlement = useCreateEntitlement()
 
   const update = useCallback(
-    async (payload: PolicyFormValues) => {
+    async (payload: Forms.Policies.BaseValues) => {
       const attachIds = payload.entitlements?.attach ?? []
       const toCreate = payload.entitlements?.create ?? []
 

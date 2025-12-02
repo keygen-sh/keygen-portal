@@ -28,8 +28,8 @@ import { cn } from "@/lib/utils"
 import { useListProducts } from "@/queries/products"
 import { useListEntitlements } from "@/queries/entitlements"
 
+import * as Forms from "@/forms"
 import {
-  PolicyFormValues,
   PolicyAttributeDescriptions,
   PolicyOptionLabels,
   AuthenticationStrategy,
@@ -63,7 +63,7 @@ interface AllFieldsProps {
 export default function AllFields({
   className,
 }: AllFieldsProps): React.ReactElement {
-  const form = useFormContext<PolicyFormValues>()
+  const form = useFormContext<Forms.Policies.BaseValues>()
 
   const { data: products = [], isLoading: productsLoading } = useListProducts()
   const { data: entitlements = [], isLoading: entitlementsLoading } =
@@ -1281,7 +1281,7 @@ export default function AllFields({
               <FormItem>
                 <Field.Header label="Metadata" variant="stacking">
                   <FormControl>
-                    <KeyValueInput<PolicyFormValues> name="metadata" />
+                    <KeyValueInput<Forms.Policies.BaseValues> name="metadata" />
                   </FormControl>
                 </Field.Header>
                 <FormMessage />

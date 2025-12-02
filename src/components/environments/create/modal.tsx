@@ -16,13 +16,13 @@ import {
 
 import { Globe, GlobeLock } from "lucide-react"
 
+import * as Forms from "@/forms"
 import {
   Environment,
   EnvironmentMode,
   IsolationStrategy,
   EnvironmentErrorCode,
 } from "@/types/environments"
-import type { AttributesFormValues } from "./attributes-form"
 
 import { useCreateEnvironment } from "@/queries/environments"
 import { useSlide } from "@/hooks/use-slide"
@@ -53,7 +53,7 @@ export default function EnvironmentsCreateModal({
   const [formError, setFormError] = useState<string | null>(null)
 
   const handleCreateEnvironment = useCallback(
-    (values: AttributesFormValues) => {
+    (values: Forms.Environments.CreatePayload) => {
       if (!values.name || !values.code) {
         toast({
           message: "Failed to create environment",
@@ -66,7 +66,7 @@ export default function EnvironmentsCreateModal({
       const payload = {
         name: values.name,
         code: values.code,
-        isolationStrategy,
+        isolationStrategy: values.isolationStrategy,
       }
 
       createEnvironment.mutate(payload, {
@@ -88,7 +88,7 @@ export default function EnvironmentsCreateModal({
         },
       })
     },
-    [isolationStrategy, createEnvironment, onSelectEnvironment, onChangeMode],
+    [createEnvironment, onSelectEnvironment, onChangeMode],
   )
 
   const handleCancelCreate = useCallback(() => {
@@ -159,6 +159,7 @@ export default function EnvironmentsCreateModal({
         ) : (
           <AttributesForm
             key="environment-attributes"
+            isolationStrategy={isolationStrategy}
             loading={createEnvironment.isPending}
             error={formError}
             onSubmit={handleCreateEnvironment}

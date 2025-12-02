@@ -13,8 +13,8 @@ import {
 
 import { cn } from "@/lib/utils"
 
+import * as Forms from "@/forms"
 import {
-  PolicyFormValues,
   PolicyAttributeDescriptions,
   PolicyOptionLabels,
   ExpirationBasis,
@@ -52,7 +52,7 @@ function DefaultLayout({
   title,
   className,
 }: Omit<TimedFieldsProps, "layout">): React.ReactElement {
-  const form = useFormContext<PolicyFormValues>()
+  const form = useFormContext<Forms.Policies.BaseValues>()
 
   const duration = useWatch({ control: form.control, name: "duration" })
 
@@ -223,11 +223,11 @@ function DefaultLayout({
 function AdvancedLayout({
   className,
 }: Omit<TimedFieldsProps, "layout">): React.ReactElement {
-  const form = useFormContext<PolicyFormValues>()
+  const form = useFormContext<Forms.Policies.BaseValues>()
 
   const [showAdvanced, setShowAdvanced] = useState(false)
 
-  const advancedFields: (keyof PolicyFormValues)[] = [
+  const advancedFields: (keyof Forms.Policies.BaseValues)[] = [
     "expirationStrategy",
     "expirationBasis",
     "renewalBasis",

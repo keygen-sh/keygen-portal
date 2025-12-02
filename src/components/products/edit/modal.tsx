@@ -1,7 +1,7 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 
+import * as Forms from "@/forms"
 import { Product } from "@/types/products"
-import type { EditFormValues } from "./edit-form"
 
 import { useUpdateProduct } from "@/queries/products"
 
@@ -21,7 +21,7 @@ export default function ProductsEditModal({
 }: ProductsEditModalProps) {
   const updateProduct = useUpdateProduct(product?.id ?? "")
 
-  const handleUpdateProduct = (values: EditFormValues) => {
+  const handleUpdateProduct = (values: Forms.Products.UpdatePayload) => {
     if (!product) return
     updateProduct.mutate(values, {
       onSuccess: () => {

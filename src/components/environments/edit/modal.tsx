@@ -14,13 +14,13 @@ import {
 
 import { Globe, GlobeLock } from "lucide-react"
 
+import * as Forms from "@/forms"
 import {
   Environment,
   EnvironmentMode,
   IsolationStrategy,
   EnvironmentErrorCode,
 } from "@/types/environments"
-import type { EditEnvironmentFormValues } from "./edit-form"
 
 import { useUpdateEnvironment } from "@/queries/environments"
 
@@ -42,7 +42,7 @@ export default function EnvironmentsEditModal({
   const [formError, setFormError] = useState<string | null>(null)
 
   const handleUpdateEnvironment = useCallback(
-    (values: EditEnvironmentFormValues) => {
+    (values: Forms.Environments.UpdatePayload) => {
       setFormError(null)
 
       updateEnvironment.mutate(values, {

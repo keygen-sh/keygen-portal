@@ -1,11 +1,9 @@
 import { z } from "zod"
 
+import { Writable, OptionalExcept } from "@/types/api"
 import {
   Policy,
-  PolicyFormValues,
-  TimingTemplates,
-  AccessTemplates,
-  MeteredTemplates,
+  PolicyAttributes,
   CheckInInterval,
   AuthenticationStrategy,
   ExpirationStrategy,
@@ -23,6 +21,19 @@ import {
   HeartbeatCullStrategy,
   HeartbeatResurrectionStrategy,
 } from "@/types/policies"
+
+export type BaseValues = Writable<OptionalExcept<PolicyAttributes, "name">> & {
+  product: {
+    id: string
+  }
+  entitlements?: {
+    attach?: string[]
+    create?: { name: string; code: string; metadata?: Record<string, string> }[]
+  }
+}
+
+export type CreatePayload = BaseValues
+export type UpdatePayload = Partial<BaseValues>
 
 export const BaseShape = z.object({
   name: z.string().trim().min(1, "Policy name is required"),
@@ -165,11 +176,11 @@ export const BaseShape = z.object({
 })
 
 export const BaseRules = (
-  schema: z.ZodType<PolicyFormValues>,
-): z.ZodType<PolicyFormValues> =>
+  schema: z.ZodType<BaseValues>,
+): z.ZodType<BaseValues> =>
   schema
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         values.duration == null || values.expirationStrategy != null,
       {
         path: ["expirationStrategy"],
@@ -177,7 +188,7 @@ export const BaseRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         values.duration == null || values.expirationBasis != null,
       {
         path: ["expirationBasis"],
@@ -185,7 +196,7 @@ export const BaseRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         values.duration == null || values.renewalBasis != null,
       {
         path: ["renewalBasis"],
@@ -193,7 +204,7 @@ export const BaseRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         values.duration == null || values.transferStrategy != null,
       {
         path: ["transferStrategy"],
@@ -201,7 +212,7 @@ export const BaseRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         !(
           values.requireFingerprintScope ||
           (values.maxMachines != null && values.maxMachines > 0)
@@ -212,7 +223,7 @@ export const BaseRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         !(
           values.requireFingerprintScope ||
           (values.maxMachines != null && values.maxMachines > 0)
@@ -223,7 +234,7 @@ export const BaseRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         !(
           values.requireFingerprintScope ||
           (values.maxMachines != null && values.maxMachines > 0)
@@ -234,7 +245,7 @@ export const BaseRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         !(
           values.requireFingerprintScope ||
           (values.maxMachines != null && values.maxMachines > 0)
@@ -245,7 +256,7 @@ export const BaseRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         !(
           values.requireFingerprintScope ||
           (values.maxMachines != null && values.maxMachines > 0)
@@ -256,7 +267,7 @@ export const BaseRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         !values.requireHeartbeat ||
         (values.heartbeatDuration != null && values.heartbeatDuration >= 60),
       {
@@ -265,7 +276,7 @@ export const BaseRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         !values.requireHeartbeat || values.heartbeatBasis != null,
       {
         path: ["heartbeatBasis"],
@@ -273,7 +284,7 @@ export const BaseRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         !values.requireHeartbeat || values.heartbeatCullStrategy != null,
       {
         path: ["heartbeatCullStrategy"],
@@ -281,7 +292,7 @@ export const BaseRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         !values.requireHeartbeat ||
         values.heartbeatResurrectionStrategy != null,
       {
@@ -290,7 +301,7 @@ export const BaseRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         values.checkInInterval == null ||
         (values.checkInIntervalCount != null &&
           values.checkInIntervalCount >= 1 &&
@@ -301,7 +312,7 @@ export const BaseRules = (
       },
     )
 
-export const BaseSchema: z.ZodType<PolicyFormValues> = BaseRules(BaseShape)
+export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
 
 export const TimedShape = z.object({
   duration: z.coerce.number().int().positive().nullish().default(1209600),
@@ -316,30 +327,29 @@ export const TimedShape = z.object({
 })
 
 export const TimedRules = (
-  schema: z.ZodType<PolicyFormValues>,
-): z.ZodType<PolicyFormValues> =>
+  schema: z.ZodType<BaseValues>,
+): z.ZodType<BaseValues> =>
   schema
     .refine(
-      (values: PolicyFormValues) =>
-        values.duration != null && values.duration > 0,
+      (values: BaseValues) => values.duration != null && values.duration > 0,
       {
         path: ["duration"],
         message: "Cannot be unlimited for Timed policies",
       },
     )
-    .refine((values: PolicyFormValues) => values.expirationStrategy != null, {
+    .refine((values: BaseValues) => values.expirationStrategy != null, {
       path: ["expirationStrategy"],
       message: "Required for Timed policies",
     })
-    .refine((values: PolicyFormValues) => values.expirationBasis != null, {
+    .refine((values: BaseValues) => values.expirationBasis != null, {
       path: ["expirationBasis"],
       message: "Required for Timed policies",
     })
-    .refine((values: PolicyFormValues) => values.renewalBasis != null, {
+    .refine((values: BaseValues) => values.renewalBasis != null, {
       path: ["renewalBasis"],
       message: "Required for Timed policies",
     })
-    .refine((values: PolicyFormValues) => values.transferStrategy != null, {
+    .refine((values: BaseValues) => values.transferStrategy != null, {
       path: ["transferStrategy"],
       message: "Required for Timed policies",
     })
@@ -349,9 +359,9 @@ export const PerpetualShape = z.object({
 })
 
 export const PerpetualRules = (
-  schema: z.ZodType<PolicyFormValues>,
-): z.ZodType<PolicyFormValues> =>
-  schema.refine((values: PolicyFormValues) => values.duration == null, {
+  schema: z.ZodType<BaseValues>,
+): z.ZodType<BaseValues> =>
+  schema.refine((values: BaseValues) => values.duration == null, {
     path: ["duration"],
     message: "Must be null for Perpetual policies",
   })
@@ -370,11 +380,11 @@ export const NodeLockedShape = z.object({
 })
 
 export const NodeLockedRules = (
-  schema: z.ZodType<PolicyFormValues>,
-): z.ZodType<PolicyFormValues> =>
+  schema: z.ZodType<BaseValues>,
+): z.ZodType<BaseValues> =>
   schema
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         values.maxMachines == null ||
         values.floating ||
         values.maxMachines === 1,
@@ -384,7 +394,7 @@ export const NodeLockedRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         !values.floating ||
         values.maxMachines == null ||
         values.maxMachines > 0,
@@ -394,7 +404,7 @@ export const NodeLockedRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         !(
           values.requireFingerprintScope ||
           (values.maxMachines != null && values.maxMachines > 0)
@@ -405,7 +415,7 @@ export const NodeLockedRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         !(
           values.requireFingerprintScope ||
           (values.maxMachines != null && values.maxMachines > 0)
@@ -416,7 +426,7 @@ export const NodeLockedRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         !(
           values.requireFingerprintScope ||
           (values.maxMachines != null && values.maxMachines > 0)
@@ -427,7 +437,7 @@ export const NodeLockedRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         !(
           values.requireFingerprintScope ||
           (values.maxMachines != null && values.maxMachines > 0)
@@ -438,7 +448,7 @@ export const NodeLockedRules = (
       },
     )
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         !(
           values.requireFingerprintScope ||
           (values.maxMachines != null && values.maxMachines > 0)
@@ -465,23 +475,17 @@ export const ProcessBasedShape = z.object({
 })
 
 export const ProcessBasedRules = (
-  schema: z.ZodType<PolicyFormValues>,
-): z.ZodType<PolicyFormValues> =>
+  schema: z.ZodType<BaseValues>,
+): z.ZodType<BaseValues> =>
   schema
-    .refine(
-      (values: PolicyFormValues) => values.machineLeasingStrategy != null,
-      {
-        path: ["machineLeasingStrategy"],
-        message: "Required for Process-based policies",
-      },
-    )
-    .refine(
-      (values: PolicyFormValues) => values.processLeasingStrategy != null,
-      {
-        path: ["processLeasingStrategy"],
-        message: "Required for Process-based policies",
-      },
-    )
+    .refine((values: BaseValues) => values.machineLeasingStrategy != null, {
+      path: ["machineLeasingStrategy"],
+      message: "Required for Process-based policies",
+    })
+    .refine((values: BaseValues) => values.processLeasingStrategy != null, {
+      path: ["processLeasingStrategy"],
+      message: "Required for Process-based policies",
+    })
 
 export const LeaseBasedShape = z.object({
   requireHeartbeat: z.boolean().default(true),
@@ -503,35 +507,31 @@ export const LeaseBasedShape = z.object({
 })
 
 export const LeaseBasedRules = (
-  schema: z.ZodType<PolicyFormValues>,
-): z.ZodType<PolicyFormValues> =>
+  schema: z.ZodType<BaseValues>,
+): z.ZodType<BaseValues> =>
   schema
-    .refine((values: PolicyFormValues) => values.requireHeartbeat === true, {
+    .refine((values: BaseValues) => values.requireHeartbeat === true, {
       path: ["requireHeartbeat"],
       message: "Required for Lease‑based policies",
     })
     .refine(
-      (values: PolicyFormValues) =>
+      (values: BaseValues) =>
         values.heartbeatDuration != null && values.heartbeatDuration >= 60,
       {
         path: ["heartbeatDuration"],
         message: "Must be at least 60 seconds",
       },
     )
-    .refine((values: PolicyFormValues) => values.heartbeatBasis != null, {
+    .refine((values: BaseValues) => values.heartbeatBasis != null, {
       path: ["heartbeatBasis"],
       message: "Required for Lease‑based policies",
     })
+    .refine((values: BaseValues) => values.heartbeatCullStrategy != null, {
+      path: ["heartbeatCullStrategy"],
+      message: "Required for Lease‑based policies",
+    })
     .refine(
-      (values: PolicyFormValues) => values.heartbeatCullStrategy != null,
-      {
-        path: ["heartbeatCullStrategy"],
-        message: "Required for Lease‑based policies",
-      },
-    )
-    .refine(
-      (values: PolicyFormValues) =>
-        values.heartbeatResurrectionStrategy != null,
+      (values: BaseValues) => values.heartbeatResurrectionStrategy != null,
       {
         path: ["heartbeatResurrectionStrategy"],
         message: "Required for Lease‑based policies",
@@ -545,12 +545,36 @@ export const OfflineShape = z.object({
     .default(AuthenticationStrategy.License),
 })
 
+export enum TimingTemplates {
+  PERPETUAL = "PERPETUAL",
+  TIMED = "TIMED",
+  PERPETUAL_FALLBACK = "PERPETUAL_FALLBACK",
+}
+export enum AccessTemplates {
+  NODE_LOCKED = "NODE_LOCKED",
+  USER_LOCKED = "USER_LOCKED",
+}
+export enum MeteredTemplates {
+  PROCESS_BASED = "PROCESS_BASED",
+  LEASE_BASED = "LEASE_BASED",
+  FEATURE_BASED = "FEATURE_BASED",
+  USAGE_BASED = "USAGE_BASED",
+}
+
+export type PolicyTemplateSelection = {
+  timing: TimingTemplates | null
+  access: AccessTemplates[]
+  metered: MeteredTemplates[]
+  advanced?: boolean
+  offline?: boolean
+}
+
 export function composePolicySchema(selection: {
   timing?: TimingTemplates | null
   access?: AccessTemplates[]
   metered?: MeteredTemplates[]
   offline?: boolean
-}): z.ZodType<PolicyFormValues> {
+}): z.ZodType<BaseValues> {
   const access = selection.access ?? []
   const metered = selection.metered ?? []
   const requiresNodeLocked =
@@ -576,9 +600,8 @@ export function composePolicySchema(selection: {
     shape = shape.merge(LeaseBasedShape)
   if (selection.offline) shape = shape.merge(OfflineShape)
 
-  let schema: z.ZodType<PolicyFormValues> =
-    shape as unknown as z.ZodType<PolicyFormValues>
-  if (selection.timing === TimingTemplates.Timed) {
+  let schema: z.ZodType<BaseValues> = shape as unknown as z.ZodType<BaseValues>
+  if (selection.timing === TimingTemplates.TIMED) {
     schema = TimedRules(schema)
   }
   if (selection.timing === TimingTemplates.Perpetual) {
@@ -600,18 +623,16 @@ export function composePolicySchema(selection: {
   return schema
 }
 
-export function getSchemaDefaults<S extends z.ZodTypeAny>(
-  schema: S,
-): z.infer<S> {
+export function getSchemaDefaults(schema: z.ZodType<BaseValues>): BaseValues {
   const parsed = schema.parse({ name: "temp", product: { id: "temp" } })
 
   parsed.name = ""
   parsed.product.id = ""
 
-  return parsed as z.infer<S>
+  return parsed
 }
 
-export function getFormValuesFromPolicy(policy: Policy): PolicyFormValues {
+export function getFormValuesFromPolicy(policy: Policy): BaseValues {
   return {
     name: policy.attributes.name,
     product: { id: policy.relationships.product?.data?.id ?? "" },

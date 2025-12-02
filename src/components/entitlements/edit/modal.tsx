@@ -8,8 +8,8 @@ import {
 
 import { toast } from "@/lib/toast"
 
+import * as Forms from "@/forms"
 import { Entitlement } from "@/types/entitlements"
-import type { EditFormValues } from "./edit-form"
 
 import { useUpdateEntitlement } from "@/queries/entitlements"
 
@@ -28,7 +28,9 @@ export default function EntitlementsEditModal({
 }: EntitlementsEditModalProps) {
   const updateEntitlement = useUpdateEntitlement(entitlement?.id ?? "")
 
-  const handleUpdateEntitlement = (values: EditFormValues) => {
+  const handleUpdateEntitlement = (
+    values: Forms.Entitlements.UpdatePayload,
+  ) => {
     if (!entitlement) return
     updateEntitlement.mutate(values, {
       onSuccess: () => {

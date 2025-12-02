@@ -7,7 +7,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 
-import { AttributesFormValues } from "./attributes-form"
+import * as Forms from "@/forms"
 import { Entitlement, EntitlementErrorCode } from "@/types/entitlements"
 
 import { useCreateEntitlement } from "@/queries/entitlements"
@@ -30,7 +30,7 @@ export default function EntitlementsCreateModal({
   const [formError, setFormError] = useState<string | null>(null)
 
   const handleCreateEntitlement = useCallback(
-    (values: AttributesFormValues) => {
+    (values: Forms.Entitlements.CreatePayload) => {
       if (!values.name) {
         toast({
           message: "Failed to create entitlement",

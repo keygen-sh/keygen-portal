@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react"
+import { useCallback } from "react"
 import { useParams } from "@tanstack/react-router"
 
 import {
@@ -13,7 +13,8 @@ import { toast } from "@/lib/toast"
 
 // import { useUpdatePolicy } from "@/queries/policies"
 
-import { MockPolicies, Policy, PolicyFormValues } from "@/types/policies"
+import * as Forms from "@/forms"
+import { MockPolicies, Policy } from "@/types/policies"
 
 import EditForm from "./edit-form"
 
@@ -31,14 +32,14 @@ export default function PoliciesEditModal({
   const { policyId } = useParams({ from: "/$id/app/policies/$policyId" })
   // const { data: policy, isLoading: policyLoading, isFetching: policyFetching, isError: policyError } = useGetPolicy(policyId)
   const policy = MockPolicies.find((p) => p.id === policyId)
-  const [policyLoading, _setPolicyLoading] = useState(false)
-  const [policyFetching, _setPolicyFetching] = useState(false)
+  const policyLoading = false
+  const policyFetching = false
   const policyError = false
 
   // const updatePolicy = useUpdatePolicy(policy?.id ?? "")
 
   const handleUpdatePolicy = useCallback(
-    async (payload: PolicyFormValues) => {
+    (payload: Forms.Policies.UpdatePayload) => {
       if (!policy) return
 
       const entitlementIds = payload.entitlements?.attach ?? []

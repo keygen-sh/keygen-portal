@@ -10,7 +10,8 @@ import {
 
 import { cn } from "@/lib/utils"
 
-import { PolicyFormValues, PolicyAttributeDescriptions } from "@/types/policies"
+import * as Forms from "@/forms"
+import { PolicyAttributeDescriptions } from "@/types/policies"
 
 import * as Field from "@/components/field"
 import SectionCard from "@/components/section-card"
@@ -39,7 +40,7 @@ function DefaultLayout({
   title,
   className,
 }: Omit<UsageBasedFieldsProps, "layout">): React.ReactElement {
-  const form = useFormContext<PolicyFormValues>()
+  const form = useFormContext<Forms.Policies.BaseValues>()
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
@@ -75,7 +76,7 @@ function DefaultLayout({
 function AdvancedLayout({
   className,
 }: Omit<UsageBasedFieldsProps, "layout">): React.ReactElement {
-  const form = useFormContext<PolicyFormValues>()
+  const form = useFormContext<Forms.Policies.BaseValues>()
 
   return (
     <SectionCard

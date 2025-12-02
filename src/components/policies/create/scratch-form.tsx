@@ -6,9 +6,7 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Form } from "@/components/ui/form"
 
-import { PolicyFormValues } from "@/types/policies"
-import { CreateEntitlementValidationError } from "@/types/entitlements"
-import { BaseSchema, getSchemaDefaults } from "@/components/policies/schema"
+import * as Forms from "@/forms"
 
 import { useSlide } from "@/hooks/use-slide"
 import { useMobile } from "@/hooks/use-mobile"
@@ -20,13 +18,13 @@ import StepProgress from "@/components/step-progress"
 type Step = {
   key: string
   title: string
-  fields?: FieldPath<PolicyFormValues>[]
+  fields?: FieldPath<Forms.Policies.BaseValues>[]
   render: () => React.ReactElement
 }
 
 interface PoliciesScratchFormProps {
   onClose: () => void
-  onCreate: (payload: PolicyFormValues) => void
+  onCreate: (payload: Forms.Policies.BaseValues) => Promise<void>
 }
 
 export default function PoliciesScratchForm({
@@ -35,12 +33,12 @@ export default function PoliciesScratchForm({
 }: PoliciesScratchFormProps): React.ReactElement {
   const isMobile = useMobile()
 
-  const schema = BaseSchema
+  const schema = Forms.Policies.BaseSchema
 
-  const form = useForm<PolicyFormValues>({
+  const form = useForm<Forms.Policies.BaseValues>({
     resolver: zodResolver(schema),
     mode: "onChange",
-    defaultValues: getSchemaDefaults(BaseSchema),
+    defaultValues: Forms.Policies.getSchemaDefaults(schema),
   })
 
   const steps: Step[] = useMemo(
@@ -162,7 +160,7 @@ export default function PoliciesScratchForm({
       try {
         await onCreate(payload)
       } catch (error: unknown) {
-        if (error instanceof CreateEntitlementValidationError) {
+        if (error instanceof Forms.Entitlements.CreateValidationError) {
           const { nextAttach, nextCreate, fieldErrors } = error
 
           if (nextAttach) {

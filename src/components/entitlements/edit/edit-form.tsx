@@ -1,6 +1,5 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
@@ -16,6 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
+import * as Forms from "@/forms"
 import { Entitlement } from "@/types/entitlements"
 
 import * as Field from "@/components/field"
@@ -24,18 +24,10 @@ import SectionCard from "@/components/section-card"
 import KeyValueInput from "@/components/key-value-input"
 import DocumentationLink from "@/components/documentation-link"
 
-export const editSchema = z.object({
-  name: z.string().trim().min(1, "Entitlement name is required"),
-  code: z.string().trim().min(1, "Entitlement code is required"),
-  metadata: z.record(z.string()).default({}),
-})
-
-export type EditFormValues = z.infer<typeof editSchema>
-
 interface EditFormProps {
   entitlement: Entitlement | null
   loading?: boolean
-  onSubmit: (values: EditFormValues) => void
+  onSubmit: (values: Forms.Entitlements.BaseValues) => void
   onCancel: () => void
 }
 
@@ -45,8 +37,8 @@ export default function EditForm({
   onSubmit,
   onCancel,
 }: EditFormProps) {
-  const form = useForm<EditFormValues>({
-    resolver: zodResolver(editSchema),
+  const form = useForm<Forms.Entitlements.BaseValues>({
+    resolver: zodResolver(Forms.Entitlements.BaseSchema),
     mode: "onBlur",
     reValidateMode: "onChange",
     defaultValues: {
@@ -57,7 +49,7 @@ export default function EditForm({
   })
 
   const handleSubmit = useCallback(
-    (values: EditFormValues) => {
+    (values: Forms.Entitlements.BaseValues) => {
       onSubmit(values)
     },
     [onSubmit],
@@ -140,7 +132,7 @@ export default function EditForm({
 								  supplemental entitlement data, etc."
                         >
                           <FormControl>
-                            <KeyValueInput<EditFormValues> name="metadata" />
+                            <KeyValueInput<Forms.Entitlements.BaseValues> name="metadata" />
                           </FormControl>
                         </Field.Header>
                         <FormMessage />

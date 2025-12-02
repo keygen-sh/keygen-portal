@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/dialog"
 import { toast } from "@/lib/toast"
 
-import { MockPolicies, Policy, PolicyFormValues } from "@/types/policies"
+import * as Forms from "@/forms"
+import { MockPolicies, Policy } from "@/types/policies"
 import DuplicateForm from "./duplicate-form"
 import * as Loading from "@/components/loading"
 import * as keygen from "@/keygen"
@@ -31,7 +32,7 @@ export default function PoliciesDuplicateModal({
 
   const navigate = useNavigate()
 
-  const handleCreatePolicy = (payload: PolicyFormValues) => {
+  const handleCreatePolicy = async (payload: Forms.Policies.CreatePayload) => {
     if (!policy) return
 
     const entitlementIds = payload.entitlements?.attach ?? []

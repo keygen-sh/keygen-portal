@@ -1,6 +1,5 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
@@ -28,24 +27,19 @@ import {
   PopoverContent,
 } from "@/components/ui/popover"
 
-import { useMobile } from "@/hooks/use-mobile"
-
 import { Info, TriangleAlert } from "lucide-react"
 
+import * as Forms from "@/forms"
 import { Environment } from "@/types/environments"
+
+import { useMobile } from "@/hooks/use-mobile"
+
 import * as Loading from "@/components/loading"
-
-const editEnvironmentSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  code: z.string().min(1, "Code is required"),
-})
-
-export type EditEnvironmentFormValues = z.infer<typeof editEnvironmentSchema>
 import DocumentationLink from "@/components/documentation-link"
 
 interface EnvironmentEditProps {
   environment: Environment
-  onSubmit: (values: EditEnvironmentFormValues) => void
+  onSubmit: (values: Forms.Environments.AttributesValues) => void
   onCancel: () => void
   loading: boolean
   error: string | null
@@ -60,8 +54,8 @@ export default function EnvironmentEditForm({
 }: EnvironmentEditProps) {
   const isMobile = useMobile()
 
-  const form = useForm<EditEnvironmentFormValues>({
-    resolver: zodResolver(editEnvironmentSchema),
+  const form = useForm<Forms.Environments.AttributesValues>({
+    resolver: zodResolver(Forms.Environments.AttributesSchema),
     defaultValues: {
       name: environment.attributes.name || "",
       code: environment.attributes.code || "",

@@ -1,6 +1,5 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
@@ -28,26 +27,25 @@ import {
 
 import { Info } from "lucide-react"
 
+import * as Forms from "@/forms"
+import { IsolationStrategy } from "@/types/environments"
+
 import { useMobile } from "@/hooks/use-mobile"
-import SectionCard from "@/components/section-card"
+
 import * as Loading from "@/components/loading"
-
-const attributesSchema = z.object({
-  name: z.string().min(1, "Environment name is required"),
-  code: z.string().min(1, "Environment code is required"),
-})
-
-export type AttributesFormValues = z.infer<typeof attributesSchema>
+import SectionCard from "@/components/section-card"
 import DocumentationLink from "@/components/documentation-link"
 
 interface AttributesFormProps {
+  isolationStrategy: IsolationStrategy
   loading?: boolean
   error?: string | null
-  onSubmit: (values: { name: string; code: string }) => void
+  onSubmit: (values: Forms.Environments.CreatePayload) => void
   onCancel: () => void
 }
 
 export default function AttributesForm({
+  isolationStrategy,
   loading,
   error,
   onSubmit,
@@ -55,8 +53,8 @@ export default function AttributesForm({
 }: AttributesFormProps) {
   const isMobile = useMobile()
 
-  const form = useForm<AttributesFormValues>({
-    resolver: zodResolver(attributesSchema),
+  const form = useForm<Forms.Environments.AttributesValues>({
+    resolver: zodResolver(Forms.Environments.AttributesSchema),
     mode: "onChange",
     defaultValues: {
       name: "",
@@ -65,10 +63,10 @@ export default function AttributesForm({
   })
 
   const handleSubmit = useCallback(
-    (values: AttributesFormValues) => {
-      onSubmit(values)
+    (values: Forms.Environments.AttributesValues) => {
+      onSubmit({ ...values, isolationStrategy })
     },
-    [onSubmit],
+    [onSubmit, isolationStrategy],
   )
 
   return (

@@ -15,8 +15,8 @@ import {
 
 import { cn } from "@/lib/utils"
 
+import * as Forms from "@/forms"
 import {
-  PolicyFormValues,
   PolicyAttributeDescriptions,
   PolicyOptionLabels,
   CheckInInterval,
@@ -67,7 +67,7 @@ function DefaultLayout({
   includeAuthStrategy = true,
   className,
 }: Omit<RequirementsFieldsProps, "layout">): React.ReactElement {
-  const form = useFormContext<PolicyFormValues>()
+  const form = useFormContext<Forms.Policies.BaseValues>()
 
   const checkInInterval = useWatch({
     control: form.control,
@@ -250,7 +250,7 @@ function DefaultLayout({
             <FormItem>
               <FormLabel>Metadata</FormLabel>
               <FormControl>
-                <KeyValueInput<PolicyFormValues> name="metadata" />
+                <KeyValueInput<Forms.Policies.BaseValues> name="metadata" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -266,7 +266,7 @@ function AdvancedLayout({
   includeAuthStrategy = true,
   className,
 }: Omit<RequirementsFieldsProps, "layout">): React.ReactElement {
-  const form = useFormContext<PolicyFormValues>()
+  const form = useFormContext<Forms.Policies.BaseValues>()
 
   const checkInInterval = useWatch({
     control: form.control,
@@ -459,7 +459,7 @@ function AdvancedLayout({
               <FormItem>
                 <FormLabel>Metadata</FormLabel>
                 <FormControl>
-                  <KeyValueInput<PolicyFormValues> name="metadata" />
+                  <KeyValueInput<Forms.Policies.BaseValues> name="metadata" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

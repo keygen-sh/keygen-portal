@@ -33,6 +33,7 @@ const strategySchema = z.object({
 })
 
 type StrategyValues = z.infer<typeof strategySchema>
+import DocumentationLink from "@/components/documentation-link"
 
 interface StrategyFormProps {
   isolationStrategy?: IsolationStrategy
@@ -133,19 +134,11 @@ export default function StrategyForm({
           </div>
         </ScrollArea>
 
-        <p className="hidden flex-wrap items-center gap-1 p-4 text-sm text-content-subdued md:flex">
-          For more information on isolation strategies and their effects, see{" "}
-          <Button asChild variant="link" size="link">
-            <a
-              href="https://keygen.sh/docs/api/environments/#notes-on-isolation"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Notes on Isolation
-            </a>
-          </Button>
-          .
-        </p>
+        <DocumentationLink
+          page="environments"
+          section="isolation-strategies"
+          linkText="Notes on Isolation"
+        />
 
         <DialogFooter className="flex flex-row gap-4 border-t border-accent p-4">
           <Button

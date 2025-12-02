@@ -55,6 +55,7 @@ export const attributesSchema = z.object({
 })
 
 export type AttributesFormValues = z.infer<typeof attributesSchema>
+import DocumentationLink from "@/components/documentation-link"
 
 interface AttributesFormProps {
   loading?: boolean
@@ -329,19 +330,7 @@ export default function AttributesForm({
           </div>
         </ScrollArea>
 
-        <p className="hidden flex-wrap items-center gap-1 !bg-transparent p-4 text-sm text-content-subdued md:flex">
-          To learn more about products, see the{" "}
-          <Button asChild variant="link" size="link">
-            <a
-              href="https://keygen.sh/docs/api/products/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              documentation
-            </a>
-          </Button>{" "}
-          for more information.
-        </p>
+        <DocumentationLink page="products" />
 
         <DialogFooter className="flex flex-row gap-4 border-t border-accent p-4">
           <Button

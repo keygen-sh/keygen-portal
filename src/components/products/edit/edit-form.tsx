@@ -61,6 +61,7 @@ import TagInput from "@/components/tag-input"
 import MultiSelect from "@/components/multi-select"
 import SectionCard from "@/components/section-card"
 import KeyValueInput from "@/components/key-value-input"
+import DocumentationLink from "@/components/documentation-link"
 import { BadgeGroup, BadgeGroupItem } from "@/components/badge-group"
 import { AttributesFormValues } from "../create/attributes-form"
 
@@ -450,19 +451,7 @@ export default function EditForm({
             </div>
           </ScrollArea>
 
-          <p className="hidden flex-wrap items-center gap-1 p-4 text-sm text-content-subdued md:flex">
-            To learn more about products, see the{" "}
-            <Button asChild variant="link" size="link">
-              <a
-                href="https://keygen.sh/docs/api/products/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                documentation
-              </a>
-            </Button>{" "}
-            for more information.
-          </p>
+          <DocumentationLink page="products" />
 
           <DialogFooter className="flex flex-row gap-4 border-t border-accent p-4">
             <Button

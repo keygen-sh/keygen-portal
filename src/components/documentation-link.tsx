@@ -16,25 +16,29 @@ type DocumentationPage =
 interface DocumentationLinkProps {
   page?: DocumentationPage
   section?: string
+  message?: string
+  linkText?: string
 }
 
 export default function DocumentationLink({
   page = "",
   section = "",
+  message = "",
+  linkText = "",
 }: DocumentationLinkProps): React.ReactElement {
   return (
     <p className="mx-6 my-4 hidden flex-wrap items-center gap-1 text-sm text-content-subdued md:flex">
-      To learn more about {page || "Keygen"}, see the{" "}
+      {message || `To learn more about ${page || "Keygen"}, see the `}
       <Button asChild variant="link" size="link">
         <a
           href={`https://keygen.sh/docs/api/${page && `${page}/`}${page && section && `#${section}/`}`}
           target="_blank"
           rel="noreferrer"
         >
-          documentation
+          {linkText || "documentation"}
         </a>
-      </Button>{" "}
-      for more information.
+      </Button>
+      {message ? "." : " for more information."}
     </p>
   )
 }

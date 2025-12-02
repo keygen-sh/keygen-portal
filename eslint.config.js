@@ -6,7 +6,7 @@ import tseslint from "typescript-eslint"
 import eslintConfigPrettier from "eslint-config-prettier/flat"
 
 export default tseslint.config(
-  { ignores: ["dist", "src/routeTree.gen.ts"] },
+  { ignores: ["dist", "src/routeTree.gen.ts", "src/components/ui/**"] },
   {
     extends: [
       js.configs.recommended,

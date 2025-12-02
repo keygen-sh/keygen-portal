@@ -1,9 +1,8 @@
-import { useMemo } from "react"
-
-import { createTableColumnHelper } from "@/lib/tables"
 import { Environment } from "@/types/environments"
 
 import { useListEnvironments } from "@/queries/environments"
+
+import { useEnvironmentTableColumns } from "@/hooks/use-environment-table-columns"
 
 import DataTable from "@/components/data-table"
 import SkeletonTable from "@/components/skeleton-table"
@@ -16,23 +15,7 @@ export default function EnvironmentsList({
   onViewDetails,
 }: EnvironmentsListProps) {
   const { data: environments = [], isLoading } = useListEnvironments()
-
-  const column = createTableColumnHelper<Environment>()
-  const columns = useMemo(
-    () => [
-      column.id({ header: "ID" }),
-      column.attr("name", {
-        header: "Name",
-      }),
-      column.attr("code", {
-        header: "Code",
-      }),
-      column.attr("isolationStrategy", {
-        header: "Isolation Strategy",
-      }),
-    ],
-    [],
-  )
+  const columns = useEnvironmentTableColumns()
 
   return (
     <>

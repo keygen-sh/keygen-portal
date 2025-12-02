@@ -11,9 +11,11 @@ import { Policy, MockPolicies } from "@/types/policies"
 
 import * as keygen from "@/keygen"
 import * as Policies from "@/components/policies"
+import * as Skeletons from "@/components/skeletons"
 import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
 import SkeletonTable from "@/components/skeleton-table"
+import ClipboardButton from "@/components/clipboard-button"
 
 export default function PoliciesList() {
   // const { data: policies = [], isLoading: policiesLoading } = useListPolicies()
@@ -58,8 +60,8 @@ export default function PoliciesList() {
         </Dialog>
       </PageHeader>
 
-      {policiesLoading ? (
-        <SkeletonTable />
+      {policiesLoading && productsLoading ? (
+        <Skeletons.Table />
       ) : (
         <DataTable<Policy>
           data={MockPolicies}

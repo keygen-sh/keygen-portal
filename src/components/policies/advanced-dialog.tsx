@@ -84,7 +84,6 @@ export default function AdvancedDialog({
             >
               <TabsSwitch
                 className="pt-8 pb-0"
-                active={tab}
                 options={[
                   {
                     value: "attributes",

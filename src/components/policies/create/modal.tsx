@@ -17,7 +17,7 @@ import { Form } from "@/components/ui/form"
 import {
   Clock,
   ClockFading,
-  Infinity,
+  Infinity as InfinityIcon,
   Hexagon,
   User,
   Cpu,
@@ -405,7 +405,7 @@ export default function PoliciesCreateModal({
                 <BadgeGroup prefix="Creating a" suffix="policy">
                   {selection.timing === TimingTemplates.Perpetual && (
                     <BadgeGroupItem>
-                      <Infinity />
+                      <InfinityIcon />
                       Perpetual
                     </BadgeGroupItem>
                   )}

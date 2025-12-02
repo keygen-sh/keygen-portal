@@ -64,24 +64,24 @@ export default function AttributeValue({
       break
     }
     case "enum":
-      value = isUnset ? emptyLabel : labelize(String(raw))
+      value = isUnset ? emptyLabel : labelize(JSON.stringify(raw))
       break
     case "code":
-      value = isUnset ? emptyLabel : String(raw)
+      value = isUnset ? emptyLabel : JSON.stringify(raw)
       break
     case "number":
-      value = isUnset ? emptyLabel : String(raw)
+      value = isUnset ? emptyLabel : JSON.stringify(raw)
       break
     case "string":
     default:
-      value = isUnset ? emptyLabel : labelize(String(raw))
+      value = isUnset ? emptyLabel : labelize(JSON.stringify(raw))
       break
   }
 
   const variant: "default" | "success" | "disabled" = forceDisabled
     ? "disabled"
     : type === "boolean"
-      ? Boolean(raw)
+      ? raw
         ? "success"
         : "disabled"
       : isUnset

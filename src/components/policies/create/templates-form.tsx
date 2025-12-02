@@ -30,7 +30,7 @@ import { CardSelector, CardOption } from "@/components/card-selector"
 import {
   Clock,
   ClockFading,
-  Infinity,
+  Infinity as InfinityIcon,
   Hexagon,
   User,
   Cpu,
@@ -88,7 +88,7 @@ export default function TemplatesForm({
     {
       value: TimingTemplates.Perpetual,
       label: "Perpetual",
-      icon: <Infinity className="size-6 text-content-subdued md:size-5" />,
+      icon: <InfinityIcon className="size-6 text-content-subdued md:size-5" />,
       tooltip: "TODO",
     },
     {

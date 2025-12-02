@@ -156,7 +156,10 @@ export default function PoliciesEditModal({
             ...policy.relationships.product,
             data: {
               type: "products",
-              id: payload.product?.id ?? policy.relationships.product?.data?.id,
+              id:
+                payload.product?.id ??
+                policy.relationships.product?.data?.id ??
+                "",
             },
           },
           entitlements: {

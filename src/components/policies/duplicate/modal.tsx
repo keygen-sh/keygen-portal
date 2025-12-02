@@ -137,7 +137,7 @@ export default function PoliciesDuplicateModal({
           ...policy.relationships.product,
           data: {
             type: "products",
-            id: payload.product?.id ?? policy.relationships.product?.data?.id!,
+            id: payload.product?.id ?? policy.relationships.product?.data?.id,
           },
         },
         entitlements: {
@@ -154,7 +154,7 @@ export default function PoliciesDuplicateModal({
 
     toast({ message: "Policy created", variant: "success" })
 
-    navigate({
+    await navigate({
       to: "/$id/app/policies/$policyId",
       params: {
         id: keygen.config.id,

@@ -7,7 +7,7 @@ config.validate()
 interface CreateProps {
   name: string
   code: string
-  metadata?: Record<string, any> | null
+  metadata?: Record<string, string> | null
 }
 
 export default async function create({

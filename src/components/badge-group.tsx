@@ -44,7 +44,7 @@ export function BadgeGroup({
       {prefix != null && <span>{prefix}</span>}
 
       {visible.map((child, i) => (
-        <span key={(child as any)?.key ?? i}>{child}</span>
+        <span key={i}>{child}</span>
       ))}
 
       {overflow > 0 && (
@@ -62,7 +62,7 @@ export function BadgeGroup({
           >
             <div className="flex flex-col gap-1">
               {hidden.map((child, i) => (
-                <span key={(child as any)?.key ?? `hidden-${i}`}>{child}</span>
+                <span key={i}>{child}</span>
               ))}
             </div>
           </PopoverContent>

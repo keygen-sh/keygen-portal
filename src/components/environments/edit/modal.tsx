@@ -1,6 +1,5 @@
 import { useState, useCallback } from "react"
 
-import { Badge } from "@/components/ui/badge"
 import {
   DialogHeader,
   DialogTitle,
@@ -27,6 +26,8 @@ import { useUpdateEnvironment } from "@/queries/environments"
 
 import { toast } from "@/lib/toast"
 import EditForm from "./edit-form"
+
+import { BadgeGroup, BadgeGroupItem } from "@/components/badge-group"
 
 interface EnvironmentsEditModalProps {
   selectedEnvironment: Environment
@@ -74,22 +75,22 @@ export default function EnvironmentsEditModal({
     <>
       <DialogHeader className="h-fit border-b border-accent p-2">
         <DialogDescription className="flex h-5 items-center space-x-1 text-xs text-content-normal">
-          Editing a
-          <Badge variant="secondary" className="mx-1">
-            {selectedEnvironment.attributes.isolationStrategy ===
-            IsolationStrategy.Isolated ? (
-              <>
-                <GlobeLock />
-                Isolated
-              </>
-            ) : (
-              <>
-                <Globe />
-                Shared
-              </>
-            )}
-          </Badge>
-          environment
+          <BadgeGroup prefix="Updating an existing" suffix="environment">
+            <BadgeGroupItem>
+              {selectedEnvironment.attributes.isolationStrategy ===
+              IsolationStrategy.Isolated ? (
+                <>
+                  <GlobeLock />
+                  Isolated
+                </>
+              ) : (
+                <>
+                  <Globe />
+                  Shared
+                </>
+              )}
+            </BadgeGroupItem>
+          </BadgeGroup>
         </DialogDescription>
         <DialogTitle>
           <Breadcrumb>

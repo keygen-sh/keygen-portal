@@ -74,9 +74,11 @@ export default function EntitlementDetails() {
   })
 
   useEffect(() => {
-    if (entitlementError && !entitlementFetching) {
-      navigate({ to: ".." })
-    }
+    ;(async () => {
+      if (entitlementError && !entitlementFetching) {
+        await navigate({ to: ".." })
+      }
+    })()
   }, [entitlementError, entitlementFetching, navigate])
 
   const handleOpen = (key: keyof typeof open) => {
@@ -91,12 +93,12 @@ export default function EntitlementDetails() {
     if (!entitlement) return
 
     deleteEntitlement.mutate(undefined, {
-      onSuccess: () => {
+      onSuccess: async () => {
         toast({
           message: "Entitlement deleted",
           variant: "success",
         })
-        navigate({ to: ".." })
+        await navigate({ to: ".." })
       },
     })
   }

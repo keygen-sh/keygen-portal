@@ -87,7 +87,7 @@ function DefaultLayout({
 
     if (changed) {
       form.clearErrors(field)
-      form.trigger(field)
+      void form.trigger(field)
     }
   }, [checkInInterval, form])
 
@@ -286,7 +286,7 @@ function AdvancedLayout({
 
     if (changed) {
       form.clearErrors(field)
-      form.trigger(field)
+      void form.trigger(field)
     }
   }, [checkInInterval, form])
 

@@ -76,19 +76,21 @@ export default function ProductDetails() {
   })
 
   useEffect(() => {
-    if (isError && !isFetching) {
-      navigate({ to: ".." })
-    }
+    ;(async () => {
+      if (isError && !isFetching) {
+        await navigate({ to: ".." })
+      }
+    })()
   }, [isError, isFetching, navigate])
 
   const handleDeleteProduct = () => {
     deleteProduct.mutate(undefined, {
-      onSuccess: () => {
+      onSuccess: async () => {
         toast({
           message: "Product deleted",
           variant: "success",
         })
-        navigate({ to: ".." })
+        await navigate({ to: ".." })
       },
     })
   }

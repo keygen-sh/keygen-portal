@@ -24,10 +24,10 @@ export default function ProductsList() {
 
   const columns = useProductTableColumns()
 
-  const handleSelectProduct = (product: Product | null) => {
+  const handleSelectProduct = async (product: Product | null) => {
     if (!product) return
 
-    navigate({
+    await navigate({
       to: "/$id/app/products/$productId",
       params: { id: keygen.config.id, productId: product.id },
     })
@@ -45,7 +45,7 @@ export default function ProductsList() {
           </DialogTrigger>
 
           <Products.Create.Modal
-            onSelectProduct={(product) => handleSelectProduct(product!)}
+            onSelectProduct={(product) => handleSelectProduct(product)}
             onClose={() => setOpen(false)}
           />
         </Dialog>

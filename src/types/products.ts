@@ -1,11 +1,4 @@
-import {
-  APIResponse,
-  Resource,
-  Relationship,
-  Linkage,
-  Writable,
-  OptionalExcept,
-} from "@/types/api"
+import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
 
 export enum ProductErrorCode {
   CodeTaken = "CODE_TAKEN",
@@ -57,12 +50,6 @@ export type Product = Resource<
 
 export type ProductResponse = APIResponse<Product>
 export type ProductsListResponse = APIResponse<Product[]>
-
-export type CreateProductPayload = OptionalExcept<
-  Writable<ProductAttributes>,
-  "name"
->
-export type UpdateProductPayload = Partial<Writable<ProductAttributes>>
 
 export const Permissions = [
   "account.read",

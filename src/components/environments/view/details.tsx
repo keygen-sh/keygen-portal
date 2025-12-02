@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge"
 
 import { Copy, Globe, GlobeLock } from "lucide-react"
 
-import { Environment } from "@/types/environments"
+import { Environment, IsolationStrategy } from "@/types/environments"
 
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
@@ -41,7 +41,8 @@ export default function EnvironmentDetails({
       <div className="flex flex-col justify-between p-4 md:flex-row">
         <div className="flex flex-col space-y-2">
           <h2 className="text-sm">
-            {environment.attributes.isolationStrategy === "ISOLATED" ? (
+            {environment.attributes.isolationStrategy ===
+            IsolationStrategy.ISOLATED ? (
               <Badge variant="secondary">
                 <GlobeLock className="inline size-4" />
                 Isolated

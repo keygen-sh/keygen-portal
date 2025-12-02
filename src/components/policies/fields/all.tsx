@@ -100,7 +100,7 @@ export default function AllFields({
     }
     if (changed) {
       form.clearErrors(fields)
-      form.trigger(fields)
+      void form.trigger(fields)
     }
   }, [duration, form])
 
@@ -121,7 +121,7 @@ export default function AllFields({
 
     if (changed) {
       form.clearErrors(field)
-      form.trigger(field)
+      void form.trigger(field)
     }
   }, [checkInInterval, form])
 
@@ -148,7 +148,7 @@ export default function AllFields({
     }
     if (changed) {
       form.clearErrors(fields)
-      form.trigger(fields)
+      void form.trigger(fields)
     }
   }, [requireHeartbeat, form])
 

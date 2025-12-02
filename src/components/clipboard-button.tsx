@@ -12,9 +12,9 @@ const ClipboardButton = forwardRef<HTMLDivElement, ClipboardButtonProps>(
     <div
       ref={ref}
       {...props}
-      onClick={(e) => {
+      onClick={async (e) => {
         e.stopPropagation()
-        copyToClipboard(value)
+        await copyToClipboard(value)
         props.onClick?.(e)
       }}
       className={

@@ -2,12 +2,10 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
-import {
-  Entitlement,
-  CreateEntitlementPayload,
-  UpdateEntitlementPayload,
-} from "@/types/entitlements"
+import * as Forms from "@/forms"
+
 import { APIError } from "@/types/api"
+import { Entitlement } from "@/types/entitlements"
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
@@ -24,7 +22,7 @@ export function useGetEntitlement(entitlementId: string) {
         throw new Error("Entitlement not found")
       }
 
-      return response.data as Entitlement
+      return response.data
     },
     retry: (failures, error) =>
       error.message !== "Entitlement not found" && failures < 3,
@@ -45,12 +43,12 @@ export function useCreateEntitlement() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Entitlement, APIError, CreateEntitlementPayload>({
+  return useMutation<Entitlement, APIError, Forms.Entitlements.CreatePayload>({
     mutationFn: async (payload) => {
       const response = await keygen.entitlements.create(payload)
 
       if (response.errors && response.errors.length > 0) {
-        throw response.errors[0] as APIError
+        throw response.errors[0]
       }
 
       return response?.data as Entitlement
@@ -75,7 +73,7 @@ export function useUpdateEntitlement(entitlementId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Entitlement, APIError, UpdateEntitlementPayload>({
+  return useMutation<Entitlement, APIError, Forms.Entitlements.UpdatePayload>({
     mutationFn: (values) =>
       keygen.entitlements.get({ id: entitlementId }).then(async (response) => {
         const current = response.data as Entitlement
@@ -83,7 +81,7 @@ export function useUpdateEntitlement(entitlementId: string) {
         const changes = diff(
           current.attributes,
           values,
-        ) as UpdateEntitlementPayload
+        ) as Forms.Entitlements.UpdatePayload
         if (Object.keys(changes).length === 0) return current
 
         const updated = await keygen.entitlements
@@ -93,12 +91,12 @@ export function useUpdateEntitlement(entitlementId: string) {
         return updated
       }),
 
-    onSuccess: (updated) => {
+    onSuccess: async (updated) => {
       queryClient.setQueryData(
         ["entitlements", entitlementId, { environment: code }],
         updated,
       )
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: ["entitlements", { environment: code }],
       })
     },
@@ -112,8 +110,8 @@ export function useRemoveEntitlement(entitlementId: string) {
   return useMutation({
     mutationFn: () => keygen.entitlements.remove({ id: entitlementId }),
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
         queryKey: ["entitlements", { environment: code }],
       })
       queryClient.removeQueries({

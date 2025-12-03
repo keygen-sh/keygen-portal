@@ -2,23 +2,14 @@ import { useMemo } from "react"
 
 import { Policy } from "@/types/policies"
 
-import { useListProducts } from "@/queries/products"
-
 import { createTableColumnHelper } from "@/lib/tables"
 
 import ClipboardButton from "@/components/clipboard-button"
+import ProductCell from "@/components/tables/product-cell"
 
 const column = createTableColumnHelper<Policy>()
 
 export function usePolicyTableColumns() {
-  const { data: products = [] } = useListProducts()
-
-  const productNameById = useMemo(() => {
-    const map = new Map<string, string>()
-    for (const product of products) map.set(product.id, product.attributes.name)
-    return map
-  }, [products])
-
   const columns = useMemo(
     () => [
       column.id({
@@ -31,15 +22,7 @@ export function usePolicyTableColumns() {
       column.rel("product", {
         sortingFn: "alphanumeric",
         header: "Product",
-        cell: (info) => {
-          const productId = info.getValue()?.data?.id ?? ""
-
-          return (
-            productNameById.get(productId) ?? (
-              <span className="text-muted-foreground">--</span>
-            )
-          )
-        },
+        cell: (info) => <ProductCell id={info.getValue()?.data?.id} />,
       }),
       column.attr("created", {
         sortingFn: "datetime",
@@ -52,7 +35,7 @@ export function usePolicyTableColumns() {
         cell: (info) => new Date(info.getValue()).toLocaleDateString(),
       }),
     ],
-    [productNameById],
+    [],
   )
 
   return columns

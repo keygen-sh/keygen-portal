@@ -45,10 +45,7 @@ export default function PoliciesList() {
       <PageHeader title="Policies">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button
-              size="sm"
-              disabled={policiesLoading || columns.length === 0}
-            >
+            <Button size="sm" disabled={policiesLoading}>
               Create Policy
             </Button>
           </DialogTrigger>
@@ -61,7 +58,7 @@ export default function PoliciesList() {
         </Dialog>
       </PageHeader>
 
-      {policiesLoading || columns.length === 0 ? (
+      {policiesLoading ? (
         <SkeletonTable />
       ) : (
         <DataTable<Policy>

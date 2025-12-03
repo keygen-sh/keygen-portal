@@ -1,4 +1,9 @@
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
+import {
+  useQuery,
+  useQueryClient,
+  useMutation,
+  skipToken,
+} from "@tanstack/react-query"
 
 import {
   Environment,
@@ -10,13 +15,22 @@ import { APIError } from "@/types/api"
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
 
-export function useGetEnvironment(environmentId: string) {
+export function useGetEnvironment(environmentId: string | undefined) {
   return useQuery({
     queryKey: ["environment", environmentId],
-    queryFn: () =>
-      keygen.environments
-        .get({ id: environmentId })
-        .then((response) => response.data as Environment),
+    queryFn: environmentId
+      ? async () => {
+          const response = await keygen.environments.get({ id: environmentId })
+
+          if (!response.data) {
+            throw new Error("Environment not found")
+          }
+
+          return response.data as Environment
+        }
+      : skipToken,
+    retry: (failures, error) =>
+      error.message !== "Environment not found" && failures < 3,
   })
 }
 

@@ -1,4 +1,9 @@
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
+import {
+  useQuery,
+  useQueryClient,
+  useMutation,
+  skipToken,
+} from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
@@ -12,20 +17,22 @@ import { APIError } from "@/types/api"
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
 
-export function useGetEntitlement(entitlementId: string) {
+export function useGetEntitlement(entitlementId: string | undefined) {
   const { code } = useEnvironment()
 
   return useQuery({
     queryKey: ["entitlements", entitlementId, { environment: code }],
-    queryFn: async () => {
-      const response = await keygen.entitlements.get({ id: entitlementId })
+    queryFn: entitlementId
+      ? async () => {
+          const response = await keygen.entitlements.get({ id: entitlementId })
 
-      if (!response.data) {
-        throw new Error("Entitlement not found")
-      }
+          if (!response.data) {
+            throw new Error("Entitlement not found")
+          }
 
-      return response.data as Entitlement
-    },
+          return response.data as Entitlement
+        }
+      : skipToken,
     retry: (failures, error) =>
       error.message !== "Entitlement not found" && failures < 3,
   })

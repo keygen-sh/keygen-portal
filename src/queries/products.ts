@@ -1,4 +1,9 @@
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
+import {
+  useQuery,
+  useQueryClient,
+  useMutation,
+  skipToken,
+} from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
@@ -12,20 +17,22 @@ import { APIError } from "@/types/api"
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
 
-export function useGetProduct(productId: string) {
+export function useGetProduct(productId: string | undefined) {
   const { code } = useEnvironment()
 
   return useQuery({
     queryKey: ["products", productId, { environment: code }],
-    queryFn: async () => {
-      const response = await keygen.products.get({ id: productId })
+    queryFn: productId
+      ? async () => {
+          const response = await keygen.products.get({ id: productId })
 
-      if (!response.data) {
-        throw new Error("Product not found")
-      }
+          if (!response.data) {
+            throw new Error("Product not found")
+          }
 
-      return response.data as Product
-    },
+          return response.data as Product
+        }
+      : skipToken,
     retry: (failures, error) =>
       error.message !== "Product not found" && failures < 3,
   })

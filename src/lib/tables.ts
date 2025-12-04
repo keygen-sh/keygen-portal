@@ -1,10 +1,20 @@
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table"
 
-interface TableResource {
+export type TableResource = {
   id: string
   attributes: Record<PropertyKey, unknown>
   relationships: Record<PropertyKey, unknown>
 }
+
+export type TableColumns<T extends TableResource> = (
+  | ColumnDef<T, T["id"]>
+  | {
+      [K in keyof T["attributes"]]: ColumnDef<T, T["attributes"][K]>
+    }[keyof T["attributes"]]
+  | {
+      [K in keyof T["relationships"]]: ColumnDef<T, T["relationships"][K]>
+    }[keyof T["relationships"]]
+)[]
 
 export function createTableColumnHelper<T extends TableResource>() {
   const helper = createColumnHelper<T>()

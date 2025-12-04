@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react"
+import { useState, useEffect } from "react"
 
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
@@ -30,23 +29,25 @@ import {
 
 import { useMobile } from "@/hooks/use-mobile"
 
-export type DataTableProps<T, TValue = string> = {
+import { TableColumns, TableResource } from "@/lib/tables"
+
+export type DataTableProps<T extends TableResource> = {
   data: T[]
-  columns: ColumnDef<T, TValue>[]
+  columns: TableColumns<T>
   onRowClick?: (row: T) => void
   hideOnMobile?: string[]
   pageSize?: number
   includePagination?: boolean
 }
 
-export default function DataTable<T, TValue = string>({
+export default function DataTable<T extends TableResource>({
   data,
   columns,
   onRowClick,
   hideOnMobile = [],
   pageSize = 10,
   includePagination = true,
-}: DataTableProps<T, TValue>): React.ReactElement {
+}: DataTableProps<T>): React.ReactElement {
   const isMobile = useMobile()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] = useState<

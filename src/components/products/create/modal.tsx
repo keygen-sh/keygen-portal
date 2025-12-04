@@ -102,29 +102,27 @@ export default function ProductsCreateModal({
   return (
     <DialogContent className="md:min-w-4xl">
       <DialogHeader className="h-fit border-b border-accent p-2">
-        <DialogDescription className="flex h-5 items-center space-x-1 text-xs">
-          <DialogDescription className="flex h-5 items-center text-xs">
-            <BadgeGroup prefix="Creating a new" suffix="product">
-              {distributionStrategy === DistributionStrategy.Licensed && (
-                <BadgeGroupItem>
-                  <Award />
-                  Licensed
-                </BadgeGroupItem>
-              )}
-              {distributionStrategy === DistributionStrategy.Open && (
-                <BadgeGroupItem>
-                  <Unlock />
-                  Open
-                </BadgeGroupItem>
-              )}
-              {distributionStrategy === DistributionStrategy.Closed && (
-                <BadgeGroupItem>
-                  <Lock />
-                  Closed
-                </BadgeGroupItem>
-              )}
-            </BadgeGroup>
-          </DialogDescription>
+        <DialogDescription className="flex h-5 items-center text-xs">
+          <BadgeGroup prefix="Creating a new" suffix="product">
+            {distributionStrategy === DistributionStrategy.Licensed && (
+              <BadgeGroupItem>
+                <Award />
+                Licensed
+              </BadgeGroupItem>
+            )}
+            {distributionStrategy === DistributionStrategy.Open && (
+              <BadgeGroupItem>
+                <Unlock />
+                Open
+              </BadgeGroupItem>
+            )}
+            {distributionStrategy === DistributionStrategy.Closed && (
+              <BadgeGroupItem>
+                <Lock />
+                Closed
+              </BadgeGroupItem>
+            )}
+          </BadgeGroup>
         </DialogDescription>
         <DialogTitle>
           <Breadcrumb>

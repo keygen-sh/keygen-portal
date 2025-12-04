@@ -546,19 +546,19 @@ export const OfflineShape = z.object({
 })
 
 export enum TimingTemplates {
-  PERPETUAL = "PERPETUAL",
-  TIMED = "TIMED",
-  PERPETUAL_FALLBACK = "PERPETUAL_FALLBACK",
+  Perpetual = "PERPETUAL",
+  Timed = "TIMED",
+  PerpetualFallback = "PERPETUAL_FALLBACK",
 }
 export enum AccessTemplates {
-  NODE_LOCKED = "NODE_LOCKED",
-  USER_LOCKED = "USER_LOCKED",
+  NodeLocked = "NODE_LOCKED",
+  UserLocked = "USER_LOCKED",
 }
 export enum MeteredTemplates {
-  PROCESS_BASED = "PROCESS_BASED",
-  LEASE_BASED = "LEASE_BASED",
-  FEATURE_BASED = "FEATURE_BASED",
-  USAGE_BASED = "USAGE_BASED",
+  ProcessBased = "PROCESS_BASED",
+  LeaseBased = "LEASE_BASED",
+  FeatureBased = "FEATURE_BASED",
+  UsageBased = "USAGE_BASED",
 }
 
 export type PolicyTemplateSelection = {
@@ -601,7 +601,7 @@ export function composePolicySchema(selection: {
   if (selection.offline) shape = shape.merge(OfflineShape)
 
   let schema: z.ZodType<BaseValues> = shape as unknown as z.ZodType<BaseValues>
-  if (selection.timing === TimingTemplates.TIMED) {
+  if (selection.timing === TimingTemplates.Timed) {
     schema = TimedRules(schema)
   }
   if (selection.timing === TimingTemplates.Perpetual) {

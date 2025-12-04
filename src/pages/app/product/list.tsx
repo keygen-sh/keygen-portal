@@ -15,7 +15,6 @@ import * as Products from "@/components/products"
 import * as Skeletons from "@/components/skeletons"
 import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
-import ClipboardButton from "@/components/clipboard-button"
 
 export default function ProductsList() {
   const { data: products = [], isLoading } = useListProducts()

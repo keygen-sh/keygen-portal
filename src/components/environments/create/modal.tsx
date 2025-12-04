@@ -102,24 +102,22 @@ export default function EnvironmentsCreateModal({
   return (
     <>
       <DialogHeader className="h-fit border-b border-accent p-2">
-        <DialogDescription className="flex h-5 items-center space-x-1 text-xs">
-          <DialogDescription className="flex h-5 items-center text-xs">
-            <BadgeGroup prefix="Creating a new" suffix="environment">
-              <BadgeGroupItem>
-                {isolationStrategy === IsolationStrategy.Isolated ? (
-                  <>
-                    <GlobeLock />
-                    Isolated
-                  </>
-                ) : (
-                  <>
-                    <Globe />
-                    Shared
-                  </>
-                )}
-              </BadgeGroupItem>
-            </BadgeGroup>
-          </DialogDescription>
+        <DialogDescription className="flex h-5 items-center text-xs">
+          <BadgeGroup prefix="Creating a new" suffix="environment">
+            <BadgeGroupItem>
+              {isolationStrategy === IsolationStrategy.Isolated ? (
+                <>
+                  <GlobeLock />
+                  Isolated
+                </>
+              ) : (
+                <>
+                  <Globe />
+                  Shared
+                </>
+              )}
+            </BadgeGroupItem>
+          </BadgeGroup>
         </DialogDescription>
         <DialogTitle>
           <Breadcrumb>

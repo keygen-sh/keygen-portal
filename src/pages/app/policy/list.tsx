@@ -14,8 +14,6 @@ import * as Policies from "@/components/policies"
 import * as Skeletons from "@/components/skeletons"
 import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
-import SkeletonTable from "@/components/skeleton-table"
-import ClipboardButton from "@/components/clipboard-button"
 
 export default function PoliciesList() {
   // const { data: policies = [], isLoading: policiesLoading } = useListPolicies()
@@ -26,7 +24,7 @@ export default function PoliciesList() {
 
   const [open, setOpen] = useState(false)
 
-  const handleSelectPolicy = (policy: Policy | null) => {
+  const handleSelectPolicy = async (policy: Policy | null) => {
     if (!policy) return
 
     await navigate({
@@ -60,7 +58,7 @@ export default function PoliciesList() {
         </Dialog>
       </PageHeader>
 
-      {policiesLoading && productsLoading ? (
+      {policiesLoading ? (
         <Skeletons.Table />
       ) : (
         <DataTable<Policy>

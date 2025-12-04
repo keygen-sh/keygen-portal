@@ -12,8 +12,8 @@ const BaseShape = z.object({
   name: z.string().trim().min(1, "Environment name is required"),
   code: z.string().trim().min(1, "Environment code is required"),
   isolationStrategy: z.enum([
-    IsolationStrategy.ISOLATED,
-    IsolationStrategy.SHARED,
+    IsolationStrategy.Isolated,
+    IsolationStrategy.Shared,
   ]),
 })
 const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {

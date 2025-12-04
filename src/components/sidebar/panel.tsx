@@ -73,19 +73,19 @@ enum View {
 }
 
 const VIEWS_LIST = [
-  { view: View.HOME, Icon: Home },
+  { view: View.Home, Icon: Home },
   {
-    view: View.LICENSING,
+    view: View.Licensing,
     Icon: Award,
   },
   {
-    view: View.DISTRIBUTION,
+    view: View.Distribution,
     Icon: Package,
   },
-  { view: View.AUTOMATE, Icon: Zap },
-  { view: View.WEBHOOKS, Icon: Webhook },
-  { view: View.ACCESS, Icon: KeyRound },
-  { view: View.SECURITY, Icon: Shield },
+  { view: View.Automate, Icon: Zap },
+  { view: View.Webhooks, Icon: Webhook },
+  { view: View.Access, Icon: KeyRound },
+  { view: View.Security, Icon: Shield },
 ]
 
 const homeOptions = linkOptions([

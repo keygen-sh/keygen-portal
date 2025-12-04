@@ -60,7 +60,7 @@ export default function EnvironmentsViewModal({
   const handleBackToList = useCallback(() => {
     onSelectEnvironment(null)
     goTo(EnvironmentView.List)
-  }, [onSelectEnvironment])
+  }, [goTo, onSelectEnvironment])
 
   const handleDeleteEnvironment = () => {
     deleteEnvironment.mutate(undefined, {

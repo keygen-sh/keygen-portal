@@ -15,7 +15,6 @@ import * as Skeletons from "@/components/skeletons"
 import * as Entitlements from "@/components/entitlements"
 import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
-import ClipboardButton from "@/components/clipboard-button"
 
 export default function EntitlementsList() {
   const { data: entitlements = [], isLoading: entitlementsLoading } =
@@ -26,7 +25,7 @@ export default function EntitlementsList() {
 
   const [open, setOpen] = useState(false)
 
-  const handleSelectEntitlement = (entitlement: Entitlement | null) => {
+  const handleSelectEntitlement = async (entitlement: Entitlement | null) => {
     if (!entitlement) return
 
     await navigate({

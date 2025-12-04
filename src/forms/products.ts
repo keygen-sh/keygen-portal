@@ -14,9 +14,9 @@ const BaseShape = z.object({
   name: z.string().trim().min(1, "Product name is required"),
   code: z.string().trim().min(1, "Product code is required"),
   distributionStrategy: z.enum([
-    DistributionStrategy.LICENSED,
-    DistributionStrategy.OPEN,
-    DistributionStrategy.CLOSED,
+    DistributionStrategy.Licensed,
+    DistributionStrategy.Open,
+    DistributionStrategy.Closed,
   ]),
   url: z
     .string()

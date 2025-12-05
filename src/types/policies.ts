@@ -213,30 +213,6 @@ export interface PolicyInput {
   metadata?: Record<string, unknown>
 }
 
-export enum TimingTemplates {
-  PERPETUAL = "PERPETUAL",
-  TIMED = "TIMED",
-  PERPETUAL_FALLBACK = "PERPETUAL_FALLBACK",
-}
-export enum AccessTemplates {
-  NODE_LOCKED = "NODE_LOCKED",
-  USER_LOCKED = "USER_LOCKED",
-}
-export enum MeteredTemplates {
-  PROCESS_BASED = "PROCESS_BASED",
-  LEASE_BASED = "LEASE_BASED",
-  FEATURE_BASED = "FEATURE_BASED",
-  USAGE_BASED = "USAGE_BASED",
-}
-
-export type PolicyTemplateSelection = {
-  timing: TimingTemplates | null
-  access: AccessTemplates[]
-  metered: MeteredTemplates[]
-  advanced?: boolean
-  offline?: boolean
-}
-
 export type PolicyRelationships = {
   account: Relationship<Linkage<"accounts">>
   product: Relationship<Linkage<"products">>

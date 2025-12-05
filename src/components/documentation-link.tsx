@@ -17,14 +17,14 @@ interface DocumentationLinkProps {
   page?: DocumentationPage
   section?: string
   message?: string
-  linkText?: string
+  children?: React.ReactNode
 }
 
 export default function DocumentationLink({
   page = "",
   section = "",
   message = "",
-  linkText = "",
+  children,
 }: DocumentationLinkProps): React.ReactElement {
   return (
     <p className="mx-6 my-4 hidden flex-wrap items-center gap-1 text-sm text-content-subdued md:flex">
@@ -35,10 +35,10 @@ export default function DocumentationLink({
           target="_blank"
           rel="noreferrer"
         >
-          {linkText || "documentation"}
+          {children || "documentation"}
         </a>
       </Button>
-      {message ? "." : " for more information."}
+      {!message && " for more information."}
     </p>
   )
 }

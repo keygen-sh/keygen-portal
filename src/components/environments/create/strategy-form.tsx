@@ -129,8 +129,10 @@ export default function StrategyForm({
         <DocumentationLink
           page="environments"
           section="isolation-strategies"
-          linkText="Notes on Isolation"
-        />
+          message="For more information on isolation strategies and their effects, see"
+        >
+          Notes on isolation.
+        </DocumentationLink>
 
         <DialogFooter className="flex flex-row gap-4 border-t border-accent p-4">
           <Button

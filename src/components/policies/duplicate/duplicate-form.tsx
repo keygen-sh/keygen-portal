@@ -47,9 +47,9 @@ export default function DuplicateForm({
   const createEntitlement = useCreateEntitlement()
 
   const create = useCallback(
-    async (payload: Forms.Policies.BaseValues) => {
-      const attachIds = payload.entitlements?.attach ?? []
-      const toCreate = payload.entitlements?.create ?? []
+    async (values: Forms.Policies.BaseValues) => {
+      const attachIds = values.entitlements?.attach ?? []
+      const toCreate = values.entitlements?.create ?? []
 
       const [entitlements, errors] = await settleMutations<Entitlement>(
         toCreate.map((attrs) => createEntitlement.mutateAsync(attrs)),
@@ -88,7 +88,7 @@ export default function DuplicateForm({
       }
 
       await onCreate({
-        ...payload,
+        ...values,
         entitlements: {
           attach: entitlementIds,
           create: [],

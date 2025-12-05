@@ -40,9 +40,7 @@ export default function EntitlementsCreateModal({
         return
       }
 
-      const payload = values
-
-      createEntitlement.mutate(payload, {
+      createEntitlement.mutate(values, {
         onSuccess: (entitlement) => {
           toast({ message: "Entitlement created", variant: "success" })
           onSelectEntitlement(entitlement)

@@ -29,9 +29,9 @@ export function useCreateEnvironment() {
   const queryClient = useQueryClient()
 
   return useMutation<Environment, APIError, Forms.Environments.CreatePayload>({
-    mutationFn: (payload) =>
+    mutationFn: (values) =>
       keygen.environments
-        .create(payload)
+        .create(values)
         .then((response) => response.data as Environment),
 
     onSuccess: (newEnvironment) => {

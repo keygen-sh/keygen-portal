@@ -64,13 +64,13 @@ export default function ProductsCreateModal({
 
       const { permissions, ...rest } = values
 
-      const payload = {
+      const combinedValues = {
         ...(permissions && permissions.length ? { permissions } : {}),
         distributionStrategy,
         ...rest,
       }
 
-      createProduct.mutate(payload, {
+      createProduct.mutate(combinedValues, {
         onSuccess: (product) => {
           toast({ message: "Product created", variant: "success" })
           onSelectProduct(product)

@@ -28,7 +28,11 @@ export type BaseValues = Writable<OptionalExcept<PolicyAttributes, "name">> & {
   }
   entitlements?: {
     attach?: string[]
-    create?: { name: string; code: string; metadata?: Record<string, string> }[]
+    create?: {
+      name: string
+      code: string
+      metadata?: Record<string, unknown>
+    }[]
   }
 }
 

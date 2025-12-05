@@ -8,7 +8,7 @@ interface UpdateProps {
   id: string
   name?: string | null
   code?: string | null
-  metadata?: Record<string, string> | null
+  metadata?: Record<string, unknown> | null
 }
 
 export default async function update({

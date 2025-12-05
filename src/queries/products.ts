@@ -43,9 +43,9 @@ export function useCreateProduct() {
   const { code } = useEnvironment()
 
   return useMutation<Product, APIError, Forms.Products.CreatePayload>({
-    mutationFn: (payload) =>
+    mutationFn: (values) =>
       keygen.products
-        .create(payload)
+        .create(values)
         .then((response) => response.data as Product),
 
     onSuccess: (newProduct) => {

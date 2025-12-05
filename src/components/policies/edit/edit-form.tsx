@@ -39,9 +39,9 @@ export default function EditForm({
   const createEntitlement = useCreateEntitlement()
 
   const update = useCallback(
-    async (payload: Forms.Policies.BaseValues) => {
-      const attachIds = payload.entitlements?.attach ?? []
-      const toCreate = payload.entitlements?.create ?? []
+    async (values: Forms.Policies.BaseValues) => {
+      const attachIds = values.entitlements?.attach ?? []
+      const toCreate = values.entitlements?.create ?? []
 
       const [entitlements, errors] = await settleMutations<Entitlement>(
         toCreate.map((attrs) => createEntitlement.mutateAsync(attrs)),
@@ -80,7 +80,7 @@ export default function EditForm({
       }
 
       await onUpdate({
-        ...payload,
+        ...values,
         entitlements: {
           attach: entitlementIds,
           create: [],

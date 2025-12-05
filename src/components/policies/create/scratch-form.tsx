@@ -24,7 +24,7 @@ type Step = {
 
 interface PoliciesScratchFormProps {
   onClose: () => void
-  onCreate: (payload: Forms.Policies.BaseValues) => Promise<void>
+  onCreate: (values: Forms.Policies.BaseValues) => Promise<void>
 }
 
 export default function PoliciesScratchForm({
@@ -155,10 +155,10 @@ export default function PoliciesScratchForm({
       setCompleted((prev) => new Set(prev).add(current.key))
       goTo(step + 1)
     } else {
-      const payload = form.getValues()
+      const values = form.getValues()
 
       try {
-        await onCreate(payload)
+        await onCreate(values)
       } catch (error: unknown) {
         if (error instanceof Forms.Entitlements.CreateValidationError) {
           const { nextAttach, nextCreate, fieldErrors } = error

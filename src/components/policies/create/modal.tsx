@@ -257,9 +257,9 @@ export default function PoliciesCreateModal({
 
   // TODO(cazden) Replace with API call
   const handleCreatePolicy = useCallback(
-    async (payload: Forms.Policies.CreatePayload) => {
-      const attachIds = payload.entitlements?.attach ?? []
-      const toCreate = payload.entitlements?.create ?? []
+    async (values: Forms.Policies.CreatePayload) => {
+      const attachIds = values.entitlements?.attach ?? []
+      const toCreate = values.entitlements?.create ?? []
 
       const [entitlements, errors] = await settleMutations<Entitlement>(
         toCreate.map((attrs) => createEntitlement.mutateAsync(attrs)),
@@ -319,7 +319,7 @@ export default function PoliciesCreateModal({
         return
       }
 
-      const policy = buildMockPolicy(payload, selection, nextAttach)
+      const policy = buildMockPolicy(values, selection, nextAttach)
       MockPolicies.push(policy)
 
       toast({ message: "Policy created", variant: "success" })

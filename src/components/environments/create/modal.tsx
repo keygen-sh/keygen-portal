@@ -63,13 +63,7 @@ export default function EnvironmentsCreateModal({
         return
       }
 
-      const payload = {
-        name: values.name,
-        code: values.code,
-        isolationStrategy: values.isolationStrategy,
-      }
-
-      createEnvironment.mutate(payload, {
+      createEnvironment.mutate(values, {
         onSuccess: (environment) => {
           toast({ message: "Environment created", variant: "success" })
           onSelectEnvironment(environment)

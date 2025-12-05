@@ -44,8 +44,8 @@ export function useCreateEntitlement() {
   const { code } = useEnvironment()
 
   return useMutation<Entitlement, APIError, Forms.Entitlements.CreatePayload>({
-    mutationFn: async (payload) => {
-      const response = await keygen.entitlements.create(payload)
+    mutationFn: async (values) => {
+      const response = await keygen.entitlements.create(values)
 
       if (response.errors && response.errors.length > 0) {
         throw response.errors[0]

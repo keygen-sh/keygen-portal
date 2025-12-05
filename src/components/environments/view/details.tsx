@@ -42,7 +42,7 @@ export default function EnvironmentDetails({
         <div className="flex flex-col space-y-2">
           <h2 className="text-sm">
             {environment.attributes.isolationStrategy ===
-            IsolationStrategy.ISOLATED ? (
+            IsolationStrategy.Isolated ? (
               <Badge variant="secondary">
                 <GlobeLock className="inline size-4" />
                 Isolated

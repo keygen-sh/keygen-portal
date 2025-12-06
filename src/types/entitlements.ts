@@ -35,3 +35,12 @@ export type Entitlement = Resource<
 
 export type EntitlementResponse = APIResponse<Entitlement>
 export type EntitlementListResponse = APIResponse<Entitlement[]>
+
+export const EntitlementAttributeDescriptions: Readonly<
+  Record<keyof Omit<EntitlementAttributes, "created" | "updated">, string>
+> = {
+  name: "Entitlement name.",
+  code: "This can be used to lookup the entitlement by a human-readable identifier.",
+  metadata:
+    "Store arbitrary key/value data on the entitlement for book keeping purposes, supplemental entitlement data, etc.",
+} as const

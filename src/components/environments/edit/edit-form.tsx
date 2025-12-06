@@ -14,7 +14,6 @@ import {
   FormItem,
   FormControl,
   FormMessage,
-  FormLabel,
 } from "@/components/ui/form"
 import {
   Tooltip,
@@ -27,13 +26,17 @@ import {
   PopoverContent,
 } from "@/components/ui/popover"
 
-import { Info, TriangleAlert } from "lucide-react"
+import { TriangleAlert } from "lucide-react"
 
 import * as Forms from "@/forms"
-import { Environment } from "@/types/environments"
+import {
+  Environment,
+  EnvironmentAttributeDescriptions,
+} from "@/types/environments"
 
 import { useMobile } from "@/hooks/use-mobile"
 
+import * as Field from "@/components/field"
 import * as Loading from "@/components/loading"
 import DocumentationLink from "@/components/documentation-link"
 
@@ -109,94 +112,71 @@ export default function EnvironmentEditForm({
                   name="code"
                   render={({ field }) => (
                     <FormItem>
-                      <div className="flex items-center gap-2">
-                        <FormLabel className="">Code</FormLabel>
-                        {isMobile ? (
-                          <Popover>
-                            <PopoverTrigger
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Info className="size-5 text-content-subdued" />
-                            </PopoverTrigger>
-                            <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
-                              The unique code for the environment. The code
-                              cannot collide with any environments that already
-                              exist.
-                            </PopoverContent>
-                          </Popover>
-                        ) : (
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Info className="size-4 text-content-subdued" />
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-80 bg-background-4 text-content-muted">
-                              The unique code for the environment. The code
-                              cannot collide with any environments that already
-                              exist.
-                            </TooltipContent>
-                          </Tooltip>
-                        )}
-                      </div>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="e.g. qa"
-                          disabled={loading}
-                          onChange={(e) => {
-                            field.onChange(e)
-                          }}
-                        />
-                      </FormControl>
+                      <Field.Header
+                        label="Code"
+                        tooltip={EnvironmentAttributeDescriptions.code}
+                        variant="stacking"
+                      >
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="e.g. sandbox"
+                            disabled={loading}
+                            onChange={(e) => {
+                              field.onChange(e)
+                            }}
+                          />
+                        </FormControl>
+                      </Field.Header>
                       <FormMessage>{error || ""}</FormMessage>
-                      {isMobile ? (
-                        <Popover>
-                          <PopoverTrigger
-                            type="button"
-                            className="flex items-center gap-1 text-sm text-brand-amber"
-                          >
-                            <TriangleAlert className="size-5 flex-none pt-0.5" />
-
-                            <span className="text-brand-amber underline">
-                              Note on updating environment codes
-                            </span>
-                          </PopoverTrigger>
-                          <PopoverContent className="max-w-88 bg-background-4 text-content-muted">
-                            <span>
-                              Renaming an environment code that is already in
-                              use may cause requests using the old environment
-                              code to fail.
-                            </span>
-                            <Separator className="my-2 bg-content-subdued" />
-                            <span>
-                              We suggest making sure the existing code is no
-                              longer in use before changing it, to prevent
-                              unintended request failures.
-                            </span>
-                          </PopoverContent>
-                        </Popover>
-                      ) : (
-                        <Tooltip>
-                          <TooltipTrigger
-                            type="button"
-                            className="flex items-center gap-1 text-xs text-brand-amber"
-                          >
-                            <TriangleAlert className="size-3 flex-none" />
-                            <p>
-                              Renaming an environment code that is already in
-                              use may cause requests using the old environment
-                              code to fail.
-                            </p>
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-88 bg-background-4 text-content-muted">
-                            We suggest making sure the existing code is no
-                            longer in use before changing it, to prevent
-                            unintended request failures.
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
                     </FormItem>
                   )}
                 />
+
+                {isMobile ? (
+                  <Popover>
+                    <PopoverTrigger
+                      type="button"
+                      className="flex items-center gap-1 text-sm text-brand-amber"
+                    >
+                      <TriangleAlert className="size-5 flex-none pt-0.5" />
+
+                      <span className="text-brand-amber underline">
+                        Note on updating environment codes
+                      </span>
+                    </PopoverTrigger>
+                    <PopoverContent className="max-w-88 bg-background-4 text-content-muted">
+                      <span>
+                        Renaming an environment code that is already in use may
+                        cause requests using the old environment code to fail.
+                      </span>
+                      <Separator className="my-2 bg-content-subdued" />
+                      <span>
+                        We suggest making sure the existing code is no longer in
+                        use before changing it, to prevent unintended request
+                        failures.
+                      </span>
+                    </PopoverContent>
+                  </Popover>
+                ) : (
+                  <Tooltip>
+                    <TooltipTrigger
+                      type="button"
+                      className="flex items-center gap-1 text-xs text-brand-amber"
+                    >
+                      <TriangleAlert className="size-3 flex-none" />
+                      <p>
+                        Renaming an environment code that is already in use may
+                        cause requests using the old environment code to fail.
+                      </p>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-88 bg-background-4 text-content-muted">
+                      We suggest making sure the existing code is no longer in
+                      use before changing it, to prevent unintended request
+                      failures.
+                    </TooltipContent>
+                  </Tooltip>
+                )}
               </CardContent>
             </Card>
           </div>

@@ -10,28 +10,17 @@ import {
   Form,
   FormField,
   FormItem,
-  FormLabel,
   FormControl,
   FormMessage,
 } from "@/components/ui/form"
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip"
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover"
-
-import { Info } from "lucide-react"
 
 import * as Forms from "@/forms"
-import { IsolationStrategy } from "@/types/environments"
+import {
+  IsolationStrategy,
+  EnvironmentAttributeDescriptions,
+} from "@/types/environments"
 
-import { useMobile } from "@/hooks/use-mobile"
-
+import * as Field from "@/components/field"
 import * as Loading from "@/components/loading"
 import SectionCard from "@/components/section-card"
 import DocumentationLink from "@/components/documentation-link"
@@ -51,8 +40,6 @@ export default function AttributesForm({
   onSubmit,
   onCancel,
 }: AttributesFormProps) {
-  const isMobile = useMobile()
-
   const form = useForm<Forms.Environments.AttributesValues>({
     resolver: zodResolver(Forms.Environments.AttributesSchema),
     mode: "onChange",
@@ -104,40 +91,22 @@ export default function AttributesForm({
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex items-center gap-2">
-                      <FormLabel>Code</FormLabel>
-                      {isMobile ? (
-                        <Popover>
-                          <PopoverTrigger onClick={(e) => e.stopPropagation()}>
-                            <Info className="size-5 text-content-subdued" />
-                          </PopoverTrigger>
-                          <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
-                            The unique code for the environment. The code cannot
-                            collide with any environments that already exist.
-                          </PopoverContent>
-                        </Popover>
-                      ) : (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Info className="size-4 pt-0.5 text-content-subdued" />
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-80 bg-background-4 text-content-muted">
-                            The unique code for the environment. The code cannot
-                            collide with any environments that already exist.
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
-                    </div>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="e.g. sandbox"
-                        disabled={loading}
-                        onChange={(e) => {
-                          field.onChange(e)
-                        }}
-                      />
-                    </FormControl>
+                    <Field.Header
+                      label="Code"
+                      tooltip={EnvironmentAttributeDescriptions.code}
+                      variant="stacking"
+                    >
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="e.g. sandbox"
+                          disabled={loading}
+                          onChange={(e) => {
+                            field.onChange(e)
+                          }}
+                        />
+                      </FormControl>
+                    </Field.Header>
                     <FormMessage>{error || ""}</FormMessage>
                   </FormItem>
                 )}

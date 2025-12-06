@@ -16,7 +16,10 @@ import {
 } from "@/components/ui/form"
 
 import * as Forms from "@/forms"
-import { Entitlement } from "@/types/entitlements"
+import {
+  Entitlement,
+  EntitlementAttributeDescriptions,
+} from "@/types/entitlements"
 
 import * as Field from "@/components/field"
 import * as Loading from "@/components/loading"
@@ -94,7 +97,7 @@ export default function EditForm({
                       <FormItem>
                         <Field.Header
                           label="Code"
-                          tooltip="This can be used to lookup the entitlement by a human-readable identifier."
+                          tooltip={EntitlementAttributeDescriptions.code}
                         >
                           <FormControl>
                             <Input
@@ -127,9 +130,7 @@ export default function EditForm({
                           label="Metadata"
                           variant="stacking"
                           optional
-                          tooltip="Store arbitrary key/value data on the
-								  entitlement for book keeping purposes,
-								  supplemental entitlement data, etc."
+                          tooltip={EntitlementAttributeDescriptions.metadata}
                         >
                           <FormControl>
                             <KeyValueInput<Forms.Entitlements.BaseValues> name="metadata" />

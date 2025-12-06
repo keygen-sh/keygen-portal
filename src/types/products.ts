@@ -51,6 +51,30 @@ export type Product = Resource<
 export type ProductResponse = APIResponse<Product>
 export type ProductsListResponse = APIResponse<Product[]>
 
+export const ProductAttributeDescriptions: Readonly<
+  Record<keyof Omit<ProductAttributes, "created" | "updated">, string>
+> = {
+  name: "Product name.",
+  code: "This can be used to lookup the product by a human-readable identifier.",
+  distributionStrategy: "The distribution strategy for releases.",
+  url: "",
+  platforms: "",
+  permissions: "The permissions for the product. Leave blank to use defaults.",
+  metadata:
+    "Store arbitrary key/value data on the product for book keeping purposes, additional product info, etc.",
+} as const
+
+export const DistributionStrategyDescriptions: Readonly<
+  Record<DistributionStrategy, string>
+> = {
+  [DistributionStrategy.Licensed]:
+    "Only licensed users, with a valid license, can access releases and release artifacts. API authentication is required.",
+  [DistributionStrategy.Open]:
+    "Anybody can access releases. No API authentication required, so this is a great option for public downloads, open-source projects, or freemium products.",
+  [DistributionStrategy.Closed]:
+    "Only admins can access releases. Download links must be generated server-side. API authentication is required.",
+} as const
+
 export const Permissions = [
   "account.read",
   "arch.read",

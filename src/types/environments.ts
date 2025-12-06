@@ -40,3 +40,21 @@ export type Environment = Resource<
 
 export type EnvironmentResponse = APIResponse<Environment>
 export type EnvironmentsListResponse = APIResponse<Environment[]>
+
+export const EnvironmentAttributeDescriptions: Readonly<
+  Record<keyof Omit<EnvironmentAttributes, "created" | "updated">, string>
+> = {
+  name: "Environment name.",
+  code: "The unique code for the environment. The code cannot collide with any environments that already exist.",
+  isolationStrategy:
+    "The isolation strategy used for isolating the environment from other environments.",
+} as const
+
+export const IsolationStrategyDescriptions: Readonly<
+  Record<IsolationStrategy, string>
+> = {
+  [IsolationStrategy.Isolated]:
+    "The environment will be isolated from all other resources in other environments.",
+  [IsolationStrategy.Shared]:
+    "The environment will be shared with the global environment. Resources in the global environment will be available as read-only resources.",
+} as const

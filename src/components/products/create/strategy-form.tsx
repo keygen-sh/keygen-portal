@@ -22,7 +22,11 @@ import { Award, Unlock, Lock, Info } from "lucide-react"
 import { useMobile } from "@/hooks/use-mobile"
 
 import * as Forms from "@/forms"
-import { DistributionStrategy } from "@/types/products"
+import {
+  DistributionStrategy,
+  DistributionStrategyDescriptions,
+  ProductAttributeDescriptions,
+} from "@/types/products"
 
 import DocumentationLink from "@/components/documentation-link"
 import { CardSelector, CardOption } from "@/components/card-selector"
@@ -54,22 +58,19 @@ export default function StrategyForm({
       value: DistributionStrategy.Licensed,
       label: "Licensed",
       icon: <Award className="size-6 text-content-subdued md:size-5" />,
-      tooltip:
-        "Only licensed users, with a valid license, can access releases and release artifacts. API authentication is required.",
+      tooltip: DistributionStrategyDescriptions[DistributionStrategy.Licensed],
     },
     {
       value: DistributionStrategy.Open,
       label: "Open",
       icon: <Unlock className="size-6 text-content-subdued md:size-5" />,
-      tooltip:
-        "Anybody can access releases. No API authentication required, so this is a great option for public downloads, open-source projects, or freemium products.",
+      tooltip: DistributionStrategyDescriptions[DistributionStrategy.Open],
     },
     {
       value: DistributionStrategy.Closed,
       label: "Closed",
       icon: <Lock className="size-6 text-content-subdued md:size-5" />,
-      tooltip:
-        "Only admins can access releases. Download links must be generated server-side. API authentication is required.",
+      tooltip: DistributionStrategyDescriptions[DistributionStrategy.Closed],
     },
   ]
 
@@ -95,7 +96,7 @@ export default function StrategyForm({
                     <Info className="size-5 text-content-subdued" />
                   </PopoverTrigger>
                   <PopoverContent className="mr-2 max-w-60 bg-background-4 text-content-muted">
-                    The distribution strategy for releases.
+                    {ProductAttributeDescriptions.distributionStrategy}
                   </PopoverContent>
                 </Popover>
               ) : (
@@ -104,7 +105,7 @@ export default function StrategyForm({
                     <Info className="size-4 pt-0.5 text-content-subdued" />
                   </TooltipTrigger>
                   <TooltipContent className="max-w-60 bg-background-4 text-content-muted">
-                    The distribution strategy for releases.
+                    {ProductAttributeDescriptions.distributionStrategy}
                   </TooltipContent>
                 </Tooltip>
               )}

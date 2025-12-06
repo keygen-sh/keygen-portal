@@ -22,7 +22,11 @@ import { GlobeLock, Globe, Info } from "lucide-react"
 import { useMobile } from "@/hooks/use-mobile"
 
 import * as Forms from "@/forms"
-import { IsolationStrategy } from "@/types/environments"
+import {
+  EnvironmentAttributeDescriptions,
+  IsolationStrategy,
+  IsolationStrategyDescriptions,
+} from "@/types/environments"
 
 import { CardSelector, CardOption } from "@/components/card-selector"
 import DocumentationLink from "@/components/documentation-link"
@@ -54,15 +58,13 @@ export default function StrategyForm({
       value: IsolationStrategy.Isolated,
       label: "Isolated",
       icon: <GlobeLock className="size-6 text-content-subdued md:size-5" />,
-      tooltip:
-        "The environment will be isolated from all other resources in other environments.",
+      tooltip: IsolationStrategyDescriptions[IsolationStrategy.Isolated],
     },
     {
       value: IsolationStrategy.Shared,
       label: "Shared",
       icon: <Globe className="size-6 text-content-subdued md:size-5" />,
-      tooltip:
-        "The environment will be shared with the global environment. Resources in the global environment will be available as read-only resources.",
+      tooltip: IsolationStrategyDescriptions[IsolationStrategy.Shared],
     },
   ]
 
@@ -88,8 +90,7 @@ export default function StrategyForm({
                     <Info className="size-5 text-content-subdued" />
                   </PopoverTrigger>
                   <PopoverContent className="mr-2 max-w-60 bg-background-4 text-content-muted">
-                    The strategy used for isolating the environment from other
-                    environments.
+                    {EnvironmentAttributeDescriptions.isolationStrategy}
                   </PopoverContent>
                 </Popover>
               ) : (
@@ -98,8 +99,7 @@ export default function StrategyForm({
                     <Info className="size-4 pt-0.5 text-content-subdued" />
                   </TooltipTrigger>
                   <TooltipContent className="max-w-60 bg-background-4 text-content-muted">
-                    The strategy used for isolating the environment from other
-                    environments.
+                    {EnvironmentAttributeDescriptions.isolationStrategy}
                   </TooltipContent>
                 </Tooltip>
               )}

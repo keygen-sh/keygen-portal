@@ -16,20 +16,9 @@ import {
   Form,
   FormField,
   FormItem,
-  FormLabel,
   FormControl,
   FormMessage,
 } from "@/components/ui/form"
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip"
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover"
 import {
   Select,
   SelectTrigger,
@@ -44,7 +33,7 @@ import {
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb"
 
-import { Info, Award, Lock, Unlock } from "lucide-react"
+import { Award, Lock, Unlock } from "lucide-react"
 
 import * as Forms from "@/forms"
 import {
@@ -52,10 +41,10 @@ import {
   KnownPlatforms,
   Permissions,
   DistributionStrategy,
+  ProductAttributeDescriptions,
 } from "@/types/products"
 
-import { useMobile } from "@/hooks/use-mobile"
-
+import * as Field from "@/components/field"
 import * as Loading from "@/components/loading"
 import TagInput from "@/components/tag-input"
 import MultiSelect from "@/components/multi-select"
@@ -77,8 +66,6 @@ export default function EditForm({
   onSubmit,
   onCancel,
 }: EditFormProps) {
-  const isMobile = useMobile()
-
   const form = useForm<Forms.Products.BaseValues>({
     resolver: zodResolver(Forms.Products.BaseSchema),
     mode: "onBlur",
@@ -176,42 +163,22 @@ export default function EditForm({
                       name="code"
                       render={({ field }) => (
                         <FormItem>
-                          <div className="flex items-center gap-2">
-                            <FormLabel>Code</FormLabel>
-                            {isMobile ? (
-                              <Popover>
-                                <PopoverTrigger
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <Info className="size-5 text-content-subdued" />
-                                </PopoverTrigger>
-                                <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
-                                  This can be used to lookup the product by a
-                                  human-readable identifier.
-                                </PopoverContent>
-                              </Popover>
-                            ) : (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Info className="size-4 pt-0.5 text-content-subdued" />
-                                </TooltipTrigger>
-                                <TooltipContent className="max-w-80 bg-background-4 text-content-muted">
-                                  This can be used to lookup the product by a
-                                  human-readable identifier.
-                                </TooltipContent>
-                              </Tooltip>
-                            )}
-                          </div>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              placeholder="example"
-                              disabled={loading}
-                              onChange={(e) => {
-                                field.onChange(e)
-                              }}
-                            />
-                          </FormControl>
+                          <Field.Header
+                            label="Code"
+                            tooltip={ProductAttributeDescriptions.code}
+                            variant="stacking"
+                          >
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="example"
+                                disabled={loading}
+                                onChange={(e) => {
+                                  field.onChange(e)
+                                }}
+                              />
+                            </FormControl>
+                          </Field.Header>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -222,22 +189,23 @@ export default function EditForm({
                       name="url"
                       render={({ field }) => (
                         <FormItem>
-                          <div className="flex items-center justify-between gap-2">
-                            <FormLabel>URL</FormLabel>
-                            <span className="text-xs text-content-subdued">
-                              Optional
-                            </span>
-                          </div>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              placeholder="https://example.com"
-                              disabled={loading}
-                              onChange={(e) => {
-                                field.onChange(e)
-                              }}
-                            />
-                          </FormControl>
+                          <Field.Header
+                            label="URL"
+                            tooltip={ProductAttributeDescriptions.url}
+                            variant="stacking"
+                            optional
+                          >
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="https://example.com"
+                                disabled={loading}
+                                onChange={(e) => {
+                                  field.onChange(e)
+                                }}
+                              />
+                            </FormControl>
+                          </Field.Header>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -248,57 +216,41 @@ export default function EditForm({
                       name="distributionStrategy"
                       render={({ field }) => (
                         <FormItem>
-                          <div className="flex items-center gap-2">
-                            <FormLabel>Distribution Strategy</FormLabel>
-                            {isMobile ? (
-                              <Popover>
-                                <PopoverTrigger
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <Info className="size-5 text-content-subdued" />
-                                </PopoverTrigger>
-                                <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
-                                  The distribution strategy for releases.
-                                </PopoverContent>
-                              </Popover>
-                            ) : (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Info className="size-4 pt-0.5 text-content-subdued" />
-                                </TooltipTrigger>
-                                <TooltipContent className="max-w-80 bg-background-4 text-content-muted">
-                                  The distribution strategy for releases.
-                                </TooltipContent>
-                              </Tooltip>
-                            )}
-                          </div>
-
-                          <Select
-                            value={field.value}
-                            disabled={loading}
-                            onValueChange={(value) => {
-                              field.onChange(value as DistributionStrategy)
-                            }}
+                          <Field.Header
+                            label="Distribution Strategy"
+                            tooltip={
+                              ProductAttributeDescriptions.distributionStrategy
+                            }
+                            variant="stacking"
                           >
-                            <FormControl>
-                              <SelectTrigger className="w-full">
-                                <SelectValue />
-                              </SelectTrigger>
-                            </FormControl>
+                            <Select
+                              value={field.value}
+                              disabled={loading}
+                              onValueChange={(value) => {
+                                field.onChange(value as DistributionStrategy)
+                              }}
+                            >
+                              <FormControl>
+                                <SelectTrigger className="w-full">
+                                  <SelectValue />
+                                </SelectTrigger>
+                              </FormControl>
 
-                            <SelectContent>
-                              <SelectItem value={DistributionStrategy.Licensed}>
-                                Licensed
-                              </SelectItem>
-                              <SelectItem value={DistributionStrategy.Open}>
-                                Open
-                              </SelectItem>
-                              <SelectItem value={DistributionStrategy.Closed}>
-                                Closed
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-
+                              <SelectContent>
+                                <SelectItem
+                                  value={DistributionStrategy.Licensed}
+                                >
+                                  Licensed
+                                </SelectItem>
+                                <SelectItem value={DistributionStrategy.Open}>
+                                  Open
+                                </SelectItem>
+                                <SelectItem value={DistributionStrategy.Closed}>
+                                  Closed
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </Field.Header>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -309,17 +261,19 @@ export default function EditForm({
                       name="platforms"
                       render={() => (
                         <FormItem>
-                          <div className="flex items-center justify-between gap-2">
-                            <FormLabel>Platforms</FormLabel>
-                            <span className="text-xs text-content-subdued">
-                              Optional
-                            </span>
-                          </div>
-                          <TagInput
-                            name="platforms"
-                            placeholder=""
-                            options={KnownPlatforms}
-                          />
+                          <Field.Header
+                            label="Platforms"
+                            tooltip={ProductAttributeDescriptions.platforms}
+                            variant="stacking"
+                            optional
+                          >
+                            <TagInput
+                              name="platforms"
+                              placeholder=""
+                              options={KnownPlatforms}
+                              disabled={loading}
+                            />
+                          </Field.Header>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -334,43 +288,24 @@ export default function EditForm({
                       name="permissions"
                       render={({ field }) => (
                         <FormItem>
-                          <div className="flex items-center gap-2">
-                            <FormLabel>Permissions</FormLabel>
-                            {isMobile ? (
-                              <Popover>
-                                <PopoverTrigger
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <Info className="size-5 text-content-subdued" />
-                                </PopoverTrigger>
-                                <PopoverContent className="ml-2 max-w-72 bg-background-4 text-content-muted">
-                                  The permissions for the product. Leave blank
-                                  to use defaults.
-                                </PopoverContent>
-                              </Popover>
-                            ) : (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Info className="size-4 pt-0.5 text-content-subdued" />
-                                </TooltipTrigger>
-                                <TooltipContent className="max-w-52 bg-background-4 text-content-muted">
-                                  The permissions for the product. Leave blank
-                                  to use defaults.
-                                </TooltipContent>
-                              </Tooltip>
-                            )}
-                          </div>
-                          <MultiSelect
-                            value={field.value ?? []}
-                            onChange={field.onChange}
-                            options={Permissions.map((p) => ({
-                              label: p === "*" ? "*" : p,
-                              value: p,
-                            }))}
-                            wildcard="*"
-                            placeholder=""
-                            disabled={loading}
-                          />
+                          <Field.Header
+                            label="Permissions"
+                            tooltip={ProductAttributeDescriptions.permissions}
+                            variant="stacking"
+                          >
+                            <MultiSelect
+                              value={field.value ?? []}
+                              onChange={field.onChange}
+                              options={Permissions.map((p) => ({
+                                label: p === "*" ? "*" : p,
+                                value: p,
+                              }))}
+                              wildcard="*"
+                              placeholder=""
+                              disabled={loading}
+                            />
+                          </Field.Header>
+
                           <FormMessage />
                         </FormItem>
                       )}
@@ -381,46 +316,19 @@ export default function EditForm({
                       name="metadata"
                       render={() => (
                         <FormItem>
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2">
-                              <FormLabel>Metadata</FormLabel>
-
-                              {isMobile ? (
-                                <Popover>
-                                  <PopoverTrigger
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    <Info className="size-5 text-content-subdued" />
-                                  </PopoverTrigger>
-                                  <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
-                                    Store arbitrary key/value data on the
-                                    product for book keeping purposes,
-                                    additional product info, etc.
-                                  </PopoverContent>
-                                </Popover>
-                              ) : (
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Info className="size-4 pt-0.5 text-content-subdued" />
-                                  </TooltipTrigger>
-                                  <TooltipContent className="max-w-80 bg-background-4 text-content-muted">
-                                    Store arbitrary key/value data on the
-                                    product for book keeping purposes,
-                                    additional product info, etc.
-                                  </TooltipContent>
-                                </Tooltip>
-                              )}
-                            </div>
-                            <span className="text-xs text-content-subdued">
-                              Optional
-                            </span>
-                          </div>
-                          <FormControl>
-                            <KeyValueInput<Forms.Products.BaseValues>
-                              name="metadata"
-                              disabled={loading}
-                            />
-                          </FormControl>
+                          <Field.Header
+                            label="Metadata"
+                            tooltip={ProductAttributeDescriptions.metadata}
+                            variant="stacking"
+                            optional
+                          >
+                            <FormControl>
+                              <KeyValueInput<Forms.Products.AttributesValues>
+                                name="metadata"
+                                disabled={loading}
+                              />
+                            </FormControl>
+                          </Field.Header>
                           <FormMessage />
                         </FormItem>
                       )}

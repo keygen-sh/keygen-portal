@@ -27,6 +27,7 @@ interface MultiSelectProps {
   wildcard?: string
   placeholder?: string
   disabled?: boolean
+  className?: string
 }
 
 export default function MultiSelect({
@@ -36,6 +37,7 @@ export default function MultiSelect({
   wildcard,
   placeholder = "Choose...",
   disabled,
+  className,
 }: MultiSelectProps) {
   const selected = value ?? []
   const [query, setQuery] = useState("")
@@ -103,6 +105,7 @@ export default function MultiSelect({
           className={cn(
             "max-h-48 overflow-y-auto rounded-md border border-accent transition-colors duration-300 focus-within:border-content-subdued",
             "data-[state=open]:border-content-subdued [&_[data-radix-scroll-area-thumb]]:bg-content-muted",
+            className,
           )}
         >
           <div className="flex min-h-9 w-full flex-wrap items-center gap-x-2 gap-y-2 p-2 text-sm">

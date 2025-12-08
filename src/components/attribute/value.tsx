@@ -2,7 +2,7 @@ import { formatDuration } from "date-fns"
 
 import TooltipBadge from "@/components/tooltip-badge"
 
-import { secondsToParts, labelize } from "@/lib/utils"
+import { cn, secondsToParts, labelize } from "@/lib/utils"
 
 export type AttributeType =
   | "duration"
@@ -19,6 +19,7 @@ type AttributeValueProps = {
   tooltip?: string
   emptyLabel?: string
   forceDisabled?: boolean
+  className?: string
 }
 
 export default function AttributeValue({
@@ -27,6 +28,7 @@ export default function AttributeValue({
   tooltip,
   emptyLabel = "Not set",
   forceDisabled,
+  className,
 }: AttributeValueProps): React.ReactElement {
   const isUnset = raw === null || raw === ""
 
@@ -44,7 +46,12 @@ export default function AttributeValue({
     const formatted = JSON.stringify(raw, null, 2)
 
     return (
-      <pre className="max-h-64 overflow-auto rounded border p-3 font-mono text-xs whitespace-pre-wrap">
+      <pre
+        className={cn(
+          "max-h-64 overflow-auto rounded border p-3 font-mono text-xs whitespace-pre-wrap",
+          className,
+        )}
+      >
         {formatted}
       </pre>
     )
@@ -88,5 +95,12 @@ export default function AttributeValue({
         ? "disabled"
         : "default"
 
-  return <TooltipBadge value={value} variant={variant} tooltip={tooltip!} />
+  return (
+    <TooltipBadge
+      value={value}
+      variant={variant}
+      tooltip={tooltip!}
+      className={className}
+    />
+  )
 }

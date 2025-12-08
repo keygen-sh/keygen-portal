@@ -27,6 +27,8 @@ import {
   ChevronsUpDown,
 } from "lucide-react"
 
+import { cn } from "@/lib/utils"
+
 import { useMobile } from "@/hooks/use-mobile"
 
 import { TableColumns, TableResource } from "@/lib/tables"
@@ -38,6 +40,7 @@ export type DataTableProps<T extends TableResource> = {
   hideOnMobile?: string[]
   pageSize?: number
   includePagination?: boolean
+  className?: string
 }
 
 export default function DataTable<T extends TableResource>({
@@ -47,6 +50,7 @@ export default function DataTable<T extends TableResource>({
   hideOnMobile = [],
   pageSize = 10,
   includePagination = true,
+  className,
 }: DataTableProps<T>): React.ReactElement {
   const isMobile = useMobile()
   const [sorting, setSorting] = useState<SortingState>([])
@@ -73,7 +77,7 @@ export default function DataTable<T extends TableResource>({
   })
 
   return (
-    <div className="px-4">
+    <div className={cn("px-4", className)}>
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((group) => (

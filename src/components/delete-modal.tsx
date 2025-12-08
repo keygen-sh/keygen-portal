@@ -18,6 +18,7 @@ interface DeleteModalProps {
   disabled?: boolean
   onClose: () => void
   onDelete: () => void
+  className?: string
 }
 
 export default function DeleteModal({
@@ -27,10 +28,11 @@ export default function DeleteModal({
   disabled,
   onClose,
   onDelete,
+  className,
 }: DeleteModalProps) {
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
-      <AlertDialogContent>
+      <AlertDialogContent className={className}>
         <AlertDialogHeader className="text-start">
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>

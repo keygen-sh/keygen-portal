@@ -23,6 +23,7 @@ interface TagInputProps {
   placeholder?: string
   delimiters?: string[]
   disabled?: boolean
+  className?: string
 }
 
 export default function TagInput({
@@ -31,6 +32,7 @@ export default function TagInput({
   placeholder = "Add item...",
   delimiters = ["Enter", "Tab", ","],
   disabled,
+  className,
 }: TagInputProps) {
   const { watch, setValue } = useFormContext()
   const tags = useMemo(() => (watch(name) as string[]) ?? [], [watch, name])
@@ -93,6 +95,7 @@ export default function TagInput({
           className={cn(
             "flex min-h-9 w-full flex-wrap gap-x-2 gap-y-2 rounded-md border p-2 text-sm transition-colors duration-300 focus-within:border-content-subdued",
             "data-[state=open]:border-content-subdued [&_[data-radix-scroll-area-thumb]]:bg-content-muted",
+            className,
           )}
         >
           {tags.map((tag) => (

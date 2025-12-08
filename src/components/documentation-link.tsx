@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button"
 
+import { cn } from "@/lib/utils"
+
 type DocumentationPage =
   | ""
   | "environments"
@@ -17,6 +19,7 @@ interface DocumentationLinkProps {
   page?: DocumentationPage
   section?: string
   message?: string
+  className?: string
   children?: React.ReactNode
 }
 
@@ -24,10 +27,16 @@ export default function DocumentationLink({
   page = "",
   section = "",
   message = "",
+  className,
   children,
 }: DocumentationLinkProps): React.ReactElement {
   return (
-    <p className="mx-6 my-4 hidden flex-wrap items-center gap-1 text-sm text-content-subdued md:flex">
+    <p
+      className={cn(
+        "mx-6 my-4 hidden flex-wrap items-center gap-1 text-sm text-content-subdued md:flex",
+        className,
+      )}
+    >
       {message || `To learn more about ${page || "Keygen"}, see the `}
       <Button asChild variant="link" size="link">
         <a

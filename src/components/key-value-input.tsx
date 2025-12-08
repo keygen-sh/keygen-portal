@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 
 import { X } from "lucide-react"
 
+import { cn } from "@/lib/utils"
+
 type Pair = { id: string; key: string; value: string }
 
 interface KeyValueInputProps<TFormValues extends FieldValues> {
@@ -14,6 +16,7 @@ interface KeyValueInputProps<TFormValues extends FieldValues> {
   keyPlaceholder?: string
   valuePlaceholder?: string
   disabled?: boolean
+  className?: string
 }
 
 export default function KeyValueInput<
@@ -24,6 +27,7 @@ export default function KeyValueInput<
   keyPlaceholder = "Key",
   valuePlaceholder = "Value",
   disabled,
+  className,
 }: KeyValueInputProps<TFormValues>): React.ReactElement {
   const { field } = useController<TFormValues, FieldPath<TFormValues>>({ name })
 
@@ -98,7 +102,7 @@ export default function KeyValueInput<
   const canAdd = rows.every(({ key, value }) => key.trim() && value.trim())
 
   return (
-    <div className="space-y-2">
+    <div className={cn("space-y-2", className)}>
       {rows.length === 0 ? (
         <Button
           id="key-value-add"

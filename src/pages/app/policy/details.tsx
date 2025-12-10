@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
+import { useState } from "react"
 import { useNavigate, useParams } from "@tanstack/react-router"
 import { formatDate } from "date-fns"
 
@@ -45,16 +46,18 @@ import {
   Users,
 } from "lucide-react"
 
-import { MockPolicies } from "@/types/policies"
-
 import { useGetProduct } from "@/queries/products"
-import { useListEntitlements } from "@/queries/entitlements"
-// import { useGetPolicy, useRemovePolicy } from "@/queries/policies"
+import {
+  useGetPolicy,
+  useRemovePolicy,
+  useListPolicyEntitlements,
+} from "@/queries/policies"
 
 import { useMobile } from "@/hooks/use-mobile"
 
-// import { toast } from "@/lib/toast"
+import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
+
 import {
   isPerpetual,
   isTimed,
@@ -68,9 +71,9 @@ import {
 } from "@/lib/policies"
 
 import * as keygen from "@/keygen"
-import * as Attribute from "@/components/attribute"
-import * as Property from "@/components/property"
 import * as Policies from "@/components/policies"
+import * as Property from "@/components/property"
+import * as Attribute from "@/components/attribute"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
@@ -81,12 +84,13 @@ import CollapsibleMenu from "@/components/collapsible-menu"
 
 export default function PolicyDetails() {
   const { policyId } = useParams({ from: "/$id/app/policies/$policyId" })
-  // const { data: policy, isLoading: policyLoading, isFetching: policyFetching, isError: policyError } = useGetPolicy(policyId)
-  const policy = MockPolicies.find((p) => p.id === policyId)
-  const [policyLoading, setPolicyLoading] = useState(true)
-  const [policyFetching, setPolicyFetching] = useState(true)
-  const policyError = false
-  // const deletePolicy = useRemovePolicy(policyId)
+  const {
+    data: policy,
+    isLoading: policyLoading,
+    isFetching: policyFetching,
+    isError: policyError,
+  } = useGetPolicy(policyId)
+  const deletePolicy = useRemovePolicy(policyId)
 
   const productId = policy?.relationships.product?.data?.id || ""
   const {
@@ -97,19 +101,11 @@ export default function PolicyDetails() {
   } = useGetProduct(productId)
 
   const {
-    data: entitlementsData = [],
+    data: entitlements = [],
     isLoading: entitlementsLoading,
     isFetching: entitlementsFetching,
     isError: entitlementsError,
-  } = useListEntitlements()
-
-  // TODO(cazden) Derive entitlements properly once policy API is implemented
-  const entitlementIds = (policy?.relationships.entitlements?.data ?? [])
-    .map((entitlement: { id: string }) => entitlement.id || entitlement)
-    .filter(Boolean)
-  const entitlements = entitlementIds.length
-    ? entitlementsData.filter((e) => entitlementIds.includes(e.id))
-    : []
+  } = useListPolicyEntitlements(policyId)
 
   const navigate = useNavigate()
 
@@ -129,29 +125,20 @@ export default function PolicyDetails() {
     })()
   }, [policyError, policyFetching, navigate])
 
-  useEffect(() => {
-    setTimeout(() => {
-      setPolicyLoading(false)
-      setPolicyFetching(false)
-    }, 1000)
-  }, [])
-
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))
   }
 
   const handleDeletePolicy = () => {
-    console.log("Policy deleted.")
-
-    // deletePolicy.mutate(undefined, {
-    //   onSuccess: () => {
-    //     toast({
-    //       message: "Policy deleted",
-    //       variant: "success",
-    //     })
-    //     navigate({ to: ".." })
-    //   },
-    // })
+    deletePolicy.mutate(undefined, {
+      onSuccess: async () => {
+        toast({
+          message: "Policy deleted",
+          variant: "success",
+        })
+        await navigate({ to: ".." })
+      },
+    })
   }
 
   return (
@@ -295,7 +282,7 @@ export default function PolicyDetails() {
                     Lease-based
                   </Badge>
                 )}
-                {isFeatureBased(policy) && (
+                {isFeatureBased(entitlements.length) && (
                   <Badge variant="secondary">
                     <Clock className="inline size-4" />
                     Feature-based
@@ -744,11 +731,13 @@ export default function PolicyDetails() {
         </Tabs>
       )}
 
-      <Policies.AdvancedDialog
-        id={policy!.id}
-        open={open.attributes}
-        onOpenChange={() => toggleOpen("attributes", false)}
-      />
+      {policy && (
+        <Policies.AdvancedDialog
+          id={policy.id}
+          open={open.attributes}
+          onOpenChange={() => toggleOpen("attributes", false)}
+        />
+      )}
 
       <Policies.Edit.Modal
         open={open.edit}

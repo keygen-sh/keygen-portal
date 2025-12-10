@@ -13,9 +13,7 @@ import {
 
 import { Text, CurlyBraces, Copy } from "lucide-react"
 
-import { MockPolicies } from "@/types/policies"
-
-// import { useGetPolicy } from "@/queries/policies"
+import { useGetPolicy } from "@/queries/policies"
 
 import { copyToClipboard } from "@/lib/clipboard"
 
@@ -34,11 +32,12 @@ export default function AdvancedDialog({
   open,
   onOpenChange,
 }: AdvancedDialogProps) {
-  // const { data: policy, isLoading: policyLoading, isFetching: policyFetching, isError: policyError } = useGetPolicy(id)
-  const policy = MockPolicies.find((p) => p.id === id)
-  const [policyLoading, setPolicyLoading] = useState(true)
-  const [policyFetching, setPolicyFetching] = useState(true)
-  const policyError = false
+  const {
+    data: policy,
+    isLoading: policyLoading,
+    isFetching: policyFetching,
+    isError: policyError,
+  } = useGetPolicy(id)
 
   const [tab, setTab] = useState<"attributes" | "inspect">("attributes")
 
@@ -47,13 +46,6 @@ export default function AdvancedDialog({
       onOpenChange(false)
     }
   }, [policyError, policyFetching, onOpenChange])
-
-  useEffect(() => {
-    setTimeout(() => {
-      setPolicyLoading(false)
-      setPolicyFetching(false)
-    }, 300)
-  }, [])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

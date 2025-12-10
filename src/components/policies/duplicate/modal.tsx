@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { useParams, useNavigate } from "@tanstack/react-router"
 import {
   Dialog,
@@ -10,7 +9,11 @@ import {
 import { toast } from "@/lib/toast"
 
 import * as Forms from "@/forms"
-import { MockPolicies, Policy } from "@/types/policies"
+import {
+  useGetPolicy,
+  useCreatePolicy,
+  useListPolicyEntitlements,
+} from "@/queries/policies"
 import DuplicateForm from "./duplicate-form"
 import * as Loading from "@/components/loading"
 import * as keygen from "@/keygen"
@@ -25,140 +28,36 @@ export default function PoliciesDuplicateModal({
   onOpenChange,
 }: PoliciesDuplicateModalProps) {
   const { policyId } = useParams({ from: "/$id/app/policies/$policyId" })
-  const policy = MockPolicies.find((p) => p.id === policyId)
-  const [policyLoading] = useState(false)
-  const [policyFetching] = useState(false)
-  const policyError = false
+  const {
+    data: policy,
+    isLoading: policyLoading,
+    isFetching: policyFetching,
+    isError: policyError,
+  } = useGetPolicy(policyId)
 
+  const { data: entitlements = [] } = useListPolicyEntitlements(policyId)
+
+  const createPolicy = useCreatePolicy()
   const navigate = useNavigate()
 
-  const handleCreatePolicy = async (values: Forms.Policies.CreatePayload) => {
+  const handleCreatePolicy = (values: Forms.Policies.CreatePayload) => {
     if (!policy) return
 
-    const entitlementIds = values.entitlements?.attach ?? []
+    createPolicy.mutate(values, {
+      onSuccess: async (created) => {
+        toast({ message: "Policy created", variant: "success" })
+        onOpenChange(false)
 
-    onOpenChange(false)
-
-    const now = new Date().toISOString()
-    const newId = crypto.randomUUID()
-
-    const created: Policy = {
-      ...policy,
-      id: newId,
-      links: { self: `/v1/accounts/{ACCOUNT}/policies/${newId}` },
-      attributes: {
-        ...policy.attributes,
-        name: values.name ?? "",
-        created: now,
-        updated: now,
-        metadata: values.metadata ?? policy.attributes.metadata ?? {},
-        duration: values.duration ?? null,
-        expirationStrategy:
-          values.expirationStrategy ?? policy.attributes.expirationStrategy,
-        expirationBasis:
-          values.expirationBasis ?? policy.attributes.expirationBasis,
-        renewalBasis: values.renewalBasis ?? policy.attributes.renewalBasis,
-        transferStrategy:
-          values.transferStrategy ?? policy.attributes.transferStrategy,
-        strict: values.strict ?? policy.attributes.strict,
-        floating: values.floating ?? policy.attributes.floating,
-        protected: values.protected ?? policy.attributes.protected,
-        usePool: values.usePool ?? policy.attributes.usePool,
-        checkInInterval: values.checkInInterval ?? null,
-        checkInIntervalCount: values.checkInIntervalCount ?? null,
-        maxMachines: values.maxMachines ?? null,
-        maxProcesses: values.maxProcesses ?? null,
-        maxUsers: values.maxUsers ?? null,
-        maxUses: values.maxUses ?? null,
-        maxCores: values.maxCores ?? null,
-        requireCheckIn:
-          values.requireCheckIn ?? policy.attributes.requireCheckIn,
-        requireProductScope:
-          values.requireProductScope ?? policy.attributes.requireProductScope,
-        requirePolicyScope:
-          values.requirePolicyScope ?? policy.attributes.requirePolicyScope,
-        requireMachineScope:
-          values.requireMachineScope ?? policy.attributes.requireMachineScope,
-        requireFingerprintScope:
-          values.requireFingerprintScope ??
-          policy.attributes.requireFingerprintScope,
-        requireComponentsScope:
-          values.requireComponentsScope ??
-          policy.attributes.requireComponentsScope,
-        requireUserScope:
-          values.requireUserScope ?? policy.attributes.requireUserScope,
-        requireChecksumScope:
-          values.requireChecksumScope ?? policy.attributes.requireChecksumScope,
-        requireVersionScope:
-          values.requireVersionScope ?? policy.attributes.requireVersionScope,
-
-        machineUniquenessStrategy:
-          values.machineUniquenessStrategy ??
-          policy.attributes.machineUniquenessStrategy,
-        machineMatchingStrategy:
-          values.machineMatchingStrategy ??
-          policy.attributes.machineMatchingStrategy,
-        componentUniquenessStrategy:
-          values.componentUniquenessStrategy ??
-          policy.attributes.componentUniquenessStrategy,
-        componentMatchingStrategy:
-          values.componentMatchingStrategy ??
-          policy.attributes.componentMatchingStrategy,
-        overageStrategy:
-          values.overageStrategy ?? policy.attributes.overageStrategy,
-
-        requireHeartbeat:
-          values.requireHeartbeat ?? policy.attributes.requireHeartbeat,
-        heartbeatDuration: values.heartbeatDuration ?? null,
-        heartbeatBasis:
-          values.heartbeatBasis ?? policy.attributes.heartbeatBasis,
-        heartbeatCullStrategy:
-          values.heartbeatCullStrategy ??
-          policy.attributes.heartbeatCullStrategy,
-        heartbeatResurrectionStrategy:
-          values.heartbeatResurrectionStrategy ??
-          policy.attributes.heartbeatResurrectionStrategy,
-        machineLeasingStrategy:
-          values.machineLeasingStrategy ??
-          policy.attributes.machineLeasingStrategy,
-        processLeasingStrategy:
-          values.processLeasingStrategy ??
-          policy.attributes.processLeasingStrategy,
-
-        authenticationStrategy:
-          values.authenticationStrategy ??
-          policy.attributes.authenticationStrategy,
-        scheme: values.scheme ?? policy.attributes.scheme ?? null,
-        encrypted: values.encrypted ?? policy.attributes.encrypted,
-      },
-      relationships: {
-        ...policy.relationships,
-        product: {
-          ...policy.relationships.product,
-          data: {
-            type: "products",
-            id: values.product?.id ?? policy.relationships.product?.data?.id,
+        await navigate({
+          to: "/$id/app/policies/$policyId",
+          params: {
+            id: keygen.config.id,
+            policyId: created.id,
           },
-        },
-        entitlements: {
-          ...policy.relationships.entitlements,
-          data: entitlementIds.map((eid) => ({
-            type: "entitlements",
-            id: eid,
-          })),
-        },
+        })
       },
-    }
-
-    MockPolicies.push(created)
-
-    toast({ message: "Policy created", variant: "success" })
-
-    await navigate({
-      to: "/$id/app/policies/$policyId",
-      params: {
-        id: keygen.config.id,
-        policyId: created.id,
+      onError: () => {
+        toast({ message: "Failed to create policy", variant: "error" })
       },
     })
   }
@@ -186,9 +85,11 @@ export default function PoliciesDuplicateModal({
             Failed to load policy.
           </p>
         ) : (
-          open && (
+          open &&
+          policy && (
             <DuplicateForm
-              policy={policy!}
+              policy={policy}
+              entitlementIds={entitlements.map((e) => e.id)}
               onCreate={handleCreatePolicy}
               onCancel={() => onOpenChange(false)}
             />

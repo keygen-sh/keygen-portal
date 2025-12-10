@@ -26,25 +26,7 @@ import {
   Hash,
 } from "lucide-react"
 
-import {
-  Policy,
-  AuthenticationStrategy,
-  ExpirationStrategy,
-  OverageStrategy,
-  ExpirationBasis,
-  RenewalBasis,
-  TransferStrategy,
-  MachineUniquenessStrategy,
-  MachineMatchingStrategy,
-  MachineLeasingStrategy,
-  ProcessLeasingStrategy,
-  ComponentUniquenessStrategy,
-  ComponentMatchingStrategy,
-  HeartbeatBasis,
-  HeartbeatCullStrategy,
-  HeartbeatResurrectionStrategy,
-  MockPolicies,
-} from "@/types/policies"
+import { Policy } from "@/types/policies"
 import { FormFieldError } from "@/types/forms"
 import { Entitlement, EntitlementErrorCode } from "@/types/entitlements"
 
@@ -57,8 +39,9 @@ import {
 } from "@/forms/policies"
 
 import { toast } from "@/lib/toast"
-import { settleMutations } from "@/queries/utils"
 
+import { settleMutations } from "@/queries/utils"
+import { useCreatePolicy } from "@/queries/policies"
 import { useCreateEntitlement } from "@/queries/entitlements"
 
 import { useSlide } from "@/hooks/use-slide"
@@ -112,6 +95,7 @@ export default function PoliciesCreateModal({
 }: PoliciesCreateModalProps) {
   const isMobile = useMobile()
 
+  const createPolicy = useCreatePolicy()
   const createEntitlement = useCreateEntitlement()
 
   const [isTemplatesOpen, setIsTemplatesOpen] = useState(false)
@@ -255,7 +239,6 @@ export default function PoliciesCreateModal({
     setIsAttributesOpen(step > 0 && open)
   }, [open, step])
 
-  // TODO(cazden) Replace with API call
   const handleCreatePolicy = useCallback(
     async (values: Forms.Policies.CreatePayload) => {
       const attachIds = values.entitlements?.attach ?? []
@@ -319,22 +302,25 @@ export default function PoliciesCreateModal({
         return
       }
 
-      const policy = buildMockPolicy(values, selection, nextAttach)
-      MockPolicies.push(policy)
-
-      toast({ message: "Policy created", variant: "success" })
-
-      onClose()
-      onSelectPolicy(policy)
+      createPolicy.mutate(values, {
+        onSuccess: (policy) => {
+          toast({ message: "Policy created", variant: "success" })
+          onClose()
+          onSelectPolicy(policy)
+        },
+        onError: () => {
+          toast({ message: "Failed to create policy", variant: "error" })
+        },
+      })
     },
     [
       form,
-      selection,
       onClose,
+      goToStep,
+      createPolicy,
+      isScratchOpen,
       onSelectPolicy,
       createEntitlement,
-      isScratchOpen,
-      goToStep,
     ],
   )
 
@@ -679,112 +665,4 @@ function composeStepsFromSelection(selection: PolicyTemplateSelection): Step[] {
   }
 
   return steps
-}
-
-const buildMockPolicy = (
-  input: Forms.Policies.BaseValues,
-  selection: PolicyTemplateSelection,
-  entitlementIds: string[] = [],
-): Policy => {
-  const id = crypto.randomUUID()
-  const now = new Date().toISOString()
-
-  const base = Forms.Policies.getSchemaDefaults(
-    Forms.Policies.composePolicySchema(selection),
-  )
-
-  const attributes = {
-    name: input.name,
-    duration: input.duration ?? null,
-    strict: input.strict ?? base.strict ?? false,
-    floating: input.floating ?? base.floating ?? false,
-    scheme: input.scheme ?? null,
-    requireProductScope: input.requireProductScope ?? false,
-    requirePolicyScope: input.requirePolicyScope ?? false,
-    requireMachineScope: input.requireMachineScope ?? false,
-    requireFingerprintScope: input.requireFingerprintScope ?? false,
-    requireComponentsScope: input.requireComponentsScope ?? false,
-    requireUserScope: input.requireUserScope ?? false,
-    requireChecksumScope: input.requireChecksumScope ?? false,
-    requireVersionScope: input.requireVersionScope ?? false,
-    requireCheckIn: input.requireCheckIn ?? false,
-    checkInInterval: input.checkInInterval ?? null,
-    checkInIntervalCount: input.checkInIntervalCount ?? null,
-    usePool: input.usePool ?? false,
-    maxMachines: input.maxMachines ?? null,
-    maxProcesses: input.maxProcesses ?? null,
-    maxUsers: input.maxUsers ?? null,
-    maxCores: input.maxCores ?? null,
-    maxUses: input.maxUses ?? null,
-    encrypted: input.encrypted ?? false,
-    protected: input.protected ?? base.protected ?? false,
-    requireHeartbeat: input.requireHeartbeat ?? false,
-    heartbeatDuration: input.heartbeatDuration ?? null,
-    heartbeatCullStrategy:
-      input.heartbeatCullStrategy ?? HeartbeatCullStrategy.DeactivateDead,
-    heartbeatResurrectionStrategy:
-      input.heartbeatResurrectionStrategy ??
-      HeartbeatResurrectionStrategy.NoRevive,
-    heartbeatBasis: input.heartbeatBasis ?? HeartbeatBasis.FromCreation,
-    machineUniquenessStrategy:
-      input.machineUniquenessStrategy ??
-      MachineUniquenessStrategy.UniquePerLicense,
-    machineMatchingStrategy:
-      input.machineMatchingStrategy ?? MachineMatchingStrategy.MatchAny,
-    componentUniquenessStrategy:
-      input.componentUniquenessStrategy ??
-      ComponentUniquenessStrategy.UniquePerMachine,
-    componentMatchingStrategy:
-      input.componentMatchingStrategy ?? ComponentMatchingStrategy.MatchAny,
-    expirationStrategy:
-      input.expirationStrategy ?? ExpirationStrategy.RestrictAccess,
-    expirationBasis: input.expirationBasis ?? ExpirationBasis.FromCreation,
-    renewalBasis:
-      input.renewalBasis ?? base.renewalBasis ?? RenewalBasis.FromExpiry,
-    transferStrategy:
-      input.transferStrategy ??
-      base.transferStrategy ??
-      TransferStrategy.KeepExpiry,
-    authenticationStrategy:
-      input.authenticationStrategy ??
-      base.authenticationStrategy ??
-      AuthenticationStrategy.Mixed,
-    machineLeasingStrategy:
-      input.machineLeasingStrategy ?? MachineLeasingStrategy.PerLicense,
-    processLeasingStrategy:
-      input.processLeasingStrategy ?? ProcessLeasingStrategy.PerMachine,
-    overageStrategy: input.overageStrategy ?? OverageStrategy.NoOverage,
-    metadata: input.metadata ?? {},
-    created: now,
-    updated: now,
-  }
-
-  return {
-    id,
-    type: "policies",
-    links: { self: `/v1/accounts/{ACCOUNT}/policies/${id}` },
-    attributes,
-    relationships: {
-      account: {
-        links: { related: "/v1/accounts/{ACCOUNT}" },
-        data: { type: "accounts", id: "{ACCOUNT}" },
-      },
-      product: {
-        links: { related: `/v1/accounts/{ACCOUNT}/policies/${id}/product` },
-        data: { type: "products", id: input.product.id },
-      },
-      pool: {
-        links: { related: `/v1/accounts/{ACCOUNT}/policies/${id}/pool` },
-      },
-      licenses: {
-        links: { related: `/v1/accounts/{ACCOUNT}/policies/${id}/licenses` },
-      },
-      entitlements: {
-        links: {
-          related: `/v1/accounts/{ACCOUNT}/policies/${id}/entitlements`,
-        },
-        data: entitlementIds.map((eid) => ({ type: "entitlements", id: eid })),
-      },
-    },
-  }
 }

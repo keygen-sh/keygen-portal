@@ -15,7 +15,7 @@ export type AttributeType =
 
 type AttributeValueProps = {
   type: AttributeType
-  value: unknown
+  value: string | number | boolean | null
   tooltip?: string
   emptyLabel?: string
   forceDisabled?: boolean
@@ -71,17 +71,13 @@ export default function AttributeValue({
       break
     }
     case "enum":
-      value = isUnset ? emptyLabel : labelize(JSON.stringify(raw))
+    case "string":
+      value = isUnset ? emptyLabel : labelize(String(raw))
       break
     case "code":
-      value = isUnset ? emptyLabel : JSON.stringify(raw)
-      break
     case "number":
-      value = isUnset ? emptyLabel : JSON.stringify(raw)
-      break
-    case "string":
     default:
-      value = isUnset ? emptyLabel : labelize(JSON.stringify(raw))
+      value = isUnset ? emptyLabel : String(raw)
       break
   }
 

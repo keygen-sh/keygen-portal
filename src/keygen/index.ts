@@ -19,6 +19,9 @@ export { products }
 import * as entitlements from "./entitlements"
 export { entitlements }
 
+import * as policies from "./policies"
+export { policies }
+
 import * as tokens from "./tokens"
 export { tokens }
 

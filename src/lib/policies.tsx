@@ -46,12 +46,8 @@ export function isLeaseBased(policy: Policy): boolean {
   return policy.attributes.requireHeartbeat === true
 }
 
-export function isFeatureBased(policy: Policy): boolean {
-  const entitlementsUrl = policy.relationships?.entitlements?.links?.related
-  if (!entitlementsUrl) return false
-
-  // TODO(cazden) Fix this once policy API is implemented
-  return entitlementsUrl.length > 0
+export function isFeatureBased(entitlements: number): boolean {
+  return entitlements > 0
 }
 
 export function isUsageBased(policy: Policy): boolean {

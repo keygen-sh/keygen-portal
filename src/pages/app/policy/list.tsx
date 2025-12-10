@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { usePolicyTableColumns } from "@/hooks/use-policy-table-columns"
-import { Policy, MockPolicies } from "@/types/policies"
 
-// import { useListPolicies } from "@/queries/policies"
+import { Policy } from "@/types/policies"
+
+import { useListPolicies } from "@/queries/policies"
 
 import * as keygen from "@/keygen"
 import * as Policies from "@/components/policies"
@@ -16,8 +17,7 @@ import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
 
 export default function PoliciesList() {
-  // const { data: policies = [], isLoading: policiesLoading } = useListPolicies()
-  const [policiesLoading, setPoliciesLoading] = useState(true)
+  const { data: policies = [], isLoading: policiesLoading } = useListPolicies()
   const columns = usePolicyTableColumns()
 
   const navigate = useNavigate()
@@ -32,13 +32,6 @@ export default function PoliciesList() {
       params: { id: keygen.config.id, policyId: policy.id },
     })
   }
-
-  // Mock API call
-  useEffect(() => {
-    setTimeout(() => {
-      setPoliciesLoading(false)
-    }, 1000)
-  }, [])
 
   return (
     <section>
@@ -62,7 +55,7 @@ export default function PoliciesList() {
         <Skeletons.Table />
       ) : (
         <DataTable<Policy>
-          data={MockPolicies}
+          data={policies}
           columns={columns}
           hideOnMobile={[
             "attributes.id",

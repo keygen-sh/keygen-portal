@@ -21,19 +21,27 @@ import DocumentationLink from "@/components/documentation-link"
 
 interface EditFormProps {
   policy: Policy
+  entitlementIds: string[]
   onUpdate: (values: Forms.Policies.BaseValues) => Promise<void> | void
   onCancel: () => void
 }
 
 export default function EditForm({
   policy,
+  entitlementIds,
   onUpdate,
   onCancel,
 }: EditFormProps) {
   const form = useForm<Forms.Policies.BaseValues>({
     resolver: zodResolver(Forms.Policies.BaseSchema),
     mode: "onChange",
-    defaultValues: Forms.Policies.getFormValuesFromPolicy(policy),
+    defaultValues: {
+      ...Forms.Policies.getFormValuesFromPolicy(policy),
+      entitlements: {
+        attach: entitlementIds,
+        create: [],
+      },
+    },
   })
 
   const createEntitlement = useCreateEntitlement()

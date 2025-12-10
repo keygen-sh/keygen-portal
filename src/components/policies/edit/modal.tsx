@@ -11,10 +11,15 @@ import {
 
 import { toast } from "@/lib/toast"
 
-// import { useUpdatePolicy } from "@/queries/policies"
+import {
+  useGetPolicy,
+  useUpdatePolicy,
+  useListPolicyEntitlements,
+  useAttachPolicyEntitlements,
+  useDetachPolicyEntitlements,
+} from "@/queries/policies"
 
 import * as Forms from "@/forms"
-import { MockPolicies, Policy } from "@/types/policies"
 
 import EditForm from "./edit-form"
 
@@ -30,157 +35,60 @@ export default function PoliciesEditModal({
   onOpenChange,
 }: PoliciesEditModalProps) {
   const { policyId } = useParams({ from: "/$id/app/policies/$policyId" })
-  // const { data: policy, isLoading: policyLoading, isFetching: policyFetching, isError: policyError } = useGetPolicy(policyId)
-  const policy = MockPolicies.find((p) => p.id === policyId)
-  const policyLoading = false
-  const policyFetching = false
-  const policyError = false
+  const {
+    data: policy,
+    isLoading: policyLoading,
+    isFetching: policyFetching,
+    isError: policyError,
+  } = useGetPolicy(policyId)
 
-  // const updatePolicy = useUpdatePolicy(policy?.id ?? "")
+  const { data: currentEntitlements = [] } = useListPolicyEntitlements(
+    policy?.id ?? "",
+  )
+
+  const updatePolicy = useUpdatePolicy(policy?.id ?? "")
+  const attachEntitlements = useAttachPolicyEntitlements(policy?.id ?? "")
+  const detachEntitlements = useDetachPolicyEntitlements(policy?.id ?? "")
 
   const handleUpdatePolicy = useCallback(
-    (values: Forms.Policies.UpdatePayload) => {
+    async (values: Forms.Policies.UpdatePayload) => {
       if (!policy) return
 
-      const entitlementIds = values.entitlements?.attach ?? []
+      const currentIds = currentEntitlements.map((e) => e.id)
+      const newIds = values.entitlements?.attach ?? []
 
-      onOpenChange(false)
+      const toAttach = newIds.filter((id) => !currentIds.includes(id))
+      const toDetach = currentIds.filter((id) => !newIds.includes(id))
 
-      // updatePolicy.mutate(values, {
-      //   onSuccess: () => {
-      //     toast({ message: "Policy updated", variant: "success" })
-      //     onClose()
-      //   },
-      //   onError: () =>
-      //     toast({ message: "Failed to update policy", variant: "error" }),
-      //   onSettled() {
-      //     if (!updatePolicy.isError) {
-      //       onClose()
-      //     }
-      //   },
-      // })
+      try {
+        if (toDetach.length > 0) {
+          await detachEntitlements.mutateAsync(toDetach)
+        }
 
-      // Mock update
-      const updated: Policy = {
-        ...policy,
-        attributes: {
-          ...policy.attributes,
-          name: values.name ?? policy.attributes.name,
-          metadata: values.metadata ?? policy.attributes.metadata ?? {},
-          duration: values.duration ?? null,
-          expirationStrategy:
-            values.expirationStrategy ?? policy.attributes.expirationStrategy,
-          expirationBasis:
-            values.expirationBasis ?? policy.attributes.expirationBasis,
-          renewalBasis: values.renewalBasis ?? policy.attributes.renewalBasis,
-          transferStrategy:
-            values.transferStrategy ?? policy.attributes.transferStrategy,
-          strict: values.strict ?? policy.attributes.strict,
-          floating: values.floating ?? policy.attributes.floating,
-          protected: values.protected ?? policy.attributes.protected,
-          usePool: values.usePool ?? policy.attributes.usePool,
-          checkInInterval: values.checkInInterval ?? null,
-          checkInIntervalCount: values.checkInIntervalCount ?? null,
-          maxMachines: values.maxMachines ?? null,
-          maxProcesses: values.maxProcesses ?? null,
-          maxUsers: values.maxUsers ?? null,
-          maxUses: values.maxUses ?? null,
-          maxCores: values.maxCores ?? null,
-          requireCheckIn:
-            values.requireCheckIn ?? policy.attributes.requireCheckIn,
-          requireProductScope:
-            values.requireProductScope ?? policy.attributes.requireProductScope,
-          requirePolicyScope:
-            values.requirePolicyScope ?? policy.attributes.requirePolicyScope,
-          requireMachineScope:
-            values.requireMachineScope ?? policy.attributes.requireMachineScope,
-          requireFingerprintScope:
-            values.requireFingerprintScope ??
-            policy.attributes.requireFingerprintScope,
-          requireComponentsScope:
-            values.requireComponentsScope ??
-            policy.attributes.requireComponentsScope,
-          requireUserScope:
-            values.requireUserScope ?? policy.attributes.requireUserScope,
-          requireChecksumScope:
-            values.requireChecksumScope ??
-            policy.attributes.requireChecksumScope,
-          requireVersionScope:
-            values.requireVersionScope ?? policy.attributes.requireVersionScope,
+        if (toAttach.length > 0) {
+          await attachEntitlements.mutateAsync(toAttach)
+        }
 
-          machineUniquenessStrategy:
-            values.machineUniquenessStrategy ??
-            policy.attributes.machineUniquenessStrategy,
-          machineMatchingStrategy:
-            values.machineMatchingStrategy ??
-            policy.attributes.machineMatchingStrategy,
-          componentUniquenessStrategy:
-            values.componentUniquenessStrategy ??
-            policy.attributes.componentUniquenessStrategy,
-          componentMatchingStrategy:
-            values.componentMatchingStrategy ??
-            policy.attributes.componentMatchingStrategy,
-          overageStrategy:
-            values.overageStrategy ?? policy.attributes.overageStrategy,
-
-          requireHeartbeat:
-            values.requireHeartbeat ?? policy.attributes.requireHeartbeat,
-          heartbeatDuration: values.heartbeatDuration ?? null,
-          heartbeatBasis:
-            values.heartbeatBasis ?? policy.attributes.heartbeatBasis,
-          heartbeatCullStrategy:
-            values.heartbeatCullStrategy ??
-            policy.attributes.heartbeatCullStrategy,
-          heartbeatResurrectionStrategy:
-            values.heartbeatResurrectionStrategy ??
-            policy.attributes.heartbeatResurrectionStrategy,
-          machineLeasingStrategy:
-            values.machineLeasingStrategy ??
-            policy.attributes.machineLeasingStrategy,
-          processLeasingStrategy:
-            values.processLeasingStrategy ??
-            policy.attributes.processLeasingStrategy,
-
-          authenticationStrategy:
-            values.authenticationStrategy ??
-            policy.attributes.authenticationStrategy,
-          scheme: values.scheme ?? policy.attributes.scheme ?? null,
-          encrypted: values.encrypted ?? policy.attributes.encrypted,
-          updated: new Date().toISOString(),
-        },
-        relationships: {
-          ...policy.relationships,
-          product: {
-            ...policy.relationships.product,
-            data: {
-              type: "products",
-              id:
-                values.product?.id ??
-                policy.relationships.product?.data?.id ??
-                "",
-            },
+        updatePolicy.mutate(values, {
+          onSuccess: () => {
+            toast({ message: "Policy updated", variant: "success" })
+            onOpenChange(false)
           },
-          entitlements: {
-            ...policy.relationships.entitlements,
-            data: entitlementIds.map((eid) => ({
-              type: "entitlements",
-              id: eid,
-            })),
-          },
-        },
+          onError: () =>
+            toast({ message: "Failed to update policy", variant: "error" }),
+        })
+      } catch {
+        toast({ message: "Failed to update entitlements", variant: "error" })
       }
-
-      const index = MockPolicies.findIndex((p) => p.id === policy.id)
-      if (index === -1) {
-        toast({ message: "Policy not found", variant: "error" })
-        return
-      }
-
-      MockPolicies[index] = updated
-
-      toast({ message: "Policy updated", variant: "success" })
     },
-    [policy, onOpenChange],
+    [
+      policy,
+      onOpenChange,
+      updatePolicy,
+      currentEntitlements,
+      attachEntitlements,
+      detachEntitlements,
+    ],
   )
 
   return (
@@ -205,9 +113,11 @@ export default function PoliciesEditModal({
             Failed to load policy.
           </p>
         ) : (
-          open && (
+          open &&
+          policy && (
             <EditForm
-              policy={policy!}
+              policy={policy}
+              entitlementIds={currentEntitlements.map((e) => e.id)}
               onUpdate={handleUpdatePolicy}
               onCancel={() => onOpenChange(false)}
             />

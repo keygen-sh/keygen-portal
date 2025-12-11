@@ -22,7 +22,7 @@ import DocumentationLink from "@/components/documentation-link"
 interface DuplicateFormProps {
   policy: Policy
   entitlementIds: string[]
-  onCreate: (values: Forms.Policies.BaseValues) => Promise<void> | void
+  onCreate: (values: Forms.Policies.CreateValues) => Promise<void> | void
   onCancel: () => void
 }
 
@@ -33,7 +33,10 @@ export default function DuplicateForm({
   onCancel,
 }: DuplicateFormProps) {
   const defaultValues = useMemo(() => {
-    const values = Forms.Policies.getFormValuesFromPolicy(policy)
+    const values = Forms.Policies.getFormValuesFromPolicy<Forms.Policies.CreateValues>(
+      policy,
+      { product: true },
+    )
     return {
       ...values,
       name: `${values.name} (dup)`,
@@ -44,8 +47,8 @@ export default function DuplicateForm({
     }
   }, [policy, entitlementIds])
 
-  const form = useForm<Forms.Policies.BaseValues>({
-    resolver: zodResolver(Forms.Policies.BaseSchema),
+  const form = useForm<Forms.Policies.CreateValues>({
+    resolver: zodResolver(Forms.Policies.CreateSchema),
     mode: "onChange",
     defaultValues,
   })
@@ -53,7 +56,7 @@ export default function DuplicateForm({
   const createEntitlement = useCreateEntitlement()
 
   const create = useCallback(
-    async (values: Forms.Policies.BaseValues) => {
+    async (values: Forms.Policies.CreateValues) => {
       const attachIds = values.entitlements?.attach ?? []
       const toCreate = values.entitlements?.create ?? []
 

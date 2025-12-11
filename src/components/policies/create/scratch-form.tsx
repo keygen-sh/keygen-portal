@@ -18,13 +18,13 @@ import StepProgress from "@/components/step-progress"
 type Step = {
   key: string
   title: string
-  fields?: FieldPath<Forms.Policies.BaseValues>[]
+  fields?: FieldPath<Forms.Policies.CreateValues>[]
   render: () => React.ReactElement
 }
 
 interface PoliciesScratchFormProps {
   onClose: () => void
-  onCreate: (values: Forms.Policies.BaseValues) => Promise<void>
+  onCreate: (values: Forms.Policies.CreateValues) => Promise<void>
 }
 
 export default function PoliciesScratchForm({
@@ -33,9 +33,9 @@ export default function PoliciesScratchForm({
 }: PoliciesScratchFormProps): React.ReactElement {
   const isMobile = useMobile()
 
-  const schema = Forms.Policies.BaseSchema
+  const schema = Forms.Policies.CreateSchema
 
-  const form = useForm<Forms.Policies.BaseValues>({
+  const form = useForm<Forms.Policies.CreateValues>({
     resolver: zodResolver(schema),
     mode: "onChange",
     defaultValues: Forms.Policies.getSchemaDefaults(schema),
@@ -161,7 +161,8 @@ export default function PoliciesScratchForm({
         await onCreate(values)
       } catch (error: unknown) {
         if (error instanceof Forms.Entitlements.CreateValidationError) {
-          const { nextAttach, nextCreate, fieldErrors } = error
+          const { nextAttach, nextCreate, fieldErrors } =
+            error as Forms.Entitlements.CreateValidationError<Forms.Policies.CreateValues>
 
           if (nextAttach) {
             form.setValue("entitlements.attach", nextAttach)

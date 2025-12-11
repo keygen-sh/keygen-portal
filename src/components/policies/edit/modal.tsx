@@ -51,7 +51,7 @@ export default function PoliciesEditModal({
   const detachEntitlements = useDetachPolicyEntitlements(policy?.id ?? "")
 
   const handleUpdatePolicy = useCallback(
-    async (values: Forms.Policies.UpdatePayload) => {
+    async (values: Forms.Policies.UpdateValues) => {
       if (!policy) return
 
       const currentIds = currentEntitlements.map((e) => e.id)

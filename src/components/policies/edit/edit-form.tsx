@@ -22,7 +22,7 @@ import DocumentationLink from "@/components/documentation-link"
 interface EditFormProps {
   policy: Policy
   entitlementIds: string[]
-  onUpdate: (values: Forms.Policies.BaseValues) => Promise<void> | void
+  onUpdate: (values: Forms.Policies.UpdateValues) => Promise<void> | void
   onCancel: () => void
 }
 
@@ -32,8 +32,8 @@ export default function EditForm({
   onUpdate,
   onCancel,
 }: EditFormProps) {
-  const form = useForm<Forms.Policies.BaseValues>({
-    resolver: zodResolver(Forms.Policies.BaseSchema),
+  const form = useForm<Forms.Policies.UpdateValues>({
+    resolver: zodResolver(Forms.Policies.UpdateSchema),
     mode: "onChange",
     defaultValues: {
       ...Forms.Policies.getFormValuesFromPolicy(policy),
@@ -47,7 +47,7 @@ export default function EditForm({
   const createEntitlement = useCreateEntitlement()
 
   const update = useCallback(
-    async (values: Forms.Policies.BaseValues) => {
+    async (values: Forms.Policies.UpdateValues) => {
       const attachIds = values.entitlements?.attach ?? []
       const toCreate = values.entitlements?.create ?? []
 
@@ -107,7 +107,7 @@ export default function EditForm({
         }}
       >
         <ScrollArea type="always" className="h-[calc(100dvh-8rem)]">
-          <Policies.Fields.All />
+          <Policies.Fields.All omit={["product"]} />
 
           <DocumentationLink page="policies" />
         </ScrollArea>

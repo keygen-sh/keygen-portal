@@ -21,7 +21,7 @@ export default function ProductsEditModal({
 }: ProductsEditModalProps) {
   const updateProduct = useUpdateProduct(product?.id ?? "")
 
-  const handleUpdateProduct = (values: Forms.Products.UpdatePayload) => {
+  const handleUpdateProduct = (values: Forms.Products.UpdateValues) => {
     if (!product) return
     updateProduct.mutate(values, {
       onSuccess: () => {

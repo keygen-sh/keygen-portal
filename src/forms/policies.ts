@@ -307,8 +307,6 @@ export const BaseRules = (
       },
     )
 
-export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
-
 export const ProductShape = z.object({
   product: z.object({
     id: z
@@ -317,11 +315,11 @@ export const ProductShape = z.object({
   }),
 })
 
+export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
 export const CreateSchema: z.ZodType<CreateValues> = BaseRules(
   BaseShape.merge(ProductShape),
 ) as z.ZodType<CreateValues>
-export const UpdateSchema: z.ZodType<UpdateValues> =
-  BaseSchema as z.ZodType<UpdateValues>
+export const UpdateSchema: z.ZodType<UpdateValues> = BaseSchema
 
 export const TimedShape = z.object({
   duration: z.coerce.number().int().positive().nullish().default(1209600),

@@ -1,27 +1,25 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
+
+import * as Forms from "@/forms"
+import { compact } from "@/lib/compact"
 import { EnvironmentResponse } from "@/types/environments"
 
 config.validate()
 
 interface UpdateProps {
   id: string
-  name?: string | null
-  code?: string | null
+  values: Forms.Environments.UpdateValues
 }
 
 export default async function update({
   id,
-  name,
-  code,
+  values,
 }: UpdateProps): Promise<EnvironmentResponse> {
   const body = {
     data: {
       type: "environments",
-      attributes: {
-        ...(name && { name }),
-        ...(code && { code }),
-      },
+      attributes: compact(values),
     },
   }
 

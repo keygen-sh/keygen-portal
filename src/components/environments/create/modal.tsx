@@ -53,7 +53,7 @@ export default function EnvironmentsCreateModal({
   const [formError, setFormError] = useState<string | null>(null)
 
   const handleCreateEnvironment = useCallback(
-    (values: Forms.Environments.CreatePayload) => {
+    (values: Forms.Environments.AttributesValues) => {
       if (!values.name || !values.code) {
         toast({
           message: "Failed to create environment",
@@ -63,7 +63,7 @@ export default function EnvironmentsCreateModal({
         return
       }
 
-      createEnvironment.mutate(values, {
+      createEnvironment.mutate({ ...values, isolationStrategy }, {
         onSuccess: (environment) => {
           toast({ message: "Environment created", variant: "success" })
           onSelectEnvironment(environment)
@@ -82,7 +82,7 @@ export default function EnvironmentsCreateModal({
         },
       })
     },
-    [createEnvironment, onSelectEnvironment, onChangeMode],
+    [createEnvironment, onSelectEnvironment, onChangeMode, isolationStrategy],
   )
 
   const handleCancelCreate = useCallback(() => {
@@ -151,7 +151,6 @@ export default function EnvironmentsCreateModal({
         ) : (
           <AttributesForm
             key="environment-attributes"
-            isolationStrategy={isolationStrategy}
             loading={createEnvironment.isPending}
             error={formError}
             onSubmit={handleCreateEnvironment}

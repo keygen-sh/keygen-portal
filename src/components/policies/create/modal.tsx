@@ -143,10 +143,11 @@ export default function PoliciesCreateModal({
       setSelection(newSelection)
       setCompletedStep(new Set<string>())
 
-      const newSchema = Forms.Policies.composePolicySchema<Forms.Policies.CreateValues>(
-        newSelection,
-        { product: true },
-      )
+      const newSchema =
+        Forms.Policies.composePolicySchema<Forms.Policies.CreateValues>(
+          newSelection,
+          { product: true },
+        )
       form.reset(Forms.Policies.getSchemaDefaults(newSchema), {
         keepDefaultValues: false,
       })

@@ -28,9 +28,7 @@ export default function EntitlementsEditModal({
 }: EntitlementsEditModalProps) {
   const updateEntitlement = useUpdateEntitlement(entitlement?.id ?? "")
 
-  const handleUpdateEntitlement = (
-    values: Forms.Entitlements.UpdatePayload,
-  ) => {
+  const handleUpdateEntitlement = (values: Forms.Entitlements.UpdateValues) => {
     if (!entitlement) return
     updateEntitlement.mutate(values, {
       onSuccess: () => {

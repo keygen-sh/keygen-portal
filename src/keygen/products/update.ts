@@ -1,42 +1,25 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
-import { ProductResponse, DistributionStrategy } from "@/types/products"
+
+import * as Forms from "@/forms"
+import { compact } from "@/lib/compact"
+import { ProductResponse } from "@/types/products"
 
 config.validate()
 
 interface UpdateProps {
   id: string
-  name?: string | null
-  code?: string | null
-  distributionStrategy?: DistributionStrategy | null
-  url?: string | null
-  platforms?: string[] | null
-  permissions?: string[] | null
-  metadata?: Record<string, unknown> | null
+  values: Forms.Products.UpdateValues
 }
 
 export default async function update({
   id,
-  name,
-  code,
-  distributionStrategy,
-  url,
-  platforms,
-  permissions,
-  metadata,
+  values,
 }: UpdateProps): Promise<ProductResponse> {
   const body = {
     data: {
       type: "products",
-      attributes: {
-        ...(name && { name }),
-        ...(code && { code }),
-        ...(distributionStrategy && { distributionStrategy }),
-        ...(url && { url }),
-        ...(platforms && { platforms }),
-        ...(permissions && { permissions }),
-        ...(metadata && { metadata }),
-      },
+      attributes: compact(values),
     },
   }
 

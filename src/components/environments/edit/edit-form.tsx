@@ -42,7 +42,7 @@ import DocumentationLink from "@/components/documentation-link"
 
 interface EnvironmentEditProps {
   environment: Environment
-  onSubmit: (values: Forms.Environments.AttributesValues) => void
+  onSubmit: (values: Forms.Environments.UpdateValues) => void
   onCancel: () => void
   loading: boolean
   error: string | null
@@ -57,17 +57,20 @@ export default function EnvironmentEditForm({
 }: EnvironmentEditProps) {
   const isMobile = useMobile()
 
-  const form = useForm<Forms.Environments.AttributesValues>({
-    resolver: zodResolver(Forms.Environments.AttributesSchema),
+  const form = useForm<Forms.Environments.UpdateValues>({
+    resolver: zodResolver(Forms.Environments.UpdateSchema),
     defaultValues: {
       name: environment.attributes.name || "",
       code: environment.attributes.code || "",
     },
   })
 
-  const handleSubmit = useCallback(() => {
-    onSubmit(form.getValues())
-  }, [onSubmit, form])
+  const handleSubmit = useCallback(
+    (values: Forms.Environments.UpdateValues) => {
+      onSubmit(values)
+    },
+    [onSubmit],
+  )
 
   return (
     <Form {...form}>

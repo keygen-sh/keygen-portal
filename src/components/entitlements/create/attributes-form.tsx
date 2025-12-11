@@ -27,7 +27,7 @@ import DocumentationLink from "@/components/documentation-link"
 interface AttributesFormProps {
   loading?: boolean
   error?: string | null
-  onSubmit: (values: Forms.Entitlements.BaseValues) => void
+  onSubmit: (values: Forms.Entitlements.CreateValues) => void
   onCancel: () => void
 }
 
@@ -37,8 +37,8 @@ export default function AttributesForm({
   onSubmit,
   onCancel,
 }: AttributesFormProps) {
-  const form = useForm<Forms.Entitlements.BaseValues>({
-    resolver: zodResolver(Forms.Entitlements.BaseSchema),
+  const form = useForm<Forms.Entitlements.CreateValues>({
+    resolver: zodResolver(Forms.Entitlements.CreateSchema),
     mode: "onChange",
     defaultValues: {
       name: "",
@@ -48,7 +48,7 @@ export default function AttributesForm({
   })
 
   const handleSubmit = useCallback(
-    (values: Forms.Entitlements.BaseValues) => {
+    (values: Forms.Entitlements.CreateValues) => {
       onSubmit(values)
     },
     [onSubmit],

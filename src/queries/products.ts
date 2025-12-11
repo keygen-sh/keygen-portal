@@ -42,10 +42,10 @@ export function useCreateProduct() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Product, APIError, Forms.Products.CreatePayload>({
+  return useMutation<Product, APIError, Forms.Products.CreateValues>({
     mutationFn: (values) =>
       keygen.products
-        .create(values)
+        .create({ values })
         .then((response) => response.data as Product),
 
     onSuccess: (newProduct) => {
@@ -65,7 +65,7 @@ export function useUpdateProduct(productId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Product, APIError, Forms.Products.UpdatePayload>({
+  return useMutation<Product, APIError, Forms.Products.UpdateValues>({
     mutationFn: (values) =>
       keygen.products.get({ id: productId }).then(async (response) => {
         const current = response.data as Product
@@ -73,11 +73,11 @@ export function useUpdateProduct(productId: string) {
         const changes = diff(
           current.attributes,
           values,
-        ) as Forms.Products.UpdatePayload
+        ) as Forms.Products.UpdateValues
         if (Object.keys(changes).length === 0) return current
 
         const updated = await keygen.products
-          .update({ id: productId, ...changes })
+          .update({ id: productId, values: changes })
           .then((response) => response.data as Product)
 
         return updated

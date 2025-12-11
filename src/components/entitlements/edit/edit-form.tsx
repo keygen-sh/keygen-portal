@@ -30,7 +30,7 @@ import DocumentationLink from "@/components/documentation-link"
 interface EditFormProps {
   entitlement: Entitlement | null
   loading?: boolean
-  onSubmit: (values: Forms.Entitlements.BaseValues) => void
+  onSubmit: (values: Forms.Entitlements.UpdateValues) => void
   onCancel: () => void
 }
 
@@ -40,8 +40,8 @@ export default function EditForm({
   onSubmit,
   onCancel,
 }: EditFormProps) {
-  const form = useForm<Forms.Entitlements.BaseValues>({
-    resolver: zodResolver(Forms.Entitlements.BaseSchema),
+  const form = useForm<Forms.Entitlements.UpdateValues>({
+    resolver: zodResolver(Forms.Entitlements.UpdateSchema),
     mode: "onBlur",
     reValidateMode: "onChange",
     defaultValues: {
@@ -52,7 +52,7 @@ export default function EditForm({
   })
 
   const handleSubmit = useCallback(
-    (values: Forms.Entitlements.BaseValues) => {
+    (values: Forms.Entitlements.UpdateValues) => {
       onSubmit(values)
     },
     [onSubmit],

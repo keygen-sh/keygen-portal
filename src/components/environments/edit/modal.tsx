@@ -42,7 +42,7 @@ export default function EnvironmentsEditModal({
   const [formError, setFormError] = useState<string | null>(null)
 
   const handleUpdateEnvironment = useCallback(
-    (values: Forms.Environments.UpdatePayload) => {
+    (values: Forms.Environments.UpdateValues) => {
       setFormError(null)
 
       updateEnvironment.mutate(values, {

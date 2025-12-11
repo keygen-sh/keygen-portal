@@ -15,10 +15,7 @@ import {
 } from "@/components/ui/form"
 
 import * as Forms from "@/forms"
-import {
-  IsolationStrategy,
-  EnvironmentAttributeDescriptions,
-} from "@/types/environments"
+import { EnvironmentAttributeDescriptions } from "@/types/environments"
 
 import * as Field from "@/components/field"
 import * as Loading from "@/components/loading"
@@ -26,15 +23,13 @@ import SectionCard from "@/components/section-card"
 import DocumentationLink from "@/components/documentation-link"
 
 interface AttributesFormProps {
-  isolationStrategy: IsolationStrategy
   loading?: boolean
   error?: string | null
-  onSubmit: (values: Forms.Environments.CreatePayload) => void
+  onSubmit: (values: Forms.Environments.AttributesValues) => void
   onCancel: () => void
 }
 
 export default function AttributesForm({
-  isolationStrategy,
   loading,
   error,
   onSubmit,
@@ -51,9 +46,9 @@ export default function AttributesForm({
 
   const handleSubmit = useCallback(
     (values: Forms.Environments.AttributesValues) => {
-      onSubmit({ ...values, isolationStrategy })
+      onSubmit(values)
     },
-    [onSubmit, isolationStrategy],
+    [onSubmit],
   )
 
   return (

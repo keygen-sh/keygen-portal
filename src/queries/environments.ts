@@ -28,10 +28,10 @@ export function useListEnvironments() {
 export function useCreateEnvironment() {
   const queryClient = useQueryClient()
 
-  return useMutation<Environment, APIError, Forms.Environments.CreatePayload>({
+  return useMutation<Environment, APIError, Forms.Environments.CreateValues>({
     mutationFn: (values) =>
       keygen.environments
-        .create(values)
+        .create({ values })
         .then((response) => response.data as Environment),
 
     onSuccess: (newEnvironment) => {
@@ -49,7 +49,7 @@ export function useCreateEnvironment() {
 export function useUpdateEnvironment(environmentId: string) {
   const queryClient = useQueryClient()
 
-  return useMutation<Environment, APIError, Forms.Environments.UpdatePayload>({
+  return useMutation<Environment, APIError, Forms.Environments.UpdateValues>({
     mutationFn: (values) =>
       keygen.environments.get({ id: environmentId }).then(async (response) => {
         const current = response.data as Environment
@@ -57,11 +57,11 @@ export function useUpdateEnvironment(environmentId: string) {
         const changes = diff(
           current.attributes,
           values,
-        ) as Forms.Environments.UpdatePayload
+        ) as Forms.Environments.UpdateValues
         if (Object.keys(changes).length === 0) return current
 
         const updated = await keygen.environments
-          .update({ id: environmentId, ...changes })
+          .update({ id: environmentId, values: changes })
           .then((response) => response.data as Environment)
 
         return updated

@@ -1,28 +1,23 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
-import { EnvironmentResponse, IsolationStrategy } from "@/types/environments"
+
+import * as Forms from "@/forms"
+import { compact } from "@/lib/compact"
+import { EnvironmentResponse } from "@/types/environments"
 
 config.validate()
 
 interface CreateProps {
-  name: string
-  code: string
-  isolationStrategy: IsolationStrategy
+  values: Forms.Environments.CreateValues
 }
 
 export default async function create({
-  name,
-  code,
-  isolationStrategy,
+  values,
 }: CreateProps): Promise<EnvironmentResponse> {
   const body = {
     data: {
       type: "environments",
-      attributes: {
-        name,
-        code,
-        isolationStrategy,
-      },
+      attributes: compact(values),
     },
   }
 

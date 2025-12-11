@@ -40,7 +40,7 @@ export default function PoliciesDuplicateModal({
   const createPolicy = useCreatePolicy()
   const navigate = useNavigate()
 
-  const handleCreatePolicy = (values: Forms.Policies.CreatePayload) => {
+  const handleCreatePolicy = (values: Forms.Policies.CreateValues) => {
     if (!policy) return
 
     createPolicy.mutate(values, {

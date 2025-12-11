@@ -23,9 +23,6 @@ import {
 } from "@/types/policies"
 
 export type BaseValues = Writable<OptionalExcept<PolicyAttributes, "name">> & {
-  product: {
-    id: string
-  }
   entitlements?: {
     attach?: string[]
     create?: {
@@ -36,8 +33,8 @@ export type BaseValues = Writable<OptionalExcept<PolicyAttributes, "name">> & {
   }
 }
 
-export type CreatePayload = BaseValues
-export type UpdatePayload = Partial<BaseValues>
+export type CreateValues = BaseValues & { product: { id: string } }
+export type UpdateValues = Partial<BaseValues>
 
 export const BaseShape = z.object({
   name: z.string().trim().min(1, "Policy name is required"),
@@ -156,12 +153,6 @@ export const BaseShape = z.object({
     .nullish()
     .default(OverageStrategy.NoOverage),
   metadata: z.record(z.string()).default({}),
-
-  product: z.object({
-    id: z
-      .string({ required_error: "Product is required" })
-      .min(1, "Product is required."),
-  }),
 
   entitlements: z
     .object({
@@ -317,6 +308,20 @@ export const BaseRules = (
     )
 
 export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
+
+export const ProductShape = z.object({
+  product: z.object({
+    id: z
+      .string({ required_error: "Product is required" })
+      .min(1, "Product is required."),
+  }),
+})
+
+export const CreateSchema: z.ZodType<CreateValues> = BaseRules(
+  BaseShape.merge(ProductShape),
+) as z.ZodType<CreateValues>
+export const UpdateSchema: z.ZodType<UpdateValues> =
+  BaseSchema as z.ZodType<UpdateValues>
 
 export const TimedShape = z.object({
   duration: z.coerce.number().int().positive().nullish().default(1209600),
@@ -573,12 +578,15 @@ export type PolicyTemplateSelection = {
   offline?: boolean
 }
 
-export function composePolicySchema(selection: {
-  timing?: TimingTemplates | null
-  access?: AccessTemplates[]
-  metered?: MeteredTemplates[]
-  offline?: boolean
-}): z.ZodType<BaseValues> {
+export function composePolicySchema<T extends BaseValues = BaseValues>(
+  selection: {
+    timing?: TimingTemplates | null
+    access?: AccessTemplates[]
+    metered?: MeteredTemplates[]
+    offline?: boolean
+  },
+  options?: { product?: boolean },
+): z.ZodType<T> {
   const access = selection.access ?? []
   const metered = selection.metered ?? []
   const requiresNodeLocked =
@@ -587,6 +595,10 @@ export function composePolicySchema(selection: {
     metered.includes(MeteredTemplates.LeaseBased)
 
   let shape: z.ZodObject<z.ZodRawShape> = BaseShape
+
+  if (options?.product) {
+    shape = shape.merge(ProductShape)
+  }
 
   if (selection.timing === TimingTemplates.Timed) {
     shape = shape.merge(TimedShape)
@@ -624,22 +636,26 @@ export function composePolicySchema(selection: {
     schema = LeaseBasedRules(schema)
   }
 
-  return schema
+  return schema as unknown as z.ZodType<T>
 }
 
-export function getSchemaDefaults(schema: z.ZodType<BaseValues>): BaseValues {
+export function getSchemaDefaults<T extends BaseValues>(
+  schema: z.ZodType<T>,
+): T {
   const parsed = schema.parse({ name: "temp", product: { id: "temp" } })
-
   parsed.name = ""
-  parsed.product.id = ""
-
+  if ("product" in parsed) {
+    ;(parsed as CreateValues).product.id = ""
+  }
   return parsed
 }
 
-export function getFormValuesFromPolicy(policy: Policy): BaseValues {
-  return {
+export function getFormValuesFromPolicy<T extends BaseValues = BaseValues>(
+  policy: Policy,
+  options?: { product?: boolean },
+): T {
+  const base: BaseValues = {
     name: policy.attributes.name,
-    product: { id: policy.relationships.product?.data?.id ?? "" },
     metadata: policy.attributes.metadata ?? {},
 
     duration: policy.attributes.duration,
@@ -694,4 +710,13 @@ export function getFormValuesFromPolicy(policy: Policy): BaseValues {
       create: [],
     },
   }
+
+  if (options?.product) {
+    return {
+      ...base,
+      product: { id: policy.relationships.product?.data?.id ?? "" },
+    } as unknown as T
+  }
+
+  return base as unknown as T
 }

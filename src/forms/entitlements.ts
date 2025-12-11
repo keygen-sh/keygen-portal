@@ -27,13 +27,13 @@ const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {
 
 export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
 
-export class CreateValidationError extends Error {
+export class CreateValidationError<
+  T extends Forms.Policies.BaseValues = Forms.Policies.BaseValues,
+> extends Error {
   constructor(
     public nextAttach: string[],
-    public nextCreate: NonNullable<
-      Forms.Policies.BaseValues["entitlements"]
-    >["create"],
-    public fieldErrors: FormFieldError<Forms.Policies.BaseValues>[],
+    public nextCreate: NonNullable<T["entitlements"]>["create"],
+    public fieldErrors: FormFieldError<T>[],
   ) {
     super("Failed to create entitlement(s)")
     this.name = "CreateEntitlementValidationError"

@@ -61,14 +61,67 @@ import KeyValueInput from "@/components/key-value-input"
 import NullableSelect from "@/components/nullable-select"
 import DurationInput, { HeartbeatPresets } from "@/components/duration-input"
 
+export type PolicyFieldName =
+  | "name"
+  | "product"
+  | "authenticationStrategy"
+  | "checkInInterval"
+  | "checkInIntervalCount"
+  | "componentMatchingStrategy"
+  | "componentUniquenessStrategy"
+  | "duration"
+  | "expirationBasis"
+  | "expirationStrategy"
+  | "floating"
+  | "heartbeatBasis"
+  | "heartbeatCullStrategy"
+  | "heartbeatDuration"
+  | "heartbeatResurrectionStrategy"
+  | "machineLeasingStrategy"
+  | "machineMatchingStrategy"
+  | "machineUniquenessStrategy"
+  | "maxCores"
+  | "maxMachines"
+  | "maxProcesses"
+  | "maxUsers"
+  | "maxUses"
+  | "overageStrategy"
+  | "processLeasingStrategy"
+  | "protected"
+  | "renewalBasis"
+  | "requireCheckIn"
+  | "requireChecksumScope"
+  | "requireComponentsScope"
+  | "requireFingerprintScope"
+  | "requireHeartbeat"
+  | "requireMachineScope"
+  | "requirePolicyScope"
+  | "requireProductScope"
+  | "requireUserScope"
+  | "requireVersionScope"
+  | "strict"
+  | "transferStrategy"
+  | "usePool"
+  | "metadata"
+  | "entitlements"
+
 interface AllFieldsProps {
+  omit?: PolicyFieldName[]
   className?: string
 }
 
 export default function AllFields({
+  omit,
   className,
 }: AllFieldsProps): React.ReactElement {
-  const form = useFormContext<Forms.Policies.BaseValues>()
+  const form = useFormContext<
+    | Forms.Policies.BaseValues
+    | Forms.Policies.CreateValues
+    | Forms.Policies.UpdateValues
+  >()
+
+  const shouldRender = (field: PolicyFieldName) =>
+    !(omit ? omit : []).includes(field)
 
   const { data: products = [], isLoading: productsLoading } = useListProducts()
   const { data: entitlements = [], isLoading: entitlementsLoading } =
@@ -222,129 +275,196 @@ export default function AllFields({
     )
   }
 
+  const showGeneralSection = shouldRender("name") && shouldRender("product")
+
   return (
     <div className={cn("p-4", className)}>
-      <h2 className="text-content-loud/90">General</h2>
-      <section className="mt-4 flex flex-col md:flex-row">
-        <div className="w-full space-y-6">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <Field.Header label="Policy name" variant="stacking">
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Enter policy name..."
-                      autoComplete="off"
-                    />
-                  </FormControl>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+      {showGeneralSection && (
+        <>
+          <h2 className="text-content-loud/90">General</h2>
+          <section className="mt-4 flex flex-col md:flex-row">
+            <div className="w-full space-y-6">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <Field.Header label="Policy name" variant="stacking">
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Enter policy name..."
+                          autoComplete="off"
+                        />
+                      </FormControl>
+                    </Field.Header>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-        <div className="mx-8 hidden md:block">
-          <Separator orientation="vertical" dashed />
-        </div>
+            <div className="mx-8 hidden md:block">
+              <Separator orientation="vertical" dashed />
+            </div>
 
-        <div className="mt-4 w-full space-y-6 md:mt-0">
-          <FormField
-            control={form.control}
-            name="product.id"
-            render={({ field }) => (
-              <FormItem>
-                <Field.Header
-                  label="Product relationship"
-                  variant="stacking"
-                  tooltip="The product to which this policy belongs."
-                >
-                  <Select
-                    value={field.value ?? ""}
-                    onValueChange={(value) =>
-                      field.onChange(value === "" ? undefined : value)
-                    }
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select product..." />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {products.map((product) => (
-                        <SelectItem key={product.id} value={product.id}>
-                          {product.attributes.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-      </section>
+            <div className="mt-4 w-full space-y-6 md:mt-0">
+              <FormField
+                control={form.control}
+                name="product.id"
+                render={({ field }) => (
+                  <FormItem>
+                    <Field.Header
+                      label="Product relationship"
+                      variant="stacking"
+                      tooltip="The product to which this policy belongs."
+                    >
+                      <Select
+                        value={field.value ?? ""}
+                        onValueChange={(value) =>
+                          field.onChange(value === "" ? undefined : value)
+                        }
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select product..." />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {products.map((product) => (
+                            <SelectItem key={product.id} value={product.id}>
+                              {product.attributes.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </Field.Header>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </section>
 
-      <Separator className="my-6" />
+          <Separator className="my-6" />
+        </>
+      )}
 
       <h2 className="text-content-loud/90">Attributes</h2>
       <section className="mt-4 flex flex-col md:flex-row">
         <div className="w-full space-y-6">
-          <FormField
-            control={form.control}
-            name="authenticationStrategy"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <Field.Header
-                  label="Authentication strategy"
-                  tooltip={PolicyAttributeDescriptions.authenticationStrategy}
-                >
-                  <NullableSelect<AuthenticationStrategy>
-                    value={field.value}
-                    onChange={(value) => field.onChange(value)}
-                    invalid={!!fieldState.error}
-                  >
-                    {Object.values(AuthenticationStrategy).map((strategy) => (
-                      <SelectItem key={strategy} value={strategy}>
-                        {PolicyOptionLabels.authenticationStrategy[strategy]}
-                      </SelectItem>
-                    ))}
-                  </NullableSelect>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {!showGeneralSection && shouldRender("name") && (
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <Field.Header label="Policy name">
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Enter policy name..."
+                        autoComplete="off"
+                      />
+                    </FormControl>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
-          <FormField
-            control={form.control}
-            name="checkInInterval"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <Field.Header
-                  label="Check-in interval"
-                  tooltip={PolicyAttributeDescriptions.checkInInterval}
-                >
-                  <NullableSelect<CheckInInterval>
-                    value={field.value}
-                    onChange={(value) => field.onChange(value)}
-                    invalid={!!fieldState.error}
+          {!showGeneralSection && shouldRender("product") && (
+            <FormField
+              control={form.control}
+              name="product.id"
+              render={({ field }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Product relationship"
+                    tooltip="The product to which this policy belongs."
                   >
-                    {Object.values(CheckInInterval).map((interval) => (
-                      <SelectItem key={interval} value={interval}>
-                        {PolicyOptionLabels.checkInInterval[interval]}
-                      </SelectItem>
-                    ))}
-                  </NullableSelect>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                    <Select
+                      value={field.value ?? ""}
+                      onValueChange={(value) =>
+                        field.onChange(value === "" ? undefined : value)
+                      }
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select product..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {products.map((product) => (
+                          <SelectItem key={product.id} value={product.id}>
+                            {product.attributes.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("authenticationStrategy") && (
+            <FormField
+              control={form.control}
+              name="authenticationStrategy"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Authentication strategy"
+                    tooltip={PolicyAttributeDescriptions.authenticationStrategy}
+                  >
+                    <NullableSelect<AuthenticationStrategy>
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                      invalid={!!fieldState.error}
+                    >
+                      {Object.values(AuthenticationStrategy).map((strategy) => (
+                        <SelectItem key={strategy} value={strategy}>
+                          {PolicyOptionLabels.authenticationStrategy[strategy]}
+                        </SelectItem>
+                      ))}
+                    </NullableSelect>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("checkInInterval") && (
+            <FormField
+              control={form.control}
+              name="checkInInterval"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Check-in interval"
+                    tooltip={PolicyAttributeDescriptions.checkInInterval}
+                  >
+                    <NullableSelect<CheckInInterval>
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                      invalid={!!fieldState.error}
+                    >
+                      {Object.values(CheckInInterval).map((interval) => (
+                        <SelectItem key={interval} value={interval}>
+                          {PolicyOptionLabels.checkInInterval[interval]}
+                        </SelectItem>
+                      ))}
+                    </NullableSelect>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           <FormField
             control={form.control}
@@ -392,123 +512,137 @@ export default function AllFields({
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="componentMatchingStrategy"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <Field.Header
-                  label="Component matching strategy"
-                  tooltip={
-                    PolicyAttributeDescriptions.componentMatchingStrategy
-                  }
-                >
-                  <NullableSelect<ComponentMatchingStrategy>
-                    value={field.value}
-                    onChange={(value) => field.onChange(value)}
-                    invalid={!!fieldState.error}
+          {shouldRender("componentMatchingStrategy") && (
+            <FormField
+              control={form.control}
+              name="componentMatchingStrategy"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Component matching strategy"
+                    tooltip={
+                      PolicyAttributeDescriptions.componentMatchingStrategy
+                    }
                   >
-                    {Object.values(ComponentMatchingStrategy).map(
-                      (strategy) => (
-                        <SelectItem key={strategy} value={strategy}>
-                          {
-                            PolicyOptionLabels.componentMatchingStrategy[
-                              strategy
-                            ]
-                          }
-                        </SelectItem>
-                      ),
-                    )}
-                  </NullableSelect>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="componentUniquenessStrategy"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <Field.Header
-                  label="Component uniqueness strategy"
-                  tooltip={
-                    PolicyAttributeDescriptions.componentUniquenessStrategy
-                  }
-                >
-                  <NullableSelect<ComponentUniquenessStrategy>
-                    value={field.value}
-                    onChange={(value) => field.onChange(value)}
-                    invalid={!!fieldState.error}
-                  >
-                    {Object.values(ComponentUniquenessStrategy).map(
-                      (strategy) => (
-                        <SelectItem key={strategy} value={strategy}>
-                          {
-                            PolicyOptionLabels.componentUniquenessStrategy[
-                              strategy
-                            ]
-                          }
-                        </SelectItem>
-                      ),
-                    )}
-                  </NullableSelect>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="duration"
-            render={({ field }) => (
-              <FormItem>
-                <Field.Header
-                  label="Duration"
-                  tooltip={PolicyAttributeDescriptions.duration}
-                >
-                  <FormControl>
-                    <DurationInput
+                    <NullableSelect<ComponentMatchingStrategy>
                       value={field.value}
                       onChange={(value) => field.onChange(value)}
-                      units={["unlimited", "days", "weeks", "months", "years"]}
-                    />
-                  </FormControl>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                      invalid={!!fieldState.error}
+                    >
+                      {Object.values(ComponentMatchingStrategy).map(
+                        (strategy) => (
+                          <SelectItem key={strategy} value={strategy}>
+                            {
+                              PolicyOptionLabels.componentMatchingStrategy[
+                                strategy
+                              ]
+                            }
+                          </SelectItem>
+                        ),
+                      )}
+                    </NullableSelect>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
-          <FormField
-            control={form.control}
-            name="expirationBasis"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <Field.Header
-                  label="Expiration basis"
-                  tooltip={PolicyAttributeDescriptions.expirationBasis}
-                >
-                  <NullableSelect<ExpirationBasis>
-                    value={field.value}
-                    onChange={(value) => field.onChange(value)}
-                    invalid={!!fieldState.error}
-                    disabled={!duration}
-                    disabledTooltip="Set a duration to configure this field."
+          {shouldRender("componentUniquenessStrategy") && (
+            <FormField
+              control={form.control}
+              name="componentUniquenessStrategy"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Component uniqueness strategy"
+                    tooltip={
+                      PolicyAttributeDescriptions.componentUniquenessStrategy
+                    }
                   >
-                    {Object.values(ExpirationBasis).map((basis) => (
-                      <SelectItem key={basis} value={basis}>
-                        {PolicyOptionLabels.expirationBasis[basis]}
-                      </SelectItem>
-                    ))}
-                  </NullableSelect>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                    <NullableSelect<ComponentUniquenessStrategy>
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                      invalid={!!fieldState.error}
+                    >
+                      {Object.values(ComponentUniquenessStrategy).map(
+                        (strategy) => (
+                          <SelectItem key={strategy} value={strategy}>
+                            {
+                              PolicyOptionLabels.componentUniquenessStrategy[
+                                strategy
+                              ]
+                            }
+                          </SelectItem>
+                        ),
+                      )}
+                    </NullableSelect>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("duration") && (
+            <FormField
+              control={form.control}
+              name="duration"
+              render={({ field }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Duration"
+                    tooltip={PolicyAttributeDescriptions.duration}
+                  >
+                    <FormControl>
+                      <DurationInput
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
+                        units={[
+                          "unlimited",
+                          "days",
+                          "weeks",
+                          "months",
+                          "years",
+                        ]}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("expirationBasis") && (
+            <FormField
+              control={form.control}
+              name="expirationBasis"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Expiration basis"
+                    tooltip={PolicyAttributeDescriptions.expirationBasis}
+                  >
+                    <NullableSelect<ExpirationBasis>
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                      invalid={!!fieldState.error}
+                      disabled={!duration}
+                      disabledTooltip="Set a duration to configure this field."
+                    >
+                      {Object.values(ExpirationBasis).map((basis) => (
+                        <SelectItem key={basis} value={basis}>
+                          {PolicyOptionLabels.expirationBasis[basis]}
+                        </SelectItem>
+                      ))}
+                    </NullableSelect>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           <FormField
             control={form.control}
@@ -524,7 +658,6 @@ export default function AllFields({
                     onChange={(value) => field.onChange(value)}
                     invalid={!!fieldState.error}
                     disabled={!duration}
-                    disabledTooltip="Set a duration to configure this field."
                   >
                     {Object.values(ExpirationStrategy).map((strategy) => (
                       <SelectItem key={strategy} value={strategy}>
@@ -538,279 +671,307 @@ export default function AllFields({
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="floating"
-            render={({ field }) => (
-              <FormItem className="flex items-center">
-                <Field.Header
-                  label="Floating"
-                  variant="inline"
-                  tooltip={PolicyAttributeDescriptions.floating}
-                >
-                  <FormControl>
-                    <Checkbox
-                      id="floating"
-                      checked={!!field.value}
-                      onCheckedChange={(value) => field.onChange(!!value)}
-                    />
-                  </FormControl>
-                </Field.Header>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="heartbeatBasis"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <Field.Header
-                  label="Heartbeat basis"
-                  tooltip={PolicyAttributeDescriptions.heartbeatBasis}
-                >
-                  <NullableSelect<HeartbeatBasis>
-                    value={field.value}
-                    onChange={(value) => field.onChange(value)}
-                    invalid={!!fieldState.error}
-                    disabled={!requireHeartbeat}
-                    disabledTooltip="Enable heartbeat to configure this field."
+          {shouldRender("floating") && (
+            <FormField
+              control={form.control}
+              name="floating"
+              render={({ field }) => (
+                <FormItem className="flex items-center">
+                  <Field.Header
+                    label="Floating"
+                    variant="inline"
+                    tooltip={PolicyAttributeDescriptions.floating}
                   >
-                    {Object.values(HeartbeatBasis).map((basis) => (
-                      <SelectItem key={basis} value={basis}>
-                        {PolicyOptionLabels.heartbeatBasis[basis]}
-                      </SelectItem>
-                    ))}
-                  </NullableSelect>
-                </Field.Header>
+                    <FormControl>
+                      <Checkbox
+                        id="floating"
+                        checked={!!field.value}
+                        onCheckedChange={(value) => field.onChange(!!value)}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                </FormItem>
+              )}
+            />
+          )}
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="heartbeatCullStrategy"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <Field.Header
-                  label="Heartbeat cull strategy"
-                  tooltip={PolicyAttributeDescriptions.heartbeatCullStrategy}
-                >
-                  <NullableSelect<HeartbeatCullStrategy>
-                    value={field.value}
-                    onChange={(value) => field.onChange(value)}
-                    invalid={!!fieldState.error}
-                    disabled={!requireHeartbeat}
-                    disabledTooltip="Enable heartbeat to configure this field."
+          {shouldRender("heartbeatBasis") && (
+            <FormField
+              control={form.control}
+              name="heartbeatBasis"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Heartbeat basis"
+                    tooltip={PolicyAttributeDescriptions.heartbeatBasis}
                   >
-                    {Object.values(HeartbeatCullStrategy).map((strategy) => (
-                      <SelectItem key={strategy} value={strategy}>
-                        {PolicyOptionLabels.heartbeatCullStrategy[strategy]}
-                      </SelectItem>
-                    ))}
-                  </NullableSelect>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="heartbeatDuration"
-            render={({ field }) => (
-              <FormItem>
-                <Field.Header
-                  label="Heartbeat duration"
-                  tooltip={PolicyAttributeDescriptions.heartbeatDuration}
-                >
-                  <FormControl>
-                    <DurationInput
+                    <NullableSelect<HeartbeatBasis>
                       value={field.value}
-                      onChange={field.onChange}
-                      units={["seconds", "minutes", "hours", "days"]}
-                      presets={HeartbeatPresets}
-                    />
-                  </FormControl>
-                </Field.Header>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="heartbeatResurrectionStrategy"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <Field.Header
-                  label="Heartbeat resurrection strategy"
-                  tooltip={
-                    PolicyAttributeDescriptions.heartbeatResurrectionStrategy
-                  }
-                >
-                  <NullableSelect<HeartbeatResurrectionStrategy>
-                    value={field.value}
-                    onChange={(value) => field.onChange(value)}
-                    invalid={!!fieldState.error}
-                    disabled={!requireHeartbeat}
-                    disabledTooltip="Enable heartbeat to configure this field."
-                  >
-                    {Object.values(HeartbeatResurrectionStrategy).map(
-                      (strategy) => (
-                        <SelectItem key={strategy} value={strategy}>
-                          {
-                            PolicyOptionLabels.heartbeatResurrectionStrategy[
-                              strategy
-                            ]
-                          }
+                      onChange={(value) => field.onChange(value)}
+                      invalid={!!fieldState.error}
+                      disabled={!requireHeartbeat}
+                      disabledTooltip="Enable heartbeat to configure this field."
+                    >
+                      {Object.values(HeartbeatBasis).map((basis) => (
+                        <SelectItem key={basis} value={basis}>
+                          {PolicyOptionLabels.heartbeatBasis[basis]}
                         </SelectItem>
-                      ),
-                    )}
-                  </NullableSelect>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                      ))}
+                    </NullableSelect>
+                  </Field.Header>
 
-          <FormField
-            control={form.control}
-            name="machineLeasingStrategy"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <Field.Header
-                  label="Machine leasing strategy"
-                  tooltip={PolicyAttributeDescriptions.machineLeasingStrategy}
-                >
-                  <NullableSelect<MachineLeasingStrategy>
-                    value={field.value}
-                    onChange={(value) => field.onChange(value)}
-                    invalid={!!fieldState.error}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("heartbeatCullStrategy") && (
+            <FormField
+              control={form.control}
+              name="heartbeatCullStrategy"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Heartbeat cull strategy"
+                    tooltip={PolicyAttributeDescriptions.heartbeatCullStrategy}
                   >
-                    {Object.values(MachineLeasingStrategy).map((strategy) => (
-                      <SelectItem key={strategy} value={strategy}>
-                        {PolicyOptionLabels.machineLeasingStrategy[strategy]}
-                      </SelectItem>
-                    ))}
-                  </NullableSelect>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="machineMatchingStrategy"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <Field.Header
-                  label="Machine matching strategy"
-                  tooltip={PolicyAttributeDescriptions.machineMatchingStrategy}
-                >
-                  <NullableSelect<MachineMatchingStrategy>
-                    value={field.value}
-                    onChange={(value) => field.onChange(value)}
-                    invalid={!!fieldState.error}
-                  >
-                    {Object.values(MachineMatchingStrategy).map((strategy) => (
-                      <SelectItem key={strategy} value={strategy}>
-                        {PolicyOptionLabels.machineMatchingStrategy[strategy]}
-                      </SelectItem>
-                    ))}
-                  </NullableSelect>
-                </Field.Header>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="machineUniquenessStrategy"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <Field.Header
-                  label="Machine uniqueness strategy"
-                  tooltip={
-                    PolicyAttributeDescriptions.machineUniquenessStrategy
-                  }
-                >
-                  <NullableSelect<MachineUniquenessStrategy>
-                    value={field.value}
-                    onChange={(value) => field.onChange(value)}
-                    invalid={!!fieldState.error}
-                  >
-                    {Object.values(MachineUniquenessStrategy).map(
-                      (strategy) => (
+                    <NullableSelect<HeartbeatCullStrategy>
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                      invalid={!!fieldState.error}
+                      disabled={!requireHeartbeat}
+                      disabledTooltip="Enable heartbeat to configure this field."
+                    >
+                      {Object.values(HeartbeatCullStrategy).map((strategy) => (
                         <SelectItem key={strategy} value={strategy}>
-                          {
-                            PolicyOptionLabels.machineUniquenessStrategy[
-                              strategy
-                            ]
-                          }
+                          {PolicyOptionLabels.heartbeatCullStrategy[strategy]}
                         </SelectItem>
-                      ),
-                    )}
-                  </NullableSelect>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                      ))}
+                    </NullableSelect>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
-          <FormField
-            control={form.control}
-            name="maxCores"
-            render={({ field }) => (
-              <FormItem>
-                <Field.Header
-                  label="Max cores"
-                  tooltip={PolicyAttributeDescriptions.maxCores}
-                >
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={1}
-                      placeholder="e.g. 1"
-                      {...field}
-                      value={field.value ?? ""}
-                    />
-                  </FormControl>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {shouldRender("heartbeatDuration") && (
+            <FormField
+              control={form.control}
+              name="heartbeatDuration"
+              render={({ field }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Heartbeat duration"
+                    tooltip={PolicyAttributeDescriptions.heartbeatDuration}
+                  >
+                    <FormControl>
+                      <DurationInput
+                        value={field.value}
+                        onChange={field.onChange}
+                        units={["seconds", "minutes", "hours", "days"]}
+                        presets={HeartbeatPresets}
+                      />
+                    </FormControl>
+                  </Field.Header>
 
-          <FormField
-            control={form.control}
-            name="maxMachines"
-            render={({ field }) => (
-              <FormItem>
-                <Field.Header
-                  label="Max machines"
-                  tooltip={PolicyAttributeDescriptions.maxMachines}
-                >
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={1}
-                      placeholder="e.g. 1"
-                      {...field}
-                      value={field.value ?? ""}
-                    />
-                  </FormControl>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("heartbeatResurrectionStrategy") && (
+            <FormField
+              control={form.control}
+              name="heartbeatResurrectionStrategy"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Heartbeat resurrection strategy"
+                    tooltip={
+                      PolicyAttributeDescriptions.heartbeatResurrectionStrategy
+                    }
+                  >
+                    <NullableSelect<HeartbeatResurrectionStrategy>
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                      invalid={!!fieldState.error}
+                      disabled={!requireHeartbeat}
+                      disabledTooltip="Enable heartbeat to configure this field."
+                    >
+                      {Object.values(HeartbeatResurrectionStrategy).map(
+                        (strategy) => (
+                          <SelectItem key={strategy} value={strategy}>
+                            {
+                              PolicyOptionLabels.heartbeatResurrectionStrategy[
+                                strategy
+                              ]
+                            }
+                          </SelectItem>
+                        ),
+                      )}
+                    </NullableSelect>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("machineLeasingStrategy") && (
+            <FormField
+              control={form.control}
+              name="machineLeasingStrategy"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Machine leasing strategy"
+                    tooltip={PolicyAttributeDescriptions.machineLeasingStrategy}
+                  >
+                    <NullableSelect<MachineLeasingStrategy>
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                      invalid={!!fieldState.error}
+                    >
+                      {Object.values(MachineLeasingStrategy).map((strategy) => (
+                        <SelectItem key={strategy} value={strategy}>
+                          {PolicyOptionLabels.machineLeasingStrategy[strategy]}
+                        </SelectItem>
+                      ))}
+                    </NullableSelect>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("machineMatchingStrategy") && (
+            <FormField
+              control={form.control}
+              name="machineMatchingStrategy"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Machine matching strategy"
+                    tooltip={
+                      PolicyAttributeDescriptions.machineMatchingStrategy
+                    }
+                  >
+                    <NullableSelect<MachineMatchingStrategy>
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                      invalid={!!fieldState.error}
+                    >
+                      {Object.values(MachineMatchingStrategy).map(
+                        (strategy) => (
+                          <SelectItem key={strategy} value={strategy}>
+                            {
+                              PolicyOptionLabels.machineMatchingStrategy[
+                                strategy
+                              ]
+                            }
+                          </SelectItem>
+                        ),
+                      )}
+                    </NullableSelect>
+                  </Field.Header>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("machineUniquenessStrategy") && (
+            <FormField
+              control={form.control}
+              name="machineUniquenessStrategy"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Machine uniqueness strategy"
+                    tooltip={
+                      PolicyAttributeDescriptions.machineUniquenessStrategy
+                    }
+                  >
+                    <NullableSelect<MachineUniquenessStrategy>
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                      invalid={!!fieldState.error}
+                    >
+                      {Object.values(MachineUniquenessStrategy).map(
+                        (strategy) => (
+                          <SelectItem key={strategy} value={strategy}>
+                            {
+                              PolicyOptionLabels.machineUniquenessStrategy[
+                                strategy
+                              ]
+                            }
+                          </SelectItem>
+                        ),
+                      )}
+                    </NullableSelect>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("maxCores") && (
+            <FormField
+              control={form.control}
+              name="maxCores"
+              render={({ field }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Max cores"
+                    tooltip={PolicyAttributeDescriptions.maxCores}
+                  >
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min={1}
+                        placeholder="e.g. 1"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("maxMachines") && (
+            <FormField
+              control={form.control}
+              name="maxMachines"
+              render={({ field }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Max machines"
+                    tooltip={PolicyAttributeDescriptions.maxMachines}
+                  >
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min={1}
+                        placeholder="e.g. 1"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
         </div>
 
         <div className="mx-8 hidden md:block">
@@ -818,598 +979,652 @@ export default function AllFields({
         </div>
 
         <div className="mt-4 w-full space-y-6 md:mt-0">
-          <FormField
-            control={form.control}
-            name="maxProcesses"
-            render={({ field }) => (
-              <FormItem>
-                <Field.Header
-                  label="Max processes"
-                  tooltip={PolicyAttributeDescriptions.maxProcesses}
-                >
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={1}
-                      placeholder="e.g. 1"
-                      {...field}
-                      value={field.value ?? ""}
-                    />
-                  </FormControl>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="maxUsers"
-            render={({ field }) => (
-              <FormItem>
-                <Field.Header
-                  label="Max users"
-                  tooltip={PolicyAttributeDescriptions.maxUsers}
-                >
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={1}
-                      placeholder="e.g. 1"
-                      {...field}
-                      value={field.value ?? ""}
-                    />
-                  </FormControl>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="maxUses"
-            render={({ field }) => (
-              <FormItem>
-                <Field.Header
-                  label="Max uses"
-                  tooltip={PolicyAttributeDescriptions.maxUses}
-                >
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={1}
-                      placeholder="e.g. 1"
-                      {...field}
-                      value={field.value ?? ""}
-                    />
-                  </FormControl>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="overageStrategy"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <Field.Header
-                  label="Overage strategy"
-                  tooltip={PolicyAttributeDescriptions.overageStrategy}
-                >
-                  <NullableSelect<OverageStrategy>
-                    value={field.value}
-                    onChange={(value) => field.onChange(value)}
-                    invalid={!!fieldState.error}
-                  >
-                    {Object.values(OverageStrategy).map((strategy) => (
-                      <SelectItem key={strategy} value={strategy}>
-                        {PolicyOptionLabels.overageStrategy[strategy]}
-                      </SelectItem>
-                    ))}
-                  </NullableSelect>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="processLeasingStrategy"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <Field.Header
-                  label="Process leasing strategy"
-                  tooltip={PolicyAttributeDescriptions.processLeasingStrategy}
-                >
-                  <NullableSelect<ProcessLeasingStrategy>
-                    value={field.value}
-                    onChange={(value) => field.onChange(value)}
-                    invalid={!!fieldState.error}
-                  >
-                    {Object.values(ProcessLeasingStrategy).map((strategy) => (
-                      <SelectItem key={strategy} value={strategy}>
-                        {PolicyOptionLabels.processLeasingStrategy[strategy]}
-                      </SelectItem>
-                    ))}
-                  </NullableSelect>
-                </Field.Header>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="protected"
-            render={({ field }) => (
-              <FormItem className="flex items-center">
-                <Field.Header
-                  label="Protected"
-                  variant="inline"
-                  tooltip={PolicyAttributeDescriptions.protected}
-                >
-                  <FormControl>
-                    <Checkbox
-                      id="protected"
-                      checked={!!field.value}
-                      onCheckedChange={(value) => field.onChange(!!value)}
-                    />
-                  </FormControl>
-                </Field.Header>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="renewalBasis"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <Field.Header
-                  label="Renewal basis"
-                  tooltip={PolicyAttributeDescriptions.renewalBasis}
-                >
-                  <NullableSelect<RenewalBasis>
-                    value={field.value}
-                    onChange={(value) => field.onChange(value)}
-                    invalid={!!fieldState.error}
-                  >
-                    {Object.values(RenewalBasis).map((basis) => (
-                      <SelectItem key={basis} value={basis}>
-                        {PolicyOptionLabels.renewalBasis[basis]}
-                      </SelectItem>
-                    ))}
-                  </NullableSelect>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="requireCheckIn"
-            render={({ field }) => (
-              <FormItem className="flex items-center">
-                <Field.Header
-                  label="Require check-in"
-                  variant="inline"
-                  tooltip={PolicyAttributeDescriptions.requireCheckIn}
-                >
-                  <FormControl>
-                    <Checkbox
-                      id="requireCheckIn"
-                      checked={!!field.value}
-                      onCheckedChange={(value) => field.onChange(!!value)}
-                    />
-                  </FormControl>
-                </Field.Header>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="requireChecksumScope"
-            render={({ field }) => (
-              <FormItem className="flex items-center">
-                <Field.Header
-                  label="Require checksum scope"
-                  variant="inline"
-                  tooltip={PolicyAttributeDescriptions.requireChecksumScope}
-                >
-                  <FormControl>
-                    <Checkbox
-                      id="requireChecksumScope"
-                      checked={!!field.value}
-                      onCheckedChange={(value) => field.onChange(!!value)}
-                    />
-                  </FormControl>
-                </Field.Header>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="requireComponentsScope"
-            render={({ field }) => (
-              <FormItem className="flex items-center">
-                <Field.Header
-                  label="Require components scope"
-                  variant="inline"
-                  tooltip={PolicyAttributeDescriptions.requireComponentsScope}
-                >
-                  <FormControl>
-                    <Checkbox
-                      id="requireComponentsScope"
-                      checked={!!field.value}
-                      onCheckedChange={(value) => field.onChange(!!value)}
-                    />
-                  </FormControl>
-                </Field.Header>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="requireFingerprintScope"
-            render={({ field }) => (
-              <FormItem className="flex items-center">
-                <Field.Header
-                  label="Require fingerprint scope"
-                  variant="inline"
-                  tooltip={PolicyAttributeDescriptions.requireFingerprintScope}
-                >
-                  <FormControl>
-                    <Checkbox
-                      id="requireFingerprintScope"
-                      checked={!!field.value}
-                      onCheckedChange={(value) => field.onChange(!!value)}
-                    />
-                  </FormControl>
-                </Field.Header>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="requireHeartbeat"
-            render={({ field }) => (
-              <FormItem>
-                <Field.Header
-                  label="Require heartbeat"
-                  tooltip={PolicyAttributeDescriptions.requireHeartbeat}
-                >
-                  <Select
-                    value={
-                      field.value === undefined
-                        ? ""
-                        : field.value
-                          ? "true"
-                          : "false"
-                    }
-                    onValueChange={(value) =>
-                      field.onChange(
-                        value === "" ? undefined : value === "true",
-                      )
-                    }
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select one..." />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="true">Enabled</SelectItem>
-                      <SelectItem value="false">Disabled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="requireMachineScope"
-            render={({ field }) => (
-              <FormItem className="flex items-center">
-                <Field.Header
-                  label="Require machine scope"
-                  variant="inline"
-                  tooltip={PolicyAttributeDescriptions.requireMachineScope}
-                >
-                  <FormControl>
-                    <Checkbox
-                      id="requireMachineScope"
-                      checked={!!field.value}
-                      onCheckedChange={(value) => field.onChange(!!value)}
-                    />
-                  </FormControl>
-                </Field.Header>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="requirePolicyScope"
-            render={({ field }) => (
-              <FormItem className="flex items-center">
-                <Field.Header
-                  label="Require policy scope"
-                  variant="inline"
-                  tooltip={PolicyAttributeDescriptions.requirePolicyScope}
-                >
-                  <FormControl>
-                    <Checkbox
-                      id="requirePolicyScope"
-                      checked={!!field.value}
-                      onCheckedChange={(value) => field.onChange(!!value)}
-                    />
-                  </FormControl>
-                </Field.Header>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="requireProductScope"
-            render={({ field }) => (
-              <FormItem className="flex items-center">
-                <Field.Header
-                  label="Require product scope"
-                  variant="inline"
-                  tooltip={PolicyAttributeDescriptions.requireProductScope}
-                >
-                  <FormControl>
-                    <Checkbox
-                      id="requireProductScope"
-                      checked={!!field.value}
-                      onCheckedChange={(value) => field.onChange(!!value)}
-                    />
-                  </FormControl>
-                </Field.Header>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="requireUserScope"
-            render={({ field }) => (
-              <FormItem className="flex items-center">
-                <Field.Header
-                  label="Require user scope"
-                  variant="inline"
-                  tooltip={PolicyAttributeDescriptions.requireUserScope}
-                >
-                  <FormControl>
-                    <Checkbox
-                      id="requireUserScope"
-                      checked={!!field.value}
-                      onCheckedChange={(value) => field.onChange(!!value)}
-                    />
-                  </FormControl>
-                </Field.Header>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="requireVersionScope"
-            render={({ field }) => (
-              <FormItem className="flex items-center">
-                <Field.Header
-                  label="Require version scope"
-                  variant="inline"
-                  tooltip={PolicyAttributeDescriptions.requireVersionScope}
-                >
-                  <FormControl>
-                    <Checkbox
-                      id="requireVersionScope"
-                      checked={!!field.value}
-                      onCheckedChange={(value) => field.onChange(!!value)}
-                    />
-                  </FormControl>
-                </Field.Header>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="strict"
-            render={({ field }) => (
-              <FormItem className="flex items-center">
-                <Field.Header
-                  label="Strict"
-                  variant="inline"
-                  tooltip={PolicyAttributeDescriptions.strict}
-                >
-                  <FormControl>
-                    <Checkbox
-                      id="strict"
-                      checked={!!field.value}
-                      onCheckedChange={(value) => field.onChange(!!value)}
-                    />
-                  </FormControl>
-                </Field.Header>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="transferStrategy"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <Field.Header
-                  label="Transfer strategy"
-                  tooltip={PolicyAttributeDescriptions.transferStrategy}
-                >
-                  <NullableSelect<TransferStrategy>
-                    value={field.value}
-                    onChange={(value) => field.onChange(value)}
-                    invalid={!!fieldState.error}
-                  >
-                    {Object.values(TransferStrategy).map((strategy) => (
-                      <SelectItem key={strategy} value={strategy}>
-                        {PolicyOptionLabels.transferStrategy[strategy]}
-                      </SelectItem>
-                    ))}
-                  </NullableSelect>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="usePool"
-            render={({ field }) => (
-              <FormItem className="flex items-center">
-                <Field.Header
-                  label="Use pool"
-                  variant="inline"
-                  tooltip={PolicyAttributeDescriptions.usePool}
-                >
-                  <FormControl>
-                    <Checkbox
-                      id="usePool"
-                      checked={!!field.value}
-                      onCheckedChange={(value) => field.onChange(!!value)}
-                    />
-                  </FormControl>
-                </Field.Header>
-              </FormItem>
-            )}
-          />
-        </div>
-      </section>
-
-      <Separator className="my-6" />
-
-      <section className="mt-4 flex flex-col md:flex-row">
-        <div className="w-full">
-          <FormField
-            control={form.control}
-            name="metadata"
-            render={() => (
-              <FormItem>
-                <Field.Header label="Metadata" variant="stacking">
-                  <FormControl>
-                    <KeyValueInput<Forms.Policies.BaseValues> name="metadata" />
-                  </FormControl>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="block md:hidden">
-          <Separator className="my-6" />
-        </div>
-
-        <div className="mx-8 hidden md:block">
-          <Separator orientation="vertical" dashed />
-        </div>
-
-        <div className="w-full">
-          {entitlementsLoading ? (
-            <div className="space-y-2">
-              <Skeleton className="h-5 w-48 rounded-sm" />
-              <Skeleton className="h-8 w-3/4" />
-            </div>
-          ) : (
+          {shouldRender("maxProcesses") && (
             <FormField
               control={form.control}
-              name="entitlements.attach"
+              name="maxProcesses"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Attach existing entitlements</FormLabel>
-                  <FormControl>
-                    <MultiSelect
-                      value={field.value ?? []}
-                      onChange={field.onChange}
-                      options={entitlements.map((e) => ({
-                        label: e.attributes.name,
-                        value: e.id,
-                      }))}
-                      placeholder="Search entitlements"
-                    />
-                  </FormControl>
+                  <Field.Header
+                    label="Max processes"
+                    tooltip={PolicyAttributeDescriptions.maxProcesses}
+                  >
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min={1}
+                        placeholder="e.g. 1"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                  </Field.Header>
                   <FormMessage />
                 </FormItem>
               )}
             />
           )}
 
-          <div className="mt-2 space-y-3">
-            <FormLabel>Create entitlements</FormLabel>
-            {fields.map((f, i) => (
-              <div key={f.id} className="flex items-start gap-2">
+          {shouldRender("maxUsers") && (
+            <FormField
+              control={form.control}
+              name="maxUsers"
+              render={({ field }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Max users"
+                    tooltip={PolicyAttributeDescriptions.maxUsers}
+                  >
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min={1}
+                        placeholder="e.g. 1"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("maxUses") && (
+            <FormField
+              control={form.control}
+              name="maxUses"
+              render={({ field }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Max uses"
+                    tooltip={PolicyAttributeDescriptions.maxUses}
+                  >
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min={1}
+                        placeholder="e.g. 1"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("overageStrategy") && (
+            <FormField
+              control={form.control}
+              name="overageStrategy"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Overage strategy"
+                    tooltip={PolicyAttributeDescriptions.overageStrategy}
+                  >
+                    <NullableSelect<OverageStrategy>
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                      invalid={!!fieldState.error}
+                    >
+                      {Object.values(OverageStrategy).map((strategy) => (
+                        <SelectItem key={strategy} value={strategy}>
+                          {PolicyOptionLabels.overageStrategy[strategy]}
+                        </SelectItem>
+                      ))}
+                    </NullableSelect>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("processLeasingStrategy") && (
+            <FormField
+              control={form.control}
+              name="processLeasingStrategy"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Process leasing strategy"
+                    tooltip={PolicyAttributeDescriptions.processLeasingStrategy}
+                  >
+                    <NullableSelect<ProcessLeasingStrategy>
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                      invalid={!!fieldState.error}
+                    >
+                      {Object.values(ProcessLeasingStrategy).map((strategy) => (
+                        <SelectItem key={strategy} value={strategy}>
+                          {PolicyOptionLabels.processLeasingStrategy[strategy]}
+                        </SelectItem>
+                      ))}
+                    </NullableSelect>
+                  </Field.Header>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("protected") && (
+            <FormField
+              control={form.control}
+              name="protected"
+              render={({ field }) => (
+                <FormItem className="flex items-center">
+                  <Field.Header
+                    label="Protected"
+                    variant="inline"
+                    tooltip={PolicyAttributeDescriptions.protected}
+                  >
+                    <FormControl>
+                      <Checkbox
+                        id="protected"
+                        checked={!!field.value}
+                        onCheckedChange={(value) => field.onChange(!!value)}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("renewalBasis") && (
+            <FormField
+              control={form.control}
+              name="renewalBasis"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Renewal basis"
+                    tooltip={PolicyAttributeDescriptions.renewalBasis}
+                  >
+                    <NullableSelect<RenewalBasis>
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                      invalid={!!fieldState.error}
+                    >
+                      {Object.values(RenewalBasis).map((basis) => (
+                        <SelectItem key={basis} value={basis}>
+                          {PolicyOptionLabels.renewalBasis[basis]}
+                        </SelectItem>
+                      ))}
+                    </NullableSelect>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("requireCheckIn") && (
+            <FormField
+              control={form.control}
+              name="requireCheckIn"
+              render={({ field }) => (
+                <FormItem className="flex items-center">
+                  <Field.Header
+                    label="Require check-in"
+                    variant="inline"
+                    tooltip={PolicyAttributeDescriptions.requireCheckIn}
+                  >
+                    <FormControl>
+                      <Checkbox
+                        id="requireCheckIn"
+                        checked={!!field.value}
+                        onCheckedChange={(value) => field.onChange(!!value)}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("requireChecksumScope") && (
+            <FormField
+              control={form.control}
+              name="requireChecksumScope"
+              render={({ field }) => (
+                <FormItem className="flex items-center">
+                  <Field.Header
+                    label="Require checksum scope"
+                    variant="inline"
+                    tooltip={PolicyAttributeDescriptions.requireChecksumScope}
+                  >
+                    <FormControl>
+                      <Checkbox
+                        id="requireChecksumScope"
+                        checked={!!field.value}
+                        onCheckedChange={(value) => field.onChange(!!value)}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("requireComponentsScope") && (
+            <FormField
+              control={form.control}
+              name="requireComponentsScope"
+              render={({ field }) => (
+                <FormItem className="flex items-center">
+                  <Field.Header
+                    label="Require components scope"
+                    variant="inline"
+                    tooltip={PolicyAttributeDescriptions.requireComponentsScope}
+                  >
+                    <FormControl>
+                      <Checkbox
+                        id="requireComponentsScope"
+                        checked={!!field.value}
+                        onCheckedChange={(value) => field.onChange(!!value)}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("requireFingerprintScope") && (
+            <FormField
+              control={form.control}
+              name="requireFingerprintScope"
+              render={({ field }) => (
+                <FormItem className="flex items-center">
+                  <Field.Header
+                    label="Require fingerprint scope"
+                    variant="inline"
+                    tooltip={
+                      PolicyAttributeDescriptions.requireFingerprintScope
+                    }
+                  >
+                    <FormControl>
+                      <Checkbox
+                        id="requireFingerprintScope"
+                        checked={!!field.value}
+                        onCheckedChange={(value) => field.onChange(!!value)}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("requireHeartbeat") && (
+            <FormField
+              control={form.control}
+              name="requireHeartbeat"
+              render={({ field }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Require heartbeat"
+                    tooltip={PolicyAttributeDescriptions.requireHeartbeat}
+                  >
+                    <Select
+                      value={
+                        field.value === undefined
+                          ? ""
+                          : field.value
+                            ? "true"
+                            : "false"
+                      }
+                      onValueChange={(value) =>
+                        field.onChange(
+                          value === "" ? undefined : value === "true",
+                        )
+                      }
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select one..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="true">Enabled</SelectItem>
+                        <SelectItem value="false">Disabled</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("requireMachineScope") && (
+            <FormField
+              control={form.control}
+              name="requireMachineScope"
+              render={({ field }) => (
+                <FormItem className="flex items-center">
+                  <Field.Header
+                    label="Require machine scope"
+                    variant="inline"
+                    tooltip={PolicyAttributeDescriptions.requireMachineScope}
+                  >
+                    <FormControl>
+                      <Checkbox
+                        id="requireMachineScope"
+                        checked={!!field.value}
+                        onCheckedChange={(value) => field.onChange(!!value)}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("requirePolicyScope") && (
+            <FormField
+              control={form.control}
+              name="requirePolicyScope"
+              render={({ field }) => (
+                <FormItem className="flex items-center">
+                  <Field.Header
+                    label="Require policy scope"
+                    variant="inline"
+                    tooltip={PolicyAttributeDescriptions.requirePolicyScope}
+                  >
+                    <FormControl>
+                      <Checkbox
+                        id="requirePolicyScope"
+                        checked={!!field.value}
+                        onCheckedChange={(value) => field.onChange(!!value)}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("requireProductScope") && (
+            <FormField
+              control={form.control}
+              name="requireProductScope"
+              render={({ field }) => (
+                <FormItem className="flex items-center">
+                  <Field.Header
+                    label="Require product scope"
+                    variant="inline"
+                    tooltip={PolicyAttributeDescriptions.requireProductScope}
+                  >
+                    <FormControl>
+                      <Checkbox
+                        id="requireProductScope"
+                        checked={!!field.value}
+                        onCheckedChange={(value) => field.onChange(!!value)}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("requireUserScope") && (
+            <FormField
+              control={form.control}
+              name="requireUserScope"
+              render={({ field }) => (
+                <FormItem className="flex items-center">
+                  <Field.Header
+                    label="Require user scope"
+                    variant="inline"
+                    tooltip={PolicyAttributeDescriptions.requireUserScope}
+                  >
+                    <FormControl>
+                      <Checkbox
+                        id="requireUserScope"
+                        checked={!!field.value}
+                        onCheckedChange={(value) => field.onChange(!!value)}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("requireVersionScope") && (
+            <FormField
+              control={form.control}
+              name="requireVersionScope"
+              render={({ field }) => (
+                <FormItem className="flex items-center">
+                  <Field.Header
+                    label="Require version scope"
+                    variant="inline"
+                    tooltip={PolicyAttributeDescriptions.requireVersionScope}
+                  >
+                    <FormControl>
+                      <Checkbox
+                        id="requireVersionScope"
+                        checked={!!field.value}
+                        onCheckedChange={(value) => field.onChange(!!value)}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("strict") && (
+            <FormField
+              control={form.control}
+              name="strict"
+              render={({ field }) => (
+                <FormItem className="flex items-center">
+                  <Field.Header
+                    label="Strict"
+                    variant="inline"
+                    tooltip={PolicyAttributeDescriptions.strict}
+                  >
+                    <FormControl>
+                      <Checkbox
+                        id="strict"
+                        checked={!!field.value}
+                        onCheckedChange={(value) => field.onChange(!!value)}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("transferStrategy") && (
+            <FormField
+              control={form.control}
+              name="transferStrategy"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Transfer strategy"
+                    tooltip={PolicyAttributeDescriptions.transferStrategy}
+                  >
+                    <NullableSelect<TransferStrategy>
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                      invalid={!!fieldState.error}
+                    >
+                      {Object.values(TransferStrategy).map((strategy) => (
+                        <SelectItem key={strategy} value={strategy}>
+                          {PolicyOptionLabels.transferStrategy[strategy]}
+                        </SelectItem>
+                      ))}
+                    </NullableSelect>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {shouldRender("usePool") && (
+            <FormField
+              control={form.control}
+              name="usePool"
+              render={({ field }) => (
+                <FormItem className="flex items-center">
+                  <Field.Header
+                    label="Use pool"
+                    variant="inline"
+                    tooltip={PolicyAttributeDescriptions.usePool}
+                  >
+                    <FormControl>
+                      <Checkbox
+                        id="usePool"
+                        checked={!!field.value}
+                        onCheckedChange={(value) => field.onChange(!!value)}
+                      />
+                    </FormControl>
+                  </Field.Header>
+                </FormItem>
+              )}
+            />
+          )}
+        </div>
+      </section>
+
+      {(shouldRender("metadata") || shouldRender("entitlements")) && (
+        <>
+          <Separator className="my-6" />
+
+          <section className="mt-4 flex flex-col md:flex-row">
+            {shouldRender("metadata") && (
+              <div className="w-full">
                 <FormField
                   control={form.control}
-                  name={`entitlements.create.${i}.name` as const}
-                  render={({ field }) => (
+                  name="metadata"
+                  render={() => (
                     <FormItem>
-                      <FormControl>
-                        <Input placeholder="Enter name..." {...field} />
-                      </FormControl>
+                      <Field.Header label="Metadata" variant="stacking">
+                        <FormControl>
+                          <KeyValueInput<Forms.Policies.BaseValues> name="metadata" />
+                        </FormControl>
+                      </Field.Header>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name={`entitlements.create.${i}.code` as const}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input placeholder="Enter code..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="flex items-center">
+              </div>
+            )}
+
+            {shouldRender("metadata") && shouldRender("entitlements") && (
+              <>
+                <div className="block md:hidden">
+                  <Separator className="my-6" />
+                </div>
+
+                <div className="mx-8 hidden md:block">
+                  <Separator orientation="vertical" dashed />
+                </div>
+              </>
+            )}
+
+            {shouldRender("entitlements") && (
+              <div className="w-full">
+                {entitlementsLoading ? (
+                  <div className="space-y-2">
+                    <Skeleton className="h-5 w-48 rounded-sm" />
+                    <Skeleton className="h-8 w-3/4" />
+                  </div>
+                ) : (
+                  <FormField
+                    control={form.control}
+                    name="entitlements.attach"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Attach existing entitlements</FormLabel>
+                        <FormControl>
+                          <MultiSelect
+                            value={field.value ?? []}
+                            onChange={field.onChange}
+                            options={entitlements.map((e) => ({
+                              label: e.attributes.name,
+                              value: e.id,
+                            }))}
+                            placeholder="Search entitlements"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                <div className="mt-2 space-y-3">
+                  <FormLabel>Create entitlements</FormLabel>
+                  {fields.map((f, i) => (
+                    <div key={f.id} className="flex items-start gap-2">
+                      <FormField
+                        control={form.control}
+                        name={`entitlements.create.${i}.name` as const}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input placeholder="Enter name..." {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`entitlements.create.${i}.code` as const}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input placeholder="Enter code..." {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <div className="flex items-center">
+                        <Button
+                          size="icon"
+                          type="button"
+                          variant="ghost"
+                          onClick={() => remove(i)}
+                        >
+                          <X className="h-4 w-4 text-content-subdued" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
                   <Button
-                    size="icon"
+                    size="sm"
                     type="button"
                     variant="ghost"
-                    onClick={() => remove(i)}
+                    onClick={() => append({ name: "", code: "" })}
+                    className="text-content-muted"
                   >
-                    <X className="h-4 w-4 text-content-subdued" />
+                    + New entitlement
                   </Button>
                 </div>
               </div>
-            ))}
-            <Button
-              size="sm"
-              type="button"
-              variant="ghost"
-              onClick={() => append({ name: "", code: "" })}
-              className="text-content-muted"
-            >
-              + New entitlement
-            </Button>
-          </div>
-        </div>
-      </section>
+            )}
+          </section>
+        </>
+      )}
     </div>
   )
 }

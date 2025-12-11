@@ -78,7 +78,7 @@ type StepKey = (typeof Steps)[keyof typeof Steps]
 type Step = {
   key: StepKey
   title: string
-  fields?: FieldPath<Forms.Policies.BaseValues>[]
+  fields?: FieldPath<Forms.Policies.CreateValues>[]
   render: () => React.ReactElement
 }
 
@@ -113,16 +113,19 @@ export default function PoliciesCreateModal({
 
   const schema = useMemo(
     () =>
-      Forms.Policies.composePolicySchema({
-        timing: selection.timing,
-        access: selection.access,
-        metered: selection.metered,
-        offline: selection.offline,
-      }),
+      Forms.Policies.composePolicySchema<Forms.Policies.CreateValues>(
+        {
+          timing: selection.timing,
+          access: selection.access,
+          metered: selection.metered,
+          offline: selection.offline,
+        },
+        { product: true },
+      ),
     [selection],
   )
 
-  const form = useForm<Forms.Policies.BaseValues>({
+  const form = useForm<Forms.Policies.CreateValues>({
     resolver: zodResolver(schema),
     defaultValues: Forms.Policies.getSchemaDefaults(schema),
   })
@@ -140,7 +143,10 @@ export default function PoliciesCreateModal({
       setSelection(newSelection)
       setCompletedStep(new Set<string>())
 
-      const newSchema = Forms.Policies.composePolicySchema(newSelection)
+      const newSchema = Forms.Policies.composePolicySchema<Forms.Policies.CreateValues>(
+        newSelection,
+        { product: true },
+      )
       form.reset(Forms.Policies.getSchemaDefaults(newSchema), {
         keepDefaultValues: false,
       })
@@ -240,7 +246,7 @@ export default function PoliciesCreateModal({
   }, [open, step])
 
   const handleCreatePolicy = useCallback(
-    async (values: Forms.Policies.CreatePayload) => {
+    async (values: Forms.Policies.CreateValues) => {
       const attachIds = values.entitlements?.attach ?? []
       const toCreate = values.entitlements?.create ?? []
 
@@ -258,7 +264,7 @@ export default function PoliciesCreateModal({
       form.setValue("entitlements.create", nextCreate)
 
       if (errors.length > 0) {
-        const fieldErrors: FormFieldError<Forms.Policies.BaseValues>[] =
+        const fieldErrors: FormFieldError<Forms.Policies.CreateValues>[] =
           errors.map((error, index) => {
             let message = ""
             if (error.reason.code === EntitlementErrorCode.CodeTaken) {
@@ -280,7 +286,7 @@ export default function PoliciesCreateModal({
 
         if (isScratchOpen) {
           // Throw to render error messages in scratch form
-          throw new Forms.Entitlements.CreateValidationError(
+          throw new Forms.Entitlements.CreateValidationError<Forms.Policies.CreateValues>(
             nextAttach,
             nextCreate,
             fieldErrors,

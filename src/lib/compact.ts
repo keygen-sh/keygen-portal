@@ -17,7 +17,7 @@ export function compact(value: unknown): unknown {
     const result: Record<string, unknown> = {}
 
     for (const [key, val] of Object.entries(value)) {
-      if (val != null) {
+      if (val != null && val !== 0) {
         result[key] = val
       }
     }

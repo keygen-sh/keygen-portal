@@ -63,24 +63,27 @@ export default function EnvironmentsCreateModal({
         return
       }
 
-      createEnvironment.mutate({ ...values, isolationStrategy }, {
-        onSuccess: (environment) => {
-          toast({ message: "Environment created", variant: "success" })
-          onSelectEnvironment(environment)
-          onChangeMode(EnvironmentMode.View, environment)
+      createEnvironment.mutate(
+        { ...values, isolationStrategy },
+        {
+          onSuccess: (environment) => {
+            toast({ message: "Environment created", variant: "success" })
+            onSelectEnvironment(environment)
+            onChangeMode(EnvironmentMode.View, environment)
+          },
+          onError: (error) => {
+            if (
+              typeof error === "object" &&
+              error &&
+              "code" in error &&
+              error.code === EnvironmentErrorCode.CodeTaken
+            ) {
+              setFormError("Code already exists")
+            }
+            toast({ message: "Failed to create environment", variant: "error" })
+          },
         },
-        onError: (error) => {
-          if (
-            typeof error === "object" &&
-            error &&
-            "code" in error &&
-            error.code === EnvironmentErrorCode.CodeTaken
-          ) {
-            setFormError("Code already exists")
-          }
-          toast({ message: "Failed to create environment", variant: "error" })
-        },
-      })
+      )
     },
     [createEnvironment, onSelectEnvironment, onChangeMode, isolationStrategy],
   )

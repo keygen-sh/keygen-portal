@@ -33,10 +33,11 @@ export default function DuplicateForm({
   onCancel,
 }: DuplicateFormProps) {
   const defaultValues = useMemo(() => {
-    const values = Forms.Policies.getFormValuesFromPolicy<Forms.Policies.CreateValues>(
-      policy,
-      { product: true },
-    )
+    const values =
+      Forms.Policies.getFormValuesFromPolicy<Forms.Policies.CreateValues>(
+        policy,
+        { product: true },
+      )
     return {
       ...values,
       name: `${values.name} (dup)`,

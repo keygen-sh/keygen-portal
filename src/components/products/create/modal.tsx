@@ -52,7 +52,7 @@ export default function ProductsCreateModal({
   const [formError, setFormError] = useState<string | null>(null)
 
   const handleCreateProduct = useCallback(
-    (values: Forms.Products.CreatePayload) => {
+    (values: Forms.Products.AttributesValues) => {
       if (!values.name || !distributionStrategy) {
         toast({
           message: "Failed to create product",

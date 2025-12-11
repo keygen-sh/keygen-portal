@@ -56,7 +56,7 @@ import { BadgeGroup, BadgeGroupItem } from "@/components/badge-group"
 interface EditFormProps {
   product: Product | null
   loading?: boolean
-  onSubmit: (values: Forms.Products.BaseValues) => void
+  onSubmit: (values: Forms.Products.UpdateValues) => void
   onCancel: () => void
 }
 
@@ -66,8 +66,8 @@ export default function EditForm({
   onSubmit,
   onCancel,
 }: EditFormProps) {
-  const form = useForm<Forms.Products.BaseValues>({
-    resolver: zodResolver(Forms.Products.BaseSchema),
+  const form = useForm<Forms.Products.UpdateValues>({
+    resolver: zodResolver(Forms.Products.UpdateSchema),
     mode: "onBlur",
     reValidateMode: "onChange",
     defaultValues: {
@@ -86,7 +86,7 @@ export default function EditForm({
   const strategy = form.watch("distributionStrategy")
 
   const handleSubmit = useCallback(
-    (values: Forms.Products.BaseValues) => {
+    (values: Forms.Products.UpdateValues) => {
       onSubmit(values)
     },
     [onSubmit],

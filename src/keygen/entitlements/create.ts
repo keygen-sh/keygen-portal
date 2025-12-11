@@ -1,28 +1,23 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
+
+import * as Forms from "@/forms"
+import { compact } from "@/lib/compact"
 import { EntitlementResponse } from "@/types/entitlements"
 
 config.validate()
 
 interface CreateProps {
-  name: string
-  code: string
-  metadata?: Record<string, unknown> | null
+  values: Forms.Entitlements.CreateValues
 }
 
 export default async function create({
-  name,
-  code,
-  metadata,
+  values,
 }: CreateProps): Promise<EntitlementResponse> {
   const body = {
     data: {
       type: "entitlements",
-      attributes: {
-        name,
-        ...(code && { code }),
-        ...(metadata && { metadata }),
-      },
+      attributes: compact(values),
     },
   }
 

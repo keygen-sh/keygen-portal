@@ -43,9 +43,9 @@ export function useCreateEntitlement() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Entitlement, APIError, Forms.Entitlements.CreatePayload>({
+  return useMutation<Entitlement, APIError, Forms.Entitlements.CreateValues>({
     mutationFn: async (values) => {
-      const response = await keygen.entitlements.create(values)
+      const response = await keygen.entitlements.create({ values })
 
       if (response.errors && response.errors.length > 0) {
         throw response.errors[0]
@@ -73,7 +73,7 @@ export function useUpdateEntitlement(entitlementId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Entitlement, APIError, Forms.Entitlements.UpdatePayload>({
+  return useMutation<Entitlement, APIError, Forms.Entitlements.UpdateValues>({
     mutationFn: (values) =>
       keygen.entitlements.get({ id: entitlementId }).then(async (response) => {
         const current = response.data as Entitlement
@@ -81,11 +81,11 @@ export function useUpdateEntitlement(entitlementId: string) {
         const changes = diff(
           current.attributes,
           values,
-        ) as Forms.Entitlements.UpdatePayload
+        ) as Forms.Entitlements.UpdateValues
         if (Object.keys(changes).length === 0) return current
 
         const updated = await keygen.entitlements
-          .update({ id: entitlementId, ...changes })
+          .update({ id: entitlementId, values: changes })
           .then((response) => response.data as Entitlement)
 
         return updated

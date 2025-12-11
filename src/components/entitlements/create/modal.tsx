@@ -30,7 +30,7 @@ export default function EntitlementsCreateModal({
   const [formError, setFormError] = useState<string | null>(null)
 
   const handleCreateEntitlement = useCallback(
-    (values: Forms.Entitlements.CreatePayload) => {
+    (values: Forms.Entitlements.CreateValues) => {
       if (!values.name) {
         toast({
           message: "Failed to create entitlement",

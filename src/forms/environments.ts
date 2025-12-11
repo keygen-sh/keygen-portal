@@ -5,8 +5,8 @@ import { EnvironmentAttributes, IsolationStrategy } from "@/types/environments"
 
 export type BaseValues = Writable<EnvironmentAttributes>
 
-export type CreatePayload = BaseValues
-export type UpdatePayload = Partial<BaseValues>
+export type CreateValues = BaseValues
+export type UpdateValues = Partial<BaseValues>
 
 const BaseShape = z.object({
   name: z.string().trim().min(1, "Environment name is required"),
@@ -22,6 +22,8 @@ const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {
   return schema
 }
 export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
+export const CreateSchema: z.ZodType<CreateValues> = BaseSchema
+export const UpdateSchema: z.ZodType<UpdateValues> = BaseSchema
 
 const StrategyShape = BaseShape.pick({ isolationStrategy: true })
 const StrategyRules = (

@@ -1,30 +1,25 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
+
+import * as Forms from "@/forms"
+import { compact } from "@/lib/compact"
 import { EntitlementResponse } from "@/types/entitlements"
 
 config.validate()
 
 interface UpdateProps {
   id: string
-  name?: string | null
-  code?: string | null
-  metadata?: Record<string, unknown> | null
+  values: Forms.Entitlements.UpdateValues
 }
 
 export default async function update({
   id,
-  name,
-  code,
-  metadata,
+  values,
 }: UpdateProps): Promise<EntitlementResponse> {
   const body = {
     data: {
       type: "entitlements",
-      attributes: {
-        ...(name && { name }),
-        ...(code && { code }),
-        ...(metadata && { metadata }),
-      },
+      attributes: compact(values),
     },
   }
 

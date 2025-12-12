@@ -5,6 +5,11 @@ import {
   SelectContent,
   SelectTrigger,
 } from "@/components/ui/select"
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip"
 
 import { cn } from "@/lib/utils"
 
@@ -18,6 +23,7 @@ type NullableSelectProps<T extends string> = {
   placeholder?: string
   className?: string
   disabled?: boolean
+  disabledTooltip?: string
   children: React.ReactNode
 }
 
@@ -29,21 +35,37 @@ export default function NullableSelect<T extends string>({
   placeholder = "Select one...",
   className,
   disabled = false,
+  disabledTooltip,
   children,
 }: NullableSelectProps<T>): React.ReactElement {
   const rendered = (value ?? "") as string
+
+  const trigger = (
+    <SelectTrigger
+      className={cn("w-full", invalid && "!border-destructive", className)}
+      disabled={disabled}
+    >
+      <SelectValue placeholder={placeholder} />
+    </SelectTrigger>
+  )
 
   return (
     <Select
       value={rendered}
       onValueChange={(v) => onChange(v === CLEAR || v === "" ? null : (v as T))}
     >
-      <SelectTrigger
-        className={cn("w-full", invalid && "!border-destructive", className)}
-        disabled={disabled}
-      >
-        <SelectValue placeholder={placeholder} />
-      </SelectTrigger>
+      {disabled && disabledTooltip ? (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span tabIndex={0}>{trigger}</span>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-64 bg-background-4 text-pretty text-content-muted">
+            {disabledTooltip}
+          </TooltipContent>
+        </Tooltip>
+      ) : (
+        trigger
+      )}
       <SelectContent>
         <SelectItem className="text-content-subdued" value={CLEAR}>
           {clearLabel}

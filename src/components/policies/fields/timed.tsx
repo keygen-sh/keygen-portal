@@ -120,6 +120,7 @@ function DefaultLayout({
                 onChange={(value) => field.onChange(value)}
                 invalid={!!fieldState.error}
                 disabled={!duration}
+                disabledTooltip="Set a duration to configure this field."
               >
                 {Object.values(ExpirationStrategy).map((strategy) => (
                   <SelectItem key={strategy} value={strategy}>
@@ -148,6 +149,7 @@ function DefaultLayout({
                 onChange={(value) => field.onChange(value)}
                 invalid={!!fieldState.error}
                 disabled={!duration}
+                disabledTooltip="Set a duration to configure this field."
               >
                 {Object.values(ExpirationBasis).map((basis) => (
                   <SelectItem key={basis} value={basis}>
@@ -176,6 +178,7 @@ function DefaultLayout({
                 onChange={(value) => field.onChange(value)}
                 invalid={!!fieldState.error}
                 disabled={!duration}
+                disabledTooltip="Set a duration to configure this field."
               >
                 {Object.values(RenewalBasis).map((basis) => (
                   <SelectItem key={basis} value={basis}>
@@ -204,6 +207,7 @@ function DefaultLayout({
                 onChange={(value) => field.onChange(value)}
                 invalid={!!fieldState.error}
                 disabled={!duration}
+                disabledTooltip="Set a duration to configure this field."
               >
                 {Object.values(TransferStrategy).map((strategy) => (
                   <SelectItem key={strategy} value={strategy}>

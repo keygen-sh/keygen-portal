@@ -167,6 +167,7 @@ function DefaultLayout({
                 onChange={(value) => field.onChange(value)}
                 invalid={!!fieldState.error}
                 disabled={!requireHeartbeat}
+                disabledTooltip="Enable heartbeat to configure this field."
               >
                 {Object.values(HeartbeatCullStrategy).map((strategy) => (
                   <SelectItem key={strategy} value={strategy}>
@@ -195,6 +196,7 @@ function DefaultLayout({
                 onChange={(value) => field.onChange(value)}
                 invalid={!!fieldState.error}
                 disabled={!requireHeartbeat}
+                disabledTooltip="Enable heartbeat to configure this field."
               >
                 {Object.values(HeartbeatBasis).map((basis) => (
                   <SelectItem key={basis} value={basis}>
@@ -226,6 +228,7 @@ function DefaultLayout({
                 onChange={(value) => field.onChange(value)}
                 invalid={!!fieldState.error}
                 disabled={!requireHeartbeat}
+                disabledTooltip="Enable heartbeat to configure this field."
               >
                 {Object.values(HeartbeatResurrectionStrategy).map(
                   (strategy) => (

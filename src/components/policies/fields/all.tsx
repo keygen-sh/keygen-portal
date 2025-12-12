@@ -20,6 +20,11 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form"
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip"
 
 import { X } from "lucide-react"
 
@@ -351,15 +356,35 @@ export default function AllFields({
                   tooltip={PolicyAttributeDescriptions.checkInIntervalCount}
                 >
                   <FormControl>
-                    <Input
-                      type="number"
-                      min={1}
-                      max={365}
-                      placeholder="1 - 365"
-                      {...field}
-                      value={field.value ?? ""}
-                      disabled={!checkInInterval}
-                    />
+                    {!checkInInterval ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span tabIndex={0}>
+                            <Input
+                              type="number"
+                              min={1}
+                              max={365}
+                              placeholder="1 - 365"
+                              {...field}
+                              value={field.value ?? ""}
+                              disabled
+                            />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-80 bg-background-4 text-pretty text-content-muted">
+                          Set a check-in interval to configure this field.
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      <Input
+                        type="number"
+                        min={1}
+                        max={365}
+                        placeholder="1 - 365"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    )}
                   </FormControl>
                 </Field.Header>
                 <FormMessage />
@@ -471,6 +496,7 @@ export default function AllFields({
                     onChange={(value) => field.onChange(value)}
                     invalid={!!fieldState.error}
                     disabled={!duration}
+                    disabledTooltip="Set a duration to configure this field."
                   >
                     {Object.values(ExpirationBasis).map((basis) => (
                       <SelectItem key={basis} value={basis}>
@@ -498,6 +524,7 @@ export default function AllFields({
                     onChange={(value) => field.onChange(value)}
                     invalid={!!fieldState.error}
                     disabled={!duration}
+                    disabledTooltip="Set a duration to configure this field."
                   >
                     {Object.values(ExpirationStrategy).map((strategy) => (
                       <SelectItem key={strategy} value={strategy}>
@@ -547,6 +574,7 @@ export default function AllFields({
                     onChange={(value) => field.onChange(value)}
                     invalid={!!fieldState.error}
                     disabled={!requireHeartbeat}
+                    disabledTooltip="Enable heartbeat to configure this field."
                   >
                     {Object.values(HeartbeatBasis).map((basis) => (
                       <SelectItem key={basis} value={basis}>
@@ -575,6 +603,7 @@ export default function AllFields({
                     onChange={(value) => field.onChange(value)}
                     invalid={!!fieldState.error}
                     disabled={!requireHeartbeat}
+                    disabledTooltip="Enable heartbeat to configure this field."
                   >
                     {Object.values(HeartbeatCullStrategy).map((strategy) => (
                       <SelectItem key={strategy} value={strategy}>
@@ -628,6 +657,7 @@ export default function AllFields({
                     onChange={(value) => field.onChange(value)}
                     invalid={!!fieldState.error}
                     disabled={!requireHeartbeat}
+                    disabledTooltip="Enable heartbeat to configure this field."
                   >
                     {Object.values(HeartbeatResurrectionStrategy).map(
                       (strategy) => (

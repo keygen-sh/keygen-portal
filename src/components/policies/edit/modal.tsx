@@ -38,7 +38,6 @@ export default function PoliciesEditModal({
   const {
     data: policy,
     isLoading: policyLoading,
-    isFetching: policyFetching,
     isError: policyError,
   } = useGetPolicy(policyId)
 
@@ -104,7 +103,7 @@ export default function PoliciesEditModal({
           </DialogDescription>
           <DialogTitle className="sr-only" />
         </DialogHeader>
-        {policyLoading || policyFetching ? (
+        {policyLoading ? (
           <div className="flex w-full justify-center">
             <Loading.Dots />
           </div>

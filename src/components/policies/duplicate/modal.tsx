@@ -31,7 +31,6 @@ export default function PoliciesDuplicateModal({
   const {
     data: policy,
     isLoading: policyLoading,
-    isFetching: policyFetching,
     isError: policyError,
   } = useGetPolicy(policyId)
 
@@ -76,7 +75,7 @@ export default function PoliciesDuplicateModal({
           <DialogTitle className="sr-only" />
         </DialogHeader>
 
-        {policyLoading || policyFetching ? (
+        {policyLoading ? (
           <div className="flex w-full justify-center">
             <Loading.Dots />
           </div>

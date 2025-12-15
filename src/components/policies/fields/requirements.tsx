@@ -1,5 +1,4 @@
-import { useEffect } from "react"
-import { useFormContext, useWatch } from "react-hook-form"
+import { useFormContext } from "react-hook-form"
 
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -21,6 +20,7 @@ import {
   PolicyOptionLabels,
   CheckInInterval,
   AuthenticationStrategy,
+  PolicyMode,
 } from "@/types/policies"
 
 import * as Field from "@/components/field"
@@ -33,6 +33,7 @@ type Layout = "default" | "advanced"
 interface RequirementsFieldsProps {
   layout?: Layout
   title?: string
+  mode?: PolicyMode
   includeMeta?: boolean
   includeAuthStrategy?: boolean
   className?: string
@@ -41,12 +42,14 @@ interface RequirementsFieldsProps {
 export default function RequirementsFields({
   layout = "default",
   title,
+  mode = PolicyMode.Create,
   includeMeta = true,
   includeAuthStrategy = true,
   className,
 }: RequirementsFieldsProps): React.ReactElement {
   return layout === "advanced" ? (
     <AdvancedLayout
+      mode={mode}
       includeMeta={includeMeta}
       includeAuthStrategy={includeAuthStrategy}
       className={className}
@@ -54,6 +57,7 @@ export default function RequirementsFields({
   ) : (
     <DefaultLayout
       title={title}
+      mode={mode}
       includeMeta={includeMeta}
       includeAuthStrategy={includeAuthStrategy}
       className={className}
@@ -63,33 +67,14 @@ export default function RequirementsFields({
 
 function DefaultLayout({
   title,
+  mode,
   includeMeta = true,
   includeAuthStrategy = true,
   className,
 }: Omit<RequirementsFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<Forms.Policies.BaseValues>()
 
-  const checkInInterval = useWatch({
-    control: form.control,
-    name: "checkInInterval",
-  })
-
-  useEffect(() => {
-    if (checkInInterval !== null) return
-
-    let changed = false
-    const field = "checkInIntervalCount"
-
-    if (form.getValues(field) !== null || form.formState.errors[field]) {
-      form.setValue(field, null, { shouldDirty: true, shouldValidate: false })
-      changed = true
-    }
-
-    if (changed) {
-      form.clearErrors(field)
-      void form.trigger(field)
-    }
-  }, [checkInInterval, form])
+  const checkInInterval = form.watch("checkInInterval")
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
@@ -106,7 +91,12 @@ function DefaultLayout({
             >
               <NullableSelect<CheckInInterval>
                 value={field.value}
-                onChange={(value) => field.onChange(value)}
+                onChange={(value) => {
+                  field.onChange(value)
+                  if (mode === PolicyMode.Create && value === null) {
+                    form.resetField("checkInIntervalCount")
+                  }
+                }}
                 invalid={!!fieldState.error}
               >
                 {Object.values(CheckInInterval).map((interval) => (
@@ -139,6 +129,7 @@ function DefaultLayout({
                   placeholder="1 - 365"
                   {...field}
                   value={field.value ?? ""}
+                  disabled={!checkInInterval}
                 />
               </FormControl>
             </Field.Header>
@@ -262,33 +253,12 @@ function DefaultLayout({
 }
 
 function AdvancedLayout({
+  mode,
   includeMeta = true,
   includeAuthStrategy = true,
   className,
 }: Omit<RequirementsFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<Forms.Policies.BaseValues>()
-
-  const checkInInterval = useWatch({
-    control: form.control,
-    name: "checkInInterval",
-  })
-
-  useEffect(() => {
-    if (checkInInterval !== null) return
-
-    let changed = false
-    const field = "checkInIntervalCount"
-
-    if (form.getValues(field) !== null || form.formState.errors[field]) {
-      form.setValue(field, null, { shouldDirty: true, shouldValidate: false })
-      changed = true
-    }
-
-    if (changed) {
-      form.clearErrors(field)
-      void form.trigger(field)
-    }
-  }, [checkInInterval, form])
 
   return (
     <SectionCard
@@ -308,7 +278,12 @@ function AdvancedLayout({
                 >
                   <NullableSelect<CheckInInterval>
                     value={field.value}
-                    onChange={(value) => field.onChange(value)}
+                    onChange={(value) => {
+                      field.onChange(value)
+                      if (mode === PolicyMode.Create && value === null) {
+                        form.resetField("checkInIntervalCount")
+                      }
+                    }}
                     invalid={!!fieldState.error}
                   >
                     {Object.values(CheckInInterval).map((interval) => (

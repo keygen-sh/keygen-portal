@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react"
-import { useFormContext, useFormState, useWatch } from "react-hook-form"
+import { useState } from "react"
+import { useFormContext, useFormState } from "react-hook-form"
 
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
@@ -21,6 +21,7 @@ import {
   ExpirationStrategy,
   RenewalBasis,
   TransferStrategy,
+  PolicyMode,
 } from "@/types/policies"
 
 import * as Field from "@/components/field"
@@ -33,51 +34,31 @@ type Layout = "default" | "advanced"
 interface TimedFieldsProps {
   layout?: Layout
   title?: string
+  mode?: PolicyMode
   className?: string
 }
 
 export default function TimedFields({
   layout = "default",
   title,
+  mode,
   className,
 }: TimedFieldsProps): React.ReactElement {
   return layout === "advanced" ? (
-    <AdvancedLayout className={className} />
+    <AdvancedLayout mode={mode} className={className} />
   ) : (
-    <DefaultLayout title={title} className={className} />
+    <DefaultLayout title={title} mode={mode} className={className} />
   )
 }
 
 function DefaultLayout({
   title,
+  mode,
   className,
 }: Omit<TimedFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<Forms.Policies.BaseValues>()
 
-  const duration = useWatch({ control: form.control, name: "duration" })
-
-  useEffect(() => {
-    if (duration !== null) return
-
-    const fields = [
-      "expirationStrategy",
-      "expirationBasis",
-      "renewalBasis",
-      "transferStrategy",
-    ] as const
-
-    let changed = false
-    for (const field of fields) {
-      if (form.getValues(field) !== null || form.formState.errors[field]) {
-        form.setValue(field, null, { shouldDirty: true, shouldValidate: false })
-        changed = true
-      }
-    }
-    if (changed) {
-      form.clearErrors(fields)
-      void form.trigger(fields)
-    }
-  }, [duration, form])
+  const duration = form.watch("duration")
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
@@ -95,7 +76,15 @@ function DefaultLayout({
               <FormControl>
                 <DurationInput
                   value={field.value}
-                  onChange={(value) => field.onChange(value)}
+                  onChange={(value) => {
+                    field.onChange(value)
+                    if (mode === PolicyMode.Create && value === null) {
+                      form.resetField("expirationStrategy")
+                      form.resetField("expirationBasis")
+                      form.resetField("renewalBasis")
+                      form.resetField("transferStrategy")
+                    }
+                  }}
                   units={["unlimited", "days", "weeks", "months", "years"]}
                 />
               </FormControl>
@@ -225,6 +214,7 @@ function DefaultLayout({
 }
 
 function AdvancedLayout({
+  mode,
   className,
 }: Omit<TimedFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<Forms.Policies.BaseValues>()
@@ -263,7 +253,15 @@ function AdvancedLayout({
                 <FormControl>
                   <DurationInput
                     value={field.value}
-                    onChange={(value) => field.onChange(value)}
+                    onChange={(value) => {
+                      field.onChange(value)
+                      if (mode === PolicyMode.Create && value === null) {
+                        form.resetField("expirationStrategy")
+                        form.resetField("expirationBasis")
+                        form.resetField("renewalBasis")
+                        form.resetField("transferStrategy")
+                      }
+                    }}
                     units={["unlimited", "days", "weeks", "months", "years"]}
                   />
                 </FormControl>

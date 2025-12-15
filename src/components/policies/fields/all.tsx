@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useFormContext, useFieldArray, useWatch } from "react-hook-form"
+import { useFormContext, useFieldArray } from "react-hook-form"
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -53,6 +53,7 @@ import {
   ProcessLeasingStrategy,
   RenewalBasis,
   TransferStrategy,
+  PolicyMode,
 } from "@/types/policies"
 
 import * as Field from "@/components/field"
@@ -64,11 +65,13 @@ import DurationInput, { HeartbeatPresets } from "@/components/duration-input"
 
 interface AllFieldsProps {
   omit?: (keyof Forms.Policies.AllValues)[]
+  mode?: PolicyMode
   className?: string
 }
 
 export default function AllFields({
   omit,
+  mode = PolicyMode.Create,
   className,
 }: AllFieldsProps): React.ReactElement {
   const form = useFormContext<Forms.Policies.AllValues>()
@@ -91,77 +94,9 @@ export default function AllFields({
     return () => cancelAnimationFrame(id)
   }, [])
 
-  const duration = useWatch({ control: form.control, name: "duration" })
-  useEffect(() => {
-    if (duration !== null) return
-
-    const fields = [
-      "expirationStrategy",
-      "expirationBasis",
-      "renewalBasis",
-      "transferStrategy",
-    ] as const
-
-    let changed = false
-    for (const field of fields) {
-      if (form.getValues(field) != null) {
-        form.setValue(field, null, { shouldDirty: true, shouldValidate: false })
-        changed = true
-      }
-    }
-    if (changed) {
-      form.clearErrors(fields)
-      void form.trigger(fields)
-    }
-  }, [duration, form])
-
-  const checkInInterval = useWatch({
-    control: form.control,
-    name: "checkInInterval",
-  })
-  useEffect(() => {
-    if (checkInInterval !== null) return
-
-    let changed = false
-    const field = "checkInIntervalCount"
-
-    if (form.getValues(field) != null) {
-      form.setValue(field, null, { shouldDirty: true, shouldValidate: false })
-      changed = true
-    }
-
-    if (changed) {
-      form.clearErrors(field)
-      void form.trigger(field)
-    }
-  }, [checkInInterval, form])
-
-  const requireHeartbeat = useWatch({
-    control: form.control,
-    name: "requireHeartbeat",
-  })
-  useEffect(() => {
-    if (requireHeartbeat) return
-
-    const fields = [
-      "heartbeatDuration",
-      "heartbeatCullStrategy",
-      "heartbeatBasis",
-      "heartbeatResurrectionStrategy",
-    ] as const
-
-    let changed = false
-    for (const field of fields) {
-      if (form.getValues(field) != null) {
-        form.setValue(field, null, { shouldDirty: true, shouldValidate: false })
-        changed = true
-      }
-    }
-    if (changed) {
-      form.clearErrors(fields)
-      void form.trigger(fields)
-    }
-  }, [requireHeartbeat, form])
+  const duration = form.watch("duration")
+  const checkInInterval = form.watch("checkInInterval")
+  const requireHeartbeat = form.watch("requireHeartbeat")
 
   if (!mounted || productsLoading) {
     return <Skeletons.PolicyFields />
@@ -342,7 +277,12 @@ export default function AllFields({
                   >
                     <NullableSelect<CheckInInterval>
                       value={field.value}
-                      onChange={(value) => field.onChange(value)}
+                      onChange={(value) => {
+                        field.onChange(value)
+                        if (mode === PolicyMode.Create && value === null) {
+                          form.resetField("checkInIntervalCount")
+                        }
+                      }}
                       invalid={!!fieldState.error}
                     >
                       {Object.values(CheckInInterval).map((interval) => (
@@ -489,7 +429,15 @@ export default function AllFields({
                     <FormControl>
                       <DurationInput
                         value={field.value}
-                        onChange={(value) => field.onChange(value)}
+                        onChange={(value) => {
+                          field.onChange(value)
+                          if (mode === PolicyMode.Create && value === null) {
+                            form.resetField("expirationStrategy")
+                            form.resetField("expirationBasis")
+                            form.resetField("renewalBasis")
+                            form.resetField("transferStrategy")
+                          }
+                        }}
                         units={[
                           "unlimited",
                           "days",
@@ -1175,11 +1123,17 @@ export default function AllFields({
                             ? "true"
                             : "false"
                       }
-                      onValueChange={(value) =>
-                        field.onChange(
-                          value === "" ? undefined : value === "true",
-                        )
-                      }
+                      onValueChange={(value) => {
+                        const newValue =
+                          value === "" ? undefined : value === "true"
+                        field.onChange(newValue)
+                        if (mode === PolicyMode.Create && !newValue) {
+                          form.resetField("heartbeatDuration")
+                          form.resetField("heartbeatCullStrategy")
+                          form.resetField("heartbeatBasis")
+                          form.resetField("heartbeatResurrectionStrategy")
+                        }
+                      }}
                     >
                       <FormControl>
                         <SelectTrigger className="w-full">

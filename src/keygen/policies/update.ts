@@ -2,7 +2,6 @@ import config from "@/keygen/config"
 import client from "@/keygen/client"
 
 import { PolicyResponse } from "@/types/policies"
-import { compact } from "@/lib/compact"
 
 import * as Forms from "@/forms"
 
@@ -23,7 +22,7 @@ export default async function update({
   const body = {
     data: {
       type: "policies",
-      attributes: compact(attributes),
+      attributes,
     },
   }
 

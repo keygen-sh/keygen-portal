@@ -298,51 +298,53 @@ export default function AllFields({
             />
           )}
 
-          <FormField
-            control={form.control}
-            name="checkInIntervalCount"
-            render={({ field }) => (
-              <FormItem>
-                <Field.Header
-                  label="Check-in interval count"
-                  tooltip={PolicyAttributeDescriptions.checkInIntervalCount}
-                >
-                  <FormControl>
-                    {!checkInInterval ? (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span tabIndex={0}>
-                            <Input
-                              type="number"
-                              min={1}
-                              max={365}
-                              placeholder="1 - 365"
-                              {...field}
-                              value={field.value ?? ""}
-                              disabled
-                            />
-                          </span>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-80 bg-background-4 text-pretty text-content-muted">
-                          Set a check-in interval to configure this field.
-                        </TooltipContent>
-                      </Tooltip>
-                    ) : (
-                      <Input
-                        type="number"
-                        min={1}
-                        max={365}
-                        placeholder="1 - 365"
-                        {...field}
-                        value={field.value ?? ""}
-                      />
-                    )}
-                  </FormControl>
-                </Field.Header>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {shouldRender("checkInIntervalCount") && (
+            <FormField
+              control={form.control}
+              name="checkInIntervalCount"
+              render={({ field }) => (
+                <FormItem>
+                  <Field.Header
+                    label="Check-in interval count"
+                    tooltip={PolicyAttributeDescriptions.checkInIntervalCount}
+                  >
+                    <FormControl>
+                      {!checkInInterval ? (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span tabIndex={0}>
+                              <Input
+                                type="number"
+                                min={1}
+                                max={365}
+                                placeholder="1 - 365"
+                                {...field}
+                                value={field.value ?? ""}
+                                disabled
+                              />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-80 bg-background-4 text-pretty text-content-muted">
+                            Set a check-in interval to configure this field.
+                          </TooltipContent>
+                        </Tooltip>
+                      ) : (
+                        <Input
+                          type="number"
+                          min={1}
+                          max={365}
+                          placeholder="1 - 365"
+                          {...field}
+                          value={field.value ?? ""}
+                        />
+                      )}
+                    </FormControl>
+                  </Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           {shouldRender("componentMatchingStrategy") && (
             <FormField

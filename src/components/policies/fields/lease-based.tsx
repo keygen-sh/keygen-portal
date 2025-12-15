@@ -1,5 +1,4 @@
-import { useEffect } from "react"
-import { useFormContext, useWatch } from "react-hook-form"
+import { useFormContext } from "react-hook-form"
 
 import { Separator } from "@/components/ui/separator"
 import {
@@ -25,6 +24,7 @@ import {
   HeartbeatResurrectionStrategy,
   PolicyAttributeDescriptions,
   PolicyOptionLabels,
+  PolicyMode,
 } from "@/types/policies"
 
 import DurationInput, { HeartbeatPresets } from "@/components/duration-input"
@@ -37,54 +37,31 @@ type Layout = "default" | "advanced"
 interface LeaseBasedFieldsProps {
   layout?: Layout
   title?: string
+  mode?: PolicyMode
   className?: string
 }
 
 export default function LeaseBasedFields({
   layout = "default",
   title,
+  mode = PolicyMode.Create,
   className,
 }: LeaseBasedFieldsProps): React.ReactElement {
   return layout === "advanced" ? (
     <AdvancedLayout className={className} />
   ) : (
-    <DefaultLayout title={title} className={className} />
+    <DefaultLayout title={title} mode={mode} className={className} />
   )
 }
 
 function DefaultLayout({
   title,
+  mode,
   className,
 }: Omit<LeaseBasedFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<Forms.Policies.BaseValues>()
 
-  const requireHeartbeat = useWatch({
-    control: form.control,
-    name: "requireHeartbeat",
-  })
-
-  useEffect(() => {
-    if (requireHeartbeat) return
-
-    const fields = [
-      "heartbeatDuration",
-      "heartbeatCullStrategy",
-      "heartbeatBasis",
-      "heartbeatResurrectionStrategy",
-    ] as const
-
-    let changed = false
-    for (const field of fields) {
-      if (form.getValues(field) !== null || form.formState.errors[field]) {
-        form.setValue(field, null, { shouldDirty: true, shouldValidate: false })
-        changed = true
-      }
-    }
-    if (changed) {
-      form.clearErrors(fields)
-      void form.trigger(fields)
-    }
-  }, [requireHeartbeat, form])
+  const requireHeartbeat = form.watch("requireHeartbeat")
 
   return (
     <div className={cn("space-y-6 md:w-md", className)}>
@@ -107,9 +84,16 @@ function DefaultLayout({
                       ? "true"
                       : "false"
                 }
-                onValueChange={(value) =>
-                  field.onChange(value === "" ? undefined : value === "true")
-                }
+                onValueChange={(value) => {
+                  const newValue = value === "" ? undefined : value === "true"
+                  field.onChange(newValue)
+                  if (mode === PolicyMode.Create && !newValue) {
+                    form.resetField("heartbeatDuration")
+                    form.resetField("heartbeatCullStrategy")
+                    form.resetField("heartbeatBasis")
+                    form.resetField("heartbeatResurrectionStrategy")
+                  }
+                }}
               >
                 <FormControl>
                   <SelectTrigger className="w-full">

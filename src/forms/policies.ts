@@ -32,9 +32,10 @@ export type BaseValues = Writable<OptionalExcept<PolicyAttributes, "name">> & {
     }[]
   }
 }
-
 export type CreateValues = BaseValues & { product: { id: string } }
 export type UpdateValues = Partial<BaseValues>
+
+export type AllValues = BaseValues & CreateValues & UpdateValues
 
 export const BaseShape = z.object({
   name: z.string().trim().min(1, "Policy name is required"),

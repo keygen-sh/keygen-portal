@@ -70,7 +70,7 @@ function DefaultLayout({
   includeAuthStrategy = true,
   className,
 }: Omit<GeneralFieldsProps, "layout">): React.ReactElement {
-  const form = useFormContext<Forms.Policies.BaseValues>()
+  const form = useFormContext<Forms.Policies.AllValues>()
 
   const { data: products = [], isLoading: productsLoading } = useListProducts()
 
@@ -186,7 +186,7 @@ function AdvancedLayout({
   includeAuthStrategy = true,
   className,
 }: Omit<GeneralFieldsProps, "layout" | "title">): React.ReactElement {
-  const form = useFormContext<Forms.Policies.BaseValues>()
+  const form = useFormContext<Forms.Policies.AllValues>()
 
   const { data: products = [], isLoading: productsLoading } = useListProducts()
 

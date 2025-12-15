@@ -641,14 +641,16 @@ export function composePolicySchema<T extends BaseValues = BaseValues>(
   return schema as unknown as z.ZodType<T>
 }
 
-export function getSchemaDefaults<T extends BaseValues>(
+export function getCreateSchemaDefaults<T extends CreateValues>(
   schema: z.ZodType<T>,
 ): T {
+  // Parse schema with temporary values since schema requires `name` and `product.id`
   const parsed = schema.parse({ name: "temp", product: { id: "temp" } })
+
+  // Empty strings so form initializes with empty fields
   parsed.name = ""
-  if ("product" in parsed) {
-    ;(parsed as CreateValues).product.id = ""
-  }
+  parsed.product.id = ""
+
   return parsed
 }
 

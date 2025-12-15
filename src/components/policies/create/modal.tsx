@@ -127,7 +127,7 @@ export default function PoliciesCreateModal({
 
   const form = useForm<Forms.Policies.CreateValues>({
     resolver: zodResolver(schema),
-    defaultValues: Forms.Policies.getSchemaDefaults(schema),
+    defaultValues: Forms.Policies.getCreateSchemaDefaults(schema),
   })
 
   const handleSubmitTemplates = useCallback(
@@ -148,7 +148,7 @@ export default function PoliciesCreateModal({
           newSelection,
           { product: true },
         )
-      form.reset(Forms.Policies.getSchemaDefaults(newSchema), {
+      form.reset(Forms.Policies.getCreateSchemaDefaults(newSchema), {
         keepDefaultValues: false,
       })
 

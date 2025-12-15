@@ -1,4 +1,6 @@
 import { AttributeType } from "@/components/attribute/value"
+
+import { Entitlement } from "@/types/entitlements"
 import { Policy, ExpirationStrategy } from "@/types/policies"
 
 export function isPerpetual(policy: Policy): boolean {
@@ -46,8 +48,8 @@ export function isLeaseBased(policy: Policy): boolean {
   return policy.attributes.requireHeartbeat === true
 }
 
-export function isFeatureBased(entitlements: number): boolean {
-  return entitlements > 0
+export function isFeatureBased(entitlements: Entitlement[]): boolean {
+  return entitlements.length > 0
 }
 
 export function isUsageBased(policy: Policy): boolean {

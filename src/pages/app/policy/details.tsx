@@ -282,7 +282,7 @@ export default function PolicyDetails() {
                     Lease-based
                   </Badge>
                 )}
-                {isFeatureBased(entitlements.length) && (
+                {isFeatureBased(entitlements) && (
                   <Badge variant="secondary">
                     <Clock className="inline size-4" />
                     Feature-based

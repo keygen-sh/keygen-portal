@@ -127,6 +127,7 @@ function DefaultLayout({
                   onChange={field.onChange}
                   units={["seconds", "minutes", "hours", "days"]}
                   presets={HeartbeatPresets}
+                  disabled={!requireHeartbeat}
                 />
               </FormControl>
             </Field.Header>

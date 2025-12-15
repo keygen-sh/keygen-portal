@@ -91,7 +91,10 @@ function selectUnit(
     typeof totalSeconds === "number" && totalSeconds > 0 ? totalSeconds : 0
 
   if (seconds === 0) {
-    return allowed[allowed.length - 1] ?? allowed[0]
+    const positive = allowed.find(
+      (u) => typeof u.seconds === "number" && u.seconds > 0,
+    )
+    return positive ?? allowed[0]
   }
 
   for (let i = allowed.length - 1; i >= 0; i--) {
@@ -140,12 +143,12 @@ export default function DurationInput({
   const [unit, setUnit] = useState<Unit>(() =>
     selectUnit(value, availableUnits),
   )
-  const [num, setNum] = useState<number>(() => {
+  const [num, setNum] = useState<number | null>(() => {
     const selectedUnit = selectUnit(value, availableUnits)
-    if (selectedUnit.seconds == null) return 1
+    if (selectedUnit.seconds == null) return null
     if (typeof value === "number" && value > 0)
       return Math.max(1, Math.round(value / selectedUnit.seconds))
-    return 1
+    return null
   })
   const [unitsOpen, setUnitsOpen] = useState(false)
   const [presetsOpen, setPresetsOpen] = useState(false)
@@ -156,9 +159,9 @@ export default function DurationInput({
     const selectedUnit = selectUnit(seconds, availableUnits)
     setUnit(selectedUnit)
     setNum(
-      selectedUnit.seconds == null
-        ? 1
-        : Math.max(1, Math.round((seconds as number) / selectedUnit.seconds)),
+      seconds == null || selectedUnit.seconds == null
+        ? null
+        : Math.max(1, Math.round(seconds / selectedUnit.seconds)),
     )
     setPresetsOpen(false)
     onChange(seconds)
@@ -169,27 +172,38 @@ export default function DurationInput({
     setUnit(selectedUnit)
 
     const nextNum =
-      selectedUnit.seconds == null
-        ? 1
-        : typeof value === "number" && value > 0
+      value == null || selectedUnit.seconds == null
+        ? null
+        : value > 0
           ? Math.max(1, Math.round(value / selectedUnit.seconds))
-          : 1
+          : null
     setNum(nextNum)
   }, [value, availableUnits])
 
   const apply = useCallback(
-    (n: number, u: Unit) => {
-      if (u.seconds == null) onChange(null)
-      else onChange(n > 0 ? n * u.seconds : 0)
+    (n: number | null, u: Unit) => {
+      if (n == null || u.seconds == null) onChange(null)
+      else onChange(n > 0 ? n * u.seconds : null)
     },
     [onChange],
   )
 
   const onNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.currentTarget.value
-    const next = raw === "" ? 0 : Number(raw)
+    const next = raw === "" ? null : Number(raw)
     setNum(next)
-    apply(next, unit)
+
+    // Switch to a default unit if current unit is unlimited
+    if (unit.seconds == null && next != null) {
+      const defaultUnit =
+        availableUnits.find((u) => u.key === "days") ??
+        availableUnits.find((u) => u.seconds != null) ??
+        availableUnits[0]
+      setUnit(defaultUnit)
+      apply(next, defaultUnit)
+    } else {
+      apply(next, unit)
+    }
   }
 
   const onUnitChange = (u: Unit) => {
@@ -209,10 +223,10 @@ export default function DurationInput({
             type="number"
             min={1}
             step={1}
-            value={isUnlimited ? "" : num || ""}
+            value={isUnlimited || num == null ? "" : num}
             onFocus={() => setPresetsOpen(true)}
             onChange={onNumberChange}
-            disabled={disabled || isUnlimited}
+            disabled={disabled}
             className="rounded-r-none"
           />
         </PopoverPrimitive.Anchor>

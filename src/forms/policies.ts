@@ -59,11 +59,11 @@ export const BaseShape = z.object({
   requireCheckIn: z.boolean().default(false),
 
   checkInInterval: z.nativeEnum(CheckInInterval).nullish(),
-  checkInIntervalCount: z.union([
-    z.coerce.number().int(),
-    z.null(),
-    z.undefined(),
-  ]),
+  checkInIntervalCount: z.coerce
+    .number()
+    .int()
+    .nullish()
+    .transform((value) => (value === 0 ? null : value)),
 
   usePool: z.boolean().default(false),
   maxMachines: z.coerce
@@ -88,11 +88,11 @@ export const BaseShape = z.object({
   protected: z.boolean().default(true),
 
   requireHeartbeat: z.boolean().default(false),
-  heartbeatDuration: z.union([
-    z.coerce.number().int(),
-    z.null(),
-    z.undefined(),
-  ]),
+  heartbeatDuration: z.coerce
+    .number()
+    .int()
+    .nullish()
+    .transform((value) => (value === 0 ? null : value)),
   heartbeatCullStrategy: z
     .nativeEnum(HeartbeatCullStrategy)
     .nullish()
@@ -497,9 +497,12 @@ export const ProcessBasedRules = (
 
 export const LeaseBasedShape = z.object({
   requireHeartbeat: z.boolean().default(true),
-  heartbeatDuration: z
-    .union([z.coerce.number().int(), z.null(), z.undefined()])
-    .default(60),
+  heartbeatDuration: z.coerce
+    .number()
+    .int()
+    .nullish()
+    .transform((value) => (value === 0 ? null : value))
+    .default(600),
   heartbeatBasis: z
     .nativeEnum(HeartbeatBasis)
     .nullish()

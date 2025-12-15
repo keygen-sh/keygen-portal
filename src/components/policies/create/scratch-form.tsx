@@ -38,7 +38,7 @@ export default function PoliciesScratchForm({
   const form = useForm<Forms.Policies.CreateValues>({
     resolver: zodResolver(schema),
     mode: "onChange",
-    defaultValues: Forms.Policies.getSchemaDefaults(schema),
+    defaultValues: Forms.Policies.getCreateSchemaDefaults(schema),
   })
 
   const steps: Step[] = useMemo(

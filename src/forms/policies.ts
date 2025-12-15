@@ -719,8 +719,8 @@ export function getFormValuesFromPolicy<T extends BaseValues = BaseValues>(
     return {
       ...base,
       product: { id: policy.relationships.product?.data?.id ?? "" },
-    } as unknown as T
+    } as AllValues as T
   }
 
-  return base as unknown as T
+  return base as T
 }

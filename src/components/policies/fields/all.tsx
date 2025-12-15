@@ -62,52 +62,8 @@ import KeyValueInput from "@/components/key-value-input"
 import NullableSelect from "@/components/nullable-select"
 import DurationInput, { HeartbeatPresets } from "@/components/duration-input"
 
-export type PolicyFieldName =
-  | "name"
-  | "product"
-  | "authenticationStrategy"
-  | "checkInInterval"
-  | "checkInIntervalCount"
-  | "componentMatchingStrategy"
-  | "componentUniquenessStrategy"
-  | "duration"
-  | "expirationBasis"
-  | "expirationStrategy"
-  | "floating"
-  | "heartbeatBasis"
-  | "heartbeatCullStrategy"
-  | "heartbeatDuration"
-  | "heartbeatResurrectionStrategy"
-  | "machineLeasingStrategy"
-  | "machineMatchingStrategy"
-  | "machineUniquenessStrategy"
-  | "maxCores"
-  | "maxMachines"
-  | "maxProcesses"
-  | "maxUsers"
-  | "maxUses"
-  | "overageStrategy"
-  | "processLeasingStrategy"
-  | "protected"
-  | "renewalBasis"
-  | "requireCheckIn"
-  | "requireChecksumScope"
-  | "requireComponentsScope"
-  | "requireFingerprintScope"
-  | "requireHeartbeat"
-  | "requireMachineScope"
-  | "requirePolicyScope"
-  | "requireProductScope"
-  | "requireUserScope"
-  | "requireVersionScope"
-  | "strict"
-  | "transferStrategy"
-  | "usePool"
-  | "metadata"
-  | "entitlements"
-
 interface AllFieldsProps {
-  omit?: PolicyFieldName[]
+  omit?: (keyof Forms.Policies.AllValues)[]
   className?: string
 }
 
@@ -115,13 +71,9 @@ export default function AllFields({
   omit,
   className,
 }: AllFieldsProps): React.ReactElement {
-  const form = useFormContext<
-    | Forms.Policies.BaseValues
-    | Forms.Policies.CreateValues
-    | Forms.Policies.UpdateValues
-  >()
+  const form = useFormContext<Forms.Policies.AllValues>()
 
-  const shouldRender = (field: PolicyFieldName) =>
+  const shouldRender = (field: keyof Forms.Policies.AllValues) =>
     !(omit ? omit : []).includes(field)
 
   const { data: products = [], isLoading: productsLoading } = useListProducts()
@@ -712,6 +664,7 @@ export default function AllFields({
                         onChange={field.onChange}
                         units={["seconds", "minutes", "hours", "days"]}
                         presets={HeartbeatPresets}
+                        disabled={!requireHeartbeat}
                       />
                     </FormControl>
                   </Field.Header>

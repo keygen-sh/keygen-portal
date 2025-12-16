@@ -205,7 +205,14 @@ export default function DurationInput({
   const onUnitChange = (u: Unit) => {
     setUnit(u)
     setUnitsOpen(false)
-    apply(num, u)
+
+    // default when switching from unlimited to another unit
+    if (num == null && u.seconds != null) {
+      setNum(1)
+      apply(1, u)
+    } else {
+      apply(num, u)
+    }
   }
 
   const isUnlimited = unit.seconds == null

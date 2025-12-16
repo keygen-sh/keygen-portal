@@ -342,7 +342,7 @@ export const TimedRules = (
       (values: BaseValues) => values.duration != null && values.duration > 0,
       {
         path: ["duration"],
-        message: "Cannot be unlimited for Timed policies",
+        message: "Cannot be empty for Timed policies",
       },
     )
     .refine((values: BaseValues) => values.expirationStrategy != null, {

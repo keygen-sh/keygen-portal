@@ -168,17 +168,13 @@ export default function DurationInput({
   }
 
   useEffect(() => {
-    const selectedUnit = selectUnit(value, availableUnits)
-    setUnit(selectedUnit)
-
-    const nextNum =
-      value == null || selectedUnit.seconds == null
-        ? null
-        : value > 0
-          ? Math.max(1, Math.round(value / selectedUnit.seconds))
-          : null
-    setNum(nextNum)
-  }, [value, availableUnits])
+    // recalculate num based on current unit, but preserve the unit
+    if (value != null && value > 0 && unit.seconds != null) {
+      setNum(Math.max(1, Math.round(value / unit.seconds)))
+    } else {
+      setNum(null)
+    }
+  }, [value, unit])
 
   const apply = useCallback(
     (n: number | null, u: Unit) => {

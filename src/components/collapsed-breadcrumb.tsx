@@ -58,7 +58,7 @@ export default function CollapsedBreadcrumb({
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="inline-flex items-center text-content-normal"
+                    className="inline-flex h-5 items-center rounded-sm text-content-normal"
                   >
                     <MoreHorizontal className="h-4 w-4" />
                     <span className="sr-only">Previous steps</span>
@@ -118,7 +118,7 @@ export default function CollapsedBreadcrumb({
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="inline-flex items-center text-content-normal"
+                    className="inline-flex h-5 items-center rounded-sm text-content-normal"
                   >
                     <MoreHorizontal className="h-4 w-4" />
                     <span className="sr-only">Upcoming steps</span>

@@ -36,7 +36,7 @@ export default function CollapsedBreadcrumb({
   visibleSteps = 3,
   className,
 }: CollapsedBreadcrumbProps): React.ReactElement | null {
-  const currentIndex = Math.max(0, step - 1)
+  const currentIndex = step
 
   const total = crumb.length
   if (total === 0) return null
@@ -68,7 +68,7 @@ export default function CollapsedBreadcrumb({
                   {crumb.slice(0, start).map((path, i) => (
                     <DropdownMenuItem
                       key={path.key}
-                      onClick={() => goTo(i + 1)}
+                      onClick={() => goTo(i)}
                     >
                       {path.title}
                     </DropdownMenuItem>
@@ -81,7 +81,7 @@ export default function CollapsedBreadcrumb({
         )}
 
         {crumb.slice(start, end + 1).map((path, i) => {
-          const absolute = start + i + 1
+          const absolute = start + i
           const isCurrent = absolute === step
           const isPrevious = absolute < step
 

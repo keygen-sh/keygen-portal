@@ -458,8 +458,8 @@ export default function PoliciesCreateModal({
                 {!isMobile && (
                   <CollapsedBreadcrumb
                     crumb={crumb}
-                    step={step}
-                    goTo={goTo}
+                    step={step - 1}
+                    goTo={(index) => goTo(index + 1)}
                     className="mt-1"
                   />
                 )}

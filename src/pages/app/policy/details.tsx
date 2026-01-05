@@ -31,19 +31,19 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import {
-  Menu,
-  GitFork,
-  Copy,
-  SquarePlus,
-  SquarePen,
-  EllipsisVertical,
-  Package,
-  Clock,
-  ChevronRight,
   Logs,
-  Cpu,
-  Repeat,
+  Copy,
+  Menu,
+  Clock,
   Users,
+  Repeat,
+  GitFork,
+  Package,
+  Monitor,
+  SquarePen,
+  SquarePlus,
+  ChevronRight,
+  EllipsisVertical,
 } from "lucide-react"
 
 import { useGetProduct } from "@/queries/products"
@@ -538,7 +538,7 @@ export default function PolicyDetails() {
                         <Separator className="my-6" dashed />
 
                         <CollapsibleMenu
-                          title="Usage Requirements"
+                          title="Usage requirements"
                           className="space-y-2"
                         >
                           <Attribute.Field
@@ -682,7 +682,7 @@ export default function PolicyDetails() {
                       className="p-4"
                     >
                       <Property.Field
-                        icon={Cpu}
+                        icon={Monitor}
                         variant="reverse"
                         label="max machines"
                         emptyLabel="No max machines set"

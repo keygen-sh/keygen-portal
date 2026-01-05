@@ -23,7 +23,7 @@ export default function PageHeader({
         className,
       )}
     >
-      {isMobile && <SidebarTrigger />}
+      {isMobile && <SidebarTrigger className="text-content-subdued" />}
 
       {title && (
         <h1 className="flex-1 font-semibold text-content-muted">{title}</h1>

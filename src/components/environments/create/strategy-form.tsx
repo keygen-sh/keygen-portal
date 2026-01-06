@@ -139,11 +139,11 @@ export default function StrategyForm({
             variant="outline"
             type="button"
             onClick={onCancel}
-            className="max-w-[12rem] flex-1 basis-1/2"
+            className="max-w-48 flex-1 basis-1/2"
           >
             Cancel
           </Button>
-          <Button type="submit" className="max-w-[12rem] flex-1 basis-1/2">
+          <Button type="submit" className="max-w-48 flex-1 basis-1/2">
             Continue
           </Button>
         </DialogFooter>

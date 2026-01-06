@@ -2,6 +2,7 @@ export { default as Dashboard } from "./dashboard"
 export { default as Products } from "./products"
 export { default as Policies } from "./policies"
 export { default as Entitlements } from "./entitlements"
+export { default as Licenses } from "./licenses"
 
 import * as Product from "./product"
 export { Product }
@@ -11,3 +12,6 @@ export { Policy }
 
 import * as Entitlement from "./entitlement"
 export { Entitlement }
+
+import * as License from "./license"
+export { License }

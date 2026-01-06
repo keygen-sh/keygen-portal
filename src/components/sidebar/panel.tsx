@@ -238,7 +238,7 @@ export default function SidebarPanel(): React.ReactElement {
         <SidebarHeader className="flex flex-col items-center justify-center border-b">
           <SidebarGroup className="flex-row justify-between px-1">
             <Combobox />
-            <SidebarTrigger variant="rail" size="rail" className="!size-8" />
+            <SidebarTrigger variant="rail" size="rail" className="size-8!" />
           </SidebarGroup>
           <SidebarGroup className="flex-row justify-between px-1 pt-0 pb-2">
             <div className="flex w-full gap-2">

@@ -496,7 +496,7 @@ export default function PoliciesCreateModal({
                     variant="outline"
                     type="button"
                     onClick={back}
-                    className="max-w-[12rem] flex-1 basis-1/2"
+                    className="max-w-48 flex-1 basis-1/2"
                   >
                     Back
                   </Button>
@@ -507,7 +507,7 @@ export default function PoliciesCreateModal({
                     onClick={
                       last ? form.handleSubmit(handleCreatePolicy) : next
                     }
-                    className="max-w-[12rem] flex-1 basis-1/2"
+                    className="max-w-48 flex-1 basis-1/2"
                   >
                     {last ? "Create" : "Next step"}
                   </Button>

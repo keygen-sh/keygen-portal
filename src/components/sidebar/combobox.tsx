@@ -98,7 +98,7 @@ export default function SidebarCombobox(): React.ReactElement {
             variant="ghost"
             aria-expanded={openPopover}
             size="default"
-            className="!px-1 !py-0"
+            className="px-1! py-0!"
           >
             {/* TODO(cazden) Use company logo */}
             <Droplet className="mr-2 size-6 rounded-sm bg-content-loud p-1 text-background" />

@@ -104,7 +104,7 @@ export default function MultiSelect({
           scrollHideDelay={0}
           className={cn(
             "max-h-48 overflow-y-auto rounded-md border border-accent transition-colors duration-300 focus-within:border-content-subdued",
-            "data-[state=open]:border-content-subdued [&_[data-radix-scroll-area-thumb]]:bg-content-muted",
+            "**:data-radix-scroll-area-thumb:bg-content-muted data-[state=open]:border-content-subdued",
             className,
           )}
         >

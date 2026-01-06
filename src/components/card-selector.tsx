@@ -203,7 +203,7 @@ const SelectableCard = React.forwardRef<
       className={cn(
         "w-full min-w-0 cursor-pointer rounded-lg bg-background p-0.5 transition-colors duration-200",
         "focus-visible:ring-2 focus-visible:ring-content-subdued focus-visible:outline-none",
-        selected && "bg-gradient-to-r from-primary to-secondary",
+        selected && "bg-linear-to-r from-primary to-secondary",
       )}
       data-selected={selected ? "true" : "false"}
     >

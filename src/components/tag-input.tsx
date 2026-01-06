@@ -94,7 +94,7 @@ export default function TagInput({
           ref={triggerRef}
           className={cn(
             "flex min-h-9 w-full flex-wrap gap-x-2 gap-y-2 rounded-md border p-2 text-sm transition-colors duration-300 focus-within:border-content-subdued",
-            "data-[state=open]:border-content-subdued [&_[data-radix-scroll-area-thumb]]:bg-content-muted",
+            "**:data-radix-scroll-area-thumb:bg-content-muted data-[state=open]:border-content-subdued",
             className,
           )}
         >

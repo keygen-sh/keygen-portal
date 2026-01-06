@@ -72,6 +72,7 @@ import {
   getProcessesLimitDisplay,
   getCoresLimitDisplay,
   getUsesLimitDisplay,
+  isLimitOverridden,
 } from "@/lib/licenses"
 
 import * as keygen from "@/keygen"
@@ -510,98 +511,171 @@ export default function LicenseDetails() {
                             label="Cores"
                             variant="none"
                             value={
-                              <TooltipBadge
-                                value={getCoresLimitDisplay(license, policy, 0)}
-                                variant={
-                                  license.attributes.maxCores ||
-                                  policy?.attributes.maxCores
-                                    ? "default"
-                                    : "disabled"
-                                }
-                                tooltip={LicenseAttributeDescriptions.maxCores}
-                              />
+                              <span className="flex items-center gap-1.5">
+                                <TooltipBadge
+                                  value={getCoresLimitDisplay(
+                                    license,
+                                    policy,
+                                    0,
+                                  )}
+                                  variant={
+                                    license.attributes.maxCores ||
+                                    policy?.attributes.maxCores
+                                      ? "default"
+                                      : "disabled"
+                                  }
+                                  tooltip={
+                                    LicenseAttributeDescriptions.maxCores
+                                  }
+                                />
+                                {isLimitOverridden(
+                                  license.attributes.maxCores,
+                                  policy?.attributes.maxCores,
+                                ) && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-[10px]"
+                                  >
+                                    Overridden
+                                  </Badge>
+                                )}
+                              </span>
                             }
                           />
                           <Attribute.Field
                             label="Machines"
                             variant="none"
                             value={
-                              <TooltipBadge
-                                value={getMachinesLimitDisplay(
-                                  license,
-                                  policy,
-                                  license.relationships.machines?.data
-                                    ?.length ?? 0,
+                              <span className="flex items-center gap-1.5">
+                                <TooltipBadge
+                                  value={getMachinesLimitDisplay(
+                                    license,
+                                    policy,
+                                    license.relationships.machines?.data
+                                      ?.length ?? 0,
+                                  )}
+                                  variant={
+                                    license.attributes.maxMachines ||
+                                    policy?.attributes.maxMachines
+                                      ? "default"
+                                      : "disabled"
+                                  }
+                                  tooltip={
+                                    LicenseAttributeDescriptions.maxMachines
+                                  }
+                                />
+                                {isLimitOverridden(
+                                  license.attributes.maxMachines,
+                                  policy?.attributes.maxMachines,
+                                ) && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-[10px]"
+                                  >
+                                    Overridden
+                                  </Badge>
                                 )}
-                                variant={
-                                  license.attributes.maxMachines ||
-                                  policy?.attributes.maxMachines
-                                    ? "default"
-                                    : "disabled"
-                                }
-                                tooltip={
-                                  LicenseAttributeDescriptions.maxMachines
-                                }
-                              />
+                              </span>
                             }
                           />
                           <Attribute.Field
                             label="Processes"
                             variant="none"
                             value={
-                              <TooltipBadge
-                                value={getProcessesLimitDisplay(
-                                  license,
-                                  policy,
-                                  0,
+                              <span className="flex items-center gap-1.5">
+                                <TooltipBadge
+                                  value={getProcessesLimitDisplay(
+                                    license,
+                                    policy,
+                                    0,
+                                  )}
+                                  variant={
+                                    license.attributes.maxProcesses ||
+                                    policy?.attributes.maxProcesses
+                                      ? "default"
+                                      : "disabled"
+                                  }
+                                  tooltip={
+                                    LicenseAttributeDescriptions.maxProcesses
+                                  }
+                                />
+                                {isLimitOverridden(
+                                  license.attributes.maxProcesses,
+                                  policy?.attributes.maxProcesses,
+                                ) && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-[10px]"
+                                  >
+                                    Overridden
+                                  </Badge>
                                 )}
-                                variant={
-                                  license.attributes.maxProcesses ||
-                                  policy?.attributes.maxProcesses
-                                    ? "default"
-                                    : "disabled"
-                                }
-                                tooltip={
-                                  LicenseAttributeDescriptions.maxProcesses
-                                }
-                              />
+                              </span>
                             }
                           />
                           <Attribute.Field
                             label="Users"
                             variant="none"
                             value={
-                              <TooltipBadge
-                                value={getUsersLimitDisplay(
-                                  license,
-                                  policy,
-                                  license.relationships.users?.data?.length ??
-                                    0,
+                              <span className="flex items-center gap-1.5">
+                                <TooltipBadge
+                                  value={getUsersLimitDisplay(
+                                    license,
+                                    policy,
+                                    license.relationships.users?.data?.length ??
+                                      0,
+                                  )}
+                                  variant={
+                                    license.attributes.maxUsers ||
+                                    policy?.attributes.maxUsers
+                                      ? "default"
+                                      : "disabled"
+                                  }
+                                  tooltip={
+                                    LicenseAttributeDescriptions.maxUsers
+                                  }
+                                />
+                                {isLimitOverridden(
+                                  license.attributes.maxUsers,
+                                  policy?.attributes.maxUsers,
+                                ) && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-[10px]"
+                                  >
+                                    Overridden
+                                  </Badge>
                                 )}
-                                variant={
-                                  license.attributes.maxUsers ||
-                                  policy?.attributes.maxUsers
-                                    ? "default"
-                                    : "disabled"
-                                }
-                                tooltip={LicenseAttributeDescriptions.maxUsers}
-                              />
+                              </span>
                             }
                           />
                           <Attribute.Field
                             label="Uses"
                             variant="none"
                             value={
-                              <TooltipBadge
-                                value={getUsesLimitDisplay(license, policy)}
-                                variant={
-                                  license.attributes.maxUses ||
-                                  policy?.attributes.maxUses
-                                    ? "default"
-                                    : "disabled"
-                                }
-                                tooltip={LicenseAttributeDescriptions.maxUses}
-                              />
+                              <span className="flex items-center gap-1.5">
+                                <TooltipBadge
+                                  value={getUsesLimitDisplay(license, policy)}
+                                  variant={
+                                    license.attributes.maxUses ||
+                                    policy?.attributes.maxUses
+                                      ? "default"
+                                      : "disabled"
+                                  }
+                                  tooltip={LicenseAttributeDescriptions.maxUses}
+                                />
+                                {isLimitOverridden(
+                                  license.attributes.maxUses,
+                                  policy?.attributes.maxUses,
+                                ) && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-[10px]"
+                                  >
+                                    Overridden
+                                  </Badge>
+                                )}
+                              </span>
                             }
                           />
                         </CollapsibleMenu>
@@ -686,6 +760,19 @@ export default function LicenseDetails() {
                         label="cores"
                         variant="reverse"
                         value={getCoresLimitDisplay(license, policy, 0)}
+                        suffix={
+                          isLimitOverridden(
+                            license.attributes.maxCores,
+                            policy?.attributes.maxCores,
+                          ) && (
+                            <Badge
+                              variant="secondary"
+                              className="ml-1.5 text-[10px]"
+                            >
+                              Overridden
+                            </Badge>
+                          )
+                        }
                       />
                       <Property.Field
                         icon={Monitor}
@@ -696,12 +783,38 @@ export default function LicenseDetails() {
                           policy,
                           license.relationships.machines?.data?.length ?? 0,
                         )}
+                        suffix={
+                          isLimitOverridden(
+                            license.attributes.maxMachines,
+                            policy?.attributes.maxMachines,
+                          ) && (
+                            <Badge
+                              variant="secondary"
+                              className="ml-1.5 text-[10px]"
+                            >
+                              Overridden
+                            </Badge>
+                          )
+                        }
                       />
                       <Property.Field
                         icon={Repeat}
                         label="processes"
                         variant="reverse"
                         value={getProcessesLimitDisplay(license, policy, 0)}
+                        suffix={
+                          isLimitOverridden(
+                            license.attributes.maxProcesses,
+                            policy?.attributes.maxProcesses,
+                          ) && (
+                            <Badge
+                              variant="secondary"
+                              className="ml-1.5 text-[10px]"
+                            >
+                              Overridden
+                            </Badge>
+                          )
+                        }
                       />
                       <Property.Field
                         icon={Users}
@@ -712,12 +825,38 @@ export default function LicenseDetails() {
                           policy,
                           license.relationships.users?.data?.length ?? 0,
                         )}
+                        suffix={
+                          isLimitOverridden(
+                            license.attributes.maxUsers,
+                            policy?.attributes.maxUsers,
+                          ) && (
+                            <Badge
+                              variant="secondary"
+                              className="ml-1.5 text-[10px]"
+                            >
+                              Overridden
+                            </Badge>
+                          )
+                        }
                       />
                       <Property.Field
                         icon={Hash}
                         label="uses"
                         variant="reverse"
                         value={getUsesLimitDisplay(license, policy)}
+                        suffix={
+                          isLimitOverridden(
+                            license.attributes.maxUses,
+                            policy?.attributes.maxUses,
+                          ) && (
+                            <Badge
+                              variant="secondary"
+                              className="ml-1.5 text-[10px]"
+                            >
+                              Overridden
+                            </Badge>
+                          )
+                        }
                       />
                     </Property.Section>
 

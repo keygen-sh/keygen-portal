@@ -153,13 +153,13 @@ export default function EditForm({
             type="button"
             onClick={onCancel}
             disabled={loading}
-            className="max-w-[12rem] flex-1 basis-1/2"
+            className="max-w-48 flex-1 basis-1/2"
           >
             Cancel
           </Button>
           <Button
             type="submit"
-            className="max-w-[12rem] flex-1 basis-1/2"
+            className="max-w-48 flex-1 basis-1/2"
             disabled={!form.formState.isValid || loading}
           >
             {loading ? <Loading.Dots className="bg-background" /> : "Update"}

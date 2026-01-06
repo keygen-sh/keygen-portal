@@ -26,6 +26,7 @@ export function useGetPolicy(policyId: string) {
     },
     retry: (failures, error) =>
       error.message !== "Policy not found" && failures < 3,
+    enabled: !!policyId,
   })
 }
 

@@ -25,6 +25,7 @@ export function useGetProduct(productId: string) {
     },
     retry: (failures, error) =>
       error.message !== "Product not found" && failures < 3,
+    enabled: !!productId,
   })
 }
 

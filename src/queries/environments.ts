@@ -14,6 +14,7 @@ export function useGetEnvironment(environmentId: string) {
       keygen.environments
         .get({ id: environmentId })
         .then((response) => response.data as Environment),
+    enabled: !!environmentId,
   })
 }
 

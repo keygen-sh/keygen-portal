@@ -412,7 +412,7 @@ export default function LicenseDetails() {
                       value={
                         productError ? (
                           <Badge variant="destructive">ERROR</Badge>
-                        ) : policyLoading || policyFetching || productLoading || productFetching ? (
+                        ) : productLoading || productFetching ? (
                           <Skeleton className="h-5 w-32 rounded-sm" />
                         ) : product ? (
                           <button

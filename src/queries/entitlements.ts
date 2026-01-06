@@ -26,6 +26,7 @@ export function useGetEntitlement(entitlementId: string) {
     },
     retry: (failures, error) =>
       error.message !== "Entitlement not found" && failures < 3,
+    enabled: !!entitlementId,
   })
 }
 

@@ -25,6 +25,13 @@ export function getLimit(
   return licenseValue ?? policyValue
 }
 
+export function isLimitOverridden(
+  licenseValue: number | null,
+  policyValue: number | null | undefined,
+): boolean {
+  return licenseValue !== null && licenseValue !== policyValue
+}
+
 export function formatLimitValue(value: number | null): string {
   return value === null ? "unlimited" : String(value)
 }

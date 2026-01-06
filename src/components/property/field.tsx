@@ -8,6 +8,7 @@ interface PropertyFieldProps {
   label: string
   variant?: PropertyFieldVariant
   value: React.ReactNode
+  suffix?: React.ReactNode
   isEmpty?: EmptyCase
   emptyLabel?: string
   className?: string
@@ -23,6 +24,7 @@ export default function PropertyField({
   label,
   variant = "default",
   value,
+  suffix,
   isEmpty = defaultIsEmpty,
   emptyLabel = "--",
   className,
@@ -47,6 +49,7 @@ export default function PropertyField({
                   {value}
                 </span>
                 <p className="text-xs text-content-muted">{label}</p>
+                {suffix}
               </>
             )}
           </div>
@@ -74,6 +77,7 @@ export default function PropertyField({
                 >
                   {value}
                 </span>
+                {suffix}
               </>
             )}
           </div>

@@ -9,3 +9,6 @@ export { Entitlements }
 
 import * as Policies from "./policies"
 export { Policies }
+
+import * as Licenses from "./licenses"
+export { Licenses }

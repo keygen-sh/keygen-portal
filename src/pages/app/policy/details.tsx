@@ -74,6 +74,7 @@ import * as keygen from "@/keygen"
 import * as Policies from "@/components/policies"
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
+import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
@@ -477,36 +478,7 @@ export default function PolicyDetails() {
                 </CollapsibleCard>
 
                 <CollapsibleCard title="Metadata" contentClass="p-0">
-                  <ScrollArea className="min-h-0 w-full min-w-0">
-                    {policy.attributes.metadata &&
-                    Object.keys(policy.attributes.metadata).length > 0 ? (
-                      <div className="relative p-4">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() =>
-                            copyToClipboard(
-                              JSON.stringify(
-                                policy.attributes.metadata,
-                                null,
-                                2,
-                              ),
-                            )
-                          }
-                          className="absolute top-3 right-3 z-10 h-7 w-7 bg-accent/60 md:bg-accent/0"
-                        >
-                          <Copy className="size-3.5" />
-                        </Button>
-
-                        {/* FIXME(cazden) Text should be scrollable along X and shouldn't wrap on smaller screens */}
-                        <pre className="w-full max-w-full font-mono text-sm leading-snug break-words whitespace-pre-wrap">
-                          {JSON.stringify(policy.attributes.metadata, null, 2)}
-                        </pre>
-                      </div>
-                    ) : (
-                      <p className="text-sm text-content-muted">{"{ }"}</p>
-                    )}
-                  </ScrollArea>
+                  <Metadata resource={policy} />
                 </CollapsibleCard>
                 {isMobile && (
                   <CollapsibleCard

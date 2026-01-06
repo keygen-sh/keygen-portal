@@ -47,9 +47,11 @@ import { useMobile } from "@/hooks/use-mobile"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
-import * as Attribute from "@/components/attribute"
-import * as Property from "@/components/property"
+
 import * as Products from "@/components/products"
+import * as Property from "@/components/property"
+import * as Attribute from "@/components/attribute"
+import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
@@ -275,36 +277,8 @@ export default function ProductDetails() {
                   <Attribute.Field variant="text" label="TODO" value={"--"} />
                 </CollapsibleCard>
 
-                <CollapsibleCard title="Metadata">
-                  {product.attributes.metadata &&
-                  Object.keys(product.attributes.metadata).length > 0 ? (
-                    <div className="relative">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() =>
-                          copyToClipboard(
-                            JSON.stringify(
-                              product.attributes.metadata,
-                              null,
-                              2,
-                            ),
-                          )
-                        }
-                        className="absolute top-3 right-3 z-10 h-7 w-7"
-                      >
-                        <Copy className="size-3.5" />
-                      </Button>
-
-                      <ScrollArea className="max-h-64 rounded border border-accent">
-                        <pre className="p-3 font-mono text-sm leading-snug">
-                          {JSON.stringify(product.attributes.metadata, null, 2)}
-                        </pre>
-                      </ScrollArea>
-                    </div>
-                  ) : (
-                    <p className="text-sm text-content-muted">{"{ }"}</p>
-                  )}
+                <CollapsibleCard title="Metadata" contentClass="p-0">
+                  <Metadata resource={product} />
                 </CollapsibleCard>
 
                 {isMobile && (

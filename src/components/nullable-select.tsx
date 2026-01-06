@@ -42,7 +42,7 @@ export default function NullableSelect<T extends string>({
 
   const trigger = (
     <SelectTrigger
-      className={cn("w-full", invalid && "!border-destructive", className)}
+      className={cn("w-full", invalid && "border-destructive!", className)}
       disabled={disabled}
     >
       <SelectValue placeholder={placeholder} />

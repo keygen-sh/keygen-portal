@@ -133,7 +133,7 @@ export default function EnvironmentsCreateModal({
                 {step === 1 ? (
                   <BreadcrumbPage>Attributes</BreadcrumbPage>
                 ) : (
-                  <span className="text-sm font-medium break-words text-muted-foreground">
+                  <span className="text-sm font-medium wrap-break-word text-muted-foreground">
                     Attributes
                   </span>
                 )}

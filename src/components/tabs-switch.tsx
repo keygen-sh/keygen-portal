@@ -72,7 +72,7 @@ const TabsSwitch = React.forwardRef<HTMLDivElement, TabsSwitchProps>(
           ref={listRef}
           className={cn(
             "relative flex gap-4",
-            "!justify-start !p-0",
+            "justify-start! p-0!",
             className,
           )}
           {...props}

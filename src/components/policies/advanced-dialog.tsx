@@ -120,7 +120,7 @@ export default function AdvancedDialog({
                             </Button>
 
                             {/* FIXME(cazden) Text should be scrollable along X and shouldn't wrap on smaller screens */}
-                            <pre className="w-full max-w-full font-mono text-sm leading-snug break-words whitespace-pre-wrap">
+                            <pre className="w-full max-w-full font-mono text-sm leading-snug wrap-break-word whitespace-pre-wrap">
                               {JSON.stringify(
                                 policy.attributes.metadata,
                                 null,

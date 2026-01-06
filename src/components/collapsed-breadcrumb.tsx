@@ -66,10 +66,7 @@ export default function CollapsedBreadcrumb({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="min-w-[16rem]">
                   {crumb.slice(0, start).map((path, i) => (
-                    <DropdownMenuItem
-                      key={path.key}
-                      onClick={() => goTo(i)}
-                    >
+                    <DropdownMenuItem key={path.key} onClick={() => goTo(i)}>
                       {path.title}
                     </DropdownMenuItem>
                   ))}
@@ -90,18 +87,18 @@ export default function CollapsedBreadcrumb({
               {i !== 0 && <BreadcrumbSeparator />}
               <BreadcrumbItem>
                 {isCurrent ? (
-                  <BreadcrumbPage className="max-w-[14rem] truncate">
+                  <BreadcrumbPage className="max-w-56 truncate">
                     {path.title}
                   </BreadcrumbPage>
                 ) : isPrevious ? (
                   <button
-                    className="max-w-[14rem] cursor-pointer truncate text-content-normal transition-colors hover:text-content-muted"
+                    className="max-w-56 cursor-pointer truncate text-content-normal transition-colors hover:text-content-muted"
                     onClick={() => goTo(absolute)}
                   >
                     {path.title}
                   </button>
                 ) : (
-                  <span className="max-w-[14rem] truncate text-content-normal">
+                  <span className="max-w-56 truncate text-content-normal">
                     {path.title}
                   </span>
                 )}

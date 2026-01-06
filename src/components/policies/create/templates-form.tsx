@@ -312,11 +312,11 @@ export default function TemplatesForm({
               variant="outline"
               type="button"
               onClick={onStartScratch}
-              className="max-w-[12rem] flex-1 basis-1/2"
+              className="max-w-48 flex-1 basis-1/2"
             >
               Start from scratch
             </Button>
-            <Button type="submit" className="max-w-[12rem] flex-1 basis-1/2">
+            <Button type="submit" className="max-w-48 flex-1 basis-1/2">
               Continue
             </Button>
           </div>

@@ -49,7 +49,6 @@ export default function LicensesList() {
 
           <Licenses.Create.Modal
             onSelectLicense={(license) => handleSelectLicense(license)}
-            open={open}
             onClose={() => setOpen(false)}
           />
         </Dialog>
@@ -64,6 +63,7 @@ export default function LicensesList() {
           hideOnMobile={[
             "id",
             "attributes.key",
+            "relationships.policy",
             "relationships.product",
             "attributes.expiry",
             "attributes.created",

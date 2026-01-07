@@ -33,6 +33,7 @@ import {
   Ban,
   Cpu,
   Key,
+  Logs,
   Copy,
   Menu,
   Hash,
@@ -128,6 +129,7 @@ export default function LicenseDetails() {
   const [open, setOpen] = useState({
     edit: false,
     delete: false,
+    attributes: false,
   })
 
   useEffect(() => {
@@ -145,12 +147,8 @@ export default function LicenseDetails() {
     }, 1000)
   }, [])
 
-  const handleOpen = (key: keyof typeof open) => {
-    setOpen({
-      edit: false,
-      delete: false,
-      [key]: !open[key],
-    })
+  const toggleOpen = (key: keyof typeof open, value: boolean) => {
+    setOpen((prev) => ({ ...prev, [key]: value }))
   }
 
   const handleDeleteLicense = () => {
@@ -198,10 +196,9 @@ export default function LicenseDetails() {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="mr-4 p-0">
                 <DropdownMenuItem
-                  onClick={() => {
-                    setTimeout(() => {
-                      handleOpen("edit")
-                    }, 0)
+                  onClick={(e) => {
+                    toggleOpen("edit", true)
+                    e.currentTarget.blur()
                   }}
                   className="pb-2 text-base"
                 >
@@ -209,10 +206,9 @@ export default function LicenseDetails() {
                 </DropdownMenuItem>
                 <Separator />
                 <DropdownMenuItem
-                  onClick={() => {
-                    setTimeout(() => {
-                      handleOpen("delete")
-                    }, 0)
+                  onClick={(e) => {
+                    toggleOpen("delete", true)
+                    e.currentTarget.blur()
                   }}
                   className="pb-2 text-base"
                 >
@@ -225,14 +221,14 @@ export default function LicenseDetails() {
               <Button
                 variant="outline"
                 disabled={licenseLoading}
-                onClick={() => handleOpen("edit")}
+                onClick={() => toggleOpen("edit", true)}
               >
                 Edit
               </Button>
               <Button
                 variant="outline"
                 disabled={licenseLoading}
-                onClick={() => handleOpen("delete")}
+                onClick={() => toggleOpen("delete", true)}
               >
                 Delete
               </Button>
@@ -686,6 +682,17 @@ export default function LicenseDetails() {
                     </p>
                   </CollapsibleCard>
                 )}
+
+                {isMobile && (
+                  <Button
+                    variant="outline"
+                    onClick={() => toggleOpen("attributes", true)}
+                    className="w-full text-content-muted"
+                  >
+                    <Logs className="mt-0.5 size-4 text-content-normal" />
+                    View All Attributes
+                  </Button>
+                )}
               </div>
             </div>
           </ScrollArea>
@@ -862,25 +869,42 @@ export default function LicenseDetails() {
 
               <TabsContent value="events" className="p-4"></TabsContent>
             </SidebarContent>
-            <SidebarFooter className="p-4"></SidebarFooter>
+            <SidebarFooter className="p-4">
+              <Button
+                variant="outline"
+                onClick={() => toggleOpen("attributes", true)}
+                className="w-full text-content-muted"
+              >
+                <Logs className="mt-0.5 size-4 text-content-normal" />
+                View All Attributes
+              </Button>
+            </SidebarFooter>
           </Sidebar>
         </Tabs>
       )}
 
       <Licenses.Edit.Modal
         open={open.edit}
-        onClose={() => setOpen({ ...open, edit: false })}
+        onClose={() => toggleOpen("edit", false)}
         license={license!}
       />
 
       <DeleteModal
         title={`Delete ${license?.attributes.name || license?.attributes.key}`}
-        description="Are you sure you want to delete this license? This action cannot be undone."
+        description="Are you sure you want to delete this license?"
         open={open.delete}
         disabled={licenseLoading}
-        onClose={() => handleOpen("delete")}
+        onClose={() => toggleOpen("delete", false)}
         onDelete={handleDeleteLicense}
       />
+
+      {license && (
+        <Licenses.AdvancedDialog
+          id={license.id}
+          open={open.attributes}
+          onOpenChange={() => toggleOpen("attributes", false)}
+        />
+      )}
     </section>
   )
 }

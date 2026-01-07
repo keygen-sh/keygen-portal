@@ -101,3 +101,12 @@ export function getUsesLimitDisplay(
   )
   return formatLimitDisplay(license.attributes.uses, limit)
 }
+
+export function getLimitPlaceholder(
+  policyValue: number | null | undefined,
+): string {
+  if (policyValue === null || policyValue === undefined) {
+    return "Unlimited"
+  }
+  return policyValue.toString()
+}

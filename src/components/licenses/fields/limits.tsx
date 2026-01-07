@@ -10,9 +10,11 @@ import {
 } from "@/components/ui/form"
 
 import { cn } from "@/lib/utils"
+import { getLimitPlaceholder } from "@/lib/licenses"
 
 import * as Forms from "@/forms"
 import { LicenseFormFieldDescriptions } from "@/types/licenses"
+import { Policy } from "@/types/policies"
 
 import * as Field from "@/components/field"
 import SectionCard from "@/components/section-card"
@@ -23,23 +25,34 @@ interface LimitsFieldsProps {
   layout?: Layout
   title?: string
   className?: string
+  selectedPolicy?: Policy | null
 }
 
 export default function LimitsFields({
   layout = "create",
   title,
   className,
+  selectedPolicy,
 }: LimitsFieldsProps): React.ReactElement {
   return layout === "edit" ? (
-    <EditLayout title={title} className={className} />
+    <EditLayout
+      title={title}
+      selectedPolicy={selectedPolicy}
+      className={className}
+    />
   ) : (
-    <CreateLayout title={title} className={className} />
+    <CreateLayout
+      title={title}
+      selectedPolicy={selectedPolicy}
+      className={className}
+    />
   )
 }
 
 function CreateLayout({
   title,
   className,
+  selectedPolicy,
 }: Omit<LimitsFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<Forms.Licenses.BaseValues>()
 
@@ -63,7 +76,13 @@ function CreateLayout({
                         {...field}
                         type="number"
                         min={1}
-                        placeholder="Inherit from policy"
+                        placeholder={
+                          selectedPolicy
+                            ? getLimitPlaceholder(
+                                selectedPolicy.attributes.maxMachines,
+                              )
+                            : "Inherit from policy"
+                        }
                         value={field.value ?? ""}
                         onChange={(e) =>
                           field.onChange(
@@ -92,7 +111,13 @@ function CreateLayout({
                         {...field}
                         type="number"
                         min={1}
-                        placeholder="Inherit from policy"
+                        placeholder={
+                          selectedPolicy
+                            ? getLimitPlaceholder(
+                                selectedPolicy.attributes.maxProcesses,
+                              )
+                            : "Inherit from policy"
+                        }
                         value={field.value ?? ""}
                         onChange={(e) =>
                           field.onChange(
@@ -121,7 +146,13 @@ function CreateLayout({
                         {...field}
                         type="number"
                         min={1}
-                        placeholder="Inherit from policy"
+                        placeholder={
+                          selectedPolicy
+                            ? getLimitPlaceholder(
+                                selectedPolicy.attributes.maxUsers,
+                              )
+                            : "Inherit from policy"
+                        }
                         value={field.value ?? ""}
                         onChange={(e) =>
                           field.onChange(
@@ -157,7 +188,13 @@ function CreateLayout({
                         {...field}
                         type="number"
                         min={1}
-                        placeholder="Inherit from policy"
+                        placeholder={
+                          selectedPolicy
+                            ? getLimitPlaceholder(
+                                selectedPolicy.attributes.maxCores,
+                              )
+                            : "Inherit from policy"
+                        }
                         value={field.value ?? ""}
                         onChange={(e) =>
                           field.onChange(
@@ -186,7 +223,13 @@ function CreateLayout({
                         {...field}
                         type="number"
                         min={1}
-                        placeholder="Inherit from policy"
+                        placeholder={
+                          selectedPolicy
+                            ? getLimitPlaceholder(
+                                selectedPolicy.attributes.maxUses,
+                              )
+                            : "Inherit from policy"
+                        }
                         value={field.value ?? ""}
                         onChange={(e) =>
                           field.onChange(
@@ -214,6 +257,7 @@ function CreateLayout({
 
 function EditLayout({
   title,
+  selectedPolicy,
   className,
 }: Omit<LimitsFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<Forms.Licenses.UpdateValues>()
@@ -237,7 +281,13 @@ function EditLayout({
                     <Input
                       type="number"
                       min={1}
-                      placeholder="Inherit from policy"
+                      placeholder={
+                        selectedPolicy
+                          ? getLimitPlaceholder(
+                              selectedPolicy.attributes.maxMachines,
+                            )
+                          : "Inherit from policy"
+                      }
                       {...field}
                       value={field.value ?? ""}
                       onChange={(e) =>
@@ -266,7 +316,13 @@ function EditLayout({
                     <Input
                       type="number"
                       min={1}
-                      placeholder="Inherit from policy"
+                      placeholder={
+                        selectedPolicy
+                          ? getLimitPlaceholder(
+                              selectedPolicy.attributes.maxProcesses,
+                            )
+                          : "Inherit from policy"
+                      }
                       {...field}
                       value={field.value ?? ""}
                       onChange={(e) =>
@@ -295,7 +351,13 @@ function EditLayout({
                     <Input
                       type="number"
                       min={1}
-                      placeholder="Inherit from policy"
+                      placeholder={
+                        selectedPolicy
+                          ? getLimitPlaceholder(
+                              selectedPolicy.attributes.maxUsers,
+                            )
+                          : "Inherit from policy"
+                      }
                       {...field}
                       value={field.value ?? ""}
                       onChange={(e) =>
@@ -330,7 +392,13 @@ function EditLayout({
                     <Input
                       type="number"
                       min={1}
-                      placeholder="Inherit from policy"
+                      placeholder={
+                        selectedPolicy
+                          ? getLimitPlaceholder(
+                              selectedPolicy.attributes.maxCores,
+                            )
+                          : "Inherit from policy"
+                      }
                       {...field}
                       value={field.value ?? ""}
                       onChange={(e) =>
@@ -359,7 +427,13 @@ function EditLayout({
                     <Input
                       type="number"
                       min={1}
-                      placeholder="Inherit from policy"
+                      placeholder={
+                        selectedPolicy
+                          ? getLimitPlaceholder(
+                              selectedPolicy.attributes.maxUses,
+                            )
+                          : "Inherit from policy"
+                      }
                       {...field}
                       value={field.value ?? ""}
                       onChange={(e) =>

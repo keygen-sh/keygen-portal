@@ -10,6 +10,8 @@ import { DialogFooter } from "@/components/ui/dialog"
 import * as Forms from "@/forms"
 import { License } from "@/types/licenses"
 
+import { useGetPolicy } from "@/queries/policies"
+
 import * as Licenses from "@/components/licenses"
 import * as Loading from "@/components/loading"
 import DocumentationLink from "@/components/documentation-link"
@@ -46,6 +48,9 @@ export default function EditForm({
     },
   })
 
+  const policyId = license?.relationships.policy?.data?.id || ""
+  const { data: policy } = useGetPolicy(policyId)
+
   const update = useCallback(
     async (values: Forms.Licenses.UpdateValues) => {
       await onUpdate(values)
@@ -62,7 +67,7 @@ export default function EditForm({
         }}
       >
         <ScrollArea type="always" className="h-[calc(100dvh-8rem)]">
-          <Licenses.Fields.All />
+          <Licenses.Fields.All selectedPolicy={policy} />
 
           <DocumentationLink page="licenses" />
         </ScrollArea>

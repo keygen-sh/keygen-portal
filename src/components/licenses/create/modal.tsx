@@ -112,7 +112,9 @@ export default function LicensesCreateModal({
           "maxCores",
           "maxUses",
         ],
-        render: () => <Licenses.Fields.Limits selectedPolicy={selectedPolicy} />,
+        render: () => (
+          <Licenses.Fields.Limits selectedPolicy={selectedPolicy} />
+        ),
       },
       {
         key: Steps.Additional,

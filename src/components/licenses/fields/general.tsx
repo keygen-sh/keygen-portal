@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import { useFormContext } from "react-hook-form"
 
 import { Input } from "@/components/ui/input"
@@ -6,7 +7,9 @@ import {
   Select,
   SelectTrigger,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectValue,
 } from "@/components/ui/select"
 import {
@@ -21,6 +24,7 @@ import { cn } from "@/lib/utils"
 import * as Forms from "@/forms"
 
 import { useListPolicies } from "@/queries/policies"
+import { useListProducts } from "@/queries/products"
 
 import { LicenseFormFieldDescriptions } from "@/types/licenses"
 
@@ -54,6 +58,33 @@ function CreateLayout({
   const form = useFormContext<Forms.Licenses.BaseValues>()
 
   const { data: policies = [], isLoading: policiesLoading } = useListPolicies()
+  const { data: products = [], isLoading: productsLoading } = useListProducts()
+
+  const policiesByProduct = useMemo(() => {
+    const grouped = new Map<
+      string,
+      { productName: string; policies: typeof policies }
+    >()
+
+    for (const policy of policies) {
+      const productId = policy.relationships.product?.data?.id
+      if (!productId) continue
+
+      const product = products.find((p) => p.id === productId)
+      const productName = product?.attributes.name ?? "Unknown Product"
+
+      if (!grouped.has(productId)) {
+        grouped.set(productId, { productName, policies: [] })
+      }
+      grouped.get(productId)!.policies.push(policy)
+    }
+
+    return Array.from(grouped.entries()).map(([productId, data]) => ({
+      productId,
+      productName: data.productName,
+      policies: data.policies,
+    }))
+  }, [policies, products])
 
   return (
     <div className={cn("m-4 md:mb-0", className)}>
@@ -125,7 +156,7 @@ function CreateLayout({
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      disabled={policiesLoading}
+                      disabled={policiesLoading || productsLoading}
                     >
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -133,10 +164,19 @@ function CreateLayout({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {policies.map((policy) => (
-                          <SelectItem key={policy.id} value={policy.id}>
-                            {policy.attributes.name}
-                          </SelectItem>
+                        {policiesByProduct.map((group) => (
+                          <SelectGroup key={group.productId}>
+                            <SelectLabel>{group.productName}</SelectLabel>
+                            {group.policies.map((policy) => (
+                              <SelectItem
+                                key={policy.id}
+                                value={policy.id}
+                                className="pl-4"
+                              >
+                                {policy.attributes.name}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
                         ))}
                       </SelectContent>
                     </Select>

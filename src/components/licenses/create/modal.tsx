@@ -18,7 +18,6 @@ import * as Forms from "@/forms"
 import { License, LicenseStatus, MockLicenses } from "@/types/licenses"
 
 import { toast } from "@/lib/toast"
-import { generateLicenseKey } from "@/lib/licenses"
 
 import { useSlide } from "@/hooks/use-slide"
 import { useMobile } from "@/hooks/use-mobile"
@@ -167,8 +166,6 @@ export default function LicensesCreateModal({
 
       setLoading(true)
 
-      const licenseKey = values.key || generateLicenseKey()
-
       setTimeout(() => {
         const newLicense: License = {
           id: crypto.randomUUID(),
@@ -178,7 +175,7 @@ export default function LicensesCreateModal({
           },
           attributes: {
             name: values.name || null,
-            key: licenseKey,
+            key: values.key || "XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX",
             expiry: values.expiry || null,
             status: LicenseStatus.Active,
             uses: 0,

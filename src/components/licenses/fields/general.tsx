@@ -1,6 +1,5 @@
 import { useFormContext } from "react-hook-form"
 
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import {
@@ -18,7 +17,6 @@ import {
 } from "@/components/ui/form"
 
 import { cn } from "@/lib/utils"
-import { generateLicenseKey } from "@/lib/licenses"
 
 import * as Forms from "@/forms"
 
@@ -57,10 +55,6 @@ function CreateLayout({
 
   const { data: policies = [], isLoading: policiesLoading } = useListPolicies()
 
-  const handleGenerateKey = () => {
-    form.setValue("key", generateLicenseKey(), { shouldValidate: true })
-  }
-
   return (
     <div className={cn("m-4 md:mb-0", className)}>
       <FormField
@@ -98,23 +92,14 @@ function CreateLayout({
                     tooltip={LicenseFormFieldDescriptions.key}
                     optional
                   >
-                    <div className="flex gap-2">
-                      <FormControl>
-                        <Input
-                          {...field}
-                          value={field.value || ""}
-                          placeholder="Leave blank for auto-generation"
-                          className="font-mono"
-                        />
-                      </FormControl>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={handleGenerateKey}
-                      >
-                        Generate
-                      </Button>
-                    </div>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value || ""}
+                        placeholder="Leave blank for auto-generation"
+                        className="font-mono"
+                      />
+                    </FormControl>
                   </Field.Header>
                   <FormMessage />
                 </FormItem>

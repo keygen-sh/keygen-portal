@@ -1,23 +1,6 @@
 import { License } from "@/types/licenses"
 import { Policy } from "@/types/policies"
 
-export function generateLicenseKey(): string {
-  const segments = 8
-  const segmentLength = 4
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-  const key: string[] = []
-
-  for (let i = 0; i < segments; i++) {
-    let segment = ""
-    for (let j = 0; j < segmentLength; j++) {
-      segment += chars.charAt(Math.floor(Math.random() * chars.length))
-    }
-    key.push(segment)
-  }
-
-  return key.join("-")
-}
-
 export function getLimit(
   licenseValue: number | null,
   policyValue: number | null,

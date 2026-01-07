@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useFormContext } from "react-hook-form"
-import { format, parseISO } from "date-fns"
+import { format, formatDuration, parseISO } from "date-fns"
 import { CalendarIcon, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -16,10 +16,11 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
-import { cn } from "@/lib/utils"
+import { cn, secondsToParts } from "@/lib/utils"
 
 import * as Forms from "@/forms"
 import { LicenseFormFieldDescriptions } from "@/types/licenses"
+import { Policy, PolicyOptionLabels } from "@/types/policies"
 
 import * as Field from "@/components/field"
 import * as Calendars from "@/components/calendars"
@@ -29,28 +30,55 @@ type Layout = "create" | "edit"
 
 interface ExpirationFieldsProps {
   layout?: Layout
+  selectedPolicy?: Policy | null
   title?: string
   className?: string
 }
 
 export default function ExpirationFields({
   layout = "create",
+  selectedPolicy,
   title,
   className,
 }: ExpirationFieldsProps): React.ReactElement {
   return layout === "edit" ? (
     <EditLayout title={title} className={className} />
   ) : (
-    <CreateLayout title={title} className={className} />
+    <CreateLayout
+      selectedPolicy={selectedPolicy}
+      title={title}
+      className={className}
+    />
   )
 }
 
 function CreateLayout({
+  selectedPolicy,
   title,
   className,
 }: Omit<ExpirationFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<Forms.Licenses.BaseValues>()
   const [open, setOpen] = useState(false)
+
+  const durationDescription = useMemo(() => {
+    if (!selectedPolicy) return null
+
+    const { duration, expirationBasis } = selectedPolicy.attributes
+
+    if (duration == null) {
+      return "Leave empty to create a license that never expires."
+    }
+
+    const parts = secondsToParts(duration)
+    if (!parts) return null
+
+    const durationText = formatDuration(parts, { zero: false })
+    const basisText = expirationBasis
+      ? PolicyOptionLabels.expirationBasis[expirationBasis].toLowerCase()
+      : "from now"
+
+    return `Leave empty to set according to the policy's duration (${durationText} ${basisText}). Select a date to override the policy's duration for this specific license.`
+  }, [selectedPolicy])
 
   return (
     <div className={cn("m-4 md:mb-0", className)}>
@@ -131,10 +159,9 @@ function CreateLayout({
             }}
           />
 
-          <p className="text-sm text-content-muted">
-            Leave empty to inherit duration from the policy. Select a date to
-            override the policy's duration for this specific license.
-          </p>
+          {durationDescription && (
+            <p className="text-sm text-content-muted">{durationDescription}</p>
+          )}
         </div>
       </SectionCard>
     </div>

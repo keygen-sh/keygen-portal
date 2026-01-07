@@ -82,12 +82,8 @@ export default function EntitlementDetails() {
     })()
   }, [entitlementError, entitlementFetching, navigate])
 
-  const handleOpen = (key: keyof typeof open) => {
-    setOpen({
-      edit: false,
-      delete: false,
-      [key]: !open[key],
-    })
+  const toggleOpen = (key: keyof typeof open, value: boolean) => {
+    setOpen((prev) => ({ ...prev, [key]: value }))
   }
 
   const handleDeleteEntitlement = () => {
@@ -142,10 +138,9 @@ export default function EntitlementDetails() {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="mr-4 p-0">
                 <DropdownMenuItem
-                  onClick={() => {
-                    setTimeout(() => {
-                      handleOpen("edit")
-                    }, 0)
+                  onClick={(e) => {
+                    toggleOpen("edit", true)
+                    e.currentTarget.blur()
                   }}
                   className="pb-2 text-base"
                 >
@@ -153,10 +148,9 @@ export default function EntitlementDetails() {
                 </DropdownMenuItem>
                 <Separator />
                 <DropdownMenuItem
-                  onClick={() => {
-                    setTimeout(() => {
-                      handleOpen("delete")
-                    }, 0)
+                  onClick={(e) => {
+                    toggleOpen("delete", true)
+                    e.currentTarget.blur()
                   }}
                   className="pb-2 text-base"
                 >
@@ -169,14 +163,14 @@ export default function EntitlementDetails() {
               <Button
                 variant="outline"
                 disabled={entitlementLoading}
-                onClick={() => handleOpen("edit")}
+                onClick={() => toggleOpen("edit", true)}
               >
                 Edit
               </Button>
               <Button
                 variant="outline"
                 disabled={entitlementLoading}
-                onClick={() => handleOpen("delete")}
+                onClick={() => toggleOpen("delete", true)}
               >
                 Delete
               </Button>
@@ -290,7 +284,7 @@ export default function EntitlementDetails() {
 
       <Entitlements.Edit.Modal
         open={open.edit}
-        onClose={() => setOpen({ ...open, edit: false })}
+        onClose={() => toggleOpen("edit", false)}
         entitlement={entitlement!}
       />
 
@@ -299,7 +293,7 @@ export default function EntitlementDetails() {
         description="Are you sure you want to delete this entitlement?"
         open={open.delete}
         disabled={entitlementLoading}
-        onClose={() => handleOpen("delete")}
+        onClose={() => toggleOpen("delete", false)}
         onDelete={handleDeleteEntitlement}
       />
     </section>

@@ -85,6 +85,10 @@ export default function ProductDetails() {
     })()
   }, [isError, isFetching, navigate])
 
+  const toggleOpen = (key: keyof typeof open, value: boolean) => {
+    setOpen((prev) => ({ ...prev, [key]: value }))
+  }
+
   const handleDeleteProduct = () => {
     deleteProduct.mutate(undefined, {
       onSuccess: async () => {
@@ -135,10 +139,9 @@ export default function ProductDetails() {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="mr-4 p-0">
                 <DropdownMenuItem
-                  onClick={() => {
-                    setTimeout(() => {
-                      setOpen({ ...open, edit: true })
-                    }, 0)
+                  onClick={(e) => {
+                    toggleOpen("edit", true)
+                    e.currentTarget.blur()
                   }}
                   className="pb-2 text-base"
                 >
@@ -146,10 +149,9 @@ export default function ProductDetails() {
                 </DropdownMenuItem>
                 <Separator />
                 <DropdownMenuItem
-                  onClick={() => {
-                    setTimeout(() => {
-                      setOpen({ ...open, delete: true })
-                    }, 0)
+                  onClick={(e) => {
+                    toggleOpen("delete", true)
+                    e.currentTarget.blur()
                   }}
                   className="pb-2 text-base"
                 >
@@ -162,14 +164,14 @@ export default function ProductDetails() {
               <Button
                 variant="outline"
                 disabled={isLoading}
-                onClick={() => setOpen({ ...open, edit: true })}
+                onClick={() => toggleOpen("edit", true)}
               >
                 Edit
               </Button>
               <Button
                 variant="outline"
                 disabled={isLoading}
-                onClick={() => setOpen({ ...open, delete: true })}
+                onClick={() => toggleOpen("delete", true)}
               >
                 Delete
               </Button>
@@ -389,16 +391,16 @@ export default function ProductDetails() {
 
       <Products.Edit.Modal
         open={open.edit}
-        onClose={() => setOpen({ ...open, edit: false })}
+        onClose={() => toggleOpen("edit", false)}
         product={product!}
       />
 
       <DeleteModal
-        title="Are you absolutely sure?"
-        description="This action cannot be undone. This will permanently delete the product and delete all associated policy, license and machine resources."
+        title={`Delete ${product?.attributes.name}`}
+        description="Are you sure you want to delete this product?"
         open={open.delete}
         disabled={deleteProduct.isPending}
-        onClose={() => setOpen({ ...open, delete: false })}
+        onClose={() => toggleOpen("delete", false)}
         onDelete={handleDeleteProduct}
       />
     </section>

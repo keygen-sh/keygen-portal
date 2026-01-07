@@ -1,5 +1,7 @@
 import { Separator } from "@/components/ui/separator"
 
+import { Policy } from "@/types/policies"
+
 import { cn } from "@/lib/utils"
 
 import GeneralFields from "./general"
@@ -8,10 +10,12 @@ import LimitsFields from "./limits"
 import AdditionalFields from "./additional"
 
 interface AllFieldsProps {
+  selectedPolicy?: Policy | null
   className?: string
 }
 
 export default function AllFields({
+  selectedPolicy,
   className,
 }: AllFieldsProps): React.ReactElement {
   return (
@@ -31,7 +35,7 @@ export default function AllFields({
 
       <Separator className="my-6" />
 
-      <LimitsFields layout="edit" />
+      <LimitsFields layout="edit" selectedPolicy={selectedPolicy} />
 
       <Separator className="my-6" />
 

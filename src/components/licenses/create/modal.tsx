@@ -1,5 +1,5 @@
 import { useMemo, useCallback, useState } from "react"
-import { useForm, FieldPath } from "react-hook-form"
+import { useForm, FieldPath, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Form } from "@/components/ui/form"
@@ -22,6 +22,8 @@ import { generateLicenseKey } from "@/lib/licenses"
 
 import { useSlide } from "@/hooks/use-slide"
 import { useMobile } from "@/hooks/use-mobile"
+
+import { useListPolicies } from "@/queries/policies"
 
 import * as Motion from "@/components/motion"
 import * as Licenses from "@/components/licenses"
@@ -79,6 +81,13 @@ export default function LicensesCreateModal({
     },
   })
 
+  const { data: policies = [] } = useListPolicies()
+  const selectedPolicyId = useWatch({ control: form.control, name: "policyId" })
+  const selectedPolicy = useMemo(
+    () => policies.find((p) => p.id === selectedPolicyId) ?? null,
+    [policies, selectedPolicyId],
+  )
+
   const steps: Step[] = useMemo(
     () => [
       {
@@ -103,7 +112,7 @@ export default function LicensesCreateModal({
           "maxCores",
           "maxUses",
         ],
-        render: () => <Licenses.Fields.Limits />,
+        render: () => <Licenses.Fields.Limits selectedPolicy={selectedPolicy} />,
       },
       {
         key: Steps.Additional,
@@ -112,7 +121,7 @@ export default function LicensesCreateModal({
         render: () => <Licenses.Fields.Additional />,
       },
     ],
-    [],
+    [selectedPolicy],
   )
 
   const [step, direction, goTo] = useSlide(steps.map((_, i) => i))

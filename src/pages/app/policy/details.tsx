@@ -42,7 +42,6 @@ import {
   Monitor,
   SquarePen,
   SquarePlus,
-  ChevronRight,
   EllipsisVertical,
 } from "lucide-react"
 
@@ -78,6 +77,7 @@ import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
+import GoToButton from "@/components/go-to-button"
 import DeleteModal from "@/components/delete-modal"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleCard from "@/components/collapsible-card"
@@ -314,25 +314,15 @@ export default function PolicyDetails() {
                 <Package className="mr-2 size-4 pt-0.5" />
                 <span>Product:</span>
                 {product ? (
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="link"
-                      size="link"
-                      className="peer ml-3 text-content-muted"
-                      onClick={async () => {
-                        await navigate({
-                          to: "/$id/app/products/$productId",
-                          params: {
-                            id: keygen.config.id,
-                            productId: product.id,
-                          },
-                        })
-                      }}
-                    >
-                      {product?.attributes.name}
-                    </Button>
-                    <ChevronRight className="mt-0.5 size-3.5 transition-all duration-200 peer-hover:translate-x-2 peer-hover:text-brand-primary" />
-                  </div>
+                  <GoToButton
+                    path="/$id/app/products/$productId"
+                    params={{
+                      id: keygen.config.id,
+                      productId: product.id,
+                    }}
+                    label={product.attributes.name}
+                    className="ml-3"
+                  />
                 ) : (
                   <Skeleton className="mt-1 ml-3 h-6 w-48" />
                 )}
@@ -402,25 +392,14 @@ export default function PolicyDetails() {
                     entitlements.map((entitlement) => (
                       <div key={entitlement.id} className="space-y-1.5">
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1">
-                            <Button
-                              variant="link"
-                              size="link"
-                              className="peer text-content-muted"
-                              onClick={() =>
-                                navigate({
-                                  to: "/$id/app/entitlements/$entitlementId",
-                                  params: {
-                                    id: keygen.config.id,
-                                    entitlementId: entitlement.id,
-                                  },
-                                })
-                              }
-                            >
-                              {entitlement.attributes.name}
-                            </Button>
-                            <ChevronRight className="mt-0.5 size-3.5 transition-all duration-200 peer-hover:translate-x-2 peer-hover:text-brand-primary" />
-                          </div>
+                          <GoToButton
+                            path="/$id/app/entitlements/$entitlementId"
+                            params={{
+                              id: keygen.config.id,
+                              entitlementId: entitlement.id,
+                            }}
+                            label={entitlement.attributes.name}
+                          />
 
                           <Badge className="bg-background-3 px-2 py-1 text-content-muted">
                             {entitlement.attributes.code}
@@ -453,20 +432,14 @@ export default function PolicyDetails() {
                         ) : productLoading || productFetching ? (
                           <Skeleton className="h-5 w-32 rounded-sm" />
                         ) : product ? (
-                          <button
-                            className="text-primary underline-offset-4 hover:underline"
-                            onClick={() =>
-                              navigate({
-                                to: "/$id/app/products/$productId",
-                                params: {
-                                  id: keygen.config.id,
-                                  productId: product.id,
-                                },
-                              })
-                            }
-                          >
-                            {product.attributes.name}
-                          </button>
+                          <GoToButton
+                            path="/$id/app/products/$productId"
+                            params={{
+                              id: keygen.config.id,
+                              productId: product.id,
+                            }}
+                            label={product.attributes.name}
+                          />
                         ) : productId ? (
                           productId
                         ) : (

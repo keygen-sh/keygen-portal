@@ -84,6 +84,7 @@ import TooltipBadge from "@/components/tooltip-badge"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
+import GoToButton from "@/components/go-to-button"
 import DeleteModal from "@/components/delete-modal"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
@@ -416,20 +417,14 @@ export default function LicenseDetails() {
                         ) : productLoading || productFetching ? (
                           <Skeleton className="h-5 w-32 rounded-sm" />
                         ) : product ? (
-                          <button
-                            className="text-primary underline-offset-4 hover:underline"
-                            onClick={() =>
-                              navigate({
-                                to: "/$id/app/products/$productId",
-                                params: {
-                                  id: keygen.config.id,
-                                  productId: product.id,
-                                },
-                              })
-                            }
-                          >
-                            {product.attributes.name}
-                          </button>
+                          <GoToButton
+                            path="/$id/app/products/$productId"
+                            params={{
+                              id: keygen.config.id,
+                              productId: product.id,
+                            }}
+                            label={product.attributes.name}
+                          />
                         ) : productId ? (
                           productId
                         ) : (
@@ -446,20 +441,14 @@ export default function LicenseDetails() {
                         ) : policyLoading || policyFetching ? (
                           <Skeleton className="h-5 w-32 rounded-sm" />
                         ) : policy ? (
-                          <button
-                            className="text-primary underline-offset-4 hover:underline"
-                            onClick={() =>
-                              navigate({
-                                to: "/$id/app/policies/$policyId",
-                                params: {
-                                  id: keygen.config.id,
-                                  policyId: policy.id,
-                                },
-                              })
-                            }
-                          >
-                            {policy.attributes.name}
-                          </button>
+                          <GoToButton
+                            path="/$id/app/policies/$policyId"
+                            params={{
+                              id: keygen.config.id,
+                              policyId: policy.id,
+                            }}
+                            label={policy.attributes.name}
+                          />
                         ) : policyId ? (
                           policyId
                         ) : (

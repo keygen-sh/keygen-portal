@@ -1,5 +1,32 @@
+import { AttributeType } from "@/components/attribute/value"
+
 import { License } from "@/types/licenses"
 import { Policy } from "@/types/policies"
+
+export const licenseAttributeTypeSchema: Record<
+  keyof Omit<License["attributes"], "metadata" | "created" | "updated">,
+  AttributeType
+> = {
+  name: "string",
+  key: "string",
+  expiry: "datetime",
+  status: "enum",
+  uses: "number",
+  suspended: "boolean",
+  protected: "boolean",
+  version: "string",
+  maxMachines: "number",
+  maxProcesses: "number",
+  maxUsers: "number",
+  maxCores: "number",
+  maxUses: "number",
+  requireHeartbeat: "boolean",
+  requireCheckIn: "boolean",
+  lastValidated: "datetime",
+  lastCheckOut: "datetime",
+  lastCheckIn: "datetime",
+  nextCheckIn: "datetime",
+}
 
 export function getLimit(
   licenseValue: number | null,

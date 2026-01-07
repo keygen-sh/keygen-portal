@@ -10,8 +10,6 @@ export type BaseValues = Writable<
       | "name"
       | "key"
       | "expiry"
-      | "suspended"
-      | "protected"
       | "maxMachines"
       | "maxProcesses"
       | "maxUsers"
@@ -21,6 +19,8 @@ export type BaseValues = Writable<
     >
   >
 > & {
+  suspended?: boolean | null
+  protected?: boolean | null
   policyId: string
 }
 
@@ -39,8 +39,8 @@ const BaseShape = z.object({
     ),
   expiry: z.string().nullable().optional(),
   policyId: z.string().min(1, "Policy is required"),
-  suspended: z.boolean().optional().default(false),
-  protected: z.boolean().optional().default(false),
+  suspended: z.boolean().optional().nullable().default(null),
+  protected: z.boolean().optional().nullable().default(null),
   maxMachines: z.number().int().positive().nullable().optional(),
   maxProcesses: z.number().int().positive().nullable().optional(),
   maxUsers: z.number().int().positive().nullable().optional(),

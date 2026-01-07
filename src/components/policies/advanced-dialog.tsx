@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogContent,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog"
 
 import { Text, CurlyBraces } from "lucide-react"
@@ -51,7 +52,7 @@ export default function AdvancedDialog({
       <DialogContent className="flex h-[calc(100dvh-2rem)] w-full flex-col overflow-hidden p-0 md:min-w-4xl">
         <DialogHeader className="flex items-start border-b border-accent p-4 pt-3">
           <DialogTitle className="text-base">Advanced</DialogTitle>
-          {/* FIXME(cazden) Missing 'Description' warning for Dialog */}
+          <DialogDescription className="sr-only">Advanced</DialogDescription>
         </DialogHeader>
         <div className="flex min-h-0 flex-1 flex-col">
           {!policy || policyLoading ? (

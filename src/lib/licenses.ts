@@ -8,7 +8,7 @@ export const licenseAttributeTypeSchema: Record<
   AttributeType
 > = {
   name: "string",
-  key: "string",
+  key: "license-key",
   expiry: "datetime",
   status: "enum",
   uses: "number",

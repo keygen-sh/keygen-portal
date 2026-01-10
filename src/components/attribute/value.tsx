@@ -2,7 +2,10 @@ import { formatDuration } from "date-fns"
 
 import TooltipBadge from "@/components/tooltip-badge"
 
+import { truncateKey } from "@/lib/licenses"
 import { cn, secondsToParts, labelize } from "@/lib/utils"
+
+import { useMobile } from "@/hooks/use-mobile"
 
 export type AttributeType =
   | "duration"
@@ -12,6 +15,7 @@ export type AttributeType =
   | "code"
   | "json"
   | "enum"
+  | "license-key"
 
 type AttributeValueProps = {
   type: AttributeType
@@ -30,6 +34,8 @@ export default function AttributeValue({
   forceDisabled,
   className,
 }: AttributeValueProps): React.ReactElement {
+  const isMobile = useMobile()
+
   const isUnset = raw === null || raw === ""
 
   if (type === "json") {
@@ -73,6 +79,11 @@ export default function AttributeValue({
     case "enum":
     case "string":
       value = isUnset ? emptyLabel : labelize(String(raw))
+      break
+    case "license-key":
+      value = isUnset
+        ? emptyLabel
+        : truncateKey(String(raw), { maxLength: isMobile ? 16 : 24 })
       break
     case "code":
     case "number":

@@ -21,10 +21,9 @@ export type BaseValues = Writable<
 > & {
   suspended?: boolean | null
   protected?: boolean | null
-  policyId: string
 }
 
-export type CreateValues = BaseValues
+export type CreateValues = BaseValues & { policyId: string }
 export type UpdateValues = Partial<BaseValues>
 
 const BaseShape = z.object({
@@ -38,7 +37,6 @@ const BaseShape = z.object({
       "Key must be at least 8 characters",
     ),
   expiry: z.string().nullable().optional(),
-  policyId: z.string().min(1, "Policy is required"),
   suspended: z.boolean().optional().nullable().default(null),
   protected: z.boolean().optional().nullable().default(null),
   maxMachines: z.number().int().positive().nullable().optional(),
@@ -49,11 +47,17 @@ const BaseShape = z.object({
   metadata: z.record(z.unknown()).default({}),
 })
 
+const PolicyShape = z.object({
+  policyId: z.string().min(1, "Policy is required"),
+})
+
 const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {
   // Custom rules can be added here in the future, e.g.
   // schema.refine(...)
   return schema
 }
 export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
-export const CreateSchema: z.ZodType<CreateValues> = BaseSchema
+export const CreateSchema: z.ZodType<CreateValues> = BaseRules(
+  BaseShape.merge(PolicyShape),
+) as z.ZodType<CreateValues>
 export const UpdateSchema: z.ZodType<UpdateValues> = BaseSchema

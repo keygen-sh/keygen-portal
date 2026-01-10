@@ -43,7 +43,7 @@ type StepKey = (typeof Steps)[keyof typeof Steps]
 type Step = {
   key: StepKey
   title: string
-  fields?: FieldPath<Forms.Licenses.BaseValues>[]
+  fields?: FieldPath<Forms.Licenses.CreateValues>[]
   render: () => React.ReactElement
 }
 
@@ -61,8 +61,8 @@ export default function LicensesCreateModal({
   const [loading, setLoading] = useState(false)
   const [completedStep, setCompletedStep] = useState<Set<string>>(new Set())
 
-  const form = useForm<Forms.Licenses.BaseValues>({
-    resolver: zodResolver(Forms.Licenses.BaseSchema),
+  const form = useForm<Forms.Licenses.CreateValues>({
+    resolver: zodResolver(Forms.Licenses.CreateSchema),
     mode: "onChange",
     defaultValues: {
       name: "",

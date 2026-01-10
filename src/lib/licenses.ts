@@ -120,3 +120,17 @@ export function getLimitPlaceholder(
   }
   return policyValue.toString()
 }
+
+export function truncateKey(
+  key: string,
+  { maxLength = 64 }: { maxLength?: number } = {},
+): string {
+  if (key.length <= maxLength) return key
+
+  const ellipsis = "…"
+  const remaining = maxLength - ellipsis.length
+  const head = key.slice(0, Math.ceil(remaining / 2))
+  const tail = key.slice(-Math.floor(remaining / 2))
+
+  return `${head}${ellipsis}${tail}`
+}

@@ -30,7 +30,13 @@ export function useLicenseTableColumns() {
       }),
       column.attr("key", {
         header: "Key",
-        cell: (info) => <Badge className="font-mono">{info.getValue()}</Badge>,
+        cell: (info) => (
+          <ClipboardButton
+            value={info.getValue()}
+            truncateStyle="middle"
+            maxLength={12}
+          />
+        ),
       }),
       column.attr("status", {
         header: "Status",

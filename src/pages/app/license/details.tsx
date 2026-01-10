@@ -74,6 +74,7 @@ import {
   getCoresLimitDisplay,
   getUsesLimitDisplay,
   isLimitOverridden,
+  truncateKey,
 } from "@/lib/licenses"
 
 import * as keygen from "@/keygen"
@@ -174,7 +175,8 @@ export default function LicenseDetails() {
               <BreadcrumbItem>
                 {license ? (
                   <BreadcrumbPage className="w-40 truncate md:w-auto">
-                    {license?.attributes.name || license?.attributes.key}
+                    {license.attributes.name ||
+                      truncateKey(license.attributes.key, { maxLength: 32 })}
                   </BreadcrumbPage>
                 ) : (
                   <Skeleton className="h-6 w-32" />
@@ -297,8 +299,8 @@ export default function LicenseDetails() {
                   className="w-fit border-none"
                 >
                   <Key className="mr-1 size-4" />
-                  <span className="w-64 truncate font-mono md:w-auto">
-                    {license.attributes.key}
+                  <span className="font-mono">
+                    {truncateKey(license.attributes.key)}
                   </span>
                   <Copy className="size-4 pt-0.5 md:size-3" />
                 </Button>
@@ -889,14 +891,16 @@ export default function LicenseDetails() {
         license={license!}
       />
 
-      <DeleteModal
-        title={`Delete ${license?.attributes.name || license?.attributes.key}`}
-        description="Are you sure you want to delete this license?"
-        open={open.delete}
-        disabled={licenseLoading}
-        onClose={() => toggleOpen("delete", false)}
-        onDelete={handleDeleteLicense}
-      />
+      {license && (
+        <DeleteModal
+          title={`Delete ${license.attributes.name || truncateKey(license.attributes.key, { maxLength: 32 })}`}
+          description="Are you sure you want to delete this license?"
+          open={open.delete}
+          disabled={licenseLoading}
+          onClose={() => toggleOpen("delete", false)}
+          onDelete={handleDeleteLicense}
+        />
+      )}
 
       {license && (
         <Licenses.AdvancedDialog

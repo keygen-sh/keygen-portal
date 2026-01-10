@@ -176,7 +176,9 @@ export default function LicenseDetails() {
                 {license ? (
                   <BreadcrumbPage className="w-40 truncate md:w-auto">
                     {license.attributes.name ||
-                      truncateKey(license.attributes.key, { maxLength: 32 })}
+                      truncateKey(license.attributes.key, {
+                        maxLength: isMobile ? 16 : 32,
+                      })}
                   </BreadcrumbPage>
                 ) : (
                   <Skeleton className="h-6 w-32" />
@@ -300,7 +302,9 @@ export default function LicenseDetails() {
                 >
                   <Key className="mr-1 size-4" />
                   <span className="font-mono">
-                    {truncateKey(license.attributes.key)}
+                    {truncateKey(license.attributes.key, {
+                      maxLength: isMobile ? 24 : 32,
+                    })}
                   </span>
                   <Copy className="size-4 pt-0.5 md:size-3" />
                 </Button>
@@ -893,7 +897,7 @@ export default function LicenseDetails() {
 
       {license && (
         <DeleteModal
-          title={`Delete ${license.attributes.name || truncateKey(license.attributes.key, { maxLength: 32 })}`}
+          title={`Delete ${license.attributes.name || truncateKey(license.attributes.key, { maxLength: isMobile ? 16 : 32 })}`}
           description="Are you sure you want to delete this license?"
           open={open.delete}
           disabled={licenseLoading}

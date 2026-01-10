@@ -177,7 +177,7 @@ export default function LicenseDetails() {
                   <BreadcrumbPage className="w-40 truncate md:w-auto">
                     {license.attributes.name ||
                       truncateKey(license.attributes.key, {
-                        maxLength: isMobile ? 16 : 32,
+                        maxLength: isMobile ? 16 : 64,
                       })}
                   </BreadcrumbPage>
                 ) : (
@@ -303,7 +303,7 @@ export default function LicenseDetails() {
                   <Key className="mr-1 size-4" />
                   <span className="font-mono">
                     {truncateKey(license.attributes.key, {
-                      maxLength: isMobile ? 24 : 32,
+                      maxLength: isMobile ? 24 : 64,
                     })}
                   </span>
                   <Copy className="size-4 pt-0.5 md:size-3" />

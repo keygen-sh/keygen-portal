@@ -9,7 +9,7 @@ export const licenseAttributeTypeSchema: Record<
 > = {
   name: "string",
   key: "license-key",
-  expiry: "datetime",
+  expiry: "date",
   status: "enum",
   uses: "number",
   suspended: "boolean",
@@ -22,10 +22,10 @@ export const licenseAttributeTypeSchema: Record<
   maxUses: "number",
   requireHeartbeat: "boolean",
   requireCheckIn: "boolean",
-  lastValidated: "datetime",
-  lastCheckOut: "datetime",
-  lastCheckIn: "datetime",
-  nextCheckIn: "datetime",
+  lastValidated: "date",
+  lastCheckOut: "date",
+  lastCheckIn: "date",
+  nextCheckIn: "date",
 }
 
 export function getLimit(

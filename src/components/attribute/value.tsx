@@ -1,4 +1,4 @@
-import { formatDuration } from "date-fns"
+import { formatDuration, formatDate } from "date-fns"
 
 import TooltipBadge from "@/components/tooltip-badge"
 
@@ -16,6 +16,7 @@ export type AttributeType =
   | "json"
   | "enum"
   | "license-key"
+  | "date"
 
 type AttributeValueProps = {
   type: AttributeType
@@ -84,6 +85,11 @@ export default function AttributeValue({
       value = isUnset
         ? emptyLabel
         : truncateKey(String(raw), { maxLength: isMobile ? 16 : 24 })
+      break
+    case "date":
+      value = isUnset
+        ? emptyLabel
+        : formatDate(new Date(String(raw)), "PPp")
       break
     case "code":
     case "number":

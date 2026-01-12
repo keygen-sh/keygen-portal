@@ -3,6 +3,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { Copy } from "lucide-react"
 
+import { Group } from "@/types/groups"
 import { Policy } from "@/types/policies"
 import { Product } from "@/types/products"
 import { License } from "@/types/licenses"
@@ -12,7 +13,7 @@ import { cn } from "@/lib/utils"
 import { copyToClipboard } from "@/lib/clipboard"
 
 interface InspectResourceProps {
-  resource: Policy | Product | License | Entitlement
+  resource: Policy | Product | License | Entitlement | Group
   className?: string
 }
 

@@ -43,7 +43,7 @@ export default function GroupsList() {
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button size="sm" disabled={groupsLoading}>
-              Create Group
+              New Group
             </Button>
           </DialogTrigger>
 

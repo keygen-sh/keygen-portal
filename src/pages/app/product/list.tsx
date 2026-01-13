@@ -40,7 +40,7 @@ export default function ProductsList() {
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button size="sm" disabled={isLoading}>
-              Create Product
+              New Product
             </Button>
           </DialogTrigger>
 

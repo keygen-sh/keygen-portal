@@ -43,7 +43,7 @@ export default function LicensesList() {
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button size="sm" disabled={licensesLoading}>
-              Create License
+              New License
             </Button>
           </DialogTrigger>
 

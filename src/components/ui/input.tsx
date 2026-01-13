@@ -16,7 +16,7 @@ const inputVariants = cva(
   {
     variants: {
       variant: {
-        default: "",
+        default: "placeholder:text-content-subdued!",
         destructive:
           "text-destructive border-brand-destructive ring-2 ring-destructive/20 focus-visible:ring-destructive/40",
         outline: "bg-background",

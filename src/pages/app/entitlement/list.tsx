@@ -40,7 +40,7 @@ export default function EntitlementsList() {
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button size="sm" disabled={entitlementsLoading}>
-              Create Entitlement
+              New Entitlement
             </Button>
           </DialogTrigger>
 

@@ -137,7 +137,7 @@ export default function EnvironmentsViewModal({
       <DialogFooter className="border-t border-accent p-4">
         {view === EnvironmentView.List && (
           <Button onClick={() => onChangeMode(EnvironmentMode.Create)}>
-            Create Environment
+            New Environment
           </Button>
         )}
         {view === EnvironmentView.Details && selectedEnvironment && (

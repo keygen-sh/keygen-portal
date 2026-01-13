@@ -39,7 +39,7 @@ export default function PoliciesList() {
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button size="sm" disabled={policiesLoading}>
-              Create Policy
+              New Policy
             </Button>
           </DialogTrigger>
 

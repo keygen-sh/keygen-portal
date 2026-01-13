@@ -182,7 +182,9 @@ export default function MultiSelect({
               ))}
             </ScrollArea>
 
-            <CommandEmpty>No results.</CommandEmpty>
+            <CommandEmpty className="p-2 text-sm text-content-normal">
+              No results found
+            </CommandEmpty>
           </CommandList>
         </Command>
       </PopoverContent>

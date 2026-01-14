@@ -55,7 +55,7 @@ function CreateLayout({
   title,
   className,
 }: Omit<GeneralFieldsProps, "layout">): React.ReactElement {
-  const form = useFormContext<Forms.Licenses.BaseValues>()
+  const form = useFormContext<Forms.Licenses.CreateValues>()
 
   const { data: policies = [], isLoading: policiesLoading } = useListPolicies()
   const { data: products = [], isLoading: productsLoading } = useListProducts()

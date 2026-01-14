@@ -134,3 +134,7 @@ export function truncateKey(
 
   return `${head}${ellipsis}${tail}`
 }
+
+export function getLicenseLabel(license: License) {
+  return license.attributes.name || license.attributes.key
+}

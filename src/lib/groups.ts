@@ -11,3 +11,7 @@ export const groupAttributeTypeSchema: Record<
   maxLicenses: "number",
   maxMachines: "number",
 }
+
+export function getGroupLabel(group: Group) {
+  return group.attributes.name
+}

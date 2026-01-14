@@ -11,6 +11,7 @@ interface GoToProps {
   path: string
   params?: Record<string, string>
   label: string
+  disabled?: boolean
   className?: string
 }
 
@@ -18,6 +19,7 @@ export default function GoToButton({
   path,
   params,
   label,
+  disabled = false,
   className,
 }: GoToProps): React.ReactElement {
   const navigate = useNavigate()
@@ -27,12 +29,19 @@ export default function GoToButton({
   }
 
   return (
-    <div className={cn("group flex h-6 w-fit gap-1", className)}>
+    <div
+      className={cn(
+        "group flex h-6 w-fit gap-1",
+        disabled && "pointer-events-none",
+        className,
+      )}
+    >
       <Button
         type="button"
         variant="link"
         size="link"
         onClick={handleClick}
+        disabled={disabled}
         className="text-primary group-hover:text-primary/80"
         aria-label={label}
       >

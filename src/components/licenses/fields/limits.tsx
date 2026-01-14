@@ -54,7 +54,7 @@ function CreateLayout({
   className,
   selectedPolicy,
 }: Omit<LimitsFieldsProps, "layout">): React.ReactElement {
-  const form = useFormContext<Forms.Licenses.BaseValues>()
+  const form = useFormContext<Forms.Licenses.CreateValues>()
 
   return (
     <div className={cn("m-4 md:mb-0", className)}>

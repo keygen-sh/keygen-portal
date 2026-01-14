@@ -42,7 +42,7 @@ function CreateLayout({
   title,
   className,
 }: Omit<OptionsFieldsProps, "layout">): React.ReactElement {
-  const form = useFormContext<Forms.Licenses.BaseValues>()
+  const form = useFormContext<Forms.Licenses.CreateValues>()
 
   return (
     <div className={cn("m-4 md:mb-0", className)}>

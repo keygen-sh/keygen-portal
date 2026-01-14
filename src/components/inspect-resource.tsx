@@ -5,6 +5,7 @@ import { Copy } from "lucide-react"
 
 import { Group } from "@/types/groups"
 import { Policy } from "@/types/policies"
+import { Machine } from "@/types/machines"
 import { Product } from "@/types/products"
 import { License } from "@/types/licenses"
 import { Entitlement } from "@/types/entitlements"
@@ -13,7 +14,7 @@ import { cn } from "@/lib/utils"
 import { copyToClipboard } from "@/lib/clipboard"
 
 interface InspectResourceProps {
-  resource: Policy | Product | License | Entitlement | Group
+  resource: Policy | Product | License | Entitlement | Group | Machine
   className?: string
 }
 

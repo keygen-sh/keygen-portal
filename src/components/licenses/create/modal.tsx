@@ -164,6 +164,9 @@ export default function LicensesCreateModal({
         return
       }
 
+      const policy = policies.find((p) => p.id === values.policyId)
+      const productId = policy?.relationships?.product?.data?.id
+
       setLoading(true)
 
       setTimeout(() => {
@@ -204,10 +207,7 @@ export default function LicensesCreateModal({
             },
             product: {
               links: { related: null },
-              data: {
-                type: "products",
-                id: "80dca7f1-e939-4927-8e47-8a4c84c8ac71",
-              },
+              data: productId ? { type: "products", id: productId } : undefined,
             },
             policy: {
               links: { related: null },
@@ -240,7 +240,7 @@ export default function LicensesCreateModal({
         onClose()
       }, 500)
     },
-    [onSelectLicense, onClose],
+    [policies, onSelectLicense, onClose],
   )
 
   return (

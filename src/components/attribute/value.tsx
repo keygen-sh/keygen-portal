@@ -87,9 +87,7 @@ export default function AttributeValue({
         : truncateKey(String(raw), { maxLength: isMobile ? 16 : 24 })
       break
     case "date":
-      value = isUnset
-        ? emptyLabel
-        : formatDate(new Date(String(raw)), "PPp")
+      value = isUnset ? emptyLabel : formatDate(new Date(String(raw)), "PPp")
       break
     case "code":
     case "number":

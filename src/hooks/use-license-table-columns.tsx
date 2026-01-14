@@ -10,8 +10,7 @@ import {
 
 import { createTableColumnHelper } from "@/lib/tables"
 
-import PolicyCell from "@/components/tables/policy-cell"
-import ProductCell from "@/components/tables/product-cell"
+import * as Tables from "@/components/tables"
 import ClipboardButton from "@/components/clipboard-button"
 
 const column = createTableColumnHelper<License>()
@@ -52,12 +51,12 @@ export function useLicenseTableColumns() {
       column.rel("policy", {
         sortingFn: "alphanumeric",
         header: "Policy",
-        cell: (info) => <PolicyCell id={info.getValue()?.data?.id} />,
+        cell: (info) => <Tables.PolicyCell id={info.getValue()?.data?.id} />,
       }),
       column.rel("product", {
         sortingFn: "alphanumeric",
         header: "Product",
-        cell: (info) => <ProductCell id={info.getValue()?.data?.id} />,
+        cell: (info) => <Tables.ProductCell id={info.getValue()?.data?.id} />,
       }),
       column.attr("expiry", {
         sortingFn: "datetime",

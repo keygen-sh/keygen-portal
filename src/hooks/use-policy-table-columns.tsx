@@ -4,8 +4,8 @@ import { Policy } from "@/types/policies"
 
 import { createTableColumnHelper } from "@/lib/tables"
 
+import * as Tables from "@/components/tables"
 import ClipboardButton from "@/components/clipboard-button"
-import ProductCell from "@/components/tables/product-cell"
 
 const column = createTableColumnHelper<Policy>()
 
@@ -22,7 +22,7 @@ export function usePolicyTableColumns() {
       column.rel("product", {
         sortingFn: "alphanumeric",
         header: "Product",
-        cell: (info) => <ProductCell id={info.getValue()?.data?.id} />,
+        cell: (info) => <Tables.ProductCell id={info.getValue()?.data?.id} />,
       }),
       column.attr("created", {
         sortingFn: "datetime",

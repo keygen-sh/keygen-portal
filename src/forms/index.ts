@@ -13,5 +13,8 @@ export { Policies }
 import * as Licenses from "./licenses"
 export { Licenses }
 
+import * as Machines from "./machines"
+export { Machines }
+
 import * as Groups from "./groups"
 export { Groups }

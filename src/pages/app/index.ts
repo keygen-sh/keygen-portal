@@ -6,6 +6,7 @@ export { default as Licenses } from "./licenses"
 export { default as Machines } from "./machines"
 export { default as Groups } from "./groups"
 export { default as Components } from "./components"
+export { default as Processes } from "./processes"
 
 import * as Product from "./product"
 export { Product }
@@ -27,3 +28,6 @@ export { Group }
 
 import * as Component from "./component"
 export { Component }
+
+import * as Process from "./process"
+export { Process }

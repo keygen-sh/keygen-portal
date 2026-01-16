@@ -8,13 +8,21 @@ import { Policy } from "@/types/policies"
 import { Machine } from "@/types/machines"
 import { Product } from "@/types/products"
 import { License } from "@/types/licenses"
+import { Component } from "@/types/components"
 import { Entitlement } from "@/types/entitlements"
 
 import { cn } from "@/lib/utils"
 import { copyToClipboard } from "@/lib/clipboard"
 
 interface InspectResourceProps {
-  resource: Policy | Product | License | Entitlement | Group | Machine
+  resource:
+    | Policy
+    | Product
+    | License
+    | Entitlement
+    | Group
+    | Machine
+    | Component
   className?: string
 }
 

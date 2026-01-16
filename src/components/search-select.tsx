@@ -15,6 +15,7 @@ import { ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getGroupLabel } from "@/lib/groups"
 import { getLicenseLabel } from "@/lib/licenses"
+import { getMachineLabel } from "@/lib/machines"
 import { truncator, TruncateStyle } from "@/lib/truncate"
 
 import * as keygen from "@/keygen"
@@ -24,7 +25,7 @@ import GoToButton from "@/components/go-to-button"
 type BaseOption = { id: string }
 type NamedOption = BaseOption & { attributes: { name: string } }
 
-type ResourceType = "license" | "group" | "user"
+type ResourceType = "license" | "group" | "user" | "machine"
 
 interface ResourceConfig {
   getLabel: (option: BaseOption) => string
@@ -77,6 +78,21 @@ const resourceConfigs: Record<ResourceType, ResourceConfig> = {
           params={{ id: keygen.config.id }}
           label="View users"
         /> */}
+      </span>
+    ),
+  },
+  machine: {
+    getLabel: getMachineLabel as (option: BaseOption) => string,
+    placeholder: "Select a machine...",
+    searchPlaceholder: "Search by ID, name, or fingerprint...",
+    emptyMessage: (
+      <span className="flex items-center gap-2">
+        No machines found.
+        <GoToButton
+          path="/$id/app/machines"
+          params={{ id: keygen.config.id }}
+          label="View machines"
+        />
       </span>
     ),
   },

@@ -36,3 +36,7 @@ export const getHeartbeatStatusVariant = (
       return "default"
   }
 }
+
+export function getMachineLabel(machine: Machine) {
+  return machine.attributes.name || machine.attributes.fingerprint
+}

@@ -5,6 +5,7 @@ export { default as Entitlements } from "./entitlements"
 export { default as Licenses } from "./licenses"
 export { default as Machines } from "./machines"
 export { default as Groups } from "./groups"
+export { default as Components } from "./components"
 
 import * as Product from "./product"
 export { Product }
@@ -23,3 +24,6 @@ export { Machine }
 
 import * as Group from "./group"
 export { Group }
+
+import * as Component from "./component"
+export { Component }

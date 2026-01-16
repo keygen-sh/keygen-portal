@@ -6,6 +6,7 @@ import { Copy } from "lucide-react"
 import { Group } from "@/types/groups"
 import { Policy } from "@/types/policies"
 import { Machine } from "@/types/machines"
+import { Process } from "@/types/processes"
 import { Product } from "@/types/products"
 import { License } from "@/types/licenses"
 import { Component } from "@/types/components"
@@ -23,6 +24,7 @@ interface InspectResourceProps {
     | Group
     | Machine
     | Component
+    | Process
   className?: string
 }
 

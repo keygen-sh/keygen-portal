@@ -1,3 +1,13 @@
+import { User } from "@/types/users"
+import { Group } from "@/types/groups"
+import { Policy } from "@/types/policies"
+import { Machine } from "@/types/machines"
+import { Process } from "@/types/processes"
+import { Product } from "@/types/products"
+import { License } from "@/types/licenses"
+import { Component } from "@/types/components"
+import { Entitlement } from "@/types/entitlements"
+
 export type APIResponse<
   TData,
   TMeta extends Record<string, unknown> | undefined = undefined,
@@ -78,6 +88,17 @@ export interface Resource<
   relationships: TRelationship
   links: { self: string }
 }
+
+export type AnyResource =
+  | Product
+  | Entitlement
+  | Group
+  | Policy
+  | License
+  | Machine
+  | Component
+  | Process
+  | User
 
 export type Writable<T> = Omit<T, "created" | "updated">
 

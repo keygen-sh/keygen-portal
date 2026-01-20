@@ -50,7 +50,7 @@ import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
-import DeleteModal from "@/components/delete-modal"
+import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleCard from "@/components/collapsible-card"
 
 export default function EntitlementDetails() {
@@ -288,13 +288,15 @@ export default function EntitlementDetails() {
         entitlement={entitlement!}
       />
 
-      <DeleteModal
+      <ConfirmationModal
         title={`Delete ${entitlement?.attributes.name}`}
         description="Are you sure you want to delete this entitlement?"
         open={open.delete}
         disabled={entitlementLoading}
         onClose={() => toggleOpen("delete", false)}
-        onDelete={handleDeleteEntitlement}
+        onConfirm={handleDeleteEntitlement}
+        label="Delete"
+        variant="destructive"
       />
     </section>
   )

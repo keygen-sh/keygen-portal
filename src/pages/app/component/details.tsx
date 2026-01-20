@@ -62,7 +62,7 @@ import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
-import DeleteModal from "@/components/delete-modal"
+import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
 
@@ -498,13 +498,15 @@ export default function ComponentDetails() {
         component={component!}
       />
 
-      <DeleteModal
+      <ConfirmationModal
         title={`Delete ${component?.attributes.name || component?.attributes.fingerprint}`}
         description="Are you sure you want to delete this component? This action cannot be undone."
         open={open.delete}
         disabled={componentLoading}
         onClose={() => toggleOpen("delete", false)}
-        onDelete={handleDeleteComponent}
+        onConfirm={handleDeleteComponent}
+        label="Delete"
+        variant="destructive"
       />
 
       {component && (

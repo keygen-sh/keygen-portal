@@ -78,7 +78,7 @@ import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
-import DeleteModal from "@/components/delete-modal"
+import ConfirmationModal from "@/components/confirmation-modal"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
@@ -694,13 +694,15 @@ export default function PolicyDetails() {
         onOpenChange={(value) => toggleOpen("duplicate", value)}
       />
 
-      <DeleteModal
+      <ConfirmationModal
         title={`Delete ${policy?.attributes.name}`}
         description="Are you sure you want to delete this policy?"
         open={open.delete}
         disabled={policyLoading || productLoading}
         onClose={() => toggleOpen("delete", false)}
-        onDelete={handleDeletePolicy}
+        onConfirm={handleDeletePolicy}
+        label="Delete"
+        variant="destructive"
       />
     </section>
   )

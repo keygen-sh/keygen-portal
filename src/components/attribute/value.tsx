@@ -11,6 +11,7 @@ export type AttributeType =
   | "duration"
   | "boolean"
   | "string"
+  | "raw"
   | "number"
   | "code"
   | "json"
@@ -80,6 +81,9 @@ export default function AttributeValue({
     case "enum":
     case "string":
       value = isUnset ? emptyLabel : labelize(String(raw))
+      break
+    case "raw":
+      value = isUnset ? emptyLabel : String(raw)
       break
     case "license-key":
       value = isUnset

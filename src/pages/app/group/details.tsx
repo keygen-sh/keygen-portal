@@ -53,7 +53,7 @@ import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
-import DeleteModal from "@/components/delete-modal"
+import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
 
@@ -439,13 +439,15 @@ export default function GroupDetails() {
         group={group!}
       />
 
-      <DeleteModal
+      <ConfirmationModal
         title={`Delete ${group?.attributes.name}`}
         description="Are you sure you want to delete this group? This action cannot be undone."
         open={open.delete}
         disabled={groupLoading}
         onClose={() => toggleOpen("delete", false)}
-        onDelete={handleDeleteGroup}
+        onConfirm={handleDeleteGroup}
+        label="Delete"
+        variant="destructive"
       />
 
       {group && (

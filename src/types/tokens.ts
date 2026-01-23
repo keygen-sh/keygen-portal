@@ -1,10 +1,5 @@
-import {
-  APIResponse,
-  Resource,
-  Relationship,
-  Linkage,
-  Writable,
-} from "@/types/api"
+import { Writable } from "@/types/utility"
+import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
 
 export interface TokenAttributes {
   kind: string

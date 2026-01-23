@@ -1,7 +1,7 @@
 import { z } from "zod"
 
-import { Writable, OptionalExcept } from "@/types/api"
 import { ComponentAttributes } from "@/types/components"
+import { Writable, OptionalExcept } from "@/types/utility"
 
 export type BaseValues = Writable<OptionalExcept<ComponentAttributes, "name">>
 export type CreateValues = BaseValues & {

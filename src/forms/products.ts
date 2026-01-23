@@ -1,12 +1,11 @@
 import { z } from "zod"
 
-import { Writable, OptionalExcept } from "@/types/api"
+import { Writable, OptionalExcept } from "@/types/utility"
 import { ProductAttributes, DistributionStrategy } from "@/types/products"
 
 export type BaseValues = Writable<
   OptionalExcept<ProductAttributes, "name" | "code">
 >
-
 export type CreateValues = BaseValues
 export type UpdateValues = Partial<BaseValues>
 

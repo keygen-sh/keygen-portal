@@ -1,14 +1,16 @@
 import { z } from "zod"
 
-import { Writable } from "@/types/api"
+import { Override } from "@/types/utility"
 import { LicenseAttributes } from "@/types/licenses"
 
-export type BaseValues = Writable<
-  Partial<
+export type BaseValues = Partial<
+  Override<
     Pick<
       LicenseAttributes,
       | "name"
       | "key"
+      | "suspended"
+      | "protected"
       | "expiry"
       | "maxMachines"
       | "maxProcesses"
@@ -16,22 +18,30 @@ export type BaseValues = Writable<
       | "maxCores"
       | "maxUses"
       | "metadata"
-    >
+    >,
+    {
+      key?: string | null
+      suspended?: boolean | null
+      protected?: boolean | null
+    }
   >
-> & {
-  suspended?: boolean | null
-  protected?: boolean | null
-}
+>
 
 export type CreateValues = BaseValues & { policyId: string }
 export type UpdateValues = Partial<BaseValues>
 
 const BaseShape = z.object({
-  name: z.string().trim().nullable().optional(),
+  name: z
+    .string()
+    .trim()
+    .nullable()
+    .optional()
+    .transform((value) => (value === "" ? null : value)),
   key: z
     .string()
     .trim()
     .optional()
+    .transform((value) => (value === "" ? null : value))
     .refine(
       (value) => !value || value.length >= 8,
       "Key must be at least 8 characters",

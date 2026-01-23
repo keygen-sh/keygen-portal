@@ -1,10 +1,9 @@
 import { z } from "zod"
 
-import { Writable } from "@/types/api"
+import { Writable } from "@/types/utility"
 import { EnvironmentAttributes, IsolationStrategy } from "@/types/environments"
 
 export type BaseValues = Writable<EnvironmentAttributes>
-
 export type CreateValues = BaseValues
 export type UpdateValues = Partial<BaseValues>
 

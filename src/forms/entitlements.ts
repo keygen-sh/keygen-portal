@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 import { FormFieldError } from "@/types/forms"
-import { Writable, OptionalExcept } from "@/types/api"
+import { Writable, OptionalExcept } from "@/types/utility"
 import { EntitlementAttributes } from "@/types/entitlements"
 
 import * as Forms from "@/forms"
@@ -9,7 +9,6 @@ import * as Forms from "@/forms"
 export type BaseValues = Writable<
   OptionalExcept<EntitlementAttributes, "name" | "code">
 >
-
 export type CreateValues = BaseValues
 export type UpdateValues = Partial<BaseValues>
 

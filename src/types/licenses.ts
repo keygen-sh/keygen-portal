@@ -123,20 +123,6 @@ export const LicenseAttributeDescriptions: Readonly<
     "Store arbitrary key/value data on the license for book keeping purposes, entitlements, etc.",
 } as const
 
-export const LicenseStatusDescriptions: Readonly<
-  Record<LicenseStatus, string>
-> = {
-  [LicenseStatus.Active]:
-    "License has been created, validated, checked out, or checked in within the last 90 days.",
-  [LicenseStatus.Inactive]: "License has had no activity in the past 90 days.",
-  [LicenseStatus.Expiring]: "License is expiring within the next 3 days.",
-  [LicenseStatus.Expired]: "License expiration date has passed.",
-  [LicenseStatus.Suspended]:
-    "License has been suspended and will always fail validation.",
-  [LicenseStatus.Banned]:
-    "License is associated with a user who has been banned.",
-} as const
-
 export const LicenseFormFieldDescriptions: Readonly<
   typeof LicenseAttributeDescriptions
 > = {
@@ -150,6 +136,27 @@ export const LicenseFormFieldDescriptions: Readonly<
   maxCores: "Override the policy's max cores limit for this license.",
   maxUses: "Override the policy's max uses limit for this license.",
 }
+
+export const LicenseDisabledFormFieldDescriptions: Readonly<
+  Partial<Record<keyof LicenseAttributes, string>>
+> = {
+  maxMachines:
+    "Max machines cannot be overridden for licenses with a non-floating policy. Value must be 1.",
+}
+
+export const LicenseStatusDescriptions: Readonly<
+  Record<LicenseStatus, string>
+> = {
+  [LicenseStatus.Active]:
+    "License has been created, validated, checked out, or checked in within the last 90 days.",
+  [LicenseStatus.Inactive]: "License has had no activity in the past 90 days.",
+  [LicenseStatus.Expiring]: "License is expiring within the next 3 days.",
+  [LicenseStatus.Expired]: "License expiration date has passed.",
+  [LicenseStatus.Suspended]:
+    "License has been suspended and will always fail validation.",
+  [LicenseStatus.Banned]:
+    "License is associated with a user who has been banned.",
+} as const
 
 export const LicenseStatusLabels: Readonly<Record<LicenseStatus, string>> = {
   [LicenseStatus.Active]: "Active",

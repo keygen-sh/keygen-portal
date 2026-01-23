@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { Writable } from "@/types/api"
+import { Writable } from "@/types/utility"
 import { MachineAttributes } from "@/types/machines"
 
 export type BaseValues = Writable<
@@ -21,12 +21,10 @@ export type BaseValues = Writable<
   groupId?: string | null
   ownerId?: string | null
 }
-
 export type CreateValues = BaseValues & {
   fingerprint: string
   licenseId: string
 }
-
 export type UpdateValues = Partial<BaseValues>
 
 const BaseShape = z.object({

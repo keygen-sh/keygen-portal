@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { Writable, OptionalExcept } from "@/types/api"
+import { Writable, OptionalExcept } from "@/types/utility"
 import { GroupAttributes } from "@/types/groups"
 
 export type BaseValues = Writable<OptionalExcept<GroupAttributes, "name">>

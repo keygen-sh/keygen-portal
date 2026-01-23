@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { Writable, OptionalExcept } from "@/types/api"
+import { Writable, OptionalExcept } from "@/types/utility"
 import {
   Policy,
   PolicyAttributes,

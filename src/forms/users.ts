@@ -1,13 +1,12 @@
 import { z } from "zod"
 
-import { Writable, OptionalExcept } from "@/types/api"
 import { UserAttributes, UserRole } from "@/types/users"
+import { Writable, OptionalExcept } from "@/types/utility"
 
 export type BaseValues = Writable<OptionalExcept<UserAttributes, "email">> & {
   groupId?: string | null
   password?: string | null
 }
-
 export type CreateValues = BaseValues
 export type UpdateValues = Partial<BaseValues>
 

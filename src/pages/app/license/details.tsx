@@ -53,7 +53,6 @@ import {
 } from "lucide-react"
 
 import {
-  MockLicenses,
   LicenseStatus,
   LicenseStatusLabels,
   LicenseStatusVariants,
@@ -63,9 +62,11 @@ import {
 
 import { useGetPolicy } from "@/queries/policies"
 import { useGetProduct } from "@/queries/products"
+import { useGetLicense, useRemoveLicense } from "@/queries/licenses"
 
 import { useMobile } from "@/hooks/use-mobile"
 
+import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
 import {
   getMachinesLimitDisplay,
@@ -103,10 +104,13 @@ const LicenseStatusIcons: Record<LicenseStatus, React.ReactNode> = {
 export default function LicenseDetails() {
   const { licenseId } = useParams({ from: "/$id/app/licenses/$licenseId" })
 
-  const license = MockLicenses.find((l) => l.id === licenseId)
-  const [licenseLoading, setLicenseLoading] = useState(true)
-  const [licenseFetching, setLicenseFetching] = useState(true)
-  const licenseError = false
+  const {
+    data: license,
+    isLoading: licenseLoading,
+    isFetching: licenseFetching,
+    isError: licenseError,
+  } = useGetLicense(licenseId)
+  const removeLicense = useRemoveLicense(licenseId)
 
   const policyId = license?.relationships.policy?.data?.id || ""
   const {
@@ -141,20 +145,18 @@ export default function LicenseDetails() {
     })()
   }, [licenseError, licenseFetching, navigate])
 
-  useEffect(() => {
-    setTimeout(() => {
-      setLicenseLoading(false)
-      setLicenseFetching(false)
-    }, 1000)
-  }, [])
-
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))
   }
 
-  const handleDeleteLicense = () => {
-    console.log("License deleted.")
-    // TODO(cazden) Implement API call to delete license
+  const handleDeleteLicense = async () => {
+    try {
+      await removeLicense.mutateAsync()
+      toast({ message: "License deleted", variant: "success" })
+      await navigate({ to: ".." })
+    } catch {
+      toast({ message: "Failed to delete license", variant: "error" })
+    }
   }
 
   return (
@@ -277,7 +279,7 @@ export default function LicenseDetails() {
               <div className="flex flex-col gap-3 md:flex-row md:items-center">
                 <h1 className="font-owners-wide text-2xl font-medium">
                   {license?.attributes.name || (
-                    <span className="text-lg font-normal text-content-disabled">
+                    <span className="flex items-center text-lg font-normal text-content-disabled">
                       {"(name not set)"}
                     </span>
                   )}
@@ -286,7 +288,7 @@ export default function LicenseDetails() {
                   variant="clipboard"
                   size="clipboard"
                   onClick={() => copyToClipboard(license.id)}
-                  className="w-fit pb-0.5"
+                  className="w-fit"
                 >
                   {license.id}
                   <Copy className="size-4 pt-0.5 md:size-3" />
@@ -889,11 +891,12 @@ export default function LicenseDetails() {
         </Tabs>
       )}
 
-      <Licenses.Edit.Modal
-        open={open.edit}
-        onClose={() => toggleOpen("edit", false)}
-        license={license!}
-      />
+      {license && (
+        <Licenses.Edit.Modal
+          open={open.edit}
+          onOpenChange={(value) => toggleOpen("edit", value)}
+        />
+      )}
 
       {license && (
         <ConfirmationModal

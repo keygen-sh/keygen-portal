@@ -15,7 +15,7 @@ import {
 
 import * as Forms from "@/forms"
 
-import { License, LicenseStatus, MockLicenses } from "@/types/licenses"
+import { License } from "@/types/licenses"
 
 import { toast } from "@/lib/toast"
 
@@ -23,6 +23,7 @@ import { useSlide } from "@/hooks/use-slide"
 import { useMobile } from "@/hooks/use-mobile"
 
 import { useListPolicies } from "@/queries/policies"
+import { useCreateLicense } from "@/queries/licenses"
 
 import * as Motion from "@/components/motion"
 import * as Licenses from "@/components/licenses"
@@ -58,7 +59,7 @@ export default function LicensesCreateModal({
 }: LicensesCreateModalProps) {
   const isMobile = useMobile()
 
-  const [loading, setLoading] = useState(false)
+  const createLicense = useCreateLicense()
   const [completedStep, setCompletedStep] = useState<Set<string>>(new Set())
 
   const form = useForm<Forms.Licenses.CreateValues>({
@@ -119,7 +120,9 @@ export default function LicensesCreateModal({
         key: Steps.Additional,
         title: "Additional configuration",
         fields: ["protected", "suspended", "metadata"],
-        render: () => <Licenses.Fields.Additional />,
+        render: () => (
+          <Licenses.Fields.Additional selectedPolicy={selectedPolicy} />
+        ),
       },
     ],
     [selectedPolicy],
@@ -164,83 +167,20 @@ export default function LicensesCreateModal({
         return
       }
 
-      const policy = policies.find((p) => p.id === values.policyId)
-      const productId = policy?.relationships?.product?.data?.id
-
-      setLoading(true)
-
-      setTimeout(() => {
-        const newLicense: License = {
-          id: crypto.randomUUID(),
-          type: "licenses",
-          links: {
-            self: `/v1/accounts/{ACCOUNT}/licenses/${crypto.randomUUID()}`,
-          },
-          attributes: {
-            name: values.name || null,
-            key: values.key || "XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX",
-            expiry: values.expiry || null,
-            status: LicenseStatus.Active,
-            uses: 0,
-            suspended: values.suspended || false,
-            protected: values.protected || false,
-            version: null,
-            maxMachines: values.maxMachines || null,
-            maxProcesses: values.maxProcesses || null,
-            maxUsers: values.maxUsers || null,
-            maxCores: values.maxCores || null,
-            maxUses: values.maxUses || null,
-            requireHeartbeat: false,
-            requireCheckIn: false,
-            lastValidated: null,
-            lastCheckOut: null,
-            lastCheckIn: null,
-            nextCheckIn: null,
-            metadata: values.metadata || {},
-            created: new Date().toISOString(),
-            updated: new Date().toISOString(),
-          },
-          relationships: {
-            account: {
-              links: { related: "/v1/accounts/{ACCOUNT}" },
-              data: { type: "accounts", id: "{ACCOUNT}" },
-            },
-            product: {
-              links: { related: null },
-              data: productId ? { type: "products", id: productId } : undefined,
-            },
-            policy: {
-              links: { related: null },
-              data: { type: "policies", id: values.policyId },
-            },
-            group: {
-              links: { related: null },
-              data: null,
-            },
-            owner: {
-              links: { related: null },
-              data: null,
-            },
-            users: {
-              links: { related: null },
-            },
-            machines: {
-              links: { related: null },
-            },
-            entitlements: {
-              links: { related: null },
-            },
-          },
-        }
-
-        MockLicenses.push(newLicense)
-        setLoading(false)
-        toast({ message: "License created", variant: "success" })
-        onSelectLicense(newLicense)
-        onClose()
-      }, 500)
+      createLicense.mutate(values, {
+        onSuccess: (license) => {
+          toast({ message: "License created", variant: "success" })
+          onSelectLicense(license)
+        },
+        onError: () => {
+          toast({
+            message: "Failed to create license",
+            variant: "error",
+          })
+        },
+      })
     },
-    [policies, onSelectLicense, onClose],
+    [createLicense, onSelectLicense],
   )
 
   return (
@@ -293,7 +233,7 @@ export default function LicensesCreateModal({
               variant="outline"
               type="button"
               onClick={step === 0 ? onClose : back}
-              disabled={loading}
+              disabled={createLicense.isPending}
               className="max-w-48 flex-1 basis-1/2"
             >
               {step === 0 ? "Cancel" : "Back"}
@@ -303,10 +243,10 @@ export default function LicensesCreateModal({
               key={last ? "create" : "next"}
               type="button"
               onClick={last ? form.handleSubmit(handleCreateLicense) : next}
-              disabled={loading}
+              disabled={createLicense.isPending}
               className="max-w-48 flex-1 basis-1/2"
             >
-              {loading ? (
+              {createLicense.isPending ? (
                 <Loading.Dots className="bg-background" />
               ) : last ? (
                 "Create"

@@ -12,7 +12,7 @@ import {
 
 import { Text, CurlyBraces } from "lucide-react"
 
-import { MockLicenses } from "@/types/licenses"
+import { useGetLicense } from "@/queries/licenses"
 
 import * as Licenses from "@/components/licenses"
 import Metadata from "@/components/metadata"
@@ -32,11 +32,12 @@ export default function AdvancedDialog({
   open,
   onOpenChange,
 }: AdvancedDialogProps) {
-  // TODO(cazden) Replace with useGetLicense query when available
-  const license = MockLicenses.find((l) => l.id === id)
-  const licenseLoading = false
-  const licenseFetching = false
-  const licenseError = !license
+  const {
+    data: license,
+    isLoading: licenseLoading,
+    isFetching: licenseFetching,
+    isError: licenseError,
+  } = useGetLicense(id)
 
   const [tab, setTab] = useState<"attributes" | "inspect">("attributes")
 

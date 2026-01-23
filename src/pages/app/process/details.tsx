@@ -43,7 +43,6 @@ import {
 } from "lucide-react"
 
 import { MockMachines } from "@/types/machines"
-import { MockLicenses } from "@/types/licenses"
 import {
   MockProcesses,
   ProcessAttributeDescriptions,
@@ -54,6 +53,7 @@ import {
 } from "@/types/processes"
 
 import { useGetProduct } from "@/queries/products"
+import { useGetLicense } from "@/queries/licenses"
 
 import { useMobile } from "@/hooks/use-mobile"
 
@@ -95,9 +95,11 @@ export default function ProcessDetails() {
   const machineError = false
 
   const licenseId = process?.relationships.license?.data?.id || ""
-  const license = MockLicenses.find((l) => l.id === licenseId)
-  const [licenseLoading, setLicenseLoading] = useState(true)
-  const licenseError = false
+  const {
+    data: license,
+    isLoading: licenseLoading,
+    isError: licenseError,
+  } = useGetLicense(licenseId)
 
   const productId = process?.relationships.product?.data?.id || ""
   const {
@@ -127,7 +129,6 @@ export default function ProcessDetails() {
     setTimeout(() => {
       setProcessLoading(false)
       setMachineLoading(false)
-      setLicenseLoading(false)
     }, 300)
   }, [])
 

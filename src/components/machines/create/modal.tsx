@@ -16,12 +16,13 @@ import {
 import * as Forms from "@/forms"
 
 import { Machine, HeartbeatStatus, MockMachines } from "@/types/machines"
-import { MockLicenses } from "@/types/licenses"
 
 import { toast } from "@/lib/toast"
 
 import { useSlide } from "@/hooks/use-slide"
 import { useMobile } from "@/hooks/use-mobile"
+
+import { useListLicenses } from "@/queries/licenses"
 
 import * as Motion from "@/components/motion"
 import * as Machines from "@/components/machines"
@@ -55,6 +56,7 @@ export default function MachinesCreateModal({
   onClose,
 }: MachinesCreateModalProps) {
   const isMobile = useMobile()
+  const { data: licenses = [] } = useListLicenses()
 
   const [loading, setLoading] = useState(false)
   const [completedStep, setCompletedStep] = useState<Set<string>>(new Set())
@@ -141,7 +143,7 @@ export default function MachinesCreateModal({
         return
       }
 
-      const license = MockLicenses.find((l) => l.id === values.licenseId)
+      const license = licenses.find((l) => l.id === values.licenseId)
       const productId = license?.relationships?.product?.data?.id
 
       setLoading(true)
@@ -220,7 +222,7 @@ export default function MachinesCreateModal({
         onClose()
       }, 500)
     },
-    [onSelectMachine, onClose],
+    [licenses, onSelectMachine, onClose],
   )
 
   return (

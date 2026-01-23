@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { useLicenseTableColumns } from "@/hooks/use-license-table-columns"
-import { License, MockLicenses } from "@/types/licenses"
+import { License } from "@/types/licenses"
+
+import { useListLicenses } from "@/queries/licenses"
 
 import * as keygen from "@/keygen"
 import * as Licenses from "@/components/licenses"
@@ -14,7 +16,7 @@ import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
 
 export default function LicensesList() {
-  const [licensesLoading, setLicensesLoading] = useState(true)
+  const { data: licenses = [], isLoading: licensesLoading } = useListLicenses()
   const columns = useLicenseTableColumns()
 
   const navigate = useNavigate()
@@ -28,14 +30,8 @@ export default function LicensesList() {
       to: "/$id/app/licenses/$licenseId",
       params: { id: keygen.config.id, licenseId: license.id },
     })
+    setOpen(false)
   }
-
-  // Mock API call
-  useEffect(() => {
-    setTimeout(() => {
-      setLicensesLoading(false)
-    }, 1000)
-  }, [])
 
   return (
     <section>
@@ -58,10 +54,9 @@ export default function LicensesList() {
         <Skeletons.Table />
       ) : (
         <DataTable<License>
-          data={MockLicenses}
+          data={licenses}
           columns={columns}
           hideOnMobile={[
-            "id",
             "attributes.key",
             "relationships.policy",
             "relationships.product",

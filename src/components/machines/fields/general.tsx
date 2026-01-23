@@ -13,8 +13,9 @@ import { cn } from "@/lib/utils"
 
 import * as Forms from "@/forms"
 
-import { MockLicenses } from "@/types/licenses"
 import { MachineFormFieldDescriptions } from "@/types/machines"
+
+import { useListLicenses } from "@/queries/licenses"
 
 import * as Field from "@/components/field"
 import SectionCard from "@/components/section-card"
@@ -30,6 +31,7 @@ export default function GeneralFields({
   className,
 }: GeneralFieldsProps): React.ReactElement {
   const form = useFormContext<Forms.Machines.CreateValues>()
+  const { data: licenses = [] } = useListLicenses()
 
   return (
     <div className={cn("m-4 md:mb-0", className)}>
@@ -96,7 +98,7 @@ export default function GeneralFields({
                       resource="license"
                       value={field.value}
                       onChange={(value) => field.onChange(value)}
-                      options={MockLicenses}
+                      options={licenses}
                       allowClear={false}
                       invalid={!!fieldState.error}
                       truncate="middle"

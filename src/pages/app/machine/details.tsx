@@ -40,10 +40,10 @@ import {
 } from "lucide-react"
 
 import { MockGroups } from "@/types/groups"
-import { MockLicenses } from "@/types/licenses"
 import { MockMachines, MachineAttributeDescriptions } from "@/types/machines"
 
 import { useGetProduct } from "@/queries/products"
+import { useGetLicense } from "@/queries/licenses"
 
 import { useMobile } from "@/hooks/use-mobile"
 
@@ -72,9 +72,11 @@ export default function MachineDetails() {
   const machineError = false
 
   const licenseId = machine?.relationships.license?.data?.id || ""
-  const license = MockLicenses.find((l) => l.id === licenseId)
-  const [licenseLoading, setLicenseLoading] = useState(true)
-  const licenseError = false
+  const {
+    data: license,
+    isLoading: licenseLoading,
+    isError: licenseError,
+  } = useGetLicense(licenseId)
 
   const groupId = machine?.relationships.group?.data?.id || ""
   const group = MockGroups.find((g) => g.id === groupId)
@@ -108,7 +110,6 @@ export default function MachineDetails() {
   useEffect(() => {
     setTimeout(() => {
       setMachineLoading(false)
-      setLicenseLoading(false)
       setGroupLoading(false)
     }, 300)
   }, [])
@@ -395,7 +396,7 @@ export default function MachineDetails() {
                         <Skeleton className="h-5 w-32 rounded-sm" />
                       ) : license ? (
                         <GoToButton
-                          path="/$id/app/license/$licenseId"
+                          path="/$id/app/licenses/$licenseId"
                           params={{
                             id: keygen.config.id,
                             licenseId: license.id,
@@ -427,7 +428,7 @@ export default function MachineDetails() {
                         <Skeleton className="h-5 w-32 rounded-sm" />
                       ) : product ? (
                         <GoToButton
-                          path="/$id/app/product/$productId"
+                          path="/$id/app/products/$productId"
                           params={{
                             id: keygen.config.id,
                             productId: product.id,

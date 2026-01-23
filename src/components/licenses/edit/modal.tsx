@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useParams } from "@tanstack/react-router"
 
 import {
   Dialog,
@@ -11,88 +11,48 @@ import {
 import { toast } from "@/lib/toast"
 
 import * as Forms from "@/forms"
-import { License, MockLicenses } from "@/types/licenses"
+
+import { useGetLicense, useUpdateLicense } from "@/queries/licenses"
 
 import EditForm from "./edit-form"
-
 import * as Loading from "@/components/loading"
 
 interface LicensesEditModalProps {
   open: boolean
-  onClose: () => void
-  license: License | null
+  onOpenChange: (value: boolean) => void
 }
 
 export default function LicensesEditModal({
   open,
-  onClose,
-  license,
+  onOpenChange,
 }: LicensesEditModalProps) {
-  const [loading, setLoading] = useState(false)
+  const { licenseId } = useParams({ from: "/$id/app/licenses/$licenseId" })
+  const {
+    data: license,
+    isLoading: licenseLoading,
+    isError: licenseError,
+  } = useGetLicense(licenseId)
+  const updateLicense = useUpdateLicense(licenseId)
 
-  const handleUpdateLicense = useCallback(
-    (values: Forms.Licenses.UpdateValues) => {
-      if (!license) return
-
-      setLoading(true)
-
-      // Mock update
-      setTimeout(() => {
-        const index = MockLicenses.findIndex((l) => l.id === license.id)
-        if (index === -1) {
-          toast({ message: "License not found", variant: "error" })
-          setLoading(false)
-          return
-        }
-
-        const updated: License = {
-          ...license,
-          attributes: {
-            ...license.attributes,
-            name:
-              values.name !== undefined ? values.name : license.attributes.name,
-            expiry:
-              values.expiry !== undefined
-                ? values.expiry
-                : license.attributes.expiry,
-            suspended: values.suspended ?? license.attributes.suspended,
-            protected: values.protected ?? license.attributes.protected,
-            maxMachines:
-              values.maxMachines !== undefined
-                ? values.maxMachines
-                : license.attributes.maxMachines,
-            maxProcesses:
-              values.maxProcesses !== undefined
-                ? values.maxProcesses
-                : license.attributes.maxProcesses,
-            maxUsers:
-              values.maxUsers !== undefined
-                ? values.maxUsers
-                : license.attributes.maxUsers,
-            maxCores:
-              values.maxCores !== undefined
-                ? values.maxCores
-                : license.attributes.maxCores,
-            maxUses:
-              values.maxUses !== undefined
-                ? values.maxUses
-                : license.attributes.maxUses,
-            metadata: values.metadata ?? license.attributes.metadata,
-            updated: new Date().toISOString(),
-          },
-        }
-
-        MockLicenses[index] = updated
-        setLoading(false)
+  const handleUpdateLicense = (values: Forms.Licenses.UpdateValues) => {
+    if (!license) return
+    updateLicense.mutate(values, {
+      onSuccess: () => {
         toast({ message: "License updated", variant: "success" })
-        onClose()
-      }, 500)
-    },
-    [license, onClose],
-  )
+        onOpenChange(false)
+      },
+      onError: () =>
+        toast({ message: "Failed to update license", variant: "error" }),
+      onSettled() {
+        if (!updateLicense.isError) {
+          onOpenChange(false)
+        }
+      },
+    })
+  }
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => e.preventDefault()}
@@ -104,17 +64,21 @@ export default function LicensesEditModal({
           </DialogDescription>
           <DialogTitle className="sr-only" />
         </DialogHeader>
-        {!license ? (
+        {licenseLoading ? (
           <div className="flex w-full justify-center">
             <Loading.Dots />
           </div>
+        ) : licenseError ? (
+          <p className="text-center text-sm text-red-500">
+            Failed to load policy.
+          </p>
         ) : (
-          open && (
+          open &&
+          license && (
             <EditForm
               license={license}
-              loading={loading}
               onUpdate={handleUpdateLicense}
-              onCancel={onClose}
+              onCancel={() => onOpenChange(false)}
             />
           )
         )}

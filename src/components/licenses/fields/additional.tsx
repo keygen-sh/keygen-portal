@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils"
 
 import * as Forms from "@/forms"
 import { LicenseFormFieldDescriptions } from "@/types/licenses"
+import { Policy } from "@/types/policies"
 
 import * as Field from "@/components/field"
 import SectionCard from "@/components/section-card"
@@ -24,23 +25,30 @@ interface OptionsFieldsProps {
   layout?: Layout
   title?: string
   className?: string
+  selectedPolicy?: Policy | null
 }
 
 export default function OptionsFields({
   layout = "create",
   title,
   className,
+  selectedPolicy,
 }: OptionsFieldsProps): React.ReactElement {
   return layout === "edit" ? (
     <EditLayout title={title} className={className} />
   ) : (
-    <CreateLayout title={title} className={className} />
+    <CreateLayout
+      title={title}
+      className={className}
+      selectedPolicy={selectedPolicy}
+    />
   )
 }
 
 function CreateLayout({
   title,
   className,
+  selectedPolicy,
 }: Omit<OptionsFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<Forms.Licenses.CreateValues>()
 
@@ -62,7 +70,11 @@ function CreateLayout({
                     <FormControl>
                       <Checkbox
                         id="protected"
-                        checked={!!field.value}
+                        checked={
+                          field.value ??
+                          selectedPolicy?.attributes.protected ??
+                          false
+                        }
                         onCheckedChange={(value) => field.onChange(!!value)}
                       />
                     </FormControl>
@@ -197,8 +209,7 @@ function EditLayout({
                   tooltip={LicenseFormFieldDescriptions.metadata}
                 >
                   <FormControl>
-                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                    <KeyValueInput<any> name="metadata" />
+                    <KeyValueInput<Forms.Licenses.UpdateValues> name="metadata" />
                   </FormControl>
                 </Field.Header>
                 <FormMessage />

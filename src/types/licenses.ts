@@ -180,5 +180,3 @@ export const LicenseStatusVariants: Readonly<
   [LicenseStatus.Suspended]: "destructive",
   [LicenseStatus.Banned]: "destructive",
 } as const
-
-export const MockLicenses: License[] = []

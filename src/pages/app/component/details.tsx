@@ -40,13 +40,13 @@ import {
 } from "lucide-react"
 
 import { MockMachines } from "@/types/machines"
-import { MockLicenses } from "@/types/licenses"
 import {
   MockComponents,
   ComponentAttributeDescriptions,
 } from "@/types/components"
 
 import { useGetProduct } from "@/queries/products"
+import { useGetLicense } from "@/queries/licenses"
 
 import { useMobile } from "@/hooks/use-mobile"
 
@@ -81,9 +81,11 @@ export default function ComponentDetails() {
   const machineError = false
 
   const licenseId = component?.relationships.license?.data?.id || ""
-  const license = MockLicenses.find((l) => l.id === licenseId)
-  const [licenseLoading, setLicenseLoading] = useState(true)
-  const licenseError = false
+  const {
+    data: license,
+    isLoading: licenseLoading,
+    isError: licenseError,
+  } = useGetLicense(licenseId)
 
   const productId = component?.relationships.product?.data?.id || ""
   const {
@@ -113,7 +115,6 @@ export default function ComponentDetails() {
     setTimeout(() => {
       setComponentLoading(false)
       setMachineLoading(false)
-      setLicenseLoading(false)
     }, 300)
   }, [])
 

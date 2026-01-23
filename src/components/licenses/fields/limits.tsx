@@ -13,7 +13,10 @@ import { cn } from "@/lib/utils"
 import { getLimitPlaceholder } from "@/lib/licenses"
 
 import * as Forms from "@/forms"
-import { LicenseFormFieldDescriptions } from "@/types/licenses"
+import {
+  LicenseFormFieldDescriptions,
+  LicenseDisabledFormFieldDescriptions,
+} from "@/types/licenses"
 import { Policy } from "@/types/policies"
 
 import * as Field from "@/components/field"
@@ -88,6 +91,10 @@ function CreateLayout({
                           field.onChange(
                             e.target.value ? parseInt(e.target.value) : null,
                           )
+                        }
+                        disabled={selectedPolicy?.attributes.floating === false}
+                        disabledTooltip={
+                          LicenseDisabledFormFieldDescriptions.maxMachines
                         }
                       />
                     </FormControl>
@@ -294,6 +301,10 @@ function EditLayout({
                         field.onChange(
                           e.target.value ? parseInt(e.target.value) : null,
                         )
+                      }
+                      disabled={selectedPolicy?.attributes.floating === false}
+                      disabledTooltip={
+                        LicenseDisabledFormFieldDescriptions.maxMachines
                       }
                     />
                   </FormControl>

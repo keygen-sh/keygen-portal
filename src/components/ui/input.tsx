@@ -2,6 +2,12 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Eye, EyeOff } from "lucide-react"
 
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip"
+
 import { cn } from "@/lib/utils"
 
 const inputVariants = cva(
@@ -47,32 +53,65 @@ function Input({
   toggle = false,
   type = "text",
   className,
+  disabled,
+  disabledTooltip,
   ...props
 }: React.ComponentProps<"input"> &
   VariantProps<typeof inputVariants> & {
     asChild?: boolean
+    disabledTooltip?: string
   }) {
   const [isPasswordVisible, setIsPasswordVisible] = React.useState(false)
 
   const inputClasses = inputVariants({ variant, fieldSize, toggle, className })
 
   const isToggleable = toggle === true && type === "password"
-  if (!isToggleable) {
-    return <input type={type} className={cn(inputClasses)} {...props} />
+
+  const input = (inputType: string) => (
+    <input
+      type={inputType}
+      className={cn(inputClasses)}
+      disabled={disabled}
+      {...props}
+    />
+  )
+
+  const tooltip = (element: React.ReactElement) => {
+    if (disabled && disabledTooltip) {
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span tabIndex={0} className="block">
+              {element}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-64 bg-background-4 text-pretty text-content-muted">
+            {disabledTooltip}
+          </TooltipContent>
+        </Tooltip>
+      )
+    }
+    return element
   }
 
-  return (
+  if (!isToggleable) {
+    return tooltip(input(type))
+  }
+
+  return tooltip(
     <div className="relative">
       <input
         {...props}
         type={isPasswordVisible ? "text" : "password"}
         className={cn(inputClasses)}
+        disabled={disabled}
       />
       <button
         type="button"
         onClick={() => setIsPasswordVisible((prev) => !prev)}
         className="absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground"
         aria-label={isPasswordVisible ? "Hide password" : "Show password"}
+        disabled={disabled}
       >
         {isPasswordVisible ? (
           <EyeOff className="h-4 w-4 text-content-subdued" />
@@ -80,7 +119,7 @@ function Input({
           <Eye className="h-4 w-4 text-content-subdued" />
         )}
       </button>
-    </div>
+    </div>,
   )
 }
 

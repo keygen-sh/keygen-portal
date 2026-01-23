@@ -22,6 +22,9 @@ export { entitlements }
 import * as policies from "./policies"
 export { policies }
 
+import * as licenses from "./licenses"
+export { licenses }
+
 import * as tokens from "./tokens"
 export { tokens }
 

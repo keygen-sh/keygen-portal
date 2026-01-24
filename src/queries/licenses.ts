@@ -114,4 +114,3 @@ export function useRemoveLicense(licenseId: string) {
     },
   })
 }
-

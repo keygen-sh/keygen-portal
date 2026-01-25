@@ -65,5 +65,3 @@ export const GroupFormFieldDescriptions: Readonly<
   maxMachines:
     "The maximum number of machines that can be in the group. Leave empty for unlimited.",
 }
-
-export const MockGroups: Group[] = []

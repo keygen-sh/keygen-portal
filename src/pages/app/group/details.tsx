@@ -38,10 +38,13 @@ import {
   EllipsisVertical,
 } from "lucide-react"
 
-import { MockGroups, GroupAttributeDescriptions } from "@/types/groups"
+import { GroupAttributeDescriptions } from "@/types/groups"
+
+import { useGetGroup, useRemoveGroup } from "@/queries/groups"
 
 import { useMobile } from "@/hooks/use-mobile"
 
+import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
 
 import * as keygen from "@/keygen"
@@ -60,10 +63,13 @@ import CollapsibleCard from "@/components/collapsible-card"
 export default function GroupDetails() {
   const { groupId } = useParams({ from: "/$id/app/groups/$groupId" })
 
-  const group = MockGroups.find((g) => g.id === groupId)
-  const [groupLoading, setGroupLoading] = useState(true)
-  const [groupFetching, setGroupFetching] = useState(true)
-  const groupError = false
+  const {
+    data: group,
+    isLoading: groupLoading,
+    isFetching: groupFetching,
+    isError: groupError,
+  } = useGetGroup(groupId)
+  const removeGroup = useRemoveGroup(groupId)
 
   const navigate = useNavigate()
 
@@ -82,20 +88,18 @@ export default function GroupDetails() {
     })()
   }, [groupError, groupFetching, navigate])
 
-  useEffect(() => {
-    setTimeout(() => {
-      setGroupLoading(false)
-      setGroupFetching(false)
-    }, 1000)
-  }, [])
-
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))
   }
 
-  const handleDeleteGroup = () => {
-    console.log("Group deleted.")
-    // TODO(cazden) Implement API call to delete group
+  const handleDeleteGroup = async () => {
+    try {
+      await removeGroup.mutateAsync()
+      toast({ message: "Group deleted", variant: "success" })
+      await navigate({ to: ".." })
+    } catch {
+      toast({ message: "Failed to delete group", variant: "error" })
+    }
   }
 
   return (
@@ -435,8 +439,7 @@ export default function GroupDetails() {
 
       <Groups.Edit.Modal
         open={open.edit}
-        onClose={() => toggleOpen("edit", false)}
-        group={group!}
+        onOpenChange={(value) => toggleOpen("edit", value)}
       />
 
       <ConfirmationModal

@@ -13,7 +13,8 @@ import { cn } from "@/lib/utils"
 
 import * as Forms from "@/forms"
 
-import { MockGroups } from "@/types/groups"
+import { useListGroups } from "@/queries/groups"
+
 import { MachineFormFieldDescriptions } from "@/types/machines"
 
 import * as Field from "@/components/field"
@@ -28,6 +29,7 @@ export default function AllFields({
   className,
 }: AllFieldsProps): React.ReactElement {
   const form = useFormContext<Forms.Machines.UpdateValues>()
+  const { data: groups = [] } = useListGroups()
 
   return (
     <div className={cn("p-4", className)}>
@@ -259,7 +261,7 @@ export default function AllFields({
                     resource="group"
                     value={field.value}
                     onChange={(value) => field.onChange(value)}
-                    options={MockGroups}
+                    options={groups}
                     invalid={!!fieldState.error}
                   />
                 </Field.Header>

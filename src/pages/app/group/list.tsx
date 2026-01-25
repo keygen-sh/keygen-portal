@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { useGroupTableColumns } from "@/hooks/use-group-table-columns"
-import { Group, MockGroups } from "@/types/groups"
+import { useListGroups } from "@/queries/groups"
+import { Group } from "@/types/groups"
 
 import * as keygen from "@/keygen"
 import * as Groups from "@/components/groups"
@@ -14,7 +15,7 @@ import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
 
 export default function GroupsList() {
-  const [groupsLoading, setGroupsLoading] = useState(true)
+  const { data: groups = [], isLoading: groupsLoading } = useListGroups()
   const columns = useGroupTableColumns()
 
   const navigate = useNavigate()
@@ -29,13 +30,6 @@ export default function GroupsList() {
       params: { id: keygen.config.id, groupId: group.id },
     })
   }
-
-  // Mock API call
-  useEffect(() => {
-    setTimeout(() => {
-      setGroupsLoading(false)
-    }, 1000)
-  }, [])
 
   return (
     <section>
@@ -58,7 +52,7 @@ export default function GroupsList() {
         <Skeletons.Table />
       ) : (
         <DataTable<Group>
-          data={MockGroups}
+          data={groups}
           columns={columns}
           hideOnMobile={[
             "id",

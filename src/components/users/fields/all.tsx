@@ -16,13 +16,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import TooltipSelectItem from "@/components/tooltip-select-item"
 
 import { cn } from "@/lib/utils"
 
 import * as Forms from "@/forms"
 
-import { MockGroups } from "@/types/groups"
+import { useListGroups } from "@/queries/groups"
+
 import { Permissions } from "@/types/products"
 import {
   UserRole,
@@ -37,6 +37,7 @@ import * as Field from "@/components/field"
 import MultiSelect from "@/components/multi-select"
 import SearchSelect from "@/components/search-select"
 import KeyValueInput from "@/components/key-value-input"
+import TooltipSelectItem from "@/components/tooltip-select-item"
 
 interface AllFieldsProps {
   className?: string
@@ -46,6 +47,7 @@ export default function AllFields({
   className,
 }: AllFieldsProps): React.ReactElement {
   const form = useFormContext<Forms.Users.UpdateValues>()
+  const { data: groups = [] } = useListGroups()
 
   return (
     <div className={cn("p-4", className)}>
@@ -274,7 +276,7 @@ export default function AllFields({
                     resource="group"
                     value={field.value}
                     onChange={(value) => field.onChange(value)}
-                    options={MockGroups}
+                    options={groups}
                     invalid={!!fieldState.error}
                   />
                 </Field.Header>

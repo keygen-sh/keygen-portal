@@ -39,9 +39,9 @@ import {
   EllipsisVertical,
 } from "lucide-react"
 
-import { MockGroups } from "@/types/groups"
 import { MockMachines, MachineAttributeDescriptions } from "@/types/machines"
 
+import { useGetGroup } from "@/queries/groups"
 import { useGetProduct } from "@/queries/products"
 import { useGetLicense } from "@/queries/licenses"
 
@@ -79,9 +79,11 @@ export default function MachineDetails() {
   } = useGetLicense(licenseId)
 
   const groupId = machine?.relationships.group?.data?.id || ""
-  const group = MockGroups.find((g) => g.id === groupId)
-  const [groupLoading, setGroupLoading] = useState(true)
-  const groupError = false
+  const {
+    data: group,
+    isLoading: groupLoading,
+    isError: groupError,
+  } = useGetGroup(groupId)
 
   const productId = machine?.relationships.product?.data?.id || ""
   const {
@@ -110,7 +112,6 @@ export default function MachineDetails() {
   useEffect(() => {
     setTimeout(() => {
       setMachineLoading(false)
-      setGroupLoading(false)
     }, 300)
   }, [])
 

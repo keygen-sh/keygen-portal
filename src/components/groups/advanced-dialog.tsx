@@ -13,7 +13,7 @@ import {
 
 import { Text, CurlyBraces } from "lucide-react"
 
-import { MockGroups } from "@/types/groups"
+import { useGetGroup } from "@/queries/groups"
 
 import * as Groups from "@/components/groups"
 import Metadata from "@/components/metadata"
@@ -32,11 +32,12 @@ export default function AdvancedDialog({
   open,
   onOpenChange,
 }: AdvancedDialogProps) {
-  // TODO: Replace with useGetGroup query when available
-  const group = MockGroups.find((g) => g.id === id)
-  const groupLoading = false
-  const groupFetching = false
-  const groupError = !group
+  const {
+    data: group,
+    isLoading: groupLoading,
+    isFetching: groupFetching,
+    isError: groupError,
+  } = useGetGroup(id)
 
   const [tab, setTab] = useState<"attributes" | "inspect">("attributes")
 

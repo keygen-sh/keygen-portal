@@ -12,7 +12,8 @@ import { cn } from "@/lib/utils"
 
 import * as Forms from "@/forms"
 
-import { MockGroups } from "@/types/groups"
+import { useListGroups } from "@/queries/groups"
+
 import { UserCreateFormFieldDescriptions } from "@/types/users"
 
 import * as Field from "@/components/field"
@@ -30,6 +31,7 @@ export default function AdditionalFields({
   className,
 }: AdditionalFieldsProps): React.ReactElement {
   const form = useFormContext<Forms.Users.CreateValues>()
+  const { data: groups = [] } = useListGroups()
 
   return (
     <div className={cn("m-4 md:mb-0", className)}>
@@ -46,7 +48,7 @@ export default function AdditionalFields({
                       resource="group"
                       value={field.value}
                       onChange={(value) => field.onChange(value)}
-                      options={MockGroups}
+                      options={groups}
                       invalid={!!fieldState.error}
                     />
                   </Field.Header>

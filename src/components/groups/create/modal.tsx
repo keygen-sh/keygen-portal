@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
@@ -15,9 +15,11 @@ import {
 
 import * as Forms from "@/forms"
 
-import { Group, MockGroups } from "@/types/groups"
+import { Group } from "@/types/groups"
 
 import { toast } from "@/lib/toast"
+
+import { useCreateGroup } from "@/queries/groups"
 
 import * as Groups from "@/components/groups"
 import * as Loading from "@/components/loading"
@@ -32,7 +34,7 @@ export default function GroupsCreateModal({
   onSelectGroup,
   onClose,
 }: GroupsCreateModalProps) {
-  const [loading, setLoading] = useState(false)
+  const createGroup = useCreateGroup()
 
   const form = useForm<Forms.Groups.CreateValues>({
     resolver: zodResolver(Forms.Groups.CreateSchema),
@@ -48,60 +50,21 @@ export default function GroupsCreateModal({
 
   const handleCreateGroup = useCallback(
     (values: Forms.Groups.CreateValues) => {
-      setLoading(true)
-
-      setTimeout(() => {
-        const newGroup: Group = {
-          id: crypto.randomUUID(),
-          type: "groups",
-          links: {
-            self: `/v1/accounts/{ACCOUNT}/groups/${crypto.randomUUID()}`,
-          },
-          attributes: {
-            name: values.name,
-            maxUsers: values.maxUsers ?? null,
-            maxLicenses: values.maxLicenses ?? null,
-            maxMachines: values.maxMachines ?? null,
-            metadata: values.metadata ?? {},
-            created: new Date().toISOString(),
-            updated: new Date().toISOString(),
-          },
-          relationships: {
-            account: {
-              links: { related: "/v1/accounts/{ACCOUNT}" },
-              data: { type: "accounts", id: "{ACCOUNT}" },
-            },
-            environment: {
-              links: { related: null },
-              data: null,
-            },
-            owners: {
-              links: { related: null },
-              data: [],
-            },
-            users: {
-              links: { related: null },
-              data: [],
-            },
-            licenses: {
-              links: { related: null },
-              data: [],
-            },
-            machines: {
-              links: { related: null },
-              data: [],
-            },
-          },
-        }
-
-        MockGroups.push(newGroup)
-        setLoading(false)
-        toast({ message: "Group created", variant: "success" })
-        onSelectGroup(newGroup)
-        onClose()
-      }, 500)
+      createGroup.mutate(values, {
+        onSuccess: (group) => {
+          toast({ message: "Group created", variant: "success" })
+          onSelectGroup(group)
+          onClose()
+        },
+        onError: () => {
+          toast({
+            message: "Failed to create group",
+            variant: "error",
+          })
+        },
+      })
     },
-    [onSelectGroup, onClose],
+    [createGroup, onSelectGroup, onClose],
   )
 
   return (
@@ -126,7 +89,7 @@ export default function GroupsCreateModal({
               variant="outline"
               type="button"
               onClick={onClose}
-              disabled={loading}
+              disabled={createGroup.isPending}
               className="max-w-48 flex-1 basis-1/2"
             >
               Cancel
@@ -134,10 +97,14 @@ export default function GroupsCreateModal({
 
             <Button
               type="submit"
-              disabled={loading}
+              disabled={createGroup.isPending}
               className="max-w-48 flex-1 basis-1/2"
             >
-              {loading ? <Loading.Dots className="bg-background" /> : "Create"}
+              {createGroup.isPending ? (
+                <Loading.Dots className="bg-background" />
+              ) : (
+                "Create"
+              )}
             </Button>
           </DialogFooter>
         </form>

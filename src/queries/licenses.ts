@@ -24,8 +24,6 @@ export function useGetLicense(licenseId: string) {
 
       return response.data
     },
-    retry: (failures, error) =>
-      error.message !== "License not found" && failures < 3,
     enabled: !!licenseId,
   })
 }

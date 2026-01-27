@@ -1,5 +1,9 @@
 import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
 
+export enum MachineErrorCode {
+  MachineLimitExceeded = "MACHINE_LIMIT_EXCEEDED",
+}
+
 export enum MachineMode {
   View = "view",
   Edit = "edit",

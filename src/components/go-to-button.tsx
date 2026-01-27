@@ -24,7 +24,8 @@ export default function GoToButton({
 }: GoToProps): React.ReactElement {
   const navigate = useNavigate()
 
-  const handleClick = async () => {
+  const handleClick = async (e: React.MouseEvent) => {
+    e.stopPropagation()
     await navigate({ to: path, params })
   }
 

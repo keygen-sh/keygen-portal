@@ -1,7 +1,9 @@
-// TODO(cazden) Add machines query
-// import { useGetMachine } from "@/queries/machines"
+import { useGetMachine } from "@/queries/machines"
+
+import * as keygen from "@/keygen"
 
 import ResourceCell from "./resource-cell"
+import GoToButton from "@/components/go-to-button"
 
 interface MachineCellProps {
   id: string | undefined
@@ -15,15 +17,17 @@ export default function MachineCell({
 }
 
 function MachineCellContent({ id }: { id: string }): React.ReactElement {
-  // const { data, isLoading: machineLoading } = useGetMachine(id)
+  const { data: machine, isLoading: machineLoading } = useGetMachine(id)
 
-  void id
-  const data = { attributes: { name: "--" } }
-  const machineLoading = false
+  const label = machine?.attributes.name || "View Machine"
 
   return (
-    <ResourceCell isEmpty={!data} isLoading={machineLoading}>
-      {data?.attributes.name}
+    <ResourceCell isEmpty={!machine} isLoading={machineLoading}>
+      <GoToButton
+        path="/$id/app/machines/$machineId"
+        params={{ id: keygen.config.id, machineId: id }}
+        label={label}
+      />
     </ResourceCell>
   )
 }

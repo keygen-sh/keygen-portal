@@ -1,6 +1,9 @@
 import { useGetProduct } from "@/queries/products"
 
+import * as keygen from "@/keygen"
+
 import ResourceCell from "./resource-cell"
+import GoToButton from "@/components/go-to-button"
 
 interface ProductCellProps {
   id: string | undefined
@@ -14,11 +17,17 @@ export default function ProductCell({
 }
 
 function ProductCellContent({ id }: { id: string }): React.ReactElement {
-  const { data, isLoading: productLoading } = useGetProduct(id)
+  const { data: product, isLoading: productLoading } = useGetProduct(id)
+
+  const label = product?.attributes.name || "View Product"
 
   return (
-    <ResourceCell isEmpty={!data} isLoading={productLoading}>
-      {data?.attributes.name}
+    <ResourceCell isEmpty={!product} isLoading={productLoading}>
+      <GoToButton
+        path="/$id/app/products/$productId"
+        params={{ id: keygen.config.id, productId: id }}
+        label={label}
+      />
     </ResourceCell>
   )
 }

@@ -13,7 +13,7 @@ import {
 
 import { Text, CurlyBraces } from "lucide-react"
 
-import { MockMachines } from "@/types/machines"
+import { useGetMachine } from "@/queries/machines"
 
 import * as Machines from "@/components/machines"
 import Metadata from "@/components/metadata"
@@ -32,10 +32,12 @@ export default function AdvancedDialog({
   open,
   onOpenChange,
 }: AdvancedDialogProps) {
-  const machine = MockMachines.find((m) => m.id === id)
-  const machineLoading = false
-  const machineFetching = false
-  const machineError = !machine
+  const {
+    data: machine,
+    isLoading: machineLoading,
+    isFetching: machineFetching,
+    isError: machineError,
+  } = useGetMachine(id)
 
   const [tab, setTab] = useState<"attributes" | "inspect">("attributes")
 

@@ -17,8 +17,9 @@ import * as Forms from "@/forms"
 
 import { useMobile } from "@/hooks/use-mobile"
 
-import { MockMachines } from "@/types/machines"
 import { ProcessFormFieldDescriptions } from "@/types/processes"
+
+import { useListMachines } from "@/queries/machines"
 
 import * as Field from "@/components/field"
 import SectionCard from "@/components/section-card"
@@ -50,6 +51,7 @@ function CreateLayout({
   const form = useFormContext<Forms.Processes.CreateValues>()
   const isMobile = useMobile()
   const [pidFocused, setPidFocused] = useState(false)
+  const { data: machines = [] } = useListMachines()
 
   return (
     <div className={cn("m-4 md:mb-0", className)}>
@@ -108,7 +110,7 @@ function CreateLayout({
                       resource="machine"
                       value={field.value}
                       onChange={(value) => field.onChange(value)}
-                      options={MockMachines}
+                      options={machines}
                       allowClear={false}
                       invalid={!!fieldState.error}
                       truncate="middle"

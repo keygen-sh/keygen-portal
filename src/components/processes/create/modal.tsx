@@ -15,8 +15,9 @@ import {
 
 import * as Forms from "@/forms"
 
-import { MockMachines } from "@/types/machines"
 import { Process, ProcessStatus, MockProcesses } from "@/types/processes"
+
+import { useListMachines } from "@/queries/machines"
 
 import { toast } from "@/lib/toast"
 
@@ -34,6 +35,7 @@ export default function ProcessesCreateModal({
   onClose,
 }: ProcessesCreateModalProps) {
   const [loading, setLoading] = useState(false)
+  const { data: machines = [] } = useListMachines()
 
   const form = useForm<Forms.Processes.CreateValues>({
     resolver: zodResolver(Forms.Processes.CreateSchema),
@@ -56,7 +58,7 @@ export default function ProcessesCreateModal({
         return
       }
 
-      const machine = MockMachines.find((m) => m.id === values.machineId)
+      const machine = machines.find((m) => m.id === values.machineId)
       const licenseId = machine?.relationships?.license?.data?.id
       const productId = machine?.relationships?.product?.data?.id
 

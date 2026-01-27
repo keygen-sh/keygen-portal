@@ -42,7 +42,6 @@ import {
   EllipsisVertical,
 } from "lucide-react"
 
-import { MockMachines } from "@/types/machines"
 import {
   MockProcesses,
   ProcessAttributeDescriptions,
@@ -52,6 +51,7 @@ import {
   ProcessStatusDescriptions,
 } from "@/types/processes"
 
+import { useGetMachine } from "@/queries/machines"
 import { useGetProduct } from "@/queries/products"
 import { useGetLicense } from "@/queries/licenses"
 
@@ -90,9 +90,11 @@ export default function ProcessDetails() {
   const processError = false
 
   const machineId = process?.relationships.machine?.data?.id || ""
-  const machine = MockMachines.find((m) => m.id === machineId)
-  const [machineLoading, setMachineLoading] = useState(true)
-  const machineError = false
+  const {
+    data: machine,
+    isLoading: machineLoading,
+    isError: machineError,
+  } = useGetMachine(machineId)
 
   const licenseId = process?.relationships.license?.data?.id || ""
   const {
@@ -128,7 +130,6 @@ export default function ProcessDetails() {
   useEffect(() => {
     setTimeout(() => {
       setProcessLoading(false)
-      setMachineLoading(false)
     }, 300)
   }, [])
 

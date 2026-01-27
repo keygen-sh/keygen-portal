@@ -110,7 +110,7 @@ export default function ProcessesCreateModal({
       onSelectProcess(newProcess)
       onClose()
     },
-    [onSelectProcess, onClose],
+    [machines, onSelectProcess, onClose],
   )
 
   return (

@@ -4,12 +4,6 @@ import { APIError } from "@/types/api"
 
 import { toast } from "@/lib/toast"
 
-export type ErrorFieldMapping<TFieldValues extends FieldValues> = {
-  code: string
-  field: FieldPath<TFieldValues>
-  message?: string
-}
-
 export type FormStep<TFieldValues extends FieldValues> = {
   key: string
   fields?: FieldPath<TFieldValues>[]
@@ -18,7 +12,6 @@ export type FormStep<TFieldValues extends FieldValues> = {
 export type HandleFormErrorOptions<TFieldValues extends FieldValues> = {
   form: UseFormReturn<TFieldValues>
   error: APIError
-  fieldMappings?: ErrorFieldMapping<TFieldValues>[]
   steps?: FormStep<TFieldValues>[]
   goToStep?: (index: number) => void
   toastMessage: string
@@ -61,53 +54,30 @@ function findStepForField<TFieldValues extends FieldValues>(
 export function handleFormError<TFieldValues extends FieldValues>(
   options: HandleFormErrorOptions<TFieldValues>,
 ): boolean {
-  const {
-    form,
-    error,
-    fieldMappings = [],
-    steps = [],
-    goToStep,
-    toastMessage,
-    showToast = true,
-  } = options
+  const { form, error, steps = [], goToStep, toastMessage, showToast = true } = options
 
   let fieldSet = false
-  let targetField: FieldPath<TFieldValues> | null = null
-  let errorMessage: string | null = null
 
-  if (error.code) {
-    const mapping = fieldMappings.find((mapping) => mapping.code === error.code)
-    if (mapping) {
-      targetField = mapping.field
-      errorMessage = mapping.message ?? error.detail ?? "Field is invalid"
-    }
-  }
+  const extractedField = extractFieldFromPointer(error.source?.pointer)
+  if (extractedField) {
+    const isKnownField = steps.some((s) =>
+      s.fields?.some((f) => String(f) === extractedField),
+    )
 
-  if (!targetField && error.source?.pointer) {
-    const extractedField = extractFieldFromPointer(error.source.pointer)
-    if (extractedField) {
-      const isKnownField =
-        fieldMappings.some((m) => String(m.field) === extractedField) ||
-        steps.some((s) => s.fields?.some((f) => String(f) === extractedField))
+    if (isKnownField) {
+      const targetField = extractedField as FieldPath<TFieldValues>
 
-      if (isKnownField) {
-        targetField = extractedField as FieldPath<TFieldValues>
-        errorMessage = error.detail ?? "Field is invalid"
-      }
-    }
-  }
+      form.setError(targetField, {
+        type: "manual",
+        message: error.detail ?? "Field is invalid",
+      })
+      fieldSet = true
 
-  if (targetField) {
-    form.setError(targetField, {
-      type: "manual",
-      message: errorMessage ?? "Field is invalid",
-    })
-    fieldSet = true
-
-    if (goToStep && steps.length > 0) {
-      const stepIndex = findStepForField(targetField, steps)
-      if (stepIndex >= 0) {
-        goToStep(stepIndex)
+      if (goToStep && steps.length > 0) {
+        const stepIndex = findStepForField(targetField, steps)
+        if (stepIndex >= 0) {
+          goToStep(stepIndex)
+        }
       }
     }
   }

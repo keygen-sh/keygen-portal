@@ -128,8 +128,6 @@ export default function MachineDetails() {
     }
   }
 
-  console.log(machine)
-
   return (
     <section className="flex h-screen w-full">
       <div className="flex min-w-0 flex-1 flex-col">

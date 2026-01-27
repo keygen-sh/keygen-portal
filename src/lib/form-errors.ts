@@ -53,10 +53,15 @@ function findStepForField<TFieldValues extends FieldValues>(
 
 export function handleFormError<TFieldValues extends FieldValues>(
   options: HandleFormErrorOptions<TFieldValues>,
-): boolean {
-  const { form, error, steps = [], goToStep, toastMessage, showToast = true } = options
-
-  let fieldSet = false
+): void {
+  const {
+    form,
+    error,
+    steps = [],
+    goToStep,
+    toastMessage,
+    showToast = true,
+  } = options
 
   const extractedField = extractFieldFromPointer(error.source?.pointer)
   if (extractedField) {
@@ -71,7 +76,6 @@ export function handleFormError<TFieldValues extends FieldValues>(
         type: "manual",
         message: error.detail ?? "Field is invalid",
       })
-      fieldSet = true
 
       if (goToStep && steps.length > 0) {
         const stepIndex = findStepForField(targetField, steps)
@@ -89,8 +93,6 @@ export function handleFormError<TFieldValues extends FieldValues>(
       variant: "error",
     })
   }
-
-  return fieldSet
 }
 
 export function createFormErrorHandler<TFieldValues extends FieldValues>(

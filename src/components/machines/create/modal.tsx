@@ -15,14 +15,14 @@ import {
 
 import * as Forms from "@/forms"
 
-import { Machine, HeartbeatStatus, MockMachines } from "@/types/machines"
+import { Machine, MachineErrorCode } from "@/types/machines"
 
 import { toast } from "@/lib/toast"
 
 import { useSlide } from "@/hooks/use-slide"
 import { useMobile } from "@/hooks/use-mobile"
 
-import { useListLicenses } from "@/queries/licenses"
+import { useCreateMachine } from "@/queries/machines"
 
 import * as Motion from "@/components/motion"
 import * as Machines from "@/components/machines"
@@ -56,9 +56,8 @@ export default function MachinesCreateModal({
   onClose,
 }: MachinesCreateModalProps) {
   const isMobile = useMobile()
-  const { data: licenses = [] } = useListLicenses()
+  const createMachine = useCreateMachine()
 
-  const [loading, setLoading] = useState(false)
   const [completedStep, setCompletedStep] = useState<Set<string>>(new Set())
 
   const form = useForm<Forms.Machines.CreateValues>({
@@ -134,95 +133,31 @@ export default function MachinesCreateModal({
 
   const handleCreateMachine = useCallback(
     (values: Forms.Machines.CreateValues) => {
-      if (!values.licenseId) {
-        toast({
-          message: "Failed to create machine",
-          description: "License is required.",
-          variant: "error",
-        })
-        return
-      }
+      createMachine.mutate(values, {
+        onSuccess: (machine) => {
+          toast({ message: "Machine activated", variant: "success" })
+          onSelectMachine(machine)
+          onClose()
+        },
+        onError: (error) => {
+          // TODO(cazden) Add standardized form error handling
+          if (error.code === MachineErrorCode.MachineLimitExceeded) {
+            form.setError("licenseId", {
+              type: "manual",
+              message: "Machine limit exceeded for this license",
+            })
+            goTo(0)
+          }
 
-      const license = licenses.find((l) => l.id === values.licenseId)
-      const productId = license?.relationships?.product?.data?.id
-
-      setLoading(true)
-
-      setTimeout(() => {
-        const newMachine: Machine = {
-          id: crypto.randomUUID(),
-          type: "machines",
-          links: {
-            self: `/v1/accounts/{ACCOUNT}/machines/${crypto.randomUUID()}`,
-          },
-          attributes: {
-            fingerprint: values.fingerprint,
-            name: values.name ?? null,
-            ip: values.ip ?? null,
-            hostname: values.hostname ?? null,
-            platform: values.platform ?? null,
-            cores: values.cores ?? null,
-            memory: values.memory ?? null,
-            disk: values.disk ?? null,
-            requireHeartbeat: false,
-            heartbeatStatus: HeartbeatStatus.NotStarted,
-            heartbeatDuration: null,
-            lastHeartbeat: null,
-            nextHeartbeat: null,
-            lastCheckOut: null,
-            maxProcesses: null,
-            metadata: values.metadata ?? {},
-            created: new Date().toISOString(),
-            updated: new Date().toISOString(),
-          },
-          relationships: {
-            account: {
-              links: { related: "/v1/accounts/{ACCOUNT}" },
-              data: { type: "accounts", id: "{ACCOUNT}" },
-            },
-            environment: {
-              links: { related: null },
-              data: null,
-            },
-            product: {
-              links: { related: null },
-              data: productId ? { type: "products", id: productId } : undefined,
-            },
-            license: {
-              links: { related: null },
-              data: { type: "licenses", id: values.licenseId },
-            },
-            owner: {
-              links: { related: null },
-              data: values.ownerId
-                ? { type: "users", id: values.ownerId }
-                : null,
-            },
-            group: {
-              links: { related: null },
-              data: values.groupId
-                ? { type: "groups", id: values.groupId }
-                : null,
-            },
-            components: {
-              links: { related: null },
-              data: [],
-            },
-            processes: {
-              links: { related: null },
-              data: [],
-            },
-          },
-        }
-
-        MockMachines.push(newMachine)
-        setLoading(false)
-        toast({ message: "Machine created", variant: "success" })
-        onSelectMachine(newMachine)
-        onClose()
-      }, 500)
+          toast({
+            message: "Failed to activate machine",
+            description: error.detail,
+            variant: "error",
+          })
+        },
+      })
     },
-    [licenses, onSelectMachine, onClose],
+    [createMachine, onSelectMachine, onClose, form, goTo],
   )
 
   return (
@@ -275,7 +210,7 @@ export default function MachinesCreateModal({
               variant="outline"
               type="button"
               onClick={step === 0 ? onClose : back}
-              disabled={loading}
+              disabled={createMachine.isPending}
               className="max-w-48 flex-1 basis-1/2"
             >
               {step === 0 ? "Cancel" : "Back"}
@@ -285,13 +220,13 @@ export default function MachinesCreateModal({
               key={last ? "create" : "next"}
               type="button"
               onClick={last ? form.handleSubmit(handleCreateMachine) : next}
-              disabled={loading}
+              disabled={createMachine.isPending}
               className="max-w-48 flex-1 basis-1/2"
             >
-              {loading ? (
+              {createMachine.isPending ? (
                 <Loading.Dots className="bg-background" />
               ) : last ? (
-                "Create"
+                "Activate"
               ) : (
                 "Next step"
               )}

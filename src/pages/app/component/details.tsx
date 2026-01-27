@@ -39,12 +39,12 @@ import {
   EllipsisVertical,
 } from "lucide-react"
 
-import { MockMachines } from "@/types/machines"
 import {
   MockComponents,
   ComponentAttributeDescriptions,
 } from "@/types/components"
 
+import { useGetMachine } from "@/queries/machines"
 import { useGetProduct } from "@/queries/products"
 import { useGetLicense } from "@/queries/licenses"
 
@@ -76,9 +76,11 @@ export default function ComponentDetails() {
   const componentError = false
 
   const machineId = component?.relationships.machine?.data?.id || ""
-  const machine = MockMachines.find((m) => m.id === machineId)
-  const [machineLoading, setMachineLoading] = useState(true)
-  const machineError = false
+  const {
+    data: machine,
+    isLoading: machineLoading,
+    isError: machineError,
+  } = useGetMachine(machineId)
 
   const licenseId = component?.relationships.license?.data?.id || ""
   const {
@@ -114,7 +116,6 @@ export default function ComponentDetails() {
   useEffect(() => {
     setTimeout(() => {
       setComponentLoading(false)
-      setMachineLoading(false)
     }, 300)
   }, [])
 

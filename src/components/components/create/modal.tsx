@@ -14,9 +14,9 @@ import {
 } from "@/components/ui/dialog"
 
 import * as Forms from "@/forms"
-
-import { MockMachines } from "@/types/machines"
 import { Component, MockComponents } from "@/types/components"
+
+import { useListMachines } from "@/queries/machines"
 
 import { toast } from "@/lib/toast"
 
@@ -34,6 +34,7 @@ export default function ComponentsCreateModal({
   onClose,
 }: ComponentsCreateModalProps) {
   const [loading, setLoading] = useState(false)
+  const { data: machines = [] } = useListMachines()
 
   const form = useForm<Forms.Components.CreateValues>({
     resolver: zodResolver(Forms.Components.CreateSchema),
@@ -57,7 +58,7 @@ export default function ComponentsCreateModal({
         return
       }
 
-      const machine = MockMachines.find((m) => m.id === values.machineId)
+      const machine = machines.find((m) => m.id === values.machineId)
       const licenseId = machine?.relationships?.license?.data?.id
       const productId = machine?.relationships?.product?.data?.id
 
@@ -106,7 +107,7 @@ export default function ComponentsCreateModal({
       onSelectComponent(newComponent)
       onClose()
     },
-    [onSelectComponent, onClose],
+    [machines, onSelectComponent, onClose],
   )
 
   return (

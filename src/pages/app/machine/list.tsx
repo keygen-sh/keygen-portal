@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { useMachineTableColumns } from "@/hooks/use-machine-table-columns"
-import { Machine, MockMachines } from "@/types/machines"
+import { useListMachines } from "@/queries/machines"
+import { Machine } from "@/types/machines"
 
 import * as keygen from "@/keygen"
 import * as Machines from "@/components/machines"
@@ -14,7 +15,7 @@ import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
 
 export default function MachinesList() {
-  const [machinesLoading, setMachinesLoading] = useState(true)
+  const { data: machines = [], isLoading: machinesLoading } = useListMachines()
   const columns = useMachineTableColumns()
 
   const navigate = useNavigate()
@@ -29,12 +30,6 @@ export default function MachinesList() {
       params: { id: keygen.config.id, machineId: machine.id },
     })
   }
-
-  useEffect(() => {
-    setTimeout(() => {
-      setMachinesLoading(false)
-    }, 300)
-  }, [])
 
   return (
     <section>
@@ -57,7 +52,7 @@ export default function MachinesList() {
         <Skeletons.Table />
       ) : (
         <DataTable<Machine>
-          data={MockMachines}
+          data={machines}
           columns={columns}
           hideOnMobile={[
             "relationships.license",

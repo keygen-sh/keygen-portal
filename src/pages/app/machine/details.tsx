@@ -39,14 +39,16 @@ import {
   EllipsisVertical,
 } from "lucide-react"
 
-import { MockMachines, MachineAttributeDescriptions } from "@/types/machines"
+import { MachineAttributeDescriptions } from "@/types/machines"
 
+import { useGetMachine, useRemoveMachine } from "@/queries/machines"
 import { useGetGroup } from "@/queries/groups"
 import { useGetProduct } from "@/queries/products"
 import { useGetLicense } from "@/queries/licenses"
 
 import { useMobile } from "@/hooks/use-mobile"
 
+import { toast } from "@/lib/toast"
 import { truncateKey } from "@/lib/licenses"
 import { copyToClipboard } from "@/lib/clipboard"
 import { getHeartbeatStatusVariant } from "@/lib/machines"
@@ -66,10 +68,13 @@ import CollapsibleCard from "@/components/collapsible-card"
 
 export default function MachineDetails() {
   const { machineId } = useParams({ from: "/$id/app/machines/$machineId" })
-
-  const machine = MockMachines.find((m) => m.id === machineId)
-  const [machineLoading, setMachineLoading] = useState(true)
-  const machineError = false
+  const {
+    data: machine,
+    isLoading: machineLoading,
+    isFetching: machineFetching,
+    isError: machineError,
+  } = useGetMachine(machineId)
+  const removeMachine = useRemoveMachine(machineId)
 
   const licenseId = machine?.relationships.license?.data?.id || ""
   const {
@@ -103,26 +108,27 @@ export default function MachineDetails() {
 
   useEffect(() => {
     ;(async () => {
-      if (machineError) {
+      if (machineError && !machineFetching) {
         await navigate({ to: ".." })
       }
     })()
-  }, [machineError, navigate])
-
-  useEffect(() => {
-    setTimeout(() => {
-      setMachineLoading(false)
-    }, 300)
-  }, [])
+  }, [machineError, machineFetching, navigate])
 
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))
   }
 
-  const handleDeleteMachine = () => {
-    console.log("Machine deleted.")
-    // TODO(cazden) Implement API call to delete machine
+  const handleDeleteMachine = async () => {
+    try {
+      await removeMachine.mutateAsync()
+      toast({ message: "Machine deactivated", variant: "success" })
+      await navigate({ to: ".." })
+    } catch {
+      toast({ message: "Failed to deactivate machine", variant: "error" })
+    }
   }
+
+  console.log(machine)
 
   return (
     <section className="flex h-screen w-full">
@@ -181,7 +187,7 @@ export default function MachineDetails() {
                   }}
                   className="pb-2 text-base"
                 >
-                  Delete
+                  Deactivate
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -199,7 +205,7 @@ export default function MachineDetails() {
                 disabled={machineLoading}
                 onClick={() => toggleOpen("delete", true)}
               >
-                Delete
+                Deactivate
               </Button>
             </div>
           )}
@@ -297,7 +303,7 @@ export default function MachineDetails() {
                         value={
                           <Attribute.Value
                             type="number"
-                            value={machine.attributes.memory}
+                            value={machine.attributes.memory ?? null}
                             tooltip={MachineAttributeDescriptions.memory}
                           />
                         }
@@ -636,18 +642,17 @@ export default function MachineDetails() {
 
       <Machines.Edit.Modal
         open={open.edit}
-        onClose={() => toggleOpen("edit", false)}
-        machine={machine!}
+        onOpenChange={(value) => toggleOpen("edit", value)}
       />
 
       <ConfirmationModal
-        title={`Delete ${machine?.attributes.name || machine?.attributes.fingerprint}`}
-        description="Are you sure you want to delete this machine? This action cannot be undone."
+        title={`Deactivate ${machine?.attributes.name || machine?.attributes.fingerprint}`}
+        description="Are you sure you want to deactivate this machine? This action cannot be undone."
         open={open.delete}
         disabled={machineLoading}
         onClose={() => toggleOpen("delete", false)}
         onConfirm={handleDeleteMachine}
-        label="Delete"
+        label="Deactivate"
         variant="destructive"
       />
 

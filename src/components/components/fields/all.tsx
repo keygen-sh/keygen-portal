@@ -13,8 +13,9 @@ import { cn } from "@/lib/utils"
 
 import * as Forms from "@/forms"
 
-import { MockMachines } from "@/types/machines"
 import { ComponentFormFieldDescriptions } from "@/types/components"
+
+import { useListMachines } from "@/queries/machines"
 
 import * as Field from "@/components/field"
 import SectionCard from "@/components/section-card"
@@ -43,6 +44,7 @@ function CreateLayout({
   className,
 }: Omit<AllFieldsProps, "layout">): React.ReactElement {
   const form = useFormContext<Forms.Components.CreateValues>()
+  const { data: machines = [] } = useListMachines()
 
   return (
     <div className={cn("m-4 md:mb-0", className)}>
@@ -106,7 +108,7 @@ function CreateLayout({
                       resource="machine"
                       value={field.value}
                       onChange={(value) => field.onChange(value)}
-                      options={MockMachines}
+                      options={machines}
                       allowClear={false}
                       invalid={!!fieldState.error}
                       truncate="middle"

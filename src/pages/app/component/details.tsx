@@ -39,41 +39,43 @@ import {
   EllipsisVertical,
 } from "lucide-react"
 
-import {
-  MockComponents,
-  ComponentAttributeDescriptions,
-} from "@/types/components"
+import { ComponentAttributeDescriptions } from "@/types/components"
 
 import { useGetMachine } from "@/queries/machines"
 import { useGetProduct } from "@/queries/products"
 import { useGetLicense } from "@/queries/licenses"
+import { useGetComponent, useRemoveComponent } from "@/queries/components"
 
 import { useMobile } from "@/hooks/use-mobile"
 
+import { toast } from "@/lib/toast"
 import { truncateKey } from "@/lib/licenses"
 import { copyToClipboard } from "@/lib/clipboard"
 
 import * as keygen from "@/keygen"
-import * as Components from "@/components/components"
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
+import * as Components from "@/components/components"
 import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
-import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
+import ConfirmationModal from "@/components/confirmation-modal"
 
 export default function ComponentDetails() {
   const { componentId } = useParams({
     from: "/$id/app/components/$componentId",
   })
-
-  const component = MockComponents.find((c) => c.id === componentId)
-  const [componentLoading, setComponentLoading] = useState(true)
-  const componentError = false
+  const {
+    data: component,
+    isLoading: componentLoading,
+    isFetching: componentFetching,
+    isError: componentError,
+  } = useGetComponent(componentId)
+  const removeComponent = useRemoveComponent(componentId)
 
   const machineId = component?.relationships.machine?.data?.id || ""
   const {
@@ -107,25 +109,24 @@ export default function ComponentDetails() {
 
   useEffect(() => {
     ;(async () => {
-      if (componentError) {
+      if (componentError && !componentFetching) {
         await navigate({ to: ".." })
       }
     })()
-  }, [componentError, navigate])
-
-  useEffect(() => {
-    setTimeout(() => {
-      setComponentLoading(false)
-    }, 300)
-  }, [])
+  }, [componentError, componentFetching, navigate])
 
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))
   }
 
-  const handleDeleteComponent = () => {
-    console.log("Component deleted.")
-    // TODO: Implement API call to delete component
+  const handleDeleteComponent = async () => {
+    try {
+      await removeComponent.mutateAsync()
+      toast({ message: "Component deleted", variant: "success" })
+      await navigate({ to: ".." })
+    } catch {
+      toast({ message: "Failed to delete component", variant: "error" })
+    }
   }
 
   return (
@@ -496,8 +497,7 @@ export default function ComponentDetails() {
 
       <Components.Edit.Modal
         open={open.edit}
-        onClose={() => toggleOpen("edit", false)}
-        component={component!}
+        onOpenChange={(value) => toggleOpen("edit", value)}
       />
 
       <ConfirmationModal

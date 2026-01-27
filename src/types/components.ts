@@ -62,5 +62,3 @@ export const ComponentFormFieldDescriptions: Readonly<
     "The unique fingerprint of the component, e.g. a motherboard serial number. This can be an arbitrary string, but must be unique within the scope of the machine it belongs to or according to the policy's component uniqueness strategy.",
   machine: "The machine that the component is for.",
 }
-
-export const MockComponents: Component[] = []

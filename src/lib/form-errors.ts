@@ -83,6 +83,15 @@ export function handleFormError<TFieldValues extends FieldValues>(
           goToStep(stepIndex)
         }
       }
+
+      if (showToast) {
+        toast({
+          message: toastMessage,
+          variant: "error",
+        })
+      }
+
+      return
     }
   }
 

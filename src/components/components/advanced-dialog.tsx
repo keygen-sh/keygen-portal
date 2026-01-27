@@ -13,7 +13,7 @@ import {
 
 import { Text, CurlyBraces } from "lucide-react"
 
-import { MockComponents } from "@/types/components"
+import { useGetComponent } from "@/queries/components"
 
 import * as Components from "@/components/components"
 import Metadata from "@/components/metadata"
@@ -32,10 +32,12 @@ export default function AdvancedDialog({
   open,
   onOpenChange,
 }: AdvancedDialogProps) {
-  const component = MockComponents.find((c) => c.id === id)
-  const componentLoading = false
-  const componentFetching = false
-  const componentError = !component
+  const {
+    data: component,
+    isLoading: componentLoading,
+    isFetching: componentFetching,
+    isError: componentError,
+  } = useGetComponent(id)
 
   const [tab, setTab] = useState<"attributes" | "inspect">("attributes")
 

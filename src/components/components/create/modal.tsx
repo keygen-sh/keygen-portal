@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
@@ -14,9 +14,9 @@ import {
 } from "@/components/ui/dialog"
 
 import * as Forms from "@/forms"
-import { Component, MockComponents } from "@/types/components"
+import { Component } from "@/types/components"
 
-import { useListMachines } from "@/queries/machines"
+import { useCreateComponent } from "@/queries/components"
 
 import { toast } from "@/lib/toast"
 
@@ -33,8 +33,7 @@ export default function ComponentsCreateModal({
   onSelectComponent,
   onClose,
 }: ComponentsCreateModalProps) {
-  const [loading, setLoading] = useState(false)
-  const { data: machines = [] } = useListMachines()
+  const createComponent = useCreateComponent()
 
   const form = useForm<Forms.Components.CreateValues>({
     resolver: zodResolver(Forms.Components.CreateSchema),
@@ -49,65 +48,22 @@ export default function ComponentsCreateModal({
 
   const handleCreateComponent = useCallback(
     (values: Forms.Components.CreateValues) => {
-      if (!values.machineId) {
-        toast({
-          message: "Failed to create component",
-          description: "Machine is required.",
-          variant: "error",
-        })
-        return
-      }
-
-      const machine = machines.find((m) => m.id === values.machineId)
-      const licenseId = machine?.relationships?.license?.data?.id
-      const productId = machine?.relationships?.product?.data?.id
-
-      setLoading(true)
-
-      const newComponent: Component = {
-        id: crypto.randomUUID(),
-        type: "components",
-        links: {
-          self: `/v1/accounts/{ACCOUNT}/components/${crypto.randomUUID()}`,
+      createComponent.mutate(values, {
+        onSuccess: (component) => {
+          toast({ message: "Component created", variant: "success" })
+          onSelectComponent(component)
+          onClose()
         },
-        attributes: {
-          fingerprint: values.fingerprint,
-          name: values.name ?? null,
-          metadata: values.metadata ?? {},
-          created: new Date().toISOString(),
-          updated: new Date().toISOString(),
+        onError: (error) => {
+          toast({
+            message: "Failed to create component",
+            description: error.detail,
+            variant: "error",
+          })
         },
-        relationships: {
-          account: {
-            links: { related: "/v1/accounts/{ACCOUNT}" },
-            data: { type: "accounts", id: "{ACCOUNT}" },
-          },
-          environment: {
-            links: { related: null },
-            data: null,
-          },
-          product: {
-            links: { related: null },
-            data: productId ? { type: "products", id: productId } : undefined,
-          },
-          license: {
-            links: { related: null },
-            data: licenseId ? { type: "licenses", id: licenseId } : undefined,
-          },
-          machine: {
-            links: { related: null },
-            data: { type: "machines", id: values.machineId },
-          },
-        },
-      }
-
-      MockComponents.push(newComponent)
-      setLoading(false)
-      toast({ message: "Component created", variant: "success" })
-      onSelectComponent(newComponent)
-      onClose()
+      })
     },
-    [machines, onSelectComponent, onClose],
+    [createComponent, onSelectComponent, onClose],
   )
 
   return (
@@ -132,7 +88,7 @@ export default function ComponentsCreateModal({
               variant="outline"
               type="button"
               onClick={onClose}
-              disabled={loading}
+              disabled={createComponent.isPending}
               className="max-w-48 flex-1 basis-1/2"
             >
               Cancel
@@ -140,10 +96,14 @@ export default function ComponentsCreateModal({
 
             <Button
               type="submit"
-              disabled={loading}
+              disabled={createComponent.isPending}
               className="max-w-48 flex-1 basis-1/2"
             >
-              {loading ? <Loading.Dots className="bg-background" /> : "Create"}
+              {createComponent.isPending ? (
+                <Loading.Dots className="bg-background" />
+              ) : (
+                "Create"
+              )}
             </Button>
           </DialogFooter>
         </form>

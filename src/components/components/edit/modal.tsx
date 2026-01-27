@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useParams } from "@tanstack/react-router"
 
 import {
   Dialog,
@@ -11,59 +11,50 @@ import {
 import { toast } from "@/lib/toast"
 
 import * as Forms from "@/forms"
-import { Component, MockComponents } from "@/types/components"
+
+import { useGetComponent, useUpdateComponent } from "@/queries/components"
 
 import EditForm from "./edit-form"
-
 import * as Loading from "@/components/loading"
 
 interface ComponentsEditModalProps {
   open: boolean
-  onClose: () => void
-  component: Component | null
+  onOpenChange: (value: boolean) => void
 }
 
 export default function ComponentsEditModal({
   open,
-  onClose,
-  component,
+  onOpenChange,
 }: ComponentsEditModalProps) {
-  const [loading, setLoading] = useState(false)
+  const { componentId } = useParams({
+    from: "/$id/app/components/$componentId",
+  })
+  const {
+    data: component,
+    isLoading: componentLoading,
+    isError: componentError,
+  } = useGetComponent(componentId)
+  const updateComponent = useUpdateComponent(componentId)
 
-  const handleUpdateComponent = useCallback(
-    (values: Forms.Components.UpdateValues) => {
-      if (!component) return
-
-      setLoading(true)
-
-      const index = MockComponents.findIndex((c) => c.id === component.id)
-      if (index === -1) {
-        toast({ message: "Component not found", variant: "error" })
-        setLoading(false)
-        return
-      }
-
-      const updated: Component = {
-        ...component,
-        attributes: {
-          ...component.attributes,
-          name:
-            values.name !== undefined ? values.name : component.attributes.name,
-          metadata: values.metadata ?? component.attributes.metadata,
-          updated: new Date().toISOString(),
-        },
-      }
-
-      MockComponents[index] = updated
-      setLoading(false)
-      toast({ message: "Component updated", variant: "success" })
-      onClose()
-    },
-    [component, onClose],
-  )
+  const handleUpdateComponent = (values: Forms.Components.UpdateValues) => {
+    if (!component) return
+    updateComponent.mutate(values, {
+      onSuccess: () => {
+        toast({ message: "Component updated", variant: "success" })
+        onOpenChange(false)
+      },
+      onError: () =>
+        toast({ message: "Failed to update component", variant: "error" }),
+      onSettled() {
+        if (!updateComponent.isError) {
+          onOpenChange(false)
+        }
+      },
+    })
+  }
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => e.preventDefault()}
@@ -75,17 +66,22 @@ export default function ComponentsEditModal({
           </DialogDescription>
           <DialogTitle className="sr-only" />
         </DialogHeader>
-        {!component ? (
+        {componentLoading ? (
           <div className="flex w-full justify-center">
             <Loading.Dots />
           </div>
+        ) : componentError ? (
+          <p className="text-center text-sm text-red-500">
+            Failed to load component.
+          </p>
         ) : (
-          open && (
+          open &&
+          component && (
             <EditForm
               component={component}
-              loading={loading}
+              loading={updateComponent.isPending}
               onUpdate={handleUpdateComponent}
-              onCancel={onClose}
+              onCancel={() => onOpenChange(false)}
             />
           )
         )}

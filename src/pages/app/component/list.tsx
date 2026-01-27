@@ -1,20 +1,23 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { useComponentTableColumns } from "@/hooks/use-component-table-columns"
-import { Component, MockComponents } from "@/types/components"
+
+import { Component } from "@/types/components"
+import { useListComponents } from "@/queries/components"
 
 import * as keygen from "@/keygen"
-import * as Components from "@/components/components"
 import * as Skeletons from "@/components/skeletons"
+import * as Components from "@/components/components"
 import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
 
 export default function ComponentsList() {
-  const [componentsLoading, setComponentsLoading] = useState(true)
+  const { data: components = [], isLoading: componentsLoading } =
+    useListComponents()
   const columns = useComponentTableColumns()
 
   const navigate = useNavigate()
@@ -29,12 +32,6 @@ export default function ComponentsList() {
       params: { id: keygen.config.id, componentId: component.id },
     })
   }
-
-  useEffect(() => {
-    setTimeout(() => {
-      setComponentsLoading(false)
-    }, 300)
-  }, [])
 
   return (
     <section>
@@ -57,7 +54,7 @@ export default function ComponentsList() {
         <Skeletons.Table />
       ) : (
         <DataTable<Component>
-          data={MockComponents}
+          data={components}
           columns={columns}
           hideOnMobile={[
             "relationships.machine",

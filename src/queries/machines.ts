@@ -1,0 +1,132 @@
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
+
+import { useEnvironment } from "@/hooks/use-environment"
+
+import * as Forms from "@/forms"
+
+import { APIError } from "@/types/api"
+import { Machine } from "@/types/machines"
+
+import * as keygen from "@/keygen"
+import { diff } from "@/lib/utils"
+
+export function useGetMachine(machineId: string) {
+  const { code } = useEnvironment()
+
+  return useQuery({
+    queryKey: ["machines", machineId, { environment: code }],
+    queryFn: async () => {
+      const response = await keygen.machines.get({ id: machineId })
+
+      if (!response.data) {
+        throw new Error("Machine not found")
+      }
+
+      return response.data
+    },
+    enabled: !!machineId,
+  })
+}
+
+export function useListMachines() {
+  const { code } = useEnvironment()
+
+  return useQuery({
+    queryKey: ["machines", { environment: code }],
+    queryFn: () =>
+      keygen.machines.list({}).then((response) => response.data ?? []),
+  })
+}
+
+export function useCreateMachine() {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<Machine, APIError, Forms.Machines.CreateValues>({
+    mutationFn: async (values) => {
+      const response = await keygen.machines.create(values)
+
+      if (response.errors && response.errors.length > 0) {
+        throw response.errors[0]
+      }
+
+      return response.data as Machine
+    },
+
+    onSuccess: (newMachine) => {
+      queryClient.setQueryData<Machine[]>(
+        ["machines", { environment: code }],
+        (old) => (old ? [newMachine, ...old] : [newMachine]),
+      )
+      queryClient.setQueryData(
+        ["machines", newMachine.id, { environment: code }],
+        newMachine,
+      )
+    },
+  })
+}
+
+export function useUpdateMachine(machineId: string) {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<Machine, APIError, Forms.Machines.UpdateValues>({
+    mutationFn: async (values) => {
+      const getResponse = await keygen.machines.get({ id: machineId })
+
+      if (!getResponse.data) {
+        throw new Error("Machine not found")
+      }
+
+      const current = getResponse.data
+
+      const changes = diff(
+        {
+          ...current.attributes,
+          groupId: current.relationships.group?.data?.id ?? null,
+          ownerId: current.relationships.owner?.data?.id ?? null,
+        },
+        values,
+      ) as Forms.Machines.UpdateValues
+
+      if (Object.keys(changes).length === 0) return current
+
+      const updated = await keygen.machines
+        .update({
+          id: machineId,
+          values: changes,
+        })
+        .then((response) => response.data as Machine)
+
+      return updated
+    },
+
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ["machines", machineId, { environment: code }],
+        updated,
+      )
+      await queryClient.invalidateQueries({
+        queryKey: ["machines", { environment: code }],
+      })
+    },
+  })
+}
+
+export function useRemoveMachine(machineId: string) {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation({
+    mutationFn: () => keygen.machines.remove({ id: machineId }),
+
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["machines", { environment: code }],
+      })
+      queryClient.removeQueries({
+        queryKey: ["machines", machineId, { environment: code }],
+      })
+    },
+  })
+}

@@ -34,5 +34,8 @@ export { groups }
 import * as machines from "./machines"
 export { machines }
 
+import * as components from "./components"
+export { components }
+
 import { logout } from "./logout"
 export { logout }

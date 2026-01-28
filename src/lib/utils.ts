@@ -83,6 +83,10 @@ export function titleCase(s: string): string {
     .replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
+export function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
 export function labelize(value?: string | null, map?: Record<string, string>) {
   if (!value) return "--"
   return (map && map[value]) || titleCase(value)

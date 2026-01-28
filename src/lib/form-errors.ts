@@ -3,6 +3,7 @@ import { FieldPath, FieldValues, UseFormReturn } from "react-hook-form"
 import { APIError } from "@/types/api"
 
 import { toast } from "@/lib/toast"
+import { capitalize } from "@/lib/utils"
 
 export type FormStep<TFieldValues extends FieldValues> = {
   key: string
@@ -98,7 +99,7 @@ export function handleFormError<TFieldValues extends FieldValues>(
   if (showToast) {
     toast({
       message: toastMessage,
-      description: error.detail ?? error.message,
+      description: capitalize(error.detail ?? error.message),
       variant: "error",
     })
   }

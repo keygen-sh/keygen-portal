@@ -75,7 +75,7 @@ export function handleFormError<TFieldValues extends FieldValues>(
 
       form.setError(targetField, {
         type: "manual",
-        message: error.detail ?? "Field is invalid",
+        message: capitalize(error.detail ?? "Field is invalid"),
       })
 
       if (goToStep && steps.length > 0) {

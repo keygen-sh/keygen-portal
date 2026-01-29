@@ -99,3 +99,14 @@ export type AnyResource =
   | Component
   | Process
   | User
+
+export type ResourceType =
+  | "product"
+  | "entitlement"
+  | "group"
+  | "policy"
+  | "license"
+  | "machine"
+  | "component"
+  | "process"
+  | "user"

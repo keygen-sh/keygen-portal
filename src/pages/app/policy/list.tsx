@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { useNavigate } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
@@ -10,7 +9,8 @@ import { Policy } from "@/types/policies"
 
 import { useListPolicies } from "@/queries/policies"
 
-import * as keygen from "@/keygen"
+import { useResourceNavigate } from "@/hooks/use-resource-navigate"
+
 import * as Policies from "@/components/policies"
 import * as Skeletons from "@/components/skeletons"
 import DataTable from "@/components/data-table"
@@ -19,19 +19,9 @@ import PageHeader from "@/components/page-header"
 export default function PoliciesList() {
   const { data: policies = [], isLoading: policiesLoading } = useListPolicies()
   const columns = usePolicyTableColumns()
-
-  const navigate = useNavigate()
+  const navigateToResource = useResourceNavigate()
 
   const [open, setOpen] = useState(false)
-
-  const handleSelectPolicy = async (policy: Policy | null) => {
-    if (!policy) return
-
-    await navigate({
-      to: "/$accountId/app/policies/$id",
-      params: { accountId: keygen.config.id, id: policy.id },
-    })
-  }
 
   return (
     <section>
@@ -44,7 +34,7 @@ export default function PoliciesList() {
           </DialogTrigger>
 
           <Policies.Create.Modal
-            onSelectPolicy={(policy) => handleSelectPolicy(policy)}
+            onSelectPolicy={(policy) => navigateToResource(policy, "policy")}
             open={open}
             onClose={() => setOpen(false)}
           />
@@ -63,7 +53,7 @@ export default function PoliciesList() {
             "attributes.created",
             "attributes.updated",
           ]}
-          onRowClick={(p) => handleSelectPolicy(p)}
+          onRowClick={(policy) => navigateToResource(policy, "policy")}
         />
       )}
     </section>

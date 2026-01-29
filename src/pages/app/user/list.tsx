@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
@@ -7,7 +6,8 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { useUserTableColumns } from "@/hooks/use-user-table-columns"
 import { User, MockUsers } from "@/types/users"
 
-import * as keygen from "@/keygen"
+import { useResourceNavigate } from "@/hooks/use-resource-navigate"
+
 import * as Users from "@/components/users"
 import * as Skeletons from "@/components/skeletons"
 import DataTable from "@/components/data-table"
@@ -16,19 +16,9 @@ import PageHeader from "@/components/page-header"
 export default function UsersList() {
   const [usersLoading, setUsersLoading] = useState(true)
   const columns = useUserTableColumns()
-
-  const navigate = useNavigate()
+  const navigateToResource = useResourceNavigate()
 
   const [open, setOpen] = useState(false)
-
-  const handleSelectUser = async (user: User | null) => {
-    if (!user) return
-
-    await navigate({
-      to: "/$accountId/app/users/$id",
-      params: { accountId: keygen.config.id, id: user.id },
-    })
-  }
 
   // Mock API call
   useEffect(() => {
@@ -48,7 +38,7 @@ export default function UsersList() {
           </DialogTrigger>
 
           <Users.Create.Modal
-            onSelectUser={(user) => handleSelectUser(user)}
+            onSelectUser={(user) => navigateToResource(user, "user")}
             onClose={() => setOpen(false)}
           />
         </Dialog>
@@ -66,7 +56,7 @@ export default function UsersList() {
             "attributes.created",
             "attributes.updated",
           ]}
-          onRowClick={(u) => handleSelectUser(u)}
+          onRowClick={(user) => navigateToResource(user, "user")}
         />
       )}
     </section>

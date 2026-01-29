@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 import {
   Dialog,
   DialogContent,
@@ -14,9 +14,9 @@ import {
   useCreatePolicy,
   useListPolicyEntitlements,
 } from "@/queries/policies"
+import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 import DuplicateForm from "./duplicate-form"
 import * as Loading from "@/components/loading"
-import * as keygen from "@/keygen"
 
 interface PoliciesDuplicateModalProps {
   open: boolean
@@ -37,7 +37,7 @@ export default function PoliciesDuplicateModal({
   const { data: entitlements = [] } = useListPolicyEntitlements(id)
 
   const createPolicy = useCreatePolicy()
-  const navigate = useNavigate()
+  const navigateToResource = useResourceNavigate()
 
   const handleCreatePolicy = (values: Forms.Policies.CreateValues) => {
     if (!policy) return
@@ -47,13 +47,7 @@ export default function PoliciesDuplicateModal({
         toast({ message: "Policy created", variant: "success" })
         onOpenChange(false)
 
-        await navigate({
-          to: "/$accountId/app/policies/$id",
-          params: {
-            accountId: keygen.config.id,
-            id: created.id,
-          },
-        })
+        await navigateToResource(created, "policy")
       },
       onError: () => {
         toast({ message: "Failed to create policy", variant: "error" })

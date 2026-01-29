@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { useNavigate } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
@@ -9,7 +8,8 @@ import { useProcessTableColumns } from "@/hooks/use-process-table-columns"
 import { Process } from "@/types/processes"
 import { useListProcesses } from "@/queries/processes"
 
-import * as keygen from "@/keygen"
+import { useResourceNavigate } from "@/hooks/use-resource-navigate"
+
 import * as Processes from "@/components/processes"
 import * as Skeletons from "@/components/skeletons"
 import DataTable from "@/components/data-table"
@@ -19,19 +19,9 @@ export default function ProcessesList() {
   const { data: processes = [], isLoading: processesLoading } =
     useListProcesses()
   const columns = useProcessTableColumns()
-
-  const navigate = useNavigate()
+  const navigateToResource = useResourceNavigate()
 
   const [open, setOpen] = useState(false)
-
-  const handleSelectProcess = async (process: Process | null) => {
-    if (!process) return
-
-    await navigate({
-      to: "/$accountId/app/processes/$id",
-      params: { accountId: keygen.config.id, id: process.id },
-    })
-  }
 
   return (
     <section>
@@ -44,7 +34,9 @@ export default function ProcessesList() {
           </DialogTrigger>
 
           <Processes.Create.Modal
-            onSelectProcess={(process) => handleSelectProcess(process)}
+            onSelectProcess={(process) =>
+              navigateToResource(process, "process")
+            }
             onClose={() => setOpen(false)}
           />
         </Dialog>
@@ -63,7 +55,7 @@ export default function ProcessesList() {
             "attributes.created",
             "attributes.updated",
           ]}
-          onRowClick={(p) => handleSelectProcess(p)}
+          onRowClick={(process) => navigateToResource(process, "process")}
         />
       )}
     </section>

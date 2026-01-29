@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { useNavigate } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
@@ -9,7 +8,8 @@ import { License } from "@/types/licenses"
 
 import { useListLicenses } from "@/queries/licenses"
 
-import * as keygen from "@/keygen"
+import { useResourceNavigate } from "@/hooks/use-resource-navigate"
+
 import * as Licenses from "@/components/licenses"
 import * as Skeletons from "@/components/skeletons"
 import DataTable from "@/components/data-table"
@@ -18,20 +18,9 @@ import PageHeader from "@/components/page-header"
 export default function LicensesList() {
   const { data: licenses = [], isLoading: licensesLoading } = useListLicenses()
   const columns = useLicenseTableColumns()
-
-  const navigate = useNavigate()
+  const navigateToResource = useResourceNavigate()
 
   const [open, setOpen] = useState(false)
-
-  const handleSelectLicense = async (license: License | null) => {
-    if (!license) return
-
-    await navigate({
-      to: "/$accountId/app/licenses/$id",
-      params: { accountId: keygen.config.id, id: license.id },
-    })
-    setOpen(false)
-  }
 
   return (
     <section>
@@ -44,7 +33,9 @@ export default function LicensesList() {
           </DialogTrigger>
 
           <Licenses.Create.Modal
-            onSelectLicense={(license) => handleSelectLicense(license)}
+            onSelectLicense={(license) =>
+              navigateToResource(license, "license")
+            }
             onClose={() => setOpen(false)}
           />
         </Dialog>
@@ -63,7 +54,7 @@ export default function LicensesList() {
             "attributes.expiry",
             "attributes.created",
           ]}
-          onRowClick={(l) => handleSelectLicense(l)}
+          onRowClick={(license) => navigateToResource(license, "license")}
         />
       )}
     </section>

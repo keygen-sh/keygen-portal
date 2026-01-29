@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { useNavigate } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
@@ -10,7 +9,8 @@ import { Entitlement } from "@/types/entitlements"
 
 import { useListEntitlements } from "@/queries/entitlements"
 
-import * as keygen from "@/keygen"
+import { useResourceNavigate } from "@/hooks/use-resource-navigate"
+
 import * as Skeletons from "@/components/skeletons"
 import * as Entitlements from "@/components/entitlements"
 import DataTable from "@/components/data-table"
@@ -20,19 +20,9 @@ export default function EntitlementsList() {
   const { data: entitlements = [], isLoading: entitlementsLoading } =
     useListEntitlements()
   const columns = useEntitlementTableColumns()
-
-  const navigate = useNavigate()
+  const navigateToResource = useResourceNavigate()
 
   const [open, setOpen] = useState(false)
-
-  const handleSelectEntitlement = async (entitlement: Entitlement | null) => {
-    if (!entitlement) return
-
-    await navigate({
-      to: "/$accountId/app/entitlements/$id",
-      params: { accountId: keygen.config.id, id: entitlement.id },
-    })
-  }
 
   return (
     <section>
@@ -46,7 +36,7 @@ export default function EntitlementsList() {
 
           <Entitlements.Create.Modal
             onSelectEntitlement={(entitlement) =>
-              handleSelectEntitlement(entitlement)
+              navigateToResource(entitlement, "entitlement")
             }
             onClose={() => setOpen(false)}
           />
@@ -66,7 +56,9 @@ export default function EntitlementsList() {
             "attributes.created",
             "attributes.updated",
           ]}
-          onRowClick={(entitlement) => handleSelectEntitlement(entitlement)}
+          onRowClick={(entitlement) =>
+            navigateToResource(entitlement, "entitlement")
+          }
         />
       )}
     </section>

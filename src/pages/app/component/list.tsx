@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { useNavigate } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
@@ -9,7 +8,8 @@ import { useComponentTableColumns } from "@/hooks/use-component-table-columns"
 import { Component } from "@/types/components"
 import { useListComponents } from "@/queries/components"
 
-import * as keygen from "@/keygen"
+import { useResourceNavigate } from "@/hooks/use-resource-navigate"
+
 import * as Skeletons from "@/components/skeletons"
 import * as Components from "@/components/components"
 import DataTable from "@/components/data-table"
@@ -19,19 +19,9 @@ export default function ComponentsList() {
   const { data: components = [], isLoading: componentsLoading } =
     useListComponents()
   const columns = useComponentTableColumns()
-
-  const navigate = useNavigate()
+  const navigateToResource = useResourceNavigate()
 
   const [open, setOpen] = useState(false)
-
-  const handleSelectComponent = async (component: Component | null) => {
-    if (!component) return
-
-    await navigate({
-      to: "/$accountId/app/components/$id",
-      params: { accountId: keygen.config.id, id: component.id },
-    })
-  }
 
   return (
     <section>
@@ -44,7 +34,9 @@ export default function ComponentsList() {
           </DialogTrigger>
 
           <Components.Create.Modal
-            onSelectComponent={(component) => handleSelectComponent(component)}
+            onSelectComponent={(component) =>
+              navigateToResource(component, "component")
+            }
             onClose={() => setOpen(false)}
           />
         </Dialog>
@@ -62,7 +54,7 @@ export default function ComponentsList() {
             "attributes.created",
             "attributes.updated",
           ]}
-          onRowClick={(c) => handleSelectComponent(c)}
+          onRowClick={(component) => navigateToResource(component, "component")}
         />
       )}
     </section>

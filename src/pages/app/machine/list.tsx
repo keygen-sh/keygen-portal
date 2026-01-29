@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { useNavigate } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
@@ -8,7 +7,8 @@ import { useMachineTableColumns } from "@/hooks/use-machine-table-columns"
 import { useListMachines } from "@/queries/machines"
 import { Machine } from "@/types/machines"
 
-import * as keygen from "@/keygen"
+import { useResourceNavigate } from "@/hooks/use-resource-navigate"
+
 import * as Machines from "@/components/machines"
 import * as Skeletons from "@/components/skeletons"
 import DataTable from "@/components/data-table"
@@ -17,19 +17,9 @@ import PageHeader from "@/components/page-header"
 export default function MachinesList() {
   const { data: machines = [], isLoading: machinesLoading } = useListMachines()
   const columns = useMachineTableColumns()
-
-  const navigate = useNavigate()
+  const navigateToResource = useResourceNavigate()
 
   const [open, setOpen] = useState(false)
-
-  const handleSelectMachine = async (machine: Machine | null) => {
-    if (!machine) return
-
-    await navigate({
-      to: "/$accountId/app/machines/$id",
-      params: { accountId: keygen.config.id, id: machine.id },
-    })
-  }
 
   return (
     <section>
@@ -42,7 +32,9 @@ export default function MachinesList() {
           </DialogTrigger>
 
           <Machines.Create.Modal
-            onSelectMachine={(machine) => handleSelectMachine(machine)}
+            onSelectMachine={(machine) =>
+              navigateToResource(machine, "machine")
+            }
             onClose={() => setOpen(false)}
           />
         </Dialog>
@@ -60,7 +52,7 @@ export default function MachinesList() {
             "attributes.created",
             "attributes.updated",
           ]}
-          onRowClick={(m) => handleSelectMachine(m)}
+          onRowClick={(machine) => navigateToResource(machine, "machine")}
         />
       )}
     </section>

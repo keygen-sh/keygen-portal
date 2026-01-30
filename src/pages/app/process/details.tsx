@@ -43,7 +43,6 @@ import {
 } from "lucide-react"
 
 import {
-  MockProcesses,
   ProcessAttributeDescriptions,
   ProcessStatus,
   ProcessStatusLabels,
@@ -54,9 +53,11 @@ import {
 import { useGetMachine } from "@/queries/machines"
 import { useGetProduct } from "@/queries/products"
 import { useGetLicense } from "@/queries/licenses"
+import { useGetProcess, useRemoveProcess } from "@/queries/processes"
 
 import { useMobile } from "@/hooks/use-mobile"
 
+import { toast } from "@/lib/toast"
 import { truncateKey } from "@/lib/licenses"
 import { copyToClipboard } from "@/lib/clipboard"
 
@@ -84,10 +85,13 @@ export default function ProcessDetails() {
   const { processId } = useParams({
     from: "/$id/app/processes/$processId",
   })
-
-  const process = MockProcesses.find((p) => p.id === processId)
-  const [processLoading, setProcessLoading] = useState(true)
-  const processError = false
+  const {
+    data: process,
+    isLoading: processLoading,
+    isFetching: processFetching,
+    isError: processError,
+  } = useGetProcess(processId)
+  const removeProcess = useRemoveProcess(processId)
 
   const machineId = process?.relationships.machine?.data?.id || ""
   const {
@@ -121,25 +125,24 @@ export default function ProcessDetails() {
 
   useEffect(() => {
     ;(async () => {
-      if (processError) {
+      if (processError && !processFetching) {
         await navigate({ to: ".." })
       }
     })()
-  }, [processError, navigate])
-
-  useEffect(() => {
-    setTimeout(() => {
-      setProcessLoading(false)
-    }, 300)
-  }, [])
+  }, [processError, processFetching, navigate])
 
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))
   }
 
-  const handleDeleteProcess = () => {
-    console.log("Process deleted.")
-    // TODO: Implement API call to delete process
+  const handleDeleteProcess = async () => {
+    try {
+      await removeProcess.mutateAsync()
+      toast({ message: "Process Deleteed", variant: "success" })
+      await navigate({ to: ".." })
+    } catch {
+      toast({ message: "Failed to Delete process", variant: "error" })
+    }
   }
 
   return (
@@ -565,8 +568,7 @@ export default function ProcessDetails() {
 
       <Processes.Edit.Modal
         open={open.edit}
-        onClose={() => toggleOpen("edit", false)}
-        process={process!}
+        onOpenChange={(value) => toggleOpen("edit", value)}
       />
 
       <ConfirmationModal

@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { useProcessTableColumns } from "@/hooks/use-process-table-columns"
-import { Process, MockProcesses } from "@/types/processes"
+
+import { Process } from "@/types/processes"
+import { useListProcesses } from "@/queries/processes"
 
 import * as keygen from "@/keygen"
 import * as Processes from "@/components/processes"
@@ -14,7 +16,8 @@ import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
 
 export default function ProcessesList() {
-  const [processesLoading, setProcessesLoading] = useState(true)
+  const { data: processes = [], isLoading: processesLoading } =
+    useListProcesses()
   const columns = useProcessTableColumns()
 
   const navigate = useNavigate()
@@ -30,19 +33,13 @@ export default function ProcessesList() {
     })
   }
 
-  useEffect(() => {
-    setTimeout(() => {
-      setProcessesLoading(false)
-    }, 300)
-  }, [])
-
   return (
     <section>
       <PageHeader title="Processes">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button size="sm" disabled={processesLoading}>
-              New Process
+              Spawn Process
             </Button>
           </DialogTrigger>
 
@@ -57,7 +54,7 @@ export default function ProcessesList() {
         <Skeletons.Table />
       ) : (
         <DataTable<Process>
-          data={MockProcesses}
+          data={processes}
           columns={columns}
           hideOnMobile={[
             "relationships.machine",

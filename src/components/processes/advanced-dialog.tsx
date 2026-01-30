@@ -13,7 +13,7 @@ import {
 
 import { Text, CurlyBraces } from "lucide-react"
 
-import { MockProcesses } from "@/types/processes"
+import { useGetProcess } from "@/queries/processes"
 
 import * as Processes from "@/components/processes"
 import Metadata from "@/components/metadata"
@@ -32,10 +32,12 @@ export default function AdvancedDialog({
   open,
   onOpenChange,
 }: AdvancedDialogProps) {
-  const process = MockProcesses.find((p) => p.id === id)
-  const processLoading = false
-  const processFetching = false
-  const processError = !process
+  const {
+    data: process,
+    isLoading: processLoading,
+    isFetching: processFetching,
+    isError: processError,
+  } = useGetProcess(id)
 
   const [tab, setTab] = useState<"attributes" | "inspect">("attributes")
 

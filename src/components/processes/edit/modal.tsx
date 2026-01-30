@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useParams } from "@tanstack/react-router"
 
 import {
   Dialog,
@@ -11,57 +11,50 @@ import {
 import { toast } from "@/lib/toast"
 
 import * as Forms from "@/forms"
-import { Process, MockProcesses } from "@/types/processes"
+
+import { useGetProcess, useUpdateProcess } from "@/queries/processes"
 
 import EditForm from "./edit-form"
-
 import * as Loading from "@/components/loading"
 
 interface ProcessesEditModalProps {
   open: boolean
-  onClose: () => void
-  process: Process | null
+  onOpenChange: (value: boolean) => void
 }
 
 export default function ProcessesEditModal({
   open,
-  onClose,
-  process,
+  onOpenChange,
 }: ProcessesEditModalProps) {
-  const [loading, setLoading] = useState(false)
+  const { processId } = useParams({
+    from: "/$id/app/processes/$processId",
+  })
+  const {
+    data: process,
+    isLoading: processLoading,
+    isError: processError,
+  } = useGetProcess(processId)
+  const updateProcess = useUpdateProcess(processId)
 
-  const handleUpdateProcess = useCallback(
-    (values: Forms.Processes.UpdateValues) => {
-      if (!process) return
-
-      setLoading(true)
-
-      const index = MockProcesses.findIndex((p) => p.id === process.id)
-      if (index === -1) {
-        toast({ message: "Process not found", variant: "error" })
-        setLoading(false)
-        return
-      }
-
-      const updated: Process = {
-        ...process,
-        attributes: {
-          ...process.attributes,
-          metadata: values.metadata ?? process.attributes.metadata,
-          updated: new Date().toISOString(),
-        },
-      }
-
-      MockProcesses[index] = updated
-      setLoading(false)
-      toast({ message: "Process updated", variant: "success" })
-      onClose()
-    },
-    [process, onClose],
-  )
+  const handleUpdateProcess = (values: Forms.Processes.UpdateValues) => {
+    if (!process) return
+    updateProcess.mutate(values, {
+      onSuccess: () => {
+        toast({ message: "Process updated", variant: "success" })
+        onOpenChange(false)
+      },
+      onError: () =>
+        toast({ message: "Failed to update process", variant: "error" }),
+      onSettled() {
+        if (!updateProcess.isError) {
+          onOpenChange(false)
+        }
+      },
+    })
+  }
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => e.preventDefault()}
@@ -73,17 +66,22 @@ export default function ProcessesEditModal({
           </DialogDescription>
           <DialogTitle className="sr-only" />
         </DialogHeader>
-        {!process ? (
+        {processLoading ? (
           <div className="flex w-full justify-center">
             <Loading.Dots />
           </div>
+        ) : processError ? (
+          <p className="text-center text-sm text-red-500">
+            Failed to load process.
+          </p>
         ) : (
-          open && (
+          open &&
+          process && (
             <EditForm
               process={process}
-              loading={loading}
+              loading={updateProcess.isPending}
               onUpdate={handleUpdateProcess}
-              onCancel={onClose}
+              onCancel={() => onOpenChange(false)}
             />
           )
         )}

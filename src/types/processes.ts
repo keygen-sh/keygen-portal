@@ -99,5 +99,3 @@ export const ProcessStatusVariants: Readonly<
   [ProcessStatus.Dead]: "disabled",
   [ProcessStatus.Resurrected]: "secondary",
 } as const
-
-export const MockProcesses: Process[] = []

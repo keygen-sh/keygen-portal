@@ -40,5 +40,8 @@ export { components }
 import * as processes from "./processes"
 export { processes }
 
+import * as users from "./users"
+export { users }
+
 import { logout } from "./logout"
 export { logout }

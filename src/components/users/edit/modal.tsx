@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useParams } from "@tanstack/react-router"
 
 import {
   Dialog,
@@ -11,96 +11,50 @@ import {
 import { toast } from "@/lib/toast"
 
 import * as Forms from "@/forms"
-import { User, MockUsers } from "@/types/users"
+
+import { useGetUser, useUpdateUser } from "@/queries/users"
 
 import EditForm from "./edit-form"
-
 import * as Loading from "@/components/loading"
 
 interface UsersEditModalProps {
   open: boolean
-  onClose: () => void
-  user: User | null
+  onOpenChange: (value: boolean) => void
 }
 
 export default function UsersEditModal({
   open,
-  onClose,
-  user,
+  onOpenChange,
 }: UsersEditModalProps) {
-  const [loading, setLoading] = useState(false)
+  const { id } = useParams({
+    from: "/$accountId/app/users/$id",
+  })
+  const {
+    data: user,
+    isLoading: userLoading,
+    isError: userError,
+  } = useGetUser(id)
+  const updateUser = useUpdateUser(id)
 
-  const handleUpdateUser = useCallback(
-    (values: Forms.Users.UpdateValues) => {
-      if (!user) return
-
-      setLoading(true)
-
-      const index = MockUsers.findIndex((u) => u.id === user.id)
-      if (index === -1) {
-        toast({ message: "User not found", variant: "error" })
-        setLoading(false)
-        return
-      }
-
-      const firstName =
-        values.firstName !== undefined
-          ? values.firstName
-          : user.attributes.firstName
-      const lastName =
-        values.lastName !== undefined
-          ? values.lastName
-          : user.attributes.lastName
-      const fullName =
-        firstName || lastName
-          ? [firstName, lastName].filter(Boolean).join(" ")
-          : null
-
-      const groupId =
-        values.groupId !== undefined
-          ? values.groupId
-          : user.relationships.group?.data?.id
-
-      const updated: User = {
-        ...user,
-        attributes: {
-          ...user.attributes,
-          email:
-            values.email !== undefined ? values.email : user.attributes.email,
-          firstName,
-          lastName,
-          fullName,
-          role: values.role !== undefined ? values.role : user.attributes.role,
-          permissions:
-            values.permissions !== undefined
-              ? values.permissions
-              : user.attributes.permissions,
-          metadata: values.metadata ?? user.attributes.metadata,
-          updated: new Date().toISOString(),
-        },
-        relationships: {
-          ...user.relationships,
-          group: {
-            links: {
-              related: groupId
-                ? `/v1/accounts/{ACCOUNT}/groups/${groupId}`
-                : null,
-            },
-            data: groupId ? { type: "groups", id: groupId } : null,
-          },
-        },
-      }
-
-      MockUsers[index] = updated
-      setLoading(false)
-      toast({ message: "User updated", variant: "success" })
-      onClose()
-    },
-    [user, onClose],
-  )
+  const handleUpdateUser = (values: Forms.Users.UpdateValues) => {
+    if (!user) return
+    updateUser.mutate(values, {
+      onSuccess: () => {
+        toast({ message: "User updated", variant: "success" })
+        onOpenChange(false)
+      },
+      onError: () =>
+        toast({ message: "Failed to update user", variant: "error" }),
+      onSettled() {
+        if (!updateUser.isError) {
+          onOpenChange(false)
+        }
+      },
+    })
+  }
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => e.preventDefault()}
@@ -112,17 +66,22 @@ export default function UsersEditModal({
           </DialogDescription>
           <DialogTitle className="sr-only" />
         </DialogHeader>
-        {!user ? (
+        {userLoading ? (
           <div className="flex w-full justify-center">
             <Loading.Dots />
           </div>
+        ) : userError ? (
+          <p className="text-center text-sm text-red-500">
+            Failed to load user.
+          </p>
         ) : (
-          open && (
+          open &&
+          user && (
             <EditForm
               user={user}
-              loading={loading}
+              loading={updateUser.isPending}
               onUpdate={handleUpdateUser}
-              onCancel={onClose}
+              onCancel={() => onOpenChange(false)}
             />
           )
         )}

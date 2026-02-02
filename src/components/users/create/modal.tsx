@@ -15,12 +15,14 @@ import {
 
 import * as Forms from "@/forms"
 
-import { User, UserRole, UserStatus, MockUsers } from "@/types/users"
+import { User, UserRole } from "@/types/users"
 
 import { toast } from "@/lib/toast"
 
 import { useSlide } from "@/hooks/use-slide"
 import { useMobile } from "@/hooks/use-mobile"
+
+import { useCreateUser } from "@/queries/users"
 
 import * as Motion from "@/components/motion"
 import * as Users from "@/components/users"
@@ -54,8 +56,8 @@ export default function UsersCreateModal({
   onClose,
 }: UsersCreateModalProps) {
   const isMobile = useMobile()
+  const createUser = useCreateUser()
 
-  const [loading, setLoading] = useState(false)
   const [completedStep, setCompletedStep] = useState<Set<string>>(new Set())
 
   const form = useForm<Forms.Users.CreateValues>({
@@ -127,78 +129,22 @@ export default function UsersCreateModal({
 
   const handleCreateUser = useCallback(
     (values: Forms.Users.CreateValues) => {
-      setLoading(true)
-
-      const firstName = values.firstName ?? null
-      const lastName = values.lastName ?? null
-      const fullName =
-        firstName || lastName
-          ? [firstName, lastName].filter(Boolean).join(" ")
-          : null
-
-      const newUser: User = {
-        id: crypto.randomUUID(),
-        type: "users",
-        links: {
-          self: `/v1/accounts/{ACCOUNT}/users/${crypto.randomUUID()}`,
+      createUser.mutate(values, {
+        onSuccess: (user) => {
+          toast({ message: "User created", variant: "success" })
+          onSelectUser(user)
+          onClose()
         },
-        attributes: {
-          email: values.email,
-          firstName,
-          lastName,
-          fullName,
-          status: UserStatus.Active,
-          role: values.role ?? UserRole.User,
-          permissions: values.permissions ?? [],
-          metadata: values.metadata ?? {},
-          created: new Date().toISOString(),
-          updated: new Date().toISOString(),
+        onError: (error) => {
+          toast({
+            message: "Failed to create user",
+            description: error.detail,
+            variant: "error",
+          })
         },
-        relationships: {
-          account: {
-            links: { related: "/v1/accounts/{ACCOUNT}" },
-            data: { type: "accounts", id: "{ACCOUNT}" },
-          },
-          environment: {
-            links: { related: null },
-            data: null,
-          },
-          group: {
-            links: {
-              related: values.groupId
-                ? `/v1/accounts/{ACCOUNT}/groups/${values.groupId}`
-                : null,
-            },
-            data: values.groupId
-              ? { type: "groups", id: values.groupId }
-              : null,
-          },
-          products: {
-            links: { related: null },
-            data: [],
-          },
-          licenses: {
-            links: { related: null },
-            data: [],
-          },
-          machines: {
-            links: { related: null },
-            data: [],
-          },
-          tokens: {
-            links: { related: null },
-            data: [],
-          },
-        },
-      }
-
-      MockUsers.push(newUser)
-      setLoading(false)
-      toast({ message: "User created", variant: "success" })
-      onSelectUser(newUser)
-      onClose()
+      })
     },
-    [onSelectUser, onClose],
+    [createUser, onSelectUser, onClose],
   )
 
   return (
@@ -251,7 +197,7 @@ export default function UsersCreateModal({
               variant="outline"
               type="button"
               onClick={step === 0 ? onClose : back}
-              disabled={loading}
+              disabled={createUser.isPending}
               className="max-w-48 flex-1 basis-1/2"
             >
               {step === 0 ? "Cancel" : "Back"}
@@ -261,10 +207,10 @@ export default function UsersCreateModal({
               key={last ? "create" : "next"}
               type="button"
               onClick={last ? form.handleSubmit(handleCreateUser) : next}
-              disabled={loading}
+              disabled={createUser.isPending}
               className="max-w-48 flex-1 basis-1/2"
             >
-              {loading ? (
+              {createUser.isPending ? (
                 <Loading.Dots className="bg-background" />
               ) : last ? (
                 "Create"

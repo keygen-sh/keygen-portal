@@ -32,9 +32,7 @@ export default function MachinesList() {
           </DialogTrigger>
 
           <Machines.Create.Modal
-            onSelectMachine={(machine) =>
-              navigateToResource(machine, "machine")
-            }
+            onSelectMachine={(machine) => navigateToResource(machine)}
             onClose={() => setOpen(false)}
           />
         </Dialog>
@@ -52,7 +50,7 @@ export default function MachinesList() {
             "attributes.created",
             "attributes.updated",
           ]}
-          onRowClick={(machine) => navigateToResource(machine, "machine")}
+          onRowClick={(machine) => navigateToResource(machine)}
         />
       )}
     </section>

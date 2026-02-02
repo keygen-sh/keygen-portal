@@ -33,9 +33,7 @@ export default function LicensesList() {
           </DialogTrigger>
 
           <Licenses.Create.Modal
-            onSelectLicense={(license) =>
-              navigateToResource(license, "license")
-            }
+            onSelectLicense={(license) => navigateToResource(license)}
             onClose={() => setOpen(false)}
           />
         </Dialog>
@@ -54,7 +52,7 @@ export default function LicensesList() {
             "attributes.expiry",
             "attributes.created",
           ]}
-          onRowClick={(license) => navigateToResource(license, "license")}
+          onRowClick={(license) => navigateToResource(license)}
         />
       )}
     </section>

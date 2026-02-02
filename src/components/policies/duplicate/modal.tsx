@@ -47,7 +47,7 @@ export default function PoliciesDuplicateModal({
         toast({ message: "Policy created", variant: "success" })
         onOpenChange(false)
 
-        await navigateToResource(created, "policy")
+        await navigateToResource(created)
       },
       onError: () => {
         toast({ message: "Failed to create policy", variant: "error" })

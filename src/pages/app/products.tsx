@@ -6,13 +6,13 @@ import * as Motion from "@/components/motion"
 import * as Page from "@/pages"
 
 export default function Products() {
-  const { productId } = useParams({ strict: false })
+  const { id } = useParams({ strict: false })
 
-  const view = productId ? ProductView.Details : ProductView.List
+  const view = id ? ProductView.Details : ProductView.List
 
   const direction: 1 | -1 = view === ProductView.Details ? 1 : -1
 
-  const key = view === ProductView.List ? "list" : `details-${productId}`
+  const key = view === ProductView.List ? "list" : `details-${id}`
 
   return (
     <Motion.Slide direction={direction}>

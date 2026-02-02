@@ -34,7 +34,7 @@ export default function PoliciesList() {
           </DialogTrigger>
 
           <Policies.Create.Modal
-            onSelectPolicy={(policy) => navigateToResource(policy, "policy")}
+            onSelectPolicy={(policy) => navigateToResource(policy)}
             open={open}
             onClose={() => setOpen(false)}
           />
@@ -53,7 +53,7 @@ export default function PoliciesList() {
             "attributes.created",
             "attributes.updated",
           ]}
-          onRowClick={(policy) => navigateToResource(policy, "policy")}
+          onRowClick={(policy) => navigateToResource(policy)}
         />
       )}
     </section>

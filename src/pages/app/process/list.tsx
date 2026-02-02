@@ -34,9 +34,7 @@ export default function ProcessesList() {
           </DialogTrigger>
 
           <Processes.Create.Modal
-            onSelectProcess={(process) =>
-              navigateToResource(process, "process")
-            }
+            onSelectProcess={(process) => navigateToResource(process)}
             onClose={() => setOpen(false)}
           />
         </Dialog>
@@ -55,7 +53,7 @@ export default function ProcessesList() {
             "attributes.created",
             "attributes.updated",
           ]}
-          onRowClick={(process) => navigateToResource(process, "process")}
+          onRowClick={(process) => navigateToResource(process)}
         />
       )}
     </section>

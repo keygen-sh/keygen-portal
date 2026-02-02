@@ -36,7 +36,7 @@ export default function EntitlementsList() {
 
           <Entitlements.Create.Modal
             onSelectEntitlement={(entitlement) =>
-              navigateToResource(entitlement, "entitlement")
+              navigateToResource(entitlement)
             }
             onClose={() => setOpen(false)}
           />
@@ -56,9 +56,7 @@ export default function EntitlementsList() {
             "attributes.created",
             "attributes.updated",
           ]}
-          onRowClick={(entitlement) =>
-            navigateToResource(entitlement, "entitlement")
-          }
+          onRowClick={(entitlement) => navigateToResource(entitlement)}
         />
       )}
     </section>

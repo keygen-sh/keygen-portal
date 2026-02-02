@@ -38,7 +38,7 @@ export default function UsersList() {
           </DialogTrigger>
 
           <Users.Create.Modal
-            onSelectUser={(user) => navigateToResource(user, "user")}
+            onSelectUser={(user) => navigateToResource(user)}
             onClose={() => setOpen(false)}
           />
         </Dialog>
@@ -56,7 +56,7 @@ export default function UsersList() {
             "attributes.created",
             "attributes.updated",
           ]}
-          onRowClick={(user) => navigateToResource(user, "user")}
+          onRowClick={(user) => navigateToResource(user)}
         />
       )}
     </section>

@@ -34,9 +34,7 @@ export default function ComponentsList() {
           </DialogTrigger>
 
           <Components.Create.Modal
-            onSelectComponent={(component) =>
-              navigateToResource(component, "component")
-            }
+            onSelectComponent={(component) => navigateToResource(component)}
             onClose={() => setOpen(false)}
           />
         </Dialog>
@@ -54,7 +52,7 @@ export default function ComponentsList() {
             "attributes.created",
             "attributes.updated",
           ]}
-          onRowClick={(component) => navigateToResource(component, "component")}
+          onRowClick={(component) => navigateToResource(component)}
         />
       )}
     </section>

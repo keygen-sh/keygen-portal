@@ -34,9 +34,7 @@ export default function ProductsList() {
           </DialogTrigger>
 
           <Products.Create.Modal
-            onSelectProduct={(product) =>
-              navigateToResource(product, "product")
-            }
+            onSelectProduct={(product) => navigateToResource(product)}
             onClose={() => setOpen(false)}
           />
         </Dialog>
@@ -54,7 +52,7 @@ export default function ProductsList() {
             "attributes.created",
             "attributes.updated",
           ]}
-          onRowClick={(product) => navigateToResource(product, "product")}
+          onRowClick={(product) => navigateToResource(product)}
         />
       )}
     </section>

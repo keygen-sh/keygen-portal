@@ -32,7 +32,7 @@ export default function GroupsList() {
           </DialogTrigger>
 
           <Groups.Create.Modal
-            onSelectGroup={(group) => navigateToResource(group, "group")}
+            onSelectGroup={(group) => navigateToResource(group)}
             onClose={() => setOpen(false)}
           />
         </Dialog>
@@ -51,7 +51,7 @@ export default function GroupsList() {
             "attributes.maxMachines",
             "attributes.created",
           ]}
-          onRowClick={(group) => navigateToResource(group, "group")}
+          onRowClick={(group) => navigateToResource(group)}
         />
       )}
     </section>

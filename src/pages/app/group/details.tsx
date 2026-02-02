@@ -61,15 +61,15 @@ import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
 
 export default function GroupDetails() {
-  const { groupId } = useParams({ from: "/$id/app/groups/$groupId" })
+  const { id } = useParams({ from: "/$accountId/app/groups/$id" })
 
   const {
     data: group,
     isLoading: groupLoading,
     isFetching: groupFetching,
     isError: groupError,
-  } = useGetGroup(groupId)
-  const removeGroup = useRemoveGroup(groupId)
+  } = useGetGroup(id)
+  const removeGroup = useRemoveGroup(id)
 
   const navigate = useNavigate()
 
@@ -271,8 +271,8 @@ export default function GroupDetails() {
                     label="Licenses"
                     value={
                       <GoToButton
-                        path="/$id/app/licenses"
-                        params={{ id: keygen.config.id }}
+                        path="/$accountId/app/licenses"
+                        params={{ accountId: keygen.config.id }}
                         label="View all"
                       />
                     }
@@ -282,8 +282,8 @@ export default function GroupDetails() {
                     label="Users"
                     value={
                       <GoToButton
-                        path="/$id/app/users"
-                        params={{ id: keygen.config.id }}
+                        path="/$accountId/app/users"
+                        params={{ accountId: keygen.config.id }}
                         label="View all"
                       />
                     }
@@ -293,8 +293,8 @@ export default function GroupDetails() {
                     label="Machines"
                     value={
                       <GoToButton
-                        path="/$id/app/machines"
-                        params={{ id: keygen.config.id }}
+                        path="/$accountId/app/machines"
+                        params={{ accountId: keygen.config.id }}
                         label="View all"
                       />
                     }

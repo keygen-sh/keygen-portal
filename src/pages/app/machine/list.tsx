@@ -26,8 +26,8 @@ export default function MachinesList() {
     if (!machine) return
 
     await navigate({
-      to: "/$id/app/machines/$machineId",
-      params: { id: keygen.config.id, machineId: machine.id },
+      to: "/$accountId/app/machines/$id",
+      params: { accountId: keygen.config.id, id: machine.id },
     })
   }
 

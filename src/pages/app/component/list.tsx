@@ -28,8 +28,8 @@ export default function ComponentsList() {
     if (!component) return
 
     await navigate({
-      to: "/$id/app/components/$componentId",
-      params: { id: keygen.config.id, componentId: component.id },
+      to: "/$accountId/app/components/$id",
+      params: { accountId: keygen.config.id, id: component.id },
     })
   }
 

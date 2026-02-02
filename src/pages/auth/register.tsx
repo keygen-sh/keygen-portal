@@ -79,8 +79,8 @@ export default function Register() {
       )
 
       void navigate({
-        to: "/$id/app/dashboard",
-        params: { id: keygen.config.id },
+        to: "/$accountId/app/dashboard",
+        params: { accountId: keygen.config.id },
       })
     } finally {
       setLoading(false)
@@ -189,8 +189,8 @@ export default function Register() {
           }`}
         >
           <Link
-            to="/$id/auth/login"
-            params={{ id: keygen.config.id }}
+            to="/$accountId/auth/login"
+            params={{ accountId: keygen.config.id }}
             className="py-0.5 font-bold"
           >
             Log in

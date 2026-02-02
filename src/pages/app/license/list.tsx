@@ -27,8 +27,8 @@ export default function LicensesList() {
     if (!license) return
 
     await navigate({
-      to: "/$id/app/licenses/$licenseId",
-      params: { id: keygen.config.id, licenseId: license.id },
+      to: "/$accountId/app/licenses/$id",
+      params: { accountId: keygen.config.id, id: license.id },
     })
     setOpen(false)
   }

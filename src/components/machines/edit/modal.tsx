@@ -26,13 +26,13 @@ export default function MachinesEditModal({
   open,
   onOpenChange,
 }: MachinesEditModalProps) {
-  const { machineId } = useParams({ from: "/$id/app/machines/$machineId" })
+  const { id } = useParams({ from: "/$accountId/app/machines/$id" })
   const {
     data: machine,
     isLoading: machineLoading,
     isError: machineError,
-  } = useGetMachine(machineId)
-  const updateMachine = useUpdateMachine(machineId)
+  } = useGetMachine(id)
+  const updateMachine = useUpdateMachine(id)
 
   const handleUpdateMachine = (values: Forms.Machines.UpdateValues) => {
     if (!machine) return

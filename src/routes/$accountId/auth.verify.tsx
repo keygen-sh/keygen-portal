@@ -2,12 +2,12 @@ import { createFileRoute } from "@tanstack/react-router"
 import * as Page from "@/pages/index"
 import * as Guard from "@/guards/index"
 
-export const Route = createFileRoute("/$id/auth/password")({
+export const Route = createFileRoute("/$accountId/auth/verify")({
   component: () => {
     return (
-      <Guard.RequireEmail>
-        <Page.Auth.Password />
-      </Guard.RequireEmail>
+      <Guard.RequirePassword>
+        <Page.Auth.Verify />
+      </Guard.RequirePassword>
     )
   },
 })

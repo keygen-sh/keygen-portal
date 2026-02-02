@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 import * as Page from "@/pages/index"
 
-export const Route = createFileRoute("/$id/app/products")({
+export const Route = createFileRoute("/$accountId/app/products")({
   component: () => <Page.App.Products />,
 })

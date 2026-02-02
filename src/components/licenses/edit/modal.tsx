@@ -26,13 +26,13 @@ export default function LicensesEditModal({
   open,
   onOpenChange,
 }: LicensesEditModalProps) {
-  const { licenseId } = useParams({ from: "/$id/app/licenses/$licenseId" })
+  const { id } = useParams({ from: "/$accountId/app/licenses/$id" })
   const {
     data: license,
     isLoading: licenseLoading,
     isError: licenseError,
-  } = useGetLicense(licenseId)
-  const updateLicense = useUpdateLicense(licenseId)
+  } = useGetLicense(id)
+  const updateLicense = useUpdateLicense(id)
 
   const handleUpdateLicense = (values: Forms.Licenses.UpdateValues) => {
     if (!license) return

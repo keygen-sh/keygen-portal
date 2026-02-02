@@ -33,8 +33,8 @@ export default function Reset() {
   function onSubmitResetPassword() {
     // TODO(cazden) Handle previous password case & auth
     void navigate({
-      to: "/$id/app/dashboard",
-      params: { id: keygen.config.id },
+      to: "/$accountId/app/dashboard",
+      params: { accountId: keygen.config.id },
     })
   }
 

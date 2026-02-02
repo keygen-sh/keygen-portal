@@ -26,15 +26,15 @@ export default function ProcessesEditModal({
   open,
   onOpenChange,
 }: ProcessesEditModalProps) {
-  const { processId } = useParams({
-    from: "/$id/app/processes/$processId",
+  const { id } = useParams({
+    from: "/$accountId/app/processes/$id",
   })
   const {
     data: process,
     isLoading: processLoading,
     isError: processError,
-  } = useGetProcess(processId)
-  const updateProcess = useUpdateProcess(processId)
+  } = useGetProcess(id)
+  const updateProcess = useUpdateProcess(id)
 
   const handleUpdateProcess = (values: Forms.Processes.UpdateValues) => {
     if (!process) return

@@ -28,8 +28,8 @@ export default function ProcessesList() {
     if (!process) return
 
     await navigate({
-      to: "/$id/app/processes/$processId",
-      params: { id: keygen.config.id, processId: process.id },
+      to: "/$accountId/app/processes/$id",
+      params: { accountId: keygen.config.id, id: process.id },
     })
   }
 

@@ -26,15 +26,15 @@ export default function ComponentsEditModal({
   open,
   onOpenChange,
 }: ComponentsEditModalProps) {
-  const { componentId } = useParams({
-    from: "/$id/app/components/$componentId",
+  const { id } = useParams({
+    from: "/$accountId/app/components/$id",
   })
   const {
     data: component,
     isLoading: componentLoading,
     isError: componentError,
-  } = useGetComponent(componentId)
-  const updateComponent = useUpdateComponent(componentId)
+  } = useGetComponent(id)
+  const updateComponent = useUpdateComponent(id)
 
   const handleUpdateComponent = (values: Forms.Components.UpdateValues) => {
     if (!component) return

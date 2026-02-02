@@ -25,8 +25,8 @@ export default function UsersList() {
     if (!user) return
 
     await navigate({
-      to: "/$id/app/users/$userId",
-      params: { id: keygen.config.id, userId: user.id },
+      to: "/$accountId/app/users/$id",
+      params: { accountId: keygen.config.id, id: user.id },
     })
   }
 

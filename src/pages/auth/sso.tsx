@@ -31,8 +31,8 @@ export default function SSO() {
   function onSubmitSSO() {
     // TODO(cazden) Handle SSO
     void navigate({
-      to: "/$id/app/dashboard",
-      params: { id: keygen.config.id },
+      to: "/$accountId/app/dashboard",
+      params: { accountId: keygen.config.id },
     })
   }
 
@@ -85,8 +85,8 @@ export default function SSO() {
           className="text-content-loud"
         >
           <Link
-            to="/$id/auth/register"
-            params={{ id: keygen.config.id }}
+            to="/$accountId/auth/register"
+            params={{ accountId: keygen.config.id }}
             className="text-content-main underline-slide py-0.5 font-bold"
           >
             Create one
@@ -96,7 +96,10 @@ export default function SSO() {
 
       <div className="mt-2 flex w-full justify-center select-none">
         <Button variant="link" size="link" asChild>
-          <Link to="/$id/auth/login" params={{ id: keygen.config.id }}>
+          <Link
+            to="/$accountId/auth/login"
+            params={{ accountId: keygen.config.id }}
+          >
             Use password instead
           </Link>
         </Button>

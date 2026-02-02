@@ -66,16 +66,16 @@ import CollapsibleCard from "@/components/collapsible-card"
 import ConfirmationModal from "@/components/confirmation-modal"
 
 export default function ComponentDetails() {
-  const { componentId } = useParams({
-    from: "/$id/app/components/$componentId",
+  const { id } = useParams({
+    from: "/$accountId/app/components/$id",
   })
   const {
     data: component,
     isLoading: componentLoading,
     isFetching: componentFetching,
     isError: componentError,
-  } = useGetComponent(componentId)
-  const removeComponent = useRemoveComponent(componentId)
+  } = useGetComponent(id)
+  const removeComponent = useRemoveComponent(id)
 
   const machineId = component?.relationships.machine?.data?.id || ""
   const {
@@ -279,10 +279,10 @@ export default function ComponentDetails() {
                         <Skeleton className="h-5 w-32 rounded-sm" />
                       ) : machine ? (
                         <GoToButton
-                          path="/$id/app/machines/$machineId"
+                          path="/$accountId/app/machines/$id"
                           params={{
-                            id: keygen.config.id,
-                            machineId: machine.id,
+                            accountId: keygen.config.id,
+                            id: machine.id,
                           }}
                           label={
                             machine.attributes.name ||
@@ -291,8 +291,8 @@ export default function ComponentDetails() {
                         />
                       ) : (
                         <GoToButton
-                          path="/$id/app/machines"
-                          params={{ id: keygen.config.id }}
+                          path="/$accountId/app/machines"
+                          params={{ accountId: keygen.config.id }}
                           label="View all"
                         />
                       )
@@ -309,10 +309,10 @@ export default function ComponentDetails() {
                         <Skeleton className="h-5 w-32 rounded-sm" />
                       ) : license ? (
                         <GoToButton
-                          path="/$id/app/licenses/$licenseId"
+                          path="/$accountId/app/licenses/$id"
                           params={{
-                            id: keygen.config.id,
-                            licenseId: license.id,
+                            accountId: keygen.config.id,
+                            id: license.id,
                           }}
                           label={
                             license.attributes.name ||
@@ -323,8 +323,8 @@ export default function ComponentDetails() {
                         />
                       ) : (
                         <GoToButton
-                          path="/$id/app/licenses"
-                          params={{ id: keygen.config.id }}
+                          path="/$accountId/app/licenses"
+                          params={{ accountId: keygen.config.id }}
                           label="View all"
                         />
                       )
@@ -341,17 +341,17 @@ export default function ComponentDetails() {
                         <Skeleton className="h-5 w-32 rounded-sm" />
                       ) : product ? (
                         <GoToButton
-                          path="/$id/app/products/$productId"
+                          path="/$accountId/app/products/$id"
                           params={{
-                            id: keygen.config.id,
-                            productId: product.id,
+                            accountId: keygen.config.id,
+                            id: product.id,
                           }}
                           label={product.attributes.name}
                         />
                       ) : (
                         <GoToButton
-                          path="/$id/app/products"
-                          params={{ id: keygen.config.id }}
+                          path="/$accountId/app/products"
+                          params={{ accountId: keygen.config.id }}
                           label="View all"
                         />
                       )

@@ -82,16 +82,16 @@ const ProcessStatusIcons: Record<ProcessStatus, React.ReactNode> = {
 }
 
 export default function ProcessDetails() {
-  const { processId } = useParams({
-    from: "/$id/app/processes/$processId",
+  const { id } = useParams({
+    from: "/$accountId/app/processes/$id",
   })
   const {
     data: process,
     isLoading: processLoading,
     isFetching: processFetching,
     isError: processError,
-  } = useGetProcess(processId)
-  const removeProcess = useRemoveProcess(processId)
+  } = useGetProcess(id)
+  const removeProcess = useRemoveProcess(id)
 
   const machineId = process?.relationships.machine?.data?.id || ""
   const {
@@ -350,10 +350,10 @@ export default function ProcessDetails() {
                         <Skeleton className="h-5 w-32 rounded-sm" />
                       ) : machine ? (
                         <GoToButton
-                          path="/$id/app/machines/$machineId"
+                          path="/$accountId/app/machines/$id"
                           params={{
-                            id: keygen.config.id,
-                            machineId: machine.id,
+                            accountId: keygen.config.id,
+                            id: machine.id,
                           }}
                           label={
                             machine.attributes.name ||
@@ -362,8 +362,8 @@ export default function ProcessDetails() {
                         />
                       ) : (
                         <GoToButton
-                          path="/$id/app/machines"
-                          params={{ id: keygen.config.id }}
+                          path="/$accountId/app/machines"
+                          params={{ accountId: keygen.config.id }}
                           label="View all"
                         />
                       )
@@ -380,10 +380,10 @@ export default function ProcessDetails() {
                         <Skeleton className="h-5 w-32 rounded-sm" />
                       ) : license ? (
                         <GoToButton
-                          path="/$id/app/licenses/$licenseId"
+                          path="/$accountId/app/licenses/$id"
                           params={{
-                            id: keygen.config.id,
-                            licenseId: license.id,
+                            accountId: keygen.config.id,
+                            id: license.id,
                           }}
                           label={
                             license.attributes.name ||
@@ -394,8 +394,8 @@ export default function ProcessDetails() {
                         />
                       ) : (
                         <GoToButton
-                          path="/$id/app/licenses"
-                          params={{ id: keygen.config.id }}
+                          path="/$accountId/app/licenses"
+                          params={{ accountId: keygen.config.id }}
                           label="View all"
                         />
                       )
@@ -412,17 +412,17 @@ export default function ProcessDetails() {
                         <Skeleton className="h-5 w-32 rounded-sm" />
                       ) : product ? (
                         <GoToButton
-                          path="/$id/app/products/$productId"
+                          path="/$accountId/app/products/$id"
                           params={{
-                            id: keygen.config.id,
-                            productId: product.id,
+                            accountId: keygen.config.id,
+                            id: product.id,
                           }}
                           label={product.attributes.name}
                         />
                       ) : (
                         <GoToButton
-                          path="/$id/app/products"
-                          params={{ id: keygen.config.id }}
+                          path="/$accountId/app/products"
+                          params={{ accountId: keygen.config.id }}
                           label="View all"
                         />
                       )

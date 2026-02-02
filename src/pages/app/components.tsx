@@ -6,13 +6,13 @@ import * as Motion from "@/components/motion"
 import * as Page from "@/pages"
 
 export default function Components() {
-  const { componentId } = useParams({ strict: false })
+  const { id } = useParams({ strict: false })
 
-  const view = componentId ? ComponentView.Details : ComponentView.List
+  const view = id ? ComponentView.Details : ComponentView.List
 
   const direction: 1 | -1 = view === ComponentView.Details ? 1 : -1
 
-  const key = view === ComponentView.List ? "list" : `details-${componentId}`
+  const key = view === ComponentView.List ? "list" : `details-${id}`
 
   return (
     <Motion.Slide direction={direction}>

@@ -6,13 +6,13 @@ import * as Motion from "@/components/motion"
 import * as Page from "@/pages"
 
 export default function Policies() {
-  const { policyId } = useParams({ strict: false })
+  const { id } = useParams({ strict: false })
 
-  const view = policyId ? PolicyView.Details : PolicyView.List
+  const view = id ? PolicyView.Details : PolicyView.List
 
   const direction: 1 | -1 = view === PolicyView.Details ? 1 : -1
 
-  const key = view === PolicyView.List ? "list" : `details-${policyId}`
+  const key = view === PolicyView.List ? "list" : `details-${id}`
 
   return (
     <Motion.Slide direction={direction}>

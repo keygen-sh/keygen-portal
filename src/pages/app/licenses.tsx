@@ -6,13 +6,13 @@ import * as Motion from "@/components/motion"
 import * as Page from "@/pages"
 
 export default function Licenses() {
-  const { licenseId } = useParams({ strict: false })
+  const { id } = useParams({ strict: false })
 
-  const view = licenseId ? LicenseView.Details : LicenseView.List
+  const view = id ? LicenseView.Details : LicenseView.List
 
   const direction: 1 | -1 = view === LicenseView.Details ? 1 : -1
 
-  const key = view === LicenseView.List ? "list" : `details-${licenseId}`
+  const key = view === LicenseView.List ? "list" : `details-${id}`
 
   return (
     <Motion.Slide direction={direction}>

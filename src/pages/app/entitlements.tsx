@@ -6,14 +6,13 @@ import * as Motion from "@/components/motion"
 import * as Page from "@/pages"
 
 export default function Entitlements() {
-  const { entitlementId } = useParams({ strict: false })
+  const { id } = useParams({ strict: false })
 
-  const view = entitlementId ? EntitlementView.Details : EntitlementView.List
+  const view = id ? EntitlementView.Details : EntitlementView.List
 
   const direction: 1 | -1 = view === EntitlementView.Details ? 1 : -1
 
-  const key =
-    view === EntitlementView.List ? "list" : `details-${entitlementId}`
+  const key = view === EntitlementView.List ? "list" : `details-${id}`
 
   return (
     <Motion.Slide direction={direction}>

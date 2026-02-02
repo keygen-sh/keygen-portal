@@ -6,13 +6,13 @@ import * as Motion from "@/components/motion"
 import * as Page from "@/pages"
 
 export default function Groups() {
-  const { groupId } = useParams({ strict: false })
+  const { id } = useParams({ strict: false })
 
-  const view = groupId ? GroupView.Details : GroupView.List
+  const view = id ? GroupView.Details : GroupView.List
 
   const direction: 1 | -1 = view === GroupView.Details ? 1 : -1
 
-  const key = view === GroupView.List ? "list" : `details-${groupId}`
+  const key = view === GroupView.List ? "list" : `details-${id}`
 
   return (
     <Motion.Slide direction={direction}>

@@ -6,13 +6,13 @@ import * as Motion from "@/components/motion"
 import * as Page from "@/pages"
 
 export default function Processes() {
-  const { processId } = useParams({ strict: false })
+  const { id } = useParams({ strict: false })
 
-  const view = processId ? ProcessView.Details : ProcessView.List
+  const view = id ? ProcessView.Details : ProcessView.List
 
   const direction: 1 | -1 = view === ProcessView.Details ? 1 : -1
 
-  const key = view === ProcessView.List ? "list" : `details-${processId}`
+  const key = view === ProcessView.List ? "list" : `details-${id}`
 
   return (
     <Motion.Slide direction={direction}>

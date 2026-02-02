@@ -42,7 +42,6 @@ import {
 } from "lucide-react"
 
 import {
-  MockUsers,
   UserAttributeDescriptions,
   UserStatus,
   UserStatusLabels,
@@ -51,8 +50,11 @@ import {
   UserRoleLabels,
 } from "@/types/users"
 
+import { useGetUser, useRemoveUser } from "@/queries/users"
+
 import { useMobile } from "@/hooks/use-mobile"
 
+import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
 
 import * as keygen from "@/keygen"
@@ -77,11 +79,13 @@ const UserStatusIcons: Record<UserStatus, React.ReactNode> = {
 
 export default function UserDetails() {
   const { id } = useParams({ from: "/$accountId/app/users/$id" })
-
-  const user = MockUsers.find((u) => u.id === id)
-  const [userLoading, setUserLoading] = useState(true)
-  const [userFetching, setUserFetching] = useState(true)
-  const userError = false
+  const {
+    data: user,
+    isLoading: userLoading,
+    isFetching: userFetching,
+    isError: userError,
+  } = useGetUser(id)
+  const deleteUser = useRemoveUser(id)
 
   const navigate = useNavigate()
 
@@ -102,20 +106,20 @@ export default function UserDetails() {
     })()
   }, [userError, userFetching, navigate])
 
-  useEffect(() => {
-    setTimeout(() => {
-      setUserLoading(false)
-      setUserFetching(false)
-    }, 300)
-  }, [])
-
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))
   }
 
   const handleDeleteUser = () => {
-    console.log("User deleted.")
-    // TODO(cazden) Implement API call
+    deleteUser.mutate(undefined, {
+      onSuccess: async () => {
+        toast({
+          message: "User deleted",
+          variant: "success",
+        })
+        await navigate({ to: ".." })
+      },
+    })
   }
 
   const handleBanUser = () => {
@@ -544,8 +548,7 @@ export default function UserDetails() {
 
       <Users.Edit.Modal
         open={open.edit}
-        onClose={() => toggleOpen("edit", false)}
-        user={user!}
+        onOpenChange={(value) => toggleOpen("edit", value)}
       />
 
       <ConfirmationModal
@@ -583,7 +586,7 @@ export default function UserDetails() {
         disabled={userLoading}
         onClose={() => toggleOpen("ban", false)}
         onConfirm={handleBanUser}
-        confirmVariant="destructive"
+        variant="destructive"
       />
     </section>
   )

@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { useUserTableColumns } from "@/hooks/use-user-table-columns"
-import { User, MockUsers } from "@/types/users"
+import { useListUsers } from "@/queries/users"
+import { User } from "@/types/users"
 
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
@@ -14,18 +15,11 @@ import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
 
 export default function UsersList() {
-  const [usersLoading, setUsersLoading] = useState(true)
+  const { data: users = [], isLoading: usersLoading } = useListUsers()
   const columns = useUserTableColumns()
   const navigateToResource = useResourceNavigate()
 
   const [open, setOpen] = useState(false)
-
-  // Mock API call
-  useEffect(() => {
-    setTimeout(() => {
-      setUsersLoading(false)
-    }, 300)
-  }, [])
 
   return (
     <section>
@@ -48,7 +42,7 @@ export default function UsersList() {
         <Skeletons.Table />
       ) : (
         <DataTable<User>
-          data={MockUsers}
+          data={users}
           columns={columns}
           hideOnMobile={[
             "attributes.fullName",

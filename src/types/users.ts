@@ -157,4 +157,4 @@ export const InternalRoles: UserRole[] = [
   UserRole.SupportAgent,
 ]
 
-export const MockUsers: User[] = []
+export const AllRoles: UserRole[] = [...ExternalRoles, ...InternalRoles]

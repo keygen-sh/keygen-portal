@@ -13,7 +13,7 @@ import {
 
 import { Text, CurlyBraces } from "lucide-react"
 
-import { MockUsers } from "@/types/users"
+import { useGetUser } from "@/queries/users"
 
 import * as Users from "@/components/users"
 import Metadata from "@/components/metadata"
@@ -32,11 +32,12 @@ export default function AdvancedDialog({
   open,
   onOpenChange,
 }: AdvancedDialogProps) {
-  // TODO: Replace with useGetUser query when available
-  const user = MockUsers.find((u) => u.id === id)
-  const userLoading = false
-  const userFetching = false
-  const userError = !user
+  const {
+    data: user,
+    isLoading: userLoading,
+    isFetching: userFetching,
+    isError: userError,
+  } = useGetUser(id)
 
   const [tab, setTab] = useState<"attributes" | "inspect">("attributes")
 

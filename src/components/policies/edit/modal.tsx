@@ -34,12 +34,12 @@ export default function PoliciesEditModal({
   open,
   onOpenChange,
 }: PoliciesEditModalProps) {
-  const { policyId } = useParams({ from: "/$id/app/policies/$policyId" })
+  const { id } = useParams({ from: "/$accountId/app/policies/$id" })
   const {
     data: policy,
     isLoading: policyLoading,
     isError: policyError,
-  } = useGetPolicy(policyId)
+  } = useGetPolicy(id)
 
   const { data: currentEntitlements = [] } = useListPolicyEntitlements(
     policy?.id ?? "",

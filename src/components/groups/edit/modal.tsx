@@ -26,13 +26,13 @@ export default function GroupsEditModal({
   open,
   onOpenChange,
 }: GroupsEditModalProps) {
-  const { groupId } = useParams({ from: "/$id/app/groups/$groupId" })
+  const { id } = useParams({ from: "/$accountId/app/groups/$id" })
   const {
     data: group,
     isLoading: groupLoading,
     isError: groupError,
-  } = useGetGroup(groupId)
-  const updateGroup = useUpdateGroup(groupId)
+  } = useGetGroup(id)
+  const updateGroup = useUpdateGroup(id)
 
   const handleUpdateGroup = (values: Forms.Groups.UpdateValues) => {
     if (!group) return

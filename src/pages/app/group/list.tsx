@@ -26,8 +26,8 @@ export default function GroupsList() {
     if (!group) return
 
     await navigate({
-      to: "/$id/app/groups/$groupId",
-      params: { id: keygen.config.id, groupId: group.id },
+      to: "/$accountId/app/groups/$id",
+      params: { accountId: keygen.config.id, id: group.id },
     })
   }
 

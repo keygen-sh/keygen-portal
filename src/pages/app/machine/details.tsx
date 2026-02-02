@@ -67,14 +67,14 @@ import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
 
 export default function MachineDetails() {
-  const { machineId } = useParams({ from: "/$id/app/machines/$machineId" })
+  const { id } = useParams({ from: "/$accountId/app/machines/$id" })
   const {
     data: machine,
     isLoading: machineLoading,
     isFetching: machineFetching,
     isError: machineError,
-  } = useGetMachine(machineId)
-  const removeMachine = useRemoveMachine(machineId)
+  } = useGetMachine(id)
+  const removeMachine = useRemoveMachine(id)
 
   const licenseId = machine?.relationships.license?.data?.id || ""
   const {
@@ -401,10 +401,10 @@ export default function MachineDetails() {
                         <Skeleton className="h-5 w-32 rounded-sm" />
                       ) : license ? (
                         <GoToButton
-                          path="/$id/app/licenses/$licenseId"
+                          path="/$accountId/app/licenses/$id"
                           params={{
-                            id: keygen.config.id,
-                            licenseId: license.id,
+                            accountId: keygen.config.id,
+                            id: license.id,
                           }}
                           label={
                             license.attributes.name ||
@@ -415,8 +415,8 @@ export default function MachineDetails() {
                         />
                       ) : (
                         <GoToButton
-                          path="/$id/app/licenses"
-                          params={{ id: keygen.config.id }}
+                          path="/$accountId/app/licenses"
+                          params={{ accountId: keygen.config.id }}
                           label="View all"
                         />
                       )
@@ -433,17 +433,17 @@ export default function MachineDetails() {
                         <Skeleton className="h-5 w-32 rounded-sm" />
                       ) : product ? (
                         <GoToButton
-                          path="/$id/app/products/$productId"
+                          path="/$accountId/app/products/$id"
                           params={{
-                            id: keygen.config.id,
-                            productId: product.id,
+                            accountId: keygen.config.id,
+                            id: product.id,
                           }}
                           label={product.attributes.name}
                         />
                       ) : (
                         <GoToButton
-                          path="/$id/app/products"
-                          params={{ id: keygen.config.id }}
+                          path="/$accountId/app/products"
+                          params={{ accountId: keygen.config.id }}
                           label="View all"
                         />
                       )
@@ -463,10 +463,10 @@ export default function MachineDetails() {
                         <Skeleton className="h-5 w-32 rounded-sm" />
                       ) : group ? (
                         <GoToButton
-                          path="/$id/app/groups/$groupId"
+                          path="/$accountId/app/groups/$id"
                           params={{
-                            id: keygen.config.id,
-                            groupId: group.id,
+                            accountId: keygen.config.id,
+                            id: group.id,
                           }}
                           label={group.attributes.name}
                         />
@@ -481,8 +481,8 @@ export default function MachineDetails() {
                     label="Components"
                     value={
                       <GoToButton
-                        path="/$id/app/components"
-                        params={{ id: keygen.config.id }}
+                        path="/$accountId/app/components"
+                        params={{ accountId: keygen.config.id }}
                         label="View all"
                         disabled // TODO(cazden) Enable when components are implemented
                       />
@@ -493,8 +493,8 @@ export default function MachineDetails() {
                     label="Processes"
                     value={
                       <GoToButton
-                        path="/$id/app/processes"
-                        params={{ id: keygen.config.id }}
+                        path="/$accountId/app/processes"
+                        params={{ accountId: keygen.config.id }}
                         label="View all"
                         disabled // TODO(cazden) Enable when processes are implemented
                       />

@@ -28,8 +28,8 @@ export default function PoliciesList() {
     if (!policy) return
 
     await navigate({
-      to: "/$id/app/policies/$policyId",
-      params: { id: keygen.config.id, policyId: policy.id },
+      to: "/$accountId/app/policies/$id",
+      params: { accountId: keygen.config.id, id: policy.id },
     })
   }
 

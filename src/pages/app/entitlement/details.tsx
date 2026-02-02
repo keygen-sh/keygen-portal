@@ -54,17 +54,17 @@ import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleCard from "@/components/collapsible-card"
 
 export default function EntitlementDetails() {
-  const { entitlementId } = useParams({
-    from: "/$id/app/entitlements/$entitlementId",
+  const { id } = useParams({
+    from: "/$accountId/app/entitlements/$id",
   })
   const {
     data: entitlement,
     isLoading: entitlementLoading,
     isFetching: entitlementFetching,
     isError: entitlementError,
-  } = useGetEntitlement(entitlementId)
+  } = useGetEntitlement(id)
 
-  const deleteEntitlement = useRemoveEntitlement(entitlementId)
+  const deleteEntitlement = useRemoveEntitlement(id)
 
   const navigate = useNavigate()
 

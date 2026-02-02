@@ -28,8 +28,8 @@ export default function ProductsList() {
     if (!product) return
 
     await navigate({
-      to: "/$id/app/products/$productId",
-      params: { id: keygen.config.id, productId: product.id },
+      to: "/$accountId/app/products/$id",
+      params: { accountId: keygen.config.id, id: product.id },
     })
     setOpen(false)
   }
@@ -65,8 +65,8 @@ export default function ProductsList() {
           ]}
           onRowClick={(p) =>
             navigate({
-              to: "/$id/app/products/$productId",
-              params: { id: keygen.config.id, productId: p.id },
+              to: "/$accountId/app/products/$id",
+              params: { accountId: keygen.config.id, id: p.id },
             })
           }
         />

@@ -90,57 +90,57 @@ const VIEWS_LIST = [
 
 const homeOptions = linkOptions([
   {
-    to: "/$id/app/dashboard",
+    to: "/$accountId/app/dashboard",
     label: "Metrics",
-    params: { id: keygen.config.id },
+    params: { accountId: keygen.config.id },
   },
 ])
 
 const licensingOptions = linkOptions([
   {
-    to: "/$id/app/products",
+    to: "/$accountId/app/products",
     label: "Products",
-    params: { id: keygen.config.id },
+    params: { accountId: keygen.config.id },
   },
   {
-    to: "/$id/app/entitlements",
+    to: "/$accountId/app/entitlements",
     label: "Entitlements",
-    params: { id: keygen.config.id },
+    params: { accountId: keygen.config.id },
   },
   {
-    to: "/$id/app/groups",
+    to: "/$accountId/app/groups",
     label: "Groups",
-    params: { id: keygen.config.id },
+    params: { accountId: keygen.config.id },
   },
   {
-    to: "/$id/app/policies",
+    to: "/$accountId/app/policies",
     label: "Policies",
-    params: { id: keygen.config.id },
+    params: { accountId: keygen.config.id },
   },
   {
-    to: "/$id/app/licenses",
+    to: "/$accountId/app/licenses",
     label: "Licenses",
-    params: { id: keygen.config.id },
+    params: { accountId: keygen.config.id },
   },
   {
-    to: "/$id/app/machines",
+    to: "/$accountId/app/machines",
     label: "Machines",
-    params: { id: keygen.config.id },
+    params: { accountId: keygen.config.id },
   },
   {
-    to: "/$id/app/components",
+    to: "/$accountId/app/components",
     label: "Components",
-    params: { id: keygen.config.id },
+    params: { accountId: keygen.config.id },
   },
   {
-    to: "/$id/app/processes",
+    to: "/$accountId/app/processes",
     label: "Processes",
-    params: { id: keygen.config.id },
+    params: { accountId: keygen.config.id },
   },
   {
-    to: "/$id/app/users",
+    to: "/$accountId/app/users",
     label: "Users",
-    params: { id: keygen.config.id },
+    params: { accountId: keygen.config.id },
   },
 ])
 
@@ -412,8 +412,8 @@ function renderDistribution() {
         <SidebarMenuButton asChild>
           <Link
             disabled={true}
-            to="/$id/app/dashboard"
-            params={{ id: keygen.config.id }}
+            to="/$accountId/app/dashboard"
+            params={{ accountId: keygen.config.id }}
           >
             TO DO
           </Link>
@@ -431,8 +431,8 @@ function renderAutomate() {
         <SidebarMenuButton asChild>
           <Link
             disabled={true}
-            to="/$id/app/dashboard"
-            params={{ id: keygen.config.id }}
+            to="/$accountId/app/dashboard"
+            params={{ accountId: keygen.config.id }}
           >
             TO DO
           </Link>
@@ -450,8 +450,8 @@ function renderWebhooks() {
         <SidebarMenuButton asChild>
           <Link
             disabled={true}
-            to="/$id/app/dashboard"
-            params={{ id: keygen.config.id }}
+            to="/$accountId/app/dashboard"
+            params={{ accountId: keygen.config.id }}
           >
             TO DO
           </Link>
@@ -469,8 +469,8 @@ function renderAccess() {
         <SidebarMenuButton asChild>
           <Link
             disabled={true}
-            to="/$id/app/dashboard"
-            params={{ id: keygen.config.id }}
+            to="/$accountId/app/dashboard"
+            params={{ accountId: keygen.config.id }}
           >
             TO DO
           </Link>
@@ -488,8 +488,8 @@ function renderSecurity() {
         <SidebarMenuButton asChild>
           <Link
             disabled={true}
-            to="/$id/app/dashboard"
-            params={{ id: keygen.config.id }}
+            to="/$accountId/app/dashboard"
+            params={{ accountId: keygen.config.id }}
           >
             TO DO
           </Link>

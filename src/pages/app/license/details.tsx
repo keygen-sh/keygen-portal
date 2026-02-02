@@ -102,15 +102,15 @@ const LicenseStatusIcons: Record<LicenseStatus, React.ReactNode> = {
 }
 
 export default function LicenseDetails() {
-  const { licenseId } = useParams({ from: "/$id/app/licenses/$licenseId" })
+  const { id } = useParams({ from: "/$accountId/app/licenses/$id" })
 
   const {
     data: license,
     isLoading: licenseLoading,
     isFetching: licenseFetching,
     isError: licenseError,
-  } = useGetLicense(licenseId)
-  const removeLicense = useRemoveLicense(licenseId)
+  } = useGetLicense(id)
+  const removeLicense = useRemoveLicense(id)
 
   const policyId = license?.relationships.policy?.data?.id || ""
   const {
@@ -422,10 +422,10 @@ export default function LicenseDetails() {
                           <Skeleton className="h-5 w-32 rounded-sm" />
                         ) : product ? (
                           <GoToButton
-                            path="/$id/app/products/$productId"
+                            path="/$accountId/app/products/$id"
                             params={{
-                              id: keygen.config.id,
-                              productId: product.id,
+                              accountId: keygen.config.id,
+                              id: product.id,
                             }}
                             label={product.attributes.name}
                           />
@@ -446,10 +446,10 @@ export default function LicenseDetails() {
                           <Skeleton className="h-5 w-32 rounded-sm" />
                         ) : policy ? (
                           <GoToButton
-                            path="/$id/app/policies/$policyId"
+                            path="/$accountId/app/policies/$id"
                             params={{
-                              id: keygen.config.id,
-                              policyId: policy.id,
+                              accountId: keygen.config.id,
+                              id: policy.id,
                             }}
                             label={policy.attributes.name}
                           />

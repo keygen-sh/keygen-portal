@@ -84,14 +84,14 @@ import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
 
 export default function PolicyDetails() {
-  const { policyId } = useParams({ from: "/$id/app/policies/$policyId" })
+  const { id } = useParams({ from: "/$accountId/app/policies/$id" })
   const {
     data: policy,
     isLoading: policyLoading,
     isFetching: policyFetching,
     isError: policyError,
-  } = useGetPolicy(policyId)
-  const deletePolicy = useRemovePolicy(policyId)
+  } = useGetPolicy(id)
+  const deletePolicy = useRemovePolicy(id)
 
   const productId = policy?.relationships.product?.data?.id || ""
   const {
@@ -106,7 +106,7 @@ export default function PolicyDetails() {
     isLoading: entitlementsLoading,
     isFetching: entitlementsFetching,
     isError: entitlementsError,
-  } = useListPolicyEntitlements(policyId)
+  } = useListPolicyEntitlements(id)
 
   const navigate = useNavigate()
 
@@ -315,10 +315,10 @@ export default function PolicyDetails() {
                 <span>Product:</span>
                 {product ? (
                   <GoToButton
-                    path="/$id/app/products/$productId"
+                    path="/$accountId/app/products/$id"
                     params={{
-                      id: keygen.config.id,
-                      productId: product.id,
+                      accountId: keygen.config.id,
+                      id: product.id,
                     }}
                     label={product.attributes.name}
                     className="ml-3"
@@ -393,10 +393,10 @@ export default function PolicyDetails() {
                       <div key={entitlement.id} className="space-y-1.5">
                         <div className="flex items-center justify-between">
                           <GoToButton
-                            path="/$id/app/entitlements/$entitlementId"
+                            path="/$accountId/app/entitlements/$id"
                             params={{
-                              id: keygen.config.id,
-                              entitlementId: entitlement.id,
+                              accountId: keygen.config.id,
+                              id: entitlement.id,
                             }}
                             label={entitlement.attributes.name}
                           />
@@ -433,10 +433,10 @@ export default function PolicyDetails() {
                           <Skeleton className="h-5 w-32 rounded-sm" />
                         ) : product ? (
                           <GoToButton
-                            path="/$id/app/products/$productId"
+                            path="/$accountId/app/products/$id"
                             params={{
-                              id: keygen.config.id,
-                              productId: product.id,
+                              accountId: keygen.config.id,
+                              id: product.id,
                             }}
                             label={product.attributes.name}
                           />

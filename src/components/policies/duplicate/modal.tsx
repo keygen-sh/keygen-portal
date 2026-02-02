@@ -27,14 +27,14 @@ export default function PoliciesDuplicateModal({
   open,
   onOpenChange,
 }: PoliciesDuplicateModalProps) {
-  const { policyId } = useParams({ from: "/$id/app/policies/$policyId" })
+  const { id } = useParams({ from: "/$accountId/app/policies/$id" })
   const {
     data: policy,
     isLoading: policyLoading,
     isError: policyError,
-  } = useGetPolicy(policyId)
+  } = useGetPolicy(id)
 
-  const { data: entitlements = [] } = useListPolicyEntitlements(policyId)
+  const { data: entitlements = [] } = useListPolicyEntitlements(id)
 
   const createPolicy = useCreatePolicy()
   const navigate = useNavigate()
@@ -48,10 +48,10 @@ export default function PoliciesDuplicateModal({
         onOpenChange(false)
 
         await navigate({
-          to: "/$id/app/policies/$policyId",
+          to: "/$accountId/app/policies/$id",
           params: {
-            id: keygen.config.id,
-            policyId: created.id,
+            accountId: keygen.config.id,
+            id: created.id,
           },
         })
       },

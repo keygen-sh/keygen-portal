@@ -60,14 +60,9 @@ import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
 
 export default function ProductDetails() {
-  const { productId } = useParams({ from: "/$id/app/products/$productId" })
-  const {
-    data: product,
-    isLoading,
-    isFetching,
-    isError,
-  } = useGetProduct(productId)
-  const deleteProduct = useRemoveProduct(productId)
+  const { id } = useParams({ from: "/$accountId/app/products/$id" })
+  const { data: product, isLoading, isFetching, isError } = useGetProduct(id)
+  const deleteProduct = useRemoveProduct(id)
 
   const navigate = useNavigate()
 

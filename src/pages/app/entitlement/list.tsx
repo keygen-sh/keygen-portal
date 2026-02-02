@@ -29,8 +29,8 @@ export default function EntitlementsList() {
     if (!entitlement) return
 
     await navigate({
-      to: "/$id/app/entitlements/$entitlementId",
-      params: { id: keygen.config.id, entitlementId: entitlement.id },
+      to: "/$accountId/app/entitlements/$id",
+      params: { accountId: keygen.config.id, id: entitlement.id },
     })
   }
 

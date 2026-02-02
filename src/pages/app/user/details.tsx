@@ -76,9 +76,9 @@ const UserStatusIcons: Record<UserStatus, React.ReactNode> = {
 }
 
 export default function UserDetails() {
-  const { userId } = useParams({ from: "/$id/app/users/$userId" })
+  const { id } = useParams({ from: "/$accountId/app/users/$id" })
 
-  const user = MockUsers.find((u) => u.id === userId)
+  const user = MockUsers.find((u) => u.id === id)
   const [userLoading, setUserLoading] = useState(true)
   const [userFetching, setUserFetching] = useState(true)
   const userError = false
@@ -370,10 +370,10 @@ export default function UserDetails() {
                     value={
                       user.relationships.group?.data ? (
                         <GoToButton
-                          path="/$id/app/groups/$groupId"
+                          path="/$accountId/app/groups/$id"
                           params={{
-                            id: keygen.config.id,
-                            groupId: user.relationships.group.data.id,
+                            accountId: keygen.config.id,
+                            id: user.relationships.group.data.id,
                           }}
                           label="View"
                         />
@@ -387,8 +387,8 @@ export default function UserDetails() {
                     label="Licenses"
                     value={
                       <GoToButton
-                        path="/$id/app/licenses"
-                        params={{ id: keygen.config.id }}
+                        path="/$accountId/app/licenses"
+                        params={{ accountId: keygen.config.id }}
                         label="View all"
                       />
                     }
@@ -398,8 +398,8 @@ export default function UserDetails() {
                     label="Machines"
                     value={
                       <GoToButton
-                        path="/$id/app/machines"
-                        params={{ id: keygen.config.id }}
+                        path="/$accountId/app/machines"
+                        params={{ accountId: keygen.config.id }}
                         label="View all"
                       />
                     }

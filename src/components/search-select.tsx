@@ -43,8 +43,8 @@ const resourceConfigs: Record<ResourceType, ResourceConfig> = {
       <span className="flex items-center gap-2">
         No licenses found.
         <GoToButton
-          path="/$id/app/licenses"
-          params={{ id: keygen.config.id }}
+          path="/$accountId/app/licenses"
+          params={{ accountId: keygen.config.id }}
           label="View licenses"
         />
       </span>
@@ -58,8 +58,8 @@ const resourceConfigs: Record<ResourceType, ResourceConfig> = {
       <span className="flex items-center gap-2">
         No groups found.
         <GoToButton
-          path="/$id/app/groups"
-          params={{ id: keygen.config.id }}
+          path="/$accountId/app/groups"
+          params={{ accountId: keygen.config.id }}
           label="View groups"
         />
       </span>
@@ -74,8 +74,8 @@ const resourceConfigs: Record<ResourceType, ResourceConfig> = {
       <span className="flex items-center gap-2">
         No users found.
         {/* <GoToButton
-          path="/$id/app/users"
-          params={{ id: keygen.config.id }}
+          path="/$accountId/app/users"
+          params={{ accountId: keygen.config.id }}
           label="View users"
         /> */}
       </span>
@@ -89,8 +89,8 @@ const resourceConfigs: Record<ResourceType, ResourceConfig> = {
       <span className="flex items-center gap-2">
         No machines found.
         <GoToButton
-          path="/$id/app/machines"
-          params={{ id: keygen.config.id }}
+          path="/$accountId/app/machines"
+          params={{ accountId: keygen.config.id }}
           label="View machines"
         />
       </span>

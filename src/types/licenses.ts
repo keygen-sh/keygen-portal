@@ -1,4 +1,5 @@
 import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
+import { Writable } from "@/types/utility"
 
 export enum LicenseErrorCode {
   KeyTaken = "KEY_TAKEN",
@@ -85,7 +86,7 @@ export type LicenseResponse = APIResponse<License>
 export type LicenseListResponse = APIResponse<License[]>
 
 export const LicenseAttributeDescriptions: Readonly<
-  Record<keyof Omit<LicenseAttributes, "created" | "updated">, string>
+  Record<keyof Writable<LicenseAttributes>, string>
 > = {
   name: "A distinguishing label for the license.",
   key: "The unique license key.",
@@ -124,7 +125,7 @@ export const LicenseAttributeDescriptions: Readonly<
 } as const
 
 export const LicenseFormFieldDescriptions: Readonly<
-  typeof LicenseAttributeDescriptions
+  typeof LicenseAttributeDescriptions & { policy: string }
 > = {
   ...LicenseAttributeDescriptions,
   key: "The unique license key. Key will be auto-generated if left blank.",
@@ -135,7 +136,18 @@ export const LicenseFormFieldDescriptions: Readonly<
   maxUsers: "Override the policy's max users limit for this license.",
   maxCores: "Override the policy's max cores limit for this license.",
   maxUses: "Override the policy's max uses limit for this license.",
+  policy: "The policy to implement for this license.",
 }
+
+export const LicenseCreateFormFieldDescriptions: typeof LicenseFormFieldDescriptions =
+  {
+    ...LicenseFormFieldDescriptions,
+  }
+
+export const LicenseEditFormFieldDescriptions: typeof LicenseFormFieldDescriptions =
+  {
+    ...LicenseFormFieldDescriptions,
+  }
 
 export const LicenseDisabledFormFieldDescriptions: Readonly<
   Partial<Record<keyof LicenseAttributes, string>>

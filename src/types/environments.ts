@@ -1,4 +1,5 @@
 import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
+import { Writable } from "@/types/utility"
 
 export enum EnvironmentErrorCode {
   CodeTaken = "CODE_TAKEN",
@@ -42,13 +43,28 @@ export type EnvironmentResponse = APIResponse<Environment>
 export type EnvironmentsListResponse = APIResponse<Environment[]>
 
 export const EnvironmentAttributeDescriptions: Readonly<
-  Record<keyof Omit<EnvironmentAttributes, "created" | "updated">, string>
+  Record<keyof Writable<EnvironmentAttributes>, string>
 > = {
   name: "Environment name.",
   code: "The unique code for the environment. The code cannot collide with any environments that already exist.",
   isolationStrategy:
     "The isolation strategy used for isolating the environment from other environments.",
 } as const
+
+export const EnvironmentFormFieldDescriptions: typeof EnvironmentAttributeDescriptions =
+  {
+    ...EnvironmentAttributeDescriptions,
+  }
+
+export const EnvironmentCreateFormFieldDescriptions: typeof EnvironmentFormFieldDescriptions =
+  {
+    ...EnvironmentFormFieldDescriptions,
+  }
+
+export const EnvironmentEditFormFieldDescriptions: typeof EnvironmentFormFieldDescriptions =
+  {
+    ...EnvironmentFormFieldDescriptions,
+  }
 
 export const IsolationStrategyDescriptions: Readonly<
   Record<IsolationStrategy, string>

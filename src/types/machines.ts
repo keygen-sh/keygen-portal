@@ -1,4 +1,5 @@
 import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
+import { Writable } from "@/types/utility"
 
 export enum MachineErrorCode {
   MachineLimitExceeded = "MACHINE_LIMIT_EXCEEDED",
@@ -76,7 +77,7 @@ export type MachineResponse = APIResponse<Machine>
 export type MachineListResponse = APIResponse<Machine[]>
 
 export const MachineAttributeDescriptions: Readonly<
-  Record<keyof Omit<MachineAttributes, "created" | "updated">, string>
+  Record<keyof Writable<MachineAttributes>, string>
 > = {
   fingerprint: "The unique fingerprint of the machine.",
   name: "The human-readable name of the machine.",
@@ -104,11 +105,28 @@ export const MachineAttributeDescriptions: Readonly<
 } as const
 
 export const MachineFormFieldDescriptions: Readonly<
-  Record<keyof Omit<MachineAttributes, "created" | "updated">, string>
+  typeof MachineAttributeDescriptions & {
+    license: string
+    group: string
+    owner: string
+  }
 > = {
   ...MachineAttributeDescriptions,
   fingerprint:
     "This can be an arbitrary string, but must be unique within the scope of the license it belongs to.",
+  license: "The license that the machine is for.",
+  group: "The group the machine belongs to.",
+  owner: "The user that owns the machine.",
 }
+
+export const MachineCreateFormFieldDescriptions: typeof MachineFormFieldDescriptions =
+  {
+    ...MachineFormFieldDescriptions,
+  }
+
+export const MachineEditFormFieldDescriptions: typeof MachineFormFieldDescriptions =
+  {
+    ...MachineFormFieldDescriptions,
+  }
 
 export const MockMachines: Machine[] = []

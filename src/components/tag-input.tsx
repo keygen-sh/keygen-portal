@@ -23,6 +23,7 @@ interface TagInputProps {
   placeholder?: string
   delimiters?: string[]
   disabled?: boolean
+  autoFocus?: boolean
   className?: string
 }
 
@@ -32,6 +33,7 @@ export default function TagInput({
   placeholder = "Add item...",
   delimiters = ["Enter", "Tab", ","],
   disabled,
+  autoFocus,
   className,
 }: TagInputProps) {
   const { watch, setValue } = useFormContext()
@@ -117,6 +119,7 @@ export default function TagInput({
             ref={inputRef}
             value={draft}
             disabled={disabled}
+            autoFocus={autoFocus}
             placeholder={tags.length ? "" : placeholder}
             fieldSize={"sm"}
             className="h-5 flex-1 border-none"

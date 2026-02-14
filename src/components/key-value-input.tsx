@@ -16,6 +16,7 @@ interface KeyValueInputProps<TFormValues extends FieldValues> {
   keyPlaceholder?: string
   valuePlaceholder?: string
   disabled?: boolean
+  autoFocus?: boolean
   className?: string
 }
 
@@ -27,6 +28,7 @@ export default function KeyValueInput<
   keyPlaceholder = "Key",
   valuePlaceholder = "Value",
   disabled,
+  autoFocus,
   className,
 }: KeyValueInputProps<TFormValues>): React.ReactElement {
   const { field } = useController<TFormValues, FieldPath<TFormValues>>({ name })
@@ -152,6 +154,7 @@ export default function KeyValueInput<
             type="button"
             variant="ghost"
             onClick={addRow}
+            autoFocus={autoFocus}
             disabled={!canAdd || disabled}
             className="text-content-muted"
           >

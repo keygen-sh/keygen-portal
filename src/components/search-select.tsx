@@ -119,6 +119,7 @@ interface SearchSelectProps<T extends BaseOption> {
   allowClear?: boolean
   clearLabel?: string
   invalid?: boolean
+  autoFocus?: boolean
   truncate?: TruncateStyle
   truncateLength?: number
   className?: string
@@ -135,6 +136,7 @@ export default function SearchSelect<T extends BaseOption>({
   allowClear = true,
   clearLabel = "Clear",
   invalid = false,
+  autoFocus,
   truncate,
   truncateLength = 36,
   className,
@@ -193,6 +195,7 @@ export default function SearchSelect<T extends BaseOption>({
       variant="outline"
       role="combobox"
       aria-expanded={open}
+      autoFocus={autoFocus}
       className={cn(
         "w-full justify-between font-normal",
         !displayLabel && "text-content-subdued",

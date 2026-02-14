@@ -24,6 +24,7 @@ type NullableSelectProps<T extends string> = {
   className?: string
   disabled?: boolean
   disabledTooltip?: string
+  autoFocus?: boolean
   children: React.ReactNode
 }
 
@@ -36,6 +37,7 @@ export default function NullableSelect<T extends string>({
   className,
   disabled = false,
   disabledTooltip,
+  autoFocus,
   children,
 }: NullableSelectProps<T>): React.ReactElement {
   const rendered = (value ?? "") as string
@@ -44,6 +46,7 @@ export default function NullableSelect<T extends string>({
     <SelectTrigger
       className={cn("w-full", invalid && "border-destructive!", className)}
       disabled={disabled}
+      autoFocus={autoFocus}
     >
       <SelectValue placeholder={placeholder} />
     </SelectTrigger>

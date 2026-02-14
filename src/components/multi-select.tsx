@@ -27,6 +27,7 @@ interface MultiSelectProps {
   wildcard?: string
   placeholder?: string
   disabled?: boolean
+  autoFocus?: boolean
   className?: string
 }
 
@@ -37,6 +38,7 @@ export default function MultiSelect({
   wildcard,
   placeholder = "Choose...",
   disabled,
+  autoFocus,
   className,
 }: MultiSelectProps) {
   const selected = value ?? []
@@ -127,6 +129,7 @@ export default function MultiSelect({
               ref={inputRef}
               value={query}
               disabled={disabled}
+              autoFocus={autoFocus}
               placeholder={selected.length ? "" : placeholder}
               fieldSize="sm"
               className="h-5 flex-1 border-none"

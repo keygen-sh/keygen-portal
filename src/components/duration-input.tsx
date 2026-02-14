@@ -120,6 +120,7 @@ interface DurationInputProps {
   units?: Array<Unit["key"]>
   presets?: Preset[]
   disabled?: boolean
+  autoFocus?: boolean
   className?: string
 }
 
@@ -129,6 +130,7 @@ export default function DurationInput({
   units,
   presets,
   disabled,
+  autoFocus,
   className,
 }: DurationInputProps): React.ReactElement {
   const availableUnits = useMemo(() => {
@@ -230,6 +232,7 @@ export default function DurationInput({
             onFocus={() => setPresetsOpen(true)}
             onChange={onNumberChange}
             disabled={disabled}
+            autoFocus={autoFocus}
             className="rounded-r-none"
           />
         </PopoverPrimitive.Anchor>

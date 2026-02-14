@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { useMachineTableColumns } from "@/hooks/use-machine-table-columns"
 import { useListMachines } from "@/queries/machines"
@@ -24,19 +23,16 @@ export default function MachinesList() {
   return (
     <section>
       <PageHeader title="Machines">
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" disabled={machinesLoading}>
-              New Machine
-            </Button>
-          </DialogTrigger>
-
-          <Machines.Create.Modal
-            onSelectMachine={(machine) => navigateToResource(machine)}
-            onClose={() => setOpen(false)}
-          />
-        </Dialog>
+        <Button
+          size="sm"
+          disabled={machinesLoading}
+          onClick={() => setOpen(true)}
+        >
+          New Machine
+        </Button>
       </PageHeader>
+
+      <Machines.Form.Create open={open} onOpenChange={setOpen} />
 
       {machinesLoading ? (
         <Skeletons.Table />

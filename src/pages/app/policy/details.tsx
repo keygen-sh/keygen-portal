@@ -684,12 +684,12 @@ export default function PolicyDetails() {
         />
       )}
 
-      <Policies.Edit.Modal
+      <Policies.Form.Edit
         open={open.edit}
         onOpenChange={(value) => toggleOpen("edit", value)}
       />
 
-      <Policies.Duplicate.Modal
+      <Policies.Form.Duplicate
         open={open.duplicate}
         onOpenChange={(value) => toggleOpen("duplicate", value)}
       />

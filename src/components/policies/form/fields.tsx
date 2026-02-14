@@ -1,0 +1,2308 @@
+import { useFormContext, useFieldArray } from "react-hook-form"
+
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Skeleton } from "@/components/ui/skeleton"
+import { SelectItem } from "@/components/ui/select"
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  FormField,
+  FormLabel,
+  FormItem,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form"
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip"
+
+import { X } from "lucide-react"
+
+import { useListProducts } from "@/queries/products"
+import { useListEntitlements } from "@/queries/entitlements"
+
+import * as Schemas from "@/schemas"
+import {
+  PolicyFormFieldDescriptions,
+  PolicyCreateFormFieldDescriptions,
+  PolicyEditFormFieldDescriptions,
+  PolicyOptionLabels,
+  AuthenticationStrategy,
+  ExpirationBasis,
+  ExpirationStrategy,
+  RenewalBasis,
+  TransferStrategy,
+  HeartbeatBasis,
+  HeartbeatCullStrategy,
+  HeartbeatResurrectionStrategy,
+  MachineUniquenessStrategy,
+  MachineMatchingStrategy,
+  ComponentUniquenessStrategy,
+  ComponentMatchingStrategy,
+  OverageStrategy,
+  MachineLeasingStrategy,
+  CheckInInterval,
+  ProcessLeasingStrategy,
+  PolicyMode,
+} from "@/types/policies"
+
+import * as Forms from "@/components/forms"
+import MultiSelect from "@/components/multi-select"
+import KeyValueInput from "@/components/key-value-input"
+import NullableSelect from "@/components/nullable-select"
+import DurationInput, { HeartbeatPresets } from "@/components/duration-input"
+
+type FieldVariant = "row" | "stacking" | "inline" | "none"
+type Descriptions = typeof PolicyFormFieldDescriptions
+
+interface PoliciesFormFieldsProps {
+  include?: Schemas.Policies.FieldNames[]
+  exclude?: Schemas.Policies.FieldNames[]
+  autoFocus?: Schemas.Policies.FieldNames
+  titleVariant?: boolean
+  fieldVariant?: FieldVariant
+  mode?: PolicyMode
+  schema?: "create" | "edit"
+}
+
+const DefaultFieldSort: Schemas.Policies.FieldNames[] = [
+  "authenticationStrategy",
+  "checkInInterval",
+  "checkInIntervalCount",
+  "componentMatchingStrategy",
+  "componentUniquenessStrategy",
+  "duration",
+  "entitlements.attach",
+  "entitlements.create",
+  "expirationBasis",
+  "expirationStrategy",
+  "floating",
+  "heartbeatBasis",
+  "heartbeatCullStrategy",
+  "heartbeatDuration",
+  "heartbeatResurrectionStrategy",
+  "machineLeasingStrategy",
+  "machineMatchingStrategy",
+  "machineUniquenessStrategy",
+  "maxCores",
+  "maxMachines",
+  "maxProcesses",
+  "maxUsers",
+  "maxUses",
+  "metadata",
+  "name",
+  "overageStrategy",
+  "processLeasingStrategy",
+  "product",
+  "protected",
+  "renewalBasis",
+  "requireCheckIn",
+  "requireChecksumScope",
+  "requireComponentsScope",
+  "requireFingerprintScope",
+  "requireHeartbeat",
+  "requireMachineScope",
+  "requirePolicyScope",
+  "requireProductScope",
+  "requireUserScope",
+  "requireVersionScope",
+  "strict",
+  "transferStrategy",
+  "usePool",
+]
+
+export default function PoliciesFormFields({
+  include,
+  exclude = [],
+  autoFocus,
+  titleVariant,
+  fieldVariant = "row",
+  mode = PolicyMode.Create,
+  schema,
+}: PoliciesFormFieldsProps) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const descriptions =
+    schema === "create"
+      ? PolicyCreateFormFieldDescriptions
+      : schema === "edit"
+        ? PolicyEditFormFieldDescriptions
+        : PolicyFormFieldDescriptions
+
+  const duration = form.watch("duration")
+  const requireHeartbeat = form.watch("requireHeartbeat")
+  const checkInInterval = form.watch("checkInInterval")
+
+  const fieldMap: Record<Schemas.Policies.FieldNames, React.ReactNode> = {
+    authenticationStrategy: (
+      <AuthenticationStrategyField
+        key="authenticationStrategy"
+        autoFocus={autoFocus === "authenticationStrategy"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+      />
+    ),
+    checkInInterval: (
+      <CheckInIntervalField
+        key="checkInInterval"
+        autoFocus={autoFocus === "checkInInterval"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+        mode={mode}
+      />
+    ),
+    checkInIntervalCount: (
+      <CheckInIntervalCountField
+        key="checkInIntervalCount"
+        autoFocus={autoFocus === "checkInIntervalCount"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+        disabled={!checkInInterval}
+      />
+    ),
+    componentMatchingStrategy: (
+      <ComponentMatchingStrategyField
+        key="componentMatchingStrategy"
+        autoFocus={autoFocus === "componentMatchingStrategy"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+      />
+    ),
+    componentUniquenessStrategy: (
+      <ComponentUniquenessStrategyField
+        key="componentUniquenessStrategy"
+        autoFocus={autoFocus === "componentUniquenessStrategy"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+      />
+    ),
+    duration: (
+      <DurationField
+        key="duration"
+        autoFocus={autoFocus === "duration"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+        mode={mode}
+      />
+    ),
+    "entitlements.attach": (
+      <AttachEntitlementsField key="entitlements.attach" />
+    ),
+    "entitlements.create": (
+      <CreateEntitlementsField key="entitlements.create" />
+    ),
+    expirationBasis: (
+      <ExpirationBasisField
+        key="expirationBasis"
+        autoFocus={autoFocus === "expirationBasis"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+        disabled={!duration}
+      />
+    ),
+    expirationStrategy: (
+      <ExpirationStrategyField
+        key="expirationStrategy"
+        autoFocus={autoFocus === "expirationStrategy"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+        disabled={!duration}
+      />
+    ),
+    floating: (
+      <FloatingField
+        key="floating"
+        autoFocus={autoFocus === "floating"}
+        descriptions={descriptions}
+      />
+    ),
+    heartbeatBasis: (
+      <HeartbeatBasisField
+        key="heartbeatBasis"
+        autoFocus={autoFocus === "heartbeatBasis"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+        disabled={!requireHeartbeat}
+      />
+    ),
+    heartbeatCullStrategy: (
+      <HeartbeatCullStrategyField
+        key="heartbeatCullStrategy"
+        autoFocus={autoFocus === "heartbeatCullStrategy"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+        disabled={!requireHeartbeat}
+      />
+    ),
+    heartbeatDuration: (
+      <HeartbeatDurationField
+        key="heartbeatDuration"
+        autoFocus={autoFocus === "heartbeatDuration"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+        disabled={!requireHeartbeat}
+      />
+    ),
+    heartbeatResurrectionStrategy: (
+      <HeartbeatResurrectionStrategyField
+        key="heartbeatResurrectionStrategy"
+        autoFocus={autoFocus === "heartbeatResurrectionStrategy"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+        disabled={!requireHeartbeat}
+      />
+    ),
+    machineLeasingStrategy: (
+      <MachineLeasingStrategyField
+        key="machineLeasingStrategy"
+        autoFocus={autoFocus === "machineLeasingStrategy"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+      />
+    ),
+    machineMatchingStrategy: (
+      <MachineMatchingStrategyField
+        key="machineMatchingStrategy"
+        autoFocus={autoFocus === "machineMatchingStrategy"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+      />
+    ),
+    machineUniquenessStrategy: (
+      <MachineUniquenessStrategyField
+        key="machineUniquenessStrategy"
+        autoFocus={autoFocus === "machineUniquenessStrategy"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+      />
+    ),
+    maxCores: (
+      <MaxCoresField
+        key="maxCores"
+        autoFocus={autoFocus === "maxCores"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+      />
+    ),
+    maxMachines: (
+      <MaxMachinesField
+        key="maxMachines"
+        autoFocus={autoFocus === "maxMachines"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+      />
+    ),
+    maxProcesses: (
+      <MaxProcessesField
+        key="maxProcesses"
+        autoFocus={autoFocus === "maxProcesses"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+      />
+    ),
+    maxUsers: (
+      <MaxUsersField
+        key="maxUsers"
+        autoFocus={autoFocus === "maxUsers"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+      />
+    ),
+    maxUses: (
+      <MaxUsesField
+        key="maxUses"
+        autoFocus={autoFocus === "maxUses"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+      />
+    ),
+    metadata: (
+      <MetadataField
+        key="metadata"
+        autoFocus={autoFocus === "metadata"}
+        descriptions={descriptions}
+      />
+    ),
+    name: (
+      <NameField
+        key="name"
+        autoFocus={autoFocus === "name"}
+        titleVariant={titleVariant}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+      />
+    ),
+    overageStrategy: (
+      <OverageStrategyField
+        key="overageStrategy"
+        autoFocus={autoFocus === "overageStrategy"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+      />
+    ),
+    processLeasingStrategy: (
+      <ProcessLeasingStrategyField
+        key="processLeasingStrategy"
+        autoFocus={autoFocus === "processLeasingStrategy"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+      />
+    ),
+    product: (
+      <ProductField
+        key="product"
+        autoFocus={autoFocus === "product"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+      />
+    ),
+    protected: (
+      <ProtectedField
+        key="protected"
+        autoFocus={autoFocus === "protected"}
+        descriptions={descriptions}
+      />
+    ),
+    renewalBasis: (
+      <RenewalBasisField
+        key="renewalBasis"
+        autoFocus={autoFocus === "renewalBasis"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+        disabled={!duration}
+      />
+    ),
+    requireCheckIn: (
+      <RequireCheckInField
+        key="requireCheckIn"
+        autoFocus={autoFocus === "requireCheckIn"}
+        descriptions={descriptions}
+      />
+    ),
+    requireChecksumScope: (
+      <RequireChecksumScopeField
+        key="requireChecksumScope"
+        autoFocus={autoFocus === "requireChecksumScope"}
+        descriptions={descriptions}
+      />
+    ),
+    requireComponentsScope: (
+      <RequireComponentsScopeField
+        key="requireComponentsScope"
+        autoFocus={autoFocus === "requireComponentsScope"}
+        descriptions={descriptions}
+      />
+    ),
+    requireFingerprintScope: (
+      <RequireFingerprintScopeField
+        key="requireFingerprintScope"
+        autoFocus={autoFocus === "requireFingerprintScope"}
+        descriptions={descriptions}
+      />
+    ),
+    requireHeartbeat: (
+      <RequireHeartbeatField
+        key="requireHeartbeat"
+        autoFocus={autoFocus === "requireHeartbeat"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+        mode={mode}
+      />
+    ),
+    requireMachineScope: (
+      <RequireMachineScopeField
+        key="requireMachineScope"
+        autoFocus={autoFocus === "requireMachineScope"}
+        descriptions={descriptions}
+      />
+    ),
+    requirePolicyScope: (
+      <RequirePolicyScopeField
+        key="requirePolicyScope"
+        autoFocus={autoFocus === "requirePolicyScope"}
+        descriptions={descriptions}
+      />
+    ),
+    requireProductScope: (
+      <RequireProductScopeField
+        key="requireProductScope"
+        autoFocus={autoFocus === "requireProductScope"}
+        descriptions={descriptions}
+      />
+    ),
+    requireUserScope: (
+      <RequireUserScopeField
+        key="requireUserScope"
+        autoFocus={autoFocus === "requireUserScope"}
+        descriptions={descriptions}
+      />
+    ),
+    requireVersionScope: (
+      <RequireVersionScopeField
+        key="requireVersionScope"
+        autoFocus={autoFocus === "requireVersionScope"}
+        descriptions={descriptions}
+      />
+    ),
+    strict: (
+      <StrictField
+        key="strict"
+        autoFocus={autoFocus === "strict"}
+        descriptions={descriptions}
+      />
+    ),
+    transferStrategy: (
+      <TransferStrategyField
+        key="transferStrategy"
+        autoFocus={autoFocus === "transferStrategy"}
+        fieldVariant={fieldVariant}
+        descriptions={descriptions}
+        disabled={!duration}
+      />
+    ),
+    usePool: (
+      <UsePoolField
+        key="usePool"
+        autoFocus={autoFocus === "usePool"}
+        descriptions={descriptions}
+      />
+    ),
+  }
+
+  const fields = include
+    ? include
+    : DefaultFieldSort.filter((field) => !exclude.includes(field))
+
+  return <>{fields.map((fieldName) => fieldMap[fieldName])}</>
+}
+
+function NameField({
+  autoFocus,
+  titleVariant,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  titleVariant?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="name"
+      render={({ field }) => (
+        <FormItem>
+          {titleVariant ? (
+            <FormControl>
+              <Input
+                {...field}
+                variant="title"
+                placeholder="Enter policy name..."
+                className="border-none text-xl placeholder:text-content-subdued! md:text-2xl"
+                autoFocus={autoFocus ?? field.value.length === 0}
+                autoComplete="off"
+              />
+            </FormControl>
+          ) : (
+            <Forms.Field.Header
+              label="Policy name"
+              variant={fieldVariant}
+              tooltip={descriptions.name}
+            >
+              <FormControl>
+                <Input
+                  {...field}
+                  placeholder="Enter policy name..."
+                  autoFocus={autoFocus}
+                  autoComplete="off"
+                />
+              </FormControl>
+            </Forms.Field.Header>
+          )}
+          <FormMessage className={titleVariant ? "ml-2" : undefined} />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function ProductField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+  const { data: products = [], isLoading: productsLoading } = useListProducts()
+
+  return (
+    <FormField
+      control={form.control}
+      name="product.id"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Product"
+            variant={fieldVariant}
+            tooltip={descriptions.product}
+          >
+            <Select
+              value={field.value ?? ""}
+              onValueChange={(value) =>
+                field.onChange(value === "" ? undefined : value)
+              }
+              disabled={productsLoading}
+            >
+              <FormControl>
+                <SelectTrigger className="w-full" autoFocus={autoFocus}>
+                  <SelectValue placeholder="Select product..." />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {products.map((product) => (
+                  <SelectItem key={product.id} value={product.id}>
+                    {product.attributes.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function AuthenticationStrategyField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="authenticationStrategy"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Authentication strategy"
+            variant={fieldVariant}
+            tooltip={descriptions.authenticationStrategy}
+          >
+            <Select
+              value={field.value ?? ""}
+              onValueChange={(value) =>
+                field.onChange(value === "" ? null : value)
+              }
+            >
+              <FormControl>
+                <SelectTrigger
+                  className="w-full"
+                  data-invalid={!!fieldState.error}
+                  autoFocus={autoFocus}
+                >
+                  <SelectValue placeholder="Select strategy..." />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {Object.values(AuthenticationStrategy).map((strategy) => (
+                  <SelectItem key={strategy} value={strategy}>
+                    {PolicyOptionLabels.authenticationStrategy[strategy]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function MetadataField({
+  autoFocus,
+  descriptions,
+}: {
+  autoFocus?: boolean
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="metadata"
+      render={() => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Metadata"
+            variant="stacking"
+            tooltip={descriptions.metadata}
+          >
+            <FormControl>
+              <KeyValueInput<Schemas.Policies.AllValues>
+                name="metadata"
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function DurationField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  mode = PolicyMode.Create,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  mode?: PolicyMode
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="duration"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Duration"
+            variant={fieldVariant}
+            tooltip={descriptions.duration}
+          >
+            <FormControl>
+              <DurationInput
+                value={field.value}
+                onChange={(value) => {
+                  field.onChange(value)
+                  if (mode === PolicyMode.Create && value === null) {
+                    form.resetField("expirationStrategy")
+                    form.resetField("expirationBasis")
+                    form.resetField("renewalBasis")
+                    form.resetField("transferStrategy")
+                  }
+                }}
+                units={["unlimited", "days", "weeks", "months", "years"]}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function ExpirationStrategyField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  disabled,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  disabled?: boolean
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="expirationStrategy"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Expiration strategy"
+            variant={fieldVariant}
+            tooltip={descriptions.expirationStrategy}
+          >
+            <NullableSelect<ExpirationStrategy>
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              invalid={!!fieldState.error}
+              disabled={disabled}
+              disabledTooltip="Set a duration to configure this field."
+              autoFocus={autoFocus}
+            >
+              {Object.values(ExpirationStrategy).map((strategy) => (
+                <SelectItem key={strategy} value={strategy}>
+                  {PolicyOptionLabels.expirationStrategy[strategy]}
+                </SelectItem>
+              ))}
+            </NullableSelect>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function ExpirationBasisField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  disabled,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  disabled?: boolean
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="expirationBasis"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Expiration basis"
+            variant={fieldVariant}
+            tooltip={descriptions.expirationBasis}
+          >
+            <NullableSelect<ExpirationBasis>
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              invalid={!!fieldState.error}
+              disabled={disabled}
+              disabledTooltip="Set a duration to configure this field."
+              autoFocus={autoFocus}
+            >
+              {Object.values(ExpirationBasis).map((basis) => (
+                <SelectItem key={basis} value={basis}>
+                  {PolicyOptionLabels.expirationBasis[basis]}
+                </SelectItem>
+              ))}
+            </NullableSelect>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function RenewalBasisField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  disabled,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  disabled?: boolean
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="renewalBasis"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Renewal basis"
+            variant={fieldVariant}
+            tooltip={descriptions.renewalBasis}
+          >
+            <NullableSelect<RenewalBasis>
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              invalid={!!fieldState.error}
+              disabled={disabled}
+              disabledTooltip="Set a duration to configure this field."
+              autoFocus={autoFocus}
+            >
+              {Object.values(RenewalBasis).map((basis) => (
+                <SelectItem key={basis} value={basis}>
+                  {PolicyOptionLabels.renewalBasis[basis]}
+                </SelectItem>
+              ))}
+            </NullableSelect>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function TransferStrategyField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  disabled,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  disabled?: boolean
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="transferStrategy"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Transfer strategy"
+            variant={fieldVariant}
+            tooltip={descriptions.transferStrategy}
+          >
+            <NullableSelect<TransferStrategy>
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              invalid={!!fieldState.error}
+              disabled={disabled}
+              disabledTooltip="Set a duration to configure this field."
+              autoFocus={autoFocus}
+            >
+              {Object.values(TransferStrategy).map((strategy) => (
+                <SelectItem key={strategy} value={strategy}>
+                  {PolicyOptionLabels.transferStrategy[strategy]}
+                </SelectItem>
+              ))}
+            </NullableSelect>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function RequireHeartbeatField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  mode = PolicyMode.Create,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  mode?: PolicyMode
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="requireHeartbeat"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Require heartbeat"
+            variant={fieldVariant}
+            tooltip={descriptions.requireHeartbeat}
+          >
+            <Select
+              value={
+                field.value === undefined ? "" : field.value ? "true" : "false"
+              }
+              onValueChange={(value) => {
+                const newValue = value === "" ? undefined : value === "true"
+                field.onChange(newValue)
+                if (mode === PolicyMode.Create && !newValue) {
+                  form.resetField("heartbeatDuration")
+                  form.resetField("heartbeatCullStrategy")
+                  form.resetField("heartbeatBasis")
+                  form.resetField("heartbeatResurrectionStrategy")
+                }
+              }}
+            >
+              <FormControl>
+                <SelectTrigger className="w-full" autoFocus={autoFocus}>
+                  <SelectValue placeholder="Select one..." />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="true">Enabled</SelectItem>
+                <SelectItem value="false">Disabled</SelectItem>
+              </SelectContent>
+            </Select>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function HeartbeatDurationField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  disabled,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  disabled?: boolean
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="heartbeatDuration"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Heartbeat duration"
+            variant={fieldVariant}
+            tooltip={descriptions.heartbeatDuration}
+          >
+            <FormControl>
+              <DurationInput
+                value={field.value}
+                onChange={field.onChange}
+                units={["seconds", "minutes", "hours", "days"]}
+                presets={HeartbeatPresets}
+                disabled={disabled}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function HeartbeatBasisField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  disabled,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  disabled?: boolean
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="heartbeatBasis"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Heartbeat basis"
+            variant={fieldVariant}
+            tooltip={descriptions.heartbeatBasis}
+          >
+            <NullableSelect<HeartbeatBasis>
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              invalid={!!fieldState.error}
+              disabled={disabled}
+              disabledTooltip="Enable heartbeat to configure this field."
+              autoFocus={autoFocus}
+            >
+              {Object.values(HeartbeatBasis).map((basis) => (
+                <SelectItem key={basis} value={basis}>
+                  {PolicyOptionLabels.heartbeatBasis[basis]}
+                </SelectItem>
+              ))}
+            </NullableSelect>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function HeartbeatCullStrategyField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  disabled,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  disabled?: boolean
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="heartbeatCullStrategy"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Heartbeat cull strategy"
+            variant={fieldVariant}
+            tooltip={descriptions.heartbeatCullStrategy}
+          >
+            <NullableSelect<HeartbeatCullStrategy>
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              invalid={!!fieldState.error}
+              disabled={disabled}
+              disabledTooltip="Enable heartbeat to configure this field."
+              autoFocus={autoFocus}
+            >
+              {Object.values(HeartbeatCullStrategy).map((strategy) => (
+                <SelectItem key={strategy} value={strategy}>
+                  {PolicyOptionLabels.heartbeatCullStrategy[strategy]}
+                </SelectItem>
+              ))}
+            </NullableSelect>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function HeartbeatResurrectionStrategyField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  disabled,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  disabled?: boolean
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="heartbeatResurrectionStrategy"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Heartbeat resurrection strategy"
+            variant={fieldVariant}
+            tooltip={descriptions.heartbeatResurrectionStrategy}
+          >
+            <NullableSelect<HeartbeatResurrectionStrategy>
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              invalid={!!fieldState.error}
+              disabled={disabled}
+              disabledTooltip="Enable heartbeat to configure this field."
+              autoFocus={autoFocus}
+            >
+              {Object.values(HeartbeatResurrectionStrategy).map((strategy) => (
+                <SelectItem key={strategy} value={strategy}>
+                  {PolicyOptionLabels.heartbeatResurrectionStrategy[strategy]}
+                </SelectItem>
+              ))}
+            </NullableSelect>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function MaxMachinesField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="maxMachines"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Max machines"
+            variant={fieldVariant}
+            tooltip={descriptions.maxMachines}
+          >
+            <FormControl>
+              <Input
+                type="number"
+                min={1}
+                placeholder="e.g. 1"
+                {...field}
+                value={field.value ?? ""}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function MachineUniquenessStrategyField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="machineUniquenessStrategy"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Machine uniqueness strategy"
+            variant={fieldVariant}
+            tooltip={descriptions.machineUniquenessStrategy}
+          >
+            <NullableSelect<MachineUniquenessStrategy>
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              invalid={!!fieldState.error}
+              autoFocus={autoFocus}
+            >
+              {Object.values(MachineUniquenessStrategy).map((strategy) => (
+                <SelectItem key={strategy} value={strategy}>
+                  {PolicyOptionLabels.machineUniquenessStrategy[strategy]}
+                </SelectItem>
+              ))}
+            </NullableSelect>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function MachineMatchingStrategyField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="machineMatchingStrategy"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Machine matching strategy"
+            variant={fieldVariant}
+            tooltip={descriptions.machineMatchingStrategy}
+          >
+            <NullableSelect<MachineMatchingStrategy>
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              invalid={!!fieldState.error}
+              autoFocus={autoFocus}
+            >
+              {Object.values(MachineMatchingStrategy).map((strategy) => (
+                <SelectItem key={strategy} value={strategy}>
+                  {PolicyOptionLabels.machineMatchingStrategy[strategy]}
+                </SelectItem>
+              ))}
+            </NullableSelect>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function ComponentUniquenessStrategyField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="componentUniquenessStrategy"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Component uniqueness strategy"
+            variant={fieldVariant}
+            tooltip={descriptions.componentUniquenessStrategy}
+          >
+            <NullableSelect<ComponentUniquenessStrategy>
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              invalid={!!fieldState.error}
+              autoFocus={autoFocus}
+            >
+              {Object.values(ComponentUniquenessStrategy).map((strategy) => (
+                <SelectItem key={strategy} value={strategy}>
+                  {PolicyOptionLabels.componentUniquenessStrategy[strategy]}
+                </SelectItem>
+              ))}
+            </NullableSelect>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function ComponentMatchingStrategyField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="componentMatchingStrategy"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Component matching strategy"
+            variant={fieldVariant}
+            tooltip={descriptions.componentMatchingStrategy}
+          >
+            <NullableSelect<ComponentMatchingStrategy>
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              invalid={!!fieldState.error}
+              autoFocus={autoFocus}
+            >
+              {Object.values(ComponentMatchingStrategy).map((strategy) => (
+                <SelectItem key={strategy} value={strategy}>
+                  {PolicyOptionLabels.componentMatchingStrategy[strategy]}
+                </SelectItem>
+              ))}
+            </NullableSelect>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function OverageStrategyField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="overageStrategy"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Overage strategy"
+            variant={fieldVariant}
+            tooltip={descriptions.overageStrategy}
+          >
+            <NullableSelect<OverageStrategy>
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              invalid={!!fieldState.error}
+              autoFocus={autoFocus}
+            >
+              {Object.values(OverageStrategy).map((strategy) => (
+                <SelectItem key={strategy} value={strategy}>
+                  {PolicyOptionLabels.overageStrategy[strategy]}
+                </SelectItem>
+              ))}
+            </NullableSelect>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function MachineLeasingStrategyField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="machineLeasingStrategy"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Machine leasing strategy"
+            variant={fieldVariant}
+            tooltip={descriptions.machineLeasingStrategy}
+          >
+            <NullableSelect<MachineLeasingStrategy>
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              invalid={!!fieldState.error}
+              autoFocus={autoFocus}
+            >
+              {Object.values(MachineLeasingStrategy).map((strategy) => (
+                <SelectItem key={strategy} value={strategy}>
+                  {PolicyOptionLabels.machineLeasingStrategy[strategy]}
+                </SelectItem>
+              ))}
+            </NullableSelect>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function RequireChecksumScopeField({
+  autoFocus,
+  descriptions,
+}: {
+  autoFocus?: boolean
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="requireChecksumScope"
+      render={({ field }) => (
+        <FormItem className="flex items-center">
+          <Forms.Field.Header
+            label="Require checksum scope"
+            variant="inline"
+            tooltip={descriptions.requireChecksumScope}
+          >
+            <FormControl>
+              <Checkbox
+                id="requireChecksumScope"
+                checked={!!field.value}
+                onCheckedChange={(value) => field.onChange(!!value)}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function RequireComponentsScopeField({
+  autoFocus,
+  descriptions,
+}: {
+  autoFocus?: boolean
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="requireComponentsScope"
+      render={({ field }) => (
+        <FormItem className="flex items-center">
+          <Forms.Field.Header
+            label="Require components scope"
+            variant="inline"
+            tooltip={descriptions.requireComponentsScope}
+          >
+            <FormControl>
+              <Checkbox
+                id="requireComponentsScope"
+                checked={!!field.value}
+                onCheckedChange={(value) => field.onChange(!!value)}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function RequireFingerprintScopeField({
+  autoFocus,
+  descriptions,
+}: {
+  autoFocus?: boolean
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="requireFingerprintScope"
+      render={({ field }) => (
+        <FormItem className="flex items-center">
+          <Forms.Field.Header
+            label="Require fingerprint scope"
+            variant="inline"
+            tooltip={descriptions.requireFingerprintScope}
+          >
+            <FormControl>
+              <Checkbox
+                id="requireFingerprintScope"
+                checked={!!field.value}
+                onCheckedChange={(value) => field.onChange(!!value)}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function RequireMachineScopeField({
+  autoFocus,
+  descriptions,
+}: {
+  autoFocus?: boolean
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="requireMachineScope"
+      render={({ field }) => (
+        <FormItem className="flex items-center">
+          <Forms.Field.Header
+            label="Require machine scope"
+            variant="inline"
+            tooltip={descriptions.requireMachineScope}
+          >
+            <FormControl>
+              <Checkbox
+                id="requireMachineScope"
+                checked={!!field.value}
+                onCheckedChange={(value) => field.onChange(!!value)}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function RequirePolicyScopeField({
+  autoFocus,
+  descriptions,
+}: {
+  autoFocus?: boolean
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="requirePolicyScope"
+      render={({ field }) => (
+        <FormItem className="flex items-center">
+          <Forms.Field.Header
+            label="Require policy scope"
+            variant="inline"
+            tooltip={descriptions.requirePolicyScope}
+          >
+            <FormControl>
+              <Checkbox
+                id="requirePolicyScope"
+                checked={!!field.value}
+                onCheckedChange={(value) => field.onChange(!!value)}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function RequireProductScopeField({
+  autoFocus,
+  descriptions,
+}: {
+  autoFocus?: boolean
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="requireProductScope"
+      render={({ field }) => (
+        <FormItem className="flex items-center">
+          <Forms.Field.Header
+            label="Require product scope"
+            variant="inline"
+            tooltip={descriptions.requireProductScope}
+          >
+            <FormControl>
+              <Checkbox
+                id="requireProductScope"
+                checked={!!field.value}
+                onCheckedChange={(value) => field.onChange(!!value)}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function RequireUserScopeField({
+  autoFocus,
+  descriptions,
+}: {
+  autoFocus?: boolean
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="requireUserScope"
+      render={({ field }) => (
+        <FormItem className="flex items-center">
+          <Forms.Field.Header
+            label="Require user scope"
+            variant="inline"
+            tooltip={descriptions.requireUserScope}
+          >
+            <FormControl>
+              <Checkbox
+                id="requireUserScope"
+                checked={!!field.value}
+                onCheckedChange={(value) => field.onChange(!!value)}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function RequireVersionScopeField({
+  autoFocus,
+  descriptions,
+}: {
+  autoFocus?: boolean
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="requireVersionScope"
+      render={({ field }) => (
+        <FormItem className="flex items-center">
+          <Forms.Field.Header
+            label="Require version scope"
+            variant="inline"
+            tooltip={descriptions.requireVersionScope}
+          >
+            <FormControl>
+              <Checkbox
+                id="requireVersionScope"
+                checked={!!field.value}
+                onCheckedChange={(value) => field.onChange(!!value)}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function MaxProcessesField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="maxProcesses"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Max processes"
+            variant={fieldVariant}
+            tooltip={descriptions.maxProcesses}
+          >
+            <FormControl>
+              <Input
+                type="number"
+                min={1}
+                placeholder="e.g. 1"
+                {...field}
+                value={field.value ?? ""}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function MaxUsersField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="maxUsers"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Max users"
+            variant={fieldVariant}
+            tooltip={descriptions.maxUsers}
+          >
+            <FormControl>
+              <Input
+                type="number"
+                min={1}
+                placeholder="e.g. 1"
+                {...field}
+                value={field.value ?? ""}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function MaxUsesField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="maxUses"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Max uses"
+            variant={fieldVariant}
+            tooltip={descriptions.maxUses}
+          >
+            <FormControl>
+              <Input
+                type="number"
+                min={1}
+                placeholder="e.g. 1"
+                {...field}
+                value={field.value ?? ""}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function MaxCoresField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="maxCores"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Max cores"
+            variant={fieldVariant}
+            tooltip={descriptions.maxCores}
+          >
+            <FormControl>
+              <Input
+                type="number"
+                min={1}
+                placeholder="e.g. 1"
+                {...field}
+                value={field.value ?? ""}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function CheckInIntervalField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  mode = PolicyMode.Create,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  mode?: PolicyMode
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="checkInInterval"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Check-in interval"
+            variant={fieldVariant}
+            tooltip={descriptions.checkInInterval}
+          >
+            <NullableSelect<CheckInInterval>
+              value={field.value}
+              onChange={(value) => {
+                field.onChange(value)
+                if (mode === PolicyMode.Create && value === null) {
+                  form.resetField("checkInIntervalCount")
+                }
+              }}
+              invalid={!!fieldState.error}
+              autoFocus={autoFocus}
+            >
+              {Object.values(CheckInInterval).map((interval) => (
+                <SelectItem key={interval} value={interval}>
+                  {PolicyOptionLabels.checkInInterval[interval]}
+                </SelectItem>
+              ))}
+            </NullableSelect>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function CheckInIntervalCountField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  disabled,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  disabled?: boolean
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="checkInIntervalCount"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Check-in interval count"
+            variant={fieldVariant}
+            tooltip={descriptions.checkInIntervalCount}
+          >
+            <FormControl>
+              {disabled ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span tabIndex={0}>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={365}
+                        placeholder="1 - 365"
+                        {...field}
+                        value={field.value ?? ""}
+                        disabled
+                      />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-80 bg-background-4 text-pretty text-content-muted">
+                    Set a check-in interval to configure this field.
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <Input
+                  type="number"
+                  min={1}
+                  max={365}
+                  placeholder="1 - 365"
+                  {...field}
+                  value={field.value ?? ""}
+                  autoFocus={autoFocus}
+                />
+              )}
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function ProcessLeasingStrategyField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="processLeasingStrategy"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Process leasing strategy"
+            variant={fieldVariant}
+            tooltip={descriptions.processLeasingStrategy}
+          >
+            <NullableSelect<ProcessLeasingStrategy>
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              invalid={!!fieldState.error}
+              autoFocus={autoFocus}
+            >
+              {Object.values(ProcessLeasingStrategy).map((strategy) => (
+                <SelectItem key={strategy} value={strategy}>
+                  {PolicyOptionLabels.processLeasingStrategy[strategy]}
+                </SelectItem>
+              ))}
+            </NullableSelect>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function StrictField({
+  autoFocus,
+  descriptions,
+}: {
+  autoFocus?: boolean
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="strict"
+      render={({ field }) => (
+        <FormItem className="flex items-center">
+          <Forms.Field.Header
+            label="Strict"
+            variant="inline"
+            tooltip={descriptions.strict}
+          >
+            <FormControl>
+              <Checkbox
+                id="strict"
+                checked={!!field.value}
+                onCheckedChange={(value) => field.onChange(!!value)}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function FloatingField({
+  autoFocus,
+  descriptions,
+}: {
+  autoFocus?: boolean
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="floating"
+      render={({ field }) => (
+        <FormItem className="flex items-center">
+          <Forms.Field.Header
+            label="Floating"
+            variant="inline"
+            tooltip={descriptions.floating}
+          >
+            <FormControl>
+              <Checkbox
+                id="floating"
+                checked={!!field.value}
+                onCheckedChange={(value) => field.onChange(!!value)}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function ProtectedField({
+  autoFocus,
+  descriptions,
+}: {
+  autoFocus?: boolean
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="protected"
+      render={({ field }) => (
+        <FormItem className="flex items-center">
+          <Forms.Field.Header
+            label="Protected"
+            variant="inline"
+            tooltip={descriptions.protected}
+          >
+            <FormControl>
+              <Checkbox
+                id="protected"
+                checked={!!field.value}
+                onCheckedChange={(value) => field.onChange(!!value)}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function UsePoolField({
+  autoFocus,
+  descriptions,
+}: {
+  autoFocus?: boolean
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="usePool"
+      render={({ field }) => (
+        <FormItem className="flex items-center">
+          <Forms.Field.Header
+            label="Use pool"
+            variant="inline"
+            tooltip={descriptions.usePool}
+          >
+            <FormControl>
+              <Checkbox
+                id="usePool"
+                checked={!!field.value}
+                onCheckedChange={(value) => field.onChange(!!value)}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function RequireCheckInField({
+  autoFocus,
+  descriptions,
+}: {
+  autoFocus?: boolean
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="requireCheckIn"
+      render={({ field }) => (
+        <FormItem className="flex items-center">
+          <Forms.Field.Header
+            label="Require check-in"
+            variant="inline"
+            tooltip={descriptions.requireCheckIn}
+          >
+            <FormControl>
+              <Checkbox
+                id="requireCheckIn"
+                checked={!!field.value}
+                onCheckedChange={(value) => field.onChange(!!value)}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function AttachEntitlementsField() {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+  const { data: entitlements = [], isLoading: entitlementsLoading } =
+    useListEntitlements()
+
+  if (entitlementsLoading) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-48 rounded-sm" />
+        <Skeleton className="h-8 w-3/4" />
+      </div>
+    )
+  }
+
+  return (
+    <FormField
+      control={form.control}
+      name="entitlements.attach"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Attach existing entitlements</FormLabel>
+          <FormControl>
+            <MultiSelect
+              value={field.value ?? []}
+              onChange={field.onChange}
+              options={entitlements.map((e) => ({
+                label: e.attributes.name,
+                value: e.id,
+              }))}
+              placeholder="Search entitlements"
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function CreateEntitlementsField() {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "entitlements.create",
+  })
+
+  return (
+    <div className="mt-4 space-y-3">
+      <FormLabel>Create entitlements</FormLabel>
+      {fields.map((f, i) => (
+        <div key={f.id} className="flex items-start gap-2">
+          <FormField
+            control={form.control}
+            name={`entitlements.create.${i}.name`}
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormControl>
+                  <Input placeholder="Enter name..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name={`entitlements.create.${i}.code`}
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormControl>
+                  <Input placeholder="Enter code..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex items-center">
+            <Button
+              size="icon"
+              type="button"
+              variant="ghost"
+              onClick={() => remove(i)}
+            >
+              <X className="h-4 w-4 text-content-subdued" />
+            </Button>
+          </div>
+        </div>
+      ))}
+      <Button
+        size="sm"
+        type="button"
+        variant="ghost"
+        onClick={() => append({ name: "", code: "" })}
+        className="text-content-muted"
+      >
+        + New entitlement
+      </Button>
+    </div>
+  )
+}

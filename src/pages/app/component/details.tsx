@@ -495,7 +495,7 @@ export default function ComponentDetails() {
         </Tabs>
       )}
 
-      <Components.Edit.Modal
+      <Components.Form.Edit
         open={open.edit}
         onOpenChange={(value) => toggleOpen("edit", value)}
       />

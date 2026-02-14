@@ -2,8 +2,11 @@ import { ReactNode } from "react"
 import { AnimatePresence, motion } from "motion/react"
 import { cn } from "@/lib/utils"
 
+type MotionSlideAxis = "x" | "y"
+
 interface MotionSlideProps {
   direction: 1 | -1
+  axis?: MotionSlideAxis
   duration?: number
   offset?: number
   className?: string
@@ -12,6 +15,7 @@ interface MotionSlideProps {
 
 export default function MotionSlide({
   direction,
+  axis = "x",
   duration = 0.25,
   offset = 80,
   className,
@@ -19,17 +23,17 @@ export default function MotionSlide({
 }: MotionSlideProps): React.ReactElement {
   const slide = {
     enter: (d: 1 | -1) => ({
-      x: d * offset,
+      [axis]: d * offset,
       opacity: 0,
       pointerEvents: "none" as const,
     }),
     center: {
-      x: 0,
+      [axis]: 0,
       opacity: 1,
       pointerEvents: "auto" as const,
     },
     exit: (d: 1 | -1) => ({
-      x: d * -offset,
+      [axis]: d * -offset,
       opacity: 0,
       pointerEvents: "none" as const,
     }),

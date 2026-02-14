@@ -891,12 +891,10 @@ export default function LicenseDetails() {
         </Tabs>
       )}
 
-      {license && (
-        <Licenses.Edit.Modal
-          open={open.edit}
-          onOpenChange={(value) => toggleOpen("edit", value)}
-        />
-      )}
+      <Licenses.Form.Edit
+        open={open.edit}
+        onOpenChange={(value) => toggleOpen("edit", value)}
+      />
 
       {license && (
         <ConfirmationModal

@@ -282,10 +282,9 @@ export default function EntitlementDetails() {
         </Tabs>
       )}
 
-      <Entitlements.Edit.Modal
+      <Entitlements.Form.Edit
         open={open.edit}
-        onClose={() => toggleOpen("edit", false)}
-        entitlement={entitlement!}
+        onOpenChange={(value) => toggleOpen("edit", value)}
       />
 
       <ConfirmationModal

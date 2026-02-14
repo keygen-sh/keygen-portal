@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { useComponentTableColumns } from "@/hooks/use-component-table-columns"
 
@@ -26,19 +25,16 @@ export default function ComponentsList() {
   return (
     <section>
       <PageHeader title="Components">
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" disabled={componentsLoading}>
-              New Component
-            </Button>
-          </DialogTrigger>
-
-          <Components.Create.Modal
-            onSelectComponent={(component) => navigateToResource(component)}
-            onClose={() => setOpen(false)}
-          />
-        </Dialog>
+        <Button
+          size="sm"
+          disabled={componentsLoading}
+          onClick={() => setOpen(true)}
+        >
+          New Component
+        </Button>
       </PageHeader>
+
+      <Components.Form.Create open={open} onOpenChange={setOpen} />
 
       {componentsLoading ? (
         <Skeletons.Table />

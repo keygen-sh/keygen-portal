@@ -566,7 +566,7 @@ export default function ProcessDetails() {
         </Tabs>
       )}
 
-      <Processes.Edit.Modal
+      <Processes.Form.Edit
         open={open.edit}
         onOpenChange={(value) => toggleOpen("edit", value)}
       />

@@ -384,10 +384,9 @@ export default function ProductDetails() {
         </Tabs>
       )}
 
-      <Products.Edit.Modal
+      <Products.Form.Edit
         open={open.edit}
-        onClose={() => toggleOpen("edit", false)}
-        product={product!}
+        onOpenChange={(value) => toggleOpen("edit", value)}
       />
 
       <ConfirmationModal

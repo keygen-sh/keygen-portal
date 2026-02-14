@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { usePolicyTableColumns } from "@/hooks/use-policy-table-columns"
 
@@ -26,19 +25,15 @@ export default function PoliciesList() {
   return (
     <section>
       <PageHeader title="Policies">
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" disabled={policiesLoading}>
-              New Policy
-            </Button>
-          </DialogTrigger>
+        <Button
+          size="sm"
+          disabled={policiesLoading}
+          onClick={() => setOpen(true)}
+        >
+          New Policy
+        </Button>
 
-          <Policies.Create.Modal
-            onSelectPolicy={(policy) => navigateToResource(policy)}
-            open={open}
-            onClose={() => setOpen(false)}
-          />
-        </Dialog>
+        <Policies.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 
       {policiesLoading ? (

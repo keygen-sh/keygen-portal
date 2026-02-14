@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { useProductTableColumns } from "@/hooks/use-product-table-columns"
 
@@ -26,18 +25,10 @@ export default function ProductsList() {
   return (
     <section>
       <PageHeader title="Products">
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" disabled={isLoading}>
-              New Product
-            </Button>
-          </DialogTrigger>
-
-          <Products.Create.Modal
-            onSelectProduct={(product) => navigateToResource(product)}
-            onClose={() => setOpen(false)}
-          />
-        </Dialog>
+        <Button size="sm" disabled={isLoading} onClick={() => setOpen(true)}>
+          New Product
+        </Button>
+        <Products.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 
       {isLoading ? (

@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { useLicenseTableColumns } from "@/hooks/use-license-table-columns"
 import { License } from "@/types/licenses"
@@ -25,19 +24,16 @@ export default function LicensesList() {
   return (
     <section>
       <PageHeader title="Licenses">
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" disabled={licensesLoading}>
-              New License
-            </Button>
-          </DialogTrigger>
-
-          <Licenses.Create.Modal
-            onSelectLicense={(license) => navigateToResource(license)}
-            onClose={() => setOpen(false)}
-          />
-        </Dialog>
+        <Button
+          size="sm"
+          disabled={licensesLoading}
+          onClick={() => setOpen(true)}
+        >
+          New License
+        </Button>
       </PageHeader>
+
+      <Licenses.Form.Create open={open} onOpenChange={setOpen} />
 
       {licensesLoading ? (
         <Skeletons.Table />

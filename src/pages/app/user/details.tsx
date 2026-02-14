@@ -546,7 +546,7 @@ export default function UserDetails() {
         </Tabs>
       )}
 
-      <Users.Edit.Modal
+      <Users.Form.Edit
         open={open.edit}
         onOpenChange={(value) => toggleOpen("edit", value)}
       />

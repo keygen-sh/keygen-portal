@@ -638,7 +638,7 @@ export default function MachineDetails() {
         </Tabs>
       )}
 
-      <Machines.Edit.Modal
+      <Machines.Form.Edit
         open={open.edit}
         onOpenChange={(value) => toggleOpen("edit", value)}
       />

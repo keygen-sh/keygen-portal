@@ -437,7 +437,7 @@ export default function GroupDetails() {
         </Tabs>
       )}
 
-      <Groups.Edit.Modal
+      <Groups.Form.Edit
         open={open.edit}
         onOpenChange={(value) => toggleOpen("edit", value)}
       />

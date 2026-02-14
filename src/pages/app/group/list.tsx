@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { useGroupTableColumns } from "@/hooks/use-group-table-columns"
 import { useListGroups } from "@/queries/groups"
@@ -24,18 +23,14 @@ export default function GroupsList() {
   return (
     <section>
       <PageHeader title="Groups">
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" disabled={groupsLoading}>
-              New Group
-            </Button>
-          </DialogTrigger>
-
-          <Groups.Create.Modal
-            onSelectGroup={(group) => navigateToResource(group)}
-            onClose={() => setOpen(false)}
-          />
-        </Dialog>
+        <Button
+          size="sm"
+          disabled={groupsLoading}
+          onClick={() => setOpen(true)}
+        >
+          New Group
+        </Button>
+        <Groups.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 
       {groupsLoading ? (

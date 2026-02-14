@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { useEntitlementTableColumns } from "@/hooks/use-entitlement-table-columns"
 
@@ -27,20 +26,14 @@ export default function EntitlementsList() {
   return (
     <section>
       <PageHeader title="Entitlements">
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" disabled={entitlementsLoading}>
-              New Entitlement
-            </Button>
-          </DialogTrigger>
-
-          <Entitlements.Create.Modal
-            onSelectEntitlement={(entitlement) =>
-              navigateToResource(entitlement)
-            }
-            onClose={() => setOpen(false)}
-          />
-        </Dialog>
+        <Button
+          size="sm"
+          disabled={entitlementsLoading}
+          onClick={() => setOpen(true)}
+        >
+          New Entitlement
+        </Button>
+        <Entitlements.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 
       {entitlementsLoading ? (

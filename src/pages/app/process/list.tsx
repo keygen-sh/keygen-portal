@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { useProcessTableColumns } from "@/hooks/use-process-table-columns"
 
@@ -26,19 +25,16 @@ export default function ProcessesList() {
   return (
     <section>
       <PageHeader title="Processes">
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" disabled={processesLoading}>
-              Spawn Process
-            </Button>
-          </DialogTrigger>
-
-          <Processes.Create.Modal
-            onSelectProcess={(process) => navigateToResource(process)}
-            onClose={() => setOpen(false)}
-          />
-        </Dialog>
+        <Button
+          size="sm"
+          disabled={processesLoading}
+          onClick={() => setOpen(true)}
+        >
+          Spawn Process
+        </Button>
       </PageHeader>
+
+      <Processes.Form.Create open={open} onOpenChange={setOpen} />
 
       {processesLoading ? (
         <Skeletons.Table />

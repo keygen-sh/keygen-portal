@@ -5,10 +5,10 @@ import { Dialog, DialogContent } from "@/components/ui/dialog"
 
 import { Environment, EnvironmentMode } from "@/types/environments"
 
-import * as Motion from "@/components/motion"
 import * as View from "@/components/environments/view"
-import * as Edit from "@/components/environments/edit"
-import * as Create from "@/components/environments/create"
+
+import EditEnvironmentForm from "./form/edit"
+import CreateEnvironmentForm from "./form/create"
 
 interface EnvironmentsModalManagerProps {
   open: boolean
@@ -34,35 +34,38 @@ export default function EnvironmentsModalManager({
     setMode(newMode)
   }, [])
 
-  // TODO(cazden) Standardize Motion.Scale usage across modals or remove this case
   return (
     <AnimatePresence mode="wait">
       <Dialog open={open} onOpenChange={onClose}>
         <DialogContent className="flex flex-col justify-between p-0 transition-all duration-300 md:min-w-[700px]">
           {mode === EnvironmentMode.View && (
-            <Motion.Scale key="view">
-              <View.Modal
-                selectedEnvironment={selectedEnvironment}
-                onSelectEnvironment={handleSelectEnvironment}
-                onChangeMode={handleChangeMode}
-              />
-            </Motion.Scale>
+            <View.Modal
+              selectedEnvironment={selectedEnvironment}
+              onSelectEnvironment={handleSelectEnvironment}
+              onChangeMode={handleChangeMode}
+            />
           )}
           {mode === EnvironmentMode.Edit && selectedEnvironment && (
-            <Motion.Scale key="edit">
-              <Edit.Modal
-                selectedEnvironment={selectedEnvironment}
-                onChangeMode={handleChangeMode}
-              />
-            </Motion.Scale>
+            <EditEnvironmentForm
+              environment={selectedEnvironment}
+              open={mode === EnvironmentMode.Edit}
+              onOpenChange={(newOpen) => {
+                if (!newOpen) {
+                  handleSelectEnvironment(null)
+                  handleChangeMode(EnvironmentMode.View)
+                }
+              }}
+            />
           )}
           {mode === EnvironmentMode.Create && (
-            <Motion.Scale key="create">
-              <Create.Modal
-                onSelectEnvironment={handleSelectEnvironment}
-                onChangeMode={handleChangeMode}
-              />
-            </Motion.Scale>
+            <CreateEnvironmentForm
+              open={mode === EnvironmentMode.Create}
+              onOpenChange={(newOpen) => {
+                if (!newOpen) {
+                  handleChangeMode(EnvironmentMode.View)
+                }
+              }}
+            />
           )}
         </DialogContent>
       </Dialog>

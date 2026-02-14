@@ -2,7 +2,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 import { Product } from "@/types/products"
 import { APIError } from "@/types/api"
 
@@ -41,7 +41,7 @@ export function useCreateProduct() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Product, APIError, Forms.Products.CreateValues>({
+  return useMutation<Product, APIError, Schemas.Products.CreateValues>({
     mutationFn: (values) =>
       keygen.products
         .create({ values })
@@ -64,7 +64,7 @@ export function useUpdateProduct(productId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Product, APIError, Forms.Products.UpdateValues>({
+  return useMutation<Product, APIError, Schemas.Products.UpdateValues>({
     mutationFn: (values) =>
       keygen.products.get({ id: productId }).then(async (response) => {
         const current = response.data as Product
@@ -72,7 +72,7 @@ export function useUpdateProduct(productId: string) {
         const changes = diff(
           current.attributes,
           values,
-        ) as Forms.Products.UpdateValues
+        ) as Schemas.Products.UpdateValues
         if (Object.keys(changes).length === 0) return current
 
         const updated = await keygen.products

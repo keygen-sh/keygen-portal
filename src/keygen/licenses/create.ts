@@ -4,12 +4,12 @@ import client from "@/keygen/client"
 import { LicenseResponse } from "@/types/licenses"
 import { compact } from "@/lib/compact"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 
 config.validate()
 
 export default async function create(
-  values: Forms.Licenses.CreateValues,
+  values: Schemas.Licenses.CreateValues,
 ): Promise<LicenseResponse> {
   const { policyId, ...attributes } = values
 

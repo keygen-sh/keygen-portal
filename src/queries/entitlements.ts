@@ -2,7 +2,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
 import { Entitlement } from "@/types/entitlements"
@@ -42,7 +42,7 @@ export function useCreateEntitlement() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Entitlement, APIError, Forms.Entitlements.CreateValues>({
+  return useMutation<Entitlement, APIError, Schemas.Entitlements.CreateValues>({
     mutationFn: async (values) => {
       const response = await keygen.entitlements.create({ values })
 
@@ -72,7 +72,7 @@ export function useUpdateEntitlement(entitlementId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Entitlement, APIError, Forms.Entitlements.UpdateValues>({
+  return useMutation<Entitlement, APIError, Schemas.Entitlements.UpdateValues>({
     mutationFn: (values) =>
       keygen.entitlements.get({ id: entitlementId }).then(async (response) => {
         const current = response.data as Entitlement
@@ -80,7 +80,7 @@ export function useUpdateEntitlement(entitlementId: string) {
         const changes = diff(
           current.attributes,
           values,
-        ) as Forms.Entitlements.UpdateValues
+        ) as Schemas.Entitlements.UpdateValues
         if (Object.keys(changes).length === 0) return current
 
         const updated = await keygen.entitlements

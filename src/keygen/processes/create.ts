@@ -4,12 +4,12 @@ import client from "@/keygen/client"
 import { ProcessResponse } from "@/types/processes"
 import { compact } from "@/lib/compact"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 
 config.validate()
 
 export default async function create(
-  values: Forms.Processes.CreateValues,
+  values: Schemas.Processes.CreateValues,
 ): Promise<ProcessResponse> {
   const { machineId, ...attributes } = values
 

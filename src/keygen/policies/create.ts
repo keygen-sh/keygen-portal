@@ -4,12 +4,12 @@ import client from "@/keygen/client"
 import { PolicyResponse } from "@/types/policies"
 import { compact } from "@/lib/compact"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 
 config.validate()
 
 export default async function create(
-  values: Forms.Policies.CreateValues,
+  values: Schemas.Policies.CreateValues,
 ): Promise<PolicyResponse> {
   const { product, entitlements, ...attributes } = values
   void entitlements

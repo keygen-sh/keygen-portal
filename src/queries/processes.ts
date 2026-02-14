@@ -2,7 +2,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
 import { Process } from "@/types/processes"
@@ -42,7 +42,7 @@ export function useCreateProcess() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Process, APIError, Forms.Processes.CreateValues>({
+  return useMutation<Process, APIError, Schemas.Processes.CreateValues>({
     mutationFn: async (values) => {
       const response = await keygen.processes.create(values)
 
@@ -70,7 +70,7 @@ export function useUpdateProcess(processId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Process, APIError, Forms.Processes.UpdateValues>({
+  return useMutation<Process, APIError, Schemas.Processes.UpdateValues>({
     mutationFn: async (values) => {
       const getResponse = await keygen.processes.get({ id: processId })
 
@@ -85,7 +85,7 @@ export function useUpdateProcess(processId: string) {
           ...current.attributes,
         },
         values,
-      ) as Forms.Processes.UpdateValues
+      ) as Schemas.Processes.UpdateValues
 
       if (Object.keys(changes).length === 0) return current
 

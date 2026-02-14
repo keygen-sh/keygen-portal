@@ -3,13 +3,13 @@ import client from "@/keygen/client"
 
 import { ProcessResponse } from "@/types/processes"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 
 config.validate()
 
 interface UpdateProps {
   id: string
-  values: Forms.Processes.UpdateValues
+  values: Schemas.Processes.UpdateValues
 }
 
 export default async function update({

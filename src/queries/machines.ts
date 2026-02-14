@@ -2,7 +2,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
 import { Machine } from "@/types/machines"
@@ -42,7 +42,7 @@ export function useCreateMachine() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Machine, APIError, Forms.Machines.CreateValues>({
+  return useMutation<Machine, APIError, Schemas.Machines.CreateValues>({
     mutationFn: async (values) => {
       const response = await keygen.machines.create(values)
 
@@ -70,7 +70,7 @@ export function useUpdateMachine(machineId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Machine, APIError, Forms.Machines.UpdateValues>({
+  return useMutation<Machine, APIError, Schemas.Machines.UpdateValues>({
     mutationFn: async (values) => {
       const getResponse = await keygen.machines.get({ id: machineId })
 
@@ -87,7 +87,7 @@ export function useUpdateMachine(machineId: string) {
           ownerId: current.relationships.owner?.data?.id ?? null,
         },
         values,
-      ) as Forms.Machines.UpdateValues
+      ) as Schemas.Machines.UpdateValues
 
       if (Object.keys(changes).length === 0) return current
 

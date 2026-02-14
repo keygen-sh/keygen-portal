@@ -4,12 +4,12 @@ import client from "@/keygen/client"
 import { UserResponse } from "@/types/users"
 import { compact } from "@/lib/compact"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 
 config.validate()
 
 export default async function create(
-  values: Forms.Users.CreateValues,
+  values: Schemas.Users.CreateValues,
 ): Promise<UserResponse> {
   const { groupId, ...attributes } = values
 

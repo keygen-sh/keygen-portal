@@ -4,12 +4,12 @@ import client from "@/keygen/client"
 import { ComponentResponse } from "@/types/components"
 import { compact } from "@/lib/compact"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 
 config.validate()
 
 export default async function create(
-  values: Forms.Components.CreateValues,
+  values: Schemas.Components.CreateValues,
 ): Promise<ComponentResponse> {
   const { machineId, ...attributes } = values
 

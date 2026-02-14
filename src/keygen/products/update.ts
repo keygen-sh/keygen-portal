@@ -1,7 +1,7 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 import { compact } from "@/lib/compact"
 import { ProductResponse } from "@/types/products"
 
@@ -9,7 +9,7 @@ config.validate()
 
 interface UpdateProps {
   id: string
-  values: Forms.Products.UpdateValues
+  values: Schemas.Products.UpdateValues
 }
 
 export default async function update({

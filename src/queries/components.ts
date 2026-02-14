@@ -2,7 +2,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
 import { Component } from "@/types/components"
@@ -42,7 +42,7 @@ export function useCreateComponent() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Component, APIError, Forms.Components.CreateValues>({
+  return useMutation<Component, APIError, Schemas.Components.CreateValues>({
     mutationFn: async (values) => {
       const response = await keygen.components.create(values)
 
@@ -70,7 +70,7 @@ export function useUpdateComponent(componentId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Component, APIError, Forms.Components.UpdateValues>({
+  return useMutation<Component, APIError, Schemas.Components.UpdateValues>({
     mutationFn: async (values) => {
       const getResponse = await keygen.components.get({ id: componentId })
 
@@ -85,7 +85,7 @@ export function useUpdateComponent(componentId: string) {
           ...current.attributes,
         },
         values,
-      ) as Forms.Components.UpdateValues
+      ) as Schemas.Components.UpdateValues
 
       if (Object.keys(changes).length === 0) return current
 

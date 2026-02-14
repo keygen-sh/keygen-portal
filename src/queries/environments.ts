@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 import { Environment } from "@/types/environments"
 import { APIError } from "@/types/api"
 
@@ -29,7 +29,7 @@ export function useListEnvironments() {
 export function useCreateEnvironment() {
   const queryClient = useQueryClient()
 
-  return useMutation<Environment, APIError, Forms.Environments.CreateValues>({
+  return useMutation<Environment, APIError, Schemas.Environments.CreateValues>({
     mutationFn: (values) =>
       keygen.environments
         .create({ values })
@@ -50,7 +50,7 @@ export function useCreateEnvironment() {
 export function useUpdateEnvironment(environmentId: string) {
   const queryClient = useQueryClient()
 
-  return useMutation<Environment, APIError, Forms.Environments.UpdateValues>({
+  return useMutation<Environment, APIError, Schemas.Environments.UpdateValues>({
     mutationFn: (values) =>
       keygen.environments.get({ id: environmentId }).then(async (response) => {
         const current = response.data as Environment
@@ -58,7 +58,7 @@ export function useUpdateEnvironment(environmentId: string) {
         const changes = diff(
           current.attributes,
           values,
-        ) as Forms.Environments.UpdateValues
+        ) as Schemas.Environments.UpdateValues
         if (Object.keys(changes).length === 0) return current
 
         const updated = await keygen.environments

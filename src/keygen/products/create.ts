@@ -1,14 +1,14 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 import { compact } from "@/lib/compact"
 import { ProductResponse } from "@/types/products"
 
 config.validate()
 
 interface CreateProps {
-  values: Forms.Products.CreateValues
+  values: Schemas.Products.CreateValues
 }
 
 export default async function create({

@@ -1,5 +1,5 @@
 import { useState, useRef, useMemo, KeyboardEvent } from "react"
-import { useFormContext } from "react-hook-form"
+import { useFormContext, useWatch } from "react-hook-form"
 
 import { cn } from "@/lib/utils"
 
@@ -36,8 +36,9 @@ export default function TagInput({
   autoFocus,
   className,
 }: TagInputProps) {
-  const { watch, setValue } = useFormContext()
-  const tags = useMemo(() => (watch(name) as string[]) ?? [], [watch, name])
+  const { setValue } = useFormContext()
+  const watchedTags = useWatch({ name }) as string[] | undefined
+  const tags = useMemo(() => watchedTags ?? [], [watchedTags])
 
   const [draft, setDraft] = useState("")
   const [open, setOpen] = useState(false)

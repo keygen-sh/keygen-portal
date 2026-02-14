@@ -108,7 +108,7 @@ export default function FieldHeader({
       <div
         className={cn(
           variant !== "none" && "w-full",
-          variant === "row" && "md:max-w-96 md:min-w-48",
+          variant === "row" && "md:w-48!",
           variant === "inline" && "w-auto",
         )}
       >

@@ -2,7 +2,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
 import { User } from "@/types/users"
@@ -42,7 +42,7 @@ export function useCreateUser() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<User, APIError, Forms.Users.CreateValues>({
+  return useMutation<User, APIError, Schemas.Users.CreateValues>({
     mutationFn: async (values) => {
       const response = await keygen.users.create(values)
 
@@ -70,7 +70,7 @@ export function useUpdateUser(userId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<User, APIError, Forms.Users.UpdateValues>({
+  return useMutation<User, APIError, Schemas.Users.UpdateValues>({
     mutationFn: async (values) => {
       const getResponse = await keygen.users.get({ id: userId })
 
@@ -86,7 +86,7 @@ export function useUpdateUser(userId: string) {
           groupId: current.relationships.group?.data?.id ?? null,
         },
         values,
-      ) as Forms.Users.UpdateValues
+      ) as Schemas.Users.UpdateValues
 
       if (Object.keys(changes).length === 0) return current
 

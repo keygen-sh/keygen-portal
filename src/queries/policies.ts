@@ -2,7 +2,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
 import { Policy } from "@/types/policies"
@@ -41,7 +41,7 @@ export function useListPolicies() {
 export function useCreatePolicy() {
   const queryClient = useQueryClient()
 
-  return useMutation<Policy, APIError, Forms.Policies.CreateValues>({
+  return useMutation<Policy, APIError, Schemas.Policies.CreateValues>({
     mutationFn: async (values) => {
       const response = await keygen.policies.create(values)
       const policy = response.data as Policy
@@ -70,7 +70,7 @@ export function useUpdatePolicy(policyId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Policy, APIError, Forms.Policies.UpdateValues>({
+  return useMutation<Policy, APIError, Schemas.Policies.UpdateValues>({
     mutationFn: (values) =>
       keygen.policies.get({ id: policyId }).then(async (response) => {
         const current = response.data as Policy
@@ -78,7 +78,7 @@ export function useUpdatePolicy(policyId: string) {
         const changes = diff(
           current.attributes,
           values,
-        ) as Forms.Policies.UpdateValues
+        ) as Schemas.Policies.UpdateValues
         if (Object.keys(changes).length === 0) return current
 
         const updated = await keygen.policies

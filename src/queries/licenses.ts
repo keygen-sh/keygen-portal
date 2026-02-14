@@ -2,7 +2,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
 import { License } from "@/types/licenses"
@@ -42,7 +42,7 @@ export function useCreateLicense() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<License, APIError, Forms.Licenses.CreateValues>({
+  return useMutation<License, APIError, Schemas.Licenses.CreateValues>({
     mutationFn: (values) =>
       keygen.licenses
         .create(values)
@@ -65,7 +65,7 @@ export function useUpdateLicense(licenseId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<License, APIError, Forms.Licenses.UpdateValues>({
+  return useMutation<License, APIError, Schemas.Licenses.UpdateValues>({
     mutationFn: (values) =>
       keygen.licenses.get({ id: licenseId }).then(async (response) => {
         const current = response.data as License
@@ -73,7 +73,7 @@ export function useUpdateLicense(licenseId: string) {
         const changes = diff(
           current.attributes,
           values,
-        ) as Forms.Licenses.UpdateValues
+        ) as Schemas.Licenses.UpdateValues
         if (Object.keys(changes).length === 0) return current
 
         const updated = await keygen.licenses

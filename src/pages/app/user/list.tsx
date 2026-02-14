@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 
 import { useUserTableColumns } from "@/hooks/use-user-table-columns"
 import { useListUsers } from "@/queries/users"
@@ -24,19 +23,12 @@ export default function UsersList() {
   return (
     <section>
       <PageHeader title="Users">
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" disabled={usersLoading}>
-              New User
-            </Button>
-          </DialogTrigger>
-
-          <Users.Create.Modal
-            onSelectUser={(user) => navigateToResource(user)}
-            onClose={() => setOpen(false)}
-          />
-        </Dialog>
+        <Button size="sm" disabled={usersLoading} onClick={() => setOpen(true)}>
+          New User
+        </Button>
       </PageHeader>
+
+      <Users.Form.Create open={open} onOpenChange={setOpen} />
 
       {usersLoading ? (
         <Skeletons.Table />

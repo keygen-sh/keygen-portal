@@ -1,14 +1,14 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 import { compact } from "@/lib/compact"
 import { EntitlementResponse } from "@/types/entitlements"
 
 config.validate()
 
 interface CreateProps {
-  values: Forms.Entitlements.CreateValues
+  values: Schemas.Entitlements.CreateValues
 }
 
 export default async function create({

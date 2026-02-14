@@ -3,13 +3,13 @@ import client from "@/keygen/client"
 
 import { UserResponse } from "@/types/users"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 
 config.validate()
 
 interface UpdateProps {
   id: string
-  values: Forms.Users.UpdateValues
+  values: Schemas.Users.UpdateValues
 }
 
 export default async function update({

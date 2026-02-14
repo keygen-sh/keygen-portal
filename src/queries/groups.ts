@@ -2,7 +2,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
-import * as Forms from "@/forms"
+import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
 import { Group } from "@/types/groups"
@@ -44,7 +44,7 @@ export function useCreateGroup() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Group, APIError, Forms.Groups.CreateValues>({
+  return useMutation<Group, APIError, Schemas.Groups.CreateValues>({
     mutationFn: (values) =>
       keygen.groups.create(values).then((response) => response.data as Group),
 
@@ -65,7 +65,7 @@ export function useUpdateGroup(groupId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<Group, APIError, Forms.Groups.UpdateValues>({
+  return useMutation<Group, APIError, Schemas.Groups.UpdateValues>({
     mutationFn: (values) =>
       keygen.groups.get({ id: groupId }).then(async (response) => {
         const current = response.data as Group
@@ -73,7 +73,7 @@ export function useUpdateGroup(groupId: string) {
         const changes = diff(
           current.attributes,
           values,
-        ) as Forms.Groups.UpdateValues
+        ) as Schemas.Groups.UpdateValues
         if (Object.keys(changes).length === 0) return current
 
         const updated = await keygen.groups

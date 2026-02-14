@@ -1,4 +1,5 @@
 import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
+import { Writable } from "@/types/utility"
 
 export enum GroupMode {
   View = "view",
@@ -44,7 +45,7 @@ export type GroupResponse = APIResponse<Group>
 export type GroupListResponse = APIResponse<Group[]>
 
 export const GroupAttributeDescriptions: Readonly<
-  Record<keyof Omit<GroupAttributes, "created" | "updated">, string>
+  Record<keyof Writable<GroupAttributes>, string>
 > = {
   name: "The name of the group.",
   maxUsers: "The maximum number of users that can be in the group.",
@@ -65,3 +66,13 @@ export const GroupFormFieldDescriptions: Readonly<
   maxMachines:
     "The maximum number of machines that can be in the group. Leave empty for unlimited.",
 }
+
+export const GroupCreateFormFieldDescriptions: typeof GroupFormFieldDescriptions =
+  {
+    ...GroupFormFieldDescriptions,
+  }
+
+export const GroupEditFormFieldDescriptions: typeof GroupFormFieldDescriptions =
+  {
+    ...GroupFormFieldDescriptions,
+  }

@@ -1,4 +1,5 @@
 import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
+import { Writable } from "@/types/utility"
 
 export enum UserMode {
   View = "view",
@@ -64,7 +65,7 @@ export type UserResponse = APIResponse<User>
 export type UserListResponse = APIResponse<User[]>
 
 export const UserAttributeDescriptions: Readonly<
-  Record<keyof Omit<UserAttributes, "created" | "updated">, string>
+  Record<keyof Writable<UserAttributes>, string>
 > = {
   fullName: "The full name of the user.",
   firstName: "The first name of the user.",

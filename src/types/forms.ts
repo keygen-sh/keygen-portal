@@ -4,3 +4,9 @@ export type FormFieldError<TFieldValues extends FieldValues = FieldValues> = {
   path: FieldPath<TFieldValues>
   message: string
 }
+
+export type CombineFormValues<
+  Base,
+  Create = Base,
+  Update = Partial<Base>,
+> = Base & Create & Update

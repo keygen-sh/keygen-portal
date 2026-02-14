@@ -1,3 +1,4 @@
+import { Writable } from "@/types/utility"
 import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
 
 export enum PolicyMode {
@@ -226,10 +227,7 @@ export type PolicyResponse = APIResponse<Policy>
 export type PoliciesListResponse = APIResponse<Policy[]>
 
 export const PolicyAttributeDescriptions: Readonly<
-  Record<
-    keyof Omit<PolicyAttributes, "created" | "updated" | "metadata">,
-    string
-  >
+  Record<keyof Writable<PolicyAttributes>, string>
 > = {
   name: "Policy name.",
   duration:
@@ -311,7 +309,26 @@ export const PolicyAttributeDescriptions: Readonly<
     "The strategy used for leasing and counting machine processes.",
   overageStrategy:
     "The strategy used for a license's overage allowance, affecting max machines, max cores and max processes.",
+  metadata:
+    "Store arbitray key-value data on the policy for book keeping purposes, additional rules, etc.",
 } as const
+
+export const PolicyFormFieldDescriptions: Readonly<
+  typeof PolicyAttributeDescriptions & { product: string }
+> = {
+  ...PolicyAttributeDescriptions,
+  product: "The product to which this policy belongs.",
+}
+
+export const PolicyCreateFormFieldDescriptions: typeof PolicyFormFieldDescriptions =
+  {
+    ...PolicyFormFieldDescriptions,
+  }
+
+export const PolicyEditFormFieldDescriptions: typeof PolicyFormFieldDescriptions =
+  {
+    ...PolicyFormFieldDescriptions,
+  }
 
 export const PolicyOptionLabels = {
   checkInInterval: {

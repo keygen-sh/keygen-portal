@@ -1,4 +1,5 @@
 import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
+import { Writable } from "@/types/utility"
 
 export enum ProcessMode {
   View = "view",
@@ -51,7 +52,7 @@ export type ProcessResponse = APIResponse<Process>
 export type ProcessListResponse = APIResponse<Process[]>
 
 export const ProcessAttributeDescriptions: Readonly<
-  Record<keyof Omit<ProcessAttributes, "created" | "updated">, string>
+  Record<keyof Writable<ProcessAttributes>, string>
 > = {
   pid: "The unique pid of the process within the scope of the machine it belongs to.",
   status: "The status of the process.",
@@ -66,11 +67,22 @@ export const ProcessAttributeDescriptions: Readonly<
 } as const
 
 export const ProcessFormFieldDescriptions: Readonly<
-  Record<keyof Omit<ProcessAttributes, "created" | "updated">, string>
+  typeof ProcessAttributeDescriptions & { machine: string }
 > = {
   ...ProcessAttributeDescriptions,
   pid: "This can be an arbitrary string, but must be unique within the scope of the machine it belongs to.",
+  machine: "The machine that the process belongs to.",
 } as const
+
+export const ProcessCreateFormFieldDescriptions: typeof ProcessFormFieldDescriptions =
+  {
+    ...ProcessFormFieldDescriptions,
+  }
+
+export const ProcessEditFormFieldDescriptions: typeof ProcessFormFieldDescriptions =
+  {
+    ...ProcessFormFieldDescriptions,
+  }
 
 export const ProcessStatusDescriptions: Readonly<
   Record<ProcessStatus, string>

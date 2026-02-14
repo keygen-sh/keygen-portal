@@ -1,4 +1,5 @@
 import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
+import { Writable } from "@/types/utility"
 
 export enum ProductErrorCode {
   CodeTaken = "CODE_TAKEN",
@@ -52,7 +53,7 @@ export type ProductResponse = APIResponse<Product>
 export type ProductsListResponse = APIResponse<Product[]>
 
 export const ProductAttributeDescriptions: Readonly<
-  Record<keyof Omit<ProductAttributes, "created" | "updated">, string>
+  Record<keyof Writable<ProductAttributes>, string>
 > = {
   name: "Product name.",
   code: "This can be used to lookup the product by a human-readable identifier.",
@@ -63,6 +64,21 @@ export const ProductAttributeDescriptions: Readonly<
   metadata:
     "Store arbitrary key/value data on the product for book keeping purposes, additional product info, etc.",
 } as const
+
+export const ProductFormFieldDescriptions: typeof ProductAttributeDescriptions =
+  {
+    ...ProductAttributeDescriptions,
+  }
+
+export const ProductCreateFormFieldDescriptions: typeof ProductFormFieldDescriptions =
+  {
+    ...ProductFormFieldDescriptions,
+  }
+
+export const ProductEditFormFieldDescriptions: typeof ProductFormFieldDescriptions =
+  {
+    ...ProductFormFieldDescriptions,
+  }
 
 export const DistributionStrategyDescriptions: Readonly<
   Record<DistributionStrategy, string>

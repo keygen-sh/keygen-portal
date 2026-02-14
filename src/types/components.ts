@@ -1,4 +1,5 @@
 import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
+import { Writable } from "@/types/utility"
 
 export enum ComponentMode {
   View = "view",
@@ -43,7 +44,7 @@ export type ComponentResponse = APIResponse<Component>
 export type ComponentListResponse = APIResponse<Component[]>
 
 export const ComponentAttributeDescriptions: Readonly<
-  Record<keyof Omit<ComponentAttributes, "created" | "updated">, string>
+  Record<keyof Writable<ComponentAttributes>, string>
 > = {
   fingerprint: "The unique fingerprint of the component.",
   name: "The human-readable name of the component.",
@@ -52,13 +53,20 @@ export const ComponentAttributeDescriptions: Readonly<
 } as const
 
 export const ComponentFormFieldDescriptions: Readonly<
-  Record<
-    keyof Omit<ComponentAttributes, "created" | "updated"> | "machine",
-    string
-  >
+  typeof ComponentAttributeDescriptions & { machine: string }
 > = {
   ...ComponentAttributeDescriptions,
   fingerprint:
     "The unique fingerprint of the component, e.g. a motherboard serial number. This can be an arbitrary string, but must be unique within the scope of the machine it belongs to or according to the policy's component uniqueness strategy.",
   machine: "The machine that the component is for.",
 }
+
+export const ComponentCreateFormFieldDescriptions: typeof ComponentFormFieldDescriptions =
+  {
+    ...ComponentFormFieldDescriptions,
+  }
+
+export const ComponentEditFormFieldDescriptions: typeof ComponentFormFieldDescriptions =
+  {
+    ...ComponentFormFieldDescriptions,
+  }

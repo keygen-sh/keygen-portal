@@ -53,14 +53,13 @@ import {
   ProcessLeasingStrategy,
   PolicyMode,
 } from "@/types/policies"
+import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import MultiSelect from "@/components/multi-select"
 import KeyValueInput from "@/components/key-value-input"
 import NullableSelect from "@/components/nullable-select"
 import DurationInput, { HeartbeatPresets } from "@/components/duration-input"
-
-type FieldVariant = "row" | "stacking" | "inline" | "none"
 type Descriptions = typeof PolicyFormFieldDescriptions
 
 interface PoliciesFormFieldsProps {

@@ -23,13 +23,12 @@ import {
 } from "@/types/processes"
 
 import { useListMachines } from "@/queries/machines"
+import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import SearchSelect from "@/components/search-select"
 import KeyValueInput from "@/components/key-value-input"
 
-
-type FieldVariant = "row" | "stacking" | "inline" | "none"
 type Descriptions = typeof ProcessFormFieldDescriptions
 
 interface ProcessesFormFieldsProps {

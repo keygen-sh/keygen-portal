@@ -18,12 +18,11 @@ import {
   EnvironmentCreateFormFieldDescriptions,
   EnvironmentEditFormFieldDescriptions,
 } from "@/types/environments"
+import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import { CardSelector, CardOption } from "@/components/card-selector"
 
-
-type FieldVariant = "row" | "stacking" | "inline" | "none"
 type Descriptions = typeof EnvironmentFormFieldDescriptions
 
 interface EnvironmentsFormFieldsProps {

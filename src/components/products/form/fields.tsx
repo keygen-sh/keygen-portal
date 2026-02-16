@@ -20,14 +20,13 @@ import {
   ProductCreateFormFieldDescriptions,
   ProductEditFormFieldDescriptions,
 } from "@/types/products"
+import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import TagInput from "@/components/tag-input"
 import MultiSelect from "@/components/multi-select"
 import KeyValueInput from "@/components/key-value-input"
 import { CardSelector, CardOption } from "@/components/card-selector"
-
-type FieldVariant = "row" | "stacking" | "inline" | "none"
 type Descriptions = typeof ProductFormFieldDescriptions
 
 interface ProductsFormFieldsProps {

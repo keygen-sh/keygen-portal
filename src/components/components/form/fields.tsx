@@ -15,6 +15,7 @@ import {
   ComponentCreateFormFieldDescriptions,
   ComponentEditFormFieldDescriptions,
 } from "@/types/components"
+import { type FieldVariant } from "@/components/forms/field"
 
 import { useListMachines } from "@/queries/machines"
 
@@ -22,8 +23,6 @@ import * as Forms from "@/components/forms"
 import SearchSelect from "@/components/search-select"
 import KeyValueInput from "@/components/key-value-input"
 
-
-type FieldVariant = "row" | "stacking" | "inline" | "none"
 type Descriptions = typeof ComponentFormFieldDescriptions
 
 interface ComponentsFormFieldsProps {

@@ -15,12 +15,11 @@ import {
   GroupCreateFormFieldDescriptions,
   GroupEditFormFieldDescriptions,
 } from "@/types/groups"
+import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import KeyValueInput from "@/components/key-value-input"
 
-
-type FieldVariant = "row" | "stacking" | "inline" | "none"
 type Descriptions = typeof GroupFormFieldDescriptions
 
 interface GroupsFormFieldsProps {

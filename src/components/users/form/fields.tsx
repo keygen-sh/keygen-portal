@@ -31,6 +31,7 @@ import {
   UserCreateFormFieldDescriptions,
   UserEditFormFieldDescriptions,
 } from "@/types/users"
+import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import MultiSelect from "@/components/multi-select"
@@ -38,8 +39,6 @@ import SearchSelect from "@/components/search-select"
 import KeyValueInput from "@/components/key-value-input"
 import TooltipSelectItem from "@/components/tooltip-select-item"
 
-
-type FieldVariant = "row" | "stacking" | "inline" | "none"
 type Descriptions = typeof UserFormFieldDescriptions
 
 interface UsersFormFieldsProps {

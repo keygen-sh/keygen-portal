@@ -14,11 +14,10 @@ import {
   EntitlementCreateFormFieldDescriptions,
   EntitlementEditFormFieldDescriptions,
 } from "@/types/entitlements"
+import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import KeyValueInput from "@/components/key-value-input"
-
-type FieldVariant = "row" | "stacking" | "inline" | "none"
 type Descriptions = typeof EntitlementFormFieldDescriptions
 
 interface EntitlementsFormFieldsProps {

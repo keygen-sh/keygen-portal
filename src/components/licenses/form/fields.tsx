@@ -41,13 +41,12 @@ import {
   LicenseDisabledFormFieldDescriptions,
 } from "@/types/licenses"
 import { Policy } from "@/types/policies"
+import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import * as Calendars from "@/components/calendars"
 import KeyValueInput from "@/components/key-value-input"
 
-
-type FieldVariant = "row" | "stacking" | "inline" | "none"
 type Descriptions = typeof LicenseFormFieldDescriptions
 
 interface LicensesFormFieldsProps {

@@ -15,14 +15,14 @@ import { cn, splitLastWord } from "@/lib/utils"
 
 import { useMobile } from "@/hooks/use-mobile"
 
-type FieldHeaderVariant = "row" | "stacking" | "inline" | "none"
+export type FieldVariant = "row" | "stacking" | "inline" | "none"
 type TooltipVariant = "default" | "warning"
 
 interface FieldHeaderProps {
   label: string
   tooltip?: string | null
   tooltipVariant?: TooltipVariant
-  variant?: FieldHeaderVariant
+  variant?: FieldVariant
   optional?: boolean
   children: React.ReactNode
   className?: string

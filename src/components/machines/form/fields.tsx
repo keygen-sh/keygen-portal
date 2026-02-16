@@ -18,13 +18,12 @@ import {
   MachineCreateFormFieldDescriptions,
   MachineEditFormFieldDescriptions,
 } from "@/types/machines"
+import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import SearchSelect from "@/components/search-select"
 import KeyValueInput from "@/components/key-value-input"
 
-
-type FieldVariant = "row" | "stacking" | "inline" | "none"
 type Descriptions = typeof MachineFormFieldDescriptions
 
 interface MachinesFormFieldsProps {

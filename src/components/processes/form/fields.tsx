@@ -42,7 +42,70 @@ interface ProcessesFormFieldsProps {
   schema?: "create" | "edit"
 }
 
-const DefaultFieldSort: ProcessFieldName[] = ["pid", "machineId", "metadata"]
+const DefaultFieldSort: Schemas.Processes.FieldNames[] = [
+  "pid",
+  "machineId",
+  "metadata",
+]
+
+export default function ProcessesFormFields({
+  include,
+  exclude = [],
+  autoFocus,
+  titleVariant,
+  fieldVariant = "row",
+  schema,
+}: ProcessesFormFieldsProps) {
+  const descriptions =
+    schema === "create"
+      ? ProcessCreateFormFieldDescriptions
+      : schema === "edit"
+        ? ProcessEditFormFieldDescriptions
+        : ProcessFormFieldDescriptions
+
+  const fields = include
+    ? include
+    : DefaultFieldSort.filter((field) => !exclude.includes(field))
+
+  return (
+    <>
+      {fields.map((field) => {
+        switch (field) {
+          case "pid":
+            return (
+              <PidField
+                key="pid"
+                autoFocus={autoFocus === "pid"}
+                titleVariant={titleVariant}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "machineId":
+            return (
+              <MachineIdField
+                key="machineId"
+                autoFocus={autoFocus === "machineId"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "metadata":
+            return (
+              <MetadataField
+                key="metadata"
+                autoFocus={autoFocus === "metadata"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          default:
+            return null
+        }
+      })}
+    </>
+  )
+}
 
 function PidField({
   autoFocus,
@@ -198,54 +261,4 @@ function MetadataField({
       )}
     />
   )
-}
-
-export default function ProcessesFormFields({
-  include,
-  exclude = [],
-  autoFocus,
-  titleVariant,
-  fieldVariant = "row",
-  schema,
-}: ProcessesFormFieldsProps) {
-  const descriptions =
-    schema === "create"
-      ? ProcessCreateFormFieldDescriptions
-      : schema === "edit"
-        ? ProcessEditFormFieldDescriptions
-        : ProcessFormFieldDescriptions
-
-  const fieldMap: Record<ProcessFieldName, React.ReactNode> = {
-    pid: (
-      <PidField
-        key="pid"
-        autoFocus={autoFocus === "pid"}
-        titleVariant={titleVariant}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    machineId: (
-      <MachineIdField
-        key="machineId"
-        autoFocus={autoFocus === "machineId"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    metadata: (
-      <MetadataField
-        key="metadata"
-        autoFocus={autoFocus === "metadata"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-  }
-
-  const fields = include
-    ? include
-    : DefaultFieldSort.filter((field) => !exclude.includes(field))
-
-  return <>{fields.map((fieldName) => fieldMap[fieldName])}</>
 }

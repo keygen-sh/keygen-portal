@@ -64,66 +64,77 @@ export default function ProductsFormFields({
         ? ProductEditFormFieldDescriptions
         : ProductFormFieldDescriptions
 
-  const fieldMap: Record<Schemas.Products.FieldNames, React.ReactNode> = {
-    name: (
-      <NameField
-        key="name"
-        autoFocus={autoFocus === "name"}
-        titleVariant={titleVariant}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    code: (
-      <CodeField
-        key="code"
-        autoFocus={autoFocus === "code"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    url: (
-      <UrlField
-        key="url"
-        autoFocus={autoFocus === "url"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    distributionStrategy: (
-      <DistributionStrategyField key="distributionStrategy" />
-    ),
-    permissions: (
-      <PermissionsField
-        key="permissions"
-        autoFocus={autoFocus === "permissions"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    platforms: (
-      <PlatformsField
-        key="platforms"
-        autoFocus={autoFocus === "platforms"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    metadata: (
-      <MetadataField
-        key="metadata"
-        autoFocus={autoFocus === "metadata"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-  }
-
   const fields = include
     ? include
     : DefaultFieldSort.filter((field) => !exclude.includes(field))
 
-  return <>{fields.map((fieldName) => fieldMap[fieldName])}</>
+  return (
+    <>
+      {fields.map((field) => {
+        switch (field) {
+          case "name":
+            return (
+              <NameField
+                key="name"
+                autoFocus={autoFocus === "name"}
+                titleVariant={titleVariant}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "code":
+            return (
+              <CodeField
+                key="code"
+                autoFocus={autoFocus === "code"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "url":
+            return (
+              <UrlField
+                key="url"
+                autoFocus={autoFocus === "url"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "distributionStrategy":
+            return <DistributionStrategyField key="distributionStrategy" />
+          case "permissions":
+            return (
+              <PermissionsField
+                key="permissions"
+                autoFocus={autoFocus === "permissions"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "platforms":
+            return (
+              <PlatformsField
+                key="platforms"
+                autoFocus={autoFocus === "platforms"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "metadata":
+            return (
+              <MetadataField
+                key="metadata"
+                autoFocus={autoFocus === "metadata"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          default:
+            return null
+        }
+      })}
+    </>
+  )
 }
 
 function NameField({

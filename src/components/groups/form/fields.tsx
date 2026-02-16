@@ -46,6 +46,83 @@ const DefaultFieldSort: GroupFieldName[] = [
   "metadata",
 ]
 
+export default function GroupsFormFields({
+  include,
+  exclude = [],
+  autoFocus,
+  titleVariant,
+  fieldVariant = "row",
+  schema,
+}: GroupsFormFieldsProps) {
+  const descriptions =
+    schema === "create"
+      ? GroupCreateFormFieldDescriptions
+      : schema === "edit"
+        ? GroupEditFormFieldDescriptions
+        : GroupFormFieldDescriptions
+
+  const fields = include
+    ? include
+    : DefaultFieldSort.filter((field) => !exclude.includes(field))
+
+  return (
+    <>
+      {fields.map((field) => {
+        switch (field) {
+          case "name":
+            return (
+              <NameField
+                key="name"
+                autoFocus={autoFocus === "name"}
+                titleVariant={titleVariant}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "maxUsers":
+            return (
+              <MaxUsersField
+                key="maxUsers"
+                autoFocus={autoFocus === "maxUsers"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "maxLicenses":
+            return (
+              <MaxLicensesField
+                key="maxLicenses"
+                autoFocus={autoFocus === "maxLicenses"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "maxMachines":
+            return (
+              <MaxMachinesField
+                key="maxMachines"
+                autoFocus={autoFocus === "maxMachines"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "metadata":
+            return (
+              <MetadataField
+                key="metadata"
+                autoFocus={autoFocus === "metadata"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          default:
+            return null
+        }
+      })}
+    </>
+  )
+}
+
 function NameField({
   autoFocus,
   titleVariant,
@@ -270,70 +347,4 @@ function MetadataField({
       )}
     />
   )
-}
-
-export default function GroupsFormFields({
-  include,
-  exclude = [],
-  autoFocus,
-  titleVariant,
-  fieldVariant = "row",
-  schema,
-}: GroupsFormFieldsProps) {
-  const descriptions =
-    schema === "create"
-      ? GroupCreateFormFieldDescriptions
-      : schema === "edit"
-        ? GroupEditFormFieldDescriptions
-        : GroupFormFieldDescriptions
-
-  const fieldMap: Record<GroupFieldName, React.ReactNode> = {
-    name: (
-      <NameField
-        key="name"
-        autoFocus={autoFocus === "name"}
-        titleVariant={titleVariant}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    maxUsers: (
-      <MaxUsersField
-        key="maxUsers"
-        autoFocus={autoFocus === "maxUsers"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    maxLicenses: (
-      <MaxLicensesField
-        key="maxLicenses"
-        autoFocus={autoFocus === "maxLicenses"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    maxMachines: (
-      <MaxMachinesField
-        key="maxMachines"
-        autoFocus={autoFocus === "maxMachines"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    metadata: (
-      <MetadataField
-        key="metadata"
-        autoFocus={autoFocus === "metadata"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-  }
-
-  const fields = include
-    ? include
-    : DefaultFieldSort.filter((field) => !exclude.includes(field))
-
-  return <>{fields.map((fieldName) => fieldMap[fieldName])}</>
 }

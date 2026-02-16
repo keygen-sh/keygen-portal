@@ -42,6 +42,58 @@ const DefaultFieldSort: EnvironmentFieldName[] = [
   "isolationStrategy",
 ]
 
+export default function EnvironmentsFormFields({
+  include,
+  exclude = [],
+  autoFocus,
+  titleVariant,
+  fieldVariant = "row",
+  schema,
+}: EnvironmentsFormFieldsProps) {
+  const descriptions =
+    schema === "create"
+      ? EnvironmentCreateFormFieldDescriptions
+      : schema === "edit"
+        ? EnvironmentEditFormFieldDescriptions
+        : EnvironmentFormFieldDescriptions
+
+  const fields = include
+    ? include
+    : DefaultFieldSort.filter((field) => !exclude.includes(field))
+
+  return (
+    <>
+      {fields.map((field) => {
+        switch (field) {
+          case "name":
+            return (
+              <NameField
+                key="name"
+                autoFocus={autoFocus === "name"}
+                titleVariant={titleVariant}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "code":
+            return (
+              <CodeField
+                key="code"
+                autoFocus={autoFocus === "code"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "isolationStrategy":
+            return <IsolationStrategyField key="isolationStrategy" />
+          default:
+            return null
+        }
+      })}
+    </>
+  )
+}
+
 function NameField({
   autoFocus,
   titleVariant,
@@ -170,47 +222,4 @@ function IsolationStrategyField() {
       )}
     />
   )
-}
-
-export default function EnvironmentsFormFields({
-  include,
-  exclude = [],
-  autoFocus,
-  titleVariant,
-  fieldVariant = "row",
-  schema,
-}: EnvironmentsFormFieldsProps) {
-  const descriptions =
-    schema === "create"
-      ? EnvironmentCreateFormFieldDescriptions
-      : schema === "edit"
-        ? EnvironmentEditFormFieldDescriptions
-        : EnvironmentFormFieldDescriptions
-
-  const fieldMap: Record<EnvironmentFieldName, React.ReactNode> = {
-    name: (
-      <NameField
-        key="name"
-        autoFocus={autoFocus === "name"}
-        titleVariant={titleVariant}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    code: (
-      <CodeField
-        key="code"
-        autoFocus={autoFocus === "code"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    isolationStrategy: <IsolationStrategyField key="isolationStrategy" />,
-  }
-
-  const fields = include
-    ? include
-    : DefaultFieldSort.filter((field) => !exclude.includes(field))
-
-  return <>{fields.map((fieldName) => fieldMap[fieldName])}</>
 }

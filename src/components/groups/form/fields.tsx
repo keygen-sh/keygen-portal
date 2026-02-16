@@ -19,26 +19,20 @@ import {
 import * as Forms from "@/components/forms"
 import KeyValueInput from "@/components/key-value-input"
 
-type GroupFieldName =
-  | "name"
-  | "maxUsers"
-  | "maxLicenses"
-  | "maxMachines"
-  | "metadata"
 
 type FieldVariant = "row" | "stacking" | "inline" | "none"
 type Descriptions = typeof GroupFormFieldDescriptions
 
 interface GroupsFormFieldsProps {
-  include?: GroupFieldName[]
-  exclude?: GroupFieldName[]
-  autoFocus?: GroupFieldName
+  include?: Schemas.Groups.FieldNames[]
+  exclude?: Schemas.Groups.FieldNames[]
+  autoFocus?: Schemas.Groups.FieldNames
   titleVariant?: boolean
   fieldVariant?: FieldVariant
   schema?: "create" | "edit"
 }
 
-const DefaultFieldSort: GroupFieldName[] = [
+const DefaultFieldSort: Schemas.Groups.FieldNames[] = [
   "name",
   "maxUsers",
   "maxLicenses",

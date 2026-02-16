@@ -22,21 +22,20 @@ import {
 import * as Forms from "@/components/forms"
 import { CardSelector, CardOption } from "@/components/card-selector"
 
-type EnvironmentFieldName = "name" | "code" | "isolationStrategy"
 
 type FieldVariant = "row" | "stacking" | "inline" | "none"
 type Descriptions = typeof EnvironmentFormFieldDescriptions
 
 interface EnvironmentsFormFieldsProps {
-  include?: EnvironmentFieldName[]
-  exclude?: EnvironmentFieldName[]
-  autoFocus?: EnvironmentFieldName
+  include?: Schemas.Environments.FieldNames[]
+  exclude?: Schemas.Environments.FieldNames[]
+  autoFocus?: Schemas.Environments.FieldNames
   titleVariant?: boolean
   fieldVariant?: FieldVariant
   schema?: "create" | "edit"
 }
 
-const DefaultFieldSort: EnvironmentFieldName[] = [
+const DefaultFieldSort: Schemas.Environments.FieldNames[] = [
   "name",
   "code",
   "isolationStrategy",

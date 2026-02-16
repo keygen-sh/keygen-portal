@@ -88,6 +88,150 @@ const DefaultFieldSort: LicenseFieldName[] = [
   "metadata",
 ]
 
+export default function LicensesFormFields({
+  include,
+  exclude = [],
+  autoFocus,
+  titleVariant,
+  fieldVariant = "row",
+  selectedPolicy,
+  schema,
+}: LicensesFormFieldsProps) {
+  const descriptions =
+    schema === "create"
+      ? LicenseCreateFormFieldDescriptions
+      : schema === "edit"
+        ? LicenseEditFormFieldDescriptions
+        : LicenseFormFieldDescriptions
+
+  const fields = include
+    ? include
+    : DefaultFieldSort.filter((field) => !exclude.includes(field))
+
+  return (
+    <>
+      {fields.map((field) => {
+        switch (field) {
+          case "name":
+            return (
+              <NameField
+                key="name"
+                autoFocus={autoFocus === "name"}
+                titleVariant={titleVariant}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "key":
+            return (
+              <KeyField
+                key="key"
+                autoFocus={autoFocus === "key"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "policyId":
+            return (
+              <PolicyIdField
+                key="policyId"
+                autoFocus={autoFocus === "policyId"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "expiry":
+            return (
+              <ExpiryField
+                key="expiry"
+                autoFocus={autoFocus === "expiry"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "maxMachines":
+            return (
+              <MaxMachinesField
+                key="maxMachines"
+                autoFocus={autoFocus === "maxMachines"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                selectedPolicy={selectedPolicy}
+              />
+            )
+          case "maxProcesses":
+            return (
+              <MaxProcessesField
+                key="maxProcesses"
+                autoFocus={autoFocus === "maxProcesses"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                selectedPolicy={selectedPolicy}
+              />
+            )
+          case "maxUsers":
+            return (
+              <MaxUsersField
+                key="maxUsers"
+                autoFocus={autoFocus === "maxUsers"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                selectedPolicy={selectedPolicy}
+              />
+            )
+          case "maxCores":
+            return (
+              <MaxCoresField
+                key="maxCores"
+                autoFocus={autoFocus === "maxCores"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                selectedPolicy={selectedPolicy}
+              />
+            )
+          case "maxUses":
+            return (
+              <MaxUsesField
+                key="maxUses"
+                autoFocus={autoFocus === "maxUses"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                selectedPolicy={selectedPolicy}
+              />
+            )
+          case "suspended":
+            return (
+              <SuspendedField
+                key="suspended"
+                autoFocus={autoFocus === "suspended"}
+                descriptions={descriptions}
+              />
+            )
+          case "protected":
+            return (
+              <ProtectedField
+                key="protected"
+                autoFocus={autoFocus === "protected"}
+                descriptions={descriptions}
+                selectedPolicy={selectedPolicy}
+              />
+            )
+          case "metadata":
+            return (
+              <MetadataField
+                key="metadata"
+                autoFocus={autoFocus === "metadata"}
+                descriptions={descriptions}
+              />
+            )
+          default:
+            return null
+        }
+      })}
+    </>
+  )
+}
+
 function NameField({
   autoFocus,
   titleVariant,
@@ -731,130 +875,4 @@ function MetadataField({
       )}
     />
   )
-}
-
-export default function LicensesFormFields({
-  include,
-  exclude = [],
-  autoFocus,
-  titleVariant,
-  fieldVariant = "row",
-  selectedPolicy,
-  schema,
-}: LicensesFormFieldsProps) {
-  const descriptions =
-    schema === "create"
-      ? LicenseCreateFormFieldDescriptions
-      : schema === "edit"
-        ? LicenseEditFormFieldDescriptions
-        : LicenseFormFieldDescriptions
-
-  const fieldMap: Record<LicenseFieldName, React.ReactNode> = {
-    name: (
-      <NameField
-        key="name"
-        autoFocus={autoFocus === "name"}
-        titleVariant={titleVariant}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    key: (
-      <KeyField
-        key="key"
-        autoFocus={autoFocus === "key"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    policyId: (
-      <PolicyIdField
-        key="policyId"
-        autoFocus={autoFocus === "policyId"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    expiry: (
-      <ExpiryField
-        key="expiry"
-        autoFocus={autoFocus === "expiry"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    maxMachines: (
-      <MaxMachinesField
-        key="maxMachines"
-        autoFocus={autoFocus === "maxMachines"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-        selectedPolicy={selectedPolicy}
-      />
-    ),
-    maxProcesses: (
-      <MaxProcessesField
-        key="maxProcesses"
-        autoFocus={autoFocus === "maxProcesses"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-        selectedPolicy={selectedPolicy}
-      />
-    ),
-    maxUsers: (
-      <MaxUsersField
-        key="maxUsers"
-        autoFocus={autoFocus === "maxUsers"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-        selectedPolicy={selectedPolicy}
-      />
-    ),
-    maxCores: (
-      <MaxCoresField
-        key="maxCores"
-        autoFocus={autoFocus === "maxCores"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-        selectedPolicy={selectedPolicy}
-      />
-    ),
-    maxUses: (
-      <MaxUsesField
-        key="maxUses"
-        autoFocus={autoFocus === "maxUses"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-        selectedPolicy={selectedPolicy}
-      />
-    ),
-    suspended: (
-      <SuspendedField
-        key="suspended"
-        autoFocus={autoFocus === "suspended"}
-        descriptions={descriptions}
-      />
-    ),
-    protected: (
-      <ProtectedField
-        key="protected"
-        autoFocus={autoFocus === "protected"}
-        descriptions={descriptions}
-        selectedPolicy={selectedPolicy}
-      />
-    ),
-    metadata: (
-      <MetadataField
-        key="metadata"
-        autoFocus={autoFocus === "metadata"}
-        descriptions={descriptions}
-      />
-    ),
-  }
-
-  const fields = include
-    ? include
-    : DefaultFieldSort.filter((field) => !exclude.includes(field))
-
-  return <>{fields.map((fieldName) => fieldMap[fieldName])}</>
 }

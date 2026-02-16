@@ -71,6 +71,110 @@ const DefaultFieldSort: UserFieldName[] = [
   "groupId",
 ]
 
+export default function UsersFormFields({
+  include,
+  exclude = [],
+  autoFocus,
+  titleVariant,
+  fieldVariant = "row",
+  schema,
+}: UsersFormFieldsProps) {
+  const descriptions =
+    schema === "create"
+      ? UserCreateFormFieldDescriptions
+      : schema === "edit"
+        ? UserEditFormFieldDescriptions
+        : UserFormFieldDescriptions
+
+  const fields = include
+    ? include
+    : DefaultFieldSort.filter((field) => !exclude.includes(field))
+
+  return (
+    <>
+      {fields.map((field) => {
+        switch (field) {
+          case "email":
+            return (
+              <EmailField
+                key="email"
+                autoFocus={autoFocus === "email"}
+                titleVariant={titleVariant}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "password":
+            return (
+              <PasswordField
+                key="password"
+                autoFocus={autoFocus === "password"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "firstName":
+            return (
+              <FirstNameField
+                key="firstName"
+                autoFocus={autoFocus === "firstName"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "lastName":
+            return (
+              <LastNameField
+                key="lastName"
+                autoFocus={autoFocus === "lastName"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "role":
+            return (
+              <RoleField
+                key="role"
+                autoFocus={autoFocus === "role"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "permissions":
+            return (
+              <PermissionsField
+                key="permissions"
+                autoFocus={autoFocus === "permissions"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "metadata":
+            return (
+              <MetadataField
+                key="metadata"
+                autoFocus={autoFocus === "metadata"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "groupId":
+            return (
+              <GroupIdField
+                key="groupId"
+                autoFocus={autoFocus === "groupId"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          default:
+            return null
+        }
+      })}
+    </>
+  )
+}
+
 function EmailField({
   autoFocus,
   titleVariant,
@@ -434,94 +538,4 @@ function GroupIdField({
       )}
     />
   )
-}
-
-export default function UsersFormFields({
-  include,
-  exclude = [],
-  autoFocus,
-  titleVariant,
-  fieldVariant = "row",
-  schema,
-}: UsersFormFieldsProps) {
-  const descriptions =
-    schema === "create"
-      ? UserCreateFormFieldDescriptions
-      : schema === "edit"
-        ? UserEditFormFieldDescriptions
-        : UserFormFieldDescriptions
-
-  const fieldMap: Record<UserFieldName, React.ReactNode> = {
-    email: (
-      <EmailField
-        key="email"
-        autoFocus={autoFocus === "email"}
-        titleVariant={titleVariant}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    password: (
-      <PasswordField
-        key="password"
-        autoFocus={autoFocus === "password"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    firstName: (
-      <FirstNameField
-        key="firstName"
-        autoFocus={autoFocus === "firstName"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    lastName: (
-      <LastNameField
-        key="lastName"
-        autoFocus={autoFocus === "lastName"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    role: (
-      <RoleField
-        key="role"
-        autoFocus={autoFocus === "role"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    permissions: (
-      <PermissionsField
-        key="permissions"
-        autoFocus={autoFocus === "permissions"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    metadata: (
-      <MetadataField
-        key="metadata"
-        autoFocus={autoFocus === "metadata"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    groupId: (
-      <GroupIdField
-        key="groupId"
-        autoFocus={autoFocus === "groupId"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-  }
-
-  const fields = include
-    ? include
-    : DefaultFieldSort.filter((field) => !exclude.includes(field))
-
-  return <>{fields.map((fieldName) => fieldMap[fieldName])}</>
 }

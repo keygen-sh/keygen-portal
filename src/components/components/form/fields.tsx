@@ -43,6 +43,74 @@ const DefaultFieldSort: ComponentFieldName[] = [
   "metadata",
 ]
 
+export default function ComponentsFormFields({
+  include,
+  exclude = [],
+  autoFocus,
+  titleVariant,
+  fieldVariant = "row",
+  schema,
+}: ComponentsFormFieldsProps) {
+  const descriptions =
+    schema === "create"
+      ? ComponentCreateFormFieldDescriptions
+      : schema === "edit"
+        ? ComponentEditFormFieldDescriptions
+        : ComponentFormFieldDescriptions
+
+  const fields = include
+    ? include
+    : DefaultFieldSort.filter((field) => !exclude.includes(field))
+
+  return (
+    <>
+      {fields.map((field) => {
+        switch (field) {
+          case "name":
+            return (
+              <NameField
+                key="name"
+                autoFocus={autoFocus === "name"}
+                titleVariant={titleVariant}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "fingerprint":
+            return (
+              <FingerprintField
+                key="fingerprint"
+                autoFocus={autoFocus === "fingerprint"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "machineId":
+            return (
+              <MachineIdField
+                key="machineId"
+                autoFocus={autoFocus === "machineId"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "metadata":
+            return (
+              <MetadataField
+                key="metadata"
+                autoFocus={autoFocus === "metadata"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          default:
+            return null
+        }
+      })}
+    </>
+  )
+}
+
 function NameField({
   autoFocus,
   titleVariant,
@@ -212,62 +280,4 @@ function MetadataField({
       )}
     />
   )
-}
-
-export default function ComponentsFormFields({
-  include,
-  exclude = [],
-  autoFocus,
-  titleVariant,
-  fieldVariant = "row",
-  schema,
-}: ComponentsFormFieldsProps) {
-  const descriptions =
-    schema === "create"
-      ? ComponentCreateFormFieldDescriptions
-      : schema === "edit"
-        ? ComponentEditFormFieldDescriptions
-        : ComponentFormFieldDescriptions
-
-  const fieldMap: Record<ComponentFieldName, React.ReactNode> = {
-    name: (
-      <NameField
-        key="name"
-        autoFocus={autoFocus === "name"}
-        titleVariant={titleVariant}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    fingerprint: (
-      <FingerprintField
-        key="fingerprint"
-        autoFocus={autoFocus === "fingerprint"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    machineId: (
-      <MachineIdField
-        key="machineId"
-        autoFocus={autoFocus === "machineId"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    metadata: (
-      <MetadataField
-        key="metadata"
-        autoFocus={autoFocus === "metadata"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-  }
-
-  const fields = include
-    ? include
-    : DefaultFieldSort.filter((field) => !exclude.includes(field))
-
-  return <>{fields.map((fieldName) => fieldMap[fieldName])}</>
 }

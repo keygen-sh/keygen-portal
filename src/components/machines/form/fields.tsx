@@ -79,111 +79,129 @@ export default function MachinesFormFields({
         ? MachineEditFormFieldDescriptions
         : MachineFormFieldDescriptions
 
-  const fieldMap: Record<MachineFieldName, React.ReactNode> = {
-    name: (
-      <NameField
-        key="name"
-        autoFocus={autoFocus === "name"}
-        titleVariant={titleVariant}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    fingerprint: (
-      <FingerprintField
-        key="fingerprint"
-        autoFocus={autoFocus === "fingerprint"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    licenseId: (
-      <LicenseIdField
-        key="licenseId"
-        autoFocus={autoFocus === "licenseId"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    platform: (
-      <PlatformField
-        key="platform"
-        autoFocus={autoFocus === "platform"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    hostname: (
-      <HostnameField
-        key="hostname"
-        autoFocus={autoFocus === "hostname"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    ip: (
-      <IpField
-        key="ip"
-        autoFocus={autoFocus === "ip"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    cores: (
-      <CoresField
-        key="cores"
-        autoFocus={autoFocus === "cores"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    memory: (
-      <MemoryField
-        key="memory"
-        autoFocus={autoFocus === "memory"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    disk: (
-      <DiskField
-        key="disk"
-        autoFocus={autoFocus === "disk"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    metadata: (
-      <MetadataField
-        key="metadata"
-        autoFocus={autoFocus === "metadata"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    groupId: (
-      <GroupIdField
-        key="groupId"
-        autoFocus={autoFocus === "groupId"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    ownerId: (
-      <OwnerIdField
-        key="ownerId"
-        autoFocus={autoFocus === "ownerId"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-  }
-
   const fields = include
     ? include
     : DefaultFieldSort.filter((field) => !exclude.includes(field))
 
-  return <>{fields.map((fieldName) => fieldMap[fieldName])}</>
+  return (
+    <>
+      {fields.map((field) => {
+        switch (field) {
+          case "name":
+            return (
+              <NameField
+                key="name"
+                autoFocus={autoFocus === "name"}
+                titleVariant={titleVariant}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "fingerprint":
+            return (
+              <FingerprintField
+                key="fingerprint"
+                autoFocus={autoFocus === "fingerprint"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "licenseId":
+            return (
+              <LicenseIdField
+                key="licenseId"
+                autoFocus={autoFocus === "licenseId"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "platform":
+            return (
+              <PlatformField
+                key="platform"
+                autoFocus={autoFocus === "platform"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "hostname":
+            return (
+              <HostnameField
+                key="hostname"
+                autoFocus={autoFocus === "hostname"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "ip":
+            return (
+              <IpField
+                key="ip"
+                autoFocus={autoFocus === "ip"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "cores":
+            return (
+              <CoresField
+                key="cores"
+                autoFocus={autoFocus === "cores"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "memory":
+            return (
+              <MemoryField
+                key="memory"
+                autoFocus={autoFocus === "memory"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "disk":
+            return (
+              <DiskField
+                key="disk"
+                autoFocus={autoFocus === "disk"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "metadata":
+            return (
+              <MetadataField
+                key="metadata"
+                autoFocus={autoFocus === "metadata"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "groupId":
+            return (
+              <GroupIdField
+                key="groupId"
+                autoFocus={autoFocus === "groupId"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "ownerId":
+            return (
+              <OwnerIdField
+                key="ownerId"
+                autoFocus={autoFocus === "ownerId"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          default:
+            return null
+        }
+      })}
+    </>
+  )
 }
 
 function NameField({

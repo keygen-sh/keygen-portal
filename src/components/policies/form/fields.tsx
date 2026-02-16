@@ -141,347 +141,392 @@ export default function PoliciesFormFields({
   const requireHeartbeat = form.watch("requireHeartbeat")
   const checkInInterval = form.watch("checkInInterval")
 
-  const fieldMap: Record<Schemas.Policies.FieldNames, React.ReactNode> = {
-    authenticationStrategy: (
-      <AuthenticationStrategyField
-        key="authenticationStrategy"
-        autoFocus={autoFocus === "authenticationStrategy"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    checkInInterval: (
-      <CheckInIntervalField
-        key="checkInInterval"
-        autoFocus={autoFocus === "checkInInterval"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-        mode={mode}
-      />
-    ),
-    checkInIntervalCount: (
-      <CheckInIntervalCountField
-        key="checkInIntervalCount"
-        autoFocus={autoFocus === "checkInIntervalCount"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-        disabled={!checkInInterval}
-      />
-    ),
-    componentMatchingStrategy: (
-      <ComponentMatchingStrategyField
-        key="componentMatchingStrategy"
-        autoFocus={autoFocus === "componentMatchingStrategy"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    componentUniquenessStrategy: (
-      <ComponentUniquenessStrategyField
-        key="componentUniquenessStrategy"
-        autoFocus={autoFocus === "componentUniquenessStrategy"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    duration: (
-      <DurationField
-        key="duration"
-        autoFocus={autoFocus === "duration"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-        mode={mode}
-      />
-    ),
-    "entitlements.attach": (
-      <AttachEntitlementsField key="entitlements.attach" />
-    ),
-    "entitlements.create": (
-      <CreateEntitlementsField key="entitlements.create" />
-    ),
-    expirationBasis: (
-      <ExpirationBasisField
-        key="expirationBasis"
-        autoFocus={autoFocus === "expirationBasis"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-        disabled={!duration}
-      />
-    ),
-    expirationStrategy: (
-      <ExpirationStrategyField
-        key="expirationStrategy"
-        autoFocus={autoFocus === "expirationStrategy"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-        disabled={!duration}
-      />
-    ),
-    floating: (
-      <FloatingField
-        key="floating"
-        autoFocus={autoFocus === "floating"}
-        descriptions={descriptions}
-      />
-    ),
-    heartbeatBasis: (
-      <HeartbeatBasisField
-        key="heartbeatBasis"
-        autoFocus={autoFocus === "heartbeatBasis"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-        disabled={!requireHeartbeat}
-      />
-    ),
-    heartbeatCullStrategy: (
-      <HeartbeatCullStrategyField
-        key="heartbeatCullStrategy"
-        autoFocus={autoFocus === "heartbeatCullStrategy"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-        disabled={!requireHeartbeat}
-      />
-    ),
-    heartbeatDuration: (
-      <HeartbeatDurationField
-        key="heartbeatDuration"
-        autoFocus={autoFocus === "heartbeatDuration"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-        disabled={!requireHeartbeat}
-      />
-    ),
-    heartbeatResurrectionStrategy: (
-      <HeartbeatResurrectionStrategyField
-        key="heartbeatResurrectionStrategy"
-        autoFocus={autoFocus === "heartbeatResurrectionStrategy"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-        disabled={!requireHeartbeat}
-      />
-    ),
-    machineLeasingStrategy: (
-      <MachineLeasingStrategyField
-        key="machineLeasingStrategy"
-        autoFocus={autoFocus === "machineLeasingStrategy"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    machineMatchingStrategy: (
-      <MachineMatchingStrategyField
-        key="machineMatchingStrategy"
-        autoFocus={autoFocus === "machineMatchingStrategy"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    machineUniquenessStrategy: (
-      <MachineUniquenessStrategyField
-        key="machineUniquenessStrategy"
-        autoFocus={autoFocus === "machineUniquenessStrategy"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    maxCores: (
-      <MaxCoresField
-        key="maxCores"
-        autoFocus={autoFocus === "maxCores"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    maxMachines: (
-      <MaxMachinesField
-        key="maxMachines"
-        autoFocus={autoFocus === "maxMachines"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    maxProcesses: (
-      <MaxProcessesField
-        key="maxProcesses"
-        autoFocus={autoFocus === "maxProcesses"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    maxUsers: (
-      <MaxUsersField
-        key="maxUsers"
-        autoFocus={autoFocus === "maxUsers"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    maxUses: (
-      <MaxUsesField
-        key="maxUses"
-        autoFocus={autoFocus === "maxUses"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    metadata: (
-      <MetadataField
-        key="metadata"
-        autoFocus={autoFocus === "metadata"}
-        descriptions={descriptions}
-      />
-    ),
-    name: (
-      <NameField
-        key="name"
-        autoFocus={autoFocus === "name"}
-        titleVariant={titleVariant}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    overageStrategy: (
-      <OverageStrategyField
-        key="overageStrategy"
-        autoFocus={autoFocus === "overageStrategy"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    processLeasingStrategy: (
-      <ProcessLeasingStrategyField
-        key="processLeasingStrategy"
-        autoFocus={autoFocus === "processLeasingStrategy"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    product: (
-      <ProductField
-        key="product"
-        autoFocus={autoFocus === "product"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    protected: (
-      <ProtectedField
-        key="protected"
-        autoFocus={autoFocus === "protected"}
-        descriptions={descriptions}
-      />
-    ),
-    renewalBasis: (
-      <RenewalBasisField
-        key="renewalBasis"
-        autoFocus={autoFocus === "renewalBasis"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-        disabled={!duration}
-      />
-    ),
-    requireCheckIn: (
-      <RequireCheckInField
-        key="requireCheckIn"
-        autoFocus={autoFocus === "requireCheckIn"}
-        descriptions={descriptions}
-      />
-    ),
-    requireChecksumScope: (
-      <RequireChecksumScopeField
-        key="requireChecksumScope"
-        autoFocus={autoFocus === "requireChecksumScope"}
-        descriptions={descriptions}
-      />
-    ),
-    requireComponentsScope: (
-      <RequireComponentsScopeField
-        key="requireComponentsScope"
-        autoFocus={autoFocus === "requireComponentsScope"}
-        descriptions={descriptions}
-      />
-    ),
-    requireFingerprintScope: (
-      <RequireFingerprintScopeField
-        key="requireFingerprintScope"
-        autoFocus={autoFocus === "requireFingerprintScope"}
-        descriptions={descriptions}
-      />
-    ),
-    requireHeartbeat: (
-      <RequireHeartbeatField
-        key="requireHeartbeat"
-        autoFocus={autoFocus === "requireHeartbeat"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-        mode={mode}
-      />
-    ),
-    requireMachineScope: (
-      <RequireMachineScopeField
-        key="requireMachineScope"
-        autoFocus={autoFocus === "requireMachineScope"}
-        descriptions={descriptions}
-      />
-    ),
-    requirePolicyScope: (
-      <RequirePolicyScopeField
-        key="requirePolicyScope"
-        autoFocus={autoFocus === "requirePolicyScope"}
-        descriptions={descriptions}
-      />
-    ),
-    requireProductScope: (
-      <RequireProductScopeField
-        key="requireProductScope"
-        autoFocus={autoFocus === "requireProductScope"}
-        descriptions={descriptions}
-      />
-    ),
-    requireUserScope: (
-      <RequireUserScopeField
-        key="requireUserScope"
-        autoFocus={autoFocus === "requireUserScope"}
-        descriptions={descriptions}
-      />
-    ),
-    requireVersionScope: (
-      <RequireVersionScopeField
-        key="requireVersionScope"
-        autoFocus={autoFocus === "requireVersionScope"}
-        descriptions={descriptions}
-      />
-    ),
-    strict: (
-      <StrictField
-        key="strict"
-        autoFocus={autoFocus === "strict"}
-        descriptions={descriptions}
-      />
-    ),
-    transferStrategy: (
-      <TransferStrategyField
-        key="transferStrategy"
-        autoFocus={autoFocus === "transferStrategy"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-        disabled={!duration}
-      />
-    ),
-    usePool: (
-      <UsePoolField
-        key="usePool"
-        autoFocus={autoFocus === "usePool"}
-        descriptions={descriptions}
-      />
-    ),
-  }
-
   const fields = include
     ? include
     : DefaultFieldSort.filter((field) => !exclude.includes(field))
 
-  return <>{fields.map((fieldName) => fieldMap[fieldName])}</>
+  return (
+    <>
+      {fields.map((field) => {
+        switch (field) {
+          case "authenticationStrategy":
+            return (
+              <AuthenticationStrategyField
+                key="authenticationStrategy"
+                autoFocus={autoFocus === "authenticationStrategy"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "checkInInterval":
+            return (
+              <CheckInIntervalField
+                key="checkInInterval"
+                autoFocus={autoFocus === "checkInInterval"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                mode={mode}
+              />
+            )
+          case "checkInIntervalCount":
+            return (
+              <CheckInIntervalCountField
+                key="checkInIntervalCount"
+                autoFocus={autoFocus === "checkInIntervalCount"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                disabled={!checkInInterval}
+              />
+            )
+          case "componentMatchingStrategy":
+            return (
+              <ComponentMatchingStrategyField
+                key="componentMatchingStrategy"
+                autoFocus={autoFocus === "componentMatchingStrategy"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "componentUniquenessStrategy":
+            return (
+              <ComponentUniquenessStrategyField
+                key="componentUniquenessStrategy"
+                autoFocus={autoFocus === "componentUniquenessStrategy"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "duration":
+            return (
+              <DurationField
+                key="duration"
+                autoFocus={autoFocus === "duration"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                mode={mode}
+              />
+            )
+          case "entitlements.attach":
+            return <AttachEntitlementsField key="entitlements.attach" />
+          case "entitlements.create":
+            return <CreateEntitlementsField key="entitlements.create" />
+          case "expirationBasis":
+            return (
+              <ExpirationBasisField
+                key="expirationBasis"
+                autoFocus={autoFocus === "expirationBasis"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                disabled={!duration}
+              />
+            )
+          case "expirationStrategy":
+            return (
+              <ExpirationStrategyField
+                key="expirationStrategy"
+                autoFocus={autoFocus === "expirationStrategy"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                disabled={!duration}
+              />
+            )
+          case "floating":
+            return (
+              <FloatingField
+                key="floating"
+                autoFocus={autoFocus === "floating"}
+                descriptions={descriptions}
+              />
+            )
+          case "heartbeatBasis":
+            return (
+              <HeartbeatBasisField
+                key="heartbeatBasis"
+                autoFocus={autoFocus === "heartbeatBasis"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                disabled={!requireHeartbeat}
+              />
+            )
+          case "heartbeatCullStrategy":
+            return (
+              <HeartbeatCullStrategyField
+                key="heartbeatCullStrategy"
+                autoFocus={autoFocus === "heartbeatCullStrategy"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                disabled={!requireHeartbeat}
+              />
+            )
+          case "heartbeatDuration":
+            return (
+              <HeartbeatDurationField
+                key="heartbeatDuration"
+                autoFocus={autoFocus === "heartbeatDuration"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                disabled={!requireHeartbeat}
+              />
+            )
+          case "heartbeatResurrectionStrategy":
+            return (
+              <HeartbeatResurrectionStrategyField
+                key="heartbeatResurrectionStrategy"
+                autoFocus={autoFocus === "heartbeatResurrectionStrategy"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                disabled={!requireHeartbeat}
+              />
+            )
+          case "machineLeasingStrategy":
+            return (
+              <MachineLeasingStrategyField
+                key="machineLeasingStrategy"
+                autoFocus={autoFocus === "machineLeasingStrategy"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "machineMatchingStrategy":
+            return (
+              <MachineMatchingStrategyField
+                key="machineMatchingStrategy"
+                autoFocus={autoFocus === "machineMatchingStrategy"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "machineUniquenessStrategy":
+            return (
+              <MachineUniquenessStrategyField
+                key="machineUniquenessStrategy"
+                autoFocus={autoFocus === "machineUniquenessStrategy"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "maxCores":
+            return (
+              <MaxCoresField
+                key="maxCores"
+                autoFocus={autoFocus === "maxCores"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "maxMachines":
+            return (
+              <MaxMachinesField
+                key="maxMachines"
+                autoFocus={autoFocus === "maxMachines"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "maxProcesses":
+            return (
+              <MaxProcessesField
+                key="maxProcesses"
+                autoFocus={autoFocus === "maxProcesses"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "maxUsers":
+            return (
+              <MaxUsersField
+                key="maxUsers"
+                autoFocus={autoFocus === "maxUsers"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "maxUses":
+            return (
+              <MaxUsesField
+                key="maxUses"
+                autoFocus={autoFocus === "maxUses"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "metadata":
+            return (
+              <MetadataField
+                key="metadata"
+                autoFocus={autoFocus === "metadata"}
+                descriptions={descriptions}
+              />
+            )
+          case "name":
+            return (
+              <NameField
+                key="name"
+                autoFocus={autoFocus === "name"}
+                titleVariant={titleVariant}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "overageStrategy":
+            return (
+              <OverageStrategyField
+                key="overageStrategy"
+                autoFocus={autoFocus === "overageStrategy"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "processLeasingStrategy":
+            return (
+              <ProcessLeasingStrategyField
+                key="processLeasingStrategy"
+                autoFocus={autoFocus === "processLeasingStrategy"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "product":
+            return (
+              <ProductField
+                key="product"
+                autoFocus={autoFocus === "product"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "protected":
+            return (
+              <ProtectedField
+                key="protected"
+                autoFocus={autoFocus === "protected"}
+                descriptions={descriptions}
+              />
+            )
+          case "renewalBasis":
+            return (
+              <RenewalBasisField
+                key="renewalBasis"
+                autoFocus={autoFocus === "renewalBasis"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                disabled={!duration}
+              />
+            )
+          case "requireCheckIn":
+            return (
+              <RequireCheckInField
+                key="requireCheckIn"
+                autoFocus={autoFocus === "requireCheckIn"}
+                descriptions={descriptions}
+              />
+            )
+          case "requireChecksumScope":
+            return (
+              <RequireChecksumScopeField
+                key="requireChecksumScope"
+                autoFocus={autoFocus === "requireChecksumScope"}
+                descriptions={descriptions}
+              />
+            )
+          case "requireComponentsScope":
+            return (
+              <RequireComponentsScopeField
+                key="requireComponentsScope"
+                autoFocus={autoFocus === "requireComponentsScope"}
+                descriptions={descriptions}
+              />
+            )
+          case "requireFingerprintScope":
+            return (
+              <RequireFingerprintScopeField
+                key="requireFingerprintScope"
+                autoFocus={autoFocus === "requireFingerprintScope"}
+                descriptions={descriptions}
+              />
+            )
+          case "requireHeartbeat":
+            return (
+              <RequireHeartbeatField
+                key="requireHeartbeat"
+                autoFocus={autoFocus === "requireHeartbeat"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                mode={mode}
+              />
+            )
+          case "requireMachineScope":
+            return (
+              <RequireMachineScopeField
+                key="requireMachineScope"
+                autoFocus={autoFocus === "requireMachineScope"}
+                descriptions={descriptions}
+              />
+            )
+          case "requirePolicyScope":
+            return (
+              <RequirePolicyScopeField
+                key="requirePolicyScope"
+                autoFocus={autoFocus === "requirePolicyScope"}
+                descriptions={descriptions}
+              />
+            )
+          case "requireProductScope":
+            return (
+              <RequireProductScopeField
+                key="requireProductScope"
+                autoFocus={autoFocus === "requireProductScope"}
+                descriptions={descriptions}
+              />
+            )
+          case "requireUserScope":
+            return (
+              <RequireUserScopeField
+                key="requireUserScope"
+                autoFocus={autoFocus === "requireUserScope"}
+                descriptions={descriptions}
+              />
+            )
+          case "requireVersionScope":
+            return (
+              <RequireVersionScopeField
+                key="requireVersionScope"
+                autoFocus={autoFocus === "requireVersionScope"}
+                descriptions={descriptions}
+              />
+            )
+          case "strict":
+            return (
+              <StrictField
+                key="strict"
+                autoFocus={autoFocus === "strict"}
+                descriptions={descriptions}
+              />
+            )
+          case "transferStrategy":
+            return (
+              <TransferStrategyField
+                key="transferStrategy"
+                autoFocus={autoFocus === "transferStrategy"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                disabled={!duration}
+              />
+            )
+          case "usePool":
+            return (
+              <UsePoolField
+                key="usePool"
+                autoFocus={autoFocus === "usePool"}
+                descriptions={descriptions}
+              />
+            )
+          default:
+            return null
+        }
+      })}
+    </>
+  )
 }
 
 function NameField({

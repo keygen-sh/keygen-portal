@@ -48,39 +48,48 @@ export default function EntitlementsFormFields({
         ? EntitlementEditFormFieldDescriptions
         : EntitlementFormFieldDescriptions
 
-  const fieldMap: Record<EntitlementFieldName, React.ReactNode> = {
-    name: (
-      <NameField
-        key="name"
-        autoFocus={autoFocus === "name"}
-        titleVariant={titleVariant}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    code: (
-      <CodeField
-        key="code"
-        autoFocus={autoFocus === "code"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-    metadata: (
-      <MetadataField
-        key="metadata"
-        autoFocus={autoFocus === "metadata"}
-        fieldVariant={fieldVariant}
-        descriptions={descriptions}
-      />
-    ),
-  }
-
   const fields = include
     ? include
     : DefaultFieldSort.filter((field) => !exclude.includes(field))
 
-  return <>{fields.map((fieldName) => fieldMap[fieldName])}</>
+  return (
+    <>
+      {fields.map((field) => {
+        switch (field) {
+          case "name":
+            return (
+              <NameField
+                key="name"
+                autoFocus={autoFocus === "name"}
+                titleVariant={titleVariant}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "code":
+            return (
+              <CodeField
+                key="code"
+                autoFocus={autoFocus === "code"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "metadata":
+            return (
+              <MetadataField
+                key="metadata"
+                autoFocus={autoFocus === "metadata"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          default:
+            return null
+        }
+      })}
+    </>
+  )
 }
 
 function NameField({

@@ -1,3 +1,4 @@
+import { FieldPath } from "react-hook-form"
 import { z } from "zod"
 
 import { CombineFormValues } from "@/types/forms"
@@ -14,6 +15,8 @@ export type AllValues = CombineFormValues<
   CreateValues,
   UpdateValues
 >
+
+export type FieldNames = FieldPath<AllValues>
 
 const BaseShape = z.object({
   metadata: z.record(z.unknown()).default({}),

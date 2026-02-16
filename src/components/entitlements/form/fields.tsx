@@ -19,19 +19,22 @@ import * as Forms from "@/components/forms"
 import KeyValueInput from "@/components/key-value-input"
 
 type FieldVariant = "row" | "stacking" | "inline" | "none"
-type EntitlementFieldName = keyof Schemas.Entitlements.AllValues
 type Descriptions = typeof EntitlementFormFieldDescriptions
 
 interface EntitlementsFormFieldsProps {
-  include?: EntitlementFieldName[]
-  exclude?: EntitlementFieldName[]
-  autoFocus?: EntitlementFieldName
+  include?: Schemas.Entitlements.FieldNames[]
+  exclude?: Schemas.Entitlements.FieldNames[]
+  autoFocus?: Schemas.Entitlements.FieldNames
   titleVariant?: boolean
   fieldVariant?: FieldVariant
   schema?: "create" | "edit"
 }
 
-const DefaultFieldSort: EntitlementFieldName[] = ["name", "code", "metadata"]
+const DefaultFieldSort: Schemas.Entitlements.FieldNames[] = [
+  "name",
+  "code",
+  "metadata",
+]
 
 export default function EntitlementsFormFields({
   include,

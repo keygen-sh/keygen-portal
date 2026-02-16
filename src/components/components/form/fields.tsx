@@ -22,21 +22,20 @@ import * as Forms from "@/components/forms"
 import SearchSelect from "@/components/search-select"
 import KeyValueInput from "@/components/key-value-input"
 
-type ComponentFieldName = "name" | "fingerprint" | "machineId" | "metadata"
 
 type FieldVariant = "row" | "stacking" | "inline" | "none"
 type Descriptions = typeof ComponentFormFieldDescriptions
 
 interface ComponentsFormFieldsProps {
-  include?: ComponentFieldName[]
-  exclude?: ComponentFieldName[]
-  autoFocus?: ComponentFieldName
+  include?: Schemas.Components.FieldNames[]
+  exclude?: Schemas.Components.FieldNames[]
+  autoFocus?: Schemas.Components.FieldNames
   titleVariant?: boolean
   fieldVariant?: FieldVariant
   schema?: "create" | "edit"
 }
 
-const DefaultFieldSort: ComponentFieldName[] = [
+const DefaultFieldSort: Schemas.Components.FieldNames[] = [
   "name",
   "fingerprint",
   "machineId",

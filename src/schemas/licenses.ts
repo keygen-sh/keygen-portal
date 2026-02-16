@@ -1,3 +1,4 @@
+import { FieldPath } from "react-hook-form"
 import { z } from "zod"
 
 import { Override } from "@/types/utility"
@@ -34,6 +35,8 @@ export type AllValues = CombineFormValues<
   CreateValues,
   UpdateValues
 >
+
+export type FieldNames = FieldPath<AllValues>
 
 const BaseShape = z.object({
   name: z

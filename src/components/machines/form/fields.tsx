@@ -23,33 +23,20 @@ import * as Forms from "@/components/forms"
 import SearchSelect from "@/components/search-select"
 import KeyValueInput from "@/components/key-value-input"
 
-type MachineFieldName =
-  | "name"
-  | "fingerprint"
-  | "licenseId"
-  | "platform"
-  | "hostname"
-  | "ip"
-  | "cores"
-  | "memory"
-  | "disk"
-  | "metadata"
-  | "groupId"
-  | "ownerId"
 
 type FieldVariant = "row" | "stacking" | "inline" | "none"
 type Descriptions = typeof MachineFormFieldDescriptions
 
 interface MachinesFormFieldsProps {
-  include?: MachineFieldName[]
-  exclude?: MachineFieldName[]
-  autoFocus?: MachineFieldName
+  include?: Schemas.Machines.FieldNames[]
+  exclude?: Schemas.Machines.FieldNames[]
+  autoFocus?: Schemas.Machines.FieldNames
   titleVariant?: boolean
   fieldVariant?: FieldVariant
   schema?: "create" | "edit"
 }
 
-const DefaultFieldSort: MachineFieldName[] = [
+const DefaultFieldSort: Schemas.Machines.FieldNames[] = [
   "name",
   "fingerprint",
   "licenseId",

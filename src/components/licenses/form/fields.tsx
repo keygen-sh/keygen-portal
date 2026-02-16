@@ -46,34 +46,21 @@ import * as Forms from "@/components/forms"
 import * as Calendars from "@/components/calendars"
 import KeyValueInput from "@/components/key-value-input"
 
-type LicenseFieldName =
-  | "name"
-  | "key"
-  | "policyId"
-  | "expiry"
-  | "maxMachines"
-  | "maxProcesses"
-  | "maxUsers"
-  | "maxCores"
-  | "maxUses"
-  | "suspended"
-  | "protected"
-  | "metadata"
 
 type FieldVariant = "row" | "stacking" | "inline" | "none"
 type Descriptions = typeof LicenseFormFieldDescriptions
 
 interface LicensesFormFieldsProps {
-  include?: LicenseFieldName[]
-  exclude?: LicenseFieldName[]
-  autoFocus?: LicenseFieldName
+  include?: Schemas.Licenses.FieldNames[]
+  exclude?: Schemas.Licenses.FieldNames[]
+  autoFocus?: Schemas.Licenses.FieldNames
   titleVariant?: boolean
   fieldVariant?: FieldVariant
   selectedPolicy?: Policy | null
   schema?: "create" | "edit"
 }
 
-const DefaultFieldSort: LicenseFieldName[] = [
+const DefaultFieldSort: Schemas.Licenses.FieldNames[] = [
   "name",
   "key",
   "policyId",

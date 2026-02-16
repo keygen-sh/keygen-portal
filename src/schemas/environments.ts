@@ -1,3 +1,4 @@
+import { FieldPath } from "react-hook-form"
 import { z } from "zod"
 
 import { Writable } from "@/types/utility"
@@ -12,6 +13,8 @@ export type AllValues = CombineFormValues<
   CreateValues,
   UpdateValues
 >
+
+export type FieldNames = FieldPath<AllValues>
 
 const BaseShape = z.object({
   name: z.string().trim().min(1, "Environment name is required"),

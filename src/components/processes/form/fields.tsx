@@ -28,15 +28,14 @@ import * as Forms from "@/components/forms"
 import SearchSelect from "@/components/search-select"
 import KeyValueInput from "@/components/key-value-input"
 
-type ProcessFieldName = "pid" | "machineId" | "metadata"
 
 type FieldVariant = "row" | "stacking" | "inline" | "none"
 type Descriptions = typeof ProcessFormFieldDescriptions
 
 interface ProcessesFormFieldsProps {
-  include?: ProcessFieldName[]
-  exclude?: ProcessFieldName[]
-  autoFocus?: ProcessFieldName
+  include?: Schemas.Processes.FieldNames[]
+  exclude?: Schemas.Processes.FieldNames[]
+  autoFocus?: Schemas.Processes.FieldNames
   titleVariant?: boolean
   fieldVariant?: FieldVariant
   schema?: "create" | "edit"

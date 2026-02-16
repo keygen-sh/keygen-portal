@@ -38,29 +38,20 @@ import SearchSelect from "@/components/search-select"
 import KeyValueInput from "@/components/key-value-input"
 import TooltipSelectItem from "@/components/tooltip-select-item"
 
-type UserFieldName =
-  | "email"
-  | "password"
-  | "firstName"
-  | "lastName"
-  | "role"
-  | "permissions"
-  | "metadata"
-  | "groupId"
 
 type FieldVariant = "row" | "stacking" | "inline" | "none"
 type Descriptions = typeof UserFormFieldDescriptions
 
 interface UsersFormFieldsProps {
-  include?: UserFieldName[]
-  exclude?: UserFieldName[]
-  autoFocus?: UserFieldName
+  include?: Schemas.Users.FieldNames[]
+  exclude?: Schemas.Users.FieldNames[]
+  autoFocus?: Schemas.Users.FieldNames
   titleVariant?: boolean
   fieldVariant?: FieldVariant
   schema?: "create" | "edit"
 }
 
-const DefaultFieldSort: UserFieldName[] = [
+const DefaultFieldSort: Schemas.Users.FieldNames[] = [
   "email",
   "password",
   "firstName",

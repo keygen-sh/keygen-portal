@@ -27,6 +27,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 
 import {
@@ -80,8 +81,8 @@ import {
 
 import * as keygen from "@/keygen"
 import * as Property from "@/components/property"
-import * as Attribute from "@/components/attribute"
 import * as Licenses from "@/components/licenses"
+import * as Attribute from "@/components/attribute"
 import Metadata from "@/components/metadata"
 import TooltipBadge from "@/components/tooltip-badge"
 import PageHeader from "@/components/page-header"
@@ -135,6 +136,7 @@ export default function LicenseDetails() {
     edit: false,
     delete: false,
     attributes: false,
+    checkOut: false,
   })
 
   useEffect(() => {
@@ -203,6 +205,16 @@ export default function LicenseDetails() {
               <DropdownMenuContent className="mr-4 p-0">
                 <DropdownMenuItem
                   onClick={(e) => {
+                    toggleOpen("checkOut", true)
+                    e.currentTarget.blur()
+                  }}
+                  className="pb-2 text-base"
+                >
+                  Checkout
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={(e) => {
                     toggleOpen("edit", true)
                     e.currentTarget.blur()
                   }}
@@ -210,13 +222,13 @@ export default function LicenseDetails() {
                 >
                   Edit
                 </DropdownMenuItem>
-                <Separator />
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={(e) => {
                     toggleOpen("delete", true)
                     e.currentTarget.blur()
                   }}
-                  className="pb-2 text-base"
+                  className="pb-2 text-base text-destructive"
                 >
                   Delete
                 </DropdownMenuItem>
@@ -224,6 +236,13 @@ export default function LicenseDetails() {
             </DropdownMenu>
           ) : (
             <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                disabled={licenseLoading}
+                onClick={() => toggleOpen("checkOut", true)}
+              >
+                Checkout
+              </Button>
               <Button
                 variant="outline"
                 disabled={licenseLoading}
@@ -906,6 +925,13 @@ export default function LicenseDetails() {
           onConfirm={handleDeleteLicense}
           label="Delete"
           variant="destructive"
+        />
+      )}
+
+      {license && (
+        <Licenses.Form.CheckOut
+          open={open.checkOut}
+          onOpenChange={(value) => toggleOpen("checkOut", value)}
         />
       )}
 

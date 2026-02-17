@@ -192,3 +192,25 @@ export const LicenseStatusVariants: Readonly<
   [LicenseStatus.Suspended]: "destructive",
   [LicenseStatus.Banned]: "destructive",
 } as const
+
+export type LicenseFileAttributes = {
+  certificate: string
+  algorithm: string
+  include: string[]
+  ttl: number | null
+  expiry: string | null
+  issued: string
+}
+
+export type LicenseFileRelationships = {
+  account: Relationship<Linkage<"accounts">>
+  license: Relationship<Linkage<"licenses">>
+}
+
+export type LicenseFile = Resource<
+  "license-files",
+  LicenseFileAttributes,
+  LicenseFileRelationships
+>
+
+export type LicenseFileResponse = APIResponse<LicenseFile>

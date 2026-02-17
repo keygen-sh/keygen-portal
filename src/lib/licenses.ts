@@ -138,3 +138,15 @@ export function truncateKey(
 export function getLicenseLabel(license: License) {
   return license.attributes.name || license.attributes.key
 }
+
+export function formatTtlLabel(seconds: number | null): string {
+  if (seconds === null) return "no TTL"
+
+  const days = Math.floor(seconds / 86400)
+  if (days >= 1) return `${days} day${days === 1 ? "" : "s"}`
+
+  const hours = Math.floor(seconds / 3600)
+  if (hours >= 1) return `${hours} hour${hours === 1 ? "" : "s"}`
+
+  return `${seconds} seconds`
+}

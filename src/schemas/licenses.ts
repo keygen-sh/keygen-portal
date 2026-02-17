@@ -3,7 +3,7 @@ import { z } from "zod"
 
 import { Override } from "@/types/utility"
 import { CombineFormValues } from "@/types/forms"
-import { LicenseAttributes } from "@/types/licenses"
+import { LicenseAttributes, LicenseFileAttributes } from "@/types/licenses"
 
 export type BaseValues = Partial<
   Override<
@@ -79,3 +79,29 @@ export const CreateSchema: z.ZodType<CreateValues> = BaseRules(
   BaseShape.merge(PolicyShape),
 ) as z.ZodType<CreateValues>
 export const UpdateSchema: z.ZodType<UpdateValues> = BaseSchema
+
+export type CheckOutValues = Pick<
+  LicenseFileAttributes,
+  "include" | "ttl" | "algorithm"
+> & {
+  includeEnabled: boolean
+  ttlEnabled: boolean
+  encryptEnabled: boolean
+}
+
+const CheckOutShape = z.object({
+  includeEnabled: z.boolean().default(false),
+  include: z.array(z.string()).default([]),
+  ttlEnabled: z.boolean().default(false),
+  ttl: z.number().nullable().default(null),
+  encryptEnabled: z.boolean().default(false),
+  algorithm: z.string().default("ed25519"),
+})
+
+const CheckOutRules = (
+  schema: z.ZodType<CheckOutValues, z.ZodTypeDef, unknown>,
+): z.ZodType<CheckOutValues, z.ZodTypeDef, unknown> => {
+  return schema
+}
+
+export const CheckOutSchema = CheckOutRules(CheckOutShape)

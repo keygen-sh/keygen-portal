@@ -5,6 +5,11 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip"
+import {
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -15,6 +20,7 @@ import {
   CommandItem,
   CommandEmpty,
 } from "@/components/ui/command"
+import { useMobile } from "@/hooks/use-mobile"
 
 interface Option {
   label: string
@@ -28,6 +34,7 @@ interface MultiSelectProps {
   placeholder?: string
   disabled?: boolean
   autoFocus?: boolean
+  disabledTooltip?: string
   className?: string
 }
 
@@ -39,6 +46,7 @@ export default function MultiSelect({
   placeholder = "Choose...",
   disabled,
   autoFocus,
+  disabledTooltip,
   className,
 }: MultiSelectProps) {
   const selected = value ?? []
@@ -79,7 +87,7 @@ export default function MultiSelect({
 
   const remove = (value: string) => toggle(value, open)
 
-  return (
+  const content = (
     <Popover modal open={!disabled && open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <ScrollArea
@@ -192,5 +200,56 @@ export default function MultiSelect({
         </Command>
       </PopoverContent>
     </Popover>
+  )
+
+  if (disabled && disabledTooltip) {
+    return (
+      <DisabledTooltip tooltip={disabledTooltip}>{content}</DisabledTooltip>
+    )
+  }
+
+  return content
+}
+
+function DisabledTooltip({
+  tooltip,
+  children,
+}: {
+  tooltip: string
+  children: React.ReactNode
+}) {
+  const isMobile = useMobile()
+  const [open, setOpen] = useState(false)
+
+  const trigger = (
+    <span
+      tabIndex={0}
+      className={cn(
+        "block rounded-md transition-colors",
+        open ? "bg-background-1" : "hover:bg-background-1",
+      )}
+    >
+      {children}
+    </span>
+  )
+
+  if (isMobile) {
+    return (
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>{trigger}</PopoverTrigger>
+        <PopoverContent className="max-w-64 bg-background-4 text-pretty text-content-muted">
+          {tooltip}
+        </PopoverContent>
+      </Popover>
+    )
+  }
+
+  return (
+    <Tooltip open={open} onOpenChange={setOpen}>
+      <TooltipTrigger asChild>{trigger}</TooltipTrigger>
+      <TooltipContent className="max-w-64 bg-background-4 text-pretty text-content-muted">
+        {tooltip}
+      </TooltipContent>
+    </Tooltip>
   )
 }

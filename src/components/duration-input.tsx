@@ -5,12 +5,18 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip"
+import {
   Popover,
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover"
 
 import { cn } from "@/lib/utils"
+import { useMobile } from "@/hooks/use-mobile"
 
 const SecondsPerMinute = 60
 const SecondsPerHour = 3600
@@ -109,6 +115,7 @@ interface DurationInputProps {
   presets?: Preset[]
   disabled?: boolean
   autoFocus?: boolean
+  disabledTooltip?: string
   className?: string
 }
 
@@ -119,6 +126,7 @@ export default function DurationInput({
   presets,
   disabled,
   autoFocus,
+  disabledTooltip,
   className,
 }: DurationInputProps): React.ReactElement {
   const availableUnits = useMemo(() => {
@@ -207,7 +215,7 @@ export default function DurationInput({
 
   const isUnlimited = unit.seconds == null
 
-  return (
+  const content = (
     <div className={cn("flex items-stretch", className)}>
       <Popover open={presetsOpen} onOpenChange={setPresetsOpen}>
         <PopoverPrimitive.Anchor asChild>
@@ -291,5 +299,56 @@ export default function DurationInput({
         </PopoverContent>
       </Popover>
     </div>
+  )
+
+  if (disabled && disabledTooltip) {
+    return (
+      <DisabledTooltip tooltip={disabledTooltip}>{content}</DisabledTooltip>
+    )
+  }
+
+  return content
+}
+
+function DisabledTooltip({
+  tooltip,
+  children,
+}: {
+  tooltip: string
+  children: React.ReactNode
+}) {
+  const isMobile = useMobile()
+  const [open, setOpen] = useState(false)
+
+  const trigger = (
+    <span
+      tabIndex={0}
+      className={cn(
+        "block rounded-md transition-colors",
+        open ? "bg-background-1" : "hover:bg-background-1",
+      )}
+    >
+      {children}
+    </span>
+  )
+
+  if (isMobile) {
+    return (
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>{trigger}</PopoverTrigger>
+        <PopoverContent className="max-w-64 bg-background-4 text-pretty text-content-muted">
+          {tooltip}
+        </PopoverContent>
+      </Popover>
+    )
+  }
+
+  return (
+    <Tooltip open={open} onOpenChange={setOpen}>
+      <TooltipTrigger asChild>{trigger}</TooltipTrigger>
+      <TooltipContent className="max-w-64 bg-background-4 text-pretty text-content-muted">
+        {tooltip}
+      </TooltipContent>
+    </Tooltip>
   )
 }

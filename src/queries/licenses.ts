@@ -5,7 +5,7 @@ import { useEnvironment } from "@/hooks/use-environment"
 import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
-import { License } from "@/types/licenses"
+import { License, LicenseFile } from "@/types/licenses"
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
@@ -107,6 +107,35 @@ export function useRemoveLicense(licenseId: string) {
         queryKey: ["licenses", { environment: code }],
       })
       queryClient.removeQueries({
+        queryKey: ["licenses", licenseId, { environment: code }],
+      })
+    },
+  })
+}
+
+export function useCheckOutLicense(licenseId: string) {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<LicenseFile, APIError, Schemas.Licenses.CheckOutValues>({
+    mutationFn: (values) => {
+      const include =
+        values.includeEnabled && values.include.length > 0
+          ? values.include
+          : undefined
+
+      const ttl = values.ttlEnabled && values.ttl ? values.ttl : undefined
+
+      const prefix = values.encryptEnabled ? "aes-256-gcm" : "base64"
+      const algorithm = `${prefix}+${values.algorithm}`
+
+      return keygen.licenses
+        .checkOut({ id: licenseId, include, ttl, algorithm })
+        .then((response) => response.data as LicenseFile)
+    },
+
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
         queryKey: ["licenses", licenseId, { environment: code }],
       })
     },

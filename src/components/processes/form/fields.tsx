@@ -40,7 +40,7 @@ interface ProcessesFormFieldsProps {
   schema?: "create" | "edit"
 }
 
-const DefaultFieldSort: Schemas.Processes.FieldNames[] = [
+const IncludeDefaultFields: Schemas.Processes.FieldNames[] = [
   "pid",
   "machineId",
   "metadata",
@@ -63,7 +63,7 @@ export default function ProcessesFormFields({
 
   const fields = include
     ? include
-    : DefaultFieldSort.filter((field) => !exclude.includes(field))
+    : IncludeDefaultFields.filter((field) => !exclude.includes(field))
 
   return (
     <>

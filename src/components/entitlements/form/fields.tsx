@@ -29,7 +29,7 @@ interface EntitlementsFormFieldsProps {
   schema?: "create" | "edit"
 }
 
-const DefaultFieldSort: Schemas.Entitlements.FieldNames[] = [
+const IncludeDefaultFields: Schemas.Entitlements.FieldNames[] = [
   "name",
   "code",
   "metadata",
@@ -52,7 +52,7 @@ export default function EntitlementsFormFields({
 
   const fields = include
     ? include
-    : DefaultFieldSort.filter((field) => !exclude.includes(field))
+    : IncludeDefaultFields.filter((field) => !exclude.includes(field))
 
   return (
     <>

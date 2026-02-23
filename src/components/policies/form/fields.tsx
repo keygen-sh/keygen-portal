@@ -72,7 +72,7 @@ interface PoliciesFormFieldsProps {
   schema?: "create" | "edit"
 }
 
-const DefaultFieldSort: Schemas.Policies.FieldNames[] = [
+const IncludeDefaultFields: Schemas.Policies.FieldNames[] = [
   "authenticationStrategy",
   "checkInInterval",
   "checkInIntervalCount",
@@ -142,7 +142,7 @@ export default function PoliciesFormFields({
 
   const fields = include
     ? include
-    : DefaultFieldSort.filter((field) => !exclude.includes(field))
+    : IncludeDefaultFields.filter((field) => !exclude.includes(field))
 
   return (
     <>

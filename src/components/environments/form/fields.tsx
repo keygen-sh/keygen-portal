@@ -34,7 +34,7 @@ interface EnvironmentsFormFieldsProps {
   schema?: "create" | "edit"
 }
 
-const DefaultFieldSort: Schemas.Environments.FieldNames[] = [
+const IncludeDefaultFields: Schemas.Environments.FieldNames[] = [
   "name",
   "code",
   "isolationStrategy",
@@ -57,7 +57,7 @@ export default function EnvironmentsFormFields({
 
   const fields = include
     ? include
-    : DefaultFieldSort.filter((field) => !exclude.includes(field))
+    : IncludeDefaultFields.filter((field) => !exclude.includes(field))
 
   return (
     <>

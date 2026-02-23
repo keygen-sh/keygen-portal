@@ -50,7 +50,7 @@ interface UsersFormFieldsProps {
   schema?: "create" | "edit"
 }
 
-const DefaultFieldSort: Schemas.Users.FieldNames[] = [
+const IncludeDefaultFields: Schemas.Users.FieldNames[] = [
   "email",
   "password",
   "firstName",
@@ -78,7 +78,7 @@ export default function UsersFormFields({
 
   const fields = include
     ? include
-    : DefaultFieldSort.filter((field) => !exclude.includes(field))
+    : IncludeDefaultFields.filter((field) => !exclude.includes(field))
 
   return (
     <>

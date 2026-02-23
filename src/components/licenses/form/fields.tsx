@@ -59,7 +59,7 @@ interface LicensesFormFieldsProps {
   schema?: "create" | "edit"
 }
 
-const DefaultFieldSort: Schemas.Licenses.FieldNames[] = [
+const IncludeDefaultFields: Schemas.Licenses.FieldNames[] = [
   "name",
   "key",
   "policyId",
@@ -92,7 +92,7 @@ export default function LicensesFormFields({
 
   const fields = include
     ? include
-    : DefaultFieldSort.filter((field) => !exclude.includes(field))
+    : IncludeDefaultFields.filter((field) => !exclude.includes(field))
 
   return (
     <>

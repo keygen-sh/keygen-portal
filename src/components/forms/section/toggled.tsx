@@ -6,12 +6,12 @@ import { Switch } from "@/components/ui/switch"
 import { extractFromChildren } from "@/lib/react"
 
 interface FormsSectionToggledProps {
-  children: React.ReactNode
   label?: string
+  children: React.ReactNode
 }
 
 export default function FormsSectionToggled({
-  label,
+  label = "Advanced configuration",
   children,
 }: FormsSectionToggledProps) {
   const [showAdvanced, setShowAdvanced] = useState(false)

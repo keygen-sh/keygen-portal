@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react"
-import { useFormState } from "react-hook-form"
+import { type FieldValues, useFormContext, useFormState } from "react-hook-form"
 
 import { Switch } from "@/components/ui/switch"
 
@@ -27,23 +27,12 @@ export default function FormsSectionToggled({
     [children],
   )
 
-  const { errors } = useFormState({ name: fields })
+  const { control, getFieldState } = useFormContext<FieldValues>()
+  const state = useFormState({ control, name: fields })
 
-  const hasFieldErrors = fields.some((f) => {
-    const parts = f.split(".")
-    let current: unknown = errors
-    for (const part of parts) {
-      if (current && typeof current === "object" && part in current) {
-        current = (current as Record<string, unknown>)[part]
-      } else {
-        current = undefined
-        break
-      }
-    }
-    return !!current
-  })
-
-  const open = showAdvanced || hasFieldErrors
+  // Keep the section open when any field is invalid so the user can see and fix it
+  const open =
+    showAdvanced || fields.some((name) => getFieldState(name, state).invalid)
 
   return (
     <div className="flex flex-col space-y-4">

@@ -41,7 +41,7 @@ export default function FormsContainerDialog({
           className,
         )}
       >
-        {/* Eliminates console warnings; form layouts handle visual headers */}
+        {/* Satisfies Radix's accessibility requirements while visually hiding elements; form layouts handle visual headers */}
         <DialogHeader className="sr-only">
           <DialogDescription></DialogDescription>
           <DialogTitle></DialogTitle>

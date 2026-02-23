@@ -66,18 +66,6 @@ const DefaultPresets: Preset[] = [
   { seconds: SecondsPerYear * 3, label: "3 Years" },
 ]
 
-export const HeartbeatPresets: Preset[] = [
-  { seconds: SecondsPerMinute * 1, label: "1 Minute" },
-  { seconds: SecondsPerMinute * 2, label: "2 Minutes" },
-  { seconds: SecondsPerMinute * 5, label: "5 Minutes" },
-  { seconds: SecondsPerMinute * 10, label: "10 Minutes" },
-  { seconds: SecondsPerMinute * 15, label: "15 Minutes" },
-  { seconds: SecondsPerMinute * 30, label: "30 Minutes" },
-  { seconds: SecondsPerHour * 1, label: "1 Hour" },
-  { seconds: SecondsPerHour * 12, label: "12 Hours" },
-  { seconds: SecondsPerDay * 1, label: "1 Day" },
-]
-
 function selectUnit(
   totalSeconds?: number | null,
   allowed: Unit[] = DefaultUnits,

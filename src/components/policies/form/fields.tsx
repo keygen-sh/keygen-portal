@@ -59,8 +59,20 @@ import * as Forms from "@/components/forms"
 import MultiSelect from "@/components/multi-select"
 import KeyValueInput from "@/components/key-value-input"
 import NullableSelect from "@/components/nullable-select"
-import DurationInput, { HeartbeatPresets } from "@/components/duration-input"
+import DurationInput from "@/components/duration-input"
 type Descriptions = typeof PolicyFormFieldDescriptions
+
+const HeartbeatPresets = [
+  { seconds: 60 * 1, label: "1 Minute" },
+  { seconds: 60 * 2, label: "2 Minutes" },
+  { seconds: 60 * 5, label: "5 Minutes" },
+  { seconds: 60 * 10, label: "10 Minutes" },
+  { seconds: 60 * 15, label: "15 Minutes" },
+  { seconds: 60 * 30, label: "30 Minutes" },
+  { seconds: 3600 * 1, label: "1 Hour" },
+  { seconds: 3600 * 12, label: "12 Hours" },
+  { seconds: 86400 * 1, label: "1 Day" },
+]
 
 interface PoliciesFormFieldsProps {
   include?: Schemas.Policies.FieldNames[]

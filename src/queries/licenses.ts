@@ -113,6 +113,50 @@ export function useRemoveLicense(licenseId: string) {
   })
 }
 
+export function useSuspendLicense(licenseId: string) {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<License, APIError>({
+    mutationFn: () =>
+      keygen.licenses
+        .suspend({ id: licenseId })
+        .then((response) => response.data as License),
+
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ["licenses", licenseId, { environment: code }],
+        updated,
+      )
+      await queryClient.invalidateQueries({
+        queryKey: ["licenses", { environment: code }],
+      })
+    },
+  })
+}
+
+export function useReinstateLicense(licenseId: string) {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<License, APIError>({
+    mutationFn: () =>
+      keygen.licenses
+        .reinstate({ id: licenseId })
+        .then((response) => response.data as License),
+
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ["licenses", licenseId, { environment: code }],
+        updated,
+      )
+      await queryClient.invalidateQueries({
+        queryKey: ["licenses", { environment: code }],
+      })
+    },
+  })
+}
+
 export function useCheckOutLicense(licenseId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()

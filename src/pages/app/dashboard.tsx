@@ -1,7 +1,14 @@
-export default function App() {
+import PageHeader from "@/components/page-header"
+import * as Chart from "@/components/chart"
+
+export default function Dashboard() {
   return (
-    <div className="mt-8 flex flex-col items-center justify-center space-y-8">
-      <h1>Hello from "/app/dashboard"!</h1>
-    </div>
+    <section>
+      <PageHeader title="Metrics" />
+
+      <div className="space-y-6 p-4 md:p-6">
+        <Chart.LicenseExpirationHeatmap />
+      </div>
+    </section>
   )
 }

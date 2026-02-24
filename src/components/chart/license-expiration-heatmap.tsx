@@ -206,7 +206,7 @@ export default function LicenseExpirationHeatmap() {
     )
 
     return { monthLabels: months, numWeeks: maxX + 1, occupiedCells: occupied }
-  }, [ExpirationHeatmapMockData])
+  }, [])
 
   return (
     <Chart.Card

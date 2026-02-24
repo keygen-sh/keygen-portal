@@ -338,15 +338,12 @@ export default function LicenseExpirationHeatmap() {
           style={{
             left: currentPosRef.current.x,
             top: currentPosRef.current.y,
-            transform: expanded
-              ? "translate(-50%, 8px)"
-              : "translate(-50%, calc(-100% - 6px))",
+            transform: "translate(-50%, 8px)",
           }}
         >
           <div
             className={cn(
-              "w-52 rounded-md border border-accent bg-background-2 p-3 text-xs shadow-lg duration-150 animate-in fade-in-0 zoom-in-95",
-              expanded ? "origin-top" : "origin-bottom",
+              "w-52 origin-top rounded-md border border-accent bg-background-2 p-3 text-xs shadow-lg duration-150 animate-in fade-in-0 zoom-in-95",
             )}
           >
             <p className="font-medium text-content-muted">

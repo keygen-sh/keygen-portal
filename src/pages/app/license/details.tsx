@@ -63,7 +63,12 @@ import {
 
 import { useGetPolicy } from "@/queries/policies"
 import { useGetProduct } from "@/queries/products"
-import { useGetLicense, useRemoveLicense } from "@/queries/licenses"
+import {
+  useGetLicense,
+  useRemoveLicense,
+  useSuspendLicense,
+  useReinstateLicense,
+} from "@/queries/licenses"
 
 import { useMobile } from "@/hooks/use-mobile"
 
@@ -112,6 +117,8 @@ export default function LicenseDetails() {
     isError: licenseError,
   } = useGetLicense(id)
   const removeLicense = useRemoveLicense(id)
+  const suspendLicense = useSuspendLicense(id)
+  const reinstateLicense = useReinstateLicense(id)
 
   const policyId = license?.relationships.policy?.data?.id || ""
   const {
@@ -135,6 +142,7 @@ export default function LicenseDetails() {
   const [open, setOpen] = useState({
     edit: false,
     delete: false,
+    suspend: false,
     attributes: false,
     checkOut: false,
   })
@@ -158,6 +166,26 @@ export default function LicenseDetails() {
       await navigate({ to: ".." })
     } catch {
       toast({ message: "Failed to delete license", variant: "error" })
+    }
+  }
+
+  const handleSuspendLicense = async () => {
+    try {
+      await suspendLicense.mutateAsync()
+      toast({ message: "License suspended", variant: "success" })
+      toggleOpen("suspend", false)
+    } catch {
+      toast({ message: "Failed to suspend license", variant: "error" })
+    }
+  }
+
+  const handleReinstateLicense = async () => {
+    try {
+      await reinstateLicense.mutateAsync()
+      toast({ message: "License reinstated", variant: "success" })
+      toggleOpen("suspend", false)
+    } catch {
+      toast({ message: "Failed to reinstate license", variant: "error" })
     }
   }
 
@@ -225,6 +253,16 @@ export default function LicenseDetails() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={(e) => {
+                    toggleOpen("suspend", true)
+                    e.currentTarget.blur()
+                  }}
+                  className="pb-2 text-base"
+                >
+                  {license?.attributes.suspended ? "Reinstate" : "Suspend"}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={(e) => {
                     toggleOpen("delete", true)
                     e.currentTarget.blur()
                   }}
@@ -249,6 +287,13 @@ export default function LicenseDetails() {
                 onClick={() => toggleOpen("edit", true)}
               >
                 Edit
+              </Button>
+              <Button
+                variant="outline"
+                disabled={licenseLoading}
+                onClick={() => toggleOpen("suspend", true)}
+              >
+                {license?.attributes.suspended ? "Reinstate" : "Suspend"}
               </Button>
               <Button
                 variant="outline"
@@ -925,6 +970,27 @@ export default function LicenseDetails() {
           onConfirm={handleDeleteLicense}
           label="Delete"
           variant="destructive"
+        />
+      )}
+
+      {license && (
+        <ConfirmationModal
+          title={`${license.attributes.suspended ? "Reinstate" : "Suspend"} ${license.attributes.name || truncateKey(license.attributes.key, { maxLength: isMobile ? 16 : 32 })}`}
+          description={
+            license.attributes.suspended
+              ? "Are you sure you want to reinstate this license?"
+              : "Are you sure you want to suspend this license? Suspended licenses always fail validation."
+          }
+          open={open.suspend}
+          disabled={suspendLicense.isPending || reinstateLicense.isPending}
+          onClose={() => toggleOpen("suspend", false)}
+          onConfirm={
+            license.attributes.suspended
+              ? handleReinstateLicense
+              : handleSuspendLicense
+          }
+          label={license.attributes.suspended ? "Reinstate" : "Suspend"}
+          variant={license.attributes.suspended ? "default" : "destructive"}
         />
       )}
 

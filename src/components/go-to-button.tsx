@@ -31,7 +31,7 @@ export default function GoToButton({
   return (
     <div
       className={cn(
-        "group flex h-6 w-fit gap-1",
+        "group flex h-6 min-w-0 gap-1",
         disabled && "pointer-events-none",
         className,
       )}
@@ -42,13 +42,13 @@ export default function GoToButton({
         size="link"
         onClick={handleClick}
         disabled={disabled}
-        className="text-primary group-hover:text-primary/80"
+        className="min-w-0 shrink text-primary group-hover:text-primary/80"
         aria-label={label}
       >
-        {label}
+        <span className="truncate">{label}</span>
       </Button>
-      <div className="flex h-full items-center">
-        <ChevronRight className="mt-0.5 size-3.5 text-primary transition-all duration-200 group-hover:translate-x-2" />
+      <div className="flex h-full shrink-0 items-center">
+        <ChevronRight className="mt-0.5 size-3.5 text-primary transition-all duration-200 group-hover:translate-x-2 group-hover:text-primary!" />
       </div>
     </div>
   )

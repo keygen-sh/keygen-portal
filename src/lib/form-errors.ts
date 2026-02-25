@@ -10,15 +10,7 @@ export type FormStep<TFieldValues extends FieldValues> = {
   fields?: FieldPath<TFieldValues>[]
 }
 
-export type HandleFormErrorOptions<TFieldValues extends FieldValues> = {
-  form: UseFormReturn<TFieldValues>
-  error: APIError
-  steps?: FormStep<TFieldValues>[]
-  goToStep?: (index: number) => void
-  toastMessage: string
-  showToast?: boolean
-}
-
+// Extracts the related form field from an API error pointer
 function extractFieldFromPointer(pointer: string | undefined): string | null {
   if (!pointer) return null
 
@@ -33,6 +25,7 @@ function extractFieldFromPointer(pointer: string | undefined): string | null {
   return null
 }
 
+// Iterates through all form steps for the step that contains the specified field
 function findStepForField<TFieldValues extends FieldValues>(
   field: FieldPath<TFieldValues>,
   steps: FormStep<TFieldValues>[],
@@ -52,32 +45,54 @@ function findStepForField<TFieldValues extends FieldValues>(
   return -1
 }
 
-export function handleFormError<TFieldValues extends FieldValues>(
+// Sequentially triggers validation for all form steps until a step fails then returns its index
+async function findStepWithError<TFieldValues extends FieldValues>(
+  form: UseFormReturn<TFieldValues>,
+  steps: FormStep<TFieldValues>[],
+): Promise<number> {
+  for (let i = 0; i < steps.length; i++) {
+    const step = steps[i]
+    if (step.fields && step.fields.length > 0) {
+      const valid = await form.trigger(step.fields)
+      if (!valid) return i
+    }
+  }
+  return -1
+}
+
+export type HandleFormErrorOptions<TFieldValues extends FieldValues> = {
+  form: UseFormReturn<TFieldValues>
+  steps?: FormStep<TFieldValues>[]
+  goToStep?: (index: number) => void
+  apiError?: APIError
+  showToast?: boolean
+  toastMessage?: string
+}
+
+// Handles API and schema validation errors by setting field-level errors, navigating to the relevant step, and/or toasting
+export async function handleFormError<TFieldValues extends FieldValues>(
   options: HandleFormErrorOptions<TFieldValues>,
-): void {
+): Promise<void> {
   const {
     form,
-    error,
     steps = [],
     goToStep,
-    toastMessage,
+    apiError,
     showToast = true,
+    toastMessage = "Failed to submit",
   } = options
 
-  const extractedField = extractFieldFromPointer(error.source?.pointer)
-  if (extractedField) {
-    const isKnownField = steps.some((s) =>
-      s.fields?.some((f) => String(f) === extractedField),
-    )
-
-    if (isKnownField) {
+  if (apiError) {
+    const extractedField = extractFieldFromPointer(apiError.source?.pointer)
+    if (extractedField) {
       const targetField = extractedField as FieldPath<TFieldValues>
 
       form.setError(targetField, {
         type: "manual",
-        message: capitalize(error.detail ?? "Field is invalid"),
+        message: capitalize(apiError.detail ?? "Field is invalid"),
       })
 
+      // Navigate to form step that contains field pointer from API error
       if (goToStep && steps.length > 0) {
         const stepIndex = findStepForField(targetField, steps)
         if (stepIndex >= 0) {
@@ -94,19 +109,32 @@ export function handleFormError<TFieldValues extends FieldValues>(
 
       return
     }
+
+    // Fallback to detailed toast if pointer didn't resolve
+    if (showToast) {
+      toast({
+        message: toastMessage,
+        description: capitalize(apiError.detail ?? apiError.message),
+        variant: "error",
+      })
+    }
+
+    return
   }
 
+  // Navigate to form step that contains error from failed schema validation
+  if (goToStep && steps.length > 0) {
+    const stepIndex = await findStepWithError(form, steps)
+    if (stepIndex >= 0) {
+      goToStep(stepIndex)
+    }
+  }
+
+  // Generic error toast
   if (showToast) {
     toast({
       message: toastMessage,
-      description: capitalize(error.detail ?? error.message),
       variant: "error",
     })
   }
-}
-
-export function createFormErrorHandler<TFieldValues extends FieldValues>(
-  baseOptions: Omit<HandleFormErrorOptions<TFieldValues>, "error">,
-) {
-  return (error: APIError) => handleFormError({ ...baseOptions, error })
 }

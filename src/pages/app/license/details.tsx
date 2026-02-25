@@ -29,6 +29,11 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip"
 
 import {
   Ban,
@@ -49,6 +54,7 @@ import {
   SquarePlus,
   CircleCheck,
   CirclePause,
+  ChevronDown,
   TriangleAlert,
   EllipsisVertical,
 } from "lucide-react"
@@ -68,6 +74,7 @@ import {
   useRemoveLicense,
   useSuspendLicense,
   useReinstateLicense,
+  useRenewLicense,
 } from "@/queries/licenses"
 
 import { useMobile } from "@/hooks/use-mobile"
@@ -119,6 +126,7 @@ export default function LicenseDetails() {
   const removeLicense = useRemoveLicense(id)
   const suspendLicense = useSuspendLicense(id)
   const reinstateLicense = useReinstateLicense(id)
+  const renewLicense = useRenewLicense(id)
 
   const policyId = license?.relationships.policy?.data?.id || ""
   const {
@@ -143,6 +151,7 @@ export default function LicenseDetails() {
     edit: false,
     delete: false,
     suspend: false,
+    renew: false,
     attributes: false,
     checkOut: false,
   })
@@ -189,6 +198,22 @@ export default function LicenseDetails() {
     }
   }
 
+  const handleRenewLicense = async () => {
+    try {
+      await renewLicense.mutateAsync()
+      toast({ message: "License renewed", variant: "success" })
+      toggleOpen("renew", false)
+    } catch (e) {
+      toast({
+        message: "Failed to renew license",
+        description: e instanceof Error ? e.message : undefined,
+        variant: "error",
+      })
+    }
+  }
+
+  const isExpired = license?.attributes.status === LicenseStatus.Expired
+
   return (
     <section className="flex h-screen w-full">
       <div className="flex min-w-0 flex-1 flex-col">
@@ -233,22 +258,22 @@ export default function LicenseDetails() {
               <DropdownMenuContent className="mr-4 p-0">
                 <DropdownMenuItem
                   onClick={(e) => {
-                    toggleOpen("checkOut", true)
-                    e.currentTarget.blur()
-                  }}
-                  className="pb-2 text-base"
-                >
-                  Checkout
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={(e) => {
                     toggleOpen("edit", true)
                     e.currentTarget.blur()
                   }}
                   className="pb-2 text-base"
                 >
                   Edit
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    toggleOpen("delete", true)
+                    e.currentTarget.blur()
+                  }}
+                  className="pb-2 text-base text-destructive"
+                >
+                  Delete
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -263,24 +288,40 @@ export default function LicenseDetails() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={(e) => {
-                    toggleOpen("delete", true)
+                    toggleOpen("checkOut", true)
                     e.currentTarget.blur()
                   }}
-                  className="pb-2 text-base text-destructive"
+                  className="pb-2 text-base"
                 >
-                  Delete
+                  Checkout
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                {isExpired ? (
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("renew", true)
+                      e.currentTarget.blur()
+                    }}
+                    className="pb-2 text-base"
+                  >
+                    Renew
+                  </DropdownMenuItem>
+                ) : (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <DropdownMenuItem
+                        className="pb-2 text-base opacity-50"
+                        onSelect={(e) => e.preventDefault()}
+                      >
+                        Renew
+                      </DropdownMenuItem>
+                    </TooltipTrigger>
+                  </Tooltip>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                disabled={licenseLoading}
-                onClick={() => toggleOpen("checkOut", true)}
-              >
-                Checkout
-              </Button>
               <Button
                 variant="outline"
                 disabled={licenseLoading}
@@ -291,17 +332,65 @@ export default function LicenseDetails() {
               <Button
                 variant="outline"
                 disabled={licenseLoading}
-                onClick={() => toggleOpen("suspend", true)}
-              >
-                {license?.attributes.suspended ? "Reinstate" : "Suspend"}
-              </Button>
-              <Button
-                variant="outline"
-                disabled={licenseLoading}
                 onClick={() => toggleOpen("delete", true)}
               >
                 Delete
               </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" disabled={licenseLoading}>
+                    Actions
+                    <ChevronDown className="size-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("checkOut", true)
+                      e.currentTarget.blur()
+                    }}
+                  >
+                    Checkout
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  {isExpired ? (
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        toggleOpen("renew", true)
+                        e.currentTarget.blur()
+                      }}
+                    >
+                      Renew
+                    </DropdownMenuItem>
+                  ) : (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <DropdownMenuItem
+                          className="opacity-50"
+                          onSelect={(e) => e.preventDefault()}
+                        >
+                          Renew
+                        </DropdownMenuItem>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="left"
+                        className="max-w-64 bg-background-4 text-pretty text-content-muted"
+                      >
+                        Renewable upon expiry
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("suspend", true)
+                      e.currentTarget.blur()
+                    }}
+                  >
+                    {license?.attributes.suspended ? "Reinstate" : "Suspend"}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           )}
         </PageHeader>
@@ -991,6 +1080,19 @@ export default function LicenseDetails() {
           }
           label={license.attributes.suspended ? "Reinstate" : "Suspend"}
           variant={license.attributes.suspended ? "default" : "destructive"}
+        />
+      )}
+
+      {license && (
+        <ConfirmationModal
+          title={`Renew ${license.attributes.name || truncateKey(license.attributes.key, { maxLength: isMobile ? 16 : 32 })}`}
+          description="Are you sure you want to renew this license?"
+          open={open.renew}
+          disabled={renewLicense.isPending}
+          onClose={() => toggleOpen("renew", false)}
+          onConfirm={handleRenewLicense}
+          label="Renew"
+          variant="default"
         />
       )}
 

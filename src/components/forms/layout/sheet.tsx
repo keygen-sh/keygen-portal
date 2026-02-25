@@ -1,14 +1,21 @@
+import { useCallback } from "react"
+import { useFormContext } from "react-hook-form"
+
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+import { APIError } from "@/types/api"
+
 import { cn } from "@/lib/utils"
+import { handleFormError } from "@/lib/form-errors"
 
 import * as Loading from "@/components/loading"
 
 interface FormsContentSheetProps {
   title: string
-  onSubmit: () => void
+  onSubmit: () => void | Promise<void>
   onCancel: () => void
+  errorMessage?: string
   submitLabel?: string
   cancelLabel?: string
   isPending?: boolean
@@ -21,6 +28,7 @@ export default function FormsContentSheet({
   title,
   onSubmit,
   onCancel,
+  errorMessage,
   submitLabel = "Submit",
   cancelLabel = "Cancel",
   isPending = false,
@@ -28,6 +36,24 @@ export default function FormsContentSheet({
   children,
   className,
 }: FormsContentSheetProps) {
+  const form = useFormContext()
+
+  const handleSubmit = useCallback(async () => {
+    const valid = await form.trigger()
+    if (!valid) return
+
+    try {
+      await onSubmit()
+    } catch (error) {
+      if (errorMessage && error instanceof APIError) {
+        await handleFormError({
+          form,
+          apiError: error,
+          toastMessage: errorMessage,
+        })
+      }
+    }
+  }, [onSubmit, errorMessage, form])
   return (
     <div
       className={cn(
@@ -63,7 +89,7 @@ export default function FormsContentSheet({
         </Button>
         <Button
           type="button"
-          onClick={onSubmit}
+          onClick={handleSubmit}
           disabled={isPending}
           className="max-w-48 flex-1 basis-1/2"
         >

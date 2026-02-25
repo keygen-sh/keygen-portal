@@ -4,7 +4,10 @@ import { useFormContext } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+import { APIError } from "@/types/api"
+
 import { cn } from "@/lib/utils"
+import { handleFormError } from "@/lib/form-errors"
 
 import { useMobile } from "@/hooks/use-mobile"
 import { useSlide } from "@/hooks/use-slide"
@@ -31,9 +34,10 @@ interface FormsContentWizardProps {
   variant?: WizardVariant
   title?: string
   description?: React.ReactNode
-  onSubmit: () => void
+  onSubmit: () => void | Promise<void>
   onBack: () => void
   onCancel?: () => void
+  errorMessage?: string
   submitLabel?: string
   backLabel?: string
   cancelLabel?: string
@@ -75,6 +79,7 @@ export default function FormsContentWizard({
   onSubmit,
   onBack,
   onCancel,
+  errorMessage,
   submitLabel = "Submit",
   backLabel = "Back",
   cancelLabel = "Cancel",
@@ -93,6 +98,15 @@ export default function FormsContentWizard({
   const isFirst = currentIndex === 0
   const isLast = currentIndex === steps.length - 1
 
+  const goToIndex = useCallback(
+    (index: number) => {
+      if (index >= 0 && index < steps.length) {
+        goTo(index)
+      }
+    },
+    [steps.length, goTo],
+  )
+
   const next = useCallback(async () => {
     if (currentStep?.fields?.length) {
       const ok = await form.trigger(currentStep.fields)
@@ -108,11 +122,47 @@ export default function FormsContentWizard({
     }
 
     if (isLast) {
-      onSubmit()
+      const valid = await form.trigger()
+
+      // Catch schema errors
+      if (!valid) {
+        await handleFormError({
+          form,
+          steps: steps.map((step) => ({ key: step.id, fields: step.fields })),
+          goToStep: goToIndex,
+          toastMessage: errorMessage ?? "",
+        })
+        return
+      }
+
+      try {
+        await onSubmit()
+      } catch (error) {
+        // Catch API errors
+        if (errorMessage && error instanceof APIError) {
+          await handleFormError({
+            form,
+            steps: steps.map((step) => ({ key: step.id, fields: step.fields })),
+            goToStep: goToIndex,
+            toastMessage: errorMessage ?? "",
+            apiError: error,
+          })
+        }
+      }
     } else {
       goTo(currentIndex + 1)
     }
-  }, [currentStep, currentIndex, isLast, form, goTo, onSubmit])
+  }, [
+    currentStep,
+    currentIndex,
+    isLast,
+    form,
+    goTo,
+    goToIndex,
+    steps,
+    onSubmit,
+    errorMessage,
+  ])
 
   const back = useCallback(() => {
     if (isFirst) {
@@ -121,15 +171,6 @@ export default function FormsContentWizard({
       goTo(currentIndex - 1)
     }
   }, [currentIndex, isFirst, goTo, onBack])
-
-  const goToIndex = useCallback(
-    (index: number) => {
-      if (index >= 0 && index < steps.length) {
-        goTo(index)
-      }
-    },
-    [steps.length, goTo],
-  )
 
   return variant === "sidebar" ? (
     <SidebarContent

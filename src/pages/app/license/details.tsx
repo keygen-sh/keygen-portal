@@ -29,11 +29,6 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip"
 
 import {
   Ban,
@@ -212,8 +207,6 @@ export default function LicenseDetails() {
     }
   }
 
-  const isExpired = license?.attributes.status === LicenseStatus.Expired
-
   return (
     <section className="flex h-screen w-full">
       <div className="flex min-w-0 flex-1 flex-col">
@@ -296,28 +289,15 @@ export default function LicenseDetails() {
                   Checkout
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                {isExpired ? (
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      toggleOpen("renew", true)
-                      e.currentTarget.blur()
-                    }}
-                    className="pb-2 text-base"
-                  >
-                    Renew
-                  </DropdownMenuItem>
-                ) : (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <DropdownMenuItem
-                        className="pb-2 text-base opacity-50"
-                        onSelect={(e) => e.preventDefault()}
-                      >
-                        Renew
-                      </DropdownMenuItem>
-                    </TooltipTrigger>
-                  </Tooltip>
-                )}
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    toggleOpen("renew", true)
+                    e.currentTarget.blur()
+                  }}
+                  className="pb-2 text-base"
+                >
+                  Renew
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
@@ -353,33 +333,14 @@ export default function LicenseDetails() {
                     Checkout
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  {isExpired ? (
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        toggleOpen("renew", true)
-                        e.currentTarget.blur()
-                      }}
-                    >
-                      Renew
-                    </DropdownMenuItem>
-                  ) : (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <DropdownMenuItem
-                          className="opacity-50"
-                          onSelect={(e) => e.preventDefault()}
-                        >
-                          Renew
-                        </DropdownMenuItem>
-                      </TooltipTrigger>
-                      <TooltipContent
-                        side="left"
-                        className="max-w-64 bg-background-4 text-pretty text-content-muted"
-                      >
-                        Renewable upon expiry
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("renew", true)
+                      e.currentTarget.blur()
+                    }}
+                  >
+                    Renew
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={(e) => {

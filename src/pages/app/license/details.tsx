@@ -71,6 +71,7 @@ import {
   useReinstateLicense,
   useRenewLicense,
   useCheckInLicense,
+  useResetUsageLicense,
 } from "@/queries/licenses"
 
 import { useMobile } from "@/hooks/use-mobile"
@@ -124,6 +125,7 @@ export default function LicenseDetails() {
   const reinstateLicense = useReinstateLicense(id)
   const renewLicense = useRenewLicense(id)
   const checkInLicense = useCheckInLicense(id)
+  const resetUsageLicense = useResetUsageLicense(id)
 
   const policyId = license?.relationships.policy?.data?.id || ""
   const {
@@ -150,6 +152,7 @@ export default function LicenseDetails() {
     suspend: false,
     renew: false,
     checkIn: false,
+    resetUsage: false,
     attributes: false,
     checkOut: false,
   })
@@ -221,6 +224,16 @@ export default function LicenseDetails() {
         description: e instanceof Error ? e.message : undefined,
         variant: "error",
       })
+    }
+  }
+
+  const handleResetUsageLicense = async () => {
+    try {
+      await resetUsageLicense.mutateAsync()
+      toast({ message: "License usage reset", variant: "success" })
+      toggleOpen("resetUsage", false)
+    } catch {
+      toast({ message: "Failed to reset license usage", variant: "error" })
     }
   }
 
@@ -1110,6 +1123,19 @@ export default function LicenseDetails() {
           onClose={() => toggleOpen("checkIn", false)}
           onConfirm={handleCheckInLicense}
           label="Check in"
+          variant="default"
+        />
+      )}
+
+      {license && (
+        <ConfirmationModal
+          title={`Reset usage for ${license.attributes.name || truncateKey(license.attributes.key, { maxLength: isMobile ? 16 : 32 })}`}
+          description="Are you sure you want to reset usage for this license? This will set the license's usage count back to zero."
+          open={open.resetUsage}
+          disabled={resetUsageLicense.isPending}
+          onClose={() => toggleOpen("resetUsage", false)}
+          onConfirm={handleResetUsageLicense}
+          label="Reset Usage"
           variant="default"
         />
       )}

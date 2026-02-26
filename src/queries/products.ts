@@ -43,9 +43,13 @@ export function useCreateProduct() {
 
   return useMutation<Product, APIError, Schemas.Products.CreateValues>({
     mutationFn: (values) =>
-      keygen.products
-        .create({ values })
-        .then((response) => response.data as Product),
+      keygen.products.create({ values }).then((response) => {
+        if (response.errors) {
+          throw new APIError(response.errors[0])
+        }
+
+        return response.data
+      }),
 
     onSuccess: (newProduct) => {
       queryClient.setQueryData<Product[]>(
@@ -67,7 +71,11 @@ export function useUpdateProduct(productId: string) {
   return useMutation<Product, APIError, Schemas.Products.UpdateValues>({
     mutationFn: (values) =>
       keygen.products.get({ id: productId }).then(async (response) => {
-        const current = response.data as Product
+        if (response.errors) {
+          throw new APIError(response.errors[0])
+        }
+
+        const current = response.data
 
         const changes = diff(
           current.attributes,
@@ -75,11 +83,16 @@ export function useUpdateProduct(productId: string) {
         ) as Schemas.Products.UpdateValues
         if (Object.keys(changes).length === 0) return current
 
-        const updated = await keygen.products
-          .update({ id: productId, values: changes })
-          .then((response) => response.data as Product)
+        const updateResponse = await keygen.products.update({
+          id: productId,
+          values: changes,
+        })
 
-        return updated
+        if (updateResponse.errors) {
+          throw new APIError(updateResponse.errors[0])
+        }
+
+        return updateResponse.data
       }),
 
     onSuccess: async (updated) => {

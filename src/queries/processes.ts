@@ -46,11 +46,11 @@ export function useCreateProcess() {
     mutationFn: async (values) => {
       const response = await keygen.processes.create(values)
 
-      if (response.errors && response.errors.length > 0) {
-        throw response.errors[0]
+      if (response.errors) {
+        throw new APIError(response.errors[0])
       }
 
-      return response.data as Process
+      return response.data
     },
 
     onSuccess: (newProcess) => {
@@ -74,29 +74,29 @@ export function useUpdateProcess(processId: string) {
     mutationFn: async (values) => {
       const getResponse = await keygen.processes.get({ id: processId })
 
-      if (!getResponse.data) {
-        throw new Error("Process not found")
+      if (getResponse.errors) {
+        throw new APIError(getResponse.errors[0])
       }
 
       const current = getResponse.data
 
       const changes = diff(
-        {
-          ...current.attributes,
-        },
+        current.attributes,
         values,
       ) as Schemas.Processes.UpdateValues
 
       if (Object.keys(changes).length === 0) return current
 
-      const updated = await keygen.processes
-        .update({
-          id: processId,
-          values: changes,
-        })
-        .then((response) => response.data as Process)
+      const updateResponse = await keygen.processes.update({
+        id: processId,
+        values: changes,
+      })
 
-      return updated
+      if (updateResponse.errors) {
+        throw new APIError(updateResponse.errors[0])
+      }
+
+      return updateResponse.data
     },
 
     onSuccess: async (updated) => {

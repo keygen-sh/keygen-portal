@@ -44,7 +44,12 @@ export function useCreatePolicy() {
   return useMutation<Policy, APIError, Schemas.Policies.CreateValues>({
     mutationFn: async (values) => {
       const response = await keygen.policies.create(values)
-      const policy = response.data as Policy
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      const policy = response.data
 
       const entitlementIds = values.entitlements?.attach ?? []
       if (entitlementIds.length > 0) {
@@ -73,7 +78,11 @@ export function useUpdatePolicy(policyId: string) {
   return useMutation<Policy, APIError, Schemas.Policies.UpdateValues>({
     mutationFn: (values) =>
       keygen.policies.get({ id: policyId }).then(async (response) => {
-        const current = response.data as Policy
+        if (response.errors) {
+          throw new APIError(response.errors[0])
+        }
+
+        const current = response.data
 
         const changes = diff(
           current.attributes,
@@ -81,11 +90,16 @@ export function useUpdatePolicy(policyId: string) {
         ) as Schemas.Policies.UpdateValues
         if (Object.keys(changes).length === 0) return current
 
-        const updated = await keygen.policies
-          .update({ id: policyId, values: changes })
-          .then((response) => response.data as Policy)
+        const updateResponse = await keygen.policies.update({
+          id: policyId,
+          values: changes,
+        })
 
-        return updated
+        if (updateResponse.errors) {
+          throw new APIError(updateResponse.errors[0])
+        }
+
+        return updateResponse.data
       }),
 
     onSuccess: async (updated) => {

@@ -46,11 +46,11 @@ export function useCreateUser() {
     mutationFn: async (values) => {
       const response = await keygen.users.create(values)
 
-      if (response.errors && response.errors.length > 0) {
-        throw response.errors[0]
+      if (response.errors) {
+        throw new APIError(response.errors[0])
       }
 
-      return response.data as User
+      return response.data
     },
 
     onSuccess: (newUser) => {
@@ -74,8 +74,8 @@ export function useUpdateUser(userId: string) {
     mutationFn: async (values) => {
       const getResponse = await keygen.users.get({ id: userId })
 
-      if (!getResponse.data) {
-        throw new Error("User not found")
+      if (getResponse.errors) {
+        throw new APIError(getResponse.errors[0])
       }
 
       const current = getResponse.data
@@ -90,14 +90,16 @@ export function useUpdateUser(userId: string) {
 
       if (Object.keys(changes).length === 0) return current
 
-      const updated = await keygen.users
-        .update({
-          id: userId,
-          values: changes,
-        })
-        .then((response) => response.data as User)
+      const updateResponse = await keygen.users.update({
+        id: userId,
+        values: changes,
+      })
 
-      return updated
+      if (updateResponse.errors) {
+        throw new APIError(updateResponse.errors[0])
+      }
+
+      return updateResponse.data
     },
 
     onSuccess: async (updated) => {

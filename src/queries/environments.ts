@@ -30,10 +30,15 @@ export function useCreateEnvironment() {
   const queryClient = useQueryClient()
 
   return useMutation<Environment, APIError, Schemas.Environments.CreateValues>({
-    mutationFn: (values) =>
-      keygen.environments
-        .create({ values })
-        .then((response) => response.data as Environment),
+    mutationFn: async (values) => {
+      const response = await keygen.environments.create({ values })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response.data
+    },
 
     onSuccess: (newEnvironment) => {
       queryClient.setQueryData<Environment[]>(["environments"], (old) =>
@@ -53,7 +58,11 @@ export function useUpdateEnvironment(environmentId: string) {
   return useMutation<Environment, APIError, Schemas.Environments.UpdateValues>({
     mutationFn: (values) =>
       keygen.environments.get({ id: environmentId }).then(async (response) => {
-        const current = response.data as Environment
+        if (response.errors) {
+          throw new APIError(response.errors[0])
+        }
+
+        const current = response.data
 
         const changes = diff(
           current.attributes,
@@ -61,11 +70,16 @@ export function useUpdateEnvironment(environmentId: string) {
         ) as Schemas.Environments.UpdateValues
         if (Object.keys(changes).length === 0) return current
 
-        const updated = await keygen.environments
-          .update({ id: environmentId, values: changes })
-          .then((response) => response.data as Environment)
+        const updateResponse = await keygen.environments.update({
+          id: environmentId,
+          values: changes,
+        })
 
-        return updated
+        if (updateResponse.errors) {
+          throw new APIError(updateResponse.errors[0])
+        }
+
+        return updateResponse.data
       }),
 
     onSuccess: async (updated) => {

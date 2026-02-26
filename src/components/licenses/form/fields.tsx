@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react"
-import { useFormContext } from "react-hook-form"
+import { useFormContext, useFieldArray } from "react-hook-form"
 import { format, parseISO } from "date-fns"
 import { CalendarIcon, X } from "lucide-react"
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Popover,
   PopoverContent,
@@ -22,6 +23,7 @@ import {
 } from "@/components/ui/select"
 import {
   FormField,
+  FormLabel,
   FormItem,
   FormControl,
   FormMessage,
@@ -32,6 +34,7 @@ import { getLimitPlaceholder } from "@/lib/licenses"
 
 import { useListPolicies } from "@/queries/policies"
 import { useListProducts } from "@/queries/products"
+import { useListEntitlements } from "@/queries/entitlements"
 
 import * as Schemas from "@/schemas"
 import {
@@ -45,6 +48,7 @@ import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import * as Calendars from "@/components/calendars"
+import MultiSelect from "@/components/multi-select"
 import KeyValueInput from "@/components/key-value-input"
 
 type Descriptions = typeof LicenseFormFieldDescriptions
@@ -72,6 +76,8 @@ const IncludeDefaultFields: Schemas.Licenses.FieldNames[] = [
   "suspended",
   "protected",
   "metadata",
+  "entitlements.attach",
+  "entitlements.create",
 ]
 
 export default function LicensesFormFields({
@@ -202,6 +208,10 @@ export default function LicensesFormFields({
                 selectedPolicy={selectedPolicy}
               />
             )
+          case "entitlements.attach":
+            return <AttachEntitlementsField key="entitlements.attach" />
+          case "entitlements.create":
+            return <CreateEntitlementsField key="entitlements.create" />
           case "metadata":
             return (
               <MetadataField
@@ -860,5 +870,106 @@ function MetadataField({
         </FormItem>
       )}
     />
+  )
+}
+
+function AttachEntitlementsField() {
+  const form = useFormContext<Schemas.Licenses.AllValues>()
+  const { data: entitlements = [], isLoading: entitlementsLoading } =
+    useListEntitlements()
+
+  if (entitlementsLoading) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-48 rounded-sm" />
+        <Skeleton className="h-8 w-3/4" />
+      </div>
+    )
+  }
+
+  return (
+    <FormField
+      control={form.control}
+      name="entitlements.attach"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Attach existing entitlements</FormLabel>
+          <FormControl>
+            <MultiSelect
+              value={field.value ?? []}
+              onChange={field.onChange}
+              options={entitlements.map((e) => ({
+                label: e.attributes.name,
+                value: e.id,
+              }))}
+              placeholder="Search entitlements"
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function CreateEntitlementsField() {
+  const form = useFormContext<Schemas.Licenses.AllValues>()
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "entitlements.create",
+  })
+
+  return (
+    <div className="mt-4 space-y-3">
+      <FormLabel>Create entitlements</FormLabel>
+      {fields.map((f, i) => (
+        <div key={f.id} className="flex items-start gap-2">
+          <FormField
+            control={form.control}
+            name={`entitlements.create.${i}.name`}
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormControl>
+                  <Input placeholder="Enter name..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name={`entitlements.create.${i}.code`}
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormControl>
+                  <Input placeholder="Enter code..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex items-center">
+            <Button
+              size="icon"
+              type="button"
+              variant="ghost"
+              onClick={() => remove(i)}
+            >
+              <X className="h-4 w-4 text-content-subdued" />
+            </Button>
+          </div>
+        </div>
+      ))}
+      <Button
+        size="sm"
+        type="button"
+        variant="ghost"
+        onClick={() => append({ name: "", code: "" })}
+        className="text-content-muted"
+      >
+        + New entitlement
+      </Button>
+    </div>
   )
 }

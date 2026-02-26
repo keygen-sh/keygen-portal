@@ -7,7 +7,11 @@ import { Form } from "@/components/ui/form"
 import * as Schemas from "@/schemas"
 import { useCreateLicense } from "@/queries/licenses"
 import { useListPolicies } from "@/queries/policies"
+import { settleMutations } from "@/queries/utils"
+import { useCreateEntitlement } from "@/queries/entitlements"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
+
+import { Entitlement, EntitlementErrorCode } from "@/types/entitlements"
 
 import { toast } from "@/lib/toast"
 
@@ -40,9 +44,11 @@ export default function CreateLicenseForm({
       maxCores: null,
       maxUses: null,
       metadata: {},
+      entitlements: { attach: [], create: [] },
     },
   })
   const createLicense = useCreateLicense()
+  const createEntitlement = useCreateEntitlement()
   const navigateToResource = useResourceNavigate()
 
   const { data: policies = [] } = useListPolicies()
@@ -54,12 +60,61 @@ export default function CreateLicenseForm({
 
   const handleSubmit = useCallback(
     async (values: Schemas.Licenses.CreateValues) => {
-      const license = await createLicense.mutateAsync(values)
+      const attachIds = values.entitlements?.attach ?? []
+      const toCreate = values.entitlements?.create ?? []
+
+      const [entitlements, errors] = await settleMutations<Entitlement>(
+        toCreate.map((attrs) => createEntitlement.mutateAsync(attrs)),
+      )
+      const entitlementIds = Array.from(
+        new Set([...attachIds, ...entitlements.map((e) => e.id)]),
+      )
+
+      const nextAttach = [...entitlementIds]
+      const nextCreate = errors.map(({ index }) => toCreate[index])
+
+      form.setValue("entitlements.attach", nextAttach)
+      form.setValue("entitlements.create", nextCreate)
+
+      if (errors.length > 0) {
+        const fieldErrors = errors.map((error, index) => {
+          let message = ""
+          if (error.reason.code === EntitlementErrorCode.CodeTaken) {
+            message = "Code already exists"
+          } else {
+            message = "Field is invalid"
+          }
+
+          return {
+            path: `entitlements.create.${index}.code` as const,
+            message,
+          }
+        })
+
+        toast({
+          message: "Failed to create entitlement(s)",
+          variant: "error",
+        })
+
+        fieldErrors.forEach((fieldError) => {
+          form.setError(fieldError.path, {
+            type: "validate",
+            message: fieldError.message,
+          })
+        })
+
+        return
+      }
+
+      const license = await createLicense.mutateAsync({
+        ...values,
+        entitlements: { attach: entitlementIds, create: [] },
+      })
       toast({ message: "License created", variant: "success" })
       onOpenChange(false)
       await navigateToResource(license)
     },
-    [createLicense, navigateToResource, onOpenChange],
+    [form, createLicense, createEntitlement, navigateToResource, onOpenChange],
   )
 
   return (
@@ -152,6 +207,20 @@ export default function CreateLicenseForm({
                 Leave empty to inherit limits from the policy. Set a value to
                 override the policy's limits for this specific license.
               </p>
+            </Forms.Section.Card>
+
+            <DocumentationLink page="licenses" />
+          </Forms.Section.Step>
+
+          <Forms.Section.Step
+            crumb="Entitlements"
+            fields={["entitlements.attach", "entitlements.create"]}
+          >
+            <Forms.Section.Card title="Entitlements">
+              <Licenses.Form.Fields
+                schema="create"
+                include={["entitlements.attach", "entitlements.create"]}
+              />
             </Forms.Section.Card>
 
             <DocumentationLink page="licenses" />

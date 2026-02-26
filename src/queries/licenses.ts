@@ -253,3 +253,25 @@ export function useCheckOutLicense(licenseId: string) {
     },
   })
 }
+
+export function useResetUsageLicense(licenseId: string) {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<License, APIError>({
+    mutationFn: () =>
+      keygen.licenses
+        .resetUsage({ id: licenseId })
+        .then((response) => response.data as License),
+
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ["licenses", licenseId, { environment: code }],
+        updated,
+      )
+      await queryClient.invalidateQueries({
+        queryKey: ["licenses", { environment: code }],
+      })
+    },
+  })
+}

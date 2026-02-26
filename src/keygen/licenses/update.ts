@@ -16,10 +16,13 @@ export default async function update({
   id,
   values,
 }: UpdateProps): Promise<LicenseResponse> {
+  const { entitlements, ...attributes } = values
+  void entitlements
+
   const body = {
     data: {
       type: "licenses",
-      attributes: values,
+      attributes,
     },
   }
 

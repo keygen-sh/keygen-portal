@@ -35,13 +35,15 @@ export default function CreateEntitlementForm({
   const createEntitlement = useCreateEntitlement()
   const navigateToResource = useResourceNavigate()
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    const entitlement = await createEntitlement.mutateAsync(values)
-    toast({ message: "Entitlement created", variant: "success" })
-    onOpenChange(false)
-    await navigateToResource(entitlement)
-  }, [form, createEntitlement, navigateToResource, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Entitlements.CreateValues) => {
+      const entitlement = await createEntitlement.mutateAsync(values)
+      toast({ message: "Entitlement created", variant: "success" })
+      onOpenChange(false)
+      await navigateToResource(entitlement)
+    },
+    [createEntitlement, navigateToResource, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>

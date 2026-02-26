@@ -36,13 +36,15 @@ export default function CreateComponentForm({
   const createComponent = useCreateComponent()
   const navigateToResource = useResourceNavigate()
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    const component = await createComponent.mutateAsync(values)
-    toast({ message: "Component created", variant: "success" })
-    onOpenChange(false)
-    await navigateToResource(component)
-  }, [form, createComponent, navigateToResource, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Components.CreateValues) => {
+      const component = await createComponent.mutateAsync(values)
+      toast({ message: "Component created", variant: "success" })
+      onOpenChange(false)
+      await navigateToResource(component)
+    },
+    [createComponent, navigateToResource, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>

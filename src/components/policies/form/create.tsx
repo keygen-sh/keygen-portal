@@ -182,10 +182,12 @@ export default function CreatePolicyForm({
     [form, createPolicy, navigateToResource, createEntitlement, onOpenChange],
   )
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    await handleCreatePolicy(values)
-  }, [form, handleCreatePolicy])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Policies.CreateValues) => {
+      await handleCreatePolicy(values)
+    },
+    [handleCreatePolicy],
+  )
 
   const handleOpenChange = useCallback(
     (value: boolean) => {
@@ -521,7 +523,7 @@ interface TemplatesFormProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   selection: PolicyTemplateSelection
-  onSubmit: () => void
+  onSubmit: (data: Schemas.Policies.CreateValues) => void | Promise<void>
   onBack: () => void
   isPending: boolean
   errorMessage?: string
@@ -883,7 +885,7 @@ interface ScratchFormProps {
   form: UseFormReturn<Schemas.Policies.CreateValues>
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSubmit: () => void
+  onSubmit: (data: Schemas.Policies.CreateValues) => void | Promise<void>
   onBack: () => void
   isPending: boolean
   errorMessage?: string

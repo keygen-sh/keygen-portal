@@ -51,12 +51,14 @@ export default function EditLicenseForm({
     },
   })
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    await updateLicense.mutateAsync(values)
-    toast({ message: "License updated", variant: "success" })
-    onOpenChange(false)
-  }, [form, updateLicense, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Licenses.UpdateValues) => {
+      await updateLicense.mutateAsync(values)
+      toast({ message: "License updated", variant: "success" })
+      onOpenChange(false)
+    },
+    [updateLicense, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>

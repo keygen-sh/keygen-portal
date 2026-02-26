@@ -35,12 +35,14 @@ export default function EditProcessForm({
     },
   })
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    await updateProcess.mutateAsync(values)
-    toast({ message: "Process updated", variant: "success" })
-    onOpenChange(false)
-  }, [form, updateProcess, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Processes.UpdateValues) => {
+      await updateProcess.mutateAsync(values)
+      toast({ message: "Process updated", variant: "success" })
+      onOpenChange(false)
+    },
+    [updateProcess, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>

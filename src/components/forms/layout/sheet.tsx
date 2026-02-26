@@ -1,5 +1,5 @@
 import { useCallback } from "react"
-import { useFormContext } from "react-hook-form"
+import { useFormContext, type FieldValues } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -11,9 +11,9 @@ import { handleFormError } from "@/lib/form-errors"
 
 import * as Loading from "@/components/loading"
 
-interface FormsContentSheetProps {
+interface FormsContentSheetProps<T extends FieldValues = FieldValues> {
   title: string
-  onSubmit: () => void | Promise<void>
+  onSubmit: (data: T) => void | Promise<void>
   onCancel: () => void
   errorMessage?: string
   submitLabel?: string
@@ -24,7 +24,7 @@ interface FormsContentSheetProps {
   className?: string
 }
 
-export default function FormsContentSheet({
+export default function FormsContentSheet<T extends FieldValues = FieldValues>({
   title,
   onSubmit,
   onCancel,
@@ -35,24 +35,23 @@ export default function FormsContentSheet({
   fullscreen = false,
   children,
   className,
-}: FormsContentSheetProps) {
+}: FormsContentSheetProps<T>) {
   const form = useFormContext()
 
   const handleSubmit = useCallback(async () => {
-    const valid = await form.trigger()
-    if (!valid) return
-
-    try {
-      await onSubmit()
-    } catch (error) {
-      if (errorMessage && error instanceof APIError) {
-        await handleFormError({
-          form,
-          apiError: error,
-          toastMessage: errorMessage,
-        })
+    await form.handleSubmit(async (data) => {
+      try {
+        await onSubmit(data as T)
+      } catch (error) {
+        if (errorMessage && error instanceof APIError) {
+          await handleFormError({
+            form,
+            apiError: error,
+            toastMessage: errorMessage,
+          })
+        }
       }
-    }
+    })()
   }, [onSubmit, errorMessage, form])
   return (
     <div

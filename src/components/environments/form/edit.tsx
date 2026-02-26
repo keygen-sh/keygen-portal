@@ -37,12 +37,14 @@ export default function EditEnvironmentForm({
     },
   })
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    await updateEnvironment.mutateAsync(values)
-    toast({ message: "Environment updated", variant: "success" })
-    onOpenChange(false)
-  }, [form, updateEnvironment, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Environments.UpdateValues) => {
+      await updateEnvironment.mutateAsync(values)
+      toast({ message: "Environment updated", variant: "success" })
+      onOpenChange(false)
+    },
+    [updateEnvironment, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog

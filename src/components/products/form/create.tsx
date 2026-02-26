@@ -50,13 +50,15 @@ export default function CreateProductForm({
     name: "distributionStrategy",
   })
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    const product = await createProduct.mutateAsync(values)
-    toast({ message: "Product created", variant: "success" })
-    onOpenChange(false)
-    await navigateToResource(product)
-  }, [form, createProduct, navigateToResource, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Products.CreateValues) => {
+      const product = await createProduct.mutateAsync(values)
+      toast({ message: "Product created", variant: "success" })
+      onOpenChange(false)
+      await navigateToResource(product)
+    },
+    [createProduct, navigateToResource, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>

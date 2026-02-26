@@ -35,13 +35,15 @@ export default function CreateProcessForm({
   const createProcess = useCreateProcess()
   const navigateToResource = useResourceNavigate()
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    const process = await createProcess.mutateAsync(values)
-    toast({ message: "Process spawned", variant: "success" })
-    onOpenChange(false)
-    await navigateToResource(process)
-  }, [form, createProcess, navigateToResource, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Processes.CreateValues) => {
+      const process = await createProcess.mutateAsync(values)
+      toast({ message: "Process spawned", variant: "success" })
+      onOpenChange(false)
+      await navigateToResource(process)
+    },
+    [createProcess, navigateToResource, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>

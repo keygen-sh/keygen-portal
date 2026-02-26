@@ -37,12 +37,14 @@ export default function EditComponentForm({
     },
   })
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    await updateComponent.mutateAsync(values)
-    toast({ message: "Component updated", variant: "success" })
-    onOpenChange(false)
-  }, [form, updateComponent, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Components.UpdateValues) => {
+      await updateComponent.mutateAsync(values)
+      toast({ message: "Component updated", variant: "success" })
+      onOpenChange(false)
+    },
+    [updateComponent, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>

@@ -44,13 +44,15 @@ export default function CreateMachineForm({
   const createMachine = useCreateMachine()
   const navigateToResource = useResourceNavigate()
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    const machine = await createMachine.mutateAsync(values)
-    toast({ message: "Machine activated", variant: "success" })
-    onOpenChange(false)
-    await navigateToResource(machine)
-  }, [form, createMachine, navigateToResource, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Machines.CreateValues) => {
+      const machine = await createMachine.mutateAsync(values)
+      toast({ message: "Machine activated", variant: "success" })
+      onOpenChange(false)
+      await navigateToResource(machine)
+    },
+    [createMachine, navigateToResource, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>

@@ -46,12 +46,14 @@ export default function EditProductForm({
     },
   })
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    await updateProduct.mutateAsync(values)
-    toast({ message: "Product updated", variant: "success" })
-    onOpenChange(false)
-  }, [form, updateProduct, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Products.UpdateValues) => {
+      await updateProduct.mutateAsync(values)
+      toast({ message: "Product updated", variant: "success" })
+      onOpenChange(false)
+    },
+    [updateProduct, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>

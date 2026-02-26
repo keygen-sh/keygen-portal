@@ -43,12 +43,14 @@ export default function EditUserForm({
     },
   })
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    await updateUser.mutateAsync(values)
-    toast({ message: "User updated", variant: "success" })
-    onOpenChange(false)
-  }, [form, updateUser, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Users.UpdateValues) => {
+      await updateUser.mutateAsync(values)
+      toast({ message: "User updated", variant: "success" })
+      onOpenChange(false)
+    },
+    [updateUser, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>

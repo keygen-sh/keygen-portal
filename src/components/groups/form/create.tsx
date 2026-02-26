@@ -37,13 +37,15 @@ export default function CreateGroupForm({
   const createGroup = useCreateGroup()
   const navigateToResource = useResourceNavigate()
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    const group = await createGroup.mutateAsync(values)
-    toast({ message: "Group created", variant: "success" })
-    onOpenChange(false)
-    await navigateToResource(group)
-  }, [form, createGroup, navigateToResource, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Groups.CreateValues) => {
+      const group = await createGroup.mutateAsync(values)
+      toast({ message: "Group created", variant: "success" })
+      onOpenChange(false)
+      await navigateToResource(group)
+    },
+    [createGroup, navigateToResource, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>

@@ -45,12 +45,14 @@ export default function EditMachineForm({
     },
   })
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    await updateMachine.mutateAsync(values)
-    toast({ message: "Machine updated", variant: "success" })
-    onOpenChange(false)
-  }, [form, updateMachine, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Machines.UpdateValues) => {
+      await updateMachine.mutateAsync(values)
+      toast({ message: "Machine updated", variant: "success" })
+      onOpenChange(false)
+    },
+    [updateMachine, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>

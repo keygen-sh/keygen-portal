@@ -43,29 +43,13 @@ export default function CreateUserForm({
   const createUser = useCreateUser()
   const navigateToResource = useResourceNavigate()
 
-  const handleCreateUser = useCallback(
-    (values: Schemas.Users.CreateValues) => {
-      createUser.mutate(values, {
-        onSuccess: async (user) => {
-          toast({ message: "User created", variant: "success" })
-          onOpenChange(false)
-          await navigateToResource(user)
-        },
-        onError: (error) => {
-          toast({
-            message: "Failed to create user",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    },
-    [createUser, onOpenChange, navigateToResource],
-  )
-
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit(handleCreateUser)()
-  }, [form, handleCreateUser])
+    const values = form.getValues()
+    const user = await createUser.mutateAsync(values)
+    toast({ message: "User created", variant: "success" })
+    onOpenChange(false)
+    await navigateToResource(user)
+  }, [form, createUser, navigateToResource, onOpenChange])
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
@@ -75,6 +59,7 @@ export default function CreateUserForm({
           onSubmit={handleSubmit}
           isPending={createUser.isPending}
           description="Creating a new user"
+          errorMessage="Failed to create user"
         >
           <Forms.Section.Step
             crumb="General attributes"

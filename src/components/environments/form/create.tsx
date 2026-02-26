@@ -44,21 +44,10 @@ export default function CreateEnvironmentForm({
   })
 
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit((values) => {
-      createEnvironment.mutate(values, {
-        onSuccess: () => {
-          toast({ message: "Environment created", variant: "success" })
-          onOpenChange(false)
-        },
-        onError: (error) => {
-          toast({
-            message: "Failed to create environment",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    })()
+    const values = form.getValues()
+    await createEnvironment.mutateAsync(values)
+    toast({ message: "Environment created", variant: "success" })
+    onOpenChange(false)
   }, [form, createEnvironment, onOpenChange])
 
   return (
@@ -72,6 +61,7 @@ export default function CreateEnvironmentForm({
           onBack={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           isPending={createEnvironment.isPending}
+          errorMessage="Failed to create environment"
           description={
             <BadgeGroup prefix="Creating a new" suffix="environment">
               {selectedStrategy === IsolationStrategy.Isolated ? (

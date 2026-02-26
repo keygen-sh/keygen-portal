@@ -35,29 +35,13 @@ export default function CreateProcessForm({
   const createProcess = useCreateProcess()
   const navigateToResource = useResourceNavigate()
 
-  const handleCreateProcess = useCallback(
-    (values: Schemas.Processes.CreateValues) => {
-      createProcess.mutate(values, {
-        onSuccess: async (process) => {
-          toast({ message: "Process spawned", variant: "success" })
-          onOpenChange(false)
-          await navigateToResource(process)
-        },
-        onError: (error) => {
-          toast({
-            message: "Failed to spawn process",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    },
-    [createProcess, navigateToResource, onOpenChange],
-  )
-
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit(handleCreateProcess)()
-  }, [form, handleCreateProcess])
+    const values = form.getValues()
+    const process = await createProcess.mutateAsync(values)
+    toast({ message: "Process spawned", variant: "success" })
+    onOpenChange(false)
+    await navigateToResource(process)
+  }, [form, createProcess, navigateToResource, onOpenChange])
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
@@ -68,6 +52,7 @@ export default function CreateProcessForm({
           isPending={createProcess.isPending}
           submitLabel="Spawn"
           description="Spawning a new process"
+          errorMessage="Failed to spawn process"
         >
           <Forms.Section.Step
             crumb="Process attributes"

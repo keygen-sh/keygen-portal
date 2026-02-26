@@ -42,21 +42,10 @@ export default function EditGroupForm({
   })
 
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit((values) => {
-      updateGroup.mutate(values, {
-        onSuccess: () => {
-          toast({ message: "Group updated", variant: "success" })
-          onOpenChange(false)
-        },
-        onError: (error) => {
-          toast({
-            message: "Failed to update group",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    })()
+    const values = form.getValues()
+    await updateGroup.mutateAsync(values)
+    toast({ message: "Group updated", variant: "success" })
+    onOpenChange(false)
   }, [form, updateGroup, onOpenChange])
 
   return (
@@ -66,6 +55,7 @@ export default function EditGroupForm({
           title="Editing an existing group"
           onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
+          errorMessage="Failed to update group"
           isPending={updateGroup.isPending}
           submitLabel="Update"
         >

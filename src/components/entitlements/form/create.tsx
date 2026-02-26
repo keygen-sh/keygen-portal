@@ -35,29 +35,13 @@ export default function CreateEntitlementForm({
   const createEntitlement = useCreateEntitlement()
   const navigateToResource = useResourceNavigate()
 
-  const handleCreateEntitlement = useCallback(
-    (values: Schemas.Entitlements.CreateValues) => {
-      createEntitlement.mutate(values, {
-        onSuccess: async (entitlement) => {
-          toast({ message: "Entitlement created", variant: "success" })
-          onOpenChange(false)
-          await navigateToResource(entitlement)
-        },
-        onError: (error) => {
-          toast({
-            message: "Failed to create entitlement",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    },
-    [createEntitlement, navigateToResource, onOpenChange],
-  )
-
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit(handleCreateEntitlement)()
-  }, [form, handleCreateEntitlement])
+    const values = form.getValues()
+    const entitlement = await createEntitlement.mutateAsync(values)
+    toast({ message: "Entitlement created", variant: "success" })
+    onOpenChange(false)
+    await navigateToResource(entitlement)
+  }, [form, createEntitlement, navigateToResource, onOpenChange])
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
@@ -67,6 +51,7 @@ export default function CreateEntitlementForm({
           onSubmit={handleSubmit}
           isPending={createEntitlement.isPending}
           description="Creating a new entitlement"
+          errorMessage="Failed to create entitlement"
         >
           <Forms.Section.Step
             crumb="Entitlement attributes"

@@ -60,60 +60,51 @@ export default function EditPolicyForm({
 
   const handleSubmit = useCallback(async () => {
     if (!policy) return
-    await form.handleSubmit(async (values) => {
-      const attachIds = values.entitlements?.attach ?? []
-      const toCreate = values.entitlements?.create ?? []
-      const [entitlements, errors] = await settleMutations<Entitlement>(
-        toCreate.map((attrs) => createEntitlement.mutateAsync(attrs)),
-      )
-      const entitlementIds = Array.from(
-        new Set([...attachIds, ...entitlements.map((e) => e.id)]),
-      )
+    const values = form.getValues()
 
-      if (errors.length > 0) {
-        const nextAttach = [...entitlementIds]
-        const nextCreate = errors.map(({ index }) => toCreate[index])
-        form.setValue("entitlements.attach", nextAttach)
-        form.setValue("entitlements.create", nextCreate)
-        errors.forEach((error, index) => {
-          let message = ""
-          if (error.reason.code === EntitlementErrorCode.CodeTaken) {
-            message = "Code already exists"
-          } else {
-            message = "Field is invalid"
-          }
-          form.setError(`entitlements.create.${index}.code`, {
-            type: "validate",
-            message,
-          })
+    const attachIds = values.entitlements?.attach ?? []
+    const toCreate = values.entitlements?.create ?? []
+    const [entitlements, errors] = await settleMutations<Entitlement>(
+      toCreate.map((attrs) => createEntitlement.mutateAsync(attrs)),
+    )
+    const entitlementIds = Array.from(
+      new Set([...attachIds, ...entitlements.map((e) => e.id)]),
+    )
+
+    if (errors.length > 0) {
+      const nextAttach = [...entitlementIds]
+      const nextCreate = errors.map(({ index }) => toCreate[index])
+      form.setValue("entitlements.attach", nextAttach)
+      form.setValue("entitlements.create", nextCreate)
+      errors.forEach((error, index) => {
+        let message = ""
+        if (error.reason.code === EntitlementErrorCode.CodeTaken) {
+          message = "Code already exists"
+        } else {
+          message = "Field is invalid"
+        }
+        form.setError(`entitlements.create.${index}.code`, {
+          type: "validate",
+          message,
         })
-        toast({ message: "Failed to create entitlement(s)", variant: "error" })
-        return
-      }
+      })
+      toast({ message: "Failed to create entitlement(s)", variant: "error" })
+      return
+    }
 
-      const currentIds = currentEntitlements.map((e) => e.id)
-      const newIds = entitlementIds
-      const toAttach = newIds.filter((id) => !currentIds.includes(id))
-      const toDetach = currentIds.filter((id) => !newIds.includes(id))
+    const currentIds = currentEntitlements.map((e) => e.id)
+    const newIds = entitlementIds
+    const toAttach = newIds.filter((id) => !currentIds.includes(id))
+    const toDetach = currentIds.filter((id) => !newIds.includes(id))
 
-      try {
-        if (toDetach.length > 0) await detachEntitlements.mutateAsync(toDetach)
-        if (toAttach.length > 0) await attachEntitlements.mutateAsync(toAttach)
-        updatePolicy.mutate(
-          { ...values, entitlements: { attach: entitlementIds, create: [] } },
-          {
-            onSuccess: () => {
-              toast({ message: "Policy updated", variant: "success" })
-              onOpenChange(false)
-            },
-            onError: () =>
-              toast({ message: "Failed to update policy", variant: "error" }),
-          },
-        )
-      } catch {
-        toast({ message: "Failed to update entitlements", variant: "error" })
-      }
-    })()
+    if (toDetach.length > 0) await detachEntitlements.mutateAsync(toDetach)
+    if (toAttach.length > 0) await attachEntitlements.mutateAsync(toAttach)
+    await updatePolicy.mutateAsync({
+      ...values,
+      entitlements: { attach: entitlementIds, create: [] },
+    })
+    toast({ message: "Policy updated", variant: "success" })
+    onOpenChange(false)
   }, [
     form,
     policy,
@@ -132,6 +123,7 @@ export default function EditPolicyForm({
           title="Editing an existing policy"
           onSubmit={handleSubmit}
           onCancel={() => onOpenChange(false)}
+          errorMessage="Failed to update policy"
           isPending={
             updatePolicy.isPending ||
             attachEntitlements.isPending ||

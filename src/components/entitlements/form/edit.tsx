@@ -39,21 +39,10 @@ export default function EditEntitlementForm({
   })
 
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit((values) => {
-      updateEntitlement.mutate(values, {
-        onSuccess: () => {
-          toast({ message: "Entitlement updated", variant: "success" })
-          onOpenChange(false)
-        },
-        onError: (error) => {
-          toast({
-            message: "Failed to update entitlement",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    })()
+    const values = form.getValues()
+    await updateEntitlement.mutateAsync(values)
+    toast({ message: "Entitlement updated", variant: "success" })
+    onOpenChange(false)
   }, [form, updateEntitlement, onOpenChange])
 
   return (
@@ -63,6 +52,7 @@ export default function EditEntitlementForm({
           title="Editing an existing entitlement"
           onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
+          errorMessage="Failed to update entitlement"
           isPending={updateEntitlement.isPending}
           submitLabel="Update"
         >

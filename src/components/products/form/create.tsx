@@ -51,22 +51,11 @@ export default function CreateProductForm({
   })
 
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit((values) => {
-      createProduct.mutate(values, {
-        onSuccess: async (product) => {
-          toast({ message: "Product created", variant: "success" })
-          onOpenChange(false)
-          await navigateToResource(product)
-        },
-        onError: (error) => {
-          toast({
-            message: "Failed to create product",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    })()
+    const values = form.getValues()
+    const product = await createProduct.mutateAsync(values)
+    toast({ message: "Product created", variant: "success" })
+    onOpenChange(false)
+    await navigateToResource(product)
   }, [form, createProduct, navigateToResource, onOpenChange])
 
   return (
@@ -98,6 +87,7 @@ export default function CreateProductForm({
               )}
             </BadgeGroup>
           }
+          errorMessage="Failed to create product"
           className="md:h-[52vh]!"
         >
           <Forms.Section.Step

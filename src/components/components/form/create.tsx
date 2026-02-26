@@ -36,29 +36,13 @@ export default function CreateComponentForm({
   const createComponent = useCreateComponent()
   const navigateToResource = useResourceNavigate()
 
-  const handleCreateComponent = useCallback(
-    (values: Schemas.Components.CreateValues) => {
-      createComponent.mutate(values, {
-        onSuccess: async (component) => {
-          toast({ message: "Component created", variant: "success" })
-          onOpenChange(false)
-          await navigateToResource(component)
-        },
-        onError: (error) => {
-          toast({
-            message: "Failed to create component",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    },
-    [createComponent, navigateToResource, onOpenChange],
-  )
-
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit(handleCreateComponent)()
-  }, [form, handleCreateComponent])
+    const values = form.getValues()
+    const component = await createComponent.mutateAsync(values)
+    toast({ message: "Component created", variant: "success" })
+    onOpenChange(false)
+    await navigateToResource(component)
+  }, [form, createComponent, navigateToResource, onOpenChange])
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
@@ -68,6 +52,7 @@ export default function CreateComponentForm({
           onSubmit={handleSubmit}
           isPending={createComponent.isPending}
           description="Creating a new component"
+          errorMessage="Failed to create component"
         >
           <Forms.Section.Step
             crumb="Component attributes"

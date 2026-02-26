@@ -38,21 +38,10 @@ export default function EditComponentForm({
   })
 
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit((values) => {
-      updateComponent.mutate(values, {
-        onSuccess: () => {
-          toast({ message: "Component updated", variant: "success" })
-          onOpenChange(false)
-        },
-        onError: (error) => {
-          toast({
-            message: "Failed to update component",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    })()
+    const values = form.getValues()
+    await updateComponent.mutateAsync(values)
+    toast({ message: "Component updated", variant: "success" })
+    onOpenChange(false)
   }, [form, updateComponent, onOpenChange])
 
   return (
@@ -62,6 +51,7 @@ export default function EditComponentForm({
           title="Editing an existing component"
           onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
+          errorMessage="Failed to update component"
           isPending={updateComponent.isPending}
           submitLabel="Update"
         >

@@ -38,22 +38,11 @@ export default function CreateGroupForm({
   const navigateToResource = useResourceNavigate()
 
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit((values) => {
-      createGroup.mutate(values, {
-        onSuccess: async (group) => {
-          toast({ message: "Group created", variant: "success" })
-          onOpenChange(false)
-          await navigateToResource(group)
-        },
-        onError: (error) => {
-          toast({
-            message: "Failed to create group",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    })()
+    const values = form.getValues()
+    const group = await createGroup.mutateAsync(values)
+    toast({ message: "Group created", variant: "success" })
+    onOpenChange(false)
+    await navigateToResource(group)
   }, [form, createGroup, navigateToResource, onOpenChange])
 
   return (
@@ -64,6 +53,7 @@ export default function CreateGroupForm({
           onBack={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           isPending={createGroup.isPending}
+          errorMessage="Failed to create group"
           className="md:h-[52vh]!"
         >
           <Forms.Section.Step

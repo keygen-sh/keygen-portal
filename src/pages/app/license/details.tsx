@@ -301,6 +301,16 @@ export default function LicenseDetails() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={(e) => {
+                    toggleOpen("renew", true)
+                    e.currentTarget.blur()
+                  }}
+                  className="pb-2 text-base"
+                >
+                  Renew
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={(e) => {
                     toggleOpen("suspend", true)
                     e.currentTarget.blur()
                   }}
@@ -335,39 +345,43 @@ export default function LicenseDetails() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={(e) => {
-                    toggleOpen("renew", true)
+                    toggleOpen("resetUsage", true)
                     e.currentTarget.blur()
                   }}
                   className="pb-2 text-base"
                 >
-                  Renew
+                  Reset usage
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                disabled={licenseLoading}
-                onClick={() => toggleOpen("edit", true)}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="outline"
-                disabled={licenseLoading}
-                onClick={() => toggleOpen("delete", true)}
-              >
-                Delete
-              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" disabled={licenseLoading}>
                     Actions
-                    <ChevronDown className="size-4" />
+                    <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]_&]:rotate-180" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("renew", true)
+                      e.currentTarget.blur()
+                    }}
+                  >
+                    Renew
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("suspend", true)
+                      e.currentTarget.blur()
+                    }}
+                  >
+                    {license?.attributes.suspended ? "Reinstate" : "Suspend"}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   {license?.attributes.requireCheckIn && (
                     <>
                       <DropdownMenuItem
@@ -392,23 +406,28 @@ export default function LicenseDetails() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={(e) => {
-                      toggleOpen("renew", true)
+                      toggleOpen("resetUsage", true)
                       e.currentTarget.blur()
                     }}
                   >
-                    Renew
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      toggleOpen("suspend", true)
-                      e.currentTarget.blur()
-                    }}
-                  >
-                    {license?.attributes.suspended ? "Reinstate" : "Suspend"}
+                    Reset usage
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              <Button
+                variant="outline"
+                disabled={licenseLoading}
+                onClick={() => toggleOpen("edit", true)}
+              >
+                Edit
+              </Button>
+              <Button
+                variant="outline"
+                disabled={licenseLoading}
+                onClick={() => toggleOpen("delete", true)}
+              >
+                Delete
+              </Button>
             </div>
           )}
         </PageHeader>

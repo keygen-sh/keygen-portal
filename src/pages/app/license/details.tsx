@@ -70,6 +70,7 @@ import {
   useSuspendLicense,
   useReinstateLicense,
   useRenewLicense,
+  useCheckInLicense,
 } from "@/queries/licenses"
 
 import { useMobile } from "@/hooks/use-mobile"
@@ -122,6 +123,7 @@ export default function LicenseDetails() {
   const suspendLicense = useSuspendLicense(id)
   const reinstateLicense = useReinstateLicense(id)
   const renewLicense = useRenewLicense(id)
+  const checkInLicense = useCheckInLicense(id)
 
   const policyId = license?.relationships.policy?.data?.id || ""
   const {
@@ -147,6 +149,7 @@ export default function LicenseDetails() {
     delete: false,
     suspend: false,
     renew: false,
+    checkIn: false,
     attributes: false,
     checkOut: false,
   })
@@ -201,6 +204,20 @@ export default function LicenseDetails() {
     } catch (e) {
       toast({
         message: "Failed to renew license",
+        description: e instanceof Error ? e.message : undefined,
+        variant: "error",
+      })
+    }
+  }
+
+  const handleCheckInLicense = async () => {
+    try {
+      await checkInLicense.mutateAsync()
+      toast({ message: "License checked in", variant: "success" })
+      toggleOpen("checkIn", false)
+    } catch (e) {
+      toast({
+        message: "Failed to check in license",
         description: e instanceof Error ? e.message : undefined,
         variant: "error",
       })
@@ -279,6 +296,20 @@ export default function LicenseDetails() {
                   {license?.attributes.suspended ? "Reinstate" : "Suspend"}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
+                {license?.attributes.requireCheckIn && (
+                  <>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        toggleOpen("checkIn", true)
+                        e.currentTarget.blur()
+                      }}
+                      className="pb-2 text-base"
+                    >
+                      Check-in
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
                 <DropdownMenuItem
                   onClick={(e) => {
                     toggleOpen("checkOut", true)
@@ -324,6 +355,19 @@ export default function LicenseDetails() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  {license?.attributes.requireCheckIn && (
+                    <>
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          toggleOpen("checkIn", true)
+                          e.currentTarget.blur()
+                        }}
+                      >
+                        Check-in
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
                   <DropdownMenuItem
                     onClick={(e) => {
                       toggleOpen("checkOut", true)
@@ -1053,6 +1097,19 @@ export default function LicenseDetails() {
           onClose={() => toggleOpen("renew", false)}
           onConfirm={handleRenewLicense}
           label="Renew"
+          variant="default"
+        />
+      )}
+
+      {license && (
+        <ConfirmationModal
+          title={`Check in ${license.attributes.name || truncateKey(license.attributes.key, { maxLength: isMobile ? 16 : 32 })}`}
+          description="Are you sure you want to check in this license? This will reset the check-in window."
+          open={open.checkIn}
+          disabled={checkInLicense.isPending}
+          onClose={() => toggleOpen("checkIn", false)}
+          onConfirm={handleCheckInLicense}
+          label="Check in"
           variant="default"
         />
       )}

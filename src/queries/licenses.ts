@@ -198,6 +198,33 @@ export function useRenewLicense(licenseId: string) {
   })
 }
 
+export function useCheckInLicense(licenseId: string) {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<License, APIError>({
+    mutationFn: () => {
+      return keygen.licenses.checkIn({ id: licenseId }).then((response) => {
+        if (response.errors) {
+          throw new APIError(response.errors[0])
+        }
+
+        return response.data
+      })
+    },
+
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ["licenses", licenseId, { environment: code }],
+        updated,
+      )
+      await queryClient.invalidateQueries({
+        queryKey: ["licenses", { environment: code }],
+      })
+    },
+  })
+}
+
 export function useCheckOutLicense(licenseId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()

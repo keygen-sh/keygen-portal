@@ -38,12 +38,14 @@ export default function EditEntitlementForm({
     },
   })
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    await updateEntitlement.mutateAsync(values)
-    toast({ message: "Entitlement updated", variant: "success" })
-    onOpenChange(false)
-  }, [form, updateEntitlement, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Entitlements.UpdateValues) => {
+      await updateEntitlement.mutateAsync(values)
+      toast({ message: "Entitlement updated", variant: "success" })
+      onOpenChange(false)
+    },
+    [updateEntitlement, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>

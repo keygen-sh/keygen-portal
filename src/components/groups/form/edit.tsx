@@ -41,12 +41,14 @@ export default function EditGroupForm({
     },
   })
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    await updateGroup.mutateAsync(values)
-    toast({ message: "Group updated", variant: "success" })
-    onOpenChange(false)
-  }, [form, updateGroup, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Groups.UpdateValues) => {
+      await updateGroup.mutateAsync(values)
+      toast({ message: "Group updated", variant: "success" })
+      onOpenChange(false)
+    },
+    [updateGroup, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>

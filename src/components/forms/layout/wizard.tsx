@@ -1,5 +1,5 @@
 import { Children, isValidElement, useCallback, useMemo, useState } from "react"
-import { useFormContext } from "react-hook-form"
+import { useFormContext, type FieldValues } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -30,11 +30,11 @@ interface StepDefinition {
   element: React.ReactNode
 }
 
-interface FormsContentWizardProps {
+interface FormsContentWizardProps<T extends FieldValues = FieldValues> {
   variant?: WizardVariant
   title?: string
   description?: React.ReactNode
-  onSubmit: () => void | Promise<void>
+  onSubmit: (data: T) => void | Promise<void>
   onBack: () => void
   onCancel?: () => void
   errorMessage?: string
@@ -72,7 +72,9 @@ function getStepsFromChildren(children: React.ReactNode): StepDefinition[] {
   return steps
 }
 
-export default function FormsContentWizard({
+export default function FormsContentWizard<
+  T extends FieldValues = FieldValues,
+>({
   variant = "default",
   title,
   description,
@@ -86,7 +88,7 @@ export default function FormsContentWizard({
   isPending = false,
   children,
   className,
-}: FormsContentWizardProps) {
+}: FormsContentWizardProps<T>) {
   const form = useFormContext()
   const steps = useMemo(() => getStepsFromChildren(children), [children])
 
@@ -109,8 +111,8 @@ export default function FormsContentWizard({
 
   const next = useCallback(async () => {
     if (currentStep?.fields?.length) {
-      const ok = await form.trigger(currentStep.fields)
-      if (!ok) return
+      const valid = await form.trigger(currentStep.fields)
+      if (!valid) return
     }
 
     if (currentStep) {
@@ -122,33 +124,39 @@ export default function FormsContentWizard({
     }
 
     if (isLast) {
-      const valid = await form.trigger()
-
-      // Catch schema errors
-      if (!valid) {
-        await handleFormError({
-          form,
-          steps: steps.map((step) => ({ key: step.id, fields: step.fields })),
-          goToStep: goToIndex,
-          toastMessage: errorMessage ?? "",
-        })
-        return
-      }
-
-      try {
-        await onSubmit()
-      } catch (error) {
-        // Catch API errors
-        if (errorMessage && error instanceof APIError) {
+      await form.handleSubmit(
+        async (data) => {
+          try {
+            await onSubmit(data as T)
+          } catch (error) {
+            // Catch API errors
+            if (errorMessage && error instanceof APIError) {
+              await handleFormError({
+                form,
+                steps: steps.map((step) => ({
+                  key: step.id,
+                  fields: step.fields,
+                })),
+                goToStep: goToIndex,
+                toastMessage: errorMessage ?? "",
+                apiError: error,
+              })
+            }
+          }
+        },
+        async () => {
+          // Catch schema errors
           await handleFormError({
             form,
-            steps: steps.map((step) => ({ key: step.id, fields: step.fields })),
+            steps: steps.map((step) => ({
+              key: step.id,
+              fields: step.fields,
+            })),
             goToStep: goToIndex,
             toastMessage: errorMessage ?? "",
-            apiError: error,
           })
-        }
-      }
+        },
+      )()
     } else {
       goTo(currentIndex + 1)
     }

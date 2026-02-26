@@ -43,12 +43,14 @@ export default function CreateEnvironmentForm({
     name: "isolationStrategy",
   })
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    await createEnvironment.mutateAsync(values)
-    toast({ message: "Environment created", variant: "success" })
-    onOpenChange(false)
-  }, [form, createEnvironment, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Environments.CreateValues) => {
+      await createEnvironment.mutateAsync(values)
+      toast({ message: "Environment created", variant: "success" })
+      onOpenChange(false)
+    },
+    [createEnvironment, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog

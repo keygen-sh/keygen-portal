@@ -43,13 +43,15 @@ export default function CreateUserForm({
   const createUser = useCreateUser()
   const navigateToResource = useResourceNavigate()
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    const user = await createUser.mutateAsync(values)
-    toast({ message: "User created", variant: "success" })
-    onOpenChange(false)
-    await navigateToResource(user)
-  }, [form, createUser, navigateToResource, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Users.CreateValues) => {
+      const user = await createUser.mutateAsync(values)
+      toast({ message: "User created", variant: "success" })
+      onOpenChange(false)
+      await navigateToResource(user)
+    },
+    [createUser, navigateToResource, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>

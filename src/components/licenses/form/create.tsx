@@ -52,13 +52,15 @@ export default function CreateLicenseForm({
     [policies, selectedPolicyId],
   )
 
-  const handleSubmit = useCallback(async () => {
-    const values = form.getValues()
-    const license = await createLicense.mutateAsync(values)
-    toast({ message: "License created", variant: "success" })
-    onOpenChange(false)
-    await navigateToResource(license)
-  }, [form, createLicense, navigateToResource, onOpenChange])
+  const handleSubmit = useCallback(
+    async (values: Schemas.Licenses.CreateValues) => {
+      const license = await createLicense.mutateAsync(values)
+      toast({ message: "License created", variant: "success" })
+      onOpenChange(false)
+      await navigateToResource(license)
+    },
+    [createLicense, navigateToResource, onOpenChange],
+  )
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>

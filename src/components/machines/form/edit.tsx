@@ -46,21 +46,10 @@ export default function EditMachineForm({
   })
 
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit((values) => {
-      updateMachine.mutate(values, {
-        onSuccess: () => {
-          toast({ message: "Machine updated", variant: "success" })
-          onOpenChange(false)
-        },
-        onError: (error) => {
-          toast({
-            message: "Failed to update machine",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    })()
+    const values = form.getValues()
+    await updateMachine.mutateAsync(values)
+    toast({ message: "Machine updated", variant: "success" })
+    onOpenChange(false)
   }, [form, updateMachine, onOpenChange])
 
   return (
@@ -70,6 +59,7 @@ export default function EditMachineForm({
           title="Editing an existing machine"
           onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
+          errorMessage="Failed to update machine"
           isPending={updateMachine.isPending}
           submitLabel="Update"
           className="md:h-[76vh]!"

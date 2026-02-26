@@ -36,21 +36,10 @@ export default function EditProcessForm({
   })
 
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit((values) => {
-      updateProcess.mutate(values, {
-        onSuccess: () => {
-          toast({ message: "Process updated", variant: "success" })
-          onOpenChange(false)
-        },
-        onError: (error) => {
-          toast({
-            message: "Failed to update process",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    })()
+    const values = form.getValues()
+    await updateProcess.mutateAsync(values)
+    toast({ message: "Process updated", variant: "success" })
+    onOpenChange(false)
   }, [form, updateProcess, onOpenChange])
 
   return (
@@ -60,6 +49,7 @@ export default function EditProcessForm({
           title="Editing an existing process"
           onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
+          errorMessage="Failed to update process"
           isPending={updateProcess.isPending}
           submitLabel="Update"
         >

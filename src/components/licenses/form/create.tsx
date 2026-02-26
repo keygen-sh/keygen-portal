@@ -52,38 +52,13 @@ export default function CreateLicenseForm({
     [policies, selectedPolicyId],
   )
 
-  const handleCreateLicense = useCallback(
-    (values: Schemas.Licenses.CreateValues) => {
-      if (!values.policyId) {
-        toast({
-          message: "Failed to create license",
-          description: "Policy is required.",
-          variant: "error",
-        })
-        return
-      }
-
-      createLicense.mutate(values, {
-        onSuccess: async (license) => {
-          toast({ message: "License created", variant: "success" })
-          onOpenChange(false)
-          await navigateToResource(license)
-        },
-        onError: (error) => {
-          toast({
-            message: "Failed to create license",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    },
-    [createLicense, navigateToResource, onOpenChange],
-  )
-
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit(handleCreateLicense)()
-  }, [form, handleCreateLicense])
+    const values = form.getValues()
+    const license = await createLicense.mutateAsync(values)
+    toast({ message: "License created", variant: "success" })
+    onOpenChange(false)
+    await navigateToResource(license)
+  }, [form, createLicense, navigateToResource, onOpenChange])
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
@@ -93,6 +68,7 @@ export default function CreateLicenseForm({
           onSubmit={handleSubmit}
           isPending={createLicense.isPending}
           description="Creating a new license"
+          errorMessage="Failed to create license"
         >
           <Forms.Section.Step
             crumb="General attributes"

@@ -52,21 +52,10 @@ export default function EditLicenseForm({
   })
 
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit((values) => {
-      updateLicense.mutate(values, {
-        onSuccess: () => {
-          toast({ message: "License updated", variant: "success" })
-          onOpenChange(false)
-        },
-        onError: (error) => {
-          toast({
-            message: "Failed to update license",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    })()
+    const values = form.getValues()
+    await updateLicense.mutateAsync(values)
+    toast({ message: "License updated", variant: "success" })
+    onOpenChange(false)
   }, [form, updateLicense, onOpenChange])
 
   return (
@@ -76,6 +65,7 @@ export default function EditLicenseForm({
           title="Editing an existing license"
           onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
+          errorMessage="Failed to update license"
           isPending={updateLicense.isPending}
           submitLabel="Update"
           className="md:h-[56vh]!"

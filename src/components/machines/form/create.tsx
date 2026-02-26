@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Form } from "@/components/ui/form"
 
 import * as Schemas from "@/schemas"
-import { MachineErrorCode } from "@/types/machines"
 import { useCreateMachine } from "@/queries/machines"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
@@ -45,36 +44,13 @@ export default function CreateMachineForm({
   const createMachine = useCreateMachine()
   const navigateToResource = useResourceNavigate()
 
-  const handleCreateMachine = useCallback(
-    (values: Schemas.Machines.CreateValues) => {
-      createMachine.mutate(values, {
-        onSuccess: async (machine) => {
-          toast({ message: "Machine activated", variant: "success" })
-          onOpenChange(false)
-          await navigateToResource(machine)
-        },
-        onError: (error) => {
-          if (error.code === MachineErrorCode.MachineLimitExceeded) {
-            form.setError("licenseId", {
-              type: "manual",
-              message: "Machine limit exceeded for this license",
-            })
-          }
-
-          toast({
-            message: "Failed to activate machine",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    },
-    [createMachine, navigateToResource, onOpenChange, form],
-  )
-
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit(handleCreateMachine)()
-  }, [form, handleCreateMachine])
+    const values = form.getValues()
+    const machine = await createMachine.mutateAsync(values)
+    toast({ message: "Machine activated", variant: "success" })
+    onOpenChange(false)
+    await navigateToResource(machine)
+  }, [form, createMachine, navigateToResource, onOpenChange])
 
   return (
     <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
@@ -85,6 +61,7 @@ export default function CreateMachineForm({
           isPending={createMachine.isPending}
           submitLabel="Activate"
           description="Activating a new machine"
+          errorMessage="Failed to activate machine"
         >
           <Forms.Section.Step
             crumb="General attributes"

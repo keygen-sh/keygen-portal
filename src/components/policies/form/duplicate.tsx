@@ -69,53 +69,47 @@ export default function DuplicatePolicyForm({
 
   const handleSubmit = useCallback(async () => {
     if (!policy) return
-    await form.handleSubmit(async (values) => {
-      const attachIds = values.entitlements?.attach ?? []
-      const toCreate = values.entitlements?.create ?? []
-      const [createdEntitlements, errors] = await settleMutations<Entitlement>(
-        toCreate.map((attrs) => createEntitlement.mutateAsync(attrs)),
-      )
-      const entitlementIds = Array.from(
-        new Set([...attachIds, ...createdEntitlements.map((e) => e.id)]),
-      )
+    const values = form.getValues()
 
-      if (errors.length > 0) {
-        const nextAttach = [...entitlementIds]
-        const nextCreate = errors.map(({ index }) => toCreate[index])
-        form.setValue("entitlements.attach", nextAttach)
-        form.setValue("entitlements.create", nextCreate)
-        errors.forEach((error, index) => {
-          let message = ""
-          if (error.reason.code === EntitlementErrorCode.CodeTaken) {
-            message = "Code already exists"
-          } else {
-            message = "Field is invalid"
-          }
-          form.setError(`entitlements.create.${index}.code`, {
-            type: "validate",
-            message,
-          })
+    const attachIds = values.entitlements?.attach ?? []
+    const toCreate = values.entitlements?.create ?? []
+    const [createdEntitlements, errors] = await settleMutations<Entitlement>(
+      toCreate.map((attrs) => createEntitlement.mutateAsync(attrs)),
+    )
+    const entitlementIds = Array.from(
+      new Set([...attachIds, ...createdEntitlements.map((e) => e.id)]),
+    )
+
+    if (errors.length > 0) {
+      const nextAttach = [...entitlementIds]
+      const nextCreate = errors.map(({ index }) => toCreate[index])
+      form.setValue("entitlements.attach", nextAttach)
+      form.setValue("entitlements.create", nextCreate)
+      errors.forEach((error, index) => {
+        let message = ""
+        if (error.reason.code === EntitlementErrorCode.CodeTaken) {
+          message = "Code already exists"
+        } else {
+          message = "Field is invalid"
+        }
+        form.setError(`entitlements.create.${index}.code`, {
+          type: "validate",
+          message,
         })
-        toast({ message: "Failed to create entitlement(s)", variant: "error" })
-        return
-      }
+      })
+      toast({ message: "Failed to create entitlement(s)", variant: "error" })
+      return
+    }
 
-      createPolicy.mutate(
-        { ...values, entitlements: { attach: entitlementIds, create: [] } },
-        {
-          onSuccess: async (created) => {
-            if (entitlementIds.length > 0)
-              await attachEntitlements.mutateAsync(entitlementIds)
-            toast({ message: "Policy created", variant: "success" })
-            onOpenChange(false)
-            await navigateToResource(created)
-          },
-          onError: () => {
-            toast({ message: "Failed to create policy", variant: "error" })
-          },
-        },
-      )
-    })()
+    const created = await createPolicy.mutateAsync({
+      ...values,
+      entitlements: { attach: entitlementIds, create: [] },
+    })
+    if (entitlementIds.length > 0)
+      await attachEntitlements.mutateAsync(entitlementIds)
+    toast({ message: "Policy created", variant: "success" })
+    onOpenChange(false)
+    await navigateToResource(created)
   }, [
     form,
     policy,
@@ -156,6 +150,7 @@ export default function DuplicatePolicyForm({
             title="Duplicating an existing policy"
             onSubmit={handleSubmit}
             onCancel={() => onOpenChange(false)}
+            errorMessage="Failed to create policy"
             isPending={
               createPolicy.isPending ||
               createEntitlement.isPending ||

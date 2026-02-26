@@ -38,21 +38,10 @@ export default function EditEnvironmentForm({
   })
 
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit((values) => {
-      updateEnvironment.mutate(values, {
-        onSuccess: () => {
-          toast({ message: "Environment updated", variant: "success" })
-          onOpenChange(false)
-        },
-        onError: (error) => {
-          toast({
-            message: "Failed to update environment",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    })()
+    const values = form.getValues()
+    await updateEnvironment.mutateAsync(values)
+    toast({ message: "Environment updated", variant: "success" })
+    onOpenChange(false)
   }, [form, updateEnvironment, onOpenChange])
 
   return (
@@ -66,6 +55,7 @@ export default function EditEnvironmentForm({
           title="Editing an existing environment"
           onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
+          errorMessage="Failed to update environment"
           isPending={updateEnvironment.isPending}
           submitLabel="Update"
         >

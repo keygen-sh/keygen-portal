@@ -47,21 +47,10 @@ export default function EditProductForm({
   })
 
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit((values) => {
-      updateProduct.mutate(values, {
-        onSuccess: () => {
-          toast({ message: "Product updated", variant: "success" })
-          onOpenChange(false)
-        },
-        onError: (error) => {
-          toast({
-            message: "Failed to update product",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    })()
+    const values = form.getValues()
+    await updateProduct.mutateAsync(values)
+    toast({ message: "Product updated", variant: "success" })
+    onOpenChange(false)
   }, [form, updateProduct, onOpenChange])
 
   return (
@@ -71,6 +60,7 @@ export default function EditProductForm({
           title="Editing an existing product"
           onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
+          errorMessage="Failed to update product"
           isPending={updateProduct.isPending}
           submitLabel="Update"
           className="md:h-[70vh]!"

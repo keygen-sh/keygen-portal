@@ -174,19 +174,18 @@ export default function CreatePolicyForm({
         return
       }
 
-      createPolicy.mutate(values, {
-        onSuccess: async (policy) => {
-          toast({ message: "Policy created", variant: "success" })
-          await navigateToResource(policy)
-          onOpenChange(false)
-        },
-        onError: () => {
-          toast({ message: "Failed to create policy", variant: "error" })
-        },
-      })
+      const policy = await createPolicy.mutateAsync(values)
+      toast({ message: "Policy created", variant: "success" })
+      await navigateToResource(policy)
+      onOpenChange(false)
     },
     [form, createPolicy, navigateToResource, createEntitlement, onOpenChange],
   )
+
+  const handleSubmit = useCallback(async () => {
+    const values = form.getValues()
+    await handleCreatePolicy(values)
+  }, [form, handleCreatePolicy])
 
   const handleOpenChange = useCallback(
     (value: boolean) => {
@@ -229,8 +228,9 @@ export default function CreatePolicyForm({
           onOpenChange={handleOpenChange}
           selection={selection}
           onBack={() => setSelection(null)}
-          onSubmit={() => form.handleSubmit(handleCreatePolicy)()}
+          onSubmit={handleSubmit}
           isPending={createPolicy.isPending}
+          errorMessage="Failed to create policy"
         />
       )}
 
@@ -243,8 +243,9 @@ export default function CreatePolicyForm({
             setMode("templates")
             setSelection(null)
           }}
-          onSubmit={() => form.handleSubmit(handleCreatePolicy)()}
+          onSubmit={handleSubmit}
           isPending={createPolicy.isPending}
+          errorMessage="Failed to create policy"
         />
       )}
     </>
@@ -523,6 +524,7 @@ interface TemplatesFormProps {
   onSubmit: () => void
   onBack: () => void
   isPending: boolean
+  errorMessage?: string
 }
 
 function TemplatesForm({
@@ -533,6 +535,7 @@ function TemplatesForm({
   onSubmit,
   onBack,
   isPending,
+  errorMessage,
 }: TemplatesFormProps) {
   return (
     <Forms.Container.Dialog
@@ -545,6 +548,7 @@ function TemplatesForm({
           onSubmit={onSubmit}
           onBack={onBack}
           isPending={isPending}
+          errorMessage={errorMessage}
           description={
             <BadgeGroup prefix="Creating a new" suffix="policy" mobileMax={1}>
               {selection.timing === TimingTemplates.Perpetual && (
@@ -882,6 +886,7 @@ interface ScratchFormProps {
   onSubmit: () => void
   onBack: () => void
   isPending: boolean
+  errorMessage?: string
 }
 
 function ScratchForm({
@@ -891,6 +896,7 @@ function ScratchForm({
   onSubmit,
   onBack,
   isPending,
+  errorMessage,
 }: ScratchFormProps) {
   return (
     <Forms.Container.Dialog
@@ -907,6 +913,7 @@ function ScratchForm({
           onCancel={onBack}
           onBack={onBack}
           isPending={isPending}
+          errorMessage={errorMessage}
         >
           <Forms.Section.Step
             crumb="General attributes"

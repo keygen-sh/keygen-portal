@@ -44,21 +44,10 @@ export default function EditUserForm({
   })
 
   const handleSubmit = useCallback(async () => {
-    await form.handleSubmit((values) => {
-      updateUser.mutate(values, {
-        onSuccess: () => {
-          toast({ message: "User updated", variant: "success" })
-          onOpenChange(false)
-        },
-        onError: (error) => {
-          toast({
-            message: "Failed to update user",
-            description: error.detail,
-            variant: "error",
-          })
-        },
-      })
-    })()
+    const values = form.getValues()
+    await updateUser.mutateAsync(values)
+    toast({ message: "User updated", variant: "success" })
+    onOpenChange(false)
   }, [form, updateUser, onOpenChange])
 
   return (
@@ -68,6 +57,7 @@ export default function EditUserForm({
           title="Editing an existing user"
           onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
+          errorMessage="Failed to update user"
           isPending={userLoading}
           submitLabel="Update"
           className="md:h-[66vh]!"

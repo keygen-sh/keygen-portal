@@ -72,6 +72,7 @@ import {
   useRenewLicense,
   useCheckInLicense,
   useResetUsageLicense,
+  useListLicenseEntitlements,
 } from "@/queries/licenses"
 
 import { useMobile } from "@/hooks/use-mobile"
@@ -142,6 +143,13 @@ export default function LicenseDetails() {
     isFetching: productFetching,
     isError: productError,
   } = useGetProduct(productId)
+
+  const {
+    data: entitlements = [],
+    isLoading: entitlementsLoading,
+    isFetching: entitlementsFetching,
+    isError: entitlementsError,
+  } = useListLicenseEntitlements(id)
 
   const navigate = useNavigate()
 
@@ -598,6 +606,45 @@ export default function LicenseDetails() {
                       />
                     </div>
                   </div>
+                </CollapsibleCard>
+
+                <CollapsibleCard
+                  title="Entitlements"
+                  subtitle={
+                    <Badge className="ml-2 min-h-5 min-w-5 text-sm text-content-muted">
+                      {entitlements.length}
+                    </Badge>
+                  }
+                >
+                  {entitlementsError ? (
+                    <Badge variant="destructive">ERROR</Badge>
+                  ) : entitlementsLoading || entitlementsFetching ? (
+                    <div className="flex w-full justify-between">
+                      <Skeleton className="h-5 w-48 rounded-sm" />
+                      <Skeleton className="h-5 w-24 rounded-sm" />
+                    </div>
+                  ) : entitlements.length > 0 ? (
+                    entitlements.map((entitlement) => (
+                      <div key={entitlement.id} className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <GoToButton
+                            path="/$accountId/app/entitlements/$id"
+                            params={{
+                              accountId: keygen.config.id,
+                              id: entitlement.id,
+                            }}
+                            label={entitlement.attributes.name}
+                          />
+
+                          <Badge className="bg-background-3 px-2 py-1 text-content-muted">
+                            {entitlement.attributes.code}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <Attribute.Field variant="text" label="None" value="--" />
+                  )}
                 </CollapsibleCard>
 
                 <CollapsibleCard title="Relationships">

@@ -45,8 +45,15 @@ export function useCreateGroup() {
   const { code } = useEnvironment()
 
   return useMutation<Group, APIError, Schemas.Groups.CreateValues>({
-    mutationFn: (values) =>
-      keygen.groups.create(values).then((response) => response.data as Group),
+    mutationFn: async (values) => {
+      const response = await keygen.groups.create(values)
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response.data
+    },
 
     onSuccess: (newGroup) => {
       queryClient.setQueryData<Group[]>(
@@ -68,7 +75,11 @@ export function useUpdateGroup(groupId: string) {
   return useMutation<Group, APIError, Schemas.Groups.UpdateValues>({
     mutationFn: (values) =>
       keygen.groups.get({ id: groupId }).then(async (response) => {
-        const current = response.data as Group
+        if (response.errors) {
+          throw new APIError(response.errors[0])
+        }
+
+        const current = response.data
 
         const changes = diff(
           current.attributes,
@@ -76,11 +87,16 @@ export function useUpdateGroup(groupId: string) {
         ) as Schemas.Groups.UpdateValues
         if (Object.keys(changes).length === 0) return current
 
-        const updated = await keygen.groups
-          .update({ id: groupId, values: changes })
-          .then((response) => response.data as Group)
+        const updateResponse = await keygen.groups.update({
+          id: groupId,
+          values: changes,
+        })
 
-        return updated
+        if (updateResponse.errors) {
+          throw new APIError(updateResponse.errors[0])
+        }
+
+        return updateResponse.data
       }),
 
     onSuccess: async (updated) => {

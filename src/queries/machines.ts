@@ -46,11 +46,11 @@ export function useCreateMachine() {
     mutationFn: async (values) => {
       const response = await keygen.machines.create(values)
 
-      if (response.errors && response.errors.length > 0) {
-        throw response.errors[0]
+      if (response.errors) {
+        throw new APIError(response.errors[0])
       }
 
-      return response.data as Machine
+      return response.data
     },
 
     onSuccess: (newMachine) => {
@@ -74,8 +74,8 @@ export function useUpdateMachine(machineId: string) {
     mutationFn: async (values) => {
       const getResponse = await keygen.machines.get({ id: machineId })
 
-      if (!getResponse.data) {
-        throw new Error("Machine not found")
+      if (getResponse.errors) {
+        throw new APIError(getResponse.errors[0])
       }
 
       const current = getResponse.data
@@ -91,14 +91,16 @@ export function useUpdateMachine(machineId: string) {
 
       if (Object.keys(changes).length === 0) return current
 
-      const updated = await keygen.machines
-        .update({
-          id: machineId,
-          values: changes,
-        })
-        .then((response) => response.data as Machine)
+      const updateResponse = await keygen.machines.update({
+        id: machineId,
+        values: changes,
+      })
 
-      return updated
+      if (updateResponse.errors) {
+        throw new APIError(updateResponse.errors[0])
+      }
+
+      return updateResponse.data
     },
 
     onSuccess: async (updated) => {

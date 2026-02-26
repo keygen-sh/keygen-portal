@@ -46,11 +46,11 @@ export function useCreateComponent() {
     mutationFn: async (values) => {
       const response = await keygen.components.create(values)
 
-      if (response.errors && response.errors.length > 0) {
-        throw response.errors[0]
+      if (response.errors) {
+        throw new APIError(response.errors[0])
       }
 
-      return response.data as Component
+      return response.data
     },
 
     onSuccess: (newComponent) => {
@@ -74,29 +74,29 @@ export function useUpdateComponent(componentId: string) {
     mutationFn: async (values) => {
       const getResponse = await keygen.components.get({ id: componentId })
 
-      if (!getResponse.data) {
-        throw new Error("Component not found")
+      if (getResponse.errors) {
+        throw new APIError(getResponse.errors[0])
       }
 
       const current = getResponse.data
 
       const changes = diff(
-        {
-          ...current.attributes,
-        },
+        current.attributes,
         values,
       ) as Schemas.Components.UpdateValues
 
       if (Object.keys(changes).length === 0) return current
 
-      const updated = await keygen.components
-        .update({
-          id: componentId,
-          values: changes,
-        })
-        .then((response) => response.data as Component)
+      const updateResponse = await keygen.components.update({
+        id: componentId,
+        values: changes,
+      })
 
-      return updated
+      if (updateResponse.errors) {
+        throw new APIError(updateResponse.errors[0])
+      }
+
+      return updateResponse.data
     },
 
     onSuccess: async (updated) => {

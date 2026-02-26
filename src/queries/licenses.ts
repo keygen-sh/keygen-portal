@@ -43,10 +43,15 @@ export function useCreateLicense() {
   const { code } = useEnvironment()
 
   return useMutation<License, APIError, Schemas.Licenses.CreateValues>({
-    mutationFn: (values) =>
-      keygen.licenses
-        .create(values)
-        .then((response) => response.data as License),
+    mutationFn: async (values) => {
+      const response = await keygen.licenses.create(values)
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response.data
+    },
 
     onSuccess: (newLicense) => {
       queryClient.setQueryData<License[]>(
@@ -68,7 +73,11 @@ export function useUpdateLicense(licenseId: string) {
   return useMutation<License, APIError, Schemas.Licenses.UpdateValues>({
     mutationFn: (values) =>
       keygen.licenses.get({ id: licenseId }).then(async (response) => {
-        const current = response.data as License
+        if (response.errors) {
+          throw new APIError(response.errors[0])
+        }
+
+        const current = response.data
 
         const changes = diff(
           current.attributes,
@@ -76,11 +85,16 @@ export function useUpdateLicense(licenseId: string) {
         ) as Schemas.Licenses.UpdateValues
         if (Object.keys(changes).length === 0) return current
 
-        const updated = await keygen.licenses
-          .update({ id: licenseId, values: changes })
-          .then((response) => response.data as License)
+        const updateResponse = await keygen.licenses.update({
+          id: licenseId,
+          values: changes,
+        })
 
-        return updated
+        if (updateResponse.errors) {
+          throw new APIError(updateResponse.errors[0])
+        }
+
+        return updateResponse.data
       }),
 
     onSuccess: async (updated) => {

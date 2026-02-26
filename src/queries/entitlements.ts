@@ -46,11 +46,11 @@ export function useCreateEntitlement() {
     mutationFn: async (values) => {
       const response = await keygen.entitlements.create({ values })
 
-      if (response.errors && response.errors.length > 0) {
-        throw response.errors[0]
+      if (response.errors) {
+        throw new APIError(response.errors[0])
       }
 
-      return response?.data as Entitlement
+      return response.data
     },
 
     onSuccess: (newEntitlement) => {
@@ -75,7 +75,11 @@ export function useUpdateEntitlement(entitlementId: string) {
   return useMutation<Entitlement, APIError, Schemas.Entitlements.UpdateValues>({
     mutationFn: (values) =>
       keygen.entitlements.get({ id: entitlementId }).then(async (response) => {
-        const current = response.data as Entitlement
+        if (response.errors) {
+          throw new APIError(response.errors[0])
+        }
+
+        const current = response.data
 
         const changes = diff(
           current.attributes,
@@ -83,11 +87,16 @@ export function useUpdateEntitlement(entitlementId: string) {
         ) as Schemas.Entitlements.UpdateValues
         if (Object.keys(changes).length === 0) return current
 
-        const updated = await keygen.entitlements
-          .update({ id: entitlementId, values: changes })
-          .then((response) => response.data as Entitlement)
+        const updateResponse = await keygen.entitlements.update({
+          id: entitlementId,
+          values: changes,
+        })
 
-        return updated
+        if (updateResponse.errors) {
+          throw new APIError(updateResponse.errors[0])
+        }
+
+        return updateResponse.data
       }),
 
     onSuccess: async (updated) => {

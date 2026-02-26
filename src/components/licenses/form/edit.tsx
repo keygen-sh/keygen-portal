@@ -148,7 +148,7 @@ export default function EditLicenseForm({
             createEntitlement.isPending
           }
           submitLabel="Update"
-          className="md:h-[56vh]!"
+          className="md:h-[64vh]!"
         >
           <Forms.Section.Columns title="Attributes">
             <Forms.Section.Column>

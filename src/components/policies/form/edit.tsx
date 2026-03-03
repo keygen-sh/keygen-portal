@@ -15,10 +15,10 @@ import {
   useDetachPolicyEntitlements,
 } from "@/queries/policies"
 import { useCreateEntitlement } from "@/queries/entitlements"
-import { settleMutations } from "@/queries/utils"
 
 import * as Schemas from "@/schemas"
-import { Entitlement, EntitlementErrorCode } from "@/types/entitlements"
+
+import { settleCreateEntitlements } from "@/lib/entitlements"
 
 import * as Forms from "@/components/forms"
 import * as Policies from "@/components/policies"
@@ -35,14 +35,14 @@ export default function EditPolicyForm({
 }: EditPolicyFormProps) {
   const { id } = useParams({ from: "/$accountId/app/policies/$id" })
   const { data: policy } = useGetPolicy(id)
-  const { data: currentEntitlements = [] } = useListPolicyEntitlements(
+  const { data: policyEntitlements = [] } = useListPolicyEntitlements(
     policy?.id ?? "",
   )
 
   const updatePolicy = useUpdatePolicy(policy?.id ?? "")
-  const attachEntitlements = useAttachPolicyEntitlements(policy?.id ?? "")
-  const detachEntitlements = useDetachPolicyEntitlements(policy?.id ?? "")
   const createEntitlement = useCreateEntitlement()
+  const attachEntitlements = useAttachPolicyEntitlements()
+  const detachEntitlements = useDetachPolicyEntitlements()
 
   const form = useForm<Schemas.Policies.UpdateValues>({
     resolver: zodResolver(Schemas.Policies.UpdateSchema),
@@ -51,7 +51,7 @@ export default function EditPolicyForm({
       ? {
           ...Schemas.Policies.getFormValuesFromPolicy(policy),
           entitlements: {
-            attach: currentEntitlements.map((e) => e.id),
+            attach: policyEntitlements.map((e) => e.id),
             create: [],
           },
         }
@@ -62,47 +62,32 @@ export default function EditPolicyForm({
     async (values: Schemas.Policies.UpdateValues) => {
       if (!policy) return
 
-      const attachIds = values.entitlements?.attach ?? []
-      const toCreate = values.entitlements?.create ?? []
-      const [entitlements, errors] = await settleMutations<Entitlement>(
-        toCreate.map((attrs) => createEntitlement.mutateAsync(attrs)),
-      )
-      const entitlementIds = Array.from(
-        new Set([...attachIds, ...entitlements.map((e) => e.id)]),
-      )
-
-      if (errors.length > 0) {
-        const nextAttach = [...entitlementIds]
-        const nextCreate = errors.map(({ index }) => toCreate[index])
-        form.setValue("entitlements.attach", nextAttach)
-        form.setValue("entitlements.create", nextCreate)
-        errors.forEach((error, index) => {
-          let message = ""
-          if (error.reason.code === EntitlementErrorCode.CodeTaken) {
-            message = "Code already exists"
-          } else {
-            message = "Field is invalid"
-          }
-          form.setError(`entitlements.create.${index}.code`, {
-            type: "validate",
-            message,
-          })
-        })
-        toast({ message: "Failed to create entitlement(s)", variant: "error" })
-        return
-      }
-
-      const currentIds = currentEntitlements.map((e) => e.id)
-      const newIds = entitlementIds
-      const toAttach = newIds.filter((id) => !currentIds.includes(id))
-      const toDetach = currentIds.filter((id) => !newIds.includes(id))
-
-      if (toDetach.length > 0) await detachEntitlements.mutateAsync(toDetach)
-      if (toAttach.length > 0) await attachEntitlements.mutateAsync(toAttach)
-      await updatePolicy.mutateAsync({
-        ...values,
-        entitlements: { attach: entitlementIds, create: [] },
+      const createdEntitlementIds = await settleCreateEntitlements({
+        form,
+        createMutation: createEntitlement,
+        values: values.entitlements,
       })
+      if (!createdEntitlementIds) return
+
+      const attachEntitlementIds = createdEntitlementIds.filter(
+        (id) => !policyEntitlements.some((e) => e.id === id),
+      )
+      const detachEntitlementIds = policyEntitlements
+        .filter((e) => !createdEntitlementIds.includes(e.id))
+        .map((e) => e.id)
+
+      if (detachEntitlementIds.length > 0)
+        await detachEntitlements.mutateAsync({
+          policyId: policy.id,
+          entitlementIds: detachEntitlementIds,
+        })
+      if (attachEntitlementIds.length > 0)
+        await attachEntitlements.mutateAsync({
+          policyId: policy.id,
+          entitlementIds: attachEntitlementIds,
+        })
+
+      await updatePolicy.mutateAsync(values)
       toast({ message: "Policy updated", variant: "success" })
       onOpenChange(false)
     },
@@ -111,7 +96,7 @@ export default function EditPolicyForm({
       policy,
       onOpenChange,
       updatePolicy,
-      currentEntitlements,
+      policyEntitlements,
       attachEntitlements,
       detachEntitlements,
       createEntitlement,

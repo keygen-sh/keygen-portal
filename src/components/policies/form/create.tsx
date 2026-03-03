@@ -2,8 +2,8 @@ import { useState, useMemo, useCallback } from "react"
 import { useForm, UseFormReturn } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
@@ -23,7 +23,6 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form"
-import { CardSelector, CardOption } from "@/components/card-selector"
 
 import {
   Clock,
@@ -38,8 +37,6 @@ import {
   Info,
 } from "lucide-react"
 
-import { Entitlement, EntitlementErrorCode } from "@/types/entitlements"
-
 import * as Schemas from "@/schemas"
 import {
   PolicyTemplateSelection,
@@ -49,17 +46,21 @@ import {
 } from "@/schemas/policies"
 
 import { toast } from "@/lib/toast"
+import { settleCreateEntitlements } from "@/lib/entitlements"
 import { useMobile } from "@/hooks/use-mobile"
 
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
-import { settleMutations } from "@/queries/utils"
-import { useCreatePolicy } from "@/queries/policies"
+import {
+  useCreatePolicy,
+  useAttachPolicyEntitlements,
+} from "@/queries/policies"
 import { useCreateEntitlement } from "@/queries/entitlements"
 
 import * as Forms from "@/components/forms"
 import * as Policies from "@/components/policies"
 import DocumentationLink from "@/components/documentation-link"
+import { CardSelector, CardOption } from "@/components/card-selector"
 import { BadgeGroup, BadgeGroupItem } from "@/components/badge-group"
 
 type CreatePolicyMode = "templates" | "scratch"
@@ -75,6 +76,7 @@ export default function CreatePolicyForm({
 }: CreatePolicyFormProps) {
   const createPolicy = useCreatePolicy()
   const createEntitlement = useCreateEntitlement()
+  const attachEntitlements = useAttachPolicyEntitlements()
 
   const navigateToResource = useResourceNavigate()
 
@@ -128,58 +130,36 @@ export default function CreatePolicyForm({
 
   const handleCreatePolicy = useCallback(
     async (values: Schemas.Policies.CreateValues) => {
-      const attachIds = values.entitlements?.attach ?? []
-      const toCreate = values.entitlements?.create ?? []
+      const createdEntitlementIds = await settleCreateEntitlements({
+        form,
+        createMutation: createEntitlement,
+        values: values.entitlements,
+      })
+      if (!createdEntitlementIds) return
 
-      const [entitlements, errors] = await settleMutations<Entitlement>(
-        toCreate.map((attrs) => createEntitlement.mutateAsync(attrs)),
-      )
-      const entitlementIds = Array.from(
-        new Set([...attachIds, ...entitlements.map((e) => e.id)]),
-      )
+      const policy = await createPolicy.mutateAsync({
+        ...values,
+        entitlements: { attach: [], create: [] },
+      })
 
-      const nextAttach = [...entitlementIds]
-      const nextCreate = errors.map(({ index }) => toCreate[index])
-
-      form.setValue("entitlements.attach", nextAttach)
-      form.setValue("entitlements.create", nextCreate)
-
-      if (errors.length > 0) {
-        const fieldErrors = errors.map((error, index) => {
-          let message = ""
-          if (error.reason.code === EntitlementErrorCode.CodeTaken) {
-            message = "Code already exists"
-          } else {
-            message = "Field is invalid"
-          }
-
-          return {
-            path: `entitlements.create.${index}.code` as const,
-            message,
-          }
+      if (createdEntitlementIds.length > 0)
+        await attachEntitlements.mutateAsync({
+          policyId: policy.id,
+          entitlementIds: createdEntitlementIds,
         })
 
-        toast({
-          message: "Failed to create entitlement(s)",
-          variant: "error",
-        })
-
-        fieldErrors.forEach((fieldError) => {
-          form.setError(fieldError.path, {
-            type: "validate",
-            message: fieldError.message,
-          })
-        })
-
-        return
-      }
-
-      const policy = await createPolicy.mutateAsync(values)
       toast({ message: "Policy created", variant: "success" })
       await navigateToResource(policy)
       onOpenChange(false)
     },
-    [form, createPolicy, navigateToResource, createEntitlement, onOpenChange],
+    [
+      form,
+      createPolicy,
+      createEntitlement,
+      attachEntitlements,
+      navigateToResource,
+      onOpenChange,
+    ],
   )
 
   const handleSubmit = useCallback(
@@ -231,7 +211,11 @@ export default function CreatePolicyForm({
           selection={selection}
           onBack={() => setSelection(null)}
           onSubmit={handleSubmit}
-          isPending={createPolicy.isPending}
+          isPending={
+            createPolicy.isPending ||
+            createEntitlement.isPending ||
+            attachEntitlements.isPending
+          }
           errorMessage="Failed to create policy"
         />
       )}
@@ -246,7 +230,11 @@ export default function CreatePolicyForm({
             setSelection(null)
           }}
           onSubmit={handleSubmit}
-          isPending={createPolicy.isPending}
+          isPending={
+            createPolicy.isPending ||
+            createEntitlement.isPending ||
+            attachEntitlements.isPending
+          }
           errorMessage="Failed to create policy"
         />
       )}

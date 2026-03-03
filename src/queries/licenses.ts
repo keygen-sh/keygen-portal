@@ -346,3 +346,54 @@ export function useDetachLicenseEntitlements(licenseId: string) {
     },
   })
 }
+
+export function useListLicenseUsers(licenseId: string) {
+  const { code } = useEnvironment()
+
+  return useQuery({
+    queryKey: ["licenses", licenseId, "users", { environment: code }],
+    queryFn: () =>
+      keygen.licenses
+        .listUsers({ licenseId })
+        .then((response) => response.data ?? []),
+    enabled: !!licenseId,
+  })
+}
+
+export function useAttachLicenseUsers() {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<null, APIError, { licenseId: string; userIds: string[] }>({
+    mutationFn: ({ licenseId, userIds }) =>
+      keygen.licenses.attachUsers({ licenseId, userIds }),
+
+    onSuccess: async (_, { licenseId }) => {
+      await queryClient.invalidateQueries({
+        queryKey: ["licenses", licenseId, "users", { environment: code }],
+      })
+      await queryClient.invalidateQueries({
+        queryKey: ["licenses", licenseId, { environment: code }],
+      })
+    },
+  })
+}
+
+export function useDetachLicenseUsers() {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<null, APIError, { licenseId: string; userIds: string[] }>({
+    mutationFn: ({ licenseId, userIds }) =>
+      keygen.licenses.detachUsers({ licenseId, userIds }),
+
+    onSuccess: async (_, { licenseId }) => {
+      await queryClient.invalidateQueries({
+        queryKey: ["licenses", licenseId, "users", { environment: code }],
+      })
+      await queryClient.invalidateQueries({
+        queryKey: ["licenses", licenseId, { environment: code }],
+      })
+    },
+  })
+}

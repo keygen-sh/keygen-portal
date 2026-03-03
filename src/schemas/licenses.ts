@@ -36,6 +36,9 @@ export type BaseValues = Partial<
       metadata?: Record<string, unknown>
     }[]
   }
+  users?: {
+    attach?: string[]
+  }
 }
 export type CreateValues = BaseValues & { policyId: string }
 export type UpdateValues = Partial<BaseValues>
@@ -45,7 +48,7 @@ export type AllValues = CombineFormValues<
   UpdateValues
 >
 
-export type FieldNames = Exclude<FieldPath<AllValues>, "entitlements">
+export type FieldNames = Exclude<FieldPath<AllValues>, "entitlements" | "users">
 
 const BaseShape = z.object({
   name: z
@@ -86,6 +89,11 @@ const BaseShape = z.object({
         .default([]),
     })
     .default({ attach: [], create: [] }),
+  users: z
+    .object({
+      attach: z.array(z.string()).default([]),
+    })
+    .default({ attach: [] }),
 })
 
 const PolicyShape = z.object({

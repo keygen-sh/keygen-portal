@@ -73,6 +73,7 @@ import {
   useCheckInLicense,
   useResetUsageLicense,
   useListLicenseEntitlements,
+  useListLicenseUsers,
 } from "@/queries/licenses"
 
 import { useMobile } from "@/hooks/use-mobile"
@@ -150,6 +151,8 @@ export default function LicenseDetails() {
     isFetching: entitlementsFetching,
     isError: entitlementsError,
   } = useListLicenseEntitlements(id)
+
+  const { data: licenseUsers = [] } = useListLicenseUsers(id)
 
   const navigate = useNavigate()
 
@@ -1064,7 +1067,7 @@ export default function LicenseDetails() {
                         value={getUsersLimitDisplay(
                           license,
                           policy,
-                          license.relationships.users?.data?.length ?? 0,
+                          licenseUsers.length,
                         )}
                         suffix={
                           isLimitOverridden(

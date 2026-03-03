@@ -11,21 +11,21 @@ config.validate()
 export default async function create(
   values: Schemas.Licenses.CreateValues,
 ): Promise<LicenseResponse> {
-  const { policyId, entitlements, ...attributes } = values
+  const { policyId, entitlements, users, ...attributes } = values
   void entitlements
+  void users
+
+  const relationships: Record<string, unknown> = {
+    policy: {
+      data: { type: "policies", id: policyId },
+    },
+  }
 
   const body = {
     data: {
       type: "licenses",
       attributes: compact(attributes),
-      relationships: {
-        policy: {
-          data: {
-            type: "policies",
-            id: policyId,
-          },
-        },
-      },
+      relationships,
     },
   }
 

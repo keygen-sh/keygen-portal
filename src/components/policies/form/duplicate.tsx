@@ -13,11 +13,11 @@ import {
   useAttachPolicyEntitlements,
 } from "@/queries/policies"
 import { useCreateEntitlement } from "@/queries/entitlements"
-import { settleMutations } from "@/queries/utils"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import * as Schemas from "@/schemas"
-import { Entitlement, EntitlementErrorCode } from "@/types/entitlements"
+
+import { settleCreateEntitlements } from "@/lib/entitlements"
 
 import * as Forms from "@/components/forms"
 import * as Loading from "@/components/loading"
@@ -39,11 +39,11 @@ export default function DuplicatePolicyForm({
     isLoading: policyLoading,
     isError: policyError,
   } = useGetPolicy(id)
-  const { data: entitlements = [] } = useListPolicyEntitlements(id)
+  const { data: policyEntitlements = [] } = useListPolicyEntitlements(id)
 
   const createPolicy = useCreatePolicy()
   const createEntitlement = useCreateEntitlement()
-  const attachEntitlements = useAttachPolicyEntitlements("")
+  const attachEntitlements = useAttachPolicyEntitlements()
 
   const navigateToResource = useResourceNavigate()
 
@@ -57,9 +57,9 @@ export default function DuplicatePolicyForm({
     return {
       ...values,
       name: `${values.name} (dup)`,
-      entitlements: { attach: entitlements.map((e) => e.id), create: [] },
+      entitlements: { attach: policyEntitlements.map((e) => e.id), create: [] },
     }
-  }, [policy, entitlements])
+  }, [policy, policyEntitlements])
 
   const form = useForm<Schemas.Policies.CreateValues>({
     resolver: zodResolver(Schemas.Policies.CreateSchema),
@@ -71,42 +71,24 @@ export default function DuplicatePolicyForm({
     async (values: Schemas.Policies.CreateValues) => {
       if (!policy) return
 
-      const attachIds = values.entitlements?.attach ?? []
-      const toCreate = values.entitlements?.create ?? []
-      const [createdEntitlements, errors] = await settleMutations<Entitlement>(
-        toCreate.map((attrs) => createEntitlement.mutateAsync(attrs)),
-      )
-      const entitlementIds = Array.from(
-        new Set([...attachIds, ...createdEntitlements.map((e) => e.id)]),
-      )
-
-      if (errors.length > 0) {
-        const nextAttach = [...entitlementIds]
-        const nextCreate = errors.map(({ index }) => toCreate[index])
-        form.setValue("entitlements.attach", nextAttach)
-        form.setValue("entitlements.create", nextCreate)
-        errors.forEach((error, index) => {
-          let message = ""
-          if (error.reason.code === EntitlementErrorCode.CodeTaken) {
-            message = "Code already exists"
-          } else {
-            message = "Field is invalid"
-          }
-          form.setError(`entitlements.create.${index}.code`, {
-            type: "validate",
-            message,
-          })
-        })
-        toast({ message: "Failed to create entitlement(s)", variant: "error" })
-        return
-      }
+      const createdEntitlementIds = await settleCreateEntitlements({
+        form,
+        createMutation: createEntitlement,
+        values: values.entitlements,
+      })
+      if (!createdEntitlementIds) return
 
       const created = await createPolicy.mutateAsync({
         ...values,
-        entitlements: { attach: entitlementIds, create: [] },
+        entitlements: { attach: [], create: [] },
       })
-      if (entitlementIds.length > 0)
-        await attachEntitlements.mutateAsync(entitlementIds)
+
+      if (createdEntitlementIds.length > 0)
+        await attachEntitlements.mutateAsync({
+          policyId: created.id,
+          entitlementIds: createdEntitlementIds,
+        })
+
       toast({ message: "Policy created", variant: "success" })
       onOpenChange(false)
       await navigateToResource(created)

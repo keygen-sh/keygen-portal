@@ -145,15 +145,19 @@ export function useListPolicyEntitlements(policyId: string) {
   })
 }
 
-export function useAttachPolicyEntitlements(policyId: string) {
+export function useAttachPolicyEntitlements() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<null, APIError, string[]>({
-    mutationFn: (entitlementIds) =>
+  return useMutation<
+    null,
+    APIError,
+    { policyId: string; entitlementIds: string[] }
+  >({
+    mutationFn: ({ policyId, entitlementIds }) =>
       keygen.policies.attachEntitlements({ policyId, entitlementIds }),
 
-    onSuccess: async () => {
+    onSuccess: async (_, { policyId }) => {
       await queryClient.invalidateQueries({
         queryKey: ["policies", policyId, "entitlements", { environment: code }],
       })
@@ -164,15 +168,19 @@ export function useAttachPolicyEntitlements(policyId: string) {
   })
 }
 
-export function useDetachPolicyEntitlements(policyId: string) {
+export function useDetachPolicyEntitlements() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<null, APIError, string[]>({
-    mutationFn: (entitlementIds) =>
+  return useMutation<
+    null,
+    APIError,
+    { policyId: string; entitlementIds: string[] }
+  >({
+    mutationFn: ({ policyId, entitlementIds }) =>
       keygen.policies.detachEntitlements({ policyId, entitlementIds }),
 
-    onSuccess: async () => {
+    onSuccess: async (_, { policyId }) => {
       await queryClient.invalidateQueries({
         queryKey: ["policies", policyId, "entitlements", { environment: code }],
       })

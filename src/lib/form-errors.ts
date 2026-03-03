@@ -84,9 +84,11 @@ export async function handleFormError<TFieldValues extends FieldValues>(
 
   if (apiError) {
     const extractedField = extractFieldFromPointer(apiError.source?.pointer)
-    if (extractedField) {
-      const targetField = extractedField as FieldPath<TFieldValues>
+    const targetField = extractedField as FieldPath<TFieldValues>
+    const isRegistered =
+      extractedField != null && targetField in form.getValues()
 
+    if (isRegistered) {
       form.setError(targetField, {
         type: "manual",
         message: capitalize(apiError.detail ?? "Field is invalid"),
@@ -110,7 +112,7 @@ export async function handleFormError<TFieldValues extends FieldValues>(
       return
     }
 
-    // Fallback to detailed toast if pointer didn't resolve
+    // Fallback to detailed toast if pointer didn't resolve to a form field
     if (showToast) {
       toast({
         message: toastMessage,

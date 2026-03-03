@@ -5,15 +5,17 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Form } from "@/components/ui/form"
 
 import * as Schemas from "@/schemas"
-import { useCreateLicense } from "@/queries/licenses"
+import {
+  useCreateLicense,
+  useAttachLicenseUsers,
+  useAttachLicenseEntitlements,
+} from "@/queries/licenses"
 import { useListPolicies } from "@/queries/policies"
-import { settleMutations } from "@/queries/utils"
 import { useCreateEntitlement } from "@/queries/entitlements"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
-import { Entitlement, EntitlementErrorCode } from "@/types/entitlements"
-
 import { toast } from "@/lib/toast"
+import { settleCreateEntitlements } from "@/lib/entitlements"
 
 import * as Forms from "@/components/forms"
 import * as Licenses from "@/components/licenses"
@@ -45,10 +47,13 @@ export default function CreateLicenseForm({
       maxUses: null,
       metadata: {},
       entitlements: { attach: [], create: [] },
+      users: { attach: [] },
     },
   })
   const createLicense = useCreateLicense()
+  const attachUsers = useAttachLicenseUsers()
   const createEntitlement = useCreateEntitlement()
+  const attachEntitlements = useAttachLicenseEntitlements()
   const navigateToResource = useResourceNavigate()
 
   const { data: policies = [] } = useListPolicies()
@@ -60,61 +65,42 @@ export default function CreateLicenseForm({
 
   const handleSubmit = useCallback(
     async (values: Schemas.Licenses.CreateValues) => {
-      const attachIds = values.entitlements?.attach ?? []
-      const toCreate = values.entitlements?.create ?? []
-
-      const [entitlements, errors] = await settleMutations<Entitlement>(
-        toCreate.map((attrs) => createEntitlement.mutateAsync(attrs)),
-      )
-      const entitlementIds = Array.from(
-        new Set([...attachIds, ...entitlements.map((e) => e.id)]),
-      )
-
-      const nextAttach = [...entitlementIds]
-      const nextCreate = errors.map(({ index }) => toCreate[index])
-
-      form.setValue("entitlements.attach", nextAttach)
-      form.setValue("entitlements.create", nextCreate)
-
-      if (errors.length > 0) {
-        const fieldErrors = errors.map((error, index) => {
-          let message = ""
-          if (error.reason.code === EntitlementErrorCode.CodeTaken) {
-            message = "Code already exists"
-          } else {
-            message = "Field is invalid"
-          }
-
-          return {
-            path: `entitlements.create.${index}.code` as const,
-            message,
-          }
-        })
-
-        toast({
-          message: "Failed to create entitlement(s)",
-          variant: "error",
-        })
-
-        fieldErrors.forEach((fieldError) => {
-          form.setError(fieldError.path, {
-            type: "validate",
-            message: fieldError.message,
-          })
-        })
-
-        return
-      }
+      const createdEntitlementIds = await settleCreateEntitlements({
+        form,
+        createMutation: createEntitlement,
+        values: values.entitlements,
+      })
+      if (!createdEntitlementIds) return
 
       const license = await createLicense.mutateAsync({
         ...values,
-        entitlements: { attach: entitlementIds, create: [] },
+        entitlements: { attach: [], create: [] },
+        users: { attach: [] },
       })
+
+      if (createdEntitlementIds.length > 0)
+        await attachEntitlements.mutateAsync({
+          licenseId: license.id,
+          entitlementIds: createdEntitlementIds,
+        })
+
+      const userIds = values.users?.attach ?? []
+      if (userIds.length > 0)
+        await attachUsers.mutateAsync({ licenseId: license.id, userIds })
+
       toast({ message: "License created", variant: "success" })
       onOpenChange(false)
       await navigateToResource(license)
     },
-    [form, createLicense, createEntitlement, navigateToResource, onOpenChange],
+    [
+      form,
+      createLicense,
+      createEntitlement,
+      attachEntitlements,
+      attachUsers,
+      navigateToResource,
+      onOpenChange,
+    ],
   )
 
   return (
@@ -123,7 +109,12 @@ export default function CreateLicenseForm({
         <Forms.Layout.Wizard
           onBack={() => onOpenChange(false)}
           onSubmit={handleSubmit}
-          isPending={createLicense.isPending}
+          isPending={
+            createLicense.isPending ||
+            createEntitlement.isPending ||
+            attachEntitlements.isPending ||
+            attachUsers.isPending
+          }
           description="Creating a new license"
           errorMessage="Failed to create license"
         >
@@ -213,13 +204,22 @@ export default function CreateLicenseForm({
           </Forms.Section.Step>
 
           <Forms.Section.Step
-            crumb="Entitlements"
-            fields={["entitlements.attach", "entitlements.create"]}
+            crumb="Relationships"
+            fields={[
+              "entitlements.attach",
+              "entitlements.create",
+              "users.attach",
+            ]}
           >
-            <Forms.Section.Card title="Entitlements">
+            <Forms.Section.Card title="Relationships configuration">
               <Licenses.Form.Fields
                 schema="create"
                 include={["entitlements.attach", "entitlements.create"]}
+              />
+
+              <Licenses.Form.Fields
+                schema="create"
+                include={["users.attach"]}
               />
             </Forms.Section.Card>
 

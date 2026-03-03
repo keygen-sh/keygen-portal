@@ -32,6 +32,7 @@ import {
 import { cn } from "@/lib/utils"
 import { getLimitPlaceholder } from "@/lib/licenses"
 
+import { useListUsers } from "@/queries/users"
 import { useListPolicies } from "@/queries/policies"
 import { useListProducts } from "@/queries/products"
 import { useListEntitlements } from "@/queries/entitlements"
@@ -78,6 +79,7 @@ const IncludeDefaultFields: Schemas.Licenses.FieldNames[] = [
   "metadata",
   "entitlements.attach",
   "entitlements.create",
+  "users.attach",
 ]
 
 export default function LicensesFormFields({
@@ -212,6 +214,8 @@ export default function LicensesFormFields({
             return <AttachEntitlementsField key="entitlements.attach" />
           case "entitlements.create":
             return <CreateEntitlementsField key="entitlements.create" />
+          case "users.attach":
+            return <AttachUsersField key="users.attach" />
           case "metadata":
             return (
               <MetadataField
@@ -971,5 +975,43 @@ function CreateEntitlementsField() {
         + New entitlement
       </Button>
     </div>
+  )
+}
+
+function AttachUsersField() {
+  const form = useFormContext<Schemas.Licenses.AllValues>()
+  const { data: users = [], isLoading: usersLoading } = useListUsers()
+
+  if (usersLoading) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-48 rounded-sm" />
+        <Skeleton className="h-8 w-3/4" />
+      </div>
+    )
+  }
+
+  return (
+    <FormField
+      control={form.control}
+      name="users.attach"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Attach users</FormLabel>
+          <FormControl>
+            <MultiSelect
+              value={field.value ?? []}
+              onChange={field.onChange}
+              options={users.map((u) => ({
+                label: u.attributes.email,
+                value: u.id,
+              }))}
+              placeholder="Search users"
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   )
 }

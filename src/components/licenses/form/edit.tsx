@@ -10,17 +10,18 @@ import * as Schemas from "@/schemas"
 import {
   useGetLicense,
   useUpdateLicense,
+  useListLicenseUsers,
+  useAttachLicenseUsers,
+  useDetachLicenseUsers,
   useListLicenseEntitlements,
   useAttachLicenseEntitlements,
   useDetachLicenseEntitlements,
 } from "@/queries/licenses"
 import { useGetPolicy } from "@/queries/policies"
 import { useCreateEntitlement } from "@/queries/entitlements"
-import { settleMutations } from "@/queries/utils"
-
-import { Entitlement, EntitlementErrorCode } from "@/types/entitlements"
 
 import { toast } from "@/lib/toast"
+import { settleCreateEntitlements } from "@/lib/entitlements"
 
 import * as Forms from "@/components/forms"
 import * as Licenses from "@/components/licenses"
@@ -39,14 +40,17 @@ export default function EditLicenseForm({
   const { data: policy } = useGetPolicy(
     license?.relationships.policy?.data?.id ?? "",
   )
-  const { data: currentEntitlements = [] } = useListLicenseEntitlements(
+  const { data: licenseEntitlements = [] } = useListLicenseEntitlements(
     license?.id ?? "",
   )
+  const { data: licenseUsers = [] } = useListLicenseUsers(license?.id ?? "")
 
   const updateLicense = useUpdateLicense(license?.id ?? "")
-  const attachEntitlements = useAttachLicenseEntitlements(license?.id ?? "")
-  const detachEntitlements = useDetachLicenseEntitlements(license?.id ?? "")
+  const attachUsers = useAttachLicenseUsers()
+  const detachUsers = useDetachLicenseUsers()
   const createEntitlement = useCreateEntitlement()
+  const attachEntitlements = useAttachLicenseEntitlements()
+  const detachEntitlements = useDetachLicenseEntitlements()
 
   const form = useForm<Schemas.Licenses.UpdateValues>({
     resolver: zodResolver(Schemas.Licenses.UpdateSchema),
@@ -66,8 +70,11 @@ export default function EditLicenseForm({
           maxUses: license.attributes.maxUses ?? null,
           metadata: license.attributes.metadata ?? {},
           entitlements: {
-            attach: currentEntitlements.map((e) => e.id),
+            attach: licenseEntitlements.map((e) => e.id),
             create: [],
+          },
+          users: {
+            attach: licenseUsers.map((u) => u.id),
           },
         }
       : undefined,
@@ -77,47 +84,50 @@ export default function EditLicenseForm({
     async (values: Schemas.Licenses.UpdateValues) => {
       if (!license) return
 
-      const attachIds = values.entitlements?.attach ?? []
-      const toCreate = values.entitlements?.create ?? []
-      const [entitlements, errors] = await settleMutations<Entitlement>(
-        toCreate.map((attrs) => createEntitlement.mutateAsync(attrs)),
-      )
-      const entitlementIds = Array.from(
-        new Set([...attachIds, ...entitlements.map((e) => e.id)]),
-      )
-
-      if (errors.length > 0) {
-        const nextAttach = [...entitlementIds]
-        const nextCreate = errors.map(({ index }) => toCreate[index])
-        form.setValue("entitlements.attach", nextAttach)
-        form.setValue("entitlements.create", nextCreate)
-        errors.forEach((error, index) => {
-          let message = ""
-          if (error.reason.code === EntitlementErrorCode.CodeTaken) {
-            message = "Code already exists"
-          } else {
-            message = "Field is invalid"
-          }
-          form.setError(`entitlements.create.${index}.code`, {
-            type: "validate",
-            message,
-          })
-        })
-        toast({ message: "Failed to create entitlement(s)", variant: "error" })
-        return
-      }
-
-      const currentIds = currentEntitlements.map((e) => e.id)
-      const newIds = entitlementIds
-      const toAttach = newIds.filter((id) => !currentIds.includes(id))
-      const toDetach = currentIds.filter((id) => !newIds.includes(id))
-
-      if (toDetach.length > 0) await detachEntitlements.mutateAsync(toDetach)
-      if (toAttach.length > 0) await attachEntitlements.mutateAsync(toAttach)
-      await updateLicense.mutateAsync({
-        ...values,
-        entitlements: { attach: entitlementIds, create: [] },
+      const createdEntitlementIds = await settleCreateEntitlements({
+        form,
+        createMutation: createEntitlement,
+        values: values.entitlements,
       })
+      if (!createdEntitlementIds) return
+
+      const attachEntitlementIds = createdEntitlementIds.filter(
+        (id) => !licenseEntitlements.some((e) => e.id === id),
+      )
+      const detachEntitlementIds = licenseEntitlements
+        .filter((e) => !createdEntitlementIds.includes(e.id))
+        .map((e) => e.id)
+
+      if (detachEntitlementIds.length > 0)
+        await detachEntitlements.mutateAsync({
+          licenseId: license.id,
+          entitlementIds: detachEntitlementIds,
+        })
+      if (attachEntitlementIds.length > 0)
+        await attachEntitlements.mutateAsync({
+          licenseId: license.id,
+          entitlementIds: attachEntitlementIds,
+        })
+
+      const attachUserIds = (values.users?.attach ?? []).filter(
+        (id) => !licenseUsers.some((u) => u.id === id),
+      )
+      const detachUserIds = licenseUsers
+        .filter((u) => !(values.users?.attach ?? []).includes(u.id))
+        .map((u) => u.id)
+
+      if (detachUserIds.length > 0)
+        await detachUsers.mutateAsync({
+          licenseId: license.id,
+          userIds: detachUserIds,
+        })
+      if (attachUserIds.length > 0)
+        await attachUsers.mutateAsync({
+          licenseId: license.id,
+          userIds: attachUserIds,
+        })
+
+      await updateLicense.mutateAsync(values)
       toast({ message: "License updated", variant: "success" })
       onOpenChange(false)
     },
@@ -126,15 +136,18 @@ export default function EditLicenseForm({
       license,
       onOpenChange,
       updateLicense,
-      currentEntitlements,
+      licenseEntitlements,
       attachEntitlements,
       detachEntitlements,
       createEntitlement,
+      licenseUsers,
+      attachUsers,
+      detachUsers,
     ],
   )
 
   return (
-    <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
+    <Forms.Container.Dialog open={open} onOpenChange={onOpenChange} fullscreen>
       <Form {...form}>
         <Forms.Layout.Sheet
           title="Editing an existing license"
@@ -145,10 +158,12 @@ export default function EditLicenseForm({
             updateLicense.isPending ||
             attachEntitlements.isPending ||
             detachEntitlements.isPending ||
-            createEntitlement.isPending
+            createEntitlement.isPending ||
+            attachUsers.isPending ||
+            detachUsers.isPending
           }
           submitLabel="Update"
-          className="md:h-[64vh]!"
+          fullscreen
         >
           <Forms.Section.Columns title="Attributes">
             <Forms.Section.Column>
@@ -176,19 +191,23 @@ export default function EditLicenseForm({
 
           <Separator className="my-8" />
 
-          <Forms.Section.Columns>
-            <Forms.Section.Column>
-              <Licenses.Form.Fields
-                schema="edit"
-                include={["metadata"]}
-                fieldVariant="stacking"
-              />
-            </Forms.Section.Column>
+          <Licenses.Form.Fields
+            schema="edit"
+            include={["metadata"]}
+            fieldVariant="stacking"
+          />
+
+          <Separator className="my-8" />
+
+          <Forms.Section.Columns title="Relationships">
             <Forms.Section.Column>
               <Licenses.Form.Fields
                 schema="edit"
                 include={["entitlements.attach", "entitlements.create"]}
               />
+            </Forms.Section.Column>
+            <Forms.Section.Column>
+              <Licenses.Form.Fields schema="edit" include={["users.attach"]} />
             </Forms.Section.Column>
           </Forms.Section.Columns>
         </Forms.Layout.Sheet>

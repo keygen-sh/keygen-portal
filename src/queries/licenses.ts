@@ -299,15 +299,19 @@ export function useListLicenseEntitlements(licenseId: string) {
   })
 }
 
-export function useAttachLicenseEntitlements(licenseId: string) {
+export function useAttachLicenseEntitlements() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<null, APIError, string[]>({
-    mutationFn: (entitlementIds) =>
+  return useMutation<
+    null,
+    APIError,
+    { licenseId: string; entitlementIds: string[] }
+  >({
+    mutationFn: ({ licenseId, entitlementIds }) =>
       keygen.licenses.attachEntitlements({ licenseId, entitlementIds }),
 
-    onSuccess: async () => {
+    onSuccess: async (_, { licenseId }) => {
       await queryClient.invalidateQueries({
         queryKey: [
           "licenses",
@@ -323,15 +327,19 @@ export function useAttachLicenseEntitlements(licenseId: string) {
   })
 }
 
-export function useDetachLicenseEntitlements(licenseId: string) {
+export function useDetachLicenseEntitlements() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<null, APIError, string[]>({
-    mutationFn: (entitlementIds) =>
+  return useMutation<
+    null,
+    APIError,
+    { licenseId: string; entitlementIds: string[] }
+  >({
+    mutationFn: ({ licenseId, entitlementIds }) =>
       keygen.licenses.detachEntitlements({ licenseId, entitlementIds }),
 
-    onSuccess: async () => {
+    onSuccess: async (_, { licenseId }) => {
       await queryClient.invalidateQueries({
         queryKey: [
           "licenses",

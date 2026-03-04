@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator"
 import * as Schemas from "@/schemas"
 import { UserRole } from "@/types/users"
 
-import { useGetUser, useUpdateUser } from "@/queries/users"
+import { useGetUser, useUpdateUser, useChangeUserGroup } from "@/queries/users"
 
 import { toast } from "@/lib/toast"
 
@@ -28,6 +28,7 @@ export default function EditUserForm({
   const { id } = useParams({ from: "/$accountId/app/users/$id" })
   const { data: user, isLoading: userLoading } = useGetUser(id)
   const updateUser = useUpdateUser(user?.id ?? "")
+  const changeGroup = useChangeUserGroup()
 
   const form = useForm<Schemas.Users.UpdateValues>({
     resolver: zodResolver(Schemas.Users.UpdateSchema),
@@ -45,11 +46,21 @@ export default function EditUserForm({
 
   const handleSubmit = useCallback(
     async (values: Schemas.Users.UpdateValues) => {
+      const currentGroupId = user?.relationships.group?.data?.id ?? null
+      const newGroupId = values.groupId ?? null
+
+      if (newGroupId !== currentGroupId) {
+        await changeGroup.mutateAsync({
+          userId: user!.id,
+          groupId: newGroupId,
+        })
+      }
+
       await updateUser.mutateAsync(values)
       toast({ message: "User updated", variant: "success" })
       onOpenChange(false)
     },
-    [updateUser, onOpenChange],
+    [updateUser, changeGroup, user, onOpenChange],
   )
 
   return (

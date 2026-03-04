@@ -165,3 +165,57 @@ export function useChangeUserGroup() {
     },
   })
 }
+
+export function useBanUser(userId: string) {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<User, APIError>({
+    mutationFn: async () => {
+      const response = await keygen.users.ban({ id: userId })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response.data
+    },
+
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ["users", userId, { environment: code }],
+        updated,
+      )
+      await queryClient.invalidateQueries({
+        queryKey: ["users", { environment: code }],
+      })
+    },
+  })
+}
+
+export function useUnbanUser(userId: string) {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<User, APIError>({
+    mutationFn: async () => {
+      const response = await keygen.users.unban({ id: userId })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response.data
+    },
+
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ["users", userId, { environment: code }],
+        updated,
+      )
+      await queryClient.invalidateQueries({
+        queryKey: ["users", { environment: code }],
+      })
+    },
+  })
+}

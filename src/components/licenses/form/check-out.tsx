@@ -21,6 +21,8 @@ import {
 
 import * as Schemas from "@/schemas"
 
+import { SigningAlgorithm, SigningAlgorithmLabels } from "@/types/files"
+
 import { toast } from "@/lib/toast"
 import { downloadBlob } from "@/lib/download"
 import { formatTtlLabel } from "@/lib/licenses"
@@ -40,13 +42,6 @@ const IncludeOptions = [
   { value: "owner", label: "Owner" },
   { value: "users", label: "Users" },
 ]
-
-const SigningAlgorithms = [
-  { value: "ed25519", label: "Ed25519" },
-  { value: "ecdsa-p256", label: "ECDSA P-256" },
-  { value: "rsa-pss-sha256", label: "RSA PKCS1-PSS" },
-  { value: "rsa-sha256", label: "RSA PKCS1" },
-] as const
 
 interface CheckOutLicenseFormProps {
   open: boolean
@@ -72,7 +67,7 @@ export default function CheckOutLicenseForm({
       encryptEnabled: false,
       include: [],
       ttl: null,
-      algorithm: "ed25519",
+      algorithm: SigningAlgorithm.Ed25519,
     },
   })
 
@@ -304,9 +299,9 @@ export default function CheckOutLicenseForm({
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                {SigningAlgorithms.map((alg) => (
-                                  <SelectItem key={alg.value} value={alg.value}>
-                                    {alg.label}
+                                {Object.values(SigningAlgorithm).map((alg) => (
+                                  <SelectItem key={alg} value={alg}>
+                                    {SigningAlgorithmLabels[alg]}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -329,8 +324,8 @@ export default function CheckOutLicenseForm({
                       You're currently checking out an{" "}
                       {encryptEnabled ? "encrypted" : "unencrypted"} license
                       file, signed with{" "}
-                      {SigningAlgorithms.find((a) => a.value === algorithm)
-                        ?.label ?? algorithm}
+                      {SigningAlgorithmLabels[algorithm as SigningAlgorithm] ??
+                        algorithm}
                       {encryptEnabled && " and encrypted with AES-256-GCM"}.
                     </li>
                     {includeEnabled && include.length > 0 && (

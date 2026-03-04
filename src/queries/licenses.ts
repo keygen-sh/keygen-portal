@@ -5,6 +5,7 @@ import { useEnvironment } from "@/hooks/use-environment"
 import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
+import { Encoding } from "@/types/files"
 import { License, LicenseFile } from "@/types/licenses"
 
 import * as keygen from "@/keygen"
@@ -248,8 +249,10 @@ export function useCheckOutLicense(licenseId: string) {
 
       const ttl = values.ttlEnabled && values.ttl ? values.ttl : undefined
 
-      const prefix = values.encryptEnabled ? "aes-256-gcm" : "base64"
-      const algorithm = `${prefix}+${values.algorithm}`
+      const encoding = values.encryptEnabled
+        ? Encoding.Aes256Gcm
+        : Encoding.Base64
+      const algorithm = `${encoding}+${values.algorithm}`
 
       return keygen.licenses
         .checkOut({ id: licenseId, include, ttl, algorithm })

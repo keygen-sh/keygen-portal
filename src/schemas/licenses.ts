@@ -2,6 +2,7 @@ import { FieldPath } from "react-hook-form"
 import { z } from "zod"
 
 import { Override } from "@/types/utility"
+import { SigningAlgorithm } from "@/types/files"
 import { CombineFormValues } from "@/types/forms"
 import { LicenseAttributes, LicenseFileAttributes } from "@/types/licenses"
 
@@ -126,7 +127,7 @@ const CheckOutShape = z.object({
   ttlEnabled: z.boolean().default(false),
   ttl: z.number().nullable().default(null),
   encryptEnabled: z.boolean().default(false),
-  algorithm: z.string().default("ed25519"),
+  algorithm: z.string().default(SigningAlgorithm.Ed25519),
 })
 
 const CheckOutRules = (

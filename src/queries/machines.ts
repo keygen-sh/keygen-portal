@@ -164,3 +164,30 @@ export function useCheckOutMachine(machineId: string) {
     },
   })
 }
+
+export function useResetMachineHeartbeat(machineId: string) {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<Machine, APIError>({
+    mutationFn: async () => {
+      const response = await keygen.machines.resetHeartbeat({ id: machineId })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response.data
+    },
+
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ["machines", machineId, { environment: code }],
+        updated,
+      )
+      await queryClient.invalidateQueries({
+        queryKey: ["machines", { environment: code }],
+      })
+    },
+  })
+}

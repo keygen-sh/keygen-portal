@@ -129,4 +129,24 @@ export const MachineEditFormFieldDescriptions: typeof MachineFormFieldDescriptio
     ...MachineFormFieldDescriptions,
   }
 
-export const MockMachines: Machine[] = []
+export type MachineFileAttributes = {
+  certificate: string
+  algorithm: string
+  include: string[]
+  ttl: number | null
+  expiry: string | null
+  issued: string
+}
+
+export type MachineFileRelationships = {
+  account: Relationship<Linkage<"accounts">>
+  machine: Relationship<Linkage<"machines">>
+}
+
+export type MachineFile = Resource<
+  "machine-files",
+  MachineFileAttributes,
+  MachineFileRelationships
+>
+
+export type MachineFileResponse = APIResponse<MachineFile>

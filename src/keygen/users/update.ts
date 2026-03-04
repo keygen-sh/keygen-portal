@@ -17,27 +17,13 @@ export default async function update({
   values,
 }: UpdateProps): Promise<UserResponse> {
   const { groupId, ...attributes } = values
+  void groupId
 
-  const body: {
-    data: {
-      type: string
-      attributes: typeof attributes
-      relationships?: Record<string, unknown>
-    }
-  } = {
+  const body = {
     data: {
       type: "users",
       attributes,
     },
-  }
-
-  // Only include relationships if they're explicitly being changed
-  if (groupId !== undefined) {
-    body.data.relationships = {}
-
-    body.data.relationships.group = groupId
-      ? { data: { type: "groups", id: groupId } }
-      : { data: null }
   }
 
   const result = (await client.request(`/accounts/${config.id}/users/${id}`, {

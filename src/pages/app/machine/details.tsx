@@ -41,7 +41,11 @@ import {
 
 import { MachineAttributeDescriptions } from "@/types/machines"
 
-import { useGetMachine, useRemoveMachine } from "@/queries/machines"
+import {
+  useGetMachine,
+  useRemoveMachine,
+  useResetMachineHeartbeat,
+} from "@/queries/machines"
 import { useGetGroup } from "@/queries/groups"
 import { useGetProduct } from "@/queries/products"
 import { useGetLicense } from "@/queries/licenses"
@@ -75,6 +79,7 @@ export default function MachineDetails() {
     isError: machineError,
   } = useGetMachine(id)
   const removeMachine = useRemoveMachine(id)
+  const resetHeartbeat = useResetMachineHeartbeat(id)
 
   const licenseId = machine?.relationships.license?.data?.id || ""
   const {
@@ -105,6 +110,7 @@ export default function MachineDetails() {
     delete: false,
     checkOut: false,
     attributes: false,
+    resetHeartbeat: false,
   })
 
   useEffect(() => {
@@ -117,6 +123,16 @@ export default function MachineDetails() {
 
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))
+  }
+
+  const handleResetHeartbeat = async () => {
+    try {
+      await resetHeartbeat.mutateAsync()
+      toast({ message: "Machine heartbeat reset", variant: "success" })
+      toggleOpen("resetHeartbeat", false)
+    } catch {
+      toast({ message: "Failed to reset machine heartbeat", variant: "error" })
+    }
   }
 
   const handleDeleteMachine = async () => {
@@ -169,6 +185,20 @@ export default function MachineDetails() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="mr-4 p-0">
+                {machine?.attributes.requireHeartbeat && (
+                  <>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        toggleOpen("resetHeartbeat", true)
+                        e.currentTarget.blur()
+                      }}
+                      className="pb-2 text-base"
+                    >
+                      Reset heartbeat
+                    </DropdownMenuItem>
+                    <Separator />
+                  </>
+                )}
                 <DropdownMenuItem
                   onClick={(e) => {
                     toggleOpen("checkOut", true)
@@ -202,6 +232,15 @@ export default function MachineDetails() {
             </DropdownMenu>
           ) : (
             <div className="flex items-center space-x-2">
+              {machine?.attributes.requireHeartbeat && (
+                <Button
+                  variant="outline"
+                  disabled={machineLoading}
+                  onClick={() => toggleOpen("resetHeartbeat", true)}
+                >
+                  Reset heartbeat
+                </Button>
+              )}
               <Button
                 variant="outline"
                 disabled={machineLoading}
@@ -664,6 +703,17 @@ export default function MachineDetails() {
       <Machines.Form.CheckOut
         open={open.checkOut}
         onOpenChange={(value) => toggleOpen("checkOut", value)}
+      />
+
+      <ConfirmationModal
+        title={`Reset heartbeat for ${machine?.attributes.name || machine?.attributes.fingerprint}`}
+        description="Are you sure you want to reset and stop the heartbeat monitor for this machine? This will not deactivate the machine."
+        open={open.resetHeartbeat}
+        disabled={resetHeartbeat.isPending}
+        onClose={() => toggleOpen("resetHeartbeat", false)}
+        onConfirm={handleResetHeartbeat}
+        label="Reset heartbeat"
+        variant="default"
       />
 
       <ConfirmationModal

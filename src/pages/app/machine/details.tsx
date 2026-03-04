@@ -103,6 +103,7 @@ export default function MachineDetails() {
   const [open, setOpen] = useState({
     edit: false,
     delete: false,
+    checkOut: false,
     attributes: false,
   })
 
@@ -170,6 +171,16 @@ export default function MachineDetails() {
               <DropdownMenuContent className="mr-4 p-0">
                 <DropdownMenuItem
                   onClick={(e) => {
+                    toggleOpen("checkOut", true)
+                    e.currentTarget.blur()
+                  }}
+                  className="pb-2 text-base"
+                >
+                  Checkout
+                </DropdownMenuItem>
+                <Separator />
+                <DropdownMenuItem
+                  onClick={(e) => {
                     toggleOpen("edit", true)
                     e.currentTarget.blur()
                   }}
@@ -191,6 +202,13 @@ export default function MachineDetails() {
             </DropdownMenu>
           ) : (
             <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                disabled={machineLoading}
+                onClick={() => toggleOpen("checkOut", true)}
+              >
+                Checkout
+              </Button>
               <Button
                 variant="outline"
                 disabled={machineLoading}
@@ -641,6 +659,11 @@ export default function MachineDetails() {
       <Machines.Form.Edit
         open={open.edit}
         onOpenChange={(value) => toggleOpen("edit", value)}
+      />
+
+      <Machines.Form.CheckOut
+        open={open.checkOut}
+        onOpenChange={(value) => toggleOpen("checkOut", value)}
       />
 
       <ConfirmationModal

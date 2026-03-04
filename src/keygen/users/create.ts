@@ -12,21 +12,12 @@ export default async function create(
   values: Schemas.Users.CreateValues,
 ): Promise<UserResponse> {
   const { groupId, ...attributes } = values
-
-  const relationships: Record<string, unknown> = {}
-
-  if (groupId) {
-    relationships.group = {
-      data: { type: "groups", id: groupId },
-    }
-  }
+  void groupId
 
   const body = {
     data: {
       type: "users",
       attributes: compact(attributes),
-      relationships:
-        Object.keys(relationships).length > 0 ? relationships : undefined,
     },
   }
 

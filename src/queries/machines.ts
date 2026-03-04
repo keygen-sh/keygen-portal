@@ -5,7 +5,8 @@ import { useEnvironment } from "@/hooks/use-environment"
 import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
-import { Machine } from "@/types/machines"
+import { Encoding } from "@/types/files"
+import { Machine, MachineFile } from "@/types/machines"
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
@@ -127,6 +128,37 @@ export function useRemoveMachine(machineId: string) {
         queryKey: ["machines", { environment: code }],
       })
       queryClient.removeQueries({
+        queryKey: ["machines", machineId, { environment: code }],
+      })
+    },
+  })
+}
+
+export function useCheckOutMachine(machineId: string) {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<MachineFile, APIError, Schemas.Machines.CheckOutValues>({
+    mutationFn: (values) => {
+      const include =
+        values.includeEnabled && values.include.length > 0
+          ? values.include
+          : undefined
+
+      const ttl = values.ttlEnabled && values.ttl ? values.ttl : undefined
+
+      const encoding = values.encryptEnabled
+        ? Encoding.Aes256Gcm
+        : Encoding.Base64
+      const algorithm = `${encoding}+${values.algorithm}`
+
+      return keygen.machines
+        .checkOut({ id: machineId, include, ttl, algorithm })
+        .then((response) => response.data as MachineFile)
+    },
+
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
         queryKey: ["machines", machineId, { environment: code }],
       })
     },

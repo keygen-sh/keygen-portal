@@ -2,8 +2,9 @@ import { FieldPath } from "react-hook-form"
 import { z } from "zod"
 
 import { Writable } from "@/types/utility"
+import { SigningAlgorithm } from "@/types/files"
 import { CombineFormValues } from "@/types/forms"
-import { MachineAttributes } from "@/types/machines"
+import { MachineAttributes, MachineFileAttributes } from "@/types/machines"
 
 export type BaseValues = Writable<
   Partial<
@@ -68,3 +69,29 @@ export const CreateSchema: z.ZodType<CreateValues> = BaseRules(
   BaseShape.merge(FingerprintShape).merge(LicenseRelationshipShape),
 ) as z.ZodType<CreateValues>
 export const UpdateSchema: z.ZodType<UpdateValues> = BaseSchema
+
+export type CheckOutValues = Pick<
+  MachineFileAttributes,
+  "include" | "ttl" | "algorithm"
+> & {
+  includeEnabled: boolean
+  ttlEnabled: boolean
+  encryptEnabled: boolean
+}
+
+const CheckOutShape = z.object({
+  includeEnabled: z.boolean().default(false),
+  include: z.array(z.string()).default([]),
+  ttlEnabled: z.boolean().default(false),
+  ttl: z.number().nullable().default(null),
+  encryptEnabled: z.boolean().default(false),
+  algorithm: z.string().default(SigningAlgorithm.Ed25519),
+})
+
+const CheckOutRules = (
+  schema: z.ZodType<CheckOutValues, z.ZodTypeDef, unknown>,
+): z.ZodType<CheckOutValues, z.ZodTypeDef, unknown> => {
+  return schema
+}
+
+export const CheckOutSchema = CheckOutRules(CheckOutShape)

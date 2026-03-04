@@ -131,3 +131,37 @@ export function useRemoveUser(userId: string) {
     },
   })
 }
+
+export function useChangeUserGroup() {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<
+    User,
+    APIError,
+    { userId: string; groupId: string | null }
+  >({
+    mutationFn: async ({ userId, groupId }) => {
+      const response = await keygen.users.changeGroup({
+        id: userId,
+        groupId,
+      })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response.data
+    },
+
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ["users", updated.id, { environment: code }],
+        updated,
+      )
+      await queryClient.invalidateQueries({
+        queryKey: ["users", { environment: code }],
+      })
+    },
+  })
+}

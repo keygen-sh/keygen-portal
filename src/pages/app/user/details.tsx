@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import {
   Breadcrumb,
@@ -37,6 +38,7 @@ import {
   SquarePen,
   SquarePlus,
   CircleCheck,
+  ChevronDown,
   CirclePause,
   EllipsisVertical,
 } from "lucide-react"
@@ -50,7 +52,12 @@ import {
   UserRoleLabels,
 } from "@/types/users"
 
-import { useGetUser, useRemoveUser } from "@/queries/users"
+import {
+  useGetUser,
+  useRemoveUser,
+  useBanUser,
+  useUnbanUser,
+} from "@/queries/users"
 
 import { useMobile } from "@/hooks/use-mobile"
 
@@ -86,6 +93,8 @@ export default function UserDetails() {
     isError: userError,
   } = useGetUser(id)
   const deleteUser = useRemoveUser(id)
+  const banUser = useBanUser(id)
+  const unbanUser = useUnbanUser(id)
 
   const navigate = useNavigate()
 
@@ -96,6 +105,7 @@ export default function UserDetails() {
     attributes: false,
     resetPassword: false,
     ban: false,
+    unban: false,
   })
 
   useEffect(() => {
@@ -122,15 +132,24 @@ export default function UserDetails() {
     })
   }
 
-  const handleBanUser = () => {
-    console.log("User banned.")
-    toggleOpen("ban", false)
-    // TODO(cazden) Implement API call
+  const handleBanUser = async () => {
+    try {
+      await banUser.mutateAsync()
+      toast({ message: "User banned", variant: "success" })
+      toggleOpen("ban", false)
+    } catch {
+      toast({ message: "Failed to ban user", variant: "error" })
+    }
   }
 
-  const handleUnbanUser = () => {
-    console.log("User unbanned.")
-    // TODO(cazden) Implement API call
+  const handleUnbanUser = async () => {
+    try {
+      await unbanUser.mutateAsync()
+      toast({ message: "User unbanned", variant: "success" })
+      toggleOpen("unban", false)
+    } catch {
+      toast({ message: "Failed to unban user", variant: "error" })
+    }
   }
 
   const handleResetPassword = () => {
@@ -178,30 +197,10 @@ export default function UserDetails() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="mr-4 p-0">
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    toggleOpen("edit", true)
-                    e.currentTarget.blur()
-                  }}
-                  className="pb-2 text-base"
-                >
-                  Edit
-                </DropdownMenuItem>
-                <Separator />
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    toggleOpen("resetPassword", true)
-                    e.currentTarget.blur()
-                  }}
-                  className="pb-2 text-base"
-                >
-                  Reset Password
-                </DropdownMenuItem>
-                <Separator />
                 {user?.attributes.status === UserStatus.Banned ? (
                   <DropdownMenuItem
                     onClick={(e) => {
-                      handleUnbanUser()
+                      toggleOpen("unban", true)
                       e.currentTarget.blur()
                     }}
                     className="pb-2 text-base"
@@ -222,6 +221,26 @@ export default function UserDetails() {
                 <Separator />
                 <DropdownMenuItem
                   onClick={(e) => {
+                    toggleOpen("resetPassword", true)
+                    e.currentTarget.blur()
+                  }}
+                  className="pb-2 text-base"
+                >
+                  Reset password
+                </DropdownMenuItem>
+                <Separator />
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    toggleOpen("edit", true)
+                    e.currentTarget.blur()
+                  }}
+                  className="pb-2 text-base"
+                >
+                  Edit
+                </DropdownMenuItem>
+                <Separator />
+                <DropdownMenuItem
+                  onClick={(e) => {
                     toggleOpen("delete", true)
                     e.currentTarget.blur()
                   }}
@@ -232,34 +251,45 @@ export default function UserDetails() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="flex items-center gap-2">
-              {user?.attributes.status === UserStatus.Banned ? (
-                <Button
-                  variant="outline"
-                  disabled={userLoading}
-                  onClick={handleUnbanUser}
-                >
-                  Unban
-                </Button>
-              ) : (
-                <Button
-                  variant="outline"
-                  disabled={userLoading}
-                  onClick={() => toggleOpen("ban", true)}
-                >
-                  Ban
-                </Button>
-              )}
-              <Button
-                variant="outline"
-                disabled={userLoading}
-                onClick={() => toggleOpen("resetPassword", true)}
-              >
-                Reset Password
-              </Button>
-
-              <Separator orientation="vertical" className="mx-2 h-6!" />
-
+            <div className="flex items-center space-x-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" disabled={userLoading}>
+                    Actions
+                    <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]_&]:rotate-180" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {user?.attributes.status === UserStatus.Banned ? (
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        toggleOpen("unban", true)
+                        e.currentTarget.blur()
+                      }}
+                    >
+                      Unban
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        toggleOpen("ban", true)
+                        e.currentTarget.blur()
+                      }}
+                    >
+                      Ban
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("resetPassword", true)
+                      e.currentTarget.blur()
+                    }}
+                  >
+                    Reset password
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <Button
                 variant="outline"
                 disabled={userLoading}
@@ -583,10 +613,19 @@ export default function UserDetails() {
         title={`Ban ${user?.attributes.fullName || user?.attributes.email}?`}
         description="Are you sure you want to ban this user? They will no longer be able to authenticate with the API."
         open={open.ban}
-        disabled={userLoading}
+        disabled={banUser.isPending}
         onClose={() => toggleOpen("ban", false)}
         onConfirm={handleBanUser}
         variant="destructive"
+      />
+
+      <ConfirmationModal
+        title={`Unban ${user?.attributes.fullName || user?.attributes.email}?`}
+        description="Are you sure you want to unban this user? They will be able to authenticate with the API again."
+        open={open.unban}
+        disabled={unbanUser.isPending}
+        onClose={() => toggleOpen("unban", false)}
+        onConfirm={handleUnbanUser}
       />
     </section>
   )

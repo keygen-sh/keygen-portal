@@ -7,8 +7,8 @@ import { Form } from "@/components/ui/form"
 import * as Schemas from "@/schemas"
 import { UserRole } from "@/types/users"
 
-import { useCreateUser } from "@/queries/users"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
+import { useCreateUser, useChangeUserGroup } from "@/queries/users"
 
 import { toast } from "@/lib/toast"
 
@@ -41,16 +41,25 @@ export default function CreateUserForm({
   })
 
   const createUser = useCreateUser()
+  const changeGroup = useChangeUserGroup()
   const navigateToResource = useResourceNavigate()
 
   const handleSubmit = useCallback(
     async (values: Schemas.Users.CreateValues) => {
       const user = await createUser.mutateAsync(values)
+
+      if (values.groupId) {
+        await changeGroup.mutateAsync({
+          userId: user.id,
+          groupId: values.groupId,
+        })
+      }
+
       toast({ message: "User created", variant: "success" })
       onOpenChange(false)
       await navigateToResource(user)
     },
-    [createUser, navigateToResource, onOpenChange],
+    [createUser, changeGroup, navigateToResource, onOpenChange],
   )
 
   return (

@@ -13,17 +13,12 @@ export default async function create(
 ): Promise<MachineResponse> {
   const { licenseId, groupId, ownerId, ...attributes } = values
   void ownerId
+  void groupId
 
   const relationships: Record<string, unknown> = {
     license: {
       data: { type: "licenses", id: licenseId },
     },
-  }
-
-  if (groupId) {
-    relationships.group = {
-      data: { type: "groups", id: groupId },
-    }
   }
 
   const body = {

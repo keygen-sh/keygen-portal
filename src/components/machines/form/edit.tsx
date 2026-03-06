@@ -7,7 +7,11 @@ import { Form } from "@/components/ui/form"
 import { Separator } from "@/components/ui/separator"
 
 import * as Schemas from "@/schemas"
-import { useGetMachine, useUpdateMachine } from "@/queries/machines"
+import {
+  useGetMachine,
+  useUpdateMachine,
+  useChangeMachineOwner,
+} from "@/queries/machines"
 
 import { toast } from "@/lib/toast"
 
@@ -27,6 +31,7 @@ export default function EditMachineForm({
   const { data: machine } = useGetMachine(id)
 
   const updateMachine = useUpdateMachine(machine?.id ?? "")
+  const changeOwner = useChangeMachineOwner()
 
   const form = useForm<Schemas.Machines.UpdateValues>({
     resolver: zodResolver(Schemas.Machines.UpdateSchema),
@@ -47,11 +52,23 @@ export default function EditMachineForm({
 
   const handleSubmit = useCallback(
     async (values: Schemas.Machines.UpdateValues) => {
+      if (!machine) return
+
+      const currentOwnerId = machine.relationships.owner?.data?.id ?? null
+      const newOwnerId = values.ownerId ?? null
+
+      if (newOwnerId !== currentOwnerId) {
+        await changeOwner.mutateAsync({
+          machineId: machine.id,
+          ownerId: newOwnerId,
+        })
+      }
+
       await updateMachine.mutateAsync(values)
       toast({ message: "Machine updated", variant: "success" })
       onOpenChange(false)
     },
-    [updateMachine, onOpenChange],
+    [machine, updateMachine, changeOwner, onOpenChange],
   )
 
   return (
@@ -62,7 +79,7 @@ export default function EditMachineForm({
           onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           errorMessage="Failed to update machine"
-          isPending={updateMachine.isPending}
+          isPending={updateMachine.isPending || changeOwner.isPending}
           submitLabel="Update"
           className="md:h-[76vh]!"
         >

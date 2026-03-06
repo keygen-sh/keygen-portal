@@ -10,6 +10,7 @@ import {
 
 import * as Schemas from "@/schemas"
 
+import { useListUsers } from "@/queries/users"
 import { useListGroups } from "@/queries/groups"
 import { useListLicenses } from "@/queries/licenses"
 
@@ -664,6 +665,7 @@ function OwnerIdField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Machines.BaseValues>()
+  const { data: users = [] } = useListUsers()
 
   return (
     <FormField
@@ -681,7 +683,7 @@ function OwnerIdField({
               resource="user"
               value={field.value}
               onChange={(value) => field.onChange(value)}
-              options={[]}
+              options={users}
               invalid={!!fieldState.error}
               autoFocus={autoFocus}
             />

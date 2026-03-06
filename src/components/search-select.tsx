@@ -13,6 +13,7 @@ import {
 import { ChevronsUpDown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { getUserLabel } from "@/lib/users"
 import { getGroupLabel } from "@/lib/groups"
 import { getLicenseLabel } from "@/lib/licenses"
 import { getMachineLabel } from "@/lib/machines"
@@ -66,18 +67,17 @@ const resourceConfigs: Record<ResourceType, ResourceConfig> = {
     ),
   },
   user: {
-    // TODO(cazden) Update when Users resource is available
-    getLabel: (option: BaseOption) => option.id,
+    getLabel: getUserLabel as (option: BaseOption) => string,
     placeholder: "Select an owner...",
     searchPlaceholder: "Search by ID or email...",
     emptyMessage: (
       <span className="flex items-center gap-2">
         No users found.
-        {/* <GoToButton
+        <GoToButton
           path="/$accountId/app/users"
           params={{ accountId: keygen.config.id }}
           label="View users"
-        /> */}
+        />
       </span>
     ),
   },

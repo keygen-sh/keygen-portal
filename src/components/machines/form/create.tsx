@@ -5,8 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Form } from "@/components/ui/form"
 
 import * as Schemas from "@/schemas"
-import { useCreateMachine } from "@/queries/machines"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
+import { useCreateMachine, useChangeMachineOwner } from "@/queries/machines"
 
 import { toast } from "@/lib/toast"
 
@@ -31,7 +31,6 @@ export default function CreateMachineForm({
       name: null,
       licenseId: "",
       groupId: null,
-      ownerId: null,
       ip: null,
       hostname: null,
       platform: null,
@@ -39,19 +38,29 @@ export default function CreateMachineForm({
       memory: null,
       disk: null,
       metadata: {},
+      ownerId: null,
     },
   })
   const createMachine = useCreateMachine()
+  const changeOwner = useChangeMachineOwner()
   const navigateToResource = useResourceNavigate()
 
   const handleSubmit = useCallback(
     async (values: Schemas.Machines.CreateValues) => {
       const machine = await createMachine.mutateAsync(values)
+
+      if (values.ownerId) {
+        await changeOwner.mutateAsync({
+          machineId: machine.id,
+          ownerId: values.ownerId,
+        })
+      }
+
       toast({ message: "Machine activated", variant: "success" })
       onOpenChange(false)
       await navigateToResource(machine)
     },
-    [createMachine, navigateToResource, onOpenChange],
+    [createMachine, changeOwner, navigateToResource, onOpenChange],
   )
 
   return (
@@ -60,7 +69,7 @@ export default function CreateMachineForm({
         <Forms.Layout.Wizard
           onBack={() => onOpenChange(false)}
           onSubmit={handleSubmit}
-          isPending={createMachine.isPending}
+          isPending={createMachine.isPending || changeOwner.isPending}
           submitLabel="Activate"
           description="Activating a new machine"
           errorMessage="Failed to activate machine"
@@ -147,6 +156,7 @@ export default function CreateMachineForm({
                   />
                 </Forms.Section.Column>
               </Forms.Section.Columns>
+
               <Machines.Form.Fields
                 schema="create"
                 include={["metadata"]}

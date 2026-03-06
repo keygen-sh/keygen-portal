@@ -2,6 +2,10 @@ import { AttributeType } from "@/components/attribute/value"
 
 import { User } from "@/types/users"
 
+export function getUserLabel(user: User) {
+  return user.attributes.fullName ?? user.attributes.email
+}
+
 export const userAttributeTypeSchema: Record<
   keyof Omit<
     User["attributes"],

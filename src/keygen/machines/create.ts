@@ -12,6 +12,7 @@ export default async function create(
   values: Schemas.Machines.CreateValues,
 ): Promise<MachineResponse> {
   const { licenseId, groupId, ownerId, ...attributes } = values
+  void ownerId
 
   const relationships: Record<string, unknown> = {
     license: {
@@ -22,12 +23,6 @@ export default async function create(
   if (groupId) {
     relationships.group = {
       data: { type: "groups", id: groupId },
-    }
-  }
-
-  if (ownerId) {
-    relationships.owner = {
-      data: { type: "users", id: ownerId },
     }
   }
 

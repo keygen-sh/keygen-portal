@@ -73,6 +73,9 @@ export function useUpdateMachine(machineId: string) {
 
   return useMutation<Machine, APIError, Schemas.Machines.UpdateValues>({
     mutationFn: async (values) => {
+      const { ownerId, ...rest } = values
+      void ownerId
+
       const getResponse = await keygen.machines.get({ id: machineId })
 
       if (getResponse.errors) {
@@ -85,9 +88,8 @@ export function useUpdateMachine(machineId: string) {
         {
           ...current.attributes,
           groupId: current.relationships.group?.data?.id ?? null,
-          ownerId: current.relationships.owner?.data?.id ?? null,
         },
-        values,
+        rest,
       ) as Schemas.Machines.UpdateValues
 
       if (Object.keys(changes).length === 0) return current
@@ -183,6 +185,40 @@ export function useResetMachineHeartbeat(machineId: string) {
     onSuccess: async (updated) => {
       queryClient.setQueryData(
         ["machines", machineId, { environment: code }],
+        updated,
+      )
+      await queryClient.invalidateQueries({
+        queryKey: ["machines", { environment: code }],
+      })
+    },
+  })
+}
+
+export function useChangeMachineOwner() {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<
+    Machine,
+    APIError,
+    { machineId: string; ownerId: string | null }
+  >({
+    mutationFn: async ({ machineId, ownerId }) => {
+      const response = await keygen.machines.changeOwner({
+        id: machineId,
+        ownerId,
+      })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response.data
+    },
+
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ["machines", updated.id, { environment: code }],
         updated,
       )
       await queryClient.invalidateQueries({

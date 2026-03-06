@@ -46,6 +46,7 @@ import {
   useRemoveMachine,
   useResetMachineHeartbeat,
 } from "@/queries/machines"
+import { useGetUser } from "@/queries/users"
 import { useGetGroup } from "@/queries/groups"
 import { useGetProduct } from "@/queries/products"
 import { useGetLicense } from "@/queries/licenses"
@@ -53,6 +54,7 @@ import { useGetLicense } from "@/queries/licenses"
 import { useMobile } from "@/hooks/use-mobile"
 
 import { toast } from "@/lib/toast"
+import { getUserLabel } from "@/lib/users"
 import { copyToClipboard } from "@/lib/clipboard"
 import { getHeartbeatStatusVariant } from "@/lib/machines"
 import { truncateKey, formatTtlLabel } from "@/lib/licenses"
@@ -94,6 +96,13 @@ export default function MachineDetails() {
     isLoading: groupLoading,
     isError: groupError,
   } = useGetGroup(groupId)
+
+  const ownerId = machine?.relationships.owner?.data?.id || ""
+  const {
+    data: owner,
+    isLoading: ownerLoading,
+    isError: ownerError,
+  } = useGetUser(ownerId)
 
   const productId = machine?.relationships.product?.data?.id || ""
   const {
@@ -507,8 +516,28 @@ export default function MachineDetails() {
                     }
                   />
 
-                  {/* TODO(cazden) Implement owner relationship */}
-                  <Attribute.Field variant="text" label="Owner" value="--" />
+                  <Attribute.Field
+                    variant="text"
+                    label="Owner"
+                    value={
+                      ownerError ? (
+                        <Badge variant="destructive">ERROR</Badge>
+                      ) : ownerLoading ? (
+                        <Skeleton className="h-5 w-32 rounded-sm" />
+                      ) : owner ? (
+                        <GoToButton
+                          path="/$accountId/app/users/$id"
+                          params={{
+                            accountId: keygen.config.id,
+                            id: owner.id,
+                          }}
+                          label={getUserLabel(owner)}
+                        />
+                      ) : (
+                        "--"
+                      )
+                    }
+                  />
 
                   <Attribute.Field
                     variant="text"

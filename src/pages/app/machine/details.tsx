@@ -53,9 +53,9 @@ import { useGetLicense } from "@/queries/licenses"
 import { useMobile } from "@/hooks/use-mobile"
 
 import { toast } from "@/lib/toast"
-import { truncateKey } from "@/lib/licenses"
 import { copyToClipboard } from "@/lib/clipboard"
 import { getHeartbeatStatusVariant } from "@/lib/machines"
+import { truncateKey, formatTtlLabel } from "@/lib/licenses"
 
 import * as keygen from "@/keygen"
 import * as Machines from "@/components/machines"
@@ -707,7 +707,11 @@ export default function MachineDetails() {
 
       <ConfirmationModal
         title={`Reset heartbeat for ${machine?.attributes.name || machine?.attributes.fingerprint}`}
-        description="Are you sure you want to reset and stop the heartbeat monitor for this machine? This will not deactivate the machine."
+        description={
+          machine?.attributes.requireHeartbeat
+            ? `Are you sure you want to reset the heartbeat monitor for this machine? Because the policy requires a heartbeat, this will cause the machine to be deactivated automatically after ${formatTtlLabel(machine.attributes.heartbeatDuration)} unless the machine begins sending a heartbeat again.`
+            : "Are you sure you want to reset and stop the heartbeat monitor for this machine? This will not deactivate the machine."
+        }
         open={open.resetHeartbeat}
         disabled={resetHeartbeat.isPending}
         onClose={() => toggleOpen("resetHeartbeat", false)}

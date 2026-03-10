@@ -3,9 +3,11 @@ import { Environment } from "@/types/environments"
 import { useListEnvironments } from "@/queries/environments"
 
 import { useEnvironmentTableColumns } from "@/hooks/use-environment-table-columns"
+import { useDataTable } from "@/hooks/use-data-table"
 
 import DataTable from "@/components/data-table"
-import * as Skeletons from "@/components/skeletons"
+import Pagination from "@/components/pagination"
+import PageFooter from "@/components/page-footer"
 
 interface EnvironmentsListProps {
   onViewDetails: (environment: Environment) => void
@@ -14,26 +16,40 @@ interface EnvironmentsListProps {
 export default function EnvironmentsList({
   onViewDetails,
 }: EnvironmentsListProps) {
-  const { data: environments = [], isLoading } = useListEnvironments()
+  const table = useDataTable()
   const columns = useEnvironmentTableColumns()
 
+  const {
+    data: environments,
+    links,
+    isLoading,
+  } = useListEnvironments({
+    page: table.page,
+    pageSize: table.pageSize,
+  })
+
+  const totalPages = links?.meta?.pages ?? 1
+
   return (
-    <>
-      {environments && environments.length > 0 ? (
-        <DataTable
-          data={environments}
-          columns={columns}
-          onRowClick={onViewDetails}
-          hideOnMobile={["attributes.isolationStrategy"]}
-          includePagination={false}
+    <div className="flex h-[60vh] flex-col md:h-[40vh]">
+      <DataTable
+        data={environments}
+        table={table}
+        columns={columns}
+        pageCount={totalPages}
+        isLoading={isLoading}
+        onRowClick={onViewDetails}
+        hideOnMobile={["attributes.isolationStrategy"]}
+      />
+
+      <PageFooter>
+        <Pagination
+          page={table.page}
+          pageCount={totalPages}
+          onPageChange={table.setPage}
+          isLoading={isLoading || !table.isMeasured}
         />
-      ) : isLoading ? (
-        <Skeletons.Table />
-      ) : (
-        <p className="my-8 text-center text-sm text-content-subdued">
-          Looks empty. Create an environment to get started.
-        </p>
-      )}
-    </>
+      </PageFooter>
+    </div>
   )
 }

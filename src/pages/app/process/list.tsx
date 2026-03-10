@@ -3,27 +3,40 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 
 import { useProcessTableColumns } from "@/hooks/use-process-table-columns"
-
+import { useDataTable } from "@/hooks/use-data-table"
 import { Process } from "@/types/processes"
+
 import { useListProcesses } from "@/queries/processes"
 
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import * as Processes from "@/components/processes"
-import * as Skeletons from "@/components/skeletons"
 import DataTable from "@/components/data-table"
+import Pagination from "@/components/pagination"
 import PageHeader from "@/components/page-header"
+import PageFooter from "@/components/page-footer"
 
 export default function ProcessesList() {
-  const { data: processes = [], isLoading: processesLoading } =
-    useListProcesses()
+  const table = useDataTable()
   const columns = useProcessTableColumns()
+
+  const {
+    data: processes,
+    links,
+    isLoading: processesLoading,
+  } = useListProcesses({
+    page: table.page,
+    pageSize: table.pageSize,
+  })
+
+  const totalPages = links?.meta?.pages ?? 1
+
   const navigateToResource = useResourceNavigate()
 
   const [open, setOpen] = useState(false)
 
   return (
-    <section>
+    <section className="flex h-screen flex-col">
       <PageHeader title="Processes">
         <Button
           size="sm"
@@ -36,22 +49,30 @@ export default function ProcessesList() {
 
       <Processes.Form.Create open={open} onOpenChange={setOpen} />
 
-      {processesLoading ? (
-        <Skeletons.Table />
-      ) : (
-        <DataTable<Process>
-          data={processes}
-          columns={columns}
-          hideOnMobile={[
-            "relationships.machine",
-            "relationships.license",
-            "relationships.product",
-            "attributes.created",
-            "attributes.updated",
-          ]}
-          onRowClick={(process) => navigateToResource(process)}
+      <DataTable<Process>
+        data={processes}
+        table={table}
+        columns={columns}
+        pageCount={totalPages}
+        isLoading={processesLoading}
+        hideOnMobile={[
+          "relationships.machine",
+          "relationships.license",
+          "relationships.product",
+          "attributes.created",
+          "attributes.updated",
+        ]}
+        onRowClick={(process) => navigateToResource(process)}
+      />
+
+      <PageFooter>
+        <Pagination
+          page={table.page}
+          pageCount={totalPages}
+          onPageChange={table.setPage}
+          isLoading={processesLoading || !table.isMeasured}
         />
-      )}
+      </PageFooter>
     </section>
   )
 }

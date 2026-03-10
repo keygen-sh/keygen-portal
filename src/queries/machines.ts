@@ -227,3 +227,37 @@ export function useChangeMachineOwner() {
     },
   })
 }
+
+export function useChangeMachineGroup() {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<
+    Machine,
+    APIError,
+    { machineId: string; groupId: string | null }
+  >({
+    mutationFn: async ({ machineId, groupId }) => {
+      const response = await keygen.machines.changeGroup({
+        id: machineId,
+        groupId,
+      })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response.data
+    },
+
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ["machines", updated.id, { environment: code }],
+        updated,
+      )
+      await queryClient.invalidateQueries({
+        queryKey: ["machines", { environment: code }],
+      })
+    },
+  })
+}

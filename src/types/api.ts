@@ -60,6 +60,14 @@ export class APIError extends Error {
 export interface Link {
   related?: string | null
   self?: string | null
+  prev?: string | null
+  next?: string | null
+  first?: string | null
+  last?: string | null
+  meta?: {
+    pages?: number
+    count?: number
+  }
 }
 
 export interface Linkage<T extends string = string> {

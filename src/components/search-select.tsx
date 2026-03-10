@@ -21,22 +21,29 @@ import { truncator, TruncateStyle } from "@/lib/truncate"
 
 import * as keygen from "@/keygen"
 
+import { useSearch } from "@/queries/search"
+
+import * as Loading from "@/components/loading"
 import GoToButton from "@/components/go-to-button"
 
 type BaseOption = { id: string }
 type NamedOption = BaseOption & { attributes: { name: string } }
 
-type ResourceType = "license" | "group" | "user" | "machine"
+type ResourceType = "licenses" | "groups" | "users" | "machines"
 
 interface ResourceConfig {
   getLabel: (option: BaseOption) => string
   placeholder: string
   searchPlaceholder: string
   emptyMessage: React.ReactElement
+  searchQuery: (term: string) => {
+    query: Record<string, string>
+    op?: "AND" | "OR"
+  }
 }
 
 const resourceConfigs: Record<ResourceType, ResourceConfig> = {
-  license: {
+  licenses: {
     getLabel: getLicenseLabel as (option: BaseOption) => string,
     placeholder: "Select a license...",
     searchPlaceholder: "Search by ID or name...",
@@ -50,8 +57,12 @@ const resourceConfigs: Record<ResourceType, ResourceConfig> = {
         />
       </span>
     ),
+    searchQuery: (term) => ({
+      query: { name: term, key: term },
+      op: "OR",
+    }),
   },
-  group: {
+  groups: {
     getLabel: getGroupLabel as (option: BaseOption) => string,
     placeholder: "Select a group...",
     searchPlaceholder: "Search by ID or name...",
@@ -65,8 +76,9 @@ const resourceConfigs: Record<ResourceType, ResourceConfig> = {
         />
       </span>
     ),
+    searchQuery: (term) => ({ query: { name: term } }),
   },
-  user: {
+  users: {
     getLabel: getUserLabel as (option: BaseOption) => string,
     placeholder: "Select an owner...",
     searchPlaceholder: "Search by ID or email...",
@@ -80,8 +92,12 @@ const resourceConfigs: Record<ResourceType, ResourceConfig> = {
         />
       </span>
     ),
+    searchQuery: (term) => ({
+      query: { email: term, fullName: term },
+      op: "OR",
+    }),
   },
-  machine: {
+  machines: {
     getLabel: getMachineLabel as (option: BaseOption) => string,
     placeholder: "Select a machine...",
     searchPlaceholder: "Search by ID, name, or fingerprint...",
@@ -95,6 +111,10 @@ const resourceConfigs: Record<ResourceType, ResourceConfig> = {
         />
       </span>
     ),
+    searchQuery: (term) => ({
+      query: { name: term, fingerprint: term },
+      op: "OR",
+    }),
   },
 }
 
@@ -156,6 +176,29 @@ export default function SearchSelect<T extends BaseOption>({
   const [open, setOpen] = useState(false)
 
   const inputRef = useRef<HTMLInputElement>(null)
+  const labelRef = useRef(new Map<string, string>())
+
+  const [searchType, searchQuery, searchOp] = useMemo<
+    [ResourceType | null, Record<string, string>, ("AND" | "OR") | undefined]
+  >(() => {
+    if (!config || !resource || query.length < 3) {
+      return [null, {}, undefined]
+    }
+    const search = config.searchQuery(query)
+    return [resource, search.query, search.op]
+  }, [config, resource, query])
+
+  const { data: searchData, isFetching: isSearching } = useSearch(
+    searchType,
+    searchQuery,
+    searchOp,
+  )
+
+  if (searchData) {
+    for (const item of searchData) {
+      labelRef.current.set(item.id, getLabel(item))
+    }
+  }
 
   const format = useMemo(
     () =>
@@ -164,20 +207,28 @@ export default function SearchSelect<T extends BaseOption>({
   )
 
   const labelMap = useMemo(
-    () => new Map(options.map((o) => [o.id, getLabel(o)])),
+    () => new Map(options.map((option) => [option.id, getLabel(option)])),
     [options, getLabel],
   )
 
   const visibleOptions = useMemo(() => {
+    if (searchType != null && searchData) {
+      return searchData
+    }
+
+    if (!query) return options
+
     const lowerQuery = query.toLowerCase()
     return options.filter(
       (option) =>
         getLabel(option).toLowerCase().includes(lowerQuery) ||
         option.id.toLowerCase().includes(lowerQuery),
     )
-  }, [query, options, getLabel])
+  }, [searchType, searchData, query, options, getLabel])
 
-  const selectedLabel = value ? labelMap.get(value) : null
+  const selectedLabel = value
+    ? (labelMap.get(value) ?? labelRef.current.get(value) ?? null)
+    : null
   const displayLabel = selectedLabel
     ? format
       ? format(selectedLabel)
@@ -250,7 +301,11 @@ export default function SearchSelect<T extends BaseOption>({
                 </CommandItem>
               )}
 
-              {visibleOptions.length > 0 ? (
+              {isSearching ? (
+                <div className="flex w-full justify-center py-4">
+                  <Loading.Dots className="bg-content-subdued!" />
+                </div>
+              ) : visibleOptions.length > 0 ? (
                 visibleOptions.map((option) => {
                   const label = getLabel(option)
                   const displayOptionLabel = format ? format(label) : label

@@ -311,7 +311,7 @@ function LicenseIdField({
             tooltip={descriptions.license}
           >
             <SearchSelect
-              resource="license"
+              resource="licenses"
               value={field.value}
               onChange={(value) => field.onChange(value)}
               options={licenses}
@@ -640,7 +640,7 @@ function GroupIdField({
             optional
           >
             <SearchSelect
-              resource="group"
+              resource="groups"
               value={field.value}
               onChange={(value) => field.onChange(value)}
               options={groups}
@@ -680,7 +680,7 @@ function OwnerIdField({
             optional
           >
             <SearchSelect
-              resource="user"
+              resource="users"
               value={field.value}
               onChange={(value) => field.onChange(value)}
               options={users}

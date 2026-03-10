@@ -1,4 +1,9 @@
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  keepPreviousData,
+} from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
@@ -29,14 +34,30 @@ export function useGetMachine(machineId: string) {
   })
 }
 
-export function useListMachines() {
+export function useListMachines(params?: { page: number; pageSize: number }) {
   const { code } = useEnvironment()
 
-  return useQuery({
-    queryKey: ["machines", { environment: code }],
-    queryFn: () =>
-      keygen.machines.list({}).then((response) => response.data ?? []),
+  const query = useQuery({
+    queryKey: ["machines", { environment: code, ...params }],
+    queryFn: async () => {
+      const response = await keygen.machines.list(
+        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+      )
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response
+    },
+    placeholderData: params ? keepPreviousData : undefined,
   })
+
+  return {
+    ...query,
+    data: query.data?.data ?? [],
+    links: query.data?.links,
+  }
 }
 
 export function useCreateMachine() {

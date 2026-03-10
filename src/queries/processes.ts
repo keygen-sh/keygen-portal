@@ -1,4 +1,9 @@
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  keepPreviousData,
+} from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
@@ -28,14 +33,30 @@ export function useGetProcess(processId: string) {
   })
 }
 
-export function useListProcesses() {
+export function useListProcesses(params?: { page: number; pageSize: number }) {
   const { code } = useEnvironment()
 
-  return useQuery({
-    queryKey: ["processes", { environment: code }],
-    queryFn: () =>
-      keygen.processes.list({}).then((response) => response.data ?? []),
+  const query = useQuery({
+    queryKey: ["processes", { environment: code, ...params }],
+    queryFn: async () => {
+      const response = await keygen.processes.list(
+        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+      )
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response
+    },
+    placeholderData: params ? keepPreviousData : undefined,
   })
+
+  return {
+    ...query,
+    data: query.data?.data ?? [],
+    links: query.data?.links,
+  }
 }
 
 export function useCreateProcess() {

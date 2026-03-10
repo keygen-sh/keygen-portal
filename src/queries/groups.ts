@@ -1,4 +1,9 @@
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  keepPreviousData,
+} from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
@@ -30,14 +35,30 @@ export function useGetGroup(groupId: string) {
   })
 }
 
-export function useListGroups() {
+export function useListGroups(params?: { page: number; pageSize: number }) {
   const { code } = useEnvironment()
 
-  return useQuery({
-    queryKey: ["groups", { environment: code }],
-    queryFn: () =>
-      keygen.groups.list({}).then((response) => response.data ?? []),
+  const query = useQuery({
+    queryKey: ["groups", { environment: code, ...params }],
+    queryFn: async () => {
+      const response = await keygen.groups.list(
+        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+      )
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response
+    },
+    placeholderData: params ? keepPreviousData : undefined,
   })
+
+  return {
+    ...query,
+    data: query.data?.data ?? [],
+    links: query.data?.links,
+  }
 }
 
 export function useCreateGroup() {

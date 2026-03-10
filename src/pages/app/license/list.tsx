@@ -3,6 +3,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 
 import { useLicenseTableColumns } from "@/hooks/use-license-table-columns"
+import { useDataTable } from "@/hooks/use-data-table"
 import { License } from "@/types/licenses"
 
 import { useListLicenses } from "@/queries/licenses"
@@ -10,19 +11,32 @@ import { useListLicenses } from "@/queries/licenses"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import * as Licenses from "@/components/licenses"
-import * as Skeletons from "@/components/skeletons"
 import DataTable from "@/components/data-table"
+import Pagination from "@/components/pagination"
 import PageHeader from "@/components/page-header"
+import PageFooter from "@/components/page-footer"
 
 export default function LicensesList() {
-  const { data: licenses = [], isLoading: licensesLoading } = useListLicenses()
+  const table = useDataTable()
   const columns = useLicenseTableColumns()
+
+  const {
+    data: licenses,
+    links,
+    isLoading: licensesLoading,
+  } = useListLicenses({
+    page: table.page,
+    pageSize: table.pageSize,
+  })
+
+  const totalPages = links?.meta?.pages ?? 1
+
   const navigateToResource = useResourceNavigate()
 
   const [open, setOpen] = useState(false)
 
   return (
-    <section>
+    <section className="flex h-screen flex-col">
       <PageHeader title="Licenses">
         <Button
           size="sm"
@@ -35,22 +49,30 @@ export default function LicensesList() {
 
       <Licenses.Form.Create open={open} onOpenChange={setOpen} />
 
-      {licensesLoading ? (
-        <Skeletons.Table />
-      ) : (
-        <DataTable<License>
-          data={licenses}
-          columns={columns}
-          hideOnMobile={[
-            "attributes.key",
-            "relationships.policy",
-            "relationships.product",
-            "attributes.expiry",
-            "attributes.created",
-          ]}
-          onRowClick={(license) => navigateToResource(license)}
+      <DataTable<License>
+        data={licenses}
+        table={table}
+        columns={columns}
+        pageCount={totalPages}
+        isLoading={licensesLoading}
+        hideOnMobile={[
+          "attributes.key",
+          "relationships.policy",
+          "relationships.product",
+          "attributes.expiry",
+          "attributes.created",
+        ]}
+        onRowClick={(license) => navigateToResource(license)}
+      />
+
+      <PageFooter>
+        <Pagination
+          page={table.page}
+          pageCount={totalPages}
+          onPageChange={table.setPage}
+          isLoading={licensesLoading || !table.isMeasured}
         />
-      )}
+      </PageFooter>
     </section>
   )
 }

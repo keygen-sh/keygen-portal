@@ -6,7 +6,11 @@ import { Form } from "@/components/ui/form"
 
 import * as Schemas from "@/schemas"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
-import { useCreateMachine, useChangeMachineOwner } from "@/queries/machines"
+import {
+  useCreateMachine,
+  useChangeMachineOwner,
+  useChangeMachineGroup,
+} from "@/queries/machines"
 
 import { toast } from "@/lib/toast"
 
@@ -42,6 +46,7 @@ export default function CreateMachineForm({
     },
   })
   const createMachine = useCreateMachine()
+  const changeGroup = useChangeMachineGroup()
   const changeOwner = useChangeMachineOwner()
   const navigateToResource = useResourceNavigate()
 
@@ -56,11 +61,18 @@ export default function CreateMachineForm({
         })
       }
 
+      if (values.groupId) {
+        await changeGroup.mutateAsync({
+          machineId: machine.id,
+          groupId: values.groupId,
+        })
+      }
+
       toast({ message: "Machine activated", variant: "success" })
       onOpenChange(false)
       await navigateToResource(machine)
     },
-    [createMachine, changeOwner, navigateToResource, onOpenChange],
+    [createMachine, changeGroup, changeOwner, navigateToResource, onOpenChange],
   )
 
   return (
@@ -69,7 +81,11 @@ export default function CreateMachineForm({
         <Forms.Layout.Wizard
           onBack={() => onOpenChange(false)}
           onSubmit={handleSubmit}
-          isPending={createMachine.isPending || changeOwner.isPending}
+          isPending={
+            createMachine.isPending ||
+            changeGroup.isPending ||
+            changeOwner.isPending
+          }
           submitLabel="Activate"
           description="Activating a new machine"
           errorMessage="Failed to activate machine"

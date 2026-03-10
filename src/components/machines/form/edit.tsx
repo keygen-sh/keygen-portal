@@ -11,6 +11,7 @@ import {
   useGetMachine,
   useUpdateMachine,
   useChangeMachineOwner,
+  useChangeMachineGroup,
 } from "@/queries/machines"
 
 import { toast } from "@/lib/toast"
@@ -31,6 +32,7 @@ export default function EditMachineForm({
   const { data: machine } = useGetMachine(id)
 
   const updateMachine = useUpdateMachine(machine?.id ?? "")
+  const changeGroup = useChangeMachineGroup()
   const changeOwner = useChangeMachineOwner()
 
   const form = useForm<Schemas.Machines.UpdateValues>({
@@ -64,11 +66,21 @@ export default function EditMachineForm({
         })
       }
 
+      const currentGroupId = machine.relationships.group?.data?.id ?? null
+      const newGroupId = values.groupId ?? null
+
+      if (newGroupId !== currentGroupId) {
+        await changeGroup.mutateAsync({
+          machineId: machine.id,
+          groupId: newGroupId,
+        })
+      }
+
       await updateMachine.mutateAsync(values)
       toast({ message: "Machine updated", variant: "success" })
       onOpenChange(false)
     },
-    [machine, updateMachine, changeOwner, onOpenChange],
+    [machine, updateMachine, changeGroup, changeOwner, onOpenChange],
   )
 
   return (
@@ -79,7 +91,11 @@ export default function EditMachineForm({
           onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           errorMessage="Failed to update machine"
-          isPending={updateMachine.isPending || changeOwner.isPending}
+          isPending={
+            updateMachine.isPending ||
+            changeGroup.isPending ||
+            changeOwner.isPending
+          }
           submitLabel="Update"
           className="md:h-[76vh]!"
         >

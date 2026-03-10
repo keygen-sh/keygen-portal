@@ -1,4 +1,9 @@
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  keepPreviousData,
+} from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
@@ -27,14 +32,30 @@ export function useGetProduct(productId: string) {
   })
 }
 
-export function useListProducts() {
+export function useListProducts(params?: { page: number; pageSize: number }) {
   const { code } = useEnvironment()
 
-  return useQuery({
-    queryKey: ["products", { environment: code }],
-    queryFn: () =>
-      keygen.products.list({}).then((response) => response.data ?? []),
+  const query = useQuery({
+    queryKey: ["products", { environment: code, ...params }],
+    queryFn: async () => {
+      const response = await keygen.products.list(
+        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+      )
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response
+    },
+    placeholderData: params ? keepPreviousData : undefined,
   })
+
+  return {
+    ...query,
+    data: query.data?.data ?? [],
+    links: query.data?.links,
+  }
 }
 
 export function useCreateProduct() {

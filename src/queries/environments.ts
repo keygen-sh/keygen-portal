@@ -1,4 +1,9 @@
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
+import {
+  useQuery,
+  useQueryClient,
+  useMutation,
+  keepPreviousData,
+} from "@tanstack/react-query"
 
 import * as Schemas from "@/schemas"
 import { Environment } from "@/types/environments"
@@ -18,12 +23,31 @@ export function useGetEnvironment(environmentId: string) {
   })
 }
 
-export function useListEnvironments() {
-  return useQuery({
-    queryKey: ["environments"],
-    queryFn: () =>
-      keygen.environments.list({}).then((response) => response.data ?? []),
+export function useListEnvironments(params?: {
+  page: number
+  pageSize: number
+}) {
+  const query = useQuery({
+    queryKey: ["environments", { ...params }],
+    queryFn: async () => {
+      const response = await keygen.environments.list(
+        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+      )
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response
+    },
+    placeholderData: params ? keepPreviousData : undefined,
   })
+
+  return {
+    ...query,
+    data: query.data?.data ?? [],
+    links: query.data?.links,
+  }
 }
 
 export function useCreateEnvironment() {

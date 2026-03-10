@@ -45,3 +45,6 @@ export { users }
 
 import { logout } from "./logout"
 export { logout }
+
+import { search } from "./search"
+export { search }

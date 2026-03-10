@@ -207,7 +207,7 @@ function MachineIdField({
             tooltip={descriptions.machine}
           >
             <SearchSelect
-              resource="machine"
+              resource="machines"
               value={field.value}
               onChange={(value) => field.onChange(value)}
               options={machines}

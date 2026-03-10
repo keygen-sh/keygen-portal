@@ -515,7 +515,7 @@ function GroupIdField({
             optional
           >
             <SearchSelect
-              resource="group"
+              resource="groups"
               value={field.value}
               onChange={(value) => field.onChange(value)}
               options={groups}

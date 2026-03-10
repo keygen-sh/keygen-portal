@@ -58,7 +58,7 @@ const resourceConfigs: Record<ResourceType, ResourceConfig> = {
       </span>
     ),
     searchQuery: (term) => ({
-      query: { name: term, key: term },
+      query: { id: term, name: term, key: term },
       op: "OR",
     }),
   },
@@ -76,7 +76,10 @@ const resourceConfigs: Record<ResourceType, ResourceConfig> = {
         />
       </span>
     ),
-    searchQuery: (term) => ({ query: { name: term } }),
+    searchQuery: (term) => ({
+      query: { id: term, name: term },
+      op: "OR",
+    }),
   },
   users: {
     getLabel: getUserLabel as (option: BaseOption) => string,
@@ -93,7 +96,7 @@ const resourceConfigs: Record<ResourceType, ResourceConfig> = {
       </span>
     ),
     searchQuery: (term) => ({
-      query: { email: term, fullName: term },
+      query: { id: term, email: term, fullName: term },
       op: "OR",
     }),
   },
@@ -112,7 +115,7 @@ const resourceConfigs: Record<ResourceType, ResourceConfig> = {
       </span>
     ),
     searchQuery: (term) => ({
-      query: { name: term, fingerprint: term },
+      query: { id: term, name: term, fingerprint: term },
       op: "OR",
     }),
   },

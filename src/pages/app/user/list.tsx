@@ -1,6 +1,7 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { useUserTableColumns } from "@/hooks/use-user-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
@@ -45,20 +46,22 @@ export default function UsersList() {
 
       <Users.Form.Create open={open} onOpenChange={setOpen} />
 
-      <DataTable<User>
-        data={users}
-        table={table}
-        columns={columns}
-        pageCount={totalPages}
-        isLoading={usersLoading}
-        hideOnMobile={[
-          "attributes.fullName",
-          "attributes.role",
-          "attributes.created",
-          "attributes.updated",
-        ]}
-        onRowClick={(user) => navigateToResource(user)}
-      />
+      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
+        <DataTable<User>
+          data={users}
+          table={table}
+          columns={columns}
+          pageCount={totalPages}
+          isLoading={usersLoading}
+          hideOnMobile={[
+            "attributes.fullName",
+            "attributes.role",
+            "attributes.created",
+            "attributes.updated",
+          ]}
+          onRowClick={(user) => navigateToResource(user)}
+        />
+      </ScrollArea>
 
       <PageFooter>
         <Pagination

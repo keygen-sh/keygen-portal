@@ -2,8 +2,8 @@ import { Environment } from "@/types/environments"
 
 import { useListEnvironments } from "@/queries/environments"
 
-import { useEnvironmentTableColumns } from "@/hooks/use-environment-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
+import { useEnvironmentTableColumns } from "@/hooks/use-environment-table-columns"
 
 import DataTable from "@/components/data-table"
 import Pagination from "@/components/pagination"
@@ -25,13 +25,13 @@ export default function EnvironmentsList({
     isLoading,
   } = useListEnvironments({
     page: table.page,
-    pageSize: table.pageSize,
+    pageSize: 15, // Ignore hook value since we're in a dialog
   })
 
   const totalPages = links?.meta?.pages ?? 1
 
   return (
-    <div className="flex h-[60vh] flex-col md:h-[40vh]">
+    <>
       <DataTable
         data={environments}
         table={table}
@@ -42,7 +42,7 @@ export default function EnvironmentsList({
         hideOnMobile={["attributes.isolationStrategy"]}
       />
 
-      <PageFooter>
+      <PageFooter className="border-none">
         <Pagination
           page={table.page}
           pageCount={totalPages}
@@ -50,6 +50,6 @@ export default function EnvironmentsList({
           isLoading={isLoading}
         />
       </PageFooter>
-    </div>
+    </>
   )
 }

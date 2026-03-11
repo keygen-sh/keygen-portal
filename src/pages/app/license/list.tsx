@@ -50,7 +50,7 @@ export default function LicensesList() {
 
       <Licenses.Form.Create open={open} onOpenChange={setOpen} />
 
-      <ScrollArea className="h-[calc(100vh-8rem)] overflow-auto">
+      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<License>
           data={licenses}
           table={table}

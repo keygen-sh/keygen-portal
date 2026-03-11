@@ -111,7 +111,7 @@ export default function EnvironmentsViewModal({
         </DialogTitle>
       </DialogHeader>
 
-      <ScrollArea className="h-[60vh] md:h-[40vh]">
+      <ScrollArea className="h-[calc(100vh-8rem)] md:h-[40vh]">
         <Motion.Slide direction={direction}>
           {view === EnvironmentView.List ? (
             <EnvironmentsList

@@ -1,6 +1,7 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { useMachineTableColumns } from "@/hooks/use-machine-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
@@ -49,20 +50,22 @@ export default function MachinesList() {
 
       <Machines.Form.Create open={open} onOpenChange={setOpen} />
 
-      <DataTable<Machine>
-        data={machines}
-        table={table}
-        columns={columns}
-        pageCount={totalPages}
-        isLoading={machinesLoading}
-        hideOnMobile={[
-          "relationships.license",
-          "relationships.product",
-          "attributes.created",
-          "attributes.updated",
-        ]}
-        onRowClick={(machine) => navigateToResource(machine)}
-      />
+      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
+        <DataTable<Machine>
+          data={machines}
+          table={table}
+          columns={columns}
+          pageCount={totalPages}
+          isLoading={machinesLoading}
+          hideOnMobile={[
+            "relationships.license",
+            "relationships.product",
+            "attributes.created",
+            "attributes.updated",
+          ]}
+          onRowClick={(machine) => navigateToResource(machine)}
+        />
+      </ScrollArea>
 
       <PageFooter>
         <Pagination

@@ -37,7 +37,7 @@ export default function EnvironmentsModalManager({
   return (
     <AnimatePresence mode="wait">
       <Dialog open={open} onOpenChange={onClose}>
-        <DialogContent className="flex flex-col justify-between p-0 transition-all duration-300 md:min-w-[700px]">
+        <DialogContent className="flex min-h-screen min-w-screen flex-col justify-start rounded-none p-0 transition-all duration-300 md:min-h-auto md:min-w-[700px] md:rounded-md">
           {mode === EnvironmentMode.View && (
             <View.Modal
               selectedEnvironment={selectedEnvironment}

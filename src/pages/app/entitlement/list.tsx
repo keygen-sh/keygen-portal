@@ -1,6 +1,7 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { useEntitlementTableColumns } from "@/hooks/use-entitlement-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
@@ -48,21 +49,23 @@ export default function EntitlementsList() {
         <Entitlements.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 
-      <DataTable<Entitlement>
-        data={entitlements}
-        table={table}
-        columns={columns}
-        pageCount={totalPages}
-        isLoading={entitlementsLoading}
-        hideOnMobile={[
-          "attributes.id",
-          "attributes.code",
-          "attributes.url",
-          "attributes.created",
-          "attributes.updated",
-        ]}
-        onRowClick={(entitlement) => navigateToResource(entitlement)}
-      />
+      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
+        <DataTable<Entitlement>
+          data={entitlements}
+          table={table}
+          columns={columns}
+          pageCount={totalPages}
+          isLoading={entitlementsLoading}
+          hideOnMobile={[
+            "attributes.id",
+            "attributes.code",
+            "attributes.url",
+            "attributes.created",
+            "attributes.updated",
+          ]}
+          onRowClick={(entitlement) => navigateToResource(entitlement)}
+        />
+      </ScrollArea>
 
       <PageFooter>
         <Pagination

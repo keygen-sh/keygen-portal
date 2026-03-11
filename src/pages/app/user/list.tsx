@@ -65,7 +65,7 @@ export default function UsersList() {
           page={table.page}
           pageCount={totalPages}
           onPageChange={table.setPage}
-          isLoading={usersLoading || !table.isMeasured}
+          isLoading={usersLoading}
         />
       </PageFooter>
     </section>

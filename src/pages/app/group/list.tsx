@@ -69,7 +69,7 @@ export default function GroupsList() {
           page={table.page}
           pageCount={totalPages}
           onPageChange={table.setPage}
-          isLoading={groupsLoading || !table.isMeasured}
+          isLoading={groupsLoading}
         />
       </PageFooter>
     </section>

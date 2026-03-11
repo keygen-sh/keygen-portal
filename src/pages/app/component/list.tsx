@@ -69,7 +69,7 @@ export default function ComponentsList() {
           page={table.page}
           pageCount={totalPages}
           onPageChange={table.setPage}
-          isLoading={componentsLoading || !table.isMeasured}
+          isLoading={componentsLoading}
         />
       </PageFooter>
     </section>

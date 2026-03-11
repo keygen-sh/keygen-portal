@@ -69,7 +69,7 @@ export default function MachinesList() {
           page={table.page}
           pageCount={totalPages}
           onPageChange={table.setPage}
-          isLoading={machinesLoading || !table.isMeasured}
+          isLoading={machinesLoading}
         />
       </PageFooter>
     </section>

@@ -68,7 +68,7 @@ export default function ProductsList() {
           page={table.page}
           pageCount={totalPages}
           onPageChange={table.setPage}
-          isLoading={productsLoading || !table.isMeasured}
+          isLoading={productsLoading}
         />
       </PageFooter>
     </section>

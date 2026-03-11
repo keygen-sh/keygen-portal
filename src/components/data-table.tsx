@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useLayoutEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import {
   flexRender,
   SortingState,
@@ -50,39 +50,6 @@ export default function DataTable<T extends TableResource>({
   className,
 }: DataTableProps<T>): React.ReactElement {
   const isMobile = useMobile()
-
-  const headerRef = useRef<HTMLTableSectionElement>(null)
-  const firstRowRef = useRef<HTMLTableRowElement>(null)
-  const lastMeasurementRef = useRef({ rowHeight: 0, headerHeight: 0 })
-
-  // Update page size based on available height so table fills container
-  useLayoutEffect(() => {
-    if (!table.onMeasure) return
-
-    const row = firstRowRef.current
-    if (!row) return
-
-    let rowHeight = row.offsetHeight
-
-    // TODO(cazden) Refactor this garbage; adds compensation for header border so height is accurate when only initial row is available
-    if (data.length === 1 && headerRef.current?.firstElementChild) {
-      const headerRow = headerRef.current.firstElementChild as HTMLElement
-      rowHeight +=
-        parseFloat(getComputedStyle(headerRow).borderBottomWidth) || 0
-    }
-
-    const headerHeight = headerRef.current?.offsetHeight ?? 0
-
-    // Skip if no changes
-    if (
-      lastMeasurementRef.current.rowHeight === rowHeight &&
-      lastMeasurementRef.current.headerHeight === headerHeight
-    )
-      return
-
-    lastMeasurementRef.current = { rowHeight, headerHeight }
-    table.onMeasure({ rowHeight, headerHeight })
-  }, [isLoading, data.length, isMobile, table])
 
   // Track which pages have already animated so revisiting doesn't animate again
   const prevPageRef = useRef(table.page)
@@ -138,23 +105,18 @@ export default function DataTable<T extends TableResource>({
   })
 
   return (
-    <div
-      ref={table.containerRef}
-      className={cn("relative flex flex-1 flex-col", className)}
-    >
+    <div className={cn("relative flex flex-1 flex-col", className)}>
       <Skeletons.Table
         className={cn(
           !isLoading && "absolute opacity-0 transition-opacity duration-500",
         )}
       />
 
-      {/* FIXME(cazden) isMeasured never converges if data.length is 0 from API response, so this div remains hidden.
-      e.g. processes table doesn't transition unless we spawn a process. Need to make sure isMeasured always converges. */}
       <div
         className={cn(
-          isLoading || !table.isMeasured
+          isLoading
             ? "absolute opacity-0"
-            : "flex min-h-0 flex-1 flex-col opacity-100 transition-opacity delay-50 duration-200",
+            : "flex min-h-0 flex-1 flex-col opacity-100 transition-opacity duration-200",
         )}
       >
         <Motion.Slide
@@ -162,7 +124,7 @@ export default function DataTable<T extends TableResource>({
           className="min-h-0 flex-1 px-4"
         >
           <Table key={table.page}>
-            <TableHeader ref={headerRef}>
+            <TableHeader>
               {tableInstance.getHeaderGroups().map((group) => (
                 <TableRow key={group.id} className="hover:bg-transparent">
                   {group.headers.map((header) => {
@@ -201,7 +163,6 @@ export default function DataTable<T extends TableResource>({
                 tableInstance.getRowModel().rows.map((row, index) => (
                   <TableRow
                     key={row.id}
-                    ref={index === 0 ? firstRowRef : undefined}
                     onClick={() => onRowClick?.(row.original)}
                     className={cn(
                       shouldAnimate &&

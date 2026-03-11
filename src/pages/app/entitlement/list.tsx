@@ -69,7 +69,7 @@ export default function EntitlementsList() {
           page={table.page}
           pageCount={totalPages}
           onPageChange={table.setPage}
-          isLoading={entitlementsLoading || !table.isMeasured}
+          isLoading={entitlementsLoading}
         />
       </PageFooter>
     </section>

@@ -15,6 +15,7 @@ import DataTable from "@/components/data-table"
 import Pagination from "@/components/pagination"
 import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
+import { ScrollArea } from "@radix-ui/react-scroll-area"
 
 export default function LicensesList() {
   const table = useDataTable()
@@ -49,28 +50,30 @@ export default function LicensesList() {
 
       <Licenses.Form.Create open={open} onOpenChange={setOpen} />
 
-      <DataTable<License>
-        data={licenses}
-        table={table}
-        columns={columns}
-        pageCount={totalPages}
-        isLoading={licensesLoading}
-        hideOnMobile={[
-          "attributes.key",
-          "relationships.policy",
-          "relationships.product",
-          "attributes.expiry",
-          "attributes.created",
-        ]}
-        onRowClick={(license) => navigateToResource(license)}
-      />
+      <ScrollArea className="h-[calc(100vh-8rem)] overflow-auto">
+        <DataTable<License>
+          data={licenses}
+          table={table}
+          columns={columns}
+          pageCount={totalPages}
+          isLoading={licensesLoading}
+          hideOnMobile={[
+            "attributes.key",
+            "relationships.policy",
+            "relationships.product",
+            "attributes.expiry",
+            "attributes.created",
+          ]}
+          onRowClick={(license) => navigateToResource(license)}
+        />
+      </ScrollArea>
 
       <PageFooter>
         <Pagination
           page={table.page}
           pageCount={totalPages}
           onPageChange={table.setPage}
-          isLoading={licensesLoading || !table.isMeasured}
+          isLoading={licensesLoading}
         />
       </PageFooter>
     </section>

@@ -47,7 +47,7 @@ export default function EnvironmentsList({
           page={table.page}
           pageCount={totalPages}
           onPageChange={table.setPage}
-          isLoading={isLoading || !table.isMeasured}
+          isLoading={isLoading}
         />
       </PageFooter>
     </div>

@@ -69,7 +69,7 @@ export default function PoliciesList() {
           page={table.page}
           pageCount={totalPages}
           onPageChange={table.setPage}
-          isLoading={policiesLoading || !table.isMeasured}
+          isLoading={policiesLoading}
         />
       </PageFooter>
     </section>

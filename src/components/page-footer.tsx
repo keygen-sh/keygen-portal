@@ -11,7 +11,10 @@ export default function PageFooter({
 }: PageFooterProps): React.ReactNode {
   return (
     <footer
-      className={cn("flex items-center justify-end gap-4 p-4", className)}
+      className={cn(
+        "flex items-center justify-end gap-4 border-t border-accent p-4",
+        className,
+      )}
     >
       {children}
     </footer>

@@ -70,7 +70,7 @@ export default function ProcessesList() {
           page={table.page}
           pageCount={totalPages}
           onPageChange={table.setPage}
-          isLoading={processesLoading || !table.isMeasured}
+          isLoading={processesLoading}
         />
       </PageFooter>
     </section>

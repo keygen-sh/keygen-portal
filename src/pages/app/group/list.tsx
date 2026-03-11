@@ -1,6 +1,7 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { useGroupTableColumns } from "@/hooks/use-group-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
@@ -48,21 +49,23 @@ export default function GroupsList() {
         <Groups.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 
-      <DataTable<Group>
-        data={groups}
-        table={table}
-        columns={columns}
-        pageCount={totalPages}
-        isLoading={groupsLoading}
-        hideOnMobile={[
-          "id",
-          "attributes.maxUsers",
-          "attributes.maxLicenses",
-          "attributes.maxMachines",
-          "attributes.created",
-        ]}
-        onRowClick={(group) => navigateToResource(group)}
-      />
+      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
+        <DataTable<Group>
+          data={groups}
+          table={table}
+          columns={columns}
+          pageCount={totalPages}
+          isLoading={groupsLoading}
+          hideOnMobile={[
+            "id",
+            "attributes.maxUsers",
+            "attributes.maxLicenses",
+            "attributes.maxMachines",
+            "attributes.created",
+          ]}
+          onRowClick={(group) => navigateToResource(group)}
+        />
+      </ScrollArea>
 
       <PageFooter>
         <Pagination

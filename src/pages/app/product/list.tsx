@@ -1,6 +1,7 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { useProductTableColumns } from "@/hooks/use-product-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
@@ -48,20 +49,22 @@ export default function ProductsList() {
         <Products.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 
-      <DataTable<Product>
-        data={products}
-        table={table}
-        columns={columns}
-        pageCount={totalPages}
-        isLoading={productsLoading}
-        hideOnMobile={[
-          "attributes.id",
-          "attributes.url",
-          "attributes.created",
-          "attributes.updated",
-        ]}
-        onRowClick={(product) => navigateToResource(product)}
-      />
+      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
+        <DataTable<Product>
+          data={products}
+          table={table}
+          columns={columns}
+          pageCount={totalPages}
+          isLoading={productsLoading}
+          hideOnMobile={[
+            "attributes.id",
+            "attributes.url",
+            "attributes.created",
+            "attributes.updated",
+          ]}
+          onRowClick={(product) => navigateToResource(product)}
+        />
+      </ScrollArea>
 
       <PageFooter>
         <Pagination

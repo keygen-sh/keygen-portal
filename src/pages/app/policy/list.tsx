@@ -1,6 +1,7 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { usePolicyTableColumns } from "@/hooks/use-policy-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
@@ -49,20 +50,22 @@ export default function PoliciesList() {
         <Policies.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 
-      <DataTable<Policy>
-        data={policies}
-        table={table}
-        columns={columns}
-        pageCount={totalPages}
-        isLoading={policiesLoading}
-        hideOnMobile={[
-          "attributes.id",
-          "attributes.url",
-          "attributes.created",
-          "attributes.updated",
-        ]}
-        onRowClick={(policy) => navigateToResource(policy)}
-      />
+      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
+        <DataTable<Policy>
+          data={policies}
+          table={table}
+          columns={columns}
+          pageCount={totalPages}
+          isLoading={policiesLoading}
+          hideOnMobile={[
+            "attributes.id",
+            "attributes.url",
+            "attributes.created",
+            "attributes.updated",
+          ]}
+          onRowClick={(policy) => navigateToResource(policy)}
+        />
+      </ScrollArea>
 
       <PageFooter>
         <Pagination

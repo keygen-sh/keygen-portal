@@ -26,7 +26,7 @@ import { useListMachines } from "@/queries/machines"
 import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
-import SearchSelect from "@/components/search-select"
+import * as Search from "@/components/search"
 import KeyValueInput from "@/components/key-value-input"
 
 type Descriptions = typeof ProcessFormFieldDescriptions
@@ -206,7 +206,7 @@ function MachineIdField({
             variant={fieldVariant}
             tooltip={descriptions.machine}
           >
-            <SearchSelect
+            <Search.Select
               resource="machines"
               value={field.value}
               onChange={(value) => field.onChange(value)}

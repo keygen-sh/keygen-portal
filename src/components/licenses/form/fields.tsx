@@ -13,15 +13,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectValue,
-} from "@/components/ui/select"
-import {
   FormField,
   FormLabel,
   FormItem,
@@ -48,8 +39,8 @@ import { Policy } from "@/types/policies"
 import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
+import * as Search from "@/components/search"
 import * as Calendars from "@/components/calendars"
-import MultiSelect from "@/components/multi-select"
 import KeyValueInput from "@/components/key-value-input"
 
 type Descriptions = typeof LicenseFormFieldDescriptions
@@ -362,11 +353,20 @@ function PolicyIdField({
     }
 
     return Array.from(grouped.entries()).map(([productId, data]) => ({
-      productId,
-      productName: data.productName,
-      policies: data.policies,
+      key: productId,
+      label: data.productName,
+      options: data.policies,
     }))
   }, [policies, products])
+
+  if (policiesLoading || productsLoading) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-48 rounded-sm" />
+        <Skeleton className="h-8 w-3/4" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -379,33 +379,16 @@ function PolicyIdField({
             variant={fieldVariant}
             tooltip={descriptions.policy}
           >
-            <Select
-              onValueChange={field.onChange}
-              defaultValue={field.value}
-              disabled={policiesLoading || productsLoading}
-            >
-              <FormControl>
-                <SelectTrigger className="w-full" autoFocus={autoFocus}>
-                  <SelectValue placeholder="Select a policy..." />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {policiesByProduct.map((group) => (
-                  <SelectGroup key={group.productId}>
-                    <SelectLabel>{group.productName}</SelectLabel>
-                    {group.policies.map((policy) => (
-                      <SelectItem
-                        key={policy.id}
-                        value={policy.id}
-                        className="pl-4"
-                      >
-                        {policy.attributes.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                ))}
-              </SelectContent>
-            </Select>
+            <FormControl>
+              <Search.GroupedSelect
+                value={field.value}
+                onChange={(value) => field.onChange(value ?? "")}
+                groups={policiesByProduct}
+                resource="policies"
+                allowClear={false}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
           </Forms.Field.Header>
           <FormMessage />
         </FormItem>
@@ -899,13 +882,11 @@ function AttachEntitlementsField() {
         <FormItem>
           <FormLabel>Attach existing entitlements</FormLabel>
           <FormControl>
-            <MultiSelect
+            <Search.MultiSelect
               value={field.value ?? []}
               onChange={field.onChange}
-              options={entitlements.map((e) => ({
-                label: e.attributes.name,
-                value: e.id,
-              }))}
+              options={entitlements}
+              resource="entitlements"
               placeholder="Search entitlements"
             />
           </FormControl>
@@ -999,13 +980,11 @@ function AttachUsersField() {
         <FormItem>
           <FormLabel>Attach users</FormLabel>
           <FormControl>
-            <MultiSelect
+            <Search.MultiSelect
               value={field.value ?? []}
               onChange={field.onChange}
-              options={users.map((u) => ({
-                label: u.attributes.email,
-                value: u.id,
-              }))}
+              options={users}
+              resource="users"
               placeholder="Search users"
             />
           </FormControl>

@@ -4,11 +4,11 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Skeleton } from "@/components/ui/skeleton"
-import { SelectItem } from "@/components/ui/select"
 import {
   Select,
   SelectTrigger,
   SelectContent,
+  SelectItem,
   SelectValue,
 } from "@/components/ui/select"
 import {
@@ -56,7 +56,7 @@ import {
 import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
-import MultiSelect from "@/components/multi-select"
+import * as Search from "@/components/search"
 import KeyValueInput from "@/components/key-value-input"
 import NullableSelect from "@/components/nullable-select"
 import DurationInput from "@/components/duration-input"
@@ -605,6 +605,15 @@ function ProductField({
   const form = useFormContext<Schemas.Policies.AllValues>()
   const { data: products = [], isLoading: productsLoading } = useListProducts()
 
+  if (productsLoading) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-48 rounded-sm" />
+        <Skeleton className="h-8 w-3/4" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -616,26 +625,16 @@ function ProductField({
             variant={fieldVariant}
             tooltip={descriptions.product}
           >
-            <Select
-              value={field.value ?? ""}
-              onValueChange={(value) =>
-                field.onChange(value === "" ? undefined : value)
-              }
-              disabled={productsLoading}
-            >
-              <FormControl>
-                <SelectTrigger className="w-full" autoFocus={autoFocus}>
-                  <SelectValue placeholder="Select product..." />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {products.map((product) => (
-                  <SelectItem key={product.id} value={product.id}>
-                    {product.attributes.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <FormControl>
+              <Search.Select
+                value={field.value}
+                onChange={(value) => field.onChange(value ?? undefined)}
+                options={products}
+                resource="products"
+                allowClear={false}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
           </Forms.Field.Header>
           <FormMessage />
         </FormItem>
@@ -2284,13 +2283,11 @@ function AttachEntitlementsField() {
         <FormItem>
           <FormLabel>Attach existing entitlements</FormLabel>
           <FormControl>
-            <MultiSelect
+            <Search.MultiSelect
               value={field.value ?? []}
               onChange={field.onChange}
-              options={entitlements.map((e) => ({
-                label: e.attributes.name,
-                value: e.id,
-              }))}
+              options={entitlements}
+              resource="entitlements"
               placeholder="Search entitlements"
             />
           </FormControl>

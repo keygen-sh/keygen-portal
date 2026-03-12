@@ -12,130 +12,20 @@ import {
 
 import { ChevronsUpDown } from "lucide-react"
 
+import { useSearch } from "@/queries/search"
+import { resourceConfigs, getDefaultLabel } from "@/lib/search"
+import { SearchableResource, SearchOption } from "@/types/search"
+
 import { cn } from "@/lib/utils"
-import { getUserLabel } from "@/lib/users"
-import { getGroupLabel } from "@/lib/groups"
-import { getLicenseLabel } from "@/lib/licenses"
-import { getMachineLabel } from "@/lib/machines"
 import { truncator, TruncateStyle } from "@/lib/truncate"
 
-import * as keygen from "@/keygen"
-
-import { useSearch } from "@/queries/search"
-
 import * as Loading from "@/components/loading"
-import GoToButton from "@/components/go-to-button"
 
-type BaseOption = { id: string }
-type NamedOption = BaseOption & { attributes: { name: string } }
-
-type ResourceType = "licenses" | "groups" | "users" | "machines"
-
-interface ResourceConfig {
-  getLabel: (option: BaseOption) => string
-  placeholder: string
-  searchPlaceholder: string
-  emptyMessage: React.ReactElement
-  searchQuery: (term: string) => {
-    query: Record<string, string>
-    op?: "AND" | "OR"
-  }
-}
-
-const resourceConfigs: Record<ResourceType, ResourceConfig> = {
-  licenses: {
-    getLabel: getLicenseLabel as (option: BaseOption) => string,
-    placeholder: "Select a license...",
-    searchPlaceholder: "Search by ID or name...",
-    emptyMessage: (
-      <span className="flex items-center gap-2">
-        No licenses found.
-        <GoToButton
-          path="/$accountId/app/licenses"
-          params={{ accountId: keygen.config.id }}
-          label="View licenses"
-        />
-      </span>
-    ),
-    searchQuery: (term) => ({
-      query: { id: term, name: term, key: term },
-      op: "OR",
-    }),
-  },
-  groups: {
-    getLabel: getGroupLabel as (option: BaseOption) => string,
-    placeholder: "Select a group...",
-    searchPlaceholder: "Search by ID or name...",
-    emptyMessage: (
-      <span className="flex items-center gap-2">
-        No groups found.
-        <GoToButton
-          path="/$accountId/app/groups"
-          params={{ accountId: keygen.config.id }}
-          label="View groups"
-        />
-      </span>
-    ),
-    searchQuery: (term) => ({
-      query: { id: term, name: term },
-      op: "OR",
-    }),
-  },
-  users: {
-    getLabel: getUserLabel as (option: BaseOption) => string,
-    placeholder: "Select an owner...",
-    searchPlaceholder: "Search by ID or email...",
-    emptyMessage: (
-      <span className="flex items-center gap-2">
-        No users found.
-        <GoToButton
-          path="/$accountId/app/users"
-          params={{ accountId: keygen.config.id }}
-          label="View users"
-        />
-      </span>
-    ),
-    searchQuery: (term) => ({
-      query: { id: term, email: term, fullName: term },
-      op: "OR",
-    }),
-  },
-  machines: {
-    getLabel: getMachineLabel as (option: BaseOption) => string,
-    placeholder: "Select a machine...",
-    searchPlaceholder: "Search by ID, name, or fingerprint...",
-    emptyMessage: (
-      <span className="flex items-center gap-2">
-        No machines found.
-        <GoToButton
-          path="/$accountId/app/machines"
-          params={{ accountId: keygen.config.id }}
-          label="View machines"
-        />
-      </span>
-    ),
-    searchQuery: (term) => ({
-      query: { id: term, name: term, fingerprint: term },
-      op: "OR",
-    }),
-  },
-}
-
-function getDefaultLabel<T extends BaseOption>(option: T): string {
-  if (
-    "attributes" in option &&
-    typeof (option as NamedOption).attributes?.name === "string"
-  ) {
-    return (option as NamedOption).attributes.name
-  }
-  return option.id
-}
-
-interface SearchSelectProps<T extends BaseOption> {
+interface SearchSelectProps<T extends SearchOption> {
   value: string | null | undefined
   onChange: (value: string | null) => void
   options: T[]
-  resource?: ResourceType
+  resource?: SearchableResource
   placeholder?: string
   searchPlaceholder?: string
   emptyMessage?: string | React.ReactElement
@@ -148,7 +38,7 @@ interface SearchSelectProps<T extends BaseOption> {
   className?: string
 }
 
-export default function SearchSelect<T extends BaseOption>({
+export default function SearchSelect<T extends SearchOption>({
   value,
   onChange,
   options,
@@ -182,7 +72,11 @@ export default function SearchSelect<T extends BaseOption>({
   const labelRef = useRef(new Map<string, string>())
 
   const [searchType, searchQuery, searchOp] = useMemo<
-    [ResourceType | null, Record<string, string>, ("AND" | "OR") | undefined]
+    [
+      SearchableResource | null,
+      Record<string, string>,
+      ("AND" | "OR") | undefined,
+    ]
   >(() => {
     if (!config || !resource || query.length < 3) {
       return [null, {}, undefined]

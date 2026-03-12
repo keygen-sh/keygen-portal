@@ -1,0 +1,240 @@
+import { useState, useRef, useMemo, KeyboardEvent } from "react"
+
+import { cn } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover"
+import {
+  Command,
+  CommandList,
+  CommandItem,
+  CommandEmpty,
+} from "@/components/ui/command"
+
+import { useSearch } from "@/queries/search"
+import { resourceConfigs, getDefaultLabel } from "@/lib/search"
+import { SearchableResource, SearchOption } from "@/types/search"
+
+import * as Loading from "@/components/loading"
+
+interface SearchMultiSelectProps<T extends SearchOption> {
+  value: string[]
+  onChange: (value: string[]) => void
+  options: T[]
+  resource: SearchableResource
+  placeholder?: string
+  disabled?: boolean
+  autoFocus?: boolean
+  className?: string
+}
+
+export default function SearchMultiSelect<T extends SearchOption>({
+  value,
+  onChange,
+  options,
+  resource,
+  placeholder,
+  disabled,
+  autoFocus,
+  className,
+}: SearchMultiSelectProps<T>) {
+  const config = resourceConfigs[resource]
+  const getLabel = config.getLabel ?? getDefaultLabel
+
+  const selected = value ?? []
+  const [query, setQuery] = useState("")
+  const [open, setOpen] = useState(false)
+
+  const inputRef = useRef<HTMLInputElement>(null)
+  const triggerRef = useRef<HTMLDivElement>(null)
+  const labelRef = useRef(new Map<string, string>())
+
+  const [searchType, searchQuery, searchOp] = useMemo<
+    [
+      SearchableResource | null,
+      Record<string, string>,
+      ("AND" | "OR") | undefined,
+    ]
+  >(() => {
+    if (query.length < 3) {
+      return [null, {}, undefined]
+    }
+    const search = config.searchQuery(query)
+    return [resource, search.query, search.op]
+  }, [config, resource, query])
+
+  const { data: searchData, isFetching: isSearching } = useSearch(
+    searchType,
+    searchQuery,
+    searchOp,
+  )
+
+  if (searchData) {
+    for (const item of searchData) {
+      labelRef.current.set(item.id, getLabel(item))
+    }
+  }
+
+  const labelMap = useMemo(
+    () => new Map(options.map((option) => [option.id, getLabel(option)])),
+    [options, getLabel],
+  )
+
+  const visibleOptions = useMemo(() => {
+    if (searchType != null && searchData) {
+      return searchData
+    }
+
+    if (!query) return options
+
+    const lowerQuery = query.toLowerCase()
+    return options.filter(
+      (option) =>
+        getLabel(option).toLowerCase().includes(lowerQuery) ||
+        option.id.toLowerCase().includes(lowerQuery),
+    )
+  }, [searchType, searchData, query, options, getLabel])
+
+  const resolveLabel = (id: string) =>
+    labelMap.get(id) ?? labelRef.current.get(id) ?? id
+
+  const toggle = (id: string, focus = true) => {
+    const isActive = selected.includes(id)
+    const next = isActive ? selected.filter((v) => v !== id) : [...selected, id]
+    onChange(next)
+    setQuery("")
+    if (focus) inputRef.current?.focus()
+  }
+
+  const remove = (id: string) => toggle(id, open)
+
+  return (
+    <Popover modal open={!disabled && open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <ScrollArea
+          ref={triggerRef}
+          onPointerDownCapture={(e) => {
+            if (
+              e.target !== triggerRef.current &&
+              e.target !== inputRef.current
+            )
+              return
+
+            e.stopPropagation()
+            inputRef.current?.focus()
+          }}
+          onClickCapture={(e) => {
+            if (
+              e.target !== triggerRef.current &&
+              e.target !== inputRef.current
+            )
+              return
+            e.stopPropagation()
+          }}
+          type="always"
+          scrollHideDelay={0}
+          className={cn(
+            "max-h-48 overflow-y-auto rounded-md border border-accent transition-colors duration-300 focus-within:border-content-subdued",
+            "**:data-radix-scroll-area-thumb:bg-content-muted data-[state=open]:border-content-subdued",
+            className,
+          )}
+        >
+          <div className="flex min-h-9 w-full flex-wrap items-center gap-x-2 gap-y-2 p-2 text-sm">
+            {selected.map((id) => (
+              <Badge
+                key={id}
+                className="h-5 cursor-pointer text-content-muted"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  remove(id)
+                }}
+              >
+                {resolveLabel(id)} <span className="ml-1">&times;</span>
+              </Badge>
+            ))}
+
+            <Input
+              ref={inputRef}
+              value={query}
+              disabled={disabled}
+              autoFocus={autoFocus}
+              placeholder={
+                selected.length ? "" : (placeholder ?? config.searchPlaceholder)
+              }
+              fieldSize="sm"
+              className="h-5 flex-1 border-none"
+              onChange={(e) => {
+                setQuery(e.target.value)
+                setOpen(true)
+              }}
+              onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === "Tab") {
+                  setOpen(false)
+                  return
+                }
+
+                if (e.key === "Backspace" && !query && selected.length) {
+                  remove(selected[selected.length - 1])
+                } else if (e.key === "Escape") {
+                  setOpen(false)
+                  setQuery("")
+                }
+              }}
+              onFocus={() => setOpen(true)}
+            />
+          </div>
+        </ScrollArea>
+      </PopoverTrigger>
+
+      <PopoverContent
+        align="start"
+        className="min-w-64 p-0"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        onCloseAutoFocus={(e) => e.preventDefault()}
+      >
+        <Command shouldFilter={false}>
+          <CommandList>
+            <ScrollArea className={cn(visibleOptions.length > 5 && "h-48")}>
+              {isSearching ? (
+                <div className="flex w-full justify-center py-4">
+                  <Loading.Dots className="bg-content-subdued!" />
+                </div>
+              ) : (
+                visibleOptions.map((option) => {
+                  const label = getLabel(option)
+
+                  return (
+                    <CommandItem
+                      key={option.id}
+                      tabIndex={-1}
+                      onSelect={() => toggle(option.id)}
+                      className="cursor-pointer"
+                    >
+                      <Checkbox
+                        checked={selected.includes(option.id)}
+                        className="pointer-events-none mr-2"
+                      />
+                      {label}
+                    </CommandItem>
+                  )
+                })
+              )}
+            </ScrollArea>
+
+            {!isSearching && visibleOptions.length === 0 && (
+              <CommandEmpty className="p-2 text-sm text-content-normal">
+                {config.emptyMessage}
+              </CommandEmpty>
+            )}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  )
+}

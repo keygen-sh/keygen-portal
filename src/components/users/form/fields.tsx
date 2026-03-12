@@ -34,8 +34,8 @@ import {
 import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
+import * as Search from "@/components/search"
 import MultiSelect from "@/components/multi-select"
-import SearchSelect from "@/components/search-select"
 import KeyValueInput from "@/components/key-value-input"
 import TooltipSelectItem from "@/components/tooltip-select-item"
 
@@ -514,7 +514,7 @@ function GroupIdField({
             tooltip={descriptions.group}
             optional
           >
-            <SearchSelect
+            <Search.Select
               resource="groups"
               value={field.value}
               onChange={(value) => field.onChange(value)}

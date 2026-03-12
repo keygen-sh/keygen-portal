@@ -22,7 +22,7 @@ import {
 import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
-import SearchSelect from "@/components/search-select"
+import * as Search from "@/components/search"
 import KeyValueInput from "@/components/key-value-input"
 
 type Descriptions = typeof MachineFormFieldDescriptions
@@ -310,7 +310,7 @@ function LicenseIdField({
             variant={fieldVariant}
             tooltip={descriptions.license}
           >
-            <SearchSelect
+            <Search.Select
               resource="licenses"
               value={field.value}
               onChange={(value) => field.onChange(value)}
@@ -639,7 +639,7 @@ function GroupIdField({
             tooltip={descriptions.group}
             optional
           >
-            <SearchSelect
+            <Search.Select
               resource="groups"
               value={field.value}
               onChange={(value) => field.onChange(value)}
@@ -679,7 +679,7 @@ function OwnerIdField({
             tooltip={descriptions.owner}
             optional
           >
-            <SearchSelect
+            <Search.Select
               resource="users"
               value={field.value}
               onChange={(value) => field.onChange(value)}

@@ -1,11 +1,13 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
+
+import { SearchableResource } from "@/types/search"
 import { type APIResponse, type AnyResource } from "@/types/api"
 
 config.validate()
 
 interface SearchProps {
-  type: "users" | "licenses" | "machines" | "groups"
+  type: SearchableResource
   query: Record<string, string>
   op?: "AND" | "OR"
 }

@@ -1,11 +1,13 @@
 import { useQuery } from "@tanstack/react-query"
 
+import { SearchableResource } from "@/types/search"
+
 import { useEnvironment } from "@/hooks/use-environment"
 
 import * as keygen from "@/keygen"
 
 export function useSearch(
-  type: "users" | "licenses" | "machines" | "groups" | null,
+  type: SearchableResource | null,
   query: Record<string, string>,
   op?: "AND" | "OR",
 ) {
@@ -14,7 +16,7 @@ export function useSearch(
     type != null && Object.values(query).some((v) => v.length >= 3)
 
   return useQuery({
-    queryKey: ["search", type, query, { environment: code }],
+    queryKey: ["search", type, query, op, { environment: code }],
     queryFn: () =>
       keygen
         .search({ type: type!, query, op })

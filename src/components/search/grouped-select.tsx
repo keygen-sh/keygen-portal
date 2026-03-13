@@ -237,6 +237,7 @@ export default function GroupedSearchSelect<T extends SearchOption>({
                       return (
                         <CommandItem
                           key={option.id}
+                          value={option.id}
                           onSelect={() => handleSelect(option.id)}
                           className="cursor-pointer pl-4"
                         >

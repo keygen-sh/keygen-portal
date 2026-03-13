@@ -19,7 +19,11 @@ import {
 
 import { useSearch } from "@/queries/search"
 import { resourceConfigs, getDefaultLabel } from "@/lib/search"
-import { SearchableResource, SearchOption } from "@/types/search"
+import {
+  SearchOption,
+  SearchOperator,
+  SearchableResource,
+} from "@/types/search"
 
 import * as Loading from "@/components/loading"
 
@@ -59,7 +63,7 @@ export default function SearchMultiSelect<T extends SearchOption>({
     [
       SearchableResource | null,
       Record<string, string>,
-      ("AND" | "OR") | undefined,
+      SearchOperator | undefined,
     ]
   >(() => {
     if (query.length < 3) {

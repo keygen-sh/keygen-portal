@@ -14,7 +14,11 @@ import { ChevronsUpDown } from "lucide-react"
 
 import { useSearch } from "@/queries/search"
 import { resourceConfigs, getDefaultLabel } from "@/lib/search"
-import { SearchableResource, SearchOption } from "@/types/search"
+import {
+  SearchOption,
+  SearchOperator,
+  SearchableResource,
+} from "@/types/search"
 
 import { cn } from "@/lib/utils"
 import { truncator, TruncateStyle } from "@/lib/truncate"
@@ -75,7 +79,7 @@ export default function SearchSelect<T extends SearchOption>({
     [
       SearchableResource | null,
       Record<string, string>,
-      ("AND" | "OR") | undefined,
+      SearchOperator | undefined,
     ]
   >(() => {
     if (!config || !resource || query.length < 3) {

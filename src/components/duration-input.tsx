@@ -22,8 +22,8 @@ const SecondsPerMinute = 60
 const SecondsPerHour = 3600
 const SecondsPerDay = 86400
 const SecondsPerWeek = 604800
-const SecondsPerMonth = 2592000
-const SecondsPerYear = 31536000
+const SecondsPerMonth = 2629746
+const SecondsPerYear = 31556952
 
 type Unit = { key: string; label: string; seconds: number | null }
 

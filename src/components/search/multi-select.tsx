@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo, KeyboardEvent } from "react"
+import { useState, useRef, useMemo, type KeyboardEvent } from "react"
 
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
@@ -104,43 +104,36 @@ export default function SearchMultiSelect<T extends SearchOption>({
   const resolveLabel = (id: string) =>
     labelMap.get(id) ?? labelRef.current.get(id) ?? id
 
-  const toggle = (id: string, focus = true) => {
+  const toggle = (id: string) => {
     const isActive = selected.includes(id)
     const next = isActive ? selected.filter((v) => v !== id) : [...selected, id]
     onChange(next)
     setQuery("")
-    if (focus) inputRef.current?.focus()
+    inputRef.current?.focus()
   }
 
-  const remove = (id: string) => toggle(id, open)
+  const remove = (id: string) => {
+    onChange(selected.filter((v) => v !== id))
+  }
 
   return (
     <Popover modal open={!disabled && open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <ScrollArea
           ref={triggerRef}
+          tabIndex={0}
           onPointerDownCapture={(e) => {
-            if (
-              e.target !== triggerRef.current &&
-              e.target !== inputRef.current
-            )
-              return
-
+            if (e.target !== triggerRef.current) return
             e.stopPropagation()
-            inputRef.current?.focus()
           }}
           onClickCapture={(e) => {
-            if (
-              e.target !== triggerRef.current &&
-              e.target !== inputRef.current
-            )
-              return
+            if (e.target !== triggerRef.current) return
             e.stopPropagation()
           }}
           type="always"
           scrollHideDelay={0}
           className={cn(
-            "max-h-48 overflow-y-auto rounded-md border border-accent transition-colors duration-300 focus-within:border-content-subdued",
+            "max-h-48 cursor-pointer overflow-y-auto rounded-md border border-accent transition-colors duration-300 focus-within:border-content-subdued hover:bg-background-1",
             "**:data-radix-scroll-area-thumb:bg-content-muted data-[state=open]:border-content-subdued",
             className,
           )}
@@ -159,35 +152,11 @@ export default function SearchMultiSelect<T extends SearchOption>({
               </Badge>
             ))}
 
-            <Input
-              ref={inputRef}
-              value={query}
-              disabled={disabled}
-              autoFocus={autoFocus}
-              placeholder={
-                selected.length ? "" : (placeholder ?? config.searchPlaceholder)
-              }
-              fieldSize="sm"
-              className="h-5 flex-1 border-none"
-              onChange={(e) => {
-                setQuery(e.target.value)
-                setOpen(true)
-              }}
-              onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
-                if (e.key === "Tab") {
-                  setOpen(false)
-                  return
-                }
-
-                if (e.key === "Backspace" && !query && selected.length) {
-                  remove(selected[selected.length - 1])
-                } else if (e.key === "Escape") {
-                  setOpen(false)
-                  setQuery("")
-                }
-              }}
-              onFocus={() => setOpen(true)}
-            />
+            {selected.length === 0 && (
+              <span className="pointer-events-none text-content-subdued">
+                {placeholder ?? config.searchPlaceholder}
+              </span>
+            )}
           </div>
         </ScrollArea>
       </PopoverTrigger>
@@ -195,10 +164,31 @@ export default function SearchMultiSelect<T extends SearchOption>({
       <PopoverContent
         align="start"
         className="min-w-64 p-0"
-        onOpenAutoFocus={(e) => e.preventDefault()}
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+          inputRef.current?.focus()
+        }}
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
         <Command shouldFilter={false}>
+          <div className="border-b border-accent p-2">
+            <Input
+              ref={inputRef}
+              value={query}
+              placeholder={config.searchPlaceholder}
+              autoFocus={autoFocus}
+              fieldSize="sm"
+              className="h-8"
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === "Escape") {
+                  setOpen(false)
+                  setQuery("")
+                }
+              }}
+            />
+          </div>
+
           <CommandList>
             <ScrollArea className={cn(visibleOptions.length > 5 && "h-48")}>
               {isSearching ? (
@@ -212,7 +202,6 @@ export default function SearchMultiSelect<T extends SearchOption>({
                   return (
                     <CommandItem
                       key={option.id}
-                      tabIndex={-1}
                       onSelect={() => toggle(option.id)}
                       className="cursor-pointer"
                     >

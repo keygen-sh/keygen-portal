@@ -75,9 +75,12 @@ export function useCreateProcess() {
     },
 
     onSuccess: (newProcess) => {
-      queryClient.setQueryData<Process[]>(
+      queryClient.setQueryData(
         ["processes", { environment: code }],
-        (old) => (old ? [newProcess, ...old] : [newProcess]),
+        (old: Process[] | undefined) => {
+          if (Array.isArray(old)) return [newProcess, ...old]
+          return undefined
+        },
       )
       queryClient.setQueryData(
         ["processes", newProcess.id, { environment: code }],

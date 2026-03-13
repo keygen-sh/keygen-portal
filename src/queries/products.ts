@@ -73,9 +73,12 @@ export function useCreateProduct() {
       }),
 
     onSuccess: (newProduct) => {
-      queryClient.setQueryData<Product[]>(
+      queryClient.setQueryData(
         ["products", { environment: code }],
-        (old) => (old ? [newProduct, ...old] : [newProduct]),
+        (old: Product[] | undefined) => {
+          if (Array.isArray(old)) return [newProduct, ...old]
+          return undefined
+        },
       )
       queryClient.setQueryData(
         ["products", newProduct.id, { environment: code }],

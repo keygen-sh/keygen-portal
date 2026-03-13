@@ -80,9 +80,12 @@ export function useCreateEntitlement() {
     onSuccess: (newEntitlement) => {
       if (!newEntitlement || !newEntitlement.id) return
 
-      queryClient.setQueryData<Entitlement[]>(
+      queryClient.setQueryData(
         ["entitlements", { environment: code }],
-        (old) => (old ? [newEntitlement, ...old] : [newEntitlement]),
+        (old: Entitlement[] | undefined) => {
+          if (Array.isArray(old)) return [newEntitlement, ...old]
+          return undefined
+        },
       )
       queryClient.setQueryData(
         ["entitlements", newEntitlement.id, { environment: code }],

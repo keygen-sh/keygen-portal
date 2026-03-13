@@ -61,6 +61,7 @@ export function useListPolicies(params?: { page: number; pageSize: number }) {
 
 export function useCreatePolicy() {
   const queryClient = useQueryClient()
+  const { code } = useEnvironment()
 
   return useMutation<Policy, APIError, Schemas.Policies.CreateValues>({
     mutationFn: async (values) => {
@@ -70,22 +71,16 @@ export function useCreatePolicy() {
         throw new APIError(response.errors[0])
       }
 
-      const policy = response.data
-
-      const entitlementIds = values.entitlements?.attach ?? []
-      if (entitlementIds.length > 0) {
-        await keygen.policies.attachEntitlements({
-          policyId: policy.id,
-          entitlementIds,
-        })
-      }
-
-      return policy
+      return response.data
     },
 
     onSuccess: (newPolicy) => {
-      queryClient.setQueryData<Policy[]>(["policies"], (old) =>
-        old ? [newPolicy, ...old] : [newPolicy],
+      queryClient.setQueryData(
+        ["policies", { environment: code }],
+        (old: Policy[] | undefined) => {
+          if (Array.isArray(old)) return [newPolicy, ...old]
+          return undefined
+        },
       )
       queryClient.setQueryData(["policy", newPolicy.id], newPolicy)
     },

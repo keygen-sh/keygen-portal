@@ -75,9 +75,12 @@ export function useCreateComponent() {
     },
 
     onSuccess: (newComponent) => {
-      queryClient.setQueryData<Component[]>(
+      queryClient.setQueryData(
         ["components", { environment: code }],
-        (old) => (old ? [newComponent, ...old] : [newComponent]),
+        (old: Component[] | undefined) => {
+          if (Array.isArray(old)) return [newComponent, ...old]
+          return undefined
+        },
       )
       queryClient.setQueryData(
         ["components", newComponent.id, { environment: code }],

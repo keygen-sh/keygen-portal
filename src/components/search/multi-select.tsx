@@ -206,6 +206,7 @@ export default function SearchMultiSelect<T extends SearchOption>({
                   return (
                     <CommandItem
                       key={option.id}
+                      value={option.id}
                       onSelect={() => toggle(option.id)}
                       className="cursor-pointer"
                     >

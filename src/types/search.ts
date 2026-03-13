@@ -7,4 +7,6 @@ export type SearchableResource =
   | "products"
   | "policies"
 
+export type SearchOperator = "AND" | "OR"
+
 export type SearchOption = { id: string }

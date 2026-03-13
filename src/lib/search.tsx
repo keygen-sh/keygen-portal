@@ -1,4 +1,8 @@
-import { SearchableResource, SearchOption } from "@/types/search"
+import {
+  SearchOption,
+  SearchOperator,
+  SearchableResource,
+} from "@/types/search"
 import {
   License,
   Group,
@@ -35,7 +39,7 @@ export interface ResourceConfig<T extends SearchOption = SearchOption> {
   emptyMessage: React.ReactElement
   searchQuery: (term: string) => {
     query: Record<string, string>
-    op?: "AND" | "OR"
+    op?: SearchOperator
   }
 }
 

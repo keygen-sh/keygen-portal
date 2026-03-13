@@ -1,7 +1,7 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
 
-import { SearchableResource } from "@/types/search"
+import { SearchOperator, SearchableResource } from "@/types/search"
 import { type APIResponse, type AnyResource } from "@/types/api"
 
 config.validate()
@@ -9,7 +9,7 @@ config.validate()
 interface SearchProps {
   type: SearchableResource
   query: Record<string, string>
-  op?: "AND" | "OR"
+  op?: SearchOperator
 }
 
 export async function search({

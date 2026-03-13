@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 
-import { SearchableResource } from "@/types/search"
+import { SearchOperator, SearchableResource } from "@/types/search"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
@@ -9,7 +9,7 @@ import * as keygen from "@/keygen"
 export function useSearch(
   type: SearchableResource | null,
   query: Record<string, string>,
-  op?: "AND" | "OR",
+  op?: SearchOperator,
 ) {
   const { code } = useEnvironment()
   const enabled =

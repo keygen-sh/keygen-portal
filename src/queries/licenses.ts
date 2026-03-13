@@ -72,23 +72,16 @@ export function useCreateLicense() {
         throw new APIError(response.errors[0])
       }
 
-      const license = response.data
-
-      const entitlementIds = values.entitlements?.attach ?? []
-      if (entitlementIds.length > 0) {
-        await keygen.licenses.attachEntitlements({
-          licenseId: license.id,
-          entitlementIds,
-        })
-      }
-
-      return license
+      return response.data
     },
 
     onSuccess: async (newLicense) => {
       queryClient.setQueryData(
-        ["licenses", newLicense.id, { environment: code }],
-        newLicense,
+        ["licenses", { environment: code }],
+        (old: License[] | undefined) => {
+          if (Array.isArray(old)) return [newLicense, ...old]
+          return undefined
+        },
       )
       await queryClient.invalidateQueries({
         queryKey: ["licenses", { environment: code }],

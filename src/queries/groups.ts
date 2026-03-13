@@ -77,9 +77,12 @@ export function useCreateGroup() {
     },
 
     onSuccess: (newGroup) => {
-      queryClient.setQueryData<Group[]>(
+      queryClient.setQueryData(
         ["groups", { environment: code }],
-        (old) => (old ? [newGroup, ...old] : [newGroup]),
+        (old: Group[] | undefined) => {
+          if (Array.isArray(old)) return [newGroup, ...old]
+          return undefined
+        },
       )
       queryClient.setQueryData(
         ["groups", newGroup.id, { environment: code }],

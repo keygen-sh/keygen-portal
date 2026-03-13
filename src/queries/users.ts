@@ -75,9 +75,12 @@ export function useCreateUser() {
     },
 
     onSuccess: (newUser) => {
-      queryClient.setQueryData<User[]>(
+      queryClient.setQueryData(
         ["users", { environment: code }],
-        (old) => (old ? [newUser, ...old] : [newUser]),
+        (old: User[] | undefined) => {
+          if (Array.isArray(old)) return [newUser, ...old]
+          return undefined
+        },
       )
       queryClient.setQueryData(
         ["users", newUser.id, { environment: code }],

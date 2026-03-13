@@ -65,8 +65,12 @@ export function useCreateEnvironment() {
     },
 
     onSuccess: (newEnvironment) => {
-      queryClient.setQueryData<Environment[]>(["environments"], (old) =>
-        old ? [newEnvironment, ...old] : [newEnvironment],
+      queryClient.setQueryData(
+        ["environments"],
+        (old: Environment[] | undefined) => {
+          if (Array.isArray(old)) return [newEnvironment, ...old]
+          return undefined
+        },
       )
       queryClient.setQueryData(
         ["environment", newEnvironment.id],

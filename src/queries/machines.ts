@@ -76,9 +76,12 @@ export function useCreateMachine() {
     },
 
     onSuccess: (newMachine) => {
-      queryClient.setQueryData<Machine[]>(
+      queryClient.setQueryData(
         ["machines", { environment: code }],
-        (old) => (old ? [newMachine, ...old] : [newMachine]),
+        (old: Machine[] | undefined) => {
+          if (Array.isArray(old)) return [newMachine, ...old]
+          return undefined
+        },
       )
       queryClient.setQueryData(
         ["machines", newMachine.id, { environment: code }],

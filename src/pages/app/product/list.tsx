@@ -56,12 +56,6 @@ export default function ProductsList() {
           columns={columns}
           pageCount={totalPages}
           isLoading={productsLoading}
-          hideOnMobile={[
-            "attributes.id",
-            "attributes.url",
-            "attributes.created",
-            "attributes.updated",
-          ]}
           onRowClick={(product) => navigateToResource(product)}
         />
       </ScrollArea>

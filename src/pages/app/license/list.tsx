@@ -15,7 +15,7 @@ import DataTable from "@/components/data-table"
 import Pagination from "@/components/pagination"
 import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
-import { ScrollArea } from "@radix-ui/react-scroll-area"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 export default function LicensesList() {
   const table = useDataTable()
@@ -57,13 +57,6 @@ export default function LicensesList() {
           columns={columns}
           pageCount={totalPages}
           isLoading={licensesLoading}
-          hideOnMobile={[
-            "attributes.key",
-            "relationships.policy",
-            "relationships.product",
-            "attributes.expiry",
-            "attributes.created",
-          ]}
           onRowClick={(license) => navigateToResource(license)}
         />
       </ScrollArea>

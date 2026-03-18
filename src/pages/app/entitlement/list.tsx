@@ -56,13 +56,6 @@ export default function EntitlementsList() {
           columns={columns}
           pageCount={totalPages}
           isLoading={entitlementsLoading}
-          hideOnMobile={[
-            "attributes.id",
-            "attributes.code",
-            "attributes.url",
-            "attributes.created",
-            "attributes.updated",
-          ]}
           onRowClick={(entitlement) => navigateToResource(entitlement)}
         />
       </ScrollArea>

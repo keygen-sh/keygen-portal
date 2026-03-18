@@ -57,12 +57,6 @@ export default function MachinesList() {
           columns={columns}
           pageCount={totalPages}
           isLoading={machinesLoading}
-          hideOnMobile={[
-            "relationships.license",
-            "relationships.product",
-            "attributes.created",
-            "attributes.updated",
-          ]}
           onRowClick={(machine) => navigateToResource(machine)}
         />
       </ScrollArea>

@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef } from "react"
+import { useState, useMemo, useRef } from "react"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
 
 import { Input } from "@/components/ui/input"
@@ -141,58 +141,31 @@ export default function DurationInput({
   const [unit, setUnit] = useState<Unit>(() =>
     selectUnit(value, availableUnits),
   )
-  const [num, setNum] = useState<number | null>(() => {
-    const selectedUnit = selectUnit(value, availableUnits)
-    if (selectedUnit.seconds == null) return null
-    if (typeof value === "number" && value > 0)
-      return Math.max(1, Math.round(value / selectedUnit.seconds))
-    return null
-  })
   const [unitsOpen, setUnitsOpen] = useState(false)
   const [presetsOpen, setPresetsOpen] = useState(false)
 
   const inputRef = useRef<HTMLInputElement>(null)
-  const prevValueRef = useRef(value)
-  const prevUnitRef = useRef(unit)
 
-  if (value !== prevValueRef.current || unit !== prevUnitRef.current) {
-    prevValueRef.current = value
-    prevUnitRef.current = unit
+  const num =
+    value != null && value > 0 && unit.seconds != null
+      ? Math.max(1, Math.round(value / unit.seconds))
+      : null
 
-    const nextNum =
-      value != null && value > 0 && unit.seconds != null
-        ? Math.max(1, Math.round(value / unit.seconds))
-        : null
-
-    if (nextNum !== num) {
-      setNum(nextNum)
-    }
+  const apply = (n: number | null, u: Unit) => {
+    if (n == null || u.seconds == null) onChange(null)
+    else onChange(n > 0 ? n * u.seconds : null)
   }
 
   const selectPreset = (seconds: number | null) => {
     const selectedUnit = selectUnit(seconds, availableUnits)
     setUnit(selectedUnit)
-    setNum(
-      seconds == null || selectedUnit.seconds == null
-        ? null
-        : Math.max(1, Math.round(seconds / selectedUnit.seconds)),
-    )
     setPresetsOpen(false)
     onChange(seconds)
   }
 
-  const apply = useCallback(
-    (n: number | null, u: Unit) => {
-      if (n == null || u.seconds == null) onChange(null)
-      else onChange(n > 0 ? n * u.seconds : null)
-    },
-    [onChange],
-  )
-
   const onNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.currentTarget.value
     const next = raw === "" ? null : Number(raw)
-    setNum(next)
 
     // Switch to a default unit if current unit is unlimited
     if (unit.seconds == null && next != null) {
@@ -213,7 +186,6 @@ export default function DurationInput({
 
     // default when switching from unlimited to another unit
     if (num == null && u.seconds != null) {
-      setNum(1)
       apply(1, u)
     } else {
       apply(num, u)

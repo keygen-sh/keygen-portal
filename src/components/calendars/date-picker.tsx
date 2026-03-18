@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -20,12 +20,6 @@ export default function DatePickerCalendar({
   ...props
 }: DatePickerCalendarProps) {
   const [internalDate, setInternalDate] = useState<Date | undefined>(selected)
-  const prevSelectedRef = useRef(selected)
-
-  if (selected !== prevSelectedRef.current) {
-    prevSelectedRef.current = selected
-    setInternalDate(selected)
-  }
 
   const handleApply = () => {
     onApply?.(internalDate)

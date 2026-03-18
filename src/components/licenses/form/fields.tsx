@@ -466,6 +466,7 @@ function ExpiryField({
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
                     <Calendars.DatePicker
+                      key={selectedDate?.toISOString()}
                       selected={selectedDate}
                       onApply={(date) => {
                         field.onChange(date ? date.toISOString() : null)

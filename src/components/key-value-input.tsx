@@ -44,13 +44,16 @@ export default function KeyValueInput<
 
   if (value !== lastValueRef.current) {
     lastValueRef.current = value
+
     const entries = (field.value as Record<string, string> | undefined) ?? {}
-    const nextRows = Object.entries(entries).map(([key, value], i) => ({
-      id: `${i}-${key}`,
-      key,
-      value,
-    }))
-    setRows(nextRows)
+
+    setRows(
+      Object.entries(entries).map(([key, value], i) => ({
+        id: `${i}-${key}`,
+        key,
+        value,
+      })),
+    )
   }
 
   const commit = (draft: Pair[] = rows) => {

@@ -53,12 +53,6 @@ export default function UsersList() {
           columns={columns}
           pageCount={totalPages}
           isLoading={usersLoading}
-          hideOnMobile={[
-            "attributes.fullName",
-            "attributes.role",
-            "attributes.created",
-            "attributes.updated",
-          ]}
           onRowClick={(user) => navigateToResource(user)}
         />
       </ScrollArea>

@@ -57,12 +57,6 @@ export default function PoliciesList() {
           columns={columns}
           pageCount={totalPages}
           isLoading={policiesLoading}
-          hideOnMobile={[
-            "attributes.id",
-            "attributes.url",
-            "attributes.created",
-            "attributes.updated",
-          ]}
           onRowClick={(policy) => navigateToResource(policy)}
         />
       </ScrollArea>

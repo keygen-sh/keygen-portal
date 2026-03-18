@@ -57,13 +57,6 @@ export default function ProcessesList() {
           columns={columns}
           pageCount={totalPages}
           isLoading={processesLoading}
-          hideOnMobile={[
-            "relationships.machine",
-            "relationships.license",
-            "relationships.product",
-            "attributes.created",
-            "attributes.updated",
-          ]}
           onRowClick={(process) => navigateToResource(process)}
         />
       </ScrollArea>

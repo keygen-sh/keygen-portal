@@ -56,13 +56,6 @@ export default function GroupsList() {
           columns={columns}
           pageCount={totalPages}
           isLoading={groupsLoading}
-          hideOnMobile={[
-            "id",
-            "attributes.maxUsers",
-            "attributes.maxLicenses",
-            "attributes.maxMachines",
-            "attributes.created",
-          ]}
           onRowClick={(group) => navigateToResource(group)}
         />
       </ScrollArea>

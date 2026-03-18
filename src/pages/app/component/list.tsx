@@ -57,12 +57,6 @@ export default function ComponentsList() {
           columns={columns}
           pageCount={totalPages}
           isLoading={componentsLoading}
-          hideOnMobile={[
-            "relationships.machine",
-            "relationships.license",
-            "attributes.created",
-            "attributes.updated",
-          ]}
           onRowClick={(component) => navigateToResource(component)}
         />
       </ScrollArea>

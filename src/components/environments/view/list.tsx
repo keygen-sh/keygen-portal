@@ -39,7 +39,6 @@ export default function EnvironmentsList({
         pageCount={totalPages}
         isLoading={isLoading}
         onRowClick={onViewDetails}
-        hideOnMobile={["attributes.isolationStrategy"]}
       />
 
       <PageFooter className="border-none">

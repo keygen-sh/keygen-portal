@@ -140,9 +140,6 @@ export default function DataTable<T extends TableResource>({
 
   const scrollableColumnCount = tableColumns.length - clampedStaticColumns
 
-  // Last static column gets scroll buttons in header
-  const lastStaticColumnId = tableColumns[clampedStaticColumns - 1]?.id ?? null
-
   const canScrollLeft = scrollIndex > 0
   const canScrollRight = !allColumnsVisible && scrollOffset < maxScrollOffset
 
@@ -150,13 +147,6 @@ export default function DataTable<T extends TableResource>({
   useEffect(() => {
     setScrollIndex(0)
   }, [table.page])
-
-  // Clamp scroll index if columns change and we have fewer columns to scroll through
-  useEffect(() => {
-    if (scrollIndex > scrollableColumnCount) {
-      setScrollIndex(scrollableColumnCount)
-    }
-  }, [scrollIndex, scrollableColumnCount])
 
   // Read offset width from each header cell to get rendered widths
   const measureColumns = useCallback(() => {
@@ -196,8 +186,6 @@ export default function DataTable<T extends TableResource>({
 
       measureColumns()
     }
-
-    measure()
 
     const observer = new ResizeObserver(measure)
     if (container) observer.observe(container)
@@ -255,7 +243,6 @@ export default function DataTable<T extends TableResource>({
                       {group.headers.map((header, columnIndex) => {
                         const canSort = header.column.getCanSort()
                         const direction = header.column.getIsSorted()
-                        const totalColumns = group.headers.length
 
                         return (
                           <TableHead
@@ -265,7 +252,8 @@ export default function DataTable<T extends TableResource>({
                             }}
                             className={cn(
                               "cursor-auto border-b border-accent bg-background text-sm select-none md:text-xs",
-                              columnIndex < totalColumns - 1 && "border-r",
+                              columnIndex < group.headers.length - 1 &&
+                                "border-r",
                               columnIndex === clampedStaticColumns - 1 &&
                                 "after:pointer-events-none after:absolute after:inset-y-0 after:left-full after:w-6 after:bg-gradient-to-r after:from-secondary/5 after:to-transparent after:transition-opacity after:duration-300 after:md:w-24",
                               columnIndex === clampedStaticColumns - 1 &&
@@ -300,7 +288,7 @@ export default function DataTable<T extends TableResource>({
                               </Button>
 
                               {/* Scroll buttons */}
-                              {header.column.id === lastStaticColumnId && (
+                              {columnIndex === clampedStaticColumns - 1 && (
                                 <div
                                   className="ml-auto flex items-center gap-0.5"
                                   onClick={(e) => e.stopPropagation()}
@@ -310,7 +298,9 @@ export default function DataTable<T extends TableResource>({
                                     size="icon"
                                     className="h-6 w-6"
                                     disabled={!canScrollLeft}
-                                    onClick={() => setScrollIndex((i) => i - 1)}
+                                    onClick={() =>
+                                      setScrollIndex((i) => Math.max(i - 1, 0))
+                                    }
                                   >
                                     <ChevronLeft className="h-3 w-3" />
                                   </Button>
@@ -319,7 +309,11 @@ export default function DataTable<T extends TableResource>({
                                     size="icon"
                                     className="h-6 w-6"
                                     disabled={!canScrollRight}
-                                    onClick={() => setScrollIndex((i) => i + 1)}
+                                    onClick={() =>
+                                      setScrollIndex((i) =>
+                                        Math.min(i + 1, scrollableColumnCount),
+                                      )
+                                    }
                                   >
                                     <ChevronRight className="h-3 w-3" />
                                   </Button>

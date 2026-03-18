@@ -1,4 +1,4 @@
-import { useFormContext, useFieldArray } from "react-hook-form"
+import { useFormContext, useFieldArray, useWatch } from "react-hook-form"
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -139,18 +139,12 @@ export default function PoliciesFormFields({
   mode = PolicyMode.Create,
   schema,
 }: PoliciesFormFieldsProps) {
-  const form = useFormContext<Schemas.Policies.AllValues>()
-
   const descriptions =
     schema === "create"
       ? PolicyCreateFormFieldDescriptions
       : schema === "edit"
         ? PolicyEditFormFieldDescriptions
         : PolicyFormFieldDescriptions
-
-  const duration = form.watch("duration")
-  const requireHeartbeat = form.watch("requireHeartbeat")
-  const checkInInterval = form.watch("checkInInterval")
 
   const fields = include
     ? include
@@ -186,7 +180,6 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "checkInIntervalCount"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
-                disabled={!checkInInterval}
               />
             )
           case "componentMatchingStrategy":
@@ -228,7 +221,6 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "expirationBasis"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
-                disabled={!duration}
               />
             )
           case "expirationStrategy":
@@ -238,7 +230,6 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "expirationStrategy"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
-                disabled={!duration}
               />
             )
           case "floating":
@@ -256,7 +247,6 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "heartbeatBasis"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
-                disabled={!requireHeartbeat}
               />
             )
           case "heartbeatCullStrategy":
@@ -266,7 +256,6 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "heartbeatCullStrategy"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
-                disabled={!requireHeartbeat}
               />
             )
           case "heartbeatDuration":
@@ -276,7 +265,6 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "heartbeatDuration"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
-                disabled={!requireHeartbeat}
               />
             )
           case "heartbeatResurrectionStrategy":
@@ -286,7 +274,6 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "heartbeatResurrectionStrategy"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
-                disabled={!requireHeartbeat}
               />
             )
           case "machineLeasingStrategy":
@@ -421,7 +408,6 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "renewalBasis"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
-                disabled={!duration}
               />
             )
           case "requireCheckIn":
@@ -521,7 +507,6 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "transferStrategy"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
-                disabled={!duration}
               />
             )
           case "usePool":
@@ -790,6 +775,8 @@ function ExpirationStrategyField({
   disabled?: boolean
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const duration = useWatch<Schemas.Policies.AllValues>({ name: "duration" })
+  const isDisabled = disabled || !duration
 
   return (
     <FormField
@@ -806,7 +793,7 @@ function ExpirationStrategyField({
               value={field.value}
               onChange={(value) => field.onChange(value)}
               invalid={!!fieldState.error}
-              disabled={disabled}
+              disabled={isDisabled}
               disabledTooltip="Set a duration to configure this field."
               autoFocus={autoFocus}
             >
@@ -836,6 +823,8 @@ function ExpirationBasisField({
   disabled?: boolean
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const duration = useWatch<Schemas.Policies.AllValues>({ name: "duration" })
+  const isDisabled = disabled || !duration
 
   return (
     <FormField
@@ -852,7 +841,7 @@ function ExpirationBasisField({
               value={field.value}
               onChange={(value) => field.onChange(value)}
               invalid={!!fieldState.error}
-              disabled={disabled}
+              disabled={isDisabled}
               disabledTooltip="Set a duration to configure this field."
               autoFocus={autoFocus}
             >
@@ -882,6 +871,8 @@ function RenewalBasisField({
   disabled?: boolean
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const duration = useWatch<Schemas.Policies.AllValues>({ name: "duration" })
+  const isDisabled = disabled || !duration
 
   return (
     <FormField
@@ -898,7 +889,7 @@ function RenewalBasisField({
               value={field.value}
               onChange={(value) => field.onChange(value)}
               invalid={!!fieldState.error}
-              disabled={disabled}
+              disabled={isDisabled}
               disabledTooltip="Set a duration to configure this field."
               autoFocus={autoFocus}
             >
@@ -928,6 +919,8 @@ function TransferStrategyField({
   disabled?: boolean
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const duration = useWatch<Schemas.Policies.AllValues>({ name: "duration" })
+  const isDisabled = disabled || !duration
 
   return (
     <FormField
@@ -944,7 +937,7 @@ function TransferStrategyField({
               value={field.value}
               onChange={(value) => field.onChange(value)}
               invalid={!!fieldState.error}
-              disabled={disabled}
+              disabled={isDisabled}
               disabledTooltip="Set a duration to configure this field."
               autoFocus={autoFocus}
             >
@@ -1031,6 +1024,10 @@ function HeartbeatDurationField({
   disabled?: boolean
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const requireHeartbeat = useWatch<Schemas.Policies.AllValues>({
+    name: "requireHeartbeat",
+  })
+  const isDisabled = disabled || !requireHeartbeat
 
   return (
     <FormField
@@ -1049,7 +1046,7 @@ function HeartbeatDurationField({
                 onChange={field.onChange}
                 units={["seconds", "minutes", "hours", "days"]}
                 presets={HeartbeatPresets}
-                disabled={disabled}
+                disabled={isDisabled}
                 autoFocus={autoFocus}
               />
             </FormControl>
@@ -1073,6 +1070,10 @@ function HeartbeatBasisField({
   disabled?: boolean
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const requireHeartbeat = useWatch<Schemas.Policies.AllValues>({
+    name: "requireHeartbeat",
+  })
+  const isDisabled = disabled || !requireHeartbeat
 
   return (
     <FormField
@@ -1089,7 +1090,7 @@ function HeartbeatBasisField({
               value={field.value}
               onChange={(value) => field.onChange(value)}
               invalid={!!fieldState.error}
-              disabled={disabled}
+              disabled={isDisabled}
               disabledTooltip="Enable heartbeat to configure this field."
               autoFocus={autoFocus}
             >
@@ -1119,6 +1120,10 @@ function HeartbeatCullStrategyField({
   disabled?: boolean
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const requireHeartbeat = useWatch<Schemas.Policies.AllValues>({
+    name: "requireHeartbeat",
+  })
+  const isDisabled = disabled || !requireHeartbeat
 
   return (
     <FormField
@@ -1135,7 +1140,7 @@ function HeartbeatCullStrategyField({
               value={field.value}
               onChange={(value) => field.onChange(value)}
               invalid={!!fieldState.error}
-              disabled={disabled}
+              disabled={isDisabled}
               disabledTooltip="Enable heartbeat to configure this field."
               autoFocus={autoFocus}
             >
@@ -1165,6 +1170,10 @@ function HeartbeatResurrectionStrategyField({
   disabled?: boolean
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const requireHeartbeat = useWatch<Schemas.Policies.AllValues>({
+    name: "requireHeartbeat",
+  })
+  const isDisabled = disabled || !requireHeartbeat
 
   return (
     <FormField
@@ -1181,7 +1190,7 @@ function HeartbeatResurrectionStrategyField({
               value={field.value}
               onChange={(value) => field.onChange(value)}
               invalid={!!fieldState.error}
-              disabled={disabled}
+              disabled={isDisabled}
               disabledTooltip="Enable heartbeat to configure this field."
               autoFocus={autoFocus}
             >
@@ -1992,6 +2001,10 @@ function CheckInIntervalCountField({
   disabled?: boolean
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const checkInInterval = useWatch<Schemas.Policies.AllValues>({
+    name: "checkInInterval",
+  })
+  const isDisabled = disabled || !checkInInterval
 
   return (
     <FormField
@@ -2005,7 +2018,7 @@ function CheckInIntervalCountField({
             tooltip={descriptions.checkInIntervalCount}
           >
             <FormControl>
-              {disabled ? (
+              {isDisabled ? (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <span tabIndex={0}>

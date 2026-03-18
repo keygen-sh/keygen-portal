@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useNavigate, Link } from "@tanstack/react-router"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -34,9 +34,10 @@ const passwordSchema = z.object({
  */
 export default function Password() {
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [localError, setLocalError] = useState<string | null>(null)
 
   const auth = useAuth()
+  const error = localError || auth.error
 
   const navigate = useNavigate()
 
@@ -48,16 +49,9 @@ export default function Password() {
     },
   })
 
-  // Unify global error state with local error state
-  useEffect(() => {
-    if (auth.error) {
-      setError(auth.error)
-    }
-  }, [auth.error])
-
   async function onSubmitPassword() {
     setLoading(true)
-    setError(null)
+    setLocalError(null)
     auth.setError(null)
 
     const { password, remember } = passwordForm.getValues()
@@ -73,7 +67,7 @@ export default function Password() {
 
         switch (code) {
           case AuthErrorCode.PasswordInvalid:
-            setError("Invalid password. Please try again.")
+            setLocalError("Invalid password. Please try again.")
             break
           case AuthErrorCode.OtpRequired:
             auth.setPassword(password)
@@ -139,7 +133,8 @@ export default function Password() {
                     disabled={loading}
                     onChange={(e) => {
                       field.onChange(e)
-                      setError(null)
+                      setLocalError(null)
+                      auth.setError(null)
                     }}
                   />
                 </FormControl>

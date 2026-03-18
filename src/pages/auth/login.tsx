@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useNavigate, Link } from "@tanstack/react-router"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -30,9 +30,10 @@ const emailSchema = z.object({
  */
 export default function Login() {
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [localError, setLocalError] = useState<string | null>(null)
 
   const auth = useAuth()
+  const error = localError || auth.error
 
   const navigate = useNavigate()
 
@@ -41,16 +42,9 @@ export default function Login() {
     defaultValues: { username: "" },
   })
 
-  // Unify global error state with local error state
-  useEffect(() => {
-    if (auth.error) {
-      setError(auth.error)
-    }
-  }, [auth.error])
-
   async function onSubmitEmail() {
     setLoading(true)
-    setError(null)
+    setLocalError(null)
     auth.setError(null)
 
     const email = emailForm.getValues().username
@@ -72,14 +66,14 @@ export default function Login() {
           void navigate({ to: `/${keygen.config.id}/auth/password` })
           break
         case AuthErrorCode.OtpRequired:
-          setError("Invalid email. Please try again.")
+          setLocalError("Invalid email. Please try again.")
           break
         default:
           throw new Error(errors[0]?.detail)
       }
     } catch (error) {
       console.error(error)
-      setError("Service is unavailable. Please try again later.")
+      setLocalError("Service is unavailable. Please try again later.")
     } finally {
       setLoading(false)
     }
@@ -118,7 +112,8 @@ export default function Login() {
                     disabled={loading}
                     onChange={(e) => {
                       field.onChange(e)
-                      setError(null)
+                      setLocalError(null)
+                      auth.setError(null)
                     }}
                   />
                 </FormControl>

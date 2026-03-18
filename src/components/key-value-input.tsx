@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react"
+import { useState, useRef, useMemo } from "react"
 import { useController, FieldPath, FieldValues } from "react-hook-form"
 
 import { Input } from "@/components/ui/input"
@@ -42,19 +42,16 @@ export default function KeyValueInput<
   const lastValueRef = useRef<string | null>(null)
   const value = useMemo(() => JSON.stringify(field.value ?? {}), [field.value])
 
-  useEffect(() => {
-    if (value !== lastValueRef.current) {
-      const entries = (field.value as Record<string, string> | undefined) ?? {}
-
-      setRows(
-        Object.entries(entries).map(([key, value], i) => ({
-          id: `${i}-${key}`,
-          key,
-          value,
-        })),
-      )
-    }
-  }, [value, field.value])
+  if (value !== lastValueRef.current) {
+    lastValueRef.current = value
+    const entries = (field.value as Record<string, string> | undefined) ?? {}
+    const nextRows = Object.entries(entries).map(([key, value], i) => ({
+      id: `${i}-${key}`,
+      key,
+      value,
+    }))
+    setRows(nextRows)
+  }
 
   const commit = (draft: Pair[] = rows) => {
     const entries = Object.fromEntries(

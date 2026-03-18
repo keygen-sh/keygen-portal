@@ -178,11 +178,11 @@ export default function DataTable<T extends TableResource>({
       setAvailableWidth(container.getBoundingClientRect().width)
     }
   }, [
-    tableColumns.length,
     data,
     isMobile,
-    clampedStaticColumns,
     measureColumns,
+    tableColumns.length,
+    clampedStaticColumns,
   ])
 
   // Measure on container resize (e.g. sidebar toggle)
@@ -207,7 +207,7 @@ export default function DataTable<T extends TableResource>({
     }
   }, [data, table.page, measureColumns])
 
-  function getCellStyle(columnIndex: number): React.CSSProperties | undefined {
+  function getCellStyle(columnIndex: number): React.CSSProperties {
     // Render static columns above scrollable so they don't get visually cut off when scrolling
     if (columnIndex < clampedStaticColumns) {
       return {
@@ -266,6 +266,12 @@ export default function DataTable<T extends TableResource>({
                             className={cn(
                               "cursor-auto border-b border-accent bg-background text-sm select-none md:text-xs",
                               columnIndex < totalColumns - 1 && "border-r",
+                              columnIndex === clampedStaticColumns - 1 &&
+                                "after:pointer-events-none after:absolute after:inset-y-0 after:left-full after:w-6 after:bg-gradient-to-r after:from-secondary/5 after:to-transparent after:transition-opacity after:duration-300 after:md:w-24",
+                              columnIndex === clampedStaticColumns - 1 &&
+                                (canScrollLeft
+                                  ? "after:opacity-100"
+                                  : "after:opacity-0"),
                             )}
                             style={getCellStyle(columnIndex)}
                           >
@@ -352,6 +358,12 @@ export default function DataTable<T extends TableResource>({
                               className={cn(
                                 "border-b border-accent bg-background",
                                 columnIndex < cells.length - 1 && "border-r",
+                                columnIndex === clampedStaticColumns - 1 &&
+                                  "after:pointer-events-none after:absolute after:inset-y-0 after:left-full after:w-6 after:bg-gradient-to-r after:from-secondary/5 after:to-transparent after:transition-opacity after:duration-300 after:md:w-24",
+                                columnIndex === clampedStaticColumns - 1 &&
+                                  (canScrollLeft
+                                    ? "after:opacity-100"
+                                    : "after:opacity-0"),
                               )}
                               style={getCellStyle(columnIndex)}
                             >
@@ -381,7 +393,7 @@ export default function DataTable<T extends TableResource>({
             {/* Gradient hint */}
             <div
               className={cn(
-                "pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-secondary/10 to-transparent transition-opacity duration-300",
+                "pointer-events-none absolute inset-y-0 right-0 z-10 w-6 bg-gradient-to-l from-secondary/5 to-transparent transition-opacity duration-300 md:w-24",
                 canScrollRight ? "opacity-100" : "opacity-0",
               )}
             />

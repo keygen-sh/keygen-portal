@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 
 import { Skeleton } from "@/components/ui/skeleton"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -40,15 +40,10 @@ export default function AdvancedDialog({
   } = useGetPolicy(id)
 
   const [tab, setTab] = useState<"attributes" | "inspect">("attributes")
-
-  useEffect(() => {
-    if (policyError && !policyFetching) {
-      onOpenChange(false)
-    }
-  }, [policyError, policyFetching, onOpenChange])
+  const hasError = policyError && !policyFetching
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open && !hasError} onOpenChange={onOpenChange}>
       <DialogContent className="flex h-[calc(100dvh-2rem)] w-full flex-col overflow-hidden p-0 md:min-w-4xl">
         <DialogHeader className="flex items-start border-b border-accent p-4 pt-3">
           <DialogTitle className="text-base">Advanced</DialogTitle>

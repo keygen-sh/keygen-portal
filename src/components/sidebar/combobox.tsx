@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useMemo } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -53,19 +53,12 @@ export default function SidebarCombobox(): React.ReactElement {
       "__global",
   )
 
-  useEffect(() => {
-    if (environmentOptions.length === 0) {
-      setEnvironmentId(null)
-      return
-    }
-
-    if (
-      !environmentId ||
-      !environmentOptions.some((e) => e.id === environmentId)
-    ) {
-      setEnvironmentId(environmentOptions[0].id)
-    }
-  }, [environmentOptions, environmentId])
+  const resolvedEnvironmentId =
+    environmentOptions.length === 0
+      ? null
+      : environmentOptions.some((e) => e.id === environmentId)
+        ? environmentId
+        : environmentOptions[0].id
 
   const switchEnvironment = async (id: string, newCode: string | null) => {
     if (newCode === code) {
@@ -79,7 +72,7 @@ export default function SidebarCombobox(): React.ReactElement {
   }
 
   const currentEnvironment = environmentOptions.find(
-    (e) => e.id === environmentId,
+    (e) => e.id === resolvedEnvironmentId,
   )!
 
   if (isLoading || !currentEnvironment) {
@@ -121,7 +114,7 @@ export default function SidebarCombobox(): React.ReactElement {
             <CommandList>
               <CommandGroup heading="Environments">
                 {environmentOptions.map((environment) => {
-                  const selected = environment.id === environmentId
+                  const selected = environment.id === resolvedEnvironmentId
 
                   return (
                     <CommandItem

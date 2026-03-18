@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from "react"
+import { useState, useMemo, useCallback, useRef } from "react"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
 
 import { Input } from "@/components/ui/input"
@@ -152,6 +152,22 @@ export default function DurationInput({
   const [presetsOpen, setPresetsOpen] = useState(false)
 
   const inputRef = useRef<HTMLInputElement>(null)
+  const prevValueRef = useRef(value)
+  const prevUnitRef = useRef(unit)
+
+  if (value !== prevValueRef.current || unit !== prevUnitRef.current) {
+    prevValueRef.current = value
+    prevUnitRef.current = unit
+
+    const nextNum =
+      value != null && value > 0 && unit.seconds != null
+        ? Math.max(1, Math.round(value / unit.seconds))
+        : null
+
+    if (nextNum !== num) {
+      setNum(nextNum)
+    }
+  }
 
   const selectPreset = (seconds: number | null) => {
     const selectedUnit = selectUnit(seconds, availableUnits)
@@ -164,15 +180,6 @@ export default function DurationInput({
     setPresetsOpen(false)
     onChange(seconds)
   }
-
-  useEffect(() => {
-    // recalculate num based on current unit, but preserve the unit
-    if (value != null && value > 0 && unit.seconds != null) {
-      setNum(Math.max(1, Math.round(value / unit.seconds)))
-    } else {
-      setNum(null)
-    }
-  }, [value, unit])
 
   const apply = useCallback(
     (n: number | null, u: Unit) => {

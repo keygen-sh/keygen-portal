@@ -65,6 +65,11 @@ export default function DataTable<T extends TableResource>({
 
   const [sorting, setSorting] = useState<SortingState>([])
 
+  // Horizontal scroll state
+  const [scrollIndex, setScrollIndex] = useState(0) // Which scrollable column we've scrolled past
+  const [availableWidth, setAvailableWidth] = useState(0) // Determine if columns overflow and how much to scroll
+  const containerRef = useRef<HTMLDivElement>(null) // For measuring available container width and observing resizes (e.g. sidebar toggle)
+
   // Track which pages have already animated so revisiting doesn't animate again
   const prevPageRef = useRef(table.page)
   const directionRef = useRef<1 | -1>(1)
@@ -74,14 +79,12 @@ export default function DataTable<T extends TableResource>({
     directionRef.current = table.page > prevPageRef.current ? 1 : -1
     animatedPagesRef.current.add(prevPageRef.current)
     prevPageRef.current = table.page
+
+    // Reset horizontal scroll when changing pages
+    setScrollIndex(0)
   }
 
   const shouldAnimate = !animatedPagesRef.current.has(table.page)
-
-  // Horizontal scroll state
-  const [scrollIndex, setScrollIndex] = useState(0) // Which scrollable column we've scrolled past
-  const [availableWidth, setAvailableWidth] = useState(0) // Determine if columns overflow and how much to scroll
-  const containerRef = useRef<HTMLDivElement>(null) // For measuring available container width and observing resizes (e.g. sidebar toggle)
 
   const [columnWidths, setColumnWidths] = useState<number[]>([]) // Widths of each column for calculating scroll offsets
   const headerCellRefs = useRef<(HTMLTableCellElement | null)[]>([]) // For measuring rendered header cell widths to determine column widths
@@ -142,11 +145,6 @@ export default function DataTable<T extends TableResource>({
 
   const canScrollLeft = scrollIndex > 0
   const canScrollRight = !allColumnsVisible && scrollOffset < maxScrollOffset
-
-  // Reset horizontal scroll when changing pages
-  useEffect(() => {
-    setScrollIndex(0)
-  }, [table.page])
 
   // Read offset width from each header cell to get rendered widths
   const measureColumns = useCallback(() => {

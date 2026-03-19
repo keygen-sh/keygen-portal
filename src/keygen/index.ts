@@ -43,6 +43,9 @@ export { processes }
 import * as users from "./users"
 export { users }
 
+import * as releases from "./releases"
+export { releases }
+
 import { logout } from "./logout"
 export { logout }
 

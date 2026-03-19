@@ -170,7 +170,6 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "checkInInterval"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
-                mode={mode}
               />
             )
           case "checkInIntervalCount":
@@ -207,7 +206,6 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "duration"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
-                mode={mode}
               />
             )
           case "entitlements.attach":
@@ -449,7 +447,6 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "requireHeartbeat"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
-                mode={mode}
               />
             )
           case "requireMachineScope":
@@ -719,12 +716,10 @@ function DurationField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
-  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
-  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
@@ -742,15 +737,7 @@ function DurationField({
             <FormControl>
               <DurationInput
                 value={field.value}
-                onChange={(value) => {
-                  field.onChange(value)
-                  if (mode === PolicyMode.Create && value === null) {
-                    form.resetField("expirationStrategy")
-                    form.resetField("expirationBasis")
-                    form.resetField("renewalBasis")
-                    form.resetField("transferStrategy")
-                  }
-                }}
+                onChange={field.onChange}
                 units={["unlimited", "days", "weeks", "months", "years"]}
                 autoFocus={autoFocus}
               />
@@ -959,12 +946,10 @@ function RequireHeartbeatField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
-  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
-  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
@@ -986,12 +971,6 @@ function RequireHeartbeatField({
               onValueChange={(value) => {
                 const newValue = value === "" ? undefined : value === "true"
                 field.onChange(newValue)
-                if (mode === PolicyMode.Create && !newValue) {
-                  form.resetField("heartbeatDuration")
-                  form.resetField("heartbeatCullStrategy")
-                  form.resetField("heartbeatBasis")
-                  form.resetField("heartbeatResurrectionStrategy")
-                }
               }}
             >
               <FormControl>
@@ -1944,12 +1923,10 @@ function CheckInIntervalField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
-  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
-  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
@@ -1966,12 +1943,7 @@ function CheckInIntervalField({
           >
             <NullableSelect<CheckInInterval>
               value={field.value}
-              onChange={(value) => {
-                field.onChange(value)
-                if (mode === PolicyMode.Create && value === null) {
-                  form.resetField("checkInIntervalCount")
-                }
-              }}
+              onChange={field.onChange}
               invalid={!!fieldState.error}
               autoFocus={autoFocus}
             >

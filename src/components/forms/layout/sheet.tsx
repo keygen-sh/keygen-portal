@@ -9,6 +9,8 @@ import { APIError } from "@/types/api"
 import { cn } from "@/lib/utils"
 import { handleFormError } from "@/lib/form-errors"
 
+import { useSubmitOnce } from "@/hooks/use-submit-once"
+
 import * as Loading from "@/components/loading"
 
 interface FormsContentSheetProps<T extends FieldValues = FieldValues> {
@@ -38,21 +40,37 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
 }: FormsContentSheetProps<T>) {
   const form = useFormContext()
 
-  const handleSubmit = useCallback(async () => {
-    await form.handleSubmit(async (data) => {
-      try {
-        await onSubmit(data as T)
-      } catch (error) {
-        if (errorMessage && error instanceof APIError) {
-          await handleFormError({
-            form,
-            apiError: error,
-            toastMessage: errorMessage,
-          })
+  const [submitOnce, resetSubmitOnce] = useSubmitOnce(async () => {
+    await form.handleSubmit(
+      async (data) => {
+        try {
+          await onSubmit(data as T)
+        } catch (error) {
+          if (errorMessage && error instanceof APIError) {
+            await handleFormError({
+              form,
+              toastMessage: errorMessage ?? "",
+              apiError: error,
+            })
+          }
+
+          throw error
         }
-      }
-    })()
-  }, [onSubmit, errorMessage, form])
+      },
+      () => {
+        throw new Error(`Validation error: ${errorMessage ?? "invalid"}`)
+      },
+    )()
+  })
+
+  const handleSubmit = useCallback(async () => {
+    try {
+      await submitOnce()
+    } catch {
+      resetSubmitOnce()
+    }
+  }, [submitOnce, resetSubmitOnce])
+
   return (
     <div
       className={cn(

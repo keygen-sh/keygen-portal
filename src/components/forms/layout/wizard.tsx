@@ -11,6 +11,7 @@ import { handleFormError } from "@/lib/form-errors"
 
 import { useMobile } from "@/hooks/use-mobile"
 import { useSlide } from "@/hooks/use-slide"
+import { useSubmitOnce } from "@/hooks/use-submit-once"
 
 import * as Motion from "@/components/motion"
 import * as Loading from "@/components/loading"
@@ -109,6 +110,44 @@ export default function FormsContentWizard<
     [steps.length, goTo],
   )
 
+  const [submitOnce, resetSubmitOnce] = useSubmitOnce(async () => {
+    await form.handleSubmit(
+      async (data) => {
+        try {
+          await onSubmit(data as T)
+        } catch (error) {
+          if (errorMessage && error instanceof APIError) {
+            await handleFormError({
+              form,
+              steps: steps.map((step) => ({
+                key: step.id,
+                fields: step.fields,
+              })),
+              goToStep: goToIndex,
+              toastMessage: errorMessage ?? "",
+              apiError: error,
+            })
+          }
+
+          throw error
+        }
+      },
+      async () => {
+        await handleFormError({
+          form,
+          steps: steps.map((step) => ({
+            key: step.id,
+            fields: step.fields,
+          })),
+          goToStep: goToIndex,
+          toastMessage: errorMessage ?? "",
+        })
+
+        throw new Error(`Validation error: ${errorMessage ?? "invalid"}`)
+      },
+    )()
+  })
+
   const next = useCallback(async () => {
     if (currentStep?.fields?.length) {
       const valid = await form.trigger(currentStep.fields)
@@ -124,39 +163,11 @@ export default function FormsContentWizard<
     }
 
     if (isLast) {
-      await form.handleSubmit(
-        async (data) => {
-          try {
-            await onSubmit(data as T)
-          } catch (error) {
-            // Catch API errors
-            if (errorMessage && error instanceof APIError) {
-              await handleFormError({
-                form,
-                steps: steps.map((step) => ({
-                  key: step.id,
-                  fields: step.fields,
-                })),
-                goToStep: goToIndex,
-                toastMessage: errorMessage ?? "",
-                apiError: error,
-              })
-            }
-          }
-        },
-        async () => {
-          // Catch schema errors
-          await handleFormError({
-            form,
-            steps: steps.map((step) => ({
-              key: step.id,
-              fields: step.fields,
-            })),
-            goToStep: goToIndex,
-            toastMessage: errorMessage ?? "",
-          })
-        },
-      )()
+      try {
+        await submitOnce()
+      } catch {
+        resetSubmitOnce()
+      }
     } else {
       goTo(currentIndex + 1)
     }
@@ -166,10 +177,8 @@ export default function FormsContentWizard<
     isLast,
     form,
     goTo,
-    goToIndex,
-    steps,
-    onSubmit,
-    errorMessage,
+    submitOnce,
+    resetSubmitOnce,
   ])
 
   const back = useCallback(() => {

@@ -2,8 +2,6 @@ import { useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { Form } from "@/components/ui/form"
-
 import * as Schemas from "@/schemas"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 import {
@@ -76,8 +74,8 @@ export default function CreateMachineForm({
   )
 
   return (
-    <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
-      <Form {...form}>
+    <Forms.Provider form={form}>
+      <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Wizard
           onBack={() => onOpenChange(false)}
           onSubmit={handleSubmit}
@@ -183,7 +181,7 @@ export default function CreateMachineForm({
             <DocumentationLink page="machines" />
           </Forms.Section.Step>
         </Forms.Layout.Wizard>
-      </Form>
-    </Forms.Container.Dialog>
+      </Forms.Container.Dialog>
+    </Forms.Provider>
   )
 }

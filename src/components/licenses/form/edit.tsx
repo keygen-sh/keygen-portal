@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
 
-import { Form } from "@/components/ui/form"
 import { Separator } from "@/components/ui/separator"
 
 import * as Schemas from "@/schemas"
@@ -147,8 +146,12 @@ export default function EditLicenseForm({
   )
 
   return (
-    <Forms.Container.Dialog open={open} onOpenChange={onOpenChange} fullscreen>
-      <Form {...form}>
+    <Forms.Provider form={form}>
+      <Forms.Container.Dialog
+        open={open}
+        onOpenChange={onOpenChange}
+        fullscreen
+      >
         <Forms.Layout.Sheet
           title="Editing an existing license"
           onCancel={() => onOpenChange(false)}
@@ -211,7 +214,7 @@ export default function EditLicenseForm({
             </Forms.Section.Column>
           </Forms.Section.Columns>
         </Forms.Layout.Sheet>
-      </Form>
-    </Forms.Container.Dialog>
+      </Forms.Container.Dialog>
+    </Forms.Provider>
   )
 }

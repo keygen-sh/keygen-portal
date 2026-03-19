@@ -1,3 +1,6 @@
+import { useCallback } from "react"
+import { useFormContext } from "react-hook-form"
+
 import {
   Dialog,
   DialogContent,
@@ -30,8 +33,20 @@ export default function FormsContainerDialog({
   className,
 }: FormsContainerDialogProps) {
   const isMobile = useMobile()
+  const form = useFormContext()
+
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      onOpenChange(open)
+      if (!open) {
+        form.reset() // reset form when closed
+      }
+    },
+    [onOpenChange, form],
+  )
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         disableOverlay={disableOverlay}
         className={cn(

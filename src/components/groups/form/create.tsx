@@ -2,8 +2,6 @@ import { useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { Form } from "@/components/ui/form"
-
 import * as Schemas from "@/schemas"
 import { useCreateGroup } from "@/queries/groups"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
@@ -48,8 +46,8 @@ export default function CreateGroupForm({
   )
 
   return (
-    <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
-      <Form {...form}>
+    <Forms.Provider form={form}>
+      <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Wizard
           description="Creating a new group"
           onBack={() => onOpenChange(false)}
@@ -105,7 +103,7 @@ export default function CreateGroupForm({
             <DocumentationLink page="groups" />
           </Forms.Section.Step>
         </Forms.Layout.Wizard>
-      </Form>
-    </Forms.Container.Dialog>
+      </Forms.Container.Dialog>
+    </Forms.Provider>
   )
 }

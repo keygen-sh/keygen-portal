@@ -12,7 +12,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {
-  Form,
   FormField,
   FormItem,
   FormControl,
@@ -117,7 +116,7 @@ export default function CheckOutMachineForm({
   )
 
   return (
-    <>
+    <Forms.Provider form={form}>
       <Forms.Container.Overlay open={open} onOpenChange={handleOpenChange} />
 
       {!showResult && (
@@ -126,226 +125,225 @@ export default function CheckOutMachineForm({
           onOpenChange={handleOpenChange}
           disableOverlay
         >
-          <Form {...form}>
-            <Forms.Layout.Wizard
-              onBack={() => handleOpenChange(false)}
-              onSubmit={() => form.handleSubmit(handleCheckOut)()}
-              isPending={checkOutMachine.isPending}
-              submitLabel="Checkout machine"
-              description="Checking out a machine"
+          <Forms.Layout.Wizard
+            // NB(ezekg) using raw open handler so we don't clear form on "back"
+            //           i.e. it's less explicit than "close" and we don't want
+            //           the user to lose form state on accidental close
+            onBack={() => onOpenChange(false)}
+            onSubmit={() => form.handleSubmit(handleCheckOut)()}
+            isPending={checkOutMachine.isPending}
+            submitLabel="Checkout machine"
+            description="Checking out a machine"
+          >
+            <Forms.Section.Step
+              crumb="Include relationships"
+              fields={["includeEnabled", "include"]}
             >
-              <Forms.Section.Step
-                crumb="Include relationships"
-                fields={["includeEnabled", "include"]}
-              >
-                <Forms.Section.Card title="Relationships">
-                  <FormField
-                    control={form.control}
-                    name="includeEnabled"
-                    render={({ field }) => (
-                      <FormItem>
-                        <Forms.Field.Header
-                          label="Include relationship data"
-                          variant="inline"
-                          tooltip="You can include additional relationship data in the machine file,
+              <Forms.Section.Card title="Relationships">
+                <FormField
+                  control={form.control}
+                  name="includeEnabled"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Forms.Field.Header
+                        label="Include relationship data"
+                        variant="inline"
+                        tooltip="You can include additional relationship data in the machine file,
                                   such as a machine's license, or its components.
                                   This data will be embedded into the machine file and can be decoded for offline use."
-                        >
-                          <FormControl>
-                            <Checkbox
-                              checked={!!field.value}
-                              onCheckedChange={(value) => {
-                                field.onChange(!!value)
-                                if (!value) {
-                                  form.resetField("include")
-                                }
-                              }}
-                            />
-                          </FormControl>
-                        </Forms.Field.Header>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="include"
-                    render={({ field }) => (
-                      <FormItem>
-                        <Forms.Field.Header
-                          label="Relationships"
-                          variant="stacking"
-                          tooltip="Select the resource relationships to include in the machine file."
-                        >
-                          <FormControl>
-                            <MultiSelect
-                              value={field.value ?? []}
-                              onChange={field.onChange}
-                              options={IncludeOptions}
-                              placeholder="Select relationships..."
-                              disabled={!includeEnabled}
-                              disabledTooltip="Enable relationship data to configure this field."
-                            />
-                          </FormControl>
-                        </Forms.Field.Header>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </Forms.Section.Card>
-              </Forms.Section.Step>
-
-              <Forms.Section.Step
-                crumb="Time to live"
-                fields={["ttlEnabled", "ttl"]}
-              >
-                <Forms.Section.Card title="Time to live">
-                  <FormField
-                    control={form.control}
-                    name="ttlEnabled"
-                    render={({ field }) => (
-                      <FormItem>
-                        <Forms.Field.Header
-                          label="Add a custom TTL"
-                          variant="inline"
-                          tooltip="A time-to-live (TTL) defines how long before the machine file expires.
-                                  If no TTL is set, the machine file will default to a TTL of 30 days."
-                        >
-                          <FormControl>
-                            <Checkbox
-                              checked={!!field.value}
-                              onCheckedChange={(value) => {
-                                field.onChange(!!value)
-                                if (!value) {
-                                  form.resetField("ttl")
-                                }
-                              }}
-                            />
-                          </FormControl>
-                        </Forms.Field.Header>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="ttl"
-                    render={({ field }) => (
-                      <FormItem>
-                        <Forms.Field.Header
-                          label="Duration"
-                          variant="stacking"
-                          tooltip="Set a custom TTL duration for the machine file."
-                        >
-                          <FormControl>
-                            <DurationInput
-                              value={field.value}
-                              onChange={field.onChange}
-                              units={["days", "weeks", "months", "years"]}
-                              disabled={!ttlEnabled}
-                              disabledTooltip="Enable a custom TTL to configure this field."
-                            />
-                          </FormControl>
-                        </Forms.Field.Header>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </Forms.Section.Card>
-              </Forms.Section.Step>
-
-              <Forms.Section.Step
-                crumb="Additional configuration"
-                fields={["encrypt", "algorithm"]}
-              >
-                <Forms.Section.Card title="Additional options">
-                  <FormField
-                    control={form.control}
-                    name="encryptEnabled"
-                    render={({ field }) => (
-                      <FormItem>
-                        <Forms.Field.Header
-                          label="Encrypt the machine file"
-                          variant="inline"
-                          tooltip="Encryption adds another layer of security to your offline licensing system."
-                        >
-                          <FormControl>
-                            <Checkbox
-                              checked={!!field.value}
-                              onCheckedChange={(value) =>
-                                field.onChange(!!value)
+                      >
+                        <FormControl>
+                          <Checkbox
+                            checked={!!field.value}
+                            onCheckedChange={(value) => {
+                              field.onChange(!!value)
+                              if (!value) {
+                                form.resetField("include")
                               }
-                            />
-                          </FormControl>
-                        </Forms.Field.Header>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="algorithm"
-                    render={({ field }) => (
-                      <FormItem>
-                        <Forms.Field.Header
-                          label="Signing algorithm"
-                          variant="stacking"
-                          tooltip="The cryptographic algorithm used to sign the machine file."
-                        >
-                          <FormControl>
-                            <Select
-                              value={field.value}
-                              onValueChange={field.onChange}
-                            >
-                              <SelectTrigger className="w-full">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {Object.values(SigningAlgorithm).map((alg) => (
-                                  <SelectItem key={alg} value={alg}>
-                                    {SigningAlgorithmLabels[alg]}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                        </Forms.Field.Header>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </Forms.Section.Card>
+                            }}
+                          />
+                        </FormControl>
+                      </Forms.Field.Header>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="include"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Forms.Field.Header
+                        label="Relationships"
+                        variant="stacking"
+                        tooltip="Select the resource relationships to include in the machine file."
+                      >
+                        <FormControl>
+                          <MultiSelect
+                            value={field.value ?? []}
+                            onChange={field.onChange}
+                            options={IncludeOptions}
+                            placeholder="Select relationships..."
+                            disabled={!includeEnabled}
+                            disabledTooltip="Enable relationship data to configure this field."
+                          />
+                        </FormControl>
+                      </Forms.Field.Header>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </Forms.Section.Card>
+            </Forms.Section.Step>
 
-                <div className="space-y-2 px-8 text-sm text-content-subdued">
-                  <p>
-                    Checking out a machine will generate a Machine File, which
-                    can be decoded and used in offline/air-gap environments.
-                  </p>
-                  <ul className="list-inside list-disc space-y-2">
+            <Forms.Section.Step
+              crumb="Time to live"
+              fields={["ttlEnabled", "ttl"]}
+            >
+              <Forms.Section.Card title="Time to live">
+                <FormField
+                  control={form.control}
+                  name="ttlEnabled"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Forms.Field.Header
+                        label="Add a custom TTL"
+                        variant="inline"
+                        tooltip="A time-to-live (TTL) defines how long before the machine file expires.
+                                  If no TTL is set, the machine file will default to a TTL of 30 days."
+                      >
+                        <FormControl>
+                          <Checkbox
+                            checked={!!field.value}
+                            onCheckedChange={(value) => {
+                              field.onChange(!!value)
+                              if (!value) {
+                                form.resetField("ttl")
+                              }
+                            }}
+                          />
+                        </FormControl>
+                      </Forms.Field.Header>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="ttl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Forms.Field.Header
+                        label="Duration"
+                        variant="stacking"
+                        tooltip="Set a custom TTL duration for the machine file."
+                      >
+                        <FormControl>
+                          <DurationInput
+                            value={field.value}
+                            onChange={field.onChange}
+                            units={["days", "weeks", "months", "years"]}
+                            disabled={!ttlEnabled}
+                            disabledTooltip="Enable a custom TTL to configure this field."
+                          />
+                        </FormControl>
+                      </Forms.Field.Header>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </Forms.Section.Card>
+            </Forms.Section.Step>
+
+            <Forms.Section.Step
+              crumb="Additional configuration"
+              fields={["encrypt", "algorithm"]}
+            >
+              <Forms.Section.Card title="Additional options">
+                <FormField
+                  control={form.control}
+                  name="encryptEnabled"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Forms.Field.Header
+                        label="Encrypt the machine file"
+                        variant="inline"
+                        tooltip="Encryption adds another layer of security to your offline licensing system."
+                      >
+                        <FormControl>
+                          <Checkbox
+                            checked={!!field.value}
+                            onCheckedChange={(value) => field.onChange(!!value)}
+                          />
+                        </FormControl>
+                      </Forms.Field.Header>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="algorithm"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Forms.Field.Header
+                        label="Signing algorithm"
+                        variant="stacking"
+                        tooltip="The cryptographic algorithm used to sign the machine file."
+                      >
+                        <FormControl>
+                          <Select
+                            value={field.value}
+                            onValueChange={field.onChange}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.values(SigningAlgorithm).map((alg) => (
+                                <SelectItem key={alg} value={alg}>
+                                  {SigningAlgorithmLabels[alg]}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                      </Forms.Field.Header>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </Forms.Section.Card>
+
+              <div className="space-y-2 px-8 text-sm text-content-subdued">
+                <p>
+                  Checking out a machine will generate a Machine File, which can
+                  be decoded and used in offline/air-gap environments.
+                </p>
+                <ul className="list-inside list-disc space-y-2">
+                  <li>
+                    You're currently checking out an{" "}
+                    {encryptEnabled ? "encrypted" : "unencrypted"} machine file,
+                    signed with{" "}
+                    {SigningAlgorithmLabels[algorithm as SigningAlgorithm] ??
+                      algorithm}
+                    {encryptEnabled && " and encrypted with AES-256-GCM"}.
+                  </li>
+                  {includeEnabled && include.length > 0 && (
                     <li>
-                      You're currently checking out an{" "}
-                      {encryptEnabled ? "encrypted" : "unencrypted"} machine
-                      file, signed with{" "}
-                      {SigningAlgorithmLabels[algorithm as SigningAlgorithm] ??
-                        algorithm}
-                      {encryptEnabled && " and encrypted with AES-256-GCM"}.
+                      The following relationships will be included in the
+                      machine file: {include.join(", ")}.
                     </li>
-                    {includeEnabled && include.length > 0 && (
-                      <li>
-                        The following relationships will be included in the
-                        machine file: {include.join(", ")}.
-                      </li>
-                    )}
-                    <li>
-                      {ttlEnabled
-                        ? `The machine file has a TTL of ${formatTtlLabel(ttl)}.`
-                        : "It has the default TTL of 30 days."}
-                    </li>
-                  </ul>
-                </div>
-              </Forms.Section.Step>
-            </Forms.Layout.Wizard>
-          </Form>
+                  )}
+                  <li>
+                    {ttlEnabled
+                      ? `The machine file has a TTL of ${formatTtlLabel(ttl)}.`
+                      : "It has the default TTL of 30 days."}
+                  </li>
+                </ul>
+              </div>
+            </Forms.Section.Step>
+          </Forms.Layout.Wizard>
         </Forms.Container.Dialog>
       )}
 
@@ -365,6 +363,6 @@ export default function CheckOutMachineForm({
           }}
         />
       )}
-    </>
+    </Forms.Provider>
   )
 }

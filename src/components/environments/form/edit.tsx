@@ -2,8 +2,6 @@ import { useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { Form } from "@/components/ui/form"
-
 import * as Schemas from "@/schemas"
 import { Environment } from "@/types/environments"
 
@@ -47,12 +45,12 @@ export default function EditEnvironmentForm({
   )
 
   return (
-    <Forms.Container.Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-      disableOverlay
-    >
-      <Form {...form}>
+    <Forms.Provider form={form}>
+      <Forms.Container.Dialog
+        open={open}
+        onOpenChange={onOpenChange}
+        disableOverlay
+      >
         <Forms.Layout.Sheet
           title="Editing an existing environment"
           onCancel={() => onOpenChange(false)}
@@ -73,7 +71,7 @@ export default function EditEnvironmentForm({
 
           <DocumentationLink page="environments" className="mx-0" />
         </Forms.Layout.Sheet>
-      </Form>
-    </Forms.Container.Dialog>
+      </Forms.Container.Dialog>
+    </Forms.Provider>
   )
 }

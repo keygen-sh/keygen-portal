@@ -18,9 +18,9 @@ enum Mode {
 }
 
 interface Route {
-  label: string
   to: string
-  params?: { id: string }
+  label: string
+  params?: Record<string, unknown>
 }
 
 interface CommandMenuProps {

@@ -60,6 +60,8 @@ import * as Search from "@/components/search"
 import KeyValueInput from "@/components/key-value-input"
 import NullableSelect from "@/components/nullable-select"
 import DurationInput from "@/components/duration-input"
+import { useDeferredMount } from "@/hooks/use-deferred-mount"
+
 type Descriptions = typeof PolicyFormFieldDescriptions
 
 const HeartbeatPresets = [
@@ -151,7 +153,7 @@ export default function PoliciesFormFields({
     : IncludeDefaultFields.filter((field) => !exclude.includes(field))
 
   return (
-    <>
+    <div className="space-y-4">
       {fields.map((field) => {
         switch (field) {
           case "authenticationStrategy":
@@ -521,7 +523,7 @@ export default function PoliciesFormFields({
             return null
         }
       })}
-    </>
+    </div>
   )
 }
 
@@ -537,6 +539,16 @@ function NameField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-28 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -590,7 +602,8 @@ function ProductField({
   const form = useFormContext<Schemas.Policies.AllValues>()
   const { data: products = [], isLoading: productsLoading } = useListProducts()
 
-  if (productsLoading) {
+  const ready = useDeferredMount()
+  if (!ready || productsLoading) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-5 w-48 rounded-sm" />
@@ -638,6 +651,16 @@ function AuthenticationStrategyField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-64 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -689,6 +712,23 @@ function MetadataField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const values = form.getValues()
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-48 rounded-sm" />
+        {Object.keys(values['metadata']!).map((key) => (
+          <div key={key} className="flex space-x-2">
+            <Skeleton className="h-9 w-1/2 rounded-sm" />
+            <Skeleton className="h-9 w-1/2 rounded-sm" />
+          </div>
+        ))}
+        <Skeleton className="h-8 w-48" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -727,6 +767,19 @@ function DurationField({
   mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-32 rounded-sm" />
+        <div className="flex space-x-2">
+          <Skeleton className="h-9 w-32 rounded-sm" />
+          <Skeleton className="h-9 w-14 rounded-sm" />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -783,6 +836,16 @@ function ExpirationStrategyField({
   const duration = useWatch<Schemas.Policies.AllValues>({ name: "duration" })
   const isDisabled = disabled || !duration
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-44 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -830,6 +893,16 @@ function ExpirationBasisField({
   const form = useFormContext<Schemas.Policies.AllValues>()
   const duration = useWatch<Schemas.Policies.AllValues>({ name: "duration" })
   const isDisabled = disabled || !duration
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-36 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -879,6 +952,16 @@ function RenewalBasisField({
   const duration = useWatch<Schemas.Policies.AllValues>({ name: "duration" })
   const isDisabled = disabled || !duration
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-32 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -927,6 +1010,16 @@ function TransferStrategyField({
   const duration = useWatch<Schemas.Policies.AllValues>({ name: "duration" })
   const isDisabled = disabled || !duration
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-36 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -972,6 +1065,16 @@ function RequireHeartbeatField({
   mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-40 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -1039,6 +1142,19 @@ function HeartbeatDurationField({
   })
   const isDisabled = disabled || !requireHeartbeat
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-32 rounded-sm" />
+        <div className="flex space-x-2">
+          <Skeleton className="h-9 w-26 rounded-sm" />
+          <Skeleton className="h-9 w-20 rounded-sm" />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -1084,6 +1200,16 @@ function HeartbeatBasisField({
     name: "requireHeartbeat",
   })
   const isDisabled = disabled || !requireHeartbeat
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-36 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -1135,6 +1261,16 @@ function HeartbeatCullStrategyField({
   })
   const isDisabled = disabled || !requireHeartbeat
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -1185,6 +1321,16 @@ function HeartbeatResurrectionStrategyField({
   })
   const isDisabled = disabled || !requireHeartbeat
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-64 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -1229,6 +1375,16 @@ function MaxMachinesField({
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-28 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -1268,6 +1424,16 @@ function MachineUniquenessStrategyField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-56 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -1311,6 +1477,16 @@ function MachineMatchingStrategyField({
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-52 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -1352,6 +1528,16 @@ function ComponentUniquenessStrategyField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-60 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -1395,6 +1581,16 @@ function ComponentMatchingStrategyField({
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-56 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -1436,6 +1632,16 @@ function OverageStrategyField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-36 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -1479,6 +1685,16 @@ function MachineLeasingStrategyField({
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -1519,6 +1735,16 @@ function RequireChecksumScopeField({
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-44 rounded-sm" />
+        <Skeleton className="h-5 w-5 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -1553,6 +1779,16 @@ function RequireComponentsScopeField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-52 rounded-sm" />
+        <Skeleton className="h-5 w-5 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -1589,6 +1825,16 @@ function RequireFingerprintScopeField({
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-48 rounded-sm" />
+        <Skeleton className="h-5 w-5 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -1623,6 +1869,16 @@ function RequireMachineScopeField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-40 rounded-sm" />
+        <Skeleton className="h-5 w-5 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -1659,6 +1915,16 @@ function RequirePolicyScopeField({
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-36 rounded-sm" />
+        <Skeleton className="h-5 w-5 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -1693,6 +1959,16 @@ function RequireProductScopeField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-40 rounded-sm" />
+        <Skeleton className="h-5 w-5 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -1729,6 +2005,16 @@ function RequireUserScopeField({
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-36 rounded-sm" />
+        <Skeleton className="h-5 w-5 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -1763,6 +2049,16 @@ function RequireVersionScopeField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-40 rounded-sm" />
+        <Skeleton className="h-5 w-5 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -1800,6 +2096,16 @@ function MaxProcessesField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-32 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -1841,6 +2147,16 @@ function MaxUsersField({
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-24 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -1881,6 +2197,16 @@ function MaxUsesField({
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-20 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -1920,6 +2246,16 @@ function MaxCoresField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-24 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -1962,6 +2298,16 @@ function CheckInIntervalField({
   mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-40 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -2020,6 +2366,16 @@ function CheckInIntervalCountField({
     name: "checkInInterval",
   })
   const isDisabled = disabled || !checkInInterval
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -2083,6 +2439,16 @@ function ProcessLeasingStrategyField({
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-48 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -2123,6 +2489,16 @@ function StrictField({
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-16 rounded-sm" />
+        <Skeleton className="h-5 w-5 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -2157,6 +2533,16 @@ function FloatingField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-20 rounded-sm" />
+        <Skeleton className="h-5 w-5 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -2193,6 +2579,16 @@ function ProtectedField({
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-24 rounded-sm" />
+        <Skeleton className="h-5 w-5 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -2227,6 +2623,16 @@ function UsePoolField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-20 rounded-sm" />
+        <Skeleton className="h-5 w-5 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -2263,6 +2669,16 @@ function RequireCheckInField({
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="w-full flex justify-between">
+        <Skeleton className="h-5 w-36 rounded-sm" />
+        <Skeleton className="h-5 w-5 rounded-sm" />
+      </div>
+    )
+  }
+
   return (
     <FormField
       control={form.control}
@@ -2294,11 +2710,12 @@ function AttachEntitlementsField() {
   const { data: entitlements = [], isLoading: entitlementsLoading } =
     useListEntitlements()
 
-  if (entitlementsLoading) {
+  const ready = useDeferredMount()
+  if (!ready || entitlementsLoading) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-5 w-48 rounded-sm" />
-        <Skeleton className="h-8 w-3/4" />
+        <Skeleton className="h-8 w-full" />
       </div>
     )
   }
@@ -2333,6 +2750,16 @@ function CreateEntitlementsField() {
     control: form.control,
     name: "entitlements.create",
   })
+
+  const ready = useDeferredMount()
+  if (!ready) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-32 rounded-sm" />
+        <Skeleton className="h-8 w-48" />
+      </div>
+    )
+  }
 
   return (
     <div className="mt-4 space-y-3">

@@ -184,7 +184,11 @@ export default function EditPolicyForm({
 
           <Forms.Section.Columns>
             <Forms.Section.Column>
-              <Policies.Form.Fields schema="edit" mode={PolicyMode.Edit} include={["metadata"]} />
+              <Policies.Form.Fields
+                schema="edit"
+                mode={PolicyMode.Edit}
+                include={["metadata"]}
+              />
             </Forms.Section.Column>
             <Forms.Section.Column>
               <Policies.Form.Fields

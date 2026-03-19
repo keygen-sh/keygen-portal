@@ -543,9 +543,9 @@ function NameField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between md:flex">
         <Skeleton className="h-5 w-28 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -655,9 +655,9 @@ function AuthenticationStrategyField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-64 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -712,14 +712,14 @@ function MetadataField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
-  const values = form.getValues()
+  const { metadata } = form.getValues()
 
   const ready = useDeferredMount()
   if (!ready) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-5 w-48 rounded-sm" />
-        {Object.keys(values['metadata']!).map((key) => (
+        {Object.keys(metadata!).map((key) => (
           <div key={key} className="flex space-x-2">
             <Skeleton className="h-9 w-1/2 rounded-sm" />
             <Skeleton className="h-9 w-1/2 rounded-sm" />
@@ -771,11 +771,11 @@ function DurationField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-32 rounded-sm" />
         <div className="flex space-x-2">
-          <Skeleton className="h-9 w-32 rounded-sm" />
-          <Skeleton className="h-9 w-14 rounded-sm" />
+          <Skeleton className="h-9 w-full rounded-sm md:w-32" />
+          <Skeleton className="h-9 w-20 rounded-sm md:w-14" />
         </div>
       </div>
     )
@@ -839,9 +839,9 @@ function ExpirationStrategyField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-44 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -897,9 +897,9 @@ function ExpirationBasisField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-36 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -955,9 +955,9 @@ function RenewalBasisField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-32 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -1013,9 +1013,9 @@ function TransferStrategyField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-36 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -1069,7 +1069,7 @@ function RequireHeartbeatField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-40 rounded-sm" />
         <Skeleton className="h-9 w-48 rounded-sm" />
       </div>
@@ -1145,11 +1145,11 @@ function HeartbeatDurationField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-32 rounded-sm" />
         <div className="flex space-x-2">
-          <Skeleton className="h-9 w-26 rounded-sm" />
-          <Skeleton className="h-9 w-20 rounded-sm" />
+          <Skeleton className="h-9 w-full rounded-sm md:w-26" />
+          <Skeleton className="h-9 w-26 rounded-sm md:w-20" />
         </div>
       </div>
     )
@@ -1204,9 +1204,9 @@ function HeartbeatBasisField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-36 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -1264,9 +1264,9 @@ function HeartbeatCullStrategyField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-48 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -1324,9 +1324,9 @@ function HeartbeatResurrectionStrategyField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-64 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -1378,9 +1378,9 @@ function MaxMachinesField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-28 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -1428,9 +1428,9 @@ function MachineUniquenessStrategyField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-56 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -1480,9 +1480,9 @@ function MachineMatchingStrategyField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-52 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -1532,9 +1532,9 @@ function ComponentUniquenessStrategyField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-60 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -1584,9 +1584,9 @@ function ComponentMatchingStrategyField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-56 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -1636,9 +1636,9 @@ function OverageStrategyField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-36 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -1688,9 +1688,9 @@ function MachineLeasingStrategyField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-48 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -1738,7 +1738,7 @@ function RequireChecksumScopeField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-44 rounded-sm" />
         <Skeleton className="h-5 w-5 rounded-sm" />
       </div>
@@ -1783,7 +1783,7 @@ function RequireComponentsScopeField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-52 rounded-sm" />
         <Skeleton className="h-5 w-5 rounded-sm" />
       </div>
@@ -1828,7 +1828,7 @@ function RequireFingerprintScopeField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-48 rounded-sm" />
         <Skeleton className="h-5 w-5 rounded-sm" />
       </div>
@@ -1873,7 +1873,7 @@ function RequireMachineScopeField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-40 rounded-sm" />
         <Skeleton className="h-5 w-5 rounded-sm" />
       </div>
@@ -1918,7 +1918,7 @@ function RequirePolicyScopeField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-36 rounded-sm" />
         <Skeleton className="h-5 w-5 rounded-sm" />
       </div>
@@ -1963,7 +1963,7 @@ function RequireProductScopeField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-40 rounded-sm" />
         <Skeleton className="h-5 w-5 rounded-sm" />
       </div>
@@ -2008,7 +2008,7 @@ function RequireUserScopeField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-36 rounded-sm" />
         <Skeleton className="h-5 w-5 rounded-sm" />
       </div>
@@ -2053,7 +2053,7 @@ function RequireVersionScopeField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-40 rounded-sm" />
         <Skeleton className="h-5 w-5 rounded-sm" />
       </div>
@@ -2100,9 +2100,9 @@ function MaxProcessesField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-32 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -2150,9 +2150,9 @@ function MaxUsersField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-24 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -2200,9 +2200,9 @@ function MaxUsesField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-20 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -2250,9 +2250,9 @@ function MaxCoresField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-24 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -2302,9 +2302,9 @@ function CheckInIntervalField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-40 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -2370,9 +2370,9 @@ function CheckInIntervalCountField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-48 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -2442,9 +2442,9 @@ function ProcessLeasingStrategyField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-48 rounded-sm" />
-        <Skeleton className="h-9 w-48 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
       </div>
     )
   }
@@ -2492,7 +2492,7 @@ function StrictField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-16 rounded-sm" />
         <Skeleton className="h-5 w-5 rounded-sm" />
       </div>
@@ -2537,7 +2537,7 @@ function FloatingField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-20 rounded-sm" />
         <Skeleton className="h-5 w-5 rounded-sm" />
       </div>
@@ -2582,7 +2582,7 @@ function ProtectedField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-24 rounded-sm" />
         <Skeleton className="h-5 w-5 rounded-sm" />
       </div>
@@ -2627,7 +2627,7 @@ function UsePoolField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-20 rounded-sm" />
         <Skeleton className="h-5 w-5 rounded-sm" />
       </div>
@@ -2672,7 +2672,7 @@ function RequireCheckInField({
   const ready = useDeferredMount()
   if (!ready) {
     return (
-      <div className="w-full flex justify-between">
+      <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-36 rounded-sm" />
         <Skeleton className="h-5 w-5 rounded-sm" />
       </div>

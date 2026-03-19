@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link, linkOptions } from "@tanstack/react-router"
+import { Link, linkOptions, useMatchRoute } from "@tanstack/react-router"
 
 import { Search } from "lucide-react"
 
@@ -47,8 +47,9 @@ import {
 } from "@/components/ui/card"
 
 import {
+  type LucideIcon,
   Home,
-  Award,
+  Key,
   Package,
   Zap,
   Webhook,
@@ -62,7 +63,7 @@ import { useMobile } from "@/hooks/use-mobile"
 import Combobox from "./combobox"
 import Command from "./command"
 
-enum View {
+enum ViewId {
   Home = "home",
   Licensing = "licensing",
   Distribution = "distribution",
@@ -72,83 +73,113 @@ enum View {
   Security = "security",
 }
 
-const VIEWS_LIST = [
-  { view: View.Home, Icon: Home },
+type ViewRoute = {
+  to: string
+  label: string
+  params: Record<string, unknown>
+}
+
+type View = {
+  id: ViewId
+  label: string
+  icon: LucideIcon
+  routes: ViewRoute[]
+}
+
+const VIEWS: View[] = [
   {
-    view: View.Licensing,
-    Icon: Award,
+    id: ViewId.Home,
+    label: "Home",
+    icon: Home,
+    routes: linkOptions([
+      {
+        to: "/$accountId/app/dashboard",
+        label: "Metrics",
+        params: { accountId: keygen.config.id },
+      },
+    ]),
   },
   {
-    view: View.Distribution,
-    Icon: Package,
+    id: ViewId.Licensing,
+    label: "Licensing",
+    icon: Key,
+    routes: linkOptions([
+      {
+        to: "/$accountId/app/products",
+        label: "Products",
+        params: { accountId: keygen.config.id },
+      },
+      {
+        to: "/$accountId/app/entitlements",
+        label: "Entitlements",
+        params: { accountId: keygen.config.id },
+      },
+      {
+        to: "/$accountId/app/groups",
+        label: "Groups",
+        params: { accountId: keygen.config.id },
+      },
+      {
+        to: "/$accountId/app/policies",
+        label: "Policies",
+        params: { accountId: keygen.config.id },
+      },
+      {
+        to: "/$accountId/app/licenses",
+        label: "Licenses",
+        params: { accountId: keygen.config.id },
+      },
+      {
+        to: "/$accountId/app/machines",
+        label: "Machines",
+        params: { accountId: keygen.config.id },
+      },
+      {
+        to: "/$accountId/app/components",
+        label: "Components",
+        params: { accountId: keygen.config.id },
+      },
+      {
+        to: "/$accountId/app/processes",
+        label: "Processes",
+        params: { accountId: keygen.config.id },
+      },
+      {
+        to: "/$accountId/app/users",
+        label: "Users",
+        params: { accountId: keygen.config.id },
+      },
+    ]),
   },
-  { view: View.Automate, Icon: Zap },
-  { view: View.Webhooks, Icon: Webhook },
-  { view: View.Access, Icon: KeyRound },
-  { view: View.Security, Icon: Shield },
+  { id: ViewId.Distribution, label: "Distribution", icon: Package, routes: [] },
+  { id: ViewId.Automate, label: "Automate", icon: Zap, routes: [] },
+  { id: ViewId.Webhooks, label: "Webhooks", icon: Webhook, routes: [] },
+  { id: ViewId.Access, label: "Access", icon: KeyRound, routes: [] },
+  { id: ViewId.Security, label: "Security", icon: Shield, routes: [] },
 ]
 
-const homeOptions = linkOptions([
-  {
-    to: "/$accountId/app/dashboard",
-    label: "Metrics",
-    params: { accountId: keygen.config.id },
-  },
-])
+function useActiveView(): View {
+  const matchRoute = useMatchRoute()
 
-const licensingOptions = linkOptions([
-  {
-    to: "/$accountId/app/products",
-    label: "Products",
-    params: { accountId: keygen.config.id },
-  },
-  {
-    to: "/$accountId/app/entitlements",
-    label: "Entitlements",
-    params: { accountId: keygen.config.id },
-  },
-  {
-    to: "/$accountId/app/groups",
-    label: "Groups",
-    params: { accountId: keygen.config.id },
-  },
-  {
-    to: "/$accountId/app/policies",
-    label: "Policies",
-    params: { accountId: keygen.config.id },
-  },
-  {
-    to: "/$accountId/app/licenses",
-    label: "Licenses",
-    params: { accountId: keygen.config.id },
-  },
-  {
-    to: "/$accountId/app/machines",
-    label: "Machines",
-    params: { accountId: keygen.config.id },
-  },
-  {
-    to: "/$accountId/app/components",
-    label: "Components",
-    params: { accountId: keygen.config.id },
-  },
-  {
-    to: "/$accountId/app/processes",
-    label: "Processes",
-    params: { accountId: keygen.config.id },
-  },
-  {
-    to: "/$accountId/app/users",
-    label: "Users",
-    params: { accountId: keygen.config.id },
-  },
-])
+  for (const view of VIEWS) {
+    if (
+      view.routes.some((o) =>
+        matchRoute({ to: o.to, params: o.params, fuzzy: true }),
+      )
+    ) {
+      return view
+    }
+  }
+
+  return VIEWS.find((view) => view.id === ViewId.Home)!
+}
 
 /**
  * Renders the main app sidebar with a rail sidebar and a content sidebar.
  */
 export default function SidebarPanel(): React.ReactElement {
-  const [selectedView, setSelectedView] = useState(View.Home)
+  const activeView = useActiveView()
+  const [selectedView, setSelectedView] = useState(activeView)
   const { open, setOpen } = useSidebar()
 
   const isMobile = useMobile()
@@ -188,22 +219,24 @@ export default function SidebarPanel(): React.ReactElement {
           )}
         >
           <RailGroup className="flex flex-col items-center">
-            {VIEWS_LIST.map(({ view, Icon }) => (
-              <Tooltip key={view} delayDuration={300}>
+            {VIEWS.map((view) => (
+              <Tooltip key={view.id} delayDuration={300}>
                 <TooltipTrigger asChild>
                   <Button
                     variant="rail"
                     size="rail"
-                    className={cn(selectedView === view && "bg-background-3")}
+                    className={cn(
+                      selectedView.id === view.id && "bg-background-3",
+                    )}
                     onClick={() => {
                       setSelectedView(view)
                       setOpen(true)
                     }}
                   >
-                    <Icon
+                    <view.icon
                       className={cn(
                         "size-6 md:size-5",
-                        selectedView === view
+                        selectedView.id === view.id
                           ? "text-content-loud"
                           : "group-hover:text-primary",
                       )}
@@ -213,7 +246,7 @@ export default function SidebarPanel(): React.ReactElement {
 
                 {!isMobile && (
                   <TooltipContent side="right" className="ml-1">
-                    {view.charAt(0).toUpperCase() + view.slice(1)}
+                    {view.label}
                   </TooltipContent>
                 )}
               </Tooltip>
@@ -310,12 +343,34 @@ export default function SidebarPanel(): React.ReactElement {
                 )}
               </Button>
             </div>
-            <Command routes={homeOptions} />
+            <Command routes={VIEWS.flatMap((v) => v.routes)} />
           </SidebarGroup>
         </SidebarHeader>
 
         <SidebarContent className="overflow-hidden">
-          <SidebarGroup>{renderView(selectedView)}</SidebarGroup>
+          <SidebarGroup>
+            <SidebarMenu>
+              {selectedView && (
+                <>
+                  <SidebarGroupLabel>{selectedView.label}</SidebarGroupLabel>
+                  {selectedView.routes.map((route) => (
+                    <SidebarMenuItem key={route.to}>
+                      <SidebarMenuButton asChild>
+                        <Link
+                          {...route}
+                          activeProps={{
+                            className: "bg-background-2 text-content-loud",
+                          }}
+                        >
+                          {route.label}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </>
+              )}
+            </SidebarMenu>
+          </SidebarGroup>
         </SidebarContent>
 
         <SidebarFooter className="w-60 border-none p-4">
@@ -336,165 +391,5 @@ export default function SidebarPanel(): React.ReactElement {
         </SidebarFooter>
       </Sidebar>
     </div>
-  )
-}
-
-function renderView(view: View) {
-  switch (view) {
-    case View.Home:
-      return renderHome()
-    case View.Licensing:
-      return renderLicensing()
-    case View.Distribution:
-      return renderDistribution()
-    case View.Automate:
-      return renderAutomate()
-    case View.Webhooks:
-      return renderWebhooks()
-    case View.Access:
-      return renderAccess()
-    case View.Security:
-      return renderSecurity()
-    default:
-      return null
-  }
-}
-
-function renderHome() {
-  return (
-    <SidebarMenu>
-      <SidebarGroupLabel>Home</SidebarGroupLabel>
-      {homeOptions.map((option) => {
-        return (
-          <SidebarMenuItem key={option.to}>
-            <SidebarMenuButton asChild>
-              <Link
-                {...option}
-                activeProps={{ className: "bg-background-2 text-content-loud" }}
-              >
-                {option.label}
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        )
-      })}
-    </SidebarMenu>
-  )
-}
-
-function renderLicensing() {
-  return (
-    <SidebarMenu>
-      <SidebarGroupLabel>Licensing</SidebarGroupLabel>
-      {licensingOptions.map((option) => {
-        return (
-          <SidebarMenuItem key={option.to}>
-            <SidebarMenuButton asChild>
-              <Link
-                {...option}
-                activeProps={{ className: "bg-background-2 text-content-loud" }}
-              >
-                {option.label}
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        )
-      })}
-    </SidebarMenu>
-  )
-}
-
-function renderDistribution() {
-  return (
-    <SidebarMenu>
-      <SidebarGroupLabel>Distribution</SidebarGroupLabel>
-      <SidebarMenuItem>
-        <SidebarMenuButton asChild>
-          <Link
-            disabled={true}
-            to="/$accountId/app/dashboard"
-            params={{ accountId: keygen.config.id }}
-          >
-            TO DO
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    </SidebarMenu>
-  )
-}
-
-function renderAutomate() {
-  return (
-    <SidebarMenu>
-      <SidebarGroupLabel>Automate</SidebarGroupLabel>
-      <SidebarMenuItem>
-        <SidebarMenuButton asChild>
-          <Link
-            disabled={true}
-            to="/$accountId/app/dashboard"
-            params={{ accountId: keygen.config.id }}
-          >
-            TO DO
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    </SidebarMenu>
-  )
-}
-
-function renderWebhooks() {
-  return (
-    <SidebarMenu>
-      <SidebarGroupLabel>Webhooks</SidebarGroupLabel>
-      <SidebarMenuItem>
-        <SidebarMenuButton asChild>
-          <Link
-            disabled={true}
-            to="/$accountId/app/dashboard"
-            params={{ accountId: keygen.config.id }}
-          >
-            TO DO
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    </SidebarMenu>
-  )
-}
-
-function renderAccess() {
-  return (
-    <SidebarMenu>
-      <SidebarGroupLabel>Access</SidebarGroupLabel>
-      <SidebarMenuItem>
-        <SidebarMenuButton asChild>
-          <Link
-            disabled={true}
-            to="/$accountId/app/dashboard"
-            params={{ accountId: keygen.config.id }}
-          >
-            TO DO
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    </SidebarMenu>
-  )
-}
-
-function renderSecurity() {
-  return (
-    <SidebarMenu>
-      <SidebarGroupLabel>Security</SidebarGroupLabel>
-      <SidebarMenuItem>
-        <SidebarMenuButton asChild>
-          <Link
-            disabled={true}
-            to="/$accountId/app/dashboard"
-            params={{ accountId: keygen.config.id }}
-          >
-            TO DO
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    </SidebarMenu>
   )
 }

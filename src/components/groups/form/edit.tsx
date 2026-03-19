@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
 
-import { Form } from "@/components/ui/form"
 import { Separator } from "@/components/ui/separator"
 
 import * as Schemas from "@/schemas"
@@ -51,8 +50,8 @@ export default function EditGroupForm({
   )
 
   return (
-    <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
-      <Form {...form}>
+    <Forms.Provider form={form}>
+      <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Sheet
           title="Editing an existing group"
           onCancel={() => onOpenChange(false)}
@@ -86,7 +85,7 @@ export default function EditGroupForm({
             fieldVariant="stacking"
           />
         </Forms.Layout.Sheet>
-      </Form>
-    </Forms.Container.Dialog>
+      </Forms.Container.Dialog>
+    </Forms.Provider>
   )
 }

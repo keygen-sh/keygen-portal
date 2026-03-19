@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
 
-import { Form } from "@/components/ui/form"
 import { toast } from "@/lib/toast"
 
 import {
@@ -119,17 +118,21 @@ export default function DuplicatePolicyForm({
   }
 
   return (
-    <Forms.Container.Dialog open={open} onOpenChange={onOpenChange} fullscreen>
-      {policyLoading ? (
-        <div className="flex w-full justify-center py-8">
-          <Loading.Dots />
-        </div>
-      ) : policyError || !policy ? (
-        <p className="text-center text-sm text-red-500">
-          Failed to load policy.
-        </p>
-      ) : (
-        <Form {...form}>
+    <Forms.Provider form={form}>
+      <Forms.Container.Dialog
+        open={open}
+        onOpenChange={onOpenChange}
+        fullscreen
+      >
+        {policyLoading ? (
+          <div className="flex w-full justify-center py-8">
+            <Loading.Dots />
+          </div>
+        ) : policyError || !policy ? (
+          <p className="text-center text-sm text-red-500">
+            Failed to load policy.
+          </p>
+        ) : (
           <Forms.Layout.Sheet
             title="Duplicating an existing policy"
             onSubmit={handleSubmit}
@@ -214,8 +217,8 @@ export default function DuplicatePolicyForm({
               </Forms.Section.Column>
             </Forms.Section.Columns>
           </Forms.Layout.Sheet>
-        </Form>
-      )}
-    </Forms.Container.Dialog>
+        )}
+      </Forms.Container.Dialog>
+    </Forms.Provider>
   )
 }

@@ -2,8 +2,6 @@ import { useCallback } from "react"
 import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { Form } from "@/components/ui/form"
-
 import * as Schemas from "@/schemas"
 import { IsolationStrategy } from "@/types/environments"
 
@@ -53,12 +51,12 @@ export default function CreateEnvironmentForm({
   )
 
   return (
-    <Forms.Container.Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-      disableOverlay
-    >
-      <Form {...form}>
+    <Forms.Provider form={form}>
+      <Forms.Container.Dialog
+        open={open}
+        onOpenChange={onOpenChange}
+        disableOverlay
+      >
         <Forms.Layout.Wizard
           onBack={() => onOpenChange(false)}
           onSubmit={handleSubmit}
@@ -124,7 +122,7 @@ export default function CreateEnvironmentForm({
             <DocumentationLink page="environments" />
           </Forms.Section.Step>
         </Forms.Layout.Wizard>
-      </Form>
-    </Forms.Container.Dialog>
+      </Forms.Container.Dialog>
+    </Forms.Provider>
   )
 }

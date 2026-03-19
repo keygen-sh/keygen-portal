@@ -17,7 +17,6 @@ import {
   PopoverContent,
 } from "@/components/ui/popover"
 import {
-  Form,
   FormField,
   FormItem,
   FormControl,
@@ -332,21 +331,21 @@ function TemplatesSelectionForm({
   ]
 
   return (
-    <Forms.Container.Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-      disableOverlay
-    >
-      <Forms.Section.Header>
-        <Forms.Section.Title className="text-base">
-          New policy
-        </Forms.Section.Title>
-        <Forms.Section.Description className="text-sm">
-          Select all parameters that apply to the policy
-        </Forms.Section.Description>
-      </Forms.Section.Header>
+    <Forms.Provider form={form}>
+      <Forms.Container.Dialog
+        open={open}
+        onOpenChange={onOpenChange}
+        disableOverlay
+      >
+        <Forms.Section.Header>
+          <Forms.Section.Title className="text-base">
+            New policy
+          </Forms.Section.Title>
+          <Forms.Section.Description className="text-sm">
+            Select all parameters that apply to the policy
+          </Forms.Section.Description>
+        </Forms.Section.Header>
 
-      <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <ScrollArea className="h-[calc(100vh-15rem)] md:w-3xl">
             <div className="space-y-8">
@@ -501,8 +500,8 @@ function TemplatesSelectionForm({
             </div>
           </div>
         </form>
-      </Form>
-    </Forms.Container.Dialog>
+      </Forms.Container.Dialog>
+    </Forms.Provider>
   )
 }
 
@@ -528,12 +527,12 @@ function TemplatesForm({
   errorMessage,
 }: TemplatesFormProps) {
   return (
-    <Forms.Container.Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-      disableOverlay
-    >
-      <Form {...form}>
+    <Forms.Provider form={form}>
+      <Forms.Container.Dialog
+        open={open}
+        onOpenChange={onOpenChange}
+        disableOverlay
+      >
         <Forms.Layout.Wizard
           onSubmit={onSubmit}
           onBack={onBack}
@@ -864,8 +863,8 @@ function TemplatesForm({
             </Forms.Section.Step>
           )}
         </Forms.Layout.Wizard>
-      </Form>
-    </Forms.Container.Dialog>
+      </Forms.Container.Dialog>
+    </Forms.Provider>
   )
 }
 
@@ -889,13 +888,13 @@ function ScratchForm({
   errorMessage,
 }: ScratchFormProps) {
   return (
-    <Forms.Container.Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-      fullscreen
-      disableOverlay
-    >
-      <Form {...form}>
+    <Forms.Provider form={form}>
+      <Forms.Container.Dialog
+        open={open}
+        onOpenChange={onOpenChange}
+        fullscreen
+        disableOverlay
+      >
         <Forms.Layout.Wizard
           variant="sidebar"
           title="Creating a new policy"
@@ -1085,7 +1084,7 @@ function ScratchForm({
             <DocumentationLink page="policies" />
           </Forms.Section.Step>
         </Forms.Layout.Wizard>
-      </Form>
-    </Forms.Container.Dialog>
+      </Forms.Container.Dialog>
+    </Forms.Provider>
   )
 }

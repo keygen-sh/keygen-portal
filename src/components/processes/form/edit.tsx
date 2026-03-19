@@ -3,8 +3,6 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
 
-import { Form } from "@/components/ui/form"
-
 import * as Schemas from "@/schemas"
 import { useGetProcess, useUpdateProcess } from "@/queries/processes"
 
@@ -45,8 +43,8 @@ export default function EditProcessForm({
   )
 
   return (
-    <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
-      <Form {...form}>
+    <Forms.Provider form={form}>
+      <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Sheet
           title="Editing an existing process"
           onCancel={() => onOpenChange(false)}
@@ -61,7 +59,7 @@ export default function EditProcessForm({
             fieldVariant="stacking"
           />
         </Forms.Layout.Sheet>
-      </Form>
-    </Forms.Container.Dialog>
+      </Forms.Container.Dialog>
+    </Forms.Provider>
   )
 }

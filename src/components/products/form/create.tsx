@@ -2,8 +2,6 @@ import { useCallback } from "react"
 import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { Form } from "@/components/ui/form"
-
 import { Award, Lock, Unlock } from "lucide-react"
 
 import * as Schemas from "@/schemas"
@@ -61,8 +59,8 @@ export default function CreateProductForm({
   )
 
   return (
-    <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
-      <Form {...form}>
+    <Forms.Provider form={form}>
+      <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Wizard
           onBack={() => onOpenChange(false)}
           onSubmit={handleSubmit}
@@ -154,7 +152,7 @@ export default function CreateProductForm({
             <DocumentationLink page="products" />
           </Forms.Section.Step>
         </Forms.Layout.Wizard>
-      </Form>
-    </Forms.Container.Dialog>
+      </Forms.Container.Dialog>
+    </Forms.Provider>
   )
 }

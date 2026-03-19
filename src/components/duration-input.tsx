@@ -196,7 +196,12 @@ export default function DurationInput({
 
   const content = (
     <div className={cn("flex items-stretch", className)}>
-      <Popover open={presetsOpen} onOpenChange={setPresetsOpen}>
+      <Popover
+        open={presetsOpen}
+        onOpenChange={setPresetsOpen}
+        // FIXME(ezekg) nested dialogs break scroll area: https://github.com/radix-ui/primitives/issues/1159
+        modal={true}
+      >
         <PopoverPrimitive.Anchor asChild>
           <Input
             ref={inputRef}

@@ -5,16 +5,23 @@ export const Toaster = (props: ToasterProps) => {
   const { theme = "system" } = useTheme()
 
   return (
-    <Sonner
-      theme={theme as ToasterProps["theme"]}
-      toastOptions={{
-        classNames: {
-          toast: "flex w-full justify-center",
-        },
-      }}
-      className="toaster group"
-      position="top-center"
-      {...props}
-    />
+    <div
+      // NB(ezekg) we may be within a dialog context and we don't want
+      //           any "clicked outside" events to propagate up
+      onPointerDown={(e) => e.stopPropagation()}
+      onPointerUp={(e) => e.stopPropagation()}
+    >
+      <Sonner
+        theme={theme as ToasterProps["theme"]}
+        toastOptions={{
+          classNames: {
+            toast: "flex w-full justify-center pointer-events-auto",
+          },
+        }}
+        className="toaster group"
+        position="top-center"
+        {...props}
+      />
+    </div>
   )
 }

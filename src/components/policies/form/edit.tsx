@@ -20,6 +20,8 @@ import * as Schemas from "@/schemas"
 
 import { settleCreateEntitlements } from "@/lib/entitlements"
 
+import { PolicyMode } from "@/types/policies"
+
 import * as Forms from "@/components/forms"
 import * as Policies from "@/components/policies"
 import { Separator } from "@/components/ui/separator"
@@ -124,6 +126,7 @@ export default function EditPolicyForm({
             <Forms.Section.Column>
               <Policies.Form.Fields
                 schema="edit"
+                mode={PolicyMode.Edit}
                 include={[
                   "authenticationStrategy",
                   "checkInInterval",
@@ -150,6 +153,7 @@ export default function EditPolicyForm({
             <Forms.Section.Column>
               <Policies.Form.Fields
                 schema="edit"
+                mode={PolicyMode.Edit}
                 include={[
                   "maxUses",
                   "maxUsers",
@@ -180,11 +184,12 @@ export default function EditPolicyForm({
 
           <Forms.Section.Columns>
             <Forms.Section.Column>
-              <Policies.Form.Fields schema="edit" include={["metadata"]} />
+              <Policies.Form.Fields schema="edit" mode={PolicyMode.Edit} include={["metadata"]} />
             </Forms.Section.Column>
             <Forms.Section.Column>
               <Policies.Form.Fields
                 schema="edit"
+                mode={PolicyMode.Edit}
                 include={["entitlements.attach", "entitlements.create"]}
               />
             </Forms.Section.Column>

@@ -170,6 +170,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "checkInInterval"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "checkInIntervalCount":
@@ -206,6 +207,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "duration"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "entitlements.attach":
@@ -447,6 +449,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "requireHeartbeat"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "requireMachineScope":
@@ -716,10 +719,12 @@ function DurationField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
@@ -737,7 +742,20 @@ function DurationField({
             <FormControl>
               <DurationInput
                 value={field.value}
-                onChange={field.onChange}
+                onChange={(value) => {
+                  if (mode === PolicyMode.Create && value === null) {
+                    form.reset({
+                      ...form.getValues(),
+                      duration: value,
+                      expirationStrategy: undefined,
+                      expirationBasis: undefined,
+                      renewalBasis: undefined,
+                      transferStrategy: undefined,
+                    })
+                  } else {
+                    field.onChange(value)
+                  }
+                }}
                 units={["unlimited", "days", "weeks", "months", "years"]}
                 autoFocus={autoFocus}
               />
@@ -946,10 +964,12 @@ function RequireHeartbeatField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
@@ -970,7 +990,18 @@ function RequireHeartbeatField({
               }
               onValueChange={(value) => {
                 const newValue = value === "" ? undefined : value === "true"
-                field.onChange(newValue)
+                if (mode === PolicyMode.Create && !newValue) {
+                  form.reset({
+                    ...form.getValues(),
+                    requireHeartbeat: newValue,
+                    heartbeatDuration: undefined,
+                    heartbeatCullStrategy: undefined,
+                    heartbeatBasis: undefined,
+                    heartbeatResurrectionStrategy: undefined,
+                  })
+                } else {
+                  field.onChange(newValue)
+                }
               }}
             >
               <FormControl>
@@ -1923,10 +1954,12 @@ function CheckInIntervalField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
 
@@ -1943,7 +1976,17 @@ function CheckInIntervalField({
           >
             <NullableSelect<CheckInInterval>
               value={field.value}
-              onChange={field.onChange}
+              onChange={(value) => {
+                if (mode === PolicyMode.Create && value === null) {
+                  form.reset({
+                    ...form.getValues(),
+                    checkInInterval: value,
+                    checkInIntervalCount: undefined,
+                  })
+                } else {
+                  field.onChange(value)
+                }
+              }}
               invalid={!!fieldState.error}
               autoFocus={autoFocus}
             >

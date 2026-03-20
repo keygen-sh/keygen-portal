@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form"
 import { useParams } from "@tanstack/react-router"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { Form } from "@/components/ui/form"
 import { Separator } from "@/components/ui/separator"
 
 import * as Schemas from "@/schemas"
@@ -108,8 +107,8 @@ export default function EditReleaseForm({
   )
 
   return (
-    <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
-      <Form {...form}>
+    <Forms.Provider form={form}>
+      <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Sheet
           title="Editing an existing release"
           onCancel={() => onOpenChange(false)}
@@ -173,7 +172,7 @@ export default function EditReleaseForm({
             fieldVariant="stacking"
           />
         </Forms.Layout.Sheet>
-      </Form>
-    </Forms.Container.Dialog>
+      </Forms.Container.Dialog>
+    </Forms.Provider>
   )
 }

@@ -6,14 +6,18 @@ interface UseDeferredMountProps {
 
 // this hook can be used to improve performance when mounting a large number
 // of components, e.g. the policy edit form's fields.
-export function useDeferredMount({ delay = 500 }: UseDeferredMountProps = {}) {
-  const [ready, setReady] = useState(false)
+export function useDeferredMount({ delay = 0 }: UseDeferredMountProps = {}) {
+  const [componentShouldMount, setComponentShouldMount] = useState(delay === 0)
 
   useEffect(() => {
+    if (delay === 0) {
+      return
+    }
+
     let frame: number
 
     const timeout = setTimeout(() => {
-      frame = requestAnimationFrame(() => setReady(true))
+      frame = requestAnimationFrame(() => setComponentShouldMount(true))
     }, delay)
 
     return () => {
@@ -22,5 +26,5 @@ export function useDeferredMount({ delay = 500 }: UseDeferredMountProps = {}) {
     }
   }, [delay])
 
-  return ready
+  return componentShouldMount
 }

@@ -48,6 +48,10 @@ export function FormDialogGuard({ onClose, children }: FormDialogGuardProps) {
   const { isDirty } = form.formState
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null)
 
+  const close = useCallback(() => {
+    onClose()
+  }, [onClose])
+
   const abandonForm = useCallback(
     (action?: () => void) => {
       const resolve = action ?? onClose
@@ -75,7 +79,7 @@ export function FormDialogGuard({ onClose, children }: FormDialogGuardProps) {
   }, [])
 
   return (
-    <FormDialogGuardContext.Provider value={{ abandonForm }}>
+    <FormDialogGuardContext.Provider value={{ abandonForm, close }}>
       {children}
       <UnsavedChangesModal
         open={pendingAction !== null}

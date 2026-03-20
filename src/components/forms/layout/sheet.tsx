@@ -47,7 +47,7 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
         try {
           form.reset(data)
           await onSubmit(data as T)
-          guard.abandonForm()
+          guard.close()
         } catch (error) {
           if (errorMessage && error instanceof APIError) {
             await handleFormError({

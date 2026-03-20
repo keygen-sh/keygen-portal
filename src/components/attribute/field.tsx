@@ -7,7 +7,7 @@ import {
 import { Info } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-type AttributeVariant = "default" | "outline" | "text" | "none"
+type AttributeVariant = "default" | "outline" | "text" | "none" | "stacking"
 
 interface AttributeFieldProps {
   label: string
@@ -27,6 +27,7 @@ export default function AttributeField({
   const renderVariant = () => {
     switch (variant) {
       case "none":
+      case "stacking":
         return value
       case "text":
         return <span className={cn("px-2 text-sm", className)}>{value}</span>
@@ -45,7 +46,14 @@ export default function AttributeField({
   }
 
   return (
-    <div className="flex w-full items-start justify-between">
+    <div
+      className={cn(
+        "flex w-full",
+        variant === "stacking"
+          ? "flex-col gap-2"
+          : "items-start justify-between",
+      )}
+    >
       <div className="flex items-center gap-2">
         <p className="text-sm text-content-normal">{label}</p>
         {tooltip && (
@@ -53,7 +61,7 @@ export default function AttributeField({
             <TooltipTrigger asChild>
               <Info className="mt-1 size-3.5 text-content-subdued" />
             </TooltipTrigger>
-            <TooltipContent className="max-w-80 bg-background-4 whitespace-pre-line text-content-muted">
+            <TooltipContent className="max-w-80 bg-background-4 text-pretty whitespace-pre-line text-content-muted">
               {tooltip}
             </TooltipContent>
           </Tooltip>

@@ -24,6 +24,7 @@ interface FieldHeaderProps {
   tooltipVariant?: TooltipVariant
   variant?: FieldVariant
   optional?: boolean
+  hint?: string
   children: React.ReactNode
   className?: string
 }
@@ -34,6 +35,7 @@ export default function FieldHeader({
   tooltipVariant = "default",
   variant = "row",
   optional = false,
+  hint,
   children,
   className,
 }: FieldHeaderProps) {
@@ -100,8 +102,10 @@ export default function FieldHeader({
             </span>
           </label>
         </div>
-        {optional && (isMobile || variant === "stacking") && (
-          <span className="text-xs text-content-subdued">Optional</span>
+        {(hint || optional) && (isMobile || variant === "stacking") && (
+          <span className="text-xs text-content-subdued">
+            {hint ?? "Optional"}
+          </span>
         )}
       </div>
 

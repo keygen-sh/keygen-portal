@@ -17,6 +17,7 @@ import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import * as Schemas from "@/schemas"
 
+import { PolicyMode } from "@/types/policies"
 import { settleCreateEntitlements } from "@/lib/entitlements"
 
 import * as Forms from "@/components/forms"
@@ -46,6 +47,7 @@ export default function DuplicatePolicyForm({
   const attachEntitlements = useAttachPolicyEntitlements()
 
   const navigateToResource = useResourceNavigate()
+  const mode = PolicyMode.Duplicate
 
   const defaultValues = useMemo(() => {
     if (!policy) return undefined
@@ -147,6 +149,7 @@ export default function DuplicatePolicyForm({
               <Forms.Section.Column>
                 <Policies.Form.Fields
                   schema="create"
+                  mode={mode}
                   include={[
                     "authenticationStrategy",
                     "checkInInterval",
@@ -173,6 +176,7 @@ export default function DuplicatePolicyForm({
               <Forms.Section.Column>
                 <Policies.Form.Fields
                   schema="create"
+                  mode={mode}
                   include={[
                     "maxUses",
                     "maxUsers",
@@ -204,11 +208,16 @@ export default function DuplicatePolicyForm({
 
             <Forms.Section.Columns>
               <Forms.Section.Column>
-                <Policies.Form.Fields schema="create" include={["metadata"]} />
+                <Policies.Form.Fields
+                  schema="create"
+                  mode={mode}
+                  include={["metadata"]}
+                />
               </Forms.Section.Column>
               <Forms.Section.Column>
                 <Policies.Form.Fields
                   schema="create"
+                  mode={mode}
                   include={["entitlements.attach", "entitlements.create"]}
                 />
               </Forms.Section.Column>

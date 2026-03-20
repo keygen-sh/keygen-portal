@@ -163,6 +163,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "authenticationStrategy"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "checkInInterval":
@@ -182,6 +183,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "checkInIntervalCount"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "componentMatchingStrategy":
@@ -191,6 +193,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "componentMatchingStrategy"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "componentUniquenessStrategy":
@@ -200,6 +203,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "componentUniquenessStrategy"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "duration":
@@ -213,9 +217,13 @@ export default function PoliciesFormFields({
               />
             )
           case "entitlements.attach":
-            return <AttachEntitlementsField key="entitlements.attach" />
+            return (
+              <AttachEntitlementsField key="entitlements.attach" mode={mode} />
+            )
           case "entitlements.create":
-            return <CreateEntitlementsField key="entitlements.create" />
+            return (
+              <CreateEntitlementsField key="entitlements.create" mode={mode} />
+            )
           case "expirationBasis":
             return (
               <ExpirationBasisField
@@ -223,6 +231,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "expirationBasis"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "expirationStrategy":
@@ -232,6 +241,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "expirationStrategy"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "floating":
@@ -240,6 +250,7 @@ export default function PoliciesFormFields({
                 key="floating"
                 autoFocus={autoFocus === "floating"}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "heartbeatBasis":
@@ -249,6 +260,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "heartbeatBasis"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "heartbeatCullStrategy":
@@ -258,6 +270,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "heartbeatCullStrategy"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "heartbeatDuration":
@@ -267,6 +280,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "heartbeatDuration"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "heartbeatResurrectionStrategy":
@@ -276,6 +290,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "heartbeatResurrectionStrategy"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "machineLeasingStrategy":
@@ -285,6 +300,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "machineLeasingStrategy"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "machineMatchingStrategy":
@@ -294,6 +310,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "machineMatchingStrategy"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "machineUniquenessStrategy":
@@ -303,6 +320,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "machineUniquenessStrategy"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "maxCores":
@@ -312,6 +330,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "maxCores"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "maxMachines":
@@ -321,6 +340,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "maxMachines"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "maxProcesses":
@@ -330,6 +350,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "maxProcesses"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "maxUsers":
@@ -339,6 +360,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "maxUsers"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "maxUses":
@@ -348,6 +370,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "maxUses"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "metadata":
@@ -356,6 +379,7 @@ export default function PoliciesFormFields({
                 key="metadata"
                 autoFocus={autoFocus === "metadata"}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "name":
@@ -366,6 +390,7 @@ export default function PoliciesFormFields({
                 titleVariant={titleVariant}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "overageStrategy":
@@ -375,6 +400,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "overageStrategy"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "processLeasingStrategy":
@@ -384,6 +410,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "processLeasingStrategy"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "product":
@@ -393,6 +420,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "product"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "protected":
@@ -401,6 +429,7 @@ export default function PoliciesFormFields({
                 key="protected"
                 autoFocus={autoFocus === "protected"}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "renewalBasis":
@@ -410,6 +439,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "renewalBasis"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "requireCheckIn":
@@ -418,6 +448,7 @@ export default function PoliciesFormFields({
                 key="requireCheckIn"
                 autoFocus={autoFocus === "requireCheckIn"}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "requireChecksumScope":
@@ -426,6 +457,7 @@ export default function PoliciesFormFields({
                 key="requireChecksumScope"
                 autoFocus={autoFocus === "requireChecksumScope"}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "requireComponentsScope":
@@ -434,6 +466,7 @@ export default function PoliciesFormFields({
                 key="requireComponentsScope"
                 autoFocus={autoFocus === "requireComponentsScope"}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "requireFingerprintScope":
@@ -442,6 +475,7 @@ export default function PoliciesFormFields({
                 key="requireFingerprintScope"
                 autoFocus={autoFocus === "requireFingerprintScope"}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "requireHeartbeat":
@@ -460,6 +494,7 @@ export default function PoliciesFormFields({
                 key="requireMachineScope"
                 autoFocus={autoFocus === "requireMachineScope"}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "requirePolicyScope":
@@ -468,6 +503,7 @@ export default function PoliciesFormFields({
                 key="requirePolicyScope"
                 autoFocus={autoFocus === "requirePolicyScope"}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "requireProductScope":
@@ -476,6 +512,7 @@ export default function PoliciesFormFields({
                 key="requireProductScope"
                 autoFocus={autoFocus === "requireProductScope"}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "requireUserScope":
@@ -484,6 +521,7 @@ export default function PoliciesFormFields({
                 key="requireUserScope"
                 autoFocus={autoFocus === "requireUserScope"}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "requireVersionScope":
@@ -492,6 +530,7 @@ export default function PoliciesFormFields({
                 key="requireVersionScope"
                 autoFocus={autoFocus === "requireVersionScope"}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "strict":
@@ -500,6 +539,7 @@ export default function PoliciesFormFields({
                 key="strict"
                 autoFocus={autoFocus === "strict"}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "transferStrategy":
@@ -509,6 +549,7 @@ export default function PoliciesFormFields({
                 autoFocus={autoFocus === "transferStrategy"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "usePool":
@@ -517,6 +558,7 @@ export default function PoliciesFormFields({
                 key="usePool"
                 autoFocus={autoFocus === "usePool"}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           default:
@@ -532,16 +574,20 @@ function NameField({
   titleVariant,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   titleVariant?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between md:flex">
         <Skeleton className="h-5 w-28 rounded-sm" />
@@ -594,16 +640,20 @@ function ProductField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
   const { data: products = [], isLoading: productsLoading } = useListProducts()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready || productsLoading) {
+  if (!shouldMount || productsLoading) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-5 w-48 rounded-sm" />
@@ -645,15 +695,19 @@ function AuthenticationStrategyField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-64 rounded-sm" />
@@ -707,15 +761,19 @@ function AuthenticationStrategyField({
 function MetadataField({
   autoFocus,
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
   const { metadata } = form.getValues()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-5 w-48 rounded-sm" />
@@ -767,9 +825,11 @@ function DurationField({
   mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-32 rounded-sm" />
@@ -826,18 +886,22 @@ function ExpirationStrategyField({
   fieldVariant = "row",
   descriptions,
   disabled,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
   disabled?: boolean
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
   const duration = useWatch<Schemas.Policies.AllValues>({ name: "duration" })
   const isDisabled = disabled || !duration
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-44 rounded-sm" />
@@ -884,18 +948,22 @@ function ExpirationBasisField({
   fieldVariant = "row",
   descriptions,
   disabled,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
   disabled?: boolean
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
   const duration = useWatch<Schemas.Policies.AllValues>({ name: "duration" })
   const isDisabled = disabled || !duration
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-36 rounded-sm" />
@@ -942,18 +1010,22 @@ function RenewalBasisField({
   fieldVariant = "row",
   descriptions,
   disabled,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
   disabled?: boolean
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
   const duration = useWatch<Schemas.Policies.AllValues>({ name: "duration" })
   const isDisabled = disabled || !duration
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-32 rounded-sm" />
@@ -1000,18 +1072,22 @@ function TransferStrategyField({
   fieldVariant = "row",
   descriptions,
   disabled,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
   disabled?: boolean
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
   const duration = useWatch<Schemas.Policies.AllValues>({ name: "duration" })
   const isDisabled = disabled || !duration
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-36 rounded-sm" />
@@ -1065,9 +1141,11 @@ function RequireHeartbeatField({
   mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-40 rounded-sm" />
@@ -1130,20 +1208,24 @@ function HeartbeatDurationField({
   fieldVariant = "row",
   descriptions,
   disabled,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
   disabled?: boolean
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
   const requireHeartbeat = useWatch<Schemas.Policies.AllValues>({
     name: "requireHeartbeat",
   })
   const isDisabled = disabled || !requireHeartbeat
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-32 rounded-sm" />
@@ -1189,20 +1271,24 @@ function HeartbeatBasisField({
   fieldVariant = "row",
   descriptions,
   disabled,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
   disabled?: boolean
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
   const requireHeartbeat = useWatch<Schemas.Policies.AllValues>({
     name: "requireHeartbeat",
   })
   const isDisabled = disabled || !requireHeartbeat
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-36 rounded-sm" />
@@ -1249,20 +1335,24 @@ function HeartbeatCullStrategyField({
   fieldVariant = "row",
   descriptions,
   disabled,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
   disabled?: boolean
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
   const requireHeartbeat = useWatch<Schemas.Policies.AllValues>({
     name: "requireHeartbeat",
   })
   const isDisabled = disabled || !requireHeartbeat
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-48 rounded-sm" />
@@ -1309,20 +1399,24 @@ function HeartbeatResurrectionStrategyField({
   fieldVariant = "row",
   descriptions,
   disabled,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
   disabled?: boolean
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
   const requireHeartbeat = useWatch<Schemas.Policies.AllValues>({
     name: "requireHeartbeat",
   })
   const isDisabled = disabled || !requireHeartbeat
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-64 rounded-sm" />
@@ -1368,15 +1462,19 @@ function MaxMachinesField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-28 rounded-sm" />
@@ -1418,15 +1516,19 @@ function MachineUniquenessStrategyField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-56 rounded-sm" />
@@ -1470,15 +1572,19 @@ function MachineMatchingStrategyField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-52 rounded-sm" />
@@ -1522,15 +1628,19 @@ function ComponentUniquenessStrategyField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-60 rounded-sm" />
@@ -1574,15 +1684,19 @@ function ComponentMatchingStrategyField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-56 rounded-sm" />
@@ -1626,15 +1740,19 @@ function OverageStrategyField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-36 rounded-sm" />
@@ -1678,15 +1796,19 @@ function MachineLeasingStrategyField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-48 rounded-sm" />
@@ -1729,14 +1851,18 @@ function MachineLeasingStrategyField({
 function RequireChecksumScopeField({
   autoFocus,
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-44 rounded-sm" />
@@ -1774,14 +1900,18 @@ function RequireChecksumScopeField({
 function RequireComponentsScopeField({
   autoFocus,
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-52 rounded-sm" />
@@ -1819,14 +1949,18 @@ function RequireComponentsScopeField({
 function RequireFingerprintScopeField({
   autoFocus,
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-48 rounded-sm" />
@@ -1864,14 +1998,18 @@ function RequireFingerprintScopeField({
 function RequireMachineScopeField({
   autoFocus,
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-40 rounded-sm" />
@@ -1909,14 +2047,18 @@ function RequireMachineScopeField({
 function RequirePolicyScopeField({
   autoFocus,
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-36 rounded-sm" />
@@ -1954,14 +2096,18 @@ function RequirePolicyScopeField({
 function RequireProductScopeField({
   autoFocus,
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-40 rounded-sm" />
@@ -1999,14 +2145,18 @@ function RequireProductScopeField({
 function RequireUserScopeField({
   autoFocus,
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-36 rounded-sm" />
@@ -2044,14 +2194,18 @@ function RequireUserScopeField({
 function RequireVersionScopeField({
   autoFocus,
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-40 rounded-sm" />
@@ -2090,15 +2244,19 @@ function MaxProcessesField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-32 rounded-sm" />
@@ -2140,15 +2298,19 @@ function MaxUsersField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-24 rounded-sm" />
@@ -2190,15 +2352,19 @@ function MaxUsesField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-20 rounded-sm" />
@@ -2240,15 +2406,19 @@ function MaxCoresField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-24 rounded-sm" />
@@ -2298,9 +2468,11 @@ function CheckInIntervalField({
   mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-40 rounded-sm" />
@@ -2355,20 +2527,24 @@ function CheckInIntervalCountField({
   fieldVariant = "row",
   descriptions,
   disabled,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
   disabled?: boolean
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
   const checkInInterval = useWatch<Schemas.Policies.AllValues>({
     name: "checkInInterval",
   })
   const isDisabled = disabled || !checkInInterval
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-48 rounded-sm" />
@@ -2432,15 +2608,19 @@ function ProcessLeasingStrategyField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="w-full justify-between space-y-2 md:flex">
         <Skeleton className="h-5 w-48 rounded-sm" />
@@ -2483,14 +2663,18 @@ function ProcessLeasingStrategyField({
 function StrictField({
   autoFocus,
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-16 rounded-sm" />
@@ -2528,14 +2712,18 @@ function StrictField({
 function FloatingField({
   autoFocus,
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-20 rounded-sm" />
@@ -2573,14 +2761,18 @@ function FloatingField({
 function ProtectedField({
   autoFocus,
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-24 rounded-sm" />
@@ -2618,14 +2810,18 @@ function ProtectedField({
 function UsePoolField({
   autoFocus,
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-20 rounded-sm" />
@@ -2663,14 +2859,18 @@ function UsePoolField({
 function RequireCheckInField({
   autoFocus,
   descriptions,
+  mode = PolicyMode.Create,
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
+  mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="flex w-full justify-between">
         <Skeleton className="h-5 w-36 rounded-sm" />
@@ -2705,13 +2905,19 @@ function RequireCheckInField({
   )
 }
 
-function AttachEntitlementsField() {
+function AttachEntitlementsField({
+  mode = PolicyMode.Create,
+}: {
+  mode?: PolicyMode
+} = {}) {
   const form = useFormContext<Schemas.Policies.AllValues>()
   const { data: entitlements = [], isLoading: entitlementsLoading } =
     useListEntitlements()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready || entitlementsLoading) {
+  if (!shouldMount || entitlementsLoading) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-5 w-48 rounded-sm" />
@@ -2743,16 +2949,21 @@ function AttachEntitlementsField() {
   )
 }
 
-function CreateEntitlementsField() {
+function CreateEntitlementsField({
+  mode = PolicyMode.Create,
+}: {
+  mode?: PolicyMode
+} = {}) {
   const form = useFormContext<Schemas.Policies.AllValues>()
-
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "entitlements.create",
   })
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
 
-  const ready = useDeferredMount()
-  if (!ready) {
+  if (!shouldMount) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-5 w-32 rounded-sm" />

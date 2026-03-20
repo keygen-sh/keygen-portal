@@ -3,6 +3,7 @@ import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
 
 export enum PolicyMode {
   Create = "create",
+  Duplicate = "duplicate",
   Edit = "edit",
   View = "view",
 }

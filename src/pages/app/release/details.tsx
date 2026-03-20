@@ -65,7 +65,9 @@ import { useGetProduct } from "@/queries/products"
 import { useGetEntitlement } from "@/queries/entitlements"
 import {
   useGetRelease,
+  useYankRelease,
   useRemoveRelease,
+  usePublishRelease,
   useListReleaseConstraints,
 } from "@/queries/releases"
 
@@ -136,6 +138,8 @@ export default function ReleaseDetails() {
   const { id } = useParams({ from: "/$accountId/app/releases/$id" })
   const { data: release, isLoading, isFetching, isError } = useGetRelease(id)
   const deleteRelease = useRemoveRelease(id)
+  const publishRelease = usePublishRelease(id)
+  const yankRelease = useYankRelease(id)
 
   const productId = release?.relationships.product?.data?.id || ""
   const { data: product } = useGetProduct(productId)
@@ -153,6 +157,8 @@ export default function ReleaseDetails() {
   const [open, setOpen] = useState({
     edit: false,
     delete: false,
+    publish: false,
+    yank: false,
     attributes: false,
   })
 
@@ -178,6 +184,26 @@ export default function ReleaseDetails() {
         await navigate({ to: ".." })
       },
     })
+  }
+
+  const handlePublishRelease = async () => {
+    try {
+      await publishRelease.mutateAsync()
+      toast({ message: "Release published", variant: "success" })
+      toggleOpen("publish", false)
+    } catch {
+      toast({ message: "Failed to publish release", variant: "error" })
+    }
+  }
+
+  const handleYankRelease = async () => {
+    try {
+      await yankRelease.mutateAsync()
+      toast({ message: "Release yanked", variant: "success" })
+      toggleOpen("yank", false)
+    } catch {
+      toast({ message: "Failed to yank release", variant: "error" })
+    }
   }
 
   return (
@@ -219,6 +245,34 @@ export default function ReleaseDetails() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="mr-4 p-0">
+                {release?.attributes.status === ReleaseStatus.Draft && (
+                  <>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        toggleOpen("publish", true)
+                        e.currentTarget.blur()
+                      }}
+                      className="pb-2 text-base"
+                    >
+                      Publish
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
+                {release?.attributes.status === ReleaseStatus.Published && (
+                  <>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        toggleOpen("yank", true)
+                        e.currentTarget.blur()
+                      }}
+                      className="pb-2 text-base"
+                    >
+                      Yank
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
                 <DropdownMenuItem
                   onClick={(e) => {
                     toggleOpen("edit", true)
@@ -242,6 +296,24 @@ export default function ReleaseDetails() {
             </DropdownMenu>
           ) : (
             <div className="flex items-center space-x-2">
+              {release?.attributes.status === ReleaseStatus.Draft && (
+                <Button
+                  variant="outline"
+                  disabled={isLoading}
+                  onClick={() => toggleOpen("publish", true)}
+                >
+                  Publish
+                </Button>
+              )}
+              {release?.attributes.status === ReleaseStatus.Published && (
+                <Button
+                  variant="outline"
+                  disabled={isLoading}
+                  onClick={() => toggleOpen("yank", true)}
+                >
+                  Yank
+                </Button>
+              )}
               <Button
                 variant="outline"
                 disabled={isLoading}
@@ -583,6 +655,28 @@ export default function ReleaseDetails() {
         onClose={() => toggleOpen("delete", false)}
         onConfirm={handleDeleteRelease}
         label="Delete"
+        variant="destructive"
+      />
+
+      <ConfirmationModal
+        title={`Publish ${release?.attributes.name ?? release?.attributes.version}`}
+        description="Are you sure you want to publish this release? Once published, it will be accessible to entitled users."
+        open={open.publish}
+        disabled={publishRelease.isPending}
+        onClose={() => toggleOpen("publish", false)}
+        onConfirm={handlePublishRelease}
+        label="Publish"
+        variant="default"
+      />
+
+      <ConfirmationModal
+        title={`Yank ${release?.attributes.name ?? release?.attributes.version}`}
+        description="Are you sure you want to yank this release? Yanked releases are delisted and no longer accessible to users."
+        open={open.yank}
+        disabled={yankRelease.isPending}
+        onClose={() => toggleOpen("yank", false)}
+        onConfirm={handleYankRelease}
+        label="Yank"
         variant="destructive"
       />
 

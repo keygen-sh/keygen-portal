@@ -157,6 +157,11 @@ const VIEWS: View[] = [
     icon: Package,
     routes: linkOptions([
       {
+        to: "/$accountId/app/packages",
+        label: "Packages",
+        params: { accountId: keygen.config.id },
+      },
+      {
         to: "/$accountId/app/releases",
         label: "Releases",
         params: { accountId: keygen.config.id },

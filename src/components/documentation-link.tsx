@@ -1,23 +1,10 @@
 import { Button } from "@/components/ui/button"
 
 import { cn } from "@/lib/utils"
-
-type DocumentationPage =
-  | ""
-  | "environments"
-  | "products"
-  | "entitlements"
-  | "groups"
-  | "policies"
-  | "users"
-  | "licenses"
-  | "machines"
-  | "components"
-  | "processes"
-  | "releases"
+import { ResourceType } from "@/types/api"
 
 interface DocumentationLinkProps {
-  page?: DocumentationPage
+  page?: ResourceType | ""
   section?: string
   message?: string
   className?: string

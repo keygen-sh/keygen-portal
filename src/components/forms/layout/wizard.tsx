@@ -119,7 +119,7 @@ export default function FormsContentWizard<
         try {
           await onSubmit(data as T)
           if (autoClose) {
-            guard.complete()
+            guard.close()
           } else {
             form.reset()
           }

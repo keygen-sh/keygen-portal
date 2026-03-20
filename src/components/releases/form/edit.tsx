@@ -120,7 +120,7 @@ export default function EditReleaseForm({
             detachConstraints.isPending
           }
           submitLabel="Update"
-          className="md:h-[70vh]!"
+          className="md:h-[74vh]!"
         >
           <Forms.Section.Columns title="Attributes">
             <Forms.Section.Column>

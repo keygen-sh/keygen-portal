@@ -610,7 +610,6 @@ function ConstraintsAttachField({
           <Forms.Field.Header
             label="Constraints"
             variant="stacking"
-            hint="Requires licenses have certain entitlements"
             tooltip={descriptions.constraints}
           >
             <FormControl>

@@ -52,10 +52,9 @@ export default function CreateProductForm({
     async (values: Schemas.Products.CreateValues) => {
       const product = await createProduct.mutateAsync(values)
       toast({ message: "Product created", variant: "success" })
-      onOpenChange(false)
       await navigateToResource(product)
     },
-    [createProduct, navigateToResource, onOpenChange],
+    [createProduct, navigateToResource],
   )
 
   return (

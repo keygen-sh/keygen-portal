@@ -128,12 +128,10 @@ export default function EditLicenseForm({
 
       await updateLicense.mutateAsync(values)
       toast({ message: "License updated", variant: "success" })
-      onOpenChange(false)
     },
     [
       form,
       license,
-      onOpenChange,
       updateLicense,
       licenseEntitlements,
       attachEntitlements,

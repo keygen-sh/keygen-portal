@@ -38,10 +38,9 @@ export default function CreateComponentForm({
     async (values: Schemas.Components.CreateValues) => {
       const component = await createComponent.mutateAsync(values)
       toast({ message: "Component created", variant: "success" })
-      onOpenChange(false)
       await navigateToResource(component)
     },
-    [createComponent, navigateToResource, onOpenChange],
+    [createComponent, navigateToResource],
   )
 
   return (

@@ -149,7 +149,6 @@ export default function CreatePolicyForm({
 
       toast({ message: "Policy created", variant: "success" })
       await navigateToResource(policy)
-      onOpenChange(false)
     },
     [
       form,
@@ -157,7 +156,6 @@ export default function CreatePolicyForm({
       createEntitlement,
       attachEntitlements,
       navigateToResource,
-      onOpenChange,
     ],
   )
 
@@ -899,7 +897,6 @@ function ScratchForm({
           variant="sidebar"
           title="Creating a new policy"
           onSubmit={onSubmit}
-          onCancel={onBack}
           onBack={onBack}
           isPending={isPending}
           errorMessage={errorMessage}

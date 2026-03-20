@@ -44,9 +44,8 @@ export default function EditGroupForm({
     async (values: Schemas.Groups.UpdateValues) => {
       await updateGroup.mutateAsync(values)
       toast({ message: "Group updated", variant: "success" })
-      onOpenChange(false)
     },
-    [updateGroup, onOpenChange],
+    [updateGroup],
   )
 
   return (

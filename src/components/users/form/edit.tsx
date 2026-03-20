@@ -57,9 +57,8 @@ export default function EditUserForm({
 
       await updateUser.mutateAsync(values)
       toast({ message: "User updated", variant: "success" })
-      onOpenChange(false)
     },
-    [updateUser, changeGroup, user, onOpenChange],
+    [updateUser, changeGroup, user],
   )
 
   return (

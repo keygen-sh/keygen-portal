@@ -37,10 +37,9 @@ export default function CreateProcessForm({
     async (values: Schemas.Processes.CreateValues) => {
       const process = await createProcess.mutateAsync(values)
       toast({ message: "Process spawned", variant: "success" })
-      onOpenChange(false)
       await navigateToResource(process)
     },
-    [createProcess, navigateToResource, onOpenChange],
+    [createProcess, navigateToResource],
   )
 
   return (

@@ -39,7 +39,6 @@ interface FormsContentWizardProps<T extends FieldValues = FieldValues> {
   description?: React.ReactNode
   onSubmit: (data: T) => void | Promise<void>
   onBack?: () => void
-  onCancel?: () => void
   errorMessage?: string
   submitLabel?: string
   backLabel?: string
@@ -83,7 +82,6 @@ export default function FormsContentWizard<
   description,
   onSubmit,
   onBack,
-  onCancel,
   errorMessage,
   submitLabel = "Submit",
   backLabel = "Back",
@@ -117,7 +115,9 @@ export default function FormsContentWizard<
     await form.handleSubmit(
       async (data) => {
         try {
+          form.reset(data)
           await onSubmit(data as T)
+          guard.abandonForm()
         } catch (error) {
           if (errorMessage && error instanceof APIError) {
             await handleFormError({
@@ -187,9 +187,9 @@ export default function FormsContentWizard<
   const back = useCallback(() => {
     if (isFirst) {
       if (onBack) {
-        onBack()
+        guard.abandonForm(onBack)
       } else {
-        guard.guardedOpenChange(false)
+        guard.abandonForm()
       }
     } else {
       goTo(currentIndex - 1)
@@ -208,7 +208,7 @@ export default function FormsContentWizard<
       isLast={isLast}
       next={next}
       back={back}
-      onCancel={onCancel ?? (() => guard.guardedOpenChange(false))}
+      onCancel={() => guard.abandonForm()}
       submitLabel={submitLabel}
       backLabel={backLabel}
       cancelLabel={cancelLabel}

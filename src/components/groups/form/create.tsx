@@ -39,10 +39,9 @@ export default function CreateGroupForm({
     async (values: Schemas.Groups.CreateValues) => {
       const group = await createGroup.mutateAsync(values)
       toast({ message: "Group created", variant: "success" })
-      onOpenChange(false)
       await navigateToResource(group)
     },
-    [createGroup, navigateToResource, onOpenChange],
+    [createGroup, navigateToResource],
   )
 
   return (

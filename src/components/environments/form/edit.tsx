@@ -39,9 +39,8 @@ export default function EditEnvironmentForm({
     async (values: Schemas.Environments.UpdateValues) => {
       await updateEnvironment.mutateAsync(values)
       toast({ message: "Environment updated", variant: "success" })
-      onOpenChange(false)
     },
-    [updateEnvironment, onOpenChange],
+    [updateEnvironment],
   )
 
   return (

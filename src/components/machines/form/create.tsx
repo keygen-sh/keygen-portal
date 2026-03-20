@@ -67,10 +67,9 @@ export default function CreateMachineForm({
       }
 
       toast({ message: "Machine activated", variant: "success" })
-      onOpenChange(false)
       await navigateToResource(machine)
     },
-    [createMachine, changeGroup, changeOwner, navigateToResource, onOpenChange],
+    [createMachine, changeGroup, changeOwner, navigateToResource],
   )
 
   return (

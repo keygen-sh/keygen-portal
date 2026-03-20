@@ -38,50 +38,47 @@ export function FormRouteGuard({ children }: { children: React.ReactNode }) {
 }
 
 interface FormDialogGuardProps {
-  onOpenChange: (open: boolean) => void
+  onClose: () => void
   children: React.ReactNode
 }
 
 // FormDialogGuard intercepts and confirms dialog close when the form is dirty
-export function FormDialogGuard({
-  onOpenChange,
-  children,
-}: FormDialogGuardProps) {
+export function FormDialogGuard({ onClose, children }: FormDialogGuardProps) {
   const form = useFormContext()
   const { isDirty } = form.formState
-  const [closeBlocked, setCloseBlocked] = useState(false)
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null)
 
-  const guardedOpenChange = useCallback(
-    (nextOpen: boolean) => {
-      if (!nextOpen && isDirty) {
-        setCloseBlocked(true)
+  const abandonForm = useCallback(
+    (action?: () => void) => {
+      const resolve = action ?? onClose
+
+      if (isDirty) {
+        setPendingAction(() => resolve)
         return
       }
 
-      if (!nextOpen) {
-        form.reset()
-      }
-
-      onOpenChange(nextOpen)
+      form.reset()
+      resolve()
     },
-    [isDirty, onOpenChange, form],
+    [isDirty, form, onClose],
   )
 
   const handleConfirm = useCallback(() => {
-    setCloseBlocked(false)
+    const action = pendingAction
+    setPendingAction(null)
     form.reset()
-    onOpenChange(false)
-  }, [form, onOpenChange])
+    action?.()
+  }, [form, pendingAction])
 
   const handleCancel = useCallback(() => {
-    setCloseBlocked(false)
+    setPendingAction(null)
   }, [])
 
   return (
-    <FormDialogGuardContext.Provider value={{ guardedOpenChange }}>
+    <FormDialogGuardContext.Provider value={{ abandonForm }}>
       {children}
       <UnsavedChangesModal
-        open={closeBlocked}
+        open={pendingAction !== null}
         onClose={handleCancel}
         onConfirm={handleConfirm}
       />

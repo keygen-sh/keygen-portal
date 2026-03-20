@@ -126,7 +126,8 @@ export default function CheckOutMachineForm({
           disableOverlay
         >
           <Forms.Layout.Wizard
-            onSubmit={() => form.handleSubmit(handleCheckOut)()}
+            onSubmit={handleCheckOut}
+            autoClose={false}
             isPending={checkOutMachine.isPending}
             submitLabel="Checkout machine"
             description="Checking out a machine"

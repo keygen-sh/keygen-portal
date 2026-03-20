@@ -124,7 +124,8 @@ export default function CheckOutLicenseForm({
           disableOverlay
         >
           <Forms.Layout.Wizard
-            onSubmit={() => form.handleSubmit(handleCheckOut)()}
+            onSubmit={handleCheckOut}
+            autoClose={false}
             isPending={checkOutLicense.isPending}
             submitLabel="Checkout license"
             description="Checking out a license"

@@ -151,7 +151,18 @@ const VIEWS: View[] = [
       },
     ]),
   },
-  { id: ViewId.Distribution, label: "Distribution", icon: Package, routes: [] },
+  {
+    id: ViewId.Distribution,
+    label: "Distribution",
+    icon: Package,
+    routes: linkOptions([
+      {
+        to: "/$accountId/app/releases",
+        label: "Releases",
+        params: { accountId: keygen.config.id },
+      },
+    ]),
+  },
   { id: ViewId.Automate, label: "Automate", icon: Zap, routes: [] },
   { id: ViewId.Webhooks, label: "Webhooks", icon: Webhook, routes: [] },
   { id: ViewId.Access, label: "Access", icon: KeyRound, routes: [] },

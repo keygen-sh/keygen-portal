@@ -129,7 +129,7 @@ export default function CreateReleaseForm({
 
           <Forms.Section.Step
             crumb="Release attributes"
-            fields={["name", "productId", "version", "backdated"]}
+            fields={["name", "productId", "version", "tag", "backdated"]}
           >
             <Forms.Field.Title>
               <Releases.Form.Fields
@@ -157,7 +157,7 @@ export default function CreateReleaseForm({
                 <Forms.Section.Column>
                   <Releases.Form.Fields
                     schema="create"
-                    include={["version"]}
+                    include={["version", "tag"]}
                     fieldVariant="stacking"
                   />
                 </Forms.Section.Column>
@@ -188,25 +188,14 @@ export default function CreateReleaseForm({
 
           <Forms.Section.Step
             crumb="Additional configuration"
-            fields={["tag", "description", "metadata"]}
+            fields={["description", "metadata"]}
           >
             <Forms.Section.Card title="Release attributes">
-              <Forms.Section.Columns>
-                <Forms.Section.Column>
-                  <Releases.Form.Fields
-                    schema="create"
-                    include={["tag"]}
-                    fieldVariant="stacking"
-                  />
-                </Forms.Section.Column>
-                <Forms.Section.Column>
-                  <Releases.Form.Fields
-                    schema="create"
-                    include={["description"]}
-                    fieldVariant="stacking"
-                  />
-                </Forms.Section.Column>
-              </Forms.Section.Columns>
+              <Releases.Form.Fields
+                schema="create"
+                include={["description"]}
+                fieldVariant="stacking"
+              />
 
               <Releases.Form.Fields
                 schema="create"

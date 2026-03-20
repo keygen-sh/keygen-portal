@@ -109,10 +109,9 @@ export default function CheckOutMachineForm({
       if (!value) {
         setShowResult(false)
         setCertificate("")
-        form.reset()
       }
     },
-    [onOpenChange, form],
+    [onOpenChange],
   )
 
   return (

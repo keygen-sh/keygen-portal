@@ -107,10 +107,9 @@ export default function CheckOutLicenseForm({
       if (!value) {
         setShowResult(false)
         setCertificate("")
-        form.reset()
       }
     },
-    [onOpenChange, form],
+    [onOpenChange],
   )
 
   return (

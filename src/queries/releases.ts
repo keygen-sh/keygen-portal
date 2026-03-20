@@ -149,6 +149,50 @@ export function useRemoveRelease(releaseId: string) {
   })
 }
 
+export function usePublishRelease(releaseId: string) {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<Release, APIError>({
+    mutationFn: () =>
+      keygen.releases
+        .publish({ id: releaseId })
+        .then((response) => response.data as Release),
+
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ["releases", releaseId, { environment: code }],
+        updated,
+      )
+      await queryClient.invalidateQueries({
+        queryKey: ["releases", { environment: code }],
+      })
+    },
+  })
+}
+
+export function useYankRelease(releaseId: string) {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<Release, APIError>({
+    mutationFn: () =>
+      keygen.releases
+        .yank({ id: releaseId })
+        .then((response) => response.data as Release),
+
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ["releases", releaseId, { environment: code }],
+        updated,
+      )
+      await queryClient.invalidateQueries({
+        queryKey: ["releases", { environment: code }],
+      })
+    },
+  })
+}
+
 export function useListReleaseConstraints(releaseId: string) {
   const { code } = useEnvironment()
 

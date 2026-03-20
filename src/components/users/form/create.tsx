@@ -54,10 +54,9 @@ export default function CreateUserForm({
       }
 
       toast({ message: "User created", variant: "success" })
-      onOpenChange(false)
       await navigateToResource(user)
     },
-    [createUser, changeGroup, navigateToResource, onOpenChange],
+    [createUser, changeGroup, navigateToResource],
   )
 
   return (

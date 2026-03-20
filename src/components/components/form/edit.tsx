@@ -40,9 +40,8 @@ export default function EditComponentForm({
     async (values: Schemas.Components.UpdateValues) => {
       await updateComponent.mutateAsync(values)
       toast({ message: "Component updated", variant: "success" })
-      onOpenChange(false)
     },
-    [updateComponent, onOpenChange],
+    [updateComponent],
   )
 
   return (

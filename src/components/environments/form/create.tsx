@@ -45,9 +45,8 @@ export default function CreateEnvironmentForm({
     async (values: Schemas.Environments.CreateValues) => {
       await createEnvironment.mutateAsync(values)
       toast({ message: "Environment created", variant: "success" })
-      onOpenChange(false)
     },
-    [createEnvironment, onOpenChange],
+    [createEnvironment],
   )
 
   return (

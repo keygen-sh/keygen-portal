@@ -89,12 +89,10 @@ export default function EditPolicyForm({
 
       await updatePolicy.mutateAsync(values)
       toast({ message: "Policy updated", variant: "success" })
-      onOpenChange(false)
     },
     [
       form,
       policy,
-      onOpenChange,
       updatePolicy,
       policyEntitlements,
       attachEntitlements,

@@ -41,9 +41,8 @@ export default function EditEntitlementForm({
     async (values: Schemas.Entitlements.UpdateValues) => {
       await updateEntitlement.mutateAsync(values)
       toast({ message: "Entitlement updated", variant: "success" })
-      onOpenChange(false)
     },
-    [updateEntitlement, onOpenChange],
+    [updateEntitlement],
   )
 
   return (

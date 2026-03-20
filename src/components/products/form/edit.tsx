@@ -49,9 +49,8 @@ export default function EditProductForm({
     async (values: Schemas.Products.UpdateValues) => {
       await updateProduct.mutateAsync(values)
       toast({ message: "Product updated", variant: "success" })
-      onOpenChange(false)
     },
-    [updateProduct, onOpenChange],
+    [updateProduct],
   )
 
   return (

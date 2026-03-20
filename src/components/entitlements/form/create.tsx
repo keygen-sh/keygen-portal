@@ -37,10 +37,9 @@ export default function CreateEntitlementForm({
     async (values: Schemas.Entitlements.CreateValues) => {
       const entitlement = await createEntitlement.mutateAsync(values)
       toast({ message: "Entitlement created", variant: "success" })
-      onOpenChange(false)
       await navigateToResource(entitlement)
     },
-    [createEntitlement, navigateToResource, onOpenChange],
+    [createEntitlement, navigateToResource],
   )
 
   return (

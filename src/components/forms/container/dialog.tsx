@@ -1,3 +1,4 @@
+import { useCallback } from "react"
 import {
   Dialog,
   DialogContent,
@@ -33,7 +34,7 @@ export default function FormsContainerDialog({
   className,
 }: FormsContainerDialogProps) {
   return (
-    <FormDialogGuard onOpenChange={onOpenChange}>
+    <FormDialogGuard onClose={() => onOpenChange(false)}>
       <FormsContainerDialogInner
         open={open}
         fullscreen={fullscreen}
@@ -62,10 +63,19 @@ function FormsContainerDialogInner({
   className,
 }: FormsContainerDialogInnerProps) {
   const isMobile = useMobile()
-  const { guardedOpenChange } = useFormDialogGuardContext()
+  const { abandonForm } = useFormDialogGuardContext()
+
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      if (!open) {
+        abandonForm()
+      }
+    },
+    [abandonForm],
+  )
 
   return (
-    <Dialog open={open} onOpenChange={guardedOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         disableOverlay={disableOverlay}
         className={cn(

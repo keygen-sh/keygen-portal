@@ -77,9 +77,8 @@ export default function EditMachineForm({
 
       await updateMachine.mutateAsync(values)
       toast({ message: "Machine updated", variant: "success" })
-      onOpenChange(false)
     },
-    [machine, updateMachine, changeGroup, changeOwner, onOpenChange],
+    [machine, updateMachine, changeGroup, changeOwner],
   )
 
   return (

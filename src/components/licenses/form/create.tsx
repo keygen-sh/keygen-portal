@@ -87,7 +87,6 @@ export default function CreateLicenseForm({
         await attachUsers.mutateAsync({ licenseId: license.id, userIds })
 
       toast({ message: "License created", variant: "success" })
-      onOpenChange(false)
       await navigateToResource(license)
     },
     [
@@ -97,7 +96,6 @@ export default function CreateLicenseForm({
       attachEntitlements,
       attachUsers,
       navigateToResource,
-      onOpenChange,
     ],
   )
 

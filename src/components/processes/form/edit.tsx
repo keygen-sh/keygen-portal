@@ -37,9 +37,8 @@ export default function EditProcessForm({
     async (values: Schemas.Processes.UpdateValues) => {
       await updateProcess.mutateAsync(values)
       toast({ message: "Process updated", variant: "success" })
-      onOpenChange(false)
     },
-    [updateProcess, onOpenChange],
+    [updateProcess],
   )
 
   return (

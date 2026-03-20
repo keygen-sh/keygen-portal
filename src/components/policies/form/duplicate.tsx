@@ -91,7 +91,6 @@ export default function DuplicatePolicyForm({
         })
 
       toast({ message: "Policy created", variant: "success" })
-      onOpenChange(false)
       await navigateToResource(created)
     },
     [
@@ -101,7 +100,6 @@ export default function DuplicatePolicyForm({
       createEntitlement,
       attachEntitlements,
       navigateToResource,
-      onOpenChange,
     ],
   )
 

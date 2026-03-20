@@ -2,7 +2,7 @@ import { createContext, useContext } from "react"
 
 export interface FormDialogGuardContextValue {
   abandon: (action?: () => void) => void
-  complete: () => void
+  close: () => void
 }
 
 export const FormDialogGuardContext =

@@ -120,7 +120,7 @@ export default function FormsContentWizard<
           await onSubmit(data as T)
           if (autoClose) {
             form.reset(data)
-            guard.abandonForm()
+            guard.close()
           }
         } catch (error) {
           if (errorMessage && error instanceof APIError) {

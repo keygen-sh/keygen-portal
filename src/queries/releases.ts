@@ -148,3 +148,62 @@ export function useRemoveRelease(releaseId: string) {
     },
   })
 }
+
+export function useListReleaseConstraints(releaseId: string) {
+  const { code } = useEnvironment()
+
+  return useQuery({
+    queryKey: ["releases", releaseId, "constraints", { environment: code }],
+    queryFn: () =>
+      keygen.releases
+        .listConstraints({ releaseId })
+        .then((response) => response.data ?? []),
+    enabled: !!releaseId,
+  })
+}
+
+export function useAttachReleaseConstraints() {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<
+    null,
+    APIError,
+    { releaseId: string; entitlementIds: string[] }
+  >({
+    mutationFn: ({ releaseId, entitlementIds }) =>
+      keygen.releases.attachConstraints({ releaseId, entitlementIds }),
+
+    onSuccess: async (_, { releaseId }) => {
+      await queryClient.invalidateQueries({
+        queryKey: ["releases", releaseId, "constraints", { environment: code }],
+      })
+      await queryClient.invalidateQueries({
+        queryKey: ["releases", releaseId, { environment: code }],
+      })
+    },
+  })
+}
+
+export function useDetachReleaseConstraints() {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<
+    null,
+    APIError,
+    { releaseId: string; constraintIds: string[] }
+  >({
+    mutationFn: ({ releaseId, constraintIds }) =>
+      keygen.releases.detachConstraints({ releaseId, constraintIds }),
+
+    onSuccess: async (_, { releaseId }) => {
+      await queryClient.invalidateQueries({
+        queryKey: ["releases", releaseId, "constraints", { environment: code }],
+      })
+      await queryClient.invalidateQueries({
+        queryKey: ["releases", releaseId, { environment: code }],
+      })
+    },
+  })
+}

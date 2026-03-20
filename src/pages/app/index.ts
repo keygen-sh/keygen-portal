@@ -8,6 +8,7 @@ export { default as Users } from "./users"
 export { default as Groups } from "./groups"
 export { default as Components } from "./components"
 export { default as Processes } from "./processes"
+export { default as Packages } from "./packages"
 export { default as Releases } from "./releases"
 
 import * as Product from "./product"
@@ -36,6 +37,9 @@ export { Component }
 
 import * as Process from "./process"
 export { Process }
+
+import * as Package from "./package"
+export { Package }
 
 import * as Release from "./release"
 export { Release }

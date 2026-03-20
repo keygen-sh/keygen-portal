@@ -39,6 +39,7 @@ interface FormsContentWizardProps<T extends FieldValues = FieldValues> {
   description?: React.ReactNode
   onSubmit: (data: T) => void | Promise<void>
   onBack?: () => void
+  autoClose?: boolean
   errorMessage?: string
   submitLabel?: string
   backLabel?: string
@@ -82,6 +83,7 @@ export default function FormsContentWizard<
   description,
   onSubmit,
   onBack,
+  autoClose = true,
   errorMessage,
   submitLabel = "Submit",
   backLabel = "Back",
@@ -115,9 +117,11 @@ export default function FormsContentWizard<
     await form.handleSubmit(
       async (data) => {
         try {
-          form.reset(data)
           await onSubmit(data as T)
-          guard.abandonForm()
+          if (autoClose) {
+            form.reset(data)
+            guard.abandonForm()
+          }
         } catch (error) {
           if (errorMessage && error instanceof APIError) {
             await handleFormError({

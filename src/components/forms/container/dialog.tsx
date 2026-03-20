@@ -63,15 +63,15 @@ function FormsContainerDialogInner({
   className,
 }: FormsContainerDialogInnerProps) {
   const isMobile = useMobile()
-  const { abandonForm } = useFormDialogGuardContext()
+  const { abandon } = useFormDialogGuardContext()
 
   const handleOpenChange = useCallback(
     (open: boolean) => {
       if (!open) {
-        abandonForm()
+        abandon()
       }
     },
-    [abandonForm],
+    [abandon],
   )
 
   return (

@@ -58,7 +58,6 @@ export default function CreateEnvironmentForm({
         disableOverlay
       >
         <Forms.Layout.Wizard
-          onBack={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           isPending={createEnvironment.isPending}
           errorMessage="Failed to create environment"

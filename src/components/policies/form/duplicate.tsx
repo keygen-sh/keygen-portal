@@ -138,7 +138,6 @@ export default function DuplicatePolicyForm({
           <Forms.Layout.Sheet
             title="Duplicating an existing policy"
             onSubmit={handleSubmit}
-            onCancel={() => onOpenChange(false)}
             errorMessage="Failed to create policy"
             isPending={
               createPolicy.isPending ||

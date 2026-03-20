@@ -64,7 +64,6 @@ export default function CreateUserForm({
     <Forms.Provider form={form}>
       <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Wizard
-          onBack={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           isPending={createUser.isPending}
           description="Creating a new user"

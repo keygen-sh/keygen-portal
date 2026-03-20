@@ -87,7 +87,6 @@ export default function EditMachineForm({
       <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Sheet
           title="Editing an existing machine"
-          onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           errorMessage="Failed to update machine"
           isPending={

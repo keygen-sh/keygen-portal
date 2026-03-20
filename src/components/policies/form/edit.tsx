@@ -113,7 +113,6 @@ export default function EditPolicyForm({
         <Forms.Layout.Sheet
           title="Editing an existing policy"
           onSubmit={handleSubmit}
-          onCancel={() => onOpenChange(false)}
           errorMessage="Failed to update policy"
           isPending={
             updatePolicy.isPending ||

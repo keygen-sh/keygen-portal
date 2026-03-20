@@ -180,7 +180,7 @@ export default function CreatePolicyForm({
   )
 
   return (
-    <>
+    <Forms.Provider form={form}>
       <Forms.Container.Overlay open={open} onOpenChange={handleOpenChange} />
 
       {mode === "templates" && !selection && (
@@ -237,7 +237,7 @@ export default function CreatePolicyForm({
           errorMessage="Failed to create policy"
         />
       )}
-    </>
+    </Forms.Provider>
   )
 }
 

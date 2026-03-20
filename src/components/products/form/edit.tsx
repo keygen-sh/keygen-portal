@@ -59,7 +59,6 @@ export default function EditProductForm({
       <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Sheet
           title="Editing an existing product"
-          onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           errorMessage="Failed to update product"
           isPending={updateProduct.isPending}

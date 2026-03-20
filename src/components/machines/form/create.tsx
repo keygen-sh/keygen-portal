@@ -77,7 +77,6 @@ export default function CreateMachineForm({
     <Forms.Provider form={form}>
       <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Wizard
-          onBack={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           isPending={
             createMachine.isPending ||

@@ -62,7 +62,6 @@ export default function CreateProductForm({
     <Forms.Provider form={form}>
       <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Wizard
-          onBack={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           isPending={createProduct.isPending}
           description={

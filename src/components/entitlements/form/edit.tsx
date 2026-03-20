@@ -51,7 +51,6 @@ export default function EditEntitlementForm({
       <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Sheet
           title="Editing an existing entitlement"
-          onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           errorMessage="Failed to update entitlement"
           isPending={updateEntitlement.isPending}

@@ -126,10 +126,6 @@ export default function CheckOutMachineForm({
           disableOverlay
         >
           <Forms.Layout.Wizard
-            // NB(ezekg) using raw open handler so we don't clear form on "back"
-            //           i.e. it's less explicit than "close" and we don't want
-            //           the user to lose form state on accidental close
-            onBack={() => onOpenChange(false)}
             onSubmit={() => form.handleSubmit(handleCheckOut)()}
             isPending={checkOutMachine.isPending}
             submitLabel="Checkout machine"

@@ -54,7 +54,6 @@ export default function EditGroupForm({
       <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Sheet
           title="Editing an existing group"
-          onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           errorMessage="Failed to update group"
           isPending={updateGroup.isPending}

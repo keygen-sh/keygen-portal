@@ -45,7 +45,6 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
     await form.handleSubmit(
       async (data) => {
         try {
-          form.reset(data)
           await onSubmit(data as T)
           guard.close()
         } catch (error) {
@@ -101,7 +100,7 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
         <Button
           variant="outline"
           type="button"
-          onClick={() => guard.abandonForm()}
+          onClick={() => guard.abandon()}
           disabled={isPending}
           className="max-w-48 flex-1 basis-1/2"
         >

@@ -119,7 +119,6 @@ export default function FormsContentWizard<
         try {
           await onSubmit(data as T)
           if (autoClose) {
-            form.reset(data)
             guard.close()
           }
         } catch (error) {
@@ -191,9 +190,9 @@ export default function FormsContentWizard<
   const back = useCallback(() => {
     if (isFirst) {
       if (onBack) {
-        guard.abandonForm(onBack)
+        guard.abandon(onBack)
       } else {
-        guard.abandonForm()
+        guard.abandon()
       }
     } else {
       goTo(currentIndex - 1)
@@ -212,7 +211,7 @@ export default function FormsContentWizard<
       isLast={isLast}
       next={next}
       back={back}
-      onCancel={() => guard.abandonForm()}
+      onCancel={() => guard.abandon()}
       submitLabel={submitLabel}
       backLabel={backLabel}
       cancelLabel={cancelLabel}

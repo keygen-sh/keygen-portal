@@ -28,5 +28,8 @@ export { Components }
 import * as Processes from "./processes"
 export { Processes }
 
+import * as Packages from "./packages"
+export { Packages }
+
 import * as Releases from "./releases"
 export { Releases }

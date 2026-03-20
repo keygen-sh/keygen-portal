@@ -34,6 +34,7 @@ interface SearchMultiSelectProps<T extends SearchOption> {
   resource: SearchableResource
   placeholder?: string
   disabled?: boolean
+  invalid?: boolean
   autoFocus?: boolean
   className?: string
 }
@@ -45,6 +46,7 @@ export default function SearchMultiSelect<T extends SearchOption>({
   resource,
   placeholder,
   disabled,
+  invalid = false,
   autoFocus,
   className,
 }: SearchMultiSelectProps<T>) {
@@ -139,6 +141,7 @@ export default function SearchMultiSelect<T extends SearchOption>({
           className={cn(
             "max-h-48 cursor-pointer overflow-y-auto rounded-md border border-accent transition-colors duration-300 focus-within:border-content-subdued hover:bg-background-1",
             "**:data-radix-scroll-area-thumb:bg-content-muted data-[state=open]:border-content-subdued",
+            invalid && "border-destructive!",
             className,
           )}
         >

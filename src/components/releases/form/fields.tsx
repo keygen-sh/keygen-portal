@@ -49,6 +49,7 @@ import * as Calendars from "@/components/calendars"
 import KeyValueInput from "@/components/key-value-input"
 import { CardSelector, CardOption } from "@/components/card-selector"
 import VersionInput from "@/components/version-input"
+import { recomposeVersion } from "@/lib/releases"
 
 type Descriptions = typeof ReleaseFormFieldDescriptions
 
@@ -275,9 +276,7 @@ function VersionField({
                 value={field.value}
                 onChange={field.onChange}
                 channel={channel}
-                onChannelChange={(ch) =>
-                  form.setValue("channel", ch, { shouldValidate: true })
-                }
+                onChannelChange={(ch) => form.setValue("channel", ch)}
                 invalid={!!fieldState.error}
                 autoFocus={autoFocus}
               />
@@ -375,8 +374,21 @@ function ChannelField() {
           <CardSelector
             options={channelOptions}
             value={field.value}
-            onChange={(value: ReleaseChannel) => {
-              field.onChange(value)
+            onChange={(channel: ReleaseChannel) => {
+              const prevChannel = field.value as ReleaseChannel
+              const currentVersion = form.getValues("version")
+
+              form.setValue("channel", channel)
+
+              if (currentVersion) {
+                const recomposed = recomposeVersion(
+                  currentVersion,
+                  prevChannel,
+                  channel,
+                )
+
+                form.setValue("version", recomposed, { shouldValidate: true })
+              }
             }}
             columns={5}
           />

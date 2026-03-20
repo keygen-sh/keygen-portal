@@ -1,5 +1,6 @@
 import { FieldPath } from "react-hook-form"
 import { z } from "zod"
+import semver from "semver"
 
 import { CombineFormValues } from "@/types/forms"
 import { Writable, OptionalExcept } from "@/types/utility"
@@ -32,7 +33,11 @@ const BaseShape = z.object({
     .nullable()
     .optional()
     .transform((value) => (value === "" ? null : value)),
-  version: z.string().trim().min(1, "Version is required"),
+  version: z
+    .string()
+    .trim()
+    .min(1, "Version is required")
+    .refine((v) => semver.valid(v) !== null, "Must be a valid semver"),
   tag: z
     .string()
     .trim()
@@ -71,9 +76,34 @@ const ProductShape = z.object({
 })
 
 const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {
-  // Custom rules can be added here in the future, e.g.
-  // schema.refine(...)
-  return schema
+  return schema.superRefine((data, ctx) => {
+    const version = semver.parse(data.version)
+    if (!version) {
+      return
+    }
+
+    const channel = data.channel
+    const preTag =
+      version.prerelease.length > 0 ? String(version.prerelease[0]) : null
+
+    if (channel === ReleaseChannel.Stable) {
+      if (preTag !== null) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Stable versions must not include a prerelease tag",
+          path: ["version"],
+        })
+      }
+    } else {
+      if (preTag !== channel) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Version must include a -${channel}.x prerelease tag`,
+          path: ["version"],
+        })
+      }
+    }
+  })
 }
 export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
 export const CreateSchema: z.ZodType<CreateValues> = BaseRules(

@@ -9,10 +9,10 @@ import { FormDialogGuardContext } from "@/contexts/form-dialog-guard-context"
 // FormRouteGuard blocks and confirms routing navigation when the form is dirty
 export function FormRouteGuard({ children }: { children: React.ReactNode }) {
   const form = useFormContext()
-  const { isDirty } = form.formState
+  const { isDirty, isSubmitting } = form.formState
 
   const { status, proceed, reset } = useBlocker({
-    shouldBlockFn: () => isDirty,
+    shouldBlockFn: () => isDirty && !isSubmitting,
     withResolver: true,
     enableBeforeUnload: false,
   })

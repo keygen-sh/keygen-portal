@@ -1,6 +1,7 @@
 import { User } from "@/types/users"
 import { Group } from "@/types/groups"
 import { Policy } from "@/types/policies"
+import { Package } from "@/types/packages"
 import { Machine } from "@/types/machines"
 import { Process } from "@/types/processes"
 import { Product } from "@/types/products"
@@ -108,16 +109,18 @@ export type AnyResource =
   | Component
   | Process
   | User
+  | Package
   | Release
 
 export type ResourceType =
-  | "product"
-  | "entitlement"
-  | "group"
-  | "policy"
-  | "license"
-  | "machine"
-  | "component"
-  | "process"
-  | "user"
-  | "release"
+  | "products"
+  | "entitlements"
+  | "groups"
+  | "policies"
+  | "licenses"
+  | "machines"
+  | "components"
+  | "processes"
+  | "users"
+  | "packages"
+  | "releases"

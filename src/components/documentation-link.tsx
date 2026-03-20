@@ -14,6 +14,7 @@ type DocumentationPage =
   | "machines"
   | "components"
   | "processes"
+  | "releases"
 
 interface DocumentationLinkProps {
   page?: DocumentationPage

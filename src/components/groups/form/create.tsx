@@ -50,7 +50,6 @@ export default function CreateGroupForm({
       <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Wizard
           description="Creating a new group"
-          onBack={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           isPending={createGroup.isPending}
           errorMessage="Failed to create group"

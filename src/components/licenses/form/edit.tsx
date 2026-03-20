@@ -154,7 +154,6 @@ export default function EditLicenseForm({
       >
         <Forms.Layout.Sheet
           title="Editing an existing license"
-          onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           errorMessage="Failed to update license"
           isPending={

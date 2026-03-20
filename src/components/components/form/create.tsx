@@ -48,7 +48,6 @@ export default function CreateComponentForm({
     <Forms.Provider form={form}>
       <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Wizard
-          onBack={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           isPending={createComponent.isPending}
           description="Creating a new component"

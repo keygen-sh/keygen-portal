@@ -1,6 +1,3 @@
-import { useCallback } from "react"
-import { useFormContext } from "react-hook-form"
-
 import {
   Dialog,
   DialogContent,
@@ -12,6 +9,9 @@ import {
 } from "@/components/ui/dialog"
 
 import { useMobile } from "@/hooks/use-mobile"
+
+import { FormDialogGuard } from "@/components/forms/guard"
+import { useFormDialogGuardContext } from "@/contexts/form-dialog-guard-context"
 
 import { cn } from "@/lib/utils"
 
@@ -32,21 +32,40 @@ export default function FormsContainerDialog({
   children,
   className,
 }: FormsContainerDialogProps) {
-  const isMobile = useMobile()
-  const form = useFormContext()
-
-  const handleOpenChange = useCallback(
-    (open: boolean) => {
-      onOpenChange(open)
-      if (!open) {
-        form.reset() // reset form when closed
-      }
-    },
-    [onOpenChange, form],
+  return (
+    <FormDialogGuard onOpenChange={onOpenChange}>
+      <FormsContainerDialogInner
+        open={open}
+        fullscreen={fullscreen}
+        disableOverlay={disableOverlay}
+        className={className}
+      >
+        {children}
+      </FormsContainerDialogInner>
+    </FormDialogGuard>
   )
+}
+
+interface FormsContainerDialogInnerProps {
+  open: boolean
+  fullscreen?: boolean
+  disableOverlay?: boolean
+  children: React.ReactNode
+  className?: string
+}
+
+function FormsContainerDialogInner({
+  open,
+  fullscreen = false,
+  disableOverlay = false,
+  children,
+  className,
+}: FormsContainerDialogInnerProps) {
+  const isMobile = useMobile()
+  const { guardedOpenChange } = useFormDialogGuardContext()
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={guardedOpenChange}>
       <DialogContent
         disableOverlay={disableOverlay}
         className={cn(
@@ -76,7 +95,9 @@ export function FormsContainerOverlay({
   open,
   onOpenChange,
 }: FormsContainerOverlayProps) {
-  if (!open) return null
+  if (!open) {
+    return null
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

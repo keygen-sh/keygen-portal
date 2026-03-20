@@ -13,6 +13,8 @@ import { useMobile } from "@/hooks/use-mobile"
 import { useSlide } from "@/hooks/use-slide"
 import { useSubmitOnce } from "@/hooks/use-submit-once"
 
+import { useFormDialogGuardContext } from "@/contexts/form-dialog-guard-context"
+
 import * as Motion from "@/components/motion"
 import * as Loading from "@/components/loading"
 import StepProgress from "@/components/step-progress"
@@ -36,7 +38,7 @@ interface FormsContentWizardProps<T extends FieldValues = FieldValues> {
   title?: string
   description?: React.ReactNode
   onSubmit: (data: T) => void | Promise<void>
-  onBack: () => void
+  onBack?: () => void
   onCancel?: () => void
   errorMessage?: string
   submitLabel?: string
@@ -91,6 +93,7 @@ export default function FormsContentWizard<
   className,
 }: FormsContentWizardProps<T>) {
   const form = useFormContext()
+  const guard = useFormDialogGuardContext()
   const steps = useMemo(() => getStepsFromChildren(children), [children])
 
   const stepIndices = useMemo(() => steps.map((_, i) => i), [steps])
@@ -183,11 +186,15 @@ export default function FormsContentWizard<
 
   const back = useCallback(() => {
     if (isFirst) {
-      onBack()
+      if (onBack) {
+        onBack()
+      } else {
+        guard.guardedOpenChange(false)
+      }
     } else {
       goTo(currentIndex - 1)
     }
-  }, [currentIndex, isFirst, goTo, onBack])
+  }, [currentIndex, isFirst, goTo, onBack, guard])
 
   return variant === "sidebar" ? (
     <SidebarContent
@@ -201,7 +208,7 @@ export default function FormsContentWizard<
       isLast={isLast}
       next={next}
       back={back}
-      onCancel={onCancel ?? onBack}
+      onCancel={onCancel ?? (() => guard.guardedOpenChange(false))}
       submitLabel={submitLabel}
       backLabel={backLabel}
       cancelLabel={cancelLabel}

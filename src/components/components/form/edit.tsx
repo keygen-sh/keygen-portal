@@ -50,7 +50,6 @@ export default function EditComponentForm({
       <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Sheet
           title="Editing an existing component"
-          onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           errorMessage="Failed to update component"
           isPending={updateComponent.isPending}

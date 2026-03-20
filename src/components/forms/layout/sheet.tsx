@@ -11,12 +11,14 @@ import { handleFormError } from "@/lib/form-errors"
 
 import { useSubmitOnce } from "@/hooks/use-submit-once"
 
+import { useFormDialogGuardContext } from "@/contexts/form-dialog-guard-context"
+
 import * as Loading from "@/components/loading"
 
 interface FormsContentSheetProps<T extends FieldValues = FieldValues> {
   title: string
   onSubmit: (data: T) => void | Promise<void>
-  onCancel: () => void
+  onCancel?: () => void
   errorMessage?: string
   submitLabel?: string
   cancelLabel?: string
@@ -39,6 +41,7 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
   className,
 }: FormsContentSheetProps<T>) {
   const form = useFormContext()
+  const guard = useFormDialogGuardContext()
 
   const [submitOnce, resetSubmitOnce] = useSubmitOnce(async () => {
     await form.handleSubmit(
@@ -98,7 +101,7 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
         <Button
           variant="outline"
           type="button"
-          onClick={onCancel}
+          onClick={onCancel ?? (() => guard.guardedOpenChange(false))}
           disabled={isPending}
           className="max-w-48 flex-1 basis-1/2"
         >

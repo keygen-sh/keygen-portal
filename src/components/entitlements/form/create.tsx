@@ -47,7 +47,6 @@ export default function CreateEntitlementForm({
     <Forms.Provider form={form}>
       <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Wizard
-          onBack={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           isPending={createEntitlement.isPending}
           description="Creating a new entitlement"

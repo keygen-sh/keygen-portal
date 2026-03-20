@@ -53,7 +53,6 @@ export default function EditEnvironmentForm({
       >
         <Forms.Layout.Sheet
           title="Editing an existing environment"
-          onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           errorMessage="Failed to update environment"
           isPending={updateEnvironment.isPending}

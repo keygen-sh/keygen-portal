@@ -161,7 +161,6 @@ function NameField({
               label="Package name"
               variant={fieldVariant}
               tooltip={descriptions.name}
-              optional
             >
               <FormControl>
                 <Input

@@ -94,11 +94,9 @@ export default function EditReleaseForm({
 
       await updateRelease.mutateAsync(values)
       toast({ message: "Release updated", variant: "success" })
-      onOpenChange(false)
     },
     [
       release,
-      onOpenChange,
       updateRelease,
       releaseConstraints,
       attachConstraints,
@@ -111,7 +109,6 @@ export default function EditReleaseForm({
       <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Sheet
           title="Editing an existing release"
-          onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           errorMessage="Failed to update release"
           isPending={

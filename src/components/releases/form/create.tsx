@@ -73,10 +73,9 @@ export default function CreateReleaseForm({
         })
 
       toast({ message: "Release created", variant: "success" })
-      onOpenChange(false)
       await navigateToResource(release)
     },
-    [createRelease, attachConstraints, navigateToResource, onOpenChange],
+    [createRelease, attachConstraints, navigateToResource],
   )
 
   return (

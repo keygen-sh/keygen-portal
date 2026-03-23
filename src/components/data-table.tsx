@@ -337,7 +337,7 @@ export default function DataTable<T extends TableResource>({
                             "group/row",
                             shouldAnimate &&
                               "border-b-0 animate-in [animation-duration:500ms] fade-in fill-mode-backwards",
-                            onRowClick && "cursor-pointer",
+                            onRowClick ? "cursor-pointer" : "cursor-auto",
                           )}
                           style={
                             shouldAnimate
@@ -349,7 +349,8 @@ export default function DataTable<T extends TableResource>({
                             <TableCell
                               key={cell.id}
                               className={cn(
-                                "border-b border-accent bg-background group-hover/row:bg-accent",
+                                "border-b border-accent bg-background",
+                                onRowClick && "group-hover/row:bg-accent",
                                 columnIndex < cells.length - 1 && "border-r",
                                 columnIndex === clampedStaticColumns - 1 &&
                                   "after:pointer-events-none after:absolute after:inset-y-0 after:left-full after:w-6 after:bg-gradient-to-r after:from-secondary/5 after:to-transparent after:transition-opacity after:duration-300 after:md:w-24",

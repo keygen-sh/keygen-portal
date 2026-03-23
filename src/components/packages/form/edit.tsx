@@ -62,6 +62,16 @@ export default function EditPackageForm({
           submitLabel="Update"
           className="md:h-[74vh]!"
         >
+          <Forms.Field.CardSelector
+            title="Package engine"
+            optional
+            className="p-0"
+          >
+            <Packages.Form.Fields schema="edit" include={["engine"]} />
+          </Forms.Field.CardSelector>
+
+          <Separator className="my-8" />
+
           <Forms.Section.Columns title="Attributes">
             <Forms.Section.Column>
               <Packages.Form.Fields
@@ -78,16 +88,6 @@ export default function EditPackageForm({
               />
             </Forms.Section.Column>
           </Forms.Section.Columns>
-
-          <Separator className="my-8" />
-
-          <Forms.Field.CardSelector
-            title="Package engine"
-            optional
-            className="p-0"
-          >
-            <Packages.Form.Fields schema="edit" include={["engine"]} />
-          </Forms.Field.CardSelector>
 
           <Separator className="my-8" />
 

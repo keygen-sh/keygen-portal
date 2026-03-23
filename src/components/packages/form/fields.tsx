@@ -9,6 +9,9 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
+import * as Icons from "@/icons"
+import { Container, FileBox } from "lucide-react"
+
 import { useListProducts } from "@/queries/products"
 
 import * as Schemas from "@/schemas"
@@ -26,15 +29,6 @@ import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
 import KeyValueInput from "@/components/key-value-input"
 import { CardSelector, CardOption } from "@/components/card-selector"
-
-import {
-  Package,
-  PackageOpen,
-  Gem,
-  Hexagon,
-  Container,
-  FileBox,
-} from "lucide-react"
 
 type Descriptions = typeof PackageFormFieldDescriptions
 
@@ -222,42 +216,53 @@ function KeyField({
 function EngineField() {
   const form = useFormContext<Schemas.Packages.AllValues>()
 
-  // TODO(cazden) Update PyPi, Tauri and (maybe) RubyGems icons with corresponding logos
   const engineOptions: CardOption<PackageEngine>[] = [
     {
       value: PackageEngine.PyPI,
       label: PackageEngineLabels[PackageEngine.PyPI],
-      icon: <Package className="size-6 text-content-subdued md:size-5" />,
+      icon: (
+        <Icons.PyPi className="size-6 text-content-subdued transition-colors duration-150 group-hover:text-[#3775A9] md:size-5" />
+      ),
       tooltip: PackageEngineDescriptions[PackageEngine.PyPI],
     },
     {
       value: PackageEngine.Tauri,
       label: PackageEngineLabels[PackageEngine.Tauri],
-      icon: <PackageOpen className="size-6 text-content-subdued md:size-5" />,
+      icon: (
+        <Icons.Tauri className="size-6 text-content-subdued transition-colors duration-150 group-hover:text-[#FFC131] md:size-5" />
+      ),
       tooltip: PackageEngineDescriptions[PackageEngine.Tauri],
     },
     {
       value: PackageEngine.RubyGems,
       label: PackageEngineLabels[PackageEngine.RubyGems],
-      icon: <Gem className="size-6 text-content-subdued md:size-5" />,
+      icon: (
+        <Icons.RubyGems className="size-6 text-content-subdued transition-colors duration-150 group-hover:text-[#E9573F] md:size-5" />
+      ),
       tooltip: PackageEngineDescriptions[PackageEngine.RubyGems],
     },
     {
       value: PackageEngine.Npm,
       label: PackageEngineLabels[PackageEngine.Npm],
-      icon: <Hexagon className="size-6 text-content-subdued md:size-5" />,
+      icon: (
+        <Icons.Npm className="size-6 text-content-subdued transition-colors duration-150 group-hover:text-[#CB3837] md:size-5" />
+      ),
       tooltip: PackageEngineDescriptions[PackageEngine.Npm],
     },
     {
       value: PackageEngine.OCI,
       label: PackageEngineLabels[PackageEngine.OCI],
-      icon: <Container className="size-6 text-content-subdued md:size-5" />,
+      icon: (
+        <Container className="size-6 text-content-subdued transition-colors duration-150 group-hover:text-content-loud md:size-5" />
+      ),
       tooltip: PackageEngineDescriptions[PackageEngine.OCI],
     },
     {
       value: PackageEngine.Raw,
       label: PackageEngineLabels[PackageEngine.Raw],
-      icon: <FileBox className="size-6 text-content-subdued md:size-5" />,
+      icon: (
+        <FileBox className="size-6 text-content-subdued transition-colors duration-150 group-hover:text-content-loud md:size-5" />
+      ),
       tooltip: PackageEngineDescriptions[PackageEngine.Raw],
     },
   ]

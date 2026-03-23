@@ -45,9 +45,8 @@ export default function EditPackageForm({
 
       await updatePackage.mutateAsync(values)
       toast({ message: "Package updated", variant: "success" })
-      onOpenChange(false)
     },
-    [pkg, onOpenChange, updatePackage],
+    [pkg, updatePackage],
   )
 
   return (
@@ -55,7 +54,6 @@ export default function EditPackageForm({
       <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Sheet
           title="Editing an existing package"
-          onCancel={() => onOpenChange(false)}
           onSubmit={handleSubmit}
           errorMessage="Failed to update package"
           isPending={updatePackage.isPending}

@@ -42,10 +42,9 @@ export default function CreatePackageForm({
       const pkg = await createPackage.mutateAsync(values)
 
       toast({ message: "Package created", variant: "success" })
-      onOpenChange(false)
       await navigateToResource(pkg)
     },
-    [createPackage, navigateToResource, onOpenChange],
+    [createPackage, navigateToResource],
   )
 
   return (

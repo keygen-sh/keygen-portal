@@ -89,7 +89,7 @@ export const PackageEngineDescriptions: Readonly<
   [PackageEngine.OCI]:
     "Container images that can be built and installed via OCI-compatible tooling such as Docker CLI using our OCI registry.",
   [PackageEngine.Raw]:
-    "Other types of artifacts, such as binaries, tarballs, text files, scripts, etc., which can be downloaded via our distribution API",
+    "Other types of artifacts, such as binaries, tarballs, text files, scripts, etc., which can be downloaded via our distribution API.",
 } as const
 
 export const PackageEngineLabels: Readonly<Record<PackageEngine, string>> = {

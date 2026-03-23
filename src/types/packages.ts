@@ -78,12 +78,18 @@ export const PackageEditFormFieldDescriptions: typeof PackageFormFieldDescriptio
 export const PackageEngineDescriptions: Readonly<
   Record<PackageEngine, string>
 > = {
-  [PackageEngine.PyPI]: "Python packages distributed via PyPI.",
-  [PackageEngine.Tauri]: "Desktop applications built with Tauri.",
-  [PackageEngine.RubyGems]: "Ruby packages distributed via RubyGems.",
-  [PackageEngine.Npm]: "JavaScript packages distributed via npm.",
-  [PackageEngine.OCI]: "Container images distributed via OCI registries.",
-  [PackageEngine.Raw]: "Raw package distribution.",
+  [PackageEngine.PyPI]:
+    "Python packages that can be built and installed via our PyPI package API.",
+  [PackageEngine.Tauri]:
+    "Desktop applications built with Tauri, compatible with Tauri's native auto-updater via our Tauri distribution API.",
+  [PackageEngine.RubyGems]:
+    "Ruby packages that can be built and installed via our RubyGems API.",
+  [PackageEngine.Npm]:
+    "JavaScript packages that can be built and installed via our npm package API.",
+  [PackageEngine.OCI]:
+    "Container images that can be built and installed via OCI-compatible tooling such as Docker CLI using our OCI registry.",
+  [PackageEngine.Raw]:
+    "Other types of artifacts, such as binaries, tarballs, text files, scripts, etc., which can be downloaded via our distribution API",
 } as const
 
 export const PackageEngineLabels: Readonly<Record<PackageEngine, string>> = {
@@ -92,5 +98,5 @@ export const PackageEngineLabels: Readonly<Record<PackageEngine, string>> = {
   [PackageEngine.RubyGems]: "RubyGems",
   [PackageEngine.Npm]: "npm",
   [PackageEngine.OCI]: "OCI",
-  [PackageEngine.Raw]: "Raw",
+  [PackageEngine.Raw]: "Other",
 } as const

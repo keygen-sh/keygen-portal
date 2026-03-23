@@ -59,6 +59,14 @@ export default function CreatePackageForm({
           errorMessage="Failed to create package"
           className="md:h-[52vh]!"
         >
+          <Forms.Section.Step crumb="Package engine" fields={["engine"]}>
+            <Forms.Field.CardSelector title="Package engine" optional>
+              <Packages.Form.Fields schema="create" include={["engine"]} />
+            </Forms.Field.CardSelector>
+
+            <DocumentationLink page="packages" />
+          </Forms.Section.Step>
+
           <Forms.Section.Step
             crumb="Package attributes"
             fields={["name", "productId", "key"]}
@@ -90,14 +98,6 @@ export default function CreatePackageForm({
                 </Forms.Section.Column>
               </Forms.Section.Columns>
             </Forms.Section.Card>
-
-            <DocumentationLink page="packages" />
-          </Forms.Section.Step>
-
-          <Forms.Section.Step crumb="Package engine" fields={["engine"]}>
-            <Forms.Field.CardSelector title="Package engine" optional>
-              <Packages.Form.Fields schema="create" include={["engine"]} />
-            </Forms.Field.CardSelector>
 
             <DocumentationLink page="packages" />
           </Forms.Section.Step>

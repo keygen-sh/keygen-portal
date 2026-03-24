@@ -1,12 +1,13 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
 
 import { Button } from "@/components/ui/button"
 
 import { useLicenseTableColumns } from "@/hooks/use-license-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
+import { useFilterSearch } from "@/hooks/use-filter-search"
 import { License } from "@/types/licenses"
 
-import { useListLicenses } from "@/queries/licenses"
+import { useListLicenses, type LicenseFilters } from "@/queries/licenses"
 
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
@@ -21,6 +22,16 @@ export default function LicensesList() {
   const table = useDataTable()
   const columns = useLicenseTableColumns()
 
+  const [filters, setFilters] = useFilterSearch<LicenseFilters>()
+
+  const handleFiltersChange = useCallback(
+    (next: LicenseFilters) => {
+      setFilters(next)
+      table.setPage(1)
+    },
+    [table, setFilters],
+  )
+
   const {
     data: licenses,
     links,
@@ -28,6 +39,7 @@ export default function LicensesList() {
   } = useListLicenses({
     page: table.page,
     pageSize: table.pageSize,
+    filters,
   })
 
   const totalPages = links?.meta?.pages ?? 1
@@ -37,7 +49,7 @@ export default function LicensesList() {
   const [open, setOpen] = useState(false)
 
   return (
-    <section className="flex h-screen flex-col">
+    <section className="flex h-screen flex-col overflow-hidden">
       <PageHeader title="Licenses">
         <Button
           size="sm"
@@ -47,6 +59,10 @@ export default function LicensesList() {
           New License
         </Button>
       </PageHeader>
+
+      <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-2.5 md:px-4">
+        <Licenses.FilterBar filters={filters} onChange={handleFiltersChange} />
+      </div>
 
       <Licenses.Form.Create open={open} onOpenChange={setOpen} />
 

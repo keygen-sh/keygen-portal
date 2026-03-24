@@ -35,7 +35,10 @@ export function useGetGroup(groupId: string) {
   })
 }
 
-export function useListGroups(params?: { page: number; pageSize: number }) {
+export function useListGroups(
+  params?: { page: number; pageSize: number },
+  options?: { enabled?: boolean },
+) {
   const { code } = useEnvironment()
 
   const query = useQuery({
@@ -52,6 +55,7 @@ export function useListGroups(params?: { page: number; pageSize: number }) {
       return response
     },
     placeholderData: params ? keepPreviousData : undefined,
+    enabled: options?.enabled,
   })
 
   return {

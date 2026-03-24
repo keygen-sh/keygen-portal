@@ -33,7 +33,10 @@ export function useGetPolicy(policyId: string) {
   })
 }
 
-export function useListPolicies(params?: { page: number; pageSize: number }) {
+export function useListPolicies(
+  params?: { page: number; pageSize: number },
+  options?: { enabled?: boolean },
+) {
   const { code } = useEnvironment()
 
   const query = useQuery({
@@ -50,6 +53,7 @@ export function useListPolicies(params?: { page: number; pageSize: number }) {
       return response
     },
     placeholderData: params ? keepPreviousData : undefined,
+    enabled: options?.enabled,
   })
 
   return {

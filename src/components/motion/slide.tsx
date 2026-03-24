@@ -25,17 +25,14 @@ export default function MotionSlide({
     enter: (d: 1 | -1) => ({
       [axis]: d * offset,
       opacity: 0,
-      pointerEvents: "none" as const,
     }),
     center: {
       [axis]: 0,
       opacity: 1,
-      pointerEvents: "auto" as const,
     },
     exit: (d: 1 | -1) => ({
       [axis]: d * -offset,
       opacity: 0,
-      pointerEvents: "none" as const,
     }),
   }
 

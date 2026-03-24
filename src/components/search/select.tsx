@@ -71,7 +71,7 @@ export default function SearchSelect<T extends SearchOption>({
     emptyMessage ?? config?.emptyMessage ?? "No results found"
 
   const [query, setQuery] = useState("")
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(autoFocus ?? false)
 
   const inputRef = useRef<HTMLInputElement>(null)
   const labelRef = useRef(new Map<string, string>())

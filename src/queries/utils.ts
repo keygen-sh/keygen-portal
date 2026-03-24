@@ -1,5 +1,29 @@
+import { type QueryKey } from "@tanstack/react-query"
+
 import { partitionFulfilled } from "@/lib/partition"
 import { APIError } from "@/types/api"
+
+// similar to Tanstack's keepPreviousData except it keeps previous data during pagination
+// but clears it when filters change (so the loading skeleton is shown immediately)
+export function keepPreviousDataUnlessRefiltered<T>(nextFilters: unknown) {
+  return (
+    prevData: T | undefined,
+    prevQuery: { queryKey: QueryKey } | undefined,
+  ) => {
+    const prevKey = prevQuery?.queryKey ?? []
+    const lastKey = prevKey[prevKey.length - 1] // query options e.g. env, filters, etc.
+
+    if (typeof lastKey === "object" && "filters" in lastKey!) {
+      const prevFilters = lastKey.filters
+      const filtersChanged =
+        JSON.stringify(prevFilters) !== JSON.stringify(nextFilters)
+
+      return filtersChanged ? undefined : prevData
+    }
+
+    return prevData
+  }
+}
 
 // wrap error with an additional index property to make retries easier
 export type MutationError = { reason: APIError; index: number }

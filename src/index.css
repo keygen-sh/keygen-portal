@@ -12,6 +12,7 @@
   /* Primary/Secondary/Accent/Destructive */
   --color-brand-primary: #77fa98;
   --color-brand-secondary: #77e2fc;
+  --color-brand-secondary-light: #a5edff;
   --color-brand-secondary-dark: #192f34;
   --color-brand-accent: #282e33;
   --color-brand-amber: #ffac30;
@@ -104,6 +105,7 @@
   --color-primary-foreground: var(--color-brand-neutral-900);
 
   --color-secondary: var(--color-brand-secondary);
+  --color-secondary-light: var(--color-brand-secondary-light);
   --color-secondary-foreground: var(--color-content-loud);
 
   --color-muted: var(--color-content-subdued);

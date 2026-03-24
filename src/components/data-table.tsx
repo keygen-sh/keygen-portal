@@ -253,7 +253,7 @@ export default function DataTable<T extends TableResource>({
                               columnIndex < group.headers.length - 1 &&
                                 "border-r",
                               columnIndex === clampedStaticColumns - 1 &&
-                                "after:pointer-events-none after:absolute after:inset-y-0 after:left-full after:w-6 after:bg-gradient-to-r after:from-secondary/5 after:to-transparent after:transition-opacity after:duration-300 after:md:w-24",
+                                "after:pointer-events-none after:absolute after:inset-y-0 after:left-full after:w-12 after:bg-gradient-to-r after:from-background/50 after:to-transparent after:transition-opacity after:duration-300 after:md:w-24",
                               columnIndex === clampedStaticColumns - 1 &&
                                 (canScrollLeft
                                   ? "after:opacity-100"
@@ -353,7 +353,7 @@ export default function DataTable<T extends TableResource>({
                                 onRowClick && "group-hover/row:bg-accent",
                                 columnIndex < cells.length - 1 && "border-r",
                                 columnIndex === clampedStaticColumns - 1 &&
-                                  "after:pointer-events-none after:absolute after:inset-y-0 after:left-full after:w-6 after:bg-gradient-to-r after:from-secondary/5 after:to-transparent after:transition-opacity after:duration-300 after:md:w-24",
+                                  "after:pointer-events-none after:absolute after:inset-y-0 after:left-full after:w-12 after:bg-gradient-to-r after:from-background/50 after:to-transparent after:transition-opacity after:duration-300 after:md:w-24",
                                 columnIndex === clampedStaticColumns - 1 &&
                                   (canScrollLeft
                                     ? "after:opacity-100"
@@ -387,7 +387,7 @@ export default function DataTable<T extends TableResource>({
             {/* Gradient hint */}
             <div
               className={cn(
-                "pointer-events-none absolute inset-y-0 right-0 z-10 w-6 bg-gradient-to-l from-secondary/5 to-transparent transition-opacity duration-300 md:w-24",
+                "pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-background/50 to-transparent transition-opacity duration-300 md:w-24",
                 canScrollRight ? "opacity-100" : "opacity-0",
               )}
             />

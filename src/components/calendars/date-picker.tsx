@@ -67,14 +67,14 @@ export default function DatePickerCalendar({
           variant="outline"
           size="sm"
           onClick={handleCancel}
-          className="h-9 flex-1 rounded-sm font-semibold"
+          className="flex-1 rounded-sm text-sm"
         >
           Cancel
         </Button>
         <Button
           size="sm"
           onClick={handleApply}
-          className="h-9 flex-1 rounded-sm font-semibold"
+          className="flex-1 rounded-sm text-sm"
         >
           Apply
         </Button>

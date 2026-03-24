@@ -33,7 +33,10 @@ export function useGetUser(userId: string) {
   })
 }
 
-export function useListUsers(params?: { page: number; pageSize: number }) {
+export function useListUsers(
+  params?: { page: number; pageSize: number },
+  options?: { enabled?: boolean },
+) {
   const { code } = useEnvironment()
 
   const query = useQuery({
@@ -50,6 +53,7 @@ export function useListUsers(params?: { page: number; pageSize: number }) {
       return response
     },
     placeholderData: params ? keepPreviousData : undefined,
+    enabled: options?.enabled,
   })
 
   return {

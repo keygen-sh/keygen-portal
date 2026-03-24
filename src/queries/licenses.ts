@@ -1,9 +1,4 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  keepPreviousData,
-} from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
@@ -15,6 +10,7 @@ import { License, LicenseFile } from "@/types/licenses"
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
+import { keepPreviousDataUnlessRefiltered } from "./utils"
 
 export function useGetLicense(licenseId: string) {
   const { code } = useEnvironment()
@@ -34,14 +30,42 @@ export function useGetLicense(licenseId: string) {
   })
 }
 
-export function useListLicenses(params?: { page: number; pageSize: number }) {
+export type LicenseFilters = {
+  status?: string
+  expires?: Record<string, string>
+  expired?: Record<string, string>
+  activity?: Record<string, string>
+  unassigned?: boolean
+  assigned?: boolean
+  activated?: boolean
+  activations?: Record<string, number>
+  product?: string
+  policy?: string
+  owner?: string
+  user?: string
+  group?: string
+  machine?: string
+  metadata?: Record<string, string>
+}
+
+export function useListLicenses(params?: {
+  page: number
+  pageSize: number
+  filters?: LicenseFilters
+}) {
   const { code } = useEnvironment()
 
   const query = useQuery({
     queryKey: ["licenses", { environment: code, ...params }],
     queryFn: async () => {
       const response = await keygen.licenses.list(
-        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+        params
+          ? {
+              pageNumber: params.page,
+              pageSize: params.pageSize,
+              filters: params.filters,
+            }
+          : {},
       )
 
       if (response.errors) {
@@ -50,7 +74,9 @@ export function useListLicenses(params?: { page: number; pageSize: number }) {
 
       return response
     },
-    placeholderData: params ? keepPreviousData : undefined,
+    placeholderData: params
+      ? keepPreviousDataUnlessRefiltered(params.filters)
+      : undefined,
   })
 
   return {

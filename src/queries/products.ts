@@ -32,7 +32,10 @@ export function useGetProduct(productId: string) {
   })
 }
 
-export function useListProducts(params?: { page: number; pageSize: number }) {
+export function useListProducts(
+  params?: { page: number; pageSize: number },
+  options?: { enabled?: boolean },
+) {
   const { code } = useEnvironment()
 
   const query = useQuery({
@@ -49,6 +52,7 @@ export function useListProducts(params?: { page: number; pageSize: number }) {
       return response
     },
     placeholderData: params ? keepPreviousData : undefined,
+    enabled: options?.enabled,
   })
 
   return {

@@ -58,6 +58,9 @@ export { channels }
 import * as engines from "./engines"
 export { engines }
 
+import * as artifacts from "./artifacts"
+export { artifacts }
+
 import { logout } from "./logout"
 export { logout }
 

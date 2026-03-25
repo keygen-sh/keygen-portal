@@ -12,6 +12,7 @@ import { Product } from "@/types/products"
 import { License } from "@/types/licenses"
 import { Component } from "@/types/components"
 import { Entitlement } from "@/types/entitlements"
+import { Artifact } from "@/types/artifacts"
 
 export type APIResponse<
   TData,
@@ -99,7 +100,7 @@ export interface Resource<
   type: TType
   attributes: TAttribute
   relationships: TRelationship
-  links: { self: string }
+  links: { self: string; redirect?: string }
 }
 
 export type AnyResource =
@@ -117,6 +118,7 @@ export type AnyResource =
   | Arch
   | Channel
   | Engine
+  | Artifact
 
 export type ResourceType =
   | "products"
@@ -133,3 +135,4 @@ export type ResourceType =
   | "arches"
   | "channels"
   | "engines"
+  | "artifacts"

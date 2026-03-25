@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react"
 
-import { Copy, TriangleAlert } from "lucide-react"
+import { TriangleAlert } from "lucide-react"
 
 import {
   Dialog,
@@ -11,90 +11,97 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip"
 
-import { copyToClipboard } from "@/lib/clipboard"
 import { cn } from "@/lib/utils"
 
-interface SecretModalProps {
-  value: string
+interface GuardModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   title?: string
   description?: string
   warning?: string
   acknowledgment?: string
+  isAcknowledged?: boolean
   action?: {
     label: string
-    onClick: () => void
+    onClick: () => void | Promise<void>
   }
+  children?: React.ReactNode
 }
 
-export default function SecretModal({
-  value,
+export default function GuardModal({
   open,
   onOpenChange,
   title,
   description,
   warning,
   acknowledgment,
+  isAcknowledged,
   action,
-}: SecretModalProps) {
-  const [acknowledged, setAcknowledged] = useState(false)
+  children,
+}: GuardModalProps) {
+  const [isInternallyAcknowledged, setIsInternallyAcknowledged] =
+    useState(false)
+  const [actionPending, setActionPending] = useState(false)
 
-  const canDismiss = !acknowledgment || acknowledged
+  const effectiveIsAcknowledged = isAcknowledged || isInternallyAcknowledged
+  const canDismiss = !acknowledgment || effectiveIsAcknowledged
 
   const handleOpenChange = useCallback(
     (next: boolean) => {
       onOpenChange(next)
       if (!next) {
-        setAcknowledged(false)
+        setIsInternallyAcknowledged(false)
+        setActionPending(false)
       }
     },
     [onOpenChange],
   )
 
-  const handleCopy = useCallback(async () => {
-    await copyToClipboard(value)
-    setAcknowledged(true)
-  }, [value])
+  const handleAction = useCallback(async () => {
+    if (!action) return
 
-  const handleAction = useCallback(() => {
-    action?.onClick()
-    setAcknowledged(true)
+    try {
+      setActionPending(true)
+      await action.onClick()
+      setIsInternallyAcknowledged(true)
+    } finally {
+      setActionPending(false)
+    }
   }, [action])
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
-        // Prevent dialog close actions/hide button if we're enforcing acknowledgement or not yet acknowledged
         onInteractOutside={(e) =>
-          acknowledgment && !acknowledged && e.preventDefault()
+          acknowledgment && !effectiveIsAcknowledged && e.preventDefault()
         }
         onEscapeKeyDown={(e) =>
-          acknowledgment && !acknowledged && e.preventDefault()
+          acknowledgment && !effectiveIsAcknowledged && e.preventDefault()
         }
         className={cn(
           "md:max-w-xl",
-          acknowledgment && !acknowledged && "[&>button:last-child]:hidden",
+          acknowledgment &&
+            !effectiveIsAcknowledged &&
+            "[&>button:last-child]:hidden",
         )}
       >
-        <DialogHeader className={cn((!title || !description) && "sr-only")}>
-          <DialogTitle>{title}</DialogTitle>
+        <DialogHeader
+          className={cn(!title && !description ? "sr-only" : "p-4")}
+        >
+          <DialogTitle className="text-sm font-normal text-content-normal">
+            {title}
+          </DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col">
-          <div className="flex items-center border-b border-accent p-3">
-            <h2 className="text-sm text-content-normal">{title}</h2>
-          </div>
-
-          <div className="p-6">
+          <div className="border-t border-accent p-6">
             {warning && (
               <p className="mb-6 flex items-start gap-2 rounded-md bg-brand-amber/20 p-2 text-sm text-pretty text-brand-amber">
                 <TriangleAlert className="mt-0.5 size-4 shrink-0" />
@@ -102,28 +109,14 @@ export default function SecretModal({
               </p>
             )}
 
-            <div className="relative">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleCopy}
-                className="absolute top-3 right-3 z-10 h-7 w-7"
-              >
-                <Copy className="size-3.5" />
-              </Button>
-
-              <ScrollArea className="h-64 rounded border border-accent">
-                <pre className="p-3 font-mono text-sm leading-snug break-all whitespace-pre-wrap">
-                  {value}
-                </pre>
-              </ScrollArea>
-            </div>
+            {children}
 
             {acknowledgment && (
-              <label className="mt-10 flex cursor-pointer items-center justify-center gap-2 text-sm text-content-muted">
+              <label className="mt-10 flex items-center justify-center gap-2 text-sm text-content-muted">
                 <Checkbox
-                  checked={acknowledged}
-                  onCheckedChange={(v) => setAcknowledged(!!v)}
+                  checked={effectiveIsAcknowledged}
+                  onCheckedChange={(v) => setIsInternallyAcknowledged(!!v)}
+                  disabled={actionPending || !!isAcknowledged}
                   className="mt-0.5"
                 />
                 <span>{acknowledgment}</span>
@@ -167,6 +160,7 @@ export default function SecretModal({
               <Button
                 type="button"
                 onClick={handleAction}
+                disabled={actionPending}
                 className="max-w-48 flex-1 basis-1/2"
               >
                 {action.label}

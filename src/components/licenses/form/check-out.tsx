@@ -30,7 +30,14 @@ import { useCheckOutLicense } from "@/queries/licenses"
 
 import * as Forms from "@/components/forms"
 import MultiSelect from "@/components/multi-select"
-import SecretModal from "@/components/secret-modal"
+import { Copy } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
+
+import { copyToClipboard } from "@/lib/clipboard"
+
+import GuardModal from "@/components/guard-modal"
 import DurationInput from "@/components/duration-input"
 
 const IncludeOptions = [
@@ -342,8 +349,7 @@ export default function CheckOutLicenseForm({
       )}
 
       {showResult && (
-        <SecretModal
-          value={certificate}
+        <GuardModal
           open={open}
           onOpenChange={handleOpenChange}
           title="Checkout summary"
@@ -355,7 +361,26 @@ export default function CheckOutLicenseForm({
             label: "Download file",
             onClick: () => downloadBlob(certificate, `license-${id}.lic`),
           }}
-        />
+        >
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                void copyToClipboard(certificate)
+              }}
+              className="absolute top-3 right-3 z-10 h-7 w-7"
+            >
+              <Copy className="size-3.5" />
+            </Button>
+
+            <ScrollArea className="h-64 rounded border border-accent">
+              <pre className="p-3 font-mono text-sm leading-snug break-all whitespace-pre-wrap">
+                {certificate}
+              </pre>
+            </ScrollArea>
+          </div>
+        </GuardModal>
       )}
     </Forms.Provider>
   )

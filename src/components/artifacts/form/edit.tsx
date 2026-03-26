@@ -58,7 +58,7 @@ export default function EditArtifactForm({
           errorMessage="Failed to update artifact"
           isPending={updateArtifact.isPending}
           submitLabel="Update"
-          className="md:h-[74vh]!"
+          className="md:h-[48vh]!"
         >
           <Artifacts.Form.Fields
             schema="edit"

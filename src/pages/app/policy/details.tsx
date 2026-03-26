@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import {
+  Box,
   Logs,
   Copy,
   Menu,
@@ -38,7 +39,6 @@ import {
   Users,
   Repeat,
   GitFork,
-  Package,
   Monitor,
   SquarePen,
   SquarePlus,
@@ -311,7 +311,7 @@ export default function PolicyDetails() {
                 </Button>
               </div>
               <div className="mt-2 flex h-4 items-center text-sm text-content-subdued">
-                <Package className="mr-2 size-4 pt-0.5" />
+                <Box className="mr-2 size-4 pt-0.5" />
                 <span>Product:</span>
                 {product ? (
                   <GoToButton

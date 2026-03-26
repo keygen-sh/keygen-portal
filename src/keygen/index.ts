@@ -52,6 +52,9 @@ export { releases }
 import * as engines from "./engines"
 export { engines }
 
+import * as channels from "./channels"
+export { channels }
+
 import { logout } from "./logout"
 export { logout }
 

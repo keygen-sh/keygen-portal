@@ -10,9 +10,10 @@ import { Release } from "@/types/releases"
 import { Channel } from "@/types/channels"
 import { Product } from "@/types/products"
 import { License } from "@/types/licenses"
+import { Artifact } from "@/types/artifacts"
+import { Platform } from "@/types/platforms"
 import { Component } from "@/types/components"
 import { Entitlement } from "@/types/entitlements"
-import { Artifact } from "@/types/artifacts"
 
 export type APIResponse<
   TData,
@@ -115,10 +116,11 @@ export type AnyResource =
   | User
   | Package
   | Release
+  | Artifact
+  | Platform
   | Arch
   | Channel
   | Engine
-  | Artifact
 
 export type ResourceType =
   | "products"
@@ -132,7 +134,8 @@ export type ResourceType =
   | "users"
   | "packages"
   | "releases"
+  | "artifacts"
+  | "platforms"
   | "arches"
   | "channels"
   | "engines"
-  | "artifacts"

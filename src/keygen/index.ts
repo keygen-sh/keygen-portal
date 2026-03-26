@@ -49,11 +49,14 @@ export { packages }
 import * as releases from "./releases"
 export { releases }
 
-import * as engines from "./engines"
-export { engines }
+import * as arches from "./arches"
+export { arches }
 
 import * as channels from "./channels"
 export { channels }
+
+import * as engines from "./engines"
+export { engines }
 
 import { logout } from "./logout"
 export { logout }

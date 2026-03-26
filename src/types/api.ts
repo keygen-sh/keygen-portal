@@ -7,6 +7,7 @@ import { Process } from "@/types/processes"
 import { Product } from "@/types/products"
 import { Release } from "@/types/releases"
 import { Engine } from "@/types/engines"
+import { Channel } from "@/types/channels"
 import { License } from "@/types/licenses"
 import { Component } from "@/types/components"
 import { Entitlement } from "@/types/entitlements"
@@ -113,6 +114,7 @@ export type AnyResource =
   | Package
   | Release
   | Engine
+  | Channel
 
 export type ResourceType =
   | "products"
@@ -127,3 +129,4 @@ export type ResourceType =
   | "packages"
   | "releases"
   | "engines"
+  | "channels"

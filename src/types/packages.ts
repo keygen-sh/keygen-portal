@@ -22,7 +22,7 @@ export enum PackageEngine {
 }
 
 export type PackageAttributes = {
-  name: string | null
+  name: string
   key: string
   engine: PackageEngine | null
   metadata: Record<string, unknown>

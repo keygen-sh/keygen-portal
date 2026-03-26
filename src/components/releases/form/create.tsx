@@ -16,6 +16,7 @@ import { ReleaseChannel } from "@/types/releases"
 import {
   useCreateRelease,
   useAttachReleaseConstraints,
+  useChangeReleasePackage,
 } from "@/queries/releases"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
@@ -48,12 +49,13 @@ export default function CreateReleaseForm({
       backdated: null,
       productId: "",
       constraints: { attach: [] },
-      packages: { attach: [] },
+      packageId: null,
     },
   })
 
   const createRelease = useCreateRelease()
   const attachConstraints = useAttachReleaseConstraints()
+  const changePackage = useChangeReleasePackage()
   const navigateToResource = useResourceNavigate()
 
   const selectedChannel = useWatch({
@@ -72,10 +74,16 @@ export default function CreateReleaseForm({
           entitlementIds,
         })
 
+      if (values.packageId)
+        await changePackage.mutateAsync({
+          releaseId: release.id,
+          packageId: values.packageId,
+        })
+
       toast({ message: "Release created", variant: "success" })
       await navigateToResource(release)
     },
-    [createRelease, attachConstraints, navigateToResource],
+    [createRelease, attachConstraints, changePackage, navigateToResource],
   )
 
   return (
@@ -84,7 +92,11 @@ export default function CreateReleaseForm({
         <Forms.Layout.Wizard
           onBack={() => onOpenChange(false)}
           onSubmit={handleSubmit}
-          isPending={createRelease.isPending || attachConstraints.isPending}
+          isPending={
+            createRelease.isPending ||
+            attachConstraints.isPending ||
+            changePackage.isPending
+          }
           description={
             <BadgeGroup prefix="Creating a new" suffix="release">
               {selectedChannel === ReleaseChannel.Stable ? (
@@ -168,7 +180,7 @@ export default function CreateReleaseForm({
 
           <Forms.Section.Step
             crumb="Relationships"
-            fields={["constraints.attach", "packages.attach"]}
+            fields={["constraints.attach", "packageId"]}
           >
             <Forms.Section.Card title="Relationships">
               <Releases.Form.Fields
@@ -178,7 +190,8 @@ export default function CreateReleaseForm({
 
               <Releases.Form.Fields
                 schema="create"
-                include={["packages.attach"]}
+                include={["packageId"]}
+                fieldVariant="stacking"
               />
             </Forms.Section.Card>
 

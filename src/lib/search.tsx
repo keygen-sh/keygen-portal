@@ -11,12 +11,14 @@ import {
   Entitlement,
   Product,
   Policy,
+  Package,
 } from "@/types"
 
 import { getUserLabel } from "@/lib/users"
 import { getGroupLabel } from "@/lib/groups"
 import { getLicenseLabel } from "@/lib/licenses"
 import { getMachineLabel } from "@/lib/machines"
+import { getPackageLabel } from "@/lib/packages"
 
 import * as keygen from "@/keygen"
 
@@ -183,6 +185,26 @@ export const policiesConfig: ResourceConfig<Policy> = {
   }),
 }
 
+export const packagesConfig: ResourceConfig<Package> = {
+  getLabel: getPackageLabel,
+  placeholder: "Select a package...",
+  searchPlaceholder: "Search by ID or name...",
+  emptyMessage: (
+    <span className="flex items-center gap-2">
+      No packages found.
+      <GoToButton
+        path="/$accountId/app/packages"
+        params={{ accountId: keygen.config.id }}
+        label="View packages"
+      />
+    </span>
+  ),
+  searchQuery: (term) => ({
+    query: { id: term, name: term },
+    op: "OR",
+  }),
+}
+
 export const resourceConfigs: Record<SearchableResource, ResourceConfig> = {
   licenses: licensesConfig,
   groups: groupsConfig,
@@ -191,4 +213,5 @@ export const resourceConfigs: Record<SearchableResource, ResourceConfig> = {
   entitlements: entitlementsConfig,
   products: productsConfig,
   policies: policiesConfig,
+  packages: packagesConfig,
 }

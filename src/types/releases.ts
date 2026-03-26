@@ -52,6 +52,7 @@ export type ReleaseAttributes = {
 export type ReleaseRelationships = {
   account: Relationship<Linkage<"accounts">>
   product: Relationship<Linkage<"products">>
+  package: Relationship<Linkage<"packages">>
   constraints: Relationship<Linkage<"constraints">[]>
 }
 
@@ -111,7 +112,7 @@ export const ReleaseFormFieldDescriptions: Readonly<
     "The version of the release. This must be a valid semantic version (semver) string. Do not include a v prefix. This value must be unique per-product. The version may include prerelease and build tags.",
   product: "The product this release belongs to.",
   constraints: "Constraints require licenses have certain entitlements.",
-  packages: "The packages this release belongs to.",
+  packages: "The package this release belongs to.",
 }
 
 export const ReleaseCreateFormFieldDescriptions: typeof ReleaseFormFieldDescriptions =

@@ -6,6 +6,7 @@ export type SearchableResource =
   | "entitlements"
   | "products"
   | "policies"
+  | "packages"
 
 export type SearchOperator = "AND" | "OR"
 

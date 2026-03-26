@@ -31,6 +31,7 @@ import { cn } from "@/lib/utils"
 
 import { useListProducts } from "@/queries/products"
 import { useListEntitlements } from "@/queries/entitlements"
+import { useListPackages } from "@/queries/packages"
 
 import * as Schemas from "@/schemas"
 import {
@@ -72,7 +73,7 @@ const IncludeDefaultFields: Schemas.Releases.FieldNames[] = [
   "metadata",
   "productId",
   "constraints.attach",
-  "packages.attach",
+  "packageId",
 ]
 
 export default function ReleasesFormFields({
@@ -172,11 +173,12 @@ export default function ReleasesFormFields({
                 descriptions={descriptions}
               />
             )
-          case "packages.attach":
+          case "packageId":
             return (
-              <PackagesAttachField
-                key="packages.attach"
-                autoFocus={autoFocus === "packages.attach"}
+              <PackageIdField
+                key="packageId"
+                autoFocus={autoFocus === "packageId"}
+                fieldVariant={fieldVariant}
                 descriptions={descriptions}
               />
             )
@@ -611,6 +613,7 @@ function ConstraintsAttachField({
             label="Constraints"
             variant="stacking"
             tooltip={descriptions.constraints}
+            optional
           >
             <FormControl>
               <Search.MultiSelect
@@ -631,50 +634,49 @@ function ConstraintsAttachField({
   )
 }
 
-// TODO(cazden) implement after packages resource is built
-function PackagesAttachField({
+function PackageIdField({
   autoFocus,
+  fieldVariant = "row",
   descriptions,
 }: {
   autoFocus?: boolean
+  fieldVariant?: FieldVariant
   descriptions: Descriptions
 }) {
-  void autoFocus
-
   const form = useFormContext<Schemas.Releases.AllValues>()
-  // const { data: packages = [], isLoading: packagesLoading } = useListPackages()
 
-  // if (packagesLoading) {
-  //   return (
-  //     <div className="space-y-2">
-  //       <Skeleton className="h-5 w-48 rounded-sm" />
-  //       <Skeleton className="h-8 w-3/4" />
-  //     </div>
-  //   )
-  // }
+  const { data: packages = [], isLoading: packagesLoading } = useListPackages()
+
+  if (packagesLoading) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-48 rounded-sm" />
+        <Skeleton className="h-8 w-3/4" />
+      </div>
+    )
+  }
 
   return (
     <FormField
       control={form.control}
-      name="packages.attach"
-      render={() => (
+      name="packageId"
+      render={({ field, fieldState }) => (
         <FormItem>
           <Forms.Field.Header
-            label="Packages"
-            variant="stacking"
+            label="Package"
+            variant={fieldVariant}
             tooltip={descriptions.packages}
+            optional
           >
             <FormControl>
-              {/* <Search.MultiSelect
-                value={field.value ?? []}
-                onChange={field.onChange}
+              <Search.Select
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
                 options={packages}
                 resource="packages"
-                placeholder="Search packages"
                 invalid={!!fieldState.error}
                 autoFocus={autoFocus}
-              /> */}
-              <span className="text-xs text-content-subdued">TODO</span>
+              />
             </FormControl>
           </Forms.Field.Header>
           <FormMessage />

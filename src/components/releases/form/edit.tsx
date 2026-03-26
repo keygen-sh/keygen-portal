@@ -14,6 +14,7 @@ import {
   useListReleaseConstraints,
   useAttachReleaseConstraints,
   useDetachReleaseConstraints,
+  useChangeReleasePackage,
 } from "@/queries/releases"
 
 import { toast } from "@/lib/toast"
@@ -39,6 +40,9 @@ export default function EditReleaseForm({
   const updateRelease = useUpdateRelease(release?.id ?? "")
   const attachConstraints = useAttachReleaseConstraints()
   const detachConstraints = useDetachReleaseConstraints()
+  const changePackage = useChangeReleasePackage()
+
+  const currentPackageId = release?.relationships.package?.data?.id ?? null
 
   const form = useForm<Schemas.Releases.UpdateValues>({
     resolver: zodResolver(Schemas.Releases.UpdateSchema),
@@ -56,7 +60,7 @@ export default function EditReleaseForm({
           .map((c) => c.relationships.entitlement?.data?.id ?? "")
           .filter(Boolean),
       },
-      packages: { attach: [] },
+      packageId: currentPackageId,
     },
   })
 
@@ -92,6 +96,13 @@ export default function EditReleaseForm({
           entitlementIds: attachEntitlementIds,
         })
 
+      const selectedPackageId = values.packageId ?? null
+      if (selectedPackageId !== currentPackageId)
+        await changePackage.mutateAsync({
+          releaseId: release.id,
+          packageId: selectedPackageId,
+        })
+
       await updateRelease.mutateAsync(values)
       toast({ message: "Release updated", variant: "success" })
     },
@@ -101,6 +112,8 @@ export default function EditReleaseForm({
       releaseConstraints,
       attachConstraints,
       detachConstraints,
+      changePackage,
+      currentPackageId,
     ],
   )
 
@@ -114,7 +127,8 @@ export default function EditReleaseForm({
           isPending={
             updateRelease.isPending ||
             attachConstraints.isPending ||
-            detachConstraints.isPending
+            detachConstraints.isPending ||
+            changePackage.isPending
           }
           submitLabel="Update"
           className="md:h-[74vh]!"
@@ -156,7 +170,8 @@ export default function EditReleaseForm({
             <Forms.Section.Column>
               <Releases.Form.Fields
                 schema="edit"
-                include={["packages.attach"]}
+                include={["packageId"]}
+                fieldVariant="stacking"
               />
             </Forms.Section.Column>
           </Forms.Section.Columns>

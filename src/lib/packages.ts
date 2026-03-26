@@ -9,3 +9,7 @@ export const packageAttributeTypeSchema: Record<
   key: "raw",
   engine: "enum",
 }
+
+export function getPackageLabel(pkg: Package): string {
+  return pkg.attributes.name ?? pkg.attributes.key
+}

@@ -1,13 +1,14 @@
+import { Arch } from "@/types/arches"
 import { User } from "@/types/users"
 import { Group } from "@/types/groups"
+import { Engine } from "@/types/engines"
 import { Policy } from "@/types/policies"
 import { Package } from "@/types/packages"
 import { Machine } from "@/types/machines"
 import { Process } from "@/types/processes"
-import { Product } from "@/types/products"
 import { Release } from "@/types/releases"
-import { Engine } from "@/types/engines"
 import { Channel } from "@/types/channels"
+import { Product } from "@/types/products"
 import { License } from "@/types/licenses"
 import { Component } from "@/types/components"
 import { Entitlement } from "@/types/entitlements"
@@ -113,8 +114,9 @@ export type AnyResource =
   | User
   | Package
   | Release
-  | Engine
+  | Arch
   | Channel
+  | Engine
 
 export type ResourceType =
   | "products"
@@ -128,5 +130,6 @@ export type ResourceType =
   | "users"
   | "packages"
   | "releases"
-  | "engines"
+  | "arches"
   | "channels"
+  | "engines"

@@ -193,6 +193,19 @@ export function useYankRelease(releaseId: string) {
   })
 }
 
+export function useListReleaseArtifacts(releaseId: string) {
+  const { code } = useEnvironment()
+
+  return useQuery({
+    queryKey: ["releases", releaseId, "artifacts", { environment: code }],
+    queryFn: () =>
+      keygen.releases
+        .listArtifacts({ releaseId })
+        .then((response) => response.data ?? []),
+    enabled: !!releaseId,
+  })
+}
+
 export function useListReleaseConstraints(releaseId: string) {
   const { code } = useEnvironment()
 

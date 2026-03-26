@@ -11,6 +11,7 @@ export { default as Processes } from "./processes"
 export { default as Packages } from "./packages"
 export { default as Releases } from "./releases"
 export { default as Engines } from "./engines"
+export { default as Channels } from "./channels"
 
 import * as Product from "./product"
 export { Product }
@@ -47,3 +48,6 @@ export { Release }
 
 import * as Engine from "./engine"
 export { Engine }
+
+import * as Channel from "./channel"
+export { Channel }

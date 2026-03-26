@@ -48,6 +48,7 @@ import {
   EllipsisVertical,
 } from "lucide-react"
 
+import { Artifact } from "@/types/artifacts"
 import {
   ReleaseStatus,
   ReleaseChannel,
@@ -70,6 +71,7 @@ import {
   useYankRelease,
   useRemoveRelease,
   usePublishRelease,
+  useListReleaseArtifacts,
   useListReleaseConstraints,
 } from "@/queries/releases"
 
@@ -87,9 +89,9 @@ import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
 import TooltipBadge from "@/components/tooltip-badge"
-import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleCard from "@/components/collapsible-card"
 import { Separator } from "@/components/ui/separator"
+import ConfirmationModal from "@/components/confirmation-modal"
 
 const ReleaseChannelIcons: Record<ReleaseChannel, React.ReactNode> = {
   [ReleaseChannel.Stable]: <Package className="size-3" />,
@@ -137,6 +139,23 @@ function ConstraintRow({ constraint }: { constraint: ReleaseConstraint }) {
   )
 }
 
+function ArtifactRow({ artifact }: { artifact: Artifact }) {
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between">
+        <GoToButton
+          path="/$accountId/app/artifacts/$id"
+          params={{
+            accountId: keygen.config.id,
+            id: artifact.id,
+          }}
+          label={artifact.attributes.filename}
+        />
+      </div>
+    </div>
+  )
+}
+
 export default function ReleaseDetails() {
   const { id } = useParams({ from: "/$accountId/app/releases/$id" })
   const { data: release, isLoading, isFetching, isError } = useGetRelease(id)
@@ -156,6 +175,13 @@ export default function ReleaseDetails() {
     isFetching: constraintsFetching,
     isError: constraintsError,
   } = useListReleaseConstraints(id)
+
+  const {
+    data: artifacts = [],
+    isLoading: artifactsLoading,
+    isFetching: artifactsFetching,
+    isError: artifactsError,
+  } = useListReleaseArtifacts(id)
 
   const navigate = useNavigate()
 
@@ -504,6 +530,30 @@ export default function ReleaseDetails() {
                         key={constraint.id}
                         constraint={constraint}
                       />
+                    ))
+                  ) : (
+                    <Attribute.Field variant="text" label="None" value="--" />
+                  )}
+                </CollapsibleCard>
+
+                <CollapsibleCard
+                  title="Artifacts"
+                  subtitle={
+                    <Badge className="ml-2 min-h-5 min-w-5 text-sm text-content-muted">
+                      {artifacts.length}
+                    </Badge>
+                  }
+                >
+                  {artifactsError ? (
+                    <Badge variant="destructive">ERROR</Badge>
+                  ) : artifactsLoading || artifactsFetching ? (
+                    <div className="flex w-full justify-between">
+                      <Skeleton className="h-5 w-48 rounded-sm" />
+                      <Skeleton className="h-5 w-24 rounded-sm" />
+                    </div>
+                  ) : artifacts.length > 0 ? (
+                    artifacts.map((artifact) => (
+                      <ArtifactRow key={artifact.id} artifact={artifact} />
                     ))
                   ) : (
                     <Attribute.Field variant="text" label="None" value="--" />

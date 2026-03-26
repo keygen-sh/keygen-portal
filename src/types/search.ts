@@ -7,6 +7,7 @@ export type SearchableResource =
   | "products"
   | "policies"
   | "packages"
+  | "releases"
 
 export type SearchOperator = "AND" | "OR"
 

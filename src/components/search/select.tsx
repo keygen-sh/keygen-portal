@@ -61,6 +61,7 @@ export default function SearchSelect<T extends SearchOption>({
   const config = resource ? resourceConfigs[resource] : null
 
   const getLabel = config?.getLabel ?? getDefaultLabel
+  const renderOption = config?.renderOption ?? null
 
   const resolvedPlaceholder =
     placeholder ?? config?.placeholder ?? "Select one..."
@@ -112,6 +113,11 @@ export default function SearchSelect<T extends SearchOption>({
     [options, getLabel],
   )
 
+  const optionMap = useMemo(
+    () => new Map(options.map((option) => [option.id, option])),
+    [options],
+  )
+
   const visibleOptions = useMemo(() => {
     if (searchType != null && searchData) {
       return searchData
@@ -155,7 +161,11 @@ export default function SearchSelect<T extends SearchOption>({
         className,
       )}
     >
-      <span className="truncate">{displayLabel ?? resolvedPlaceholder}</span>
+      <span className="truncate">
+        {renderOption && value && optionMap.get(value)
+          ? renderOption(optionMap.get(value)!)
+          : (displayLabel ?? resolvedPlaceholder)}
+      </span>
       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
     </Button>
   )
@@ -209,7 +219,11 @@ export default function SearchSelect<T extends SearchOption>({
               ) : visibleOptions.length > 0 ? (
                 visibleOptions.map((option) => {
                   const label = getLabel(option)
-                  const displayOptionLabel = format ? format(label) : label
+                  const displayOptionLabel = renderOption
+                    ? renderOption(option)
+                    : format
+                      ? format(label)
+                      : label
 
                   return (
                     <CommandItem

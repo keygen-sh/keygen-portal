@@ -12,6 +12,7 @@ import {
   Product,
   Policy,
   Package,
+  Release,
 } from "@/types"
 
 import { getUserLabel } from "@/lib/users"
@@ -19,9 +20,11 @@ import { getGroupLabel } from "@/lib/groups"
 import { getLicenseLabel } from "@/lib/licenses"
 import { getMachineLabel } from "@/lib/machines"
 import { getPackageLabel } from "@/lib/packages"
+import { getReleaseLabel } from "@/lib/releases"
 
 import * as keygen from "@/keygen"
 
+import { Badge } from "@/components/ui/badge"
 import GoToButton from "@/components/go-to-button"
 
 type NamedSearchOption = SearchOption & { attributes: { name: string } }
@@ -36,6 +39,7 @@ export const getDefaultLabel = (option: SearchOption): string => {
 
 export interface ResourceConfig<T extends SearchOption = SearchOption> {
   getLabel?(this: void, option: T): string
+  renderOption?(this: void, option: T): React.ReactNode
   placeholder: string
   searchPlaceholder: string
   emptyMessage: React.ReactElement
@@ -205,6 +209,37 @@ export const packagesConfig: ResourceConfig<Package> = {
   }),
 }
 
+export const releasesConfig: ResourceConfig<Release> = {
+  getLabel: getReleaseLabel,
+  renderOption: (release) => {
+    const { name, version } = release.attributes
+    return (
+      <span className="inline-flex items-center gap-2">
+        <span>{name ?? getReleaseLabel(release)}</span>
+        <Badge variant="secondary" className="text-xs">
+          {version}
+        </Badge>
+      </span>
+    )
+  },
+  placeholder: "Select a release...",
+  searchPlaceholder: "Search by ID or name...",
+  emptyMessage: (
+    <span className="flex items-center gap-2">
+      No releases found.
+      <GoToButton
+        path="/$accountId/app/releases"
+        params={{ accountId: keygen.config.id }}
+        label="View releases"
+      />
+    </span>
+  ),
+  searchQuery: (term) => ({
+    query: { id: term, name: term, version: term },
+    op: "OR",
+  }),
+}
+
 export const resourceConfigs: Record<SearchableResource, ResourceConfig> = {
   licenses: licensesConfig,
   groups: groupsConfig,
@@ -214,4 +249,5 @@ export const resourceConfigs: Record<SearchableResource, ResourceConfig> = {
   products: productsConfig,
   policies: policiesConfig,
   packages: packagesConfig,
+  releases: releasesConfig,
 }

@@ -10,10 +10,10 @@ config.validate()
 export default async function create(
   values: Schemas.Releases.CreateValues,
 ): Promise<ReleaseResponse> {
-  const { productId, constraints, packages, ...attributes } = values
+  const { productId, constraints, packageId, ...attributes } = values
 
-  void packages
   void constraints
+  void packageId
 
   const relationships: Record<string, unknown> = {
     product: {

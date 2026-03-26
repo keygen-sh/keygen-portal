@@ -16,10 +16,10 @@ export default async function update({
   id,
   values,
 }: UpdateProps): Promise<ReleaseResponse> {
-  const { constraints, packages, ...attributes } = values
+  const { constraints, packageId, ...attributes } = values
 
-  void packages
   void constraints
+  void packageId
 
   const body = {
     data: {

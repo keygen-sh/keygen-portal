@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import {
+  Box,
   Logs,
   Menu,
   Copy,
@@ -62,6 +63,7 @@ import {
 import * as keygen from "@/keygen"
 
 import { useGetProduct } from "@/queries/products"
+import { useGetPackage } from "@/queries/packages"
 import { useGetEntitlement } from "@/queries/entitlements"
 import {
   useGetRelease,
@@ -87,6 +89,7 @@ import GoToButton from "@/components/go-to-button"
 import TooltipBadge from "@/components/tooltip-badge"
 import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleCard from "@/components/collapsible-card"
+import { Separator } from "@/components/ui/separator"
 
 const ReleaseChannelIcons: Record<ReleaseChannel, React.ReactNode> = {
   [ReleaseChannel.Stable]: <Package className="size-3" />,
@@ -143,6 +146,9 @@ export default function ReleaseDetails() {
 
   const productId = release?.relationships.product?.data?.id || ""
   const { data: product } = useGetProduct(productId)
+
+  const packageId = release?.relationships.package?.data?.id || ""
+  const { data: pkg } = useGetPackage(packageId)
 
   const {
     data: constraints = [],
@@ -369,22 +375,44 @@ export default function ReleaseDetails() {
                   <Copy className="size-4 pt-0.5 md:size-3" />
                 </Button>
               </div>
-              <div className="mt-2 flex h-4 items-center text-sm text-content-subdued">
-                <Package className="mr-2 size-4 pt-0.5" />
-                <span>Product:</span>
-                {product ? (
-                  <GoToButton
-                    path="/$accountId/app/products/$id"
-                    params={{
-                      accountId: keygen.config.id,
-                      id: product.id,
-                    }}
-                    label={product.attributes.name}
-                    className="ml-3"
-                  />
-                ) : (
-                  <Skeleton className="mt-1 ml-3 h-6 w-48" />
-                )}
+              <div className="mt-2 flex items-center">
+                <div className="flex h-4 items-center text-sm text-content-subdued">
+                  <Box className="mr-2 size-4 pt-0.5" />
+                  <span>Product:</span>
+                  {product ? (
+                    <GoToButton
+                      path="/$accountId/app/products/$id"
+                      params={{
+                        accountId: keygen.config.id,
+                        id: product.id,
+                      }}
+                      label={product.attributes.name}
+                      className="ml-3"
+                    />
+                  ) : (
+                    <Skeleton className="mt-1 ml-3 h-6 w-48" />
+                  )}
+                </div>
+
+                <Separator orientation="vertical" className="mx-4 h-4!" />
+
+                <div className="flex h-4 items-center text-sm text-content-subdued">
+                  <Package className="mr-2 size-4 pt-0.5" />
+                  <span>Package:</span>
+                  {pkg ? (
+                    <GoToButton
+                      path="/$accountId/app/packages/$id"
+                      params={{
+                        accountId: keygen.config.id,
+                        id: pkg.id,
+                      }}
+                      label={pkg.attributes.name}
+                      className="ml-3"
+                    />
+                  ) : (
+                    <Skeleton className="mt-1 ml-3 h-6 w-48" />
+                  )}
+                </div>
               </div>
 
               <div className="mt-6 space-y-6 md:mt-8">
@@ -480,36 +508,6 @@ export default function ReleaseDetails() {
                   ) : (
                     <Attribute.Field variant="text" label="None" value="--" />
                   )}
-                </CollapsibleCard>
-
-                <CollapsibleCard title="Relationships">
-                  <span className="text-xs text-content-subdued">--</span>
-                  {/* <div className="grid gap-4">
-                    <Attribute.Field
-                      variant="text"
-                      label="Package"
-                      value={
-                        packageError ? (
-                          <Badge variant="destructive">ERROR</Badge>
-                        ) : packageLoading || packageFetching ? (
-                          <Skeleton className="h-5 w-32 rounded-sm" />
-                        ) : package ? (
-                          <GoToButton
-                            path="/$accountId/app/packages/$id"
-                            params={{
-                              accountId: keygen.config.id,
-                              id: package.id,
-                            }}
-                            label={package.attributes.name}
-                          />
-                        ) : packageId ? (
-                          packageId
-                        ) : (
-                          "--"
-                        )
-                      }
-                    />
-                  </div> */}
                 </CollapsibleCard>
 
                 <CollapsibleCard title="Metadata" contentClass="p-0">

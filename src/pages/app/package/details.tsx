@@ -28,10 +28,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import {
+  Box,
   Logs,
   Menu,
   Copy,
-  Package,
   GitFork,
   SquarePen,
   SquarePlus,
@@ -205,7 +205,7 @@ export default function PackageDetails() {
                 </Button>
               </div>
               <div className="mt-2 flex h-4 items-center text-sm text-content-subdued">
-                <Package className="mr-2 size-4 pt-0.5" />
+                <Box className="mr-2 size-4 pt-0.5" />
                 <span>Product:</span>
                 {product ? (
                   <GoToButton

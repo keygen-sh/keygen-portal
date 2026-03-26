@@ -42,7 +42,7 @@ jobs:
       - name: Build
         run: pnpm generate:routes
       - name: Lint
-        run: pnpm lint
+        run: pnpm lint:check
       - name: Format
         run: pnpm format:check
       - name: Test

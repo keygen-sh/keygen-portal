@@ -251,3 +251,37 @@ export function useDetachReleaseConstraints() {
     },
   })
 }
+
+export function useChangeReleasePackage() {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<
+    Release,
+    APIError,
+    { releaseId: string; packageId: string | null }
+  >({
+    mutationFn: async ({ releaseId, packageId }) => {
+      const response = await keygen.releases.changePackage({
+        id: releaseId,
+        packageId,
+      })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response.data
+    },
+
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ["releases", updated.id, { environment: code }],
+        updated,
+      )
+      await queryClient.invalidateQueries({
+        queryKey: ["releases", { environment: code }],
+      })
+    },
+  })
+}

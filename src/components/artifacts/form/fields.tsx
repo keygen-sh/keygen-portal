@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { useFormContext } from "react-hook-form"
 
-import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Popover, PopoverContent, PopoverAnchor } from "@/components/ui/popover"
@@ -17,7 +16,6 @@ import { Info } from "lucide-react"
 import { useMobile } from "@/hooks/use-mobile"
 
 import { useListReleases } from "@/queries/releases"
-import { Release } from "@/types/releases"
 
 import * as Schemas from "@/schemas"
 import {
@@ -26,7 +24,6 @@ import {
   ArtifactEditFormFieldDescriptions,
 } from "@/types/artifacts"
 
-import { truncator } from "@/lib/truncate"
 import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
@@ -501,25 +498,6 @@ function ReleaseIdField({
 
   const { data: releases = [], isLoading: releasesLoading } = useListReleases()
 
-  const truncateMiddle = truncator("middle", { maxLength: 12 })
-
-  const getReleaseLabel = (release: Release): string => {
-    const { name, version } = release.attributes
-    return name ?? `${truncateMiddle(release.id)} ${version}`
-  }
-
-  const renderRelease = (release: Release): React.ReactNode => {
-    const { name, version } = release.attributes
-    return (
-      <span className="inline-flex items-center gap-2">
-        <span>{name ?? truncateMiddle(release.id)}</span>
-        <Badge variant="secondary" className="text-xs">
-          {version}
-        </Badge>
-      </span>
-    )
-  }
-
   if (releasesLoading) {
     return (
       <div className="space-y-2">
@@ -542,11 +520,10 @@ function ReleaseIdField({
           >
             <FormControl>
               <Search.Select
+                resource="releases"
                 value={field.value}
                 onChange={(value) => field.onChange(value ?? "")}
                 options={releases}
-                getLabel={getReleaseLabel}
-                renderOption={renderRelease}
                 allowClear={false}
                 invalid={!!fieldState.error}
                 autoFocus={autoFocus}

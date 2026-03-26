@@ -9,8 +9,8 @@ import { ReleaseAttributes, ReleaseChannel } from "@/types/releases"
 export type BaseValues = Writable<
   OptionalExcept<ReleaseAttributes, "version">
 > & {
+  packageId?: string | null
   constraints?: { attach?: string[] }
-  packages?: { attach?: string[] }
 }
 export type CreateValues = BaseValues & { productId: string }
 export type UpdateValues = Partial<BaseValues>
@@ -21,9 +21,8 @@ export type AllValues = CombineFormValues<
 >
 
 export type FieldNames =
-  | Exclude<FieldPath<AllValues>, "constraints" | "packages">
+  | Exclude<FieldPath<AllValues>, "constraints">
   | "constraints.attach"
-  | "packages.attach"
   | "productId"
 
 const BaseShape = z.object({
@@ -64,11 +63,7 @@ const BaseShape = z.object({
       attach: z.array(z.string()).default([]),
     })
     .default({ attach: [] }),
-  packages: z
-    .object({
-      attach: z.array(z.string()).default([]),
-    })
-    .default({ attach: [] }),
+  packageId: z.string().nullable().optional(),
 })
 
 const ProductShape = z.object({

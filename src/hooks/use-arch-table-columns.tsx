@@ -22,11 +22,6 @@ export function useArchTableColumns() {
         cell: (info) => new Date(info.getValue()).toLocaleDateString(),
         sortingFn: "datetime",
       }),
-      column.attr("updated", {
-        header: "Updated",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
-        sortingFn: "datetime",
-      }),
     ],
     [],
   )

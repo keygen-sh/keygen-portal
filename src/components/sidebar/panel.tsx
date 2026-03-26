@@ -171,6 +171,11 @@ const VIEWS: View[] = [
         label: "Engines",
         params: { accountId: keygen.config.id },
       },
+      {
+        to: "/$accountId/app/channels",
+        label: "Channels",
+        params: { accountId: keygen.config.id },
+      },
     ]),
   },
   { id: ViewId.Automate, label: "Automate", icon: Zap, routes: [] },

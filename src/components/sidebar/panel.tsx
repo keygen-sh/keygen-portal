@@ -167,6 +167,16 @@ const VIEWS: View[] = [
         params: { accountId: keygen.config.id },
       },
       {
+        to: "/$accountId/app/artifacts",
+        label: "Artifacts",
+        params: { accountId: keygen.config.id },
+      },
+      {
+        to: "/$accountId/app/platforms",
+        label: "Platforms",
+        params: { accountId: keygen.config.id },
+      },
+      {
         to: "/$accountId/app/arches",
         label: "Architectures",
         params: { accountId: keygen.config.id },
@@ -179,11 +189,6 @@ const VIEWS: View[] = [
       {
         to: "/$accountId/app/engines",
         label: "Engines",
-        params: { accountId: keygen.config.id },
-      },
-      {
-        to: "/$accountId/app/artifacts",
-        label: "Artifacts",
         params: { accountId: keygen.config.id },
       },
     ]),

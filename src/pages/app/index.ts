@@ -10,10 +10,11 @@ export { default as Components } from "./components"
 export { default as Processes } from "./processes"
 export { default as Packages } from "./packages"
 export { default as Releases } from "./releases"
+export { default as Artifacts } from "./artifacts"
+export { default as Platforms } from "./platforms"
 export { default as Arches } from "./arches"
 export { default as Channels } from "./channels"
 export { default as Engines } from "./engines"
-export { default as Artifacts } from "./artifacts"
 
 import * as Product from "./product"
 export { Product }
@@ -48,6 +49,12 @@ export { Package }
 import * as Release from "./release"
 export { Release }
 
+import * as Artifact from "./artifact"
+export { Artifact }
+
+import * as Platform from "./platform"
+export { Platform }
+
 import * as Arch from "./arch"
 export { Arch }
 
@@ -56,6 +63,3 @@ export { Channel }
 
 import * as Engine from "./engine"
 export { Engine }
-
-import * as Artifact from "./artifact"
-export { Artifact }

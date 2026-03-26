@@ -49,6 +49,12 @@ export { packages }
 import * as releases from "./releases"
 export { releases }
 
+import * as artifacts from "./artifacts"
+export { artifacts }
+
+import * as platforms from "./platforms"
+export { platforms }
+
 import * as arches from "./arches"
 export { arches }
 
@@ -57,9 +63,6 @@ export { channels }
 
 import * as engines from "./engines"
 export { engines }
-
-import * as artifacts from "./artifacts"
-export { artifacts }
 
 import { logout } from "./logout"
 export { logout }

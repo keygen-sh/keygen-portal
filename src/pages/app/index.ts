@@ -13,6 +13,7 @@ export { default as Releases } from "./releases"
 export { default as Arches } from "./arches"
 export { default as Channels } from "./channels"
 export { default as Engines } from "./engines"
+export { default as Artifacts } from "./artifacts"
 
 import * as Product from "./product"
 export { Product }
@@ -55,3 +56,6 @@ export { Channel }
 
 import * as Engine from "./engine"
 export { Engine }
+
+import * as Artifact from "./artifact"
+export { Artifact }

@@ -33,3 +33,6 @@ export { Packages }
 
 import * as Releases from "./releases"
 export { Releases }
+
+import * as Artifacts from "./artifacts"
+export { Artifacts }

@@ -1,9 +1,4 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  keepPreviousData,
-} from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
@@ -48,7 +43,6 @@ export function useListPackages(params?: { page: number; pageSize: number }) {
 
       return response
     },
-    placeholderData: params ? keepPreviousData : undefined,
   })
 
   return {

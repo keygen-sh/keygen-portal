@@ -1,9 +1,4 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  keepPreviousData,
-} from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
@@ -54,7 +49,6 @@ export function useListGroups(
 
       return response
     },
-    placeholderData: params ? keepPreviousData : undefined,
     enabled: options?.enabled,
   })
 

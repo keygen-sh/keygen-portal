@@ -14,7 +14,7 @@ export default async function get({ id }: GetProps): Promise<ArtifactResponse> {
     {
       method: "GET",
       headers: {
-        Prefer: "no-redirect",
+        Prefer: "no-redirect, no-download",
       },
     },
   )) as ArtifactResponse

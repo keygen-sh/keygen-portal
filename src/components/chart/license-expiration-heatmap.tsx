@@ -1,6 +1,19 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react"
-import { format, parseISO } from "date-fns"
+import {
+  format,
+  getDay,
+  addDays,
+  subDays,
+  parseISO,
+  subMonths,
+  addMonths,
+  isSameMonth,
+  startOfMonth,
+  getDaysInMonth,
+} from "date-fns"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
+import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 
 import {
@@ -14,7 +27,10 @@ import * as keygen from "@/keygen"
 import { cn } from "@/lib/utils"
 import { truncateKey } from "@/lib/licenses"
 
+import { useMobile } from "@/hooks/use-mobile"
+
 import * as Chart from "@/components/chart"
+import * as Motion from "@/components/motion"
 import GoToButton from "@/components/go-to-button"
 
 const DayLabels = ["Mon", "", "Wed", "", "Fri", "", "Sun"]
@@ -23,8 +39,17 @@ const CellHeight = 8
 const CellGap = 2
 const LabelWidth = 34
 
+const MobileCellGap = 4
+const MobileColumnCount = 6
+
+const PopoverWidth = 208 // w-52
+
 function toDisplayRow(y: number): number {
   return (y + 6) % 7
+}
+
+function toMondayRow(isoDay: number): number {
+  return isoDay === 0 ? 6 : isoDay - 1
 }
 
 function getTemperatureColor(temperature: number): string {
@@ -41,6 +66,7 @@ function getTemperatureColor(temperature: number): string {
 export default function LicenseExpirationHeatmap() {
   // TODO(cazden) Refactor with query
   const licensesLoading = false
+  const isMobile = useMobile()
 
   const [expanded, setExpanded] = useState(false)
   const [hoveredEntry, setHoveredEntry] =
@@ -115,6 +141,32 @@ export default function LicenseExpirationHeatmap() {
     setExpanded(true)
   }
 
+  // On mobile, tap a cell to select it and show popover
+  const handleCellTap = (
+    entry: ExpirationHeatmapEntry,
+    e: React.MouseEvent,
+  ) => {
+    if (expanded && hoveredEntry?.date === entry.date) {
+      close()
+      return
+    }
+
+    // Position popover within screen bounds below selected cell
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+    const pad = 8
+    const halfW = PopoverWidth / 2
+
+    let x = rect.left + rect.width / 2
+    x = Math.max(pad + halfW, Math.min(x, window.innerWidth - pad - halfW))
+
+    const pos = { x, y: rect.bottom }
+    targetPosRef.current = pos
+    currentPosRef.current = { ...pos }
+
+    setHoveredEntry(entry)
+    setExpanded(true)
+  }
+
   // Dismiss popover when clicked outside
   useEffect(() => {
     if (!expanded) return
@@ -136,7 +188,7 @@ export default function LicenseExpirationHeatmap() {
 
   // Interpolate the tooltip position toward the cursor while not expanded
   useEffect(() => {
-    if (!hoveredEntry || expanded) {
+    if (isMobile || !hoveredEntry || expanded) {
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current)
         rafRef.current = null
@@ -171,7 +223,7 @@ export default function LicenseExpirationHeatmap() {
         rafRef.current = null
       }
     }
-  }, [hoveredEntry, expanded])
+  }, [hoveredEntry, expanded, isMobile])
 
   // Derive grid layout metadata from the heatmap data
   const { monthLabels, numWeeks, occupiedCells } = useMemo(() => {
@@ -224,107 +276,118 @@ export default function LicenseExpirationHeatmap() {
       }
     >
       {ExpirationHeatmapMockData?.length ? (
-        <div className="relative w-full overflow-x-auto">
-          <div
-            style={{ minWidth: LabelWidth + numWeeks * (CellWidth + CellGap) }}
-          >
+        isMobile ? (
+          <MobileHeatmapGrid
+            hoveredEntry={hoveredEntry}
+            onCellTap={handleCellTap}
+            close={close}
+          />
+        ) : (
+          <div className="relative w-full overflow-x-auto">
             <div
-              onMouseMove={handleGridMouseMove}
               style={{
-                display: "grid",
-                gridTemplateColumns: `${LabelWidth}px repeat(${numWeeks}, ${CellWidth}px)`,
-                gridTemplateRows: `auto repeat(7, ${CellHeight}px)`,
-                columnGap: CellGap,
-                rowGap: CellGap,
+                minWidth: LabelWidth + numWeeks * (CellWidth + CellGap),
               }}
             >
-              {monthLabels.map((month, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col text-[10px] text-content-subdued"
-                  style={{ gridRow: 1, gridColumn: month.weekIndex + 2 }}
-                >
-                  <span>{month.label}</span>
-                  <span className="mt-0.5 mb-1 h-1 w-px self-center bg-content-disabled" />
-                </div>
-              ))}
+              <div
+                onMouseMove={handleGridMouseMove}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: `${LabelWidth}px repeat(${numWeeks}, ${CellWidth}px)`,
+                  gridTemplateRows: `auto repeat(7, ${CellHeight}px)`,
+                  columnGap: CellGap,
+                  rowGap: CellGap,
+                }}
+              >
+                {monthLabels.map((month, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col text-[10px] text-content-subdued"
+                    style={{ gridRow: 1, gridColumn: month.weekIndex + 2 }}
+                  >
+                    <span>{month.label}</span>
+                    <span className="mt-0.5 mb-1 h-1 w-px self-center bg-content-disabled" />
+                  </div>
+                ))}
 
-              {DayLabels.map((label, index) => (
-                <div
-                  key={index}
-                  className="flex items-center text-[10px] leading-none text-content-subdued"
-                  style={{ gridRow: index + 2, gridColumn: 1 }}
-                >
-                  {label}
-                  {label && (
-                    <span className="mr-1 ml-auto h-px w-1 bg-content-disabled" />
-                  )}
-                </div>
-              ))}
+                {DayLabels.map((label, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center text-[10px] leading-none text-content-subdued"
+                    style={{ gridRow: index + 2, gridColumn: 1 }}
+                  >
+                    {label}
+                    {label && (
+                      <span className="mr-1 ml-auto h-px w-1 bg-content-disabled" />
+                    )}
+                  </div>
+                ))}
 
-              {Array.from({ length: numWeeks }, (_, weekIndex) =>
-                Array.from({ length: 7 }, (_, dayIndex) => {
-                  if (occupiedCells.has(`${weekIndex},${dayIndex}`)) return null
-                  return (
+                {Array.from({ length: numWeeks }, (_, weekIndex) =>
+                  Array.from({ length: 7 }, (_, dayIndex) => {
+                    if (occupiedCells.has(`${weekIndex},${dayIndex}`))
+                      return null
+                    return (
+                      <div
+                        key={`empty-${weekIndex}-${dayIndex}`}
+                        className="bg-background-1"
+                        style={{
+                          gridRow: dayIndex + 2,
+                          gridColumn: weekIndex + 2,
+                        }}
+                      />
+                    )
+                  }),
+                )}
+
+                {ExpirationHeatmapMockData.map((entry) =>
+                  entry.count > 0 ? (
                     <div
-                      key={`empty-${weekIndex}-${dayIndex}`}
-                      className="bg-background-1"
+                      key={entry.date}
+                      onMouseEnter={(e) => handleCellMouseEnter(entry, e)}
+                      onMouseLeave={handleCellMouseLeave}
+                      onClick={handleCellClick}
+                      className={cn(
+                        "cursor-pointer transition-transform duration-150 ease-out hover:z-10 hover:scale-[1.3]",
+                        hoveredEntry?.date === entry.date && "z-10 scale-[1.3]",
+                      )}
                       style={{
-                        gridRow: dayIndex + 2,
-                        gridColumn: weekIndex + 2,
+                        gridRow: toDisplayRow(entry.y) + 2,
+                        gridColumn: entry.x + 2,
+                        backgroundColor: getTemperatureColor(entry.temperature),
                       }}
                     />
-                  )
-                }),
-              )}
+                  ) : (
+                    <div
+                      key={entry.date}
+                      style={{
+                        gridRow: toDisplayRow(entry.y) + 2,
+                        gridColumn: entry.x + 2,
+                        backgroundColor: getTemperatureColor(entry.temperature),
+                      }}
+                    />
+                  ),
+                )}
+              </div>
 
-              {ExpirationHeatmapMockData.map((entry) =>
-                entry.count > 0 ? (
+              {/* Temperature legend */}
+              <div className="mt-2 flex items-center justify-end gap-1.5 text-[10px] text-content-subdued">
+                <span>Less</span>
+                {[0, 0.25, 0.5, 0.75, 1].map((temperature) => (
                   <div
-                    key={entry.date}
-                    onMouseEnter={(e) => handleCellMouseEnter(entry, e)}
-                    onMouseLeave={handleCellMouseLeave}
-                    onClick={handleCellClick}
-                    className={cn(
-                      "cursor-pointer transition-transform duration-150 ease-out hover:z-10 hover:scale-[1.3]",
-                      hoveredEntry?.date === entry.date && "z-10 scale-[1.3]",
-                    )}
+                    key={temperature}
                     style={{
-                      gridRow: toDisplayRow(entry.y) + 2,
-                      gridColumn: entry.x + 2,
-                      backgroundColor: getTemperatureColor(entry.temperature),
+                      width: CellWidth - 2,
+                      height: CellHeight - 2,
+                      backgroundColor: getTemperatureColor(temperature),
                     }}
                   />
-                ) : (
-                  <div
-                    key={entry.date}
-                    style={{
-                      gridRow: toDisplayRow(entry.y) + 2,
-                      gridColumn: entry.x + 2,
-                      backgroundColor: getTemperatureColor(entry.temperature),
-                    }}
-                  />
-                ),
-              )}
-            </div>
-
-            {/* Temperature legend */}
-            <div className="mt-2 flex items-center justify-end gap-1.5 text-[10px] text-content-subdued">
-              <span>Less</span>
-              {[0, 0.25, 0.5, 0.75, 1].map((temperature) => (
-                <div
-                  key={temperature}
-                  style={{
-                    width: CellWidth - 2,
-                    height: CellHeight - 2,
-                    backgroundColor: getTemperatureColor(temperature),
-                  }}
-                />
-              ))}
-              <span>More</span>
+                ))}
+                <span>More</span>
+              </div>
             </div>
           </div>
-        </div>
+        )
       ) : null}
 
       {/* Popover/tooltip */}
@@ -345,6 +408,9 @@ export default function LicenseExpirationHeatmap() {
             className={cn(
               "w-52 origin-top rounded-md border border-accent bg-background-2 p-3 text-xs shadow-lg duration-150 animate-in fade-in-0 zoom-in-95",
             )}
+            style={{
+              width: PopoverWidth,
+            }}
           >
             <p className="font-medium text-content-muted">
               {format(parseISO(hoveredEntry.date), "MMM do, yyyy")}
@@ -355,28 +421,269 @@ export default function LicenseExpirationHeatmap() {
             </p>
             <div className="my-2 h-px bg-accent" />
 
-            {!expanded && (
+            {!isMobile && !expanded && (
               <p className="text-[10px] text-content-subdued">
                 + Click to show licenses
               </p>
             )}
 
-            <div
-              className="grid transition-[grid-template-rows] duration-200 ease-out"
-              style={{ gridTemplateRows: expanded ? "1fr" : "0fr" }}
-            >
-              <div className="overflow-hidden">
-                {expanded && (
-                  <div className="duration-200 ease-out animate-in [animation-delay:200ms] [animation-fill-mode:both] fade-in-0">
-                    <HeatmapCellExpandedContent date={hoveredEntry.date} />
-                  </div>
-                )}
+            {isMobile ? (
+              <HeatmapCellExpandedContent date={hoveredEntry.date} />
+            ) : (
+              <div
+                className="grid transition-[grid-template-rows] duration-200 ease-out"
+                style={{ gridTemplateRows: expanded ? "1fr" : "0fr" }}
+              >
+                <div className="overflow-hidden">
+                  {expanded && (
+                    <div className="duration-200 ease-out animate-in [animation-delay:200ms] [animation-fill-mode:both] fade-in-0">
+                      <HeatmapCellExpandedContent date={hoveredEntry.date} />
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}
     </Chart.Card>
+  )
+}
+
+function MobileHeatmapGrid({
+  hoveredEntry,
+  onCellTap,
+  close,
+}: {
+  hoveredEntry: ExpirationHeatmapEntry | null
+  onCellTap: (entry: ExpirationHeatmapEntry, e: React.MouseEvent) => void
+  close: () => void
+}) {
+  // Derive the date range from the data to bound navigation
+  const { minMonth, maxMonth } = useMemo((): {
+    minMonth: Date
+    maxMonth: Date
+  } => {
+    if (!ExpirationHeatmapMockData?.length)
+      return { minMonth: new Date(), maxMonth: new Date() }
+    const dates = ExpirationHeatmapMockData.map((e) => parseISO(e.date))
+    return {
+      minMonth: startOfMonth(dates.reduce((a, b) => (a < b ? a : b))),
+      maxMonth: startOfMonth(dates.reduce((a, b) => (a > b ? a : b))),
+    }
+  }, [])
+
+  const [currentMonth, setCurrentMonth] = useState(() => minMonth)
+  const [direction, setDirection] = useState<1 | -1>(1)
+
+  const canGoPrev = currentMonth > minMonth
+  const canGoNext = currentMonth < maxMonth
+
+  const goPrev = () => {
+    if (canGoPrev) {
+      close()
+      setDirection(-1)
+      setCurrentMonth((m: Date) => subMonths(m, 1))
+    }
+  }
+  const goNext = () => {
+    if (canGoNext) {
+      close()
+      setDirection(1)
+      setCurrentMonth((m: Date) => addMonths(m, 1))
+    }
+  }
+
+  // Build lookup of date/entry for current month
+  const entryByDate = useMemo(() => {
+    const map = new Map<string, ExpirationHeatmapEntry>()
+    for (const entry of ExpirationHeatmapMockData) {
+      const d = parseISO(entry.date)
+      if (isSameMonth(d, currentMonth)) {
+        map.set(entry.date, entry)
+      }
+    }
+    return map
+  }, [currentMonth])
+
+  const gridCells = useMemo(() => {
+    const firstDayRow = toMondayRow(getDay(startOfMonth(currentMonth)))
+    const daysInMonth = getDaysInMonth(currentMonth)
+    const totalSlots = MobileColumnCount * 7
+    const trailingPad = totalSlots - (firstDayRow + daysInMonth)
+
+    const year = currentMonth.getFullYear()
+    const month = currentMonth.getMonth()
+
+    const cells: {
+      row: number
+      col: number
+      dateStr: string
+      entry: ExpirationHeatmapEntry | null
+      isPadding: boolean
+    }[] = []
+
+    // Leading padding from previous month
+    const monthStart = startOfMonth(currentMonth)
+    for (let i = firstDayRow - 1; i >= 0; i--) {
+      const d = subDays(monthStart, i + 1)
+      const idx = firstDayRow - i - 1
+      cells.push({
+        row: idx % 7,
+        col: Math.floor(idx / 7),
+        dateStr: format(d, "yyyy-MM-dd"),
+        entry: null,
+        isPadding: true,
+      })
+    }
+
+    // Current month days
+    for (let day = 1; day <= daysInMonth; day++) {
+      const idx = firstDayRow + (day - 1)
+      const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+      cells.push({
+        row: idx % 7,
+        col: Math.floor(idx / 7),
+        dateStr,
+        entry: entryByDate.get(dateStr) ?? null,
+        isPadding: false,
+      })
+    }
+
+    // Trailing padding from next month
+    const lastDay = new Date(year, month, daysInMonth)
+    for (let i = 0; i < trailingPad; i++) {
+      const d = addDays(lastDay, i + 1)
+      const idx = firstDayRow + daysInMonth + i
+      cells.push({
+        row: idx % 7,
+        col: Math.floor(idx / 7),
+        dateStr: format(d, "yyyy-MM-dd"),
+        entry: null,
+        isPadding: true,
+      })
+    }
+
+    return cells
+  }, [currentMonth, entryByDate])
+
+  return (
+    <div className="w-full">
+      {/* Month navigation */}
+      <div className="mb-3 flex items-center justify-between">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={goPrev}
+          disabled={!canGoPrev}
+        >
+          <ChevronLeft className="size-4" />
+        </Button>
+        <span className="text-sm font-medium text-content-muted">
+          {format(currentMonth, "MMMM yyyy")}
+        </span>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={goNext}
+          disabled={!canGoNext}
+        >
+          <ChevronRight className="size-4" />
+        </Button>
+      </div>
+
+      <Motion.Slide direction={direction} offset={40} duration={0.2}>
+        <div key={currentMonth.toISOString()}>
+          {/* Heatmap grid */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: `${LabelWidth}px repeat(${MobileColumnCount}, 1fr)`,
+              gridTemplateRows: `repeat(7, 18px)`,
+              columnGap: MobileCellGap,
+              rowGap: MobileCellGap,
+            }}
+          >
+            {/* Day labels */}
+            {DayLabels.map((label, index) => (
+              <div
+                key={index}
+                className="flex items-center text-[10px] leading-none text-content-subdued"
+                style={{ gridRow: index + 1, gridColumn: 1 }}
+              >
+                {label}
+                {label && (
+                  <span className="mr-1 ml-auto h-px w-1 bg-content-disabled" />
+                )}
+              </div>
+            ))}
+
+            {/* Day cells */}
+            {gridCells.map(({ row, col, dateStr, entry, isPadding }) => {
+              const temperature = entry?.temperature ?? 0
+              const hasExpirations =
+                !isPadding && entry != null && entry.count > 0
+
+              if (isPadding) {
+                return (
+                  <div
+                    key={dateStr}
+                    className="rounded-xs opacity-20"
+                    style={{
+                      gridRow: row + 1,
+                      gridColumn: col + 2,
+                      backgroundColor: getTemperatureColor(0),
+                    }}
+                  />
+                )
+              }
+
+              return hasExpirations ? (
+                <div
+                  key={dateStr}
+                  onClick={(e) => onCellTap(entry, e)}
+                  className={cn(
+                    "cursor-pointer rounded-xs transition-transform duration-150 ease-out",
+                    hoveredEntry?.date === dateStr && "z-10 scale-[1.3]",
+                  )}
+                  style={{
+                    gridRow: row + 1,
+                    gridColumn: col + 2,
+                    backgroundColor: getTemperatureColor(temperature),
+                  }}
+                />
+              ) : (
+                <div
+                  key={dateStr}
+                  className="rounded-xs"
+                  style={{
+                    gridRow: row + 1,
+                    gridColumn: col + 2,
+                    backgroundColor: getTemperatureColor(0),
+                  }}
+                />
+              )
+            })}
+          </div>
+        </div>
+      </Motion.Slide>
+
+      {/* Temperature legend */}
+      <div className="mt-2 flex items-center justify-end gap-1.5 text-[10px] text-content-subdued">
+        <span>Less</span>
+        {[0, 0.25, 0.5, 0.75, 1].map((temperature) => (
+          <div
+            key={temperature}
+            style={{
+              width: 14,
+              height: 10,
+              backgroundColor: getTemperatureColor(temperature),
+            }}
+          />
+        ))}
+        <span>More</span>
+      </div>
+    </div>
   )
 }
 

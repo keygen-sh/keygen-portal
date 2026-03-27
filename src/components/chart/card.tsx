@@ -28,7 +28,12 @@ export default function ChartCard({
   action,
 }: ChartsCardProps) {
   return (
-    <Card className={cn("w-fit border-accent bg-background p-0", className)}>
+    <Card
+      className={cn(
+        "w-full border-accent bg-background p-0 md:w-fit",
+        className,
+      )}
+    >
       <CardHeader className="items-center border-b border-accent px-4 pt-3 [.border-b]:pb-2">
         <CardTitle className="text-sm font-medium text-content-muted">
           {title}

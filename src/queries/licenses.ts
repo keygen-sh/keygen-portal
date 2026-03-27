@@ -10,7 +10,6 @@ import { License, LicenseFile } from "@/types/licenses"
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
-import { keepPreviousDataUnlessRefiltered } from "./utils"
 
 export function useGetLicense(licenseId: string) {
   const { code } = useEnvironment()
@@ -74,9 +73,6 @@ export function useListLicenses(params?: {
 
       return response
     },
-    placeholderData: params
-      ? keepPreviousDataUnlessRefiltered(params.filters)
-      : undefined,
   })
 
   return {

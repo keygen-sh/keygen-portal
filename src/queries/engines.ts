@@ -1,4 +1,4 @@
-import { useQuery, keepPreviousData } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
 
@@ -40,7 +40,6 @@ export function useListEngines(params?: { page: number; pageSize: number }) {
 
       return response
     },
-    placeholderData: params ? keepPreviousData : undefined,
   })
 
   return {

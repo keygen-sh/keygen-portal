@@ -1,9 +1,4 @@
-import {
-  useQuery,
-  useQueryClient,
-  useMutation,
-  keepPreviousData,
-} from "@tanstack/react-query"
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 
 import * as Schemas from "@/schemas"
 import { Environment } from "@/types/environments"
@@ -40,7 +35,6 @@ export function useListEnvironments(params?: {
 
       return response
     },
-    placeholderData: params ? keepPreviousData : undefined,
   })
 
   return {

@@ -18,28 +18,18 @@ export default function EnumFilter({
   value,
   onChange,
 }: EnumFilterProps) {
-  const defaultValue = options[0]?.value ?? ""
+  const filter = useFilterState(value, "", onChange)
 
-  const {
-    filterState,
-    currentValue,
-    handleActivate,
-    handleConfirm,
-    handleRemove,
-    handleChange,
-  } = useFilterState(value, defaultValue, onChange)
-
-  const displayLabel =
-    options.find((o) => o.value === currentValue)?.label ?? currentValue
+  const selected = options.find((o) => o.value === filter.value) || options[0]
 
   return (
     <FilterSegmentGroup
-      state={filterState}
+      state={filter.state}
       icon={icon}
       label={label}
-      onActivate={handleActivate}
-      onConfirm={handleConfirm}
-      onRemove={handleRemove}
+      onActivate={filter.handleActivate}
+      onConfirm={filter.handleConfirm}
+      onRemove={filter.handleRemove}
     >
       <FilterSegment first icon={icon}>
         {label}
@@ -51,16 +41,16 @@ export default function EnumFilter({
         popover={(close) => (
           <OptionList
             options={options}
-            value={currentValue}
+            value={filter.value}
             onSelect={(v) => {
-              handleChange(v)
+              filter.handleChange(v)
               close()
             }}
           />
         )}
         popoverClassName="w-36"
       >
-        {displayLabel}
+        {selected.label}
       </FilterSegment>
     </FilterSegmentGroup>
   )

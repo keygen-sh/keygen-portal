@@ -3,6 +3,11 @@ import { type LucideIcon } from "lucide-react"
 import { useFilterState } from "@/hooks/use-filter-state"
 import { FilterSegmentGroup, FilterSegment, OptionList } from "./filter-segment"
 
+const BOOLEAN_OPTIONS = [
+  { label: "Is", value: "eq" },
+  { label: "Is not", value: "ne" },
+] as const
+
 export interface BooleanFilterProps {
   label: string
   icon?: LucideIcon
@@ -16,51 +21,41 @@ export default function BooleanFilter({
   value,
   onChange,
 }: BooleanFilterProps) {
-  const {
-    filterState,
-    currentValue,
-    handleActivate,
-    handleConfirm,
-    handleRemove,
-    handleChange,
-  } = useFilterState(value, true, onChange)
+  const filter = useFilterState(value, true, onChange)
 
-  const operatorOptions = [
-    { value: "is", label: "is" },
-    { value: "is-not", label: "is not" },
-  ] as const
+  const selected = BOOLEAN_OPTIONS.find((o) =>
+    filter.value ? o.value === "eq" : o.value === "ne",
+  )!
 
-  const operatorValue = currentValue === true ? "is" : "is-not"
-
-  function handleOperatorSelect(op: string) {
-    handleChange(op === "is")
+  function handleOpChange(op: string) {
+    filter.handleChange(op === "eq")
   }
 
   return (
     <FilterSegmentGroup
-      state={filterState}
+      state={filter.state}
       icon={icon}
       label={label}
-      onActivate={handleActivate}
-      onConfirm={handleConfirm}
-      onRemove={handleRemove}
+      onActivate={filter.handleActivate}
+      onConfirm={filter.handleConfirm}
+      onRemove={filter.handleRemove}
     >
       <FilterSegment first icon={icon} />
       <FilterSegment
         clickable
         popover={(close) => (
           <OptionList
-            options={operatorOptions}
-            value={operatorValue}
-            onSelect={(v) => {
-              handleOperatorSelect(v)
+            options={BOOLEAN_OPTIONS}
+            value={selected.value}
+            onSelect={(op) => {
+              handleOpChange(op)
               close()
             }}
           />
         )}
         popoverClassName="w-24"
       >
-        {operatorValue === "is" ? "is" : "is not"}
+        {selected.label.toLowerCase()}
       </FilterSegment>
       <FilterSegment last>{label}</FilterSegment>
     </FilterSegmentGroup>

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react"
+import { useCallback, useContext, useState } from "react"
 import { ChevronDown, Check, X, type LucideIcon } from "lucide-react"
 
 import {
@@ -11,7 +11,6 @@ import { cn } from "@/lib/utils"
 
 import {
   FilterStateContext,
-  useFilterStateContext,
   type FilterState,
 } from "@/contexts/filter-bar-context"
 
@@ -132,7 +131,7 @@ export function FilterSegment({
   icon?: LucideIcon
   children?: React.ReactNode
 }) {
-  const state = useFilterStateContext()
+  const state = useContext(FilterStateContext)
   const isDraft = state === "draft"
 
   const baseStyles = cn(

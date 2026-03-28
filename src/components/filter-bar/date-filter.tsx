@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState } from "react"
 import { format, parseISO } from "date-fns"
 import { type LucideIcon } from "lucide-react"
 
@@ -12,22 +12,106 @@ import * as Calendars from "@/components/calendars"
 
 import { cn } from "@/lib/utils"
 
-import { useFilterStateContext } from "@/contexts/filter-bar-context"
-import { useFilterState } from "@/hooks/use-filter-state"
+import { FilterState, useFilterState } from "@/hooks/use-filter-state"
 import { FilterSegmentGroup, FilterSegment, OptionList } from "./filter-segment"
 
-export function DateSegment({
+export type DateOption = {
+  label: string
+  op: "on" | "before" | "after"
+}
+
+export interface DateFilterProps {
+  label: string
+  icon?: LucideIcon
+  options: ReadonlyArray<DateOption>
+  value?: Record<string, string>
+  onChange: (value: Record<string, string> | undefined) => void
+}
+
+export default function DateFilter({
+  label,
+  icon,
+  options,
+  value,
+  onChange,
+}: DateFilterProps) {
+  const filter = useFilterState(value, {}, onChange)
+
+  // we only allow one operation at a time so we'll just grab the first key
+  const [currentOp] = Object.keys(filter.value)
+  const currentValue = filter.value[currentOp]
+
+  const ops = options.map((o) => ({ label: o.label, value: o.op }))
+  const selected = options.find((o) => o.op === currentOp) ?? options[0]
+
+  const displayValue = currentValue ? format(parseISO(currentValue), "PPP") : ""
+
+  function handleOpChange(op: string) {
+    if (currentValue) {
+      filter.handleChange({ [op]: currentValue })
+    } else {
+      filter.handleDraftChange({ [op]: "" })
+    }
+  }
+
+  function handleDateChange(date: Date | undefined) {
+    if (date) {
+      filter.handleChange({ [selected.op]: format(date, "yyyy-MM-dd") })
+    }
+  }
+
+  return (
+    <FilterSegmentGroup
+      state={filter.state}
+      icon={icon}
+      label={label}
+      onActivate={filter.handleActivate}
+      onConfirm={filter.handleConfirm}
+      onRemove={filter.handleRemove}
+      confirmDisabled={!currentValue}
+    >
+      <FilterSegment first icon={icon}>
+        {label}
+      </FilterSegment>
+      <FilterSegment
+        clickable
+        popover={(close) => (
+          <OptionList
+            options={ops}
+            value={currentOp}
+            onSelect={(v) => {
+              handleOpChange(v)
+              close()
+            }}
+          />
+        )}
+        popoverClassName="w-28"
+      >
+        {selected.label.toLowerCase()}
+      </FilterSegment>
+      <DatePickerSegment
+        state={filter.state}
+        value={currentValue}
+        displayValue={displayValue}
+        onSelect={handleDateChange}
+      />
+    </FilterSegmentGroup>
+  )
+}
+
+export function DatePickerSegment({
+  state,
   value,
   displayValue,
-  onDateApply,
+  onSelect,
 }: {
+  state: FilterState
   value: string
   displayValue: string
-  onDateApply: (date: Date | undefined) => void
+  onSelect: (date: Date | undefined) => void
 }) {
-  const [open, setOpen] = useState(false)
-  const state = useFilterStateContext()
   const isDraft = state === "draft"
+  const [open, setOpen] = useState(false)
 
   const selectedDate = value ? parseISO(value) : undefined
   const validDate =
@@ -45,7 +129,7 @@ export function DateSegment({
               : "bg-secondary/20 text-secondary hover:text-secondary-light",
           )}
         >
-          {displayValue || "pick date..."}
+          {displayValue || "select..."}
         </button>
       </PopoverTrigger>
       <PopoverContent
@@ -57,96 +141,12 @@ export function DateSegment({
         <Calendars.DatePicker
           selected={validDate}
           onApply={(date) => {
-            onDateApply(date)
+            onSelect(date)
             setOpen(false)
           }}
           onCancel={() => setOpen(false)}
         />
       </PopoverContent>
     </Popover>
-  )
-}
-
-export interface DateFilterProps {
-  label: string
-  icon?: LucideIcon
-  ops: ReadonlyArray<{ value: string; label: string }>
-  value?: Record<string, string>
-  onChange: (value: Record<string, string> | undefined) => void
-}
-
-export default function DateFilter({
-  label,
-  icon,
-  ops,
-  value,
-  onChange,
-}: DateFilterProps) {
-  const defaultValue = useMemo(() => ({ [ops[0].value]: "" }), [ops])
-
-  const {
-    filterState,
-    currentValue,
-    handleActivate,
-    handleConfirm,
-    handleRemove,
-    handleChange,
-    handleDraftChange,
-  } = useFilterState(value, defaultValue, onChange)
-
-  const currentOp = Object.keys(currentValue)[0]
-  const currentVal = Object.values(currentValue)[0]
-  const opLabel =
-    ops.find((o) => o.value === currentOp)?.label?.toLowerCase() ?? currentOp
-  const displayValue = currentVal ? format(parseISO(currentVal), "PPP") : ""
-
-  function handleOpSelect(op: string) {
-    if (currentVal) {
-      handleChange({ [op]: currentVal })
-    } else {
-      handleDraftChange({ [op]: "" })
-    }
-  }
-
-  function handleDateApply(date: Date | undefined) {
-    if (date) {
-      handleChange({ [currentOp]: format(date, "yyyy-MM-dd") })
-    }
-  }
-
-  return (
-    <FilterSegmentGroup
-      state={filterState}
-      icon={icon}
-      label={label}
-      onActivate={handleActivate}
-      onConfirm={handleConfirm}
-      onRemove={handleRemove}
-    >
-      <FilterSegment first icon={icon}>
-        {label}
-      </FilterSegment>
-      <FilterSegment
-        clickable
-        popover={(close) => (
-          <OptionList
-            options={ops}
-            value={currentOp}
-            onSelect={(v) => {
-              handleOpSelect(v)
-              close()
-            }}
-          />
-        )}
-        popoverClassName="w-28"
-      >
-        {opLabel}
-      </FilterSegment>
-      <DateSegment
-        value={currentVal}
-        displayValue={displayValue}
-        onDateApply={handleDateApply}
-      />
-    </FilterSegmentGroup>
   )
 }

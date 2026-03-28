@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,16 +12,18 @@ import { type LucideIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-import { useFilterStateContext } from "@/contexts/filter-bar-context"
-import { useFilterState } from "@/hooks/use-filter-state"
+import { FilterState, useFilterState } from "@/hooks/use-filter-state"
 import { FilterSegmentGroup, FilterSegment, OptionList } from "./filter-segment"
+
+type NumericOption = {
+  label: string
+  op: "eq" | "lt" | "lte" | "gt" | "gte"
+}
 
 export interface NumericFilterProps {
   label: string
   icon?: LucideIcon
-  ops: ReadonlyArray<{ value: string; label: string }>
-  defaultOp: string
-  defaultCount: number
+  options: ReadonlyArray<NumericOption>
   value?: Record<string, number>
   onChange: (value: Record<string, number> | undefined) => void
 }
@@ -29,43 +31,36 @@ export interface NumericFilterProps {
 export default function NumericFilter({
   label,
   icon,
-  ops,
-  defaultOp,
-  defaultCount,
-  value,
+  options,
+  value, // partial filter e.g. {eq: 1}
   onChange,
 }: NumericFilterProps) {
-  const defaultValue = useMemo(
-    () => ({ [defaultOp]: defaultCount }),
-    [defaultOp, defaultCount],
-  )
+  const filter = useFilterState(value, {}, onChange) // FIXME(ezekg) remove default
 
-  const {
-    filterState,
-    currentValue,
-    handleActivate,
-    handleConfirm,
-    handleRemove,
-    handleChange,
-  } = useFilterState(value, defaultValue, onChange)
+  // we only allow one operation at a time so we'll just grab the first key
+  const [currentOp] = Object.keys(filter.value)
+  const currentValue = filter.value[currentOp]
 
-  const currentOp = Object.keys(currentValue)[0]
-  const currentCount = Object.values(currentValue)[0]
-  const opLabel =
-    ops.find((o) => o.value === currentOp)?.label?.toLowerCase() ?? currentOp
+  const ops = options.map((o) => ({ label: o.label, value: o.op }))
+  const selected = options.find((o) => o.op === currentOp) ?? options[0]
 
-  function handleOpSelect(op: string) {
-    handleChange({ [op]: currentCount })
+  function handleOpChange(op: string) {
+    filter.handleChange({ [op]: currentValue })
+  }
+
+  function handleValueChange(value: number) {
+    filter.handleChange({ [selected.op]: value })
   }
 
   return (
     <FilterSegmentGroup
-      state={filterState}
+      state={filter.state}
       icon={icon}
       label={label}
-      onActivate={handleActivate}
-      onConfirm={handleConfirm}
-      onRemove={handleRemove}
+      confirmDisabled={!currentValue}
+      onActivate={filter.handleActivate}
+      onConfirm={filter.handleConfirm}
+      onRemove={filter.handleRemove}
     >
       <FilterSegment first icon={icon}>
         {label}
@@ -77,47 +72,57 @@ export default function NumericFilter({
             options={ops}
             value={currentOp}
             onSelect={(v) => {
-              handleOpSelect(v)
+              handleOpChange(v)
               close()
             }}
           />
         )}
         popoverClassName="w-32"
       >
-        {opLabel}
+        {selected.label.toLowerCase()}
       </FilterSegment>
 
-      <NumericCountSegment
-        count={currentCount}
-        onApply={(num) => handleChange({ [currentOp]: num })}
+      <NumberInputSegment
+        state={filter.state}
+        onChange={handleValueChange}
+        value={currentValue}
       />
     </FilterSegmentGroup>
   )
 }
 
-function NumericCountSegment({
-  count,
-  onApply,
+export function NumberInputSegment({
+  state,
+  value,
+  onChange,
 }: {
-  count: number
-  onApply: (value: number) => void
+  state: FilterState
+  onChange: (value: number) => void
+  value: number
 }) {
-  const state = useFilterStateContext()
   const isDraft = state === "draft"
   const [open, setOpen] = useState(false)
-  const [input, setInput] = useState(String(count))
 
-  function handleOpenChange(next: boolean) {
-    if (next) setInput(String(count))
-    setOpen(next)
+  // keep internal state so we can edit without immediately propagating changes
+  const [internalValue, setInternalValue] = useState<number | null>(value)
+
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen)
   }
 
-  function handleApply() {
-    const num = parseInt(input, 10)
-    if (!isNaN(num)) {
-      onApply(num)
-      setOpen(false)
+  function handleValueChange(nextValue: number | null) {
+    setInternalValue(nextValue)
+  }
+
+  function handleCancel() {
+    setOpen(false)
+  }
+
+  function handleSubmit() {
+    if (internalValue) {
+      onChange(internalValue)
     }
+    setOpen(false)
   }
 
   return (
@@ -128,11 +133,11 @@ function NumericCountSegment({
           className={cn(
             "inline-flex h-full cursor-pointer items-center px-0.5 text-xs transition-colors outline-none",
             isDraft
-              ? "bg-background-2/60 text-content-muted hover:brightness-125"
+              ? "bg-background-2/60 text-content-disabled italic hover:brightness-125"
               : "bg-secondary/20 text-secondary hover:text-secondary-light",
           )}
         >
-          {count}
+          {value || "count..."}
         </button>
       </PopoverTrigger>
       <PopoverContent
@@ -144,16 +149,22 @@ function NumericCountSegment({
         <div>
           <div className="p-2">
             <Input
+              className="w-full"
+              fieldSize="sm"
+              autoFocus
               type="number"
               min={0}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
+              value={internalValue ?? ""}
+              onChange={(e) =>
+                handleValueChange(
+                  e.target.value ? parseInt(e.target.value) : null,
+                )
+              }
               onKeyDown={(e) => {
-                if (e.key === "Enter") handleApply()
+                if (e.key === "Enter") {
+                  handleSubmit()
+                }
               }}
-              fieldSize="sm"
-              className="w-full"
-              autoFocus
             />
           </div>
           <div className="flex items-center gap-2 border-t p-2">
@@ -162,7 +173,7 @@ function NumericCountSegment({
               variant="outline"
               size="sm"
               className="flex-1 rounded-sm text-sm"
-              onClick={() => setOpen(false)}
+              onClick={() => handleCancel()}
             >
               Cancel
             </Button>
@@ -170,7 +181,8 @@ function NumericCountSegment({
               type="button"
               size="sm"
               className="flex-1 rounded-sm text-sm"
-              onClick={handleApply}
+              onClick={() => handleSubmit()}
+              disabled={!internalValue}
             >
               Apply
             </Button>

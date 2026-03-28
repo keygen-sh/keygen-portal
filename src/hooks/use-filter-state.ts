@@ -1,4 +1,4 @@
-import { useState, useCallback, useContext } from "react"
+import { useCallback, useContext, useState } from "react"
 import {
   FilterBarContext,
   type FilterState,
@@ -6,76 +6,94 @@ import {
 
 export type { FilterState }
 
+type DraftState<T> = {
+  value: T
+  initialValue: T | undefined
+}
+
+type UseFilterStateResult<T> = {
+  state: FilterState
+  value: T
+  handleActivate: () => void
+  handleConfirm: () => void
+  handleRemove: () => void
+  handleChange: (nextValue: T) => void
+  handleDraftChange: (nextValue: T) => void
+}
+
 export function useFilterState<T>(
   value: T | undefined,
   defaultValue: T,
   onChange: (value: T | undefined) => void,
-) {
+): UseFilterStateResult<T> {
   const { remeasure } = useContext(FilterBarContext)
-  const [isDraft, setIsDraft] = useState(false)
-  const [draftValue, setDraftValue] = useState<T>(defaultValue)
-  // Snapshot of value when draft was entered — draft auto-invalidates
-  // when value changes externally (e.g. "clear all"), no manual reset needed.
-  const [draftSnapshot, setDraftSnapshot] = useState<T | undefined>(undefined)
+  const [draft, setDraft] = useState<DraftState<T> | null>(null)
 
-  const inDraft = isDraft && value === draftSnapshot
+  // a draft is only valid while the external value still matches
+  // the value that was present when draft mode started
+  const isDraft = draft != null && value === draft.initialValue
 
-  const filterState: FilterState = inDraft
+  const state: FilterState = isDraft
     ? "draft"
     : value != null
       ? "active"
       : "inactive"
 
-  const currentValue = inDraft ? draftValue : (value ?? defaultValue)
+  const currentValue = isDraft ? draft.value : (value ?? defaultValue)
 
   const handleActivate = useCallback(() => {
-    setDraftValue(value ?? defaultValue)
-    setDraftSnapshot(value)
-    setIsDraft(true)
+    setDraft({
+      value: value ?? defaultValue,
+      initialValue: value,
+    })
     remeasure()
-  }, [value, defaultValue, remeasure])
+  }, [defaultValue, remeasure, value])
 
   const handleConfirm = useCallback(() => {
-    onChange(draftValue)
-    setIsDraft(false)
+    if (draft == null) {
+      return
+    }
+
+    onChange(draft.value)
+    setDraft(null)
     remeasure()
-  }, [draftValue, onChange, remeasure])
+  }, [draft, onChange, remeasure])
 
   const handleRemove = useCallback(() => {
     onChange(undefined)
-    setIsDraft(false)
-    setDraftValue(defaultValue)
+    setDraft(null)
     remeasure()
-  }, [onChange, defaultValue, remeasure])
+  }, [onChange, remeasure])
 
-  // Auto-applies: use when the selection completes the filter value.
+  // applies immediately when the next selection fully defines the filter value
   const handleChange = useCallback(
-    (next: T) => {
-      onChange(next)
-      if (isDraft) {
-        setIsDraft(false)
+    (nextValue: T) => {
+      onChange(nextValue)
+
+      if (draft != null) {
+        setDraft(null)
         remeasure()
       }
     },
-    [isDraft, onChange, remeasure],
+    [draft, onChange, remeasure],
   )
 
-  // Draft-only update: use when the value is still incomplete (e.g. operator
-  // changed but the value slot is now empty and needs user input).
-  // Enters draft even from active state.
+  // updates only the local draft while the filter is still incomplete
+  // if no draft exists yet, this starts one from the current external value
   const handleDraftChange = useCallback(
-    (next: T) => {
-      setDraftValue(next)
-      setDraftSnapshot(value)
-      setIsDraft(true)
+    (nextValue: T) => {
+      setDraft((currentDraft) => ({
+        value: nextValue,
+        initialValue: currentDraft?.initialValue ?? value,
+      }))
       remeasure()
     },
-    [value, remeasure],
+    [remeasure, value],
   )
 
   return {
-    filterState,
-    currentValue,
+    state,
+    value: currentValue,
     handleActivate,
     handleConfirm,
     handleRemove,

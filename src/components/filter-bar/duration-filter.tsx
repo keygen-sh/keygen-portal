@@ -1,15 +1,22 @@
-import { useMemo } from "react"
 import { type LucideIcon } from "lucide-react"
 
-import { useFilterState } from "@/hooks/use-filter-state"
+import { FilterState, useFilterState } from "@/hooks/use-filter-state"
 import { FilterSegmentGroup, FilterSegment, OptionList } from "./filter-segment"
 import { isoToHumanDuration } from "@/lib/temporal"
+
+export type DurationOption = {
+  label: string
+  op: "within" | "in" | "inside" | "outside"
+  options: ReadonlyArray<{
+    label: string
+    value: string
+  }>
+}
 
 export interface DurationFilterProps {
   label: string
   icon?: LucideIcon
-  ops: ReadonlyArray<{ value: string; label: string }>
-  durations: ReadonlyArray<{ label: string; iso: string }>
+  options: ReadonlyArray<DurationOption>
   value?: Record<string, string>
   onChange: (value: Record<string, string> | undefined) => void
 }
@@ -17,47 +24,37 @@ export interface DurationFilterProps {
 export default function DurationFilter({
   label,
   icon,
-  ops,
-  durations,
+  options,
   value,
   onChange,
 }: DurationFilterProps) {
-  const defaultValue = useMemo(
-    () => ({ [ops[0].value]: durations[0].iso }),
-    [ops, durations],
-  )
+  const filter = useFilterState(value, {}, onChange)
 
-  const {
-    filterState,
-    currentValue,
-    handleActivate,
-    handleConfirm,
-    handleRemove,
-    handleChange,
-  } = useFilterState(value, defaultValue, onChange)
+  // we only allow one operation at a time so we'll just grab the first key
+  const [currentOp] = Object.keys(filter.value)
+  const currentValue = filter.value[currentOp]
 
-  const currentOp = Object.keys(currentValue)[0]
-  const currentVal = Object.values(currentValue)[0]
-  const opLabel =
-    ops.find((o) => o.value === currentOp)?.label?.toLowerCase() ?? currentOp
-  const displayValue = isoToHumanDuration(currentVal)
+  const ops = options.map((o) => ({ label: o.label, value: o.op }))
+  const selected = options.find((o) => o.op === currentOp) ?? options[0]
 
-  function handleOpSelect(op: string) {
-    handleChange({ [op]: currentVal })
+  const displayValue = isoToHumanDuration(currentValue)
+
+  function handleOpChange(op: string) {
+    filter.handleChange({ [op]: currentValue })
   }
 
-  function handleDurationSelect(iso: string) {
-    handleChange({ [currentOp]: iso })
+  function handleDurationChange(duration: string) {
+    filter.handleChange({ [selected.op]: duration })
   }
 
   return (
     <FilterSegmentGroup
-      state={filterState}
+      state={filter.state}
       icon={icon}
       label={label}
-      onActivate={handleActivate}
-      onConfirm={handleConfirm}
-      onRemove={handleRemove}
+      onActivate={filter.handleActivate}
+      onConfirm={filter.handleConfirm}
+      onRemove={filter.handleRemove}
     >
       <FilterSegment first icon={icon}>
         {label}
@@ -68,35 +65,59 @@ export default function DurationFilter({
           <OptionList
             options={ops}
             value={currentOp}
-            onSelect={(v) => {
-              handleOpSelect(v)
+            onSelect={(op) => {
+              handleOpChange(op)
               close()
             }}
           />
         )}
         popoverClassName="w-28"
       >
-        {opLabel}
+        {selected.label.toLowerCase()}
       </FilterSegment>
-      <FilterSegment
-        clickable
-        popover={(close) => (
-          <OptionList
-            options={durations.map((p) => ({
-              value: p.iso,
-              label: p.label,
-            }))}
-            value={currentVal}
-            onSelect={(v) => {
-              handleDurationSelect(v)
-              close()
-            }}
-          />
-        )}
-        popoverClassName="w-28"
-      >
-        {displayValue || "select..."}
-      </FilterSegment>
+      <DurationPickerSegment
+        state={filter.state}
+        options={selected.options}
+        value={currentValue}
+        displayValue={displayValue}
+        onSelect={handleDurationChange}
+      />
     </FilterSegmentGroup>
+  )
+}
+
+export function DurationPickerSegment({
+  value,
+  options,
+  displayValue,
+  onSelect,
+}: {
+  state: FilterState
+  value: string
+  options: DurationOption["options"]
+  displayValue: string
+  onSelect: (duration: string) => void
+}) {
+  return (
+    <FilterSegment
+      clickable
+      popover={(close) => (
+        <OptionList
+          options={options}
+          value={value}
+          onSelect={(v) => {
+            onSelect(v)
+            close()
+          }}
+        />
+      )}
+      popoverClassName="w-28"
+    >
+      {displayValue || (
+        <span className="bg-background-2/60 text-content-disabled italic hover:brightness-125">
+          select...
+        </span>
+      )}
+    </FilterSegment>
   )
 }

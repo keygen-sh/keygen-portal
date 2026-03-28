@@ -1,97 +1,75 @@
-import { useMemo } from "react"
-import { format, parseISO } from "date-fns"
-
 import { useFilterState } from "@/hooks/use-filter-state"
 import { FilterSegmentGroup, FilterSegment, OptionList } from "./filter-segment"
-import { DateSegment } from "./date-filter"
+import { DurationOption, DurationPickerSegment } from "./duration-filter"
+import { DateOption, DatePickerSegment } from "./date-filter"
 import { isoToHumanDuration } from "@/lib/temporal"
+import { format, parseISO } from "date-fns"
 import { type LucideIcon } from "lucide-react"
 
-type TemporalOp = { value: string; label: string; type: "date" | "duration" }
+export type TemporalDurationOption = DurationOption & {
+  type: "duration"
+}
+
+export type TemporalDateOption = DateOption & {
+  type: "date"
+}
+
+export type TemporalOption = TemporalDurationOption | TemporalDateOption
 
 export interface TemporalFilterProps {
   label: string
   icon?: LucideIcon
-  ops: ReadonlyArray<TemporalOp>
-  durations?: ReadonlyArray<{ label: string; iso: string }>
-  value?: Record<string, string>
+  options: ReadonlyArray<TemporalOption>
+  value: Record<string, string> | undefined
   onChange: (value: Record<string, string> | undefined) => void
 }
 
 export default function TemporalFilter({
   label,
   icon,
-  ops,
-  durations,
-  value,
+  options,
+  value, // partial filter object e.g. {within: "P1M"}
   onChange,
 }: TemporalFilterProps) {
-  const defaultValue = useMemo(() => {
-    const firstOp = ops[0]
-    const val = firstOp.type === "date" ? "" : (durations?.[0]?.iso ?? "")
-    return { [firstOp.value]: val }
-  }, [ops, durations])
+  const filter = useFilterState(value, {}, onChange) // FIXME(ezekg) remove default?
 
-  const {
-    filterState,
-    currentValue,
-    handleActivate,
-    handleConfirm,
-    handleRemove,
-    handleChange,
-    handleDraftChange,
-  } = useFilterState(value, defaultValue, onChange)
+  // we only allow one operation at a time so we'll just grab the first key
+  const [currentOp] = Object.keys(filter.value)
+  const currentValue = filter.value[currentOp]
 
-  const currentOp = Object.keys(currentValue)[0]
-  const currentVal = currentValue[currentOp]
-  const opDef = ops.find((o) => o.value === currentOp)
-  const opLabel = opDef?.label?.toLowerCase() ?? currentOp
-  const isDateOp = opDef?.type === "date"
+  const ops = options.map((o) => ({ label: o.label, value: o.op }))
+  const selected = options.find((o) => o.op === currentOp) ?? options[0]
 
-  function handleOpSelect(op: string) {
-    const nextType = ops.find((o) => o.value === op)?.type
-    const switchingToDate = nextType === "date" && !isDateOp
-    const switchingFromDate = nextType !== "date" && isDateOp
-    if (switchingToDate) {
-      handleDraftChange({ [op]: "" })
-    } else if (switchingFromDate) {
-      const fallback = durations?.[0]?.iso
-      if (fallback) {
-        handleChange({ [op]: fallback })
-      } else {
-        handleDraftChange({ [op]: "" })
-      }
-    } else if (currentVal) {
-      handleChange({ [op]: currentVal })
-    } else {
-      handleDraftChange({ [op]: "" })
-    }
+  const displayValue =
+    selected.type === "date"
+      ? currentValue
+        ? format(parseISO(currentValue), "PPP")
+        : ""
+      : isoToHumanDuration(currentValue)
+
+  function handleOpChange(op: string) {
+    filter.handleDraftChange({ [op]: "" })
   }
 
-  function handleDurationSelect(iso: string) {
-    handleChange({ [currentOp]: iso })
+  function handleDurationChange(duration: string) {
+    filter.handleChange({ [selected.op]: duration })
   }
 
-  function handleDateApply(date: Date | undefined) {
+  function handleDateChange(date: Date | undefined) {
     if (date) {
-      handleChange({ [currentOp]: format(date, "yyyy-MM-dd") })
+      filter.handleChange({ [selected.op]: format(date, "yyyy-MM-dd") })
     }
   }
-
-  const displayValue = isDateOp
-    ? currentVal
-      ? format(parseISO(currentVal), "PPP")
-      : ""
-    : isoToHumanDuration(currentVal)
 
   return (
     <FilterSegmentGroup
-      state={filterState}
+      state={filter.state}
       icon={icon}
       label={label}
-      onActivate={handleActivate}
-      onConfirm={handleConfirm}
-      onRemove={handleRemove}
+      confirmDisabled={!currentValue}
+      onActivate={filter.handleActivate}
+      onConfirm={filter.handleConfirm}
+      onRemove={filter.handleRemove}
     >
       <FilterSegment first icon={icon}>
         {label}
@@ -101,45 +79,34 @@ export default function TemporalFilter({
         popover={(close) => (
           <OptionList
             options={ops}
-            value={currentOp}
-            onSelect={(v) => {
-              handleOpSelect(v)
+            value={selected.op}
+            onSelect={(op) => {
+              handleOpChange(op)
               close()
             }}
           />
         )}
         popoverClassName="w-28"
       >
-        {opLabel}
+        {selected.label.toLowerCase()}
       </FilterSegment>
 
-      {isDateOp ? (
-        <DateSegment
-          value={currentVal}
+      {selected.type === "date" ? (
+        <DatePickerSegment
+          state={filter.state}
+          value={currentValue}
           displayValue={displayValue}
-          onDateApply={handleDateApply}
+          onSelect={handleDateChange}
         />
-      ) : durations?.length ? (
-        <FilterSegment
-          clickable
-          popover={(close) => (
-            <OptionList
-              options={durations.map((p) => ({
-                value: p.iso,
-                label: p.label,
-              }))}
-              value={currentVal}
-              onSelect={(v) => {
-                handleDurationSelect(v)
-                close()
-              }}
-            />
-          )}
-          popoverClassName="w-28"
-        >
-          {displayValue || "select..."}
-        </FilterSegment>
-      ) : null}
+      ) : (
+        <DurationPickerSegment
+          state={filter.state}
+          options={selected.options}
+          value={currentValue}
+          displayValue={displayValue}
+          onSelect={handleDurationChange}
+        />
+      )}
     </FilterSegmentGroup>
   )
 }

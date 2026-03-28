@@ -18,8 +18,7 @@ import { type LucideIcon } from "lucide-react"
 
 import { truncator } from "@/lib/truncate"
 
-import { useFilterStateContext } from "@/contexts/filter-bar-context"
-import { useFilterState } from "@/hooks/use-filter-state"
+import { FilterState, useFilterState } from "@/hooks/use-filter-state"
 import { FilterSegmentGroup, FilterSegment } from "./filter-segment"
 
 const truncate = truncator("clip", { maxLength: 8 })
@@ -40,69 +39,71 @@ export default function ResourceFilter({
   icon,
   resource,
   options = [],
-  onActivate: onActivateProp,
+  onActivate,
   clearLabel,
   value,
   onChange,
 }: ResourceFilterProps) {
-  const [valueOpen, setValueOpen] = useState(false)
+  const filter = useFilterState(value, "", onChange)
+  const [open, setOpen] = useState(false)
 
-  const {
-    filterState,
-    currentValue,
-    handleActivate: activate,
-    handleConfirm,
-    handleRemove,
-    handleChange,
-  } = useFilterState(value, "", onChange)
+  const displayValue = filter.value ? truncate(filter.value) : null
 
+  // our onActivate callback triggers a query to populate the resource select
   function handleActivate() {
-    onActivateProp?.()
-    activate()
-    setValueOpen(true)
+    filter.handleActivate()
+    onActivate?.()
+    setOpen(true)
   }
 
-  function handleValueSelect(id: string | null) {
-    if (id) handleChange(id)
-    setValueOpen(false)
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen)
   }
 
-  const displayValue = currentValue ? truncate(currentValue) : null
+  function handleValueChange(id: string | null) {
+    if (id) {
+      filter.handleChange(id)
+    }
+    setOpen(false)
+  }
+
+  function handleSubmit() {
+    filter.handleConfirm()
+    setOpen(false)
+  }
 
   return (
     <FilterSegmentGroup
-      state={filterState}
+      state={filter.state}
       icon={icon}
       label={label}
+      confirmDisabled={!filter.value}
       onActivate={handleActivate}
-      onConfirm={handleConfirm}
-      onRemove={handleRemove}
-      confirmDisabled={!currentValue}
+      onConfirm={filter.handleConfirm}
+      onRemove={filter.handleRemove}
     >
       <FilterSegment first icon={icon}>
         {label}
       </FilterSegment>
       <FilterSegment>eq</FilterSegment>
-
-      <ResourceValueSegment
+      <ResourceSelectSegment
+        state={filter.state}
         resource={resource}
         options={options}
         clearLabel={clearLabel}
-        currentValue={currentValue || null}
+        currentValue={filter.value || null}
         displayValue={displayValue}
-        open={valueOpen}
-        onOpenChange={setValueOpen}
-        onSelect={handleValueSelect}
-        onConfirm={() => {
-          handleConfirm()
-          setValueOpen(false)
-        }}
+        open={open}
+        onOpenChange={handleOpenChange}
+        onSelect={handleValueChange}
+        onConfirm={handleSubmit}
       />
     </FilterSegmentGroup>
   )
 }
 
-function ResourceValueSegment({
+export function ResourceSelectSegment({
+  state,
   resource,
   options,
   clearLabel,
@@ -113,6 +114,7 @@ function ResourceValueSegment({
   onSelect,
   onConfirm,
 }: {
+  state: FilterState
   resource: SearchableResource
   options: AnyResource[]
   clearLabel?: string
@@ -123,7 +125,6 @@ function ResourceValueSegment({
   onSelect: (id: string | null) => void
   onConfirm: () => void
 }) {
-  const state = useFilterStateContext()
   const isDraft = state === "draft"
 
   return (
@@ -134,13 +135,8 @@ function ResourceValueSegment({
           className={cn(
             "inline-flex h-full cursor-pointer items-center px-0.5 text-xs transition-colors outline-none",
             isDraft
-              ? "bg-background-2/60 hover:brightness-125"
-              : "bg-secondary/20",
-            displayValue
-              ? isDraft
-                ? "text-content-subdued"
-                : "text-secondary hover:text-secondary-light"
-              : "text-content-disabled italic",
+              ? "bg-background-2/60 text-content-disabled italic hover:brightness-125"
+              : "bg-secondary/20 text-secondary hover:text-secondary-light",
           )}
         >
           {displayValue || "select..."}

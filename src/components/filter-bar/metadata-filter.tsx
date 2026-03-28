@@ -1,4 +1,4 @@
-import { useState, useRef, useContext } from "react"
+import { useState, useRef } from "react"
 import { X, Braces, type LucideIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -11,7 +11,7 @@ import {
 
 import { cn } from "@/lib/utils"
 
-import { FilterBarContext } from "@/contexts/filter-bar-context"
+import { FilterState, useFilterState } from "@/hooks/use-filter-state"
 import { FilterSegmentGroup, FilterSegment } from "./filter-segment"
 
 type MetadataRow = { id: string; key: string; value: string }
@@ -48,239 +48,275 @@ export default function MetadataFilter({
   value,
   onChange,
 }: MetadataFilterProps) {
-  const { remeasure } = useContext(FilterBarContext)
+  const filter = useFilterState(value, {}, onChange)
   const [open, setOpen] = useState(false)
-  const [rows, setRows] = useState<MetadataRow[]>(() => recordToRows(value))
-  const [isEditing, setIsEditing] = useState(false)
-  // snapshot of value at time of first editing started (i.e. editing auto-invalidates when
-  // value changes externally, e.g. "clear all", no manual reset needed)
-  const [editingValue, setEditingValue] = useState<
-    Record<string, string> | undefined
-  >(undefined)
+
+  function handleActivate() {
+    filter.handleActivate()
+    setOpen(true)
+  }
+
+  return (
+    <FilterSegmentGroup
+      state={filter.state}
+      icon={Icon}
+      label={label}
+      onActivate={handleActivate}
+      onConfirm={filter.handleConfirm}
+      onRemove={filter.handleRemove}
+    >
+      <FilterSegment first icon={Icon}>
+        {label}
+      </FilterSegment>
+      <MetadataInputSegment
+        state={filter.state}
+        value={filter.value}
+        open={open}
+        onOpenChange={setOpen}
+        onChange={(record) => {
+          if (record) {
+            filter.handleChange(record)
+          } else {
+            filter.handleRemove()
+          }
+        }}
+      />
+    </FilterSegmentGroup>
+  )
+}
+
+function MetadataInputSegment({
+  state,
+  value,
+  open,
+  onOpenChange,
+  onChange,
+}: {
+  state: FilterState
+  value: Record<string, string>
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onChange: (value: Record<string, string> | undefined) => void
+}) {
+  const entries = Object.entries(value)
+  const isActive = state === "active"
+  const isDraft = state === "draft"
+
+  // initialized from the committed value on mount, ensuring at least
+  // one empty row so the user always has something to type into
+  const [internalRows, setInternalRows] = useState<MetadataRow[]>(() => {
+    const rows = recordToRows(value)
+    if (rows.length === 0) {
+      rows.push({ id: crypto.randomUUID(), key: "", value: "" })
+    }
+    return rows
+  })
+
   const focusTargetRef = useRef<{
     index: number
     field: "key" | "value"
   } | null>(null)
 
-  const isActive = value != null && Object.keys(value).length > 0
-  const inEditing = isEditing && value === editingValue
-  const filterState = isActive ? "active" : inEditing ? "draft" : "inactive"
-
-  function syncAndOpen() {
-    if (!inEditing) setRows(recordToRows(value))
-    setOpen(true)
+  // focuses a row's key or value field on the next frame (we're rendering on next
+  // frame because the row may not actually until next render)
+  function focusField(rowId: string, field: "key" | "value") {
+    requestAnimationFrame(() =>
+      document.getElementById(`metadata-${field}-${rowId}`)?.focus(),
+    )
   }
 
-  function handleActivate() {
-    const initial = recordToRows(value)
-    if (initial.length === 0) {
-      initial.push({ id: crypto.randomUUID(), key: "", value: "" })
+  function handleOpenWithAutoFocus() {
+    const target = focusTargetRef.current
+    if (target == null) {
+      return
     }
-    setRows(initial)
-    setIsEditing(true)
-    setEditingValue(value)
-    focusTargetRef.current = { index: 0, field: "key" }
-    remeasure()
-    setOpen(true)
+
+    const rowId = internalRows[target.index]?.id
+    if (rowId) {
+      focusField(rowId, target.field)
+    }
+
+    focusTargetRef.current = null
   }
 
-  function openWithFocus(index: number, field: "key" | "value") {
+  function handleOpenWithFocus(index: number, field: "key" | "value") {
     focusTargetRef.current = { index, field }
-    syncAndOpen()
+
+    onOpenChange(true)
   }
 
-  function handleRemove() {
-    onChange(undefined)
-    setRows([])
-    setIsEditing(false)
-    remeasure()
-  }
-
-  function handleApply() {
-    const record = rowsToRecord(rows)
-    onChange(record)
-    setOpen(false)
-    if (!record) setIsEditing(false)
-    remeasure()
-  }
-
-  function updateRow(id: string, field: "key" | "value", next: string) {
-    setRows((prev) =>
+  function handleRowChange(id: string, field: "key" | "value", next: string) {
+    setInternalRows((prev) =>
       prev.map((row) => (row.id === id ? { ...row, [field]: next } : row)),
     )
   }
 
-  function deleteRow(id: string) {
-    setRows((prev) => prev.filter((row) => row.id !== id))
+  function handleRowDelete(id: string) {
+    setInternalRows((prev) => prev.filter((row) => row.id !== id))
   }
 
-  function addRow() {
-    const id = crypto.randomUUID()
-    setRows((prev) => [...prev, { id, key: "", value: "" }])
-    requestAnimationFrame(() =>
-      document.getElementById(`metadata-key-${id}`)?.focus(),
-    )
+  function handleRowAdd() {
+    const row = { id: crypto.randomUUID(), key: "", value: "" }
+    setInternalRows((prev) => [...prev, row])
+    focusField(row.id, "key")
   }
 
-  const canAdd = rows.every(({ key, value }) => key.trim() && value.trim())
-  const canApply = rows.some(({ key, value }) => key.trim() && value.trim())
+  function handleSubmit() {
+    onChange(rowsToRecord(internalRows))
+    onOpenChange(false)
+  }
 
-  const entries = isActive ? Object.entries(value) : []
+  function handleCancel() {
+    // discard uncommitted edits so re-opening reflects the committed value
+    setInternalRows(recordToRows(value))
+    onOpenChange(false)
+  }
+
+  const canAdd = internalRows.every(
+    ({ key, value }) => key.trim() && value.trim(),
+  )
+  const canSubmit = internalRows.some(
+    ({ key, value }) => key.trim() && value.trim(),
+  )
 
   return (
-    <FilterSegmentGroup
-      state={filterState}
-      icon={Icon}
-      label={label}
-      onActivate={handleActivate}
-      onConfirm={handleApply}
-      onRemove={handleRemove}
-      confirmDisabled={!canApply}
+    <Popover
+      open={open}
+      onOpenChange={(next) => {
+        if (next) {
+          onOpenChange(true)
+        } else {
+          handleCancel()
+        }
+      }}
     >
-      <FilterSegment first icon={Icon}>
-        {label}
-      </FilterSegment>
+      <PopoverTrigger asChild>
+        {isActive ? (
+          <span className="inline-flex h-full cursor-pointer items-center bg-secondary/20 text-xs outline-none">
+            <span className="px-0 text-secondary/40">{"{"}</span>
+            {entries.map(([k, v], i) => (
+              <span key={k} className="inline-flex items-center">
+                {i > 0 && (
+                  <span className="px-0 text-secondary/40">,&nbsp;</span>
+                )}
+                <span
+                  className="text-secondary transition-colors hover:text-secondary-light"
+                  onClick={(e) => {
+                    e.preventDefault()
 
-      <Popover
-        open={open}
-        onOpenChange={(next) => {
-          if (!next) {
-            handleApply()
-          } else {
-            syncAndOpen()
-          }
-        }}
-      >
-        <PopoverTrigger asChild>
-          {isActive ? (
-            <span className="inline-flex h-full cursor-pointer items-center bg-secondary/20 text-xs outline-none">
-              <span className="px-0 text-secondary/40">{"{"}</span>
-              {entries.map(([k, v], i) => (
-                <span key={k} className="inline-flex items-center">
-                  {i > 0 && (
-                    <span className="px-0 text-secondary/40">,&nbsp;</span>
-                  )}
-                  <span
-                    className="text-secondary transition-colors hover:text-secondary-light"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      openWithFocus(i, "key")
-                    }}
-                  >
-                    {k}
-                  </span>
-                  <span className="px-0 text-secondary/40">:&nbsp;</span>
-                  <span
-                    className="text-secondary transition-colors hover:text-secondary-light"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      openWithFocus(i, "value")
-                    }}
-                  >
-                    {v}
-                  </span>
+                    handleOpenWithFocus(i, "key")
+                  }}
+                >
+                  {k}
                 </span>
-              ))}
-              <span className="px-0 text-secondary/40">{"}"}</span>
-            </span>
-          ) : (
+                <span className="px-0 text-secondary/40">:&nbsp;</span>
+                <span
+                  className="text-secondary transition-colors hover:text-secondary-light"
+                  onClick={(e) => {
+                    e.preventDefault()
+
+                    handleOpenWithFocus(i, "value")
+                  }}
+                >
+                  {v}
+                </span>
+              </span>
+            ))}
+            <span className="px-0 text-secondary/40">{"}"}</span>
+          </span>
+        ) : (
+          <button
+            type="button"
+            className={cn(
+              "inline-flex h-full cursor-pointer items-center px-0.5 text-xs transition-colors outline-none",
+              isDraft
+                ? "bg-background-2/60 text-content-disabled italic hover:brightness-125"
+                : "bg-secondary/20 text-secondary hover:text-secondary-light",
+            )}
+          >
+            ...
+          </button>
+        )}
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        className="w-80 !bg-background p-0"
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+
+          handleOpenWithAutoFocus()
+        }}
+        onCloseAutoFocus={(e) => e.preventDefault()}
+      >
+        <div>
+          <div className="space-y-2 p-3">
+            {internalRows.map(({ id, key: k, value: v }) => (
+              <div key={id} className="flex items-center gap-2">
+                <Input
+                  id={`metadata-key-${id}`}
+                  fieldSize="sm"
+                  placeholder="Key"
+                  value={k}
+                  onChange={(e) => handleRowChange(id, "key", e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSubmit()
+                  }}
+                />
+                <Input
+                  id={`metadata-value-${id}`}
+                  fieldSize="sm"
+                  placeholder="Value"
+                  value={v}
+                  onChange={(e) => handleRowChange(id, "value", e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSubmit()
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRowDelete(id)}
+                  className="shrink-0 cursor-pointer text-content-subdued transition-colors outline-none hover:text-destructive"
+                >
+                  <X className="size-3.5" />
+                </button>
+              </div>
+            ))}
             <button
               type="button"
-              className="inline-flex h-full cursor-pointer items-center bg-background-2/60 px-1 text-xs text-content-disabled italic transition-colors outline-none hover:brightness-125"
+              onClick={handleRowAdd}
+              disabled={!canAdd}
+              className={cn(
+                "text-xs transition-colors",
+                canAdd
+                  ? "cursor-pointer text-content-muted hover:text-content-loud"
+                  : "cursor-not-allowed text-content-disabled",
+              )}
             >
-              ...
+              + Add Key/Value Pair
             </button>
-          )}
-        </PopoverTrigger>
-        <PopoverContent
-          align="start"
-          className="w-80 !bg-background p-0"
-          onOpenAutoFocus={(e) => {
-            e.preventDefault()
-            const target = focusTargetRef.current
-            if (target) {
-              const rowId = rows[target.index]?.id
-              if (rowId) {
-                const elementId = `metadata-${target.field}-${rowId}`
-                requestAnimationFrame(() =>
-                  document.getElementById(elementId)?.focus(),
-                )
-              }
-              focusTargetRef.current = null
-            }
-          }}
-          onCloseAutoFocus={(e) => e.preventDefault()}
-        >
-          <div>
-            <div className="space-y-2 p-3">
-              {rows.map(({ id, key, value: val }) => (
-                <div key={id} className="flex items-center gap-2">
-                  <Input
-                    id={`metadata-key-${id}`}
-                    placeholder="Key"
-                    value={key}
-                    onChange={(e) => updateRow(id, "key", e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleApply()
-                    }}
-                    fieldSize="sm"
-                  />
-                  <Input
-                    id={`metadata-value-${id}`}
-                    placeholder="Value"
-                    value={val}
-                    onChange={(e) => updateRow(id, "value", e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleApply()
-                    }}
-                    fieldSize="sm"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => deleteRow(id)}
-                    className="shrink-0 cursor-pointer text-content-subdued transition-colors outline-none hover:text-destructive"
-                  >
-                    <X className="size-3.5" />
-                  </button>
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={addRow}
-                disabled={!canAdd}
-                className={cn(
-                  "text-xs transition-colors",
-                  canAdd
-                    ? "cursor-pointer text-content-muted hover:text-content-loud"
-                    : "cursor-not-allowed text-content-disabled",
-                )}
-              >
-                + Add Key/Value Pair
-              </button>
-            </div>
-            <div className="flex items-center gap-2 border-t p-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="flex-1 rounded-sm text-sm"
-                onClick={() => setOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                className="flex-1 rounded-sm text-sm"
-                onClick={handleApply}
-                disabled={!canApply}
-              >
-                Apply
-              </Button>
-            </div>
           </div>
-        </PopoverContent>
-      </Popover>
-    </FilterSegmentGroup>
+          <div className="flex items-center gap-2 border-t p-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="flex-1 rounded-sm text-sm"
+              onClick={handleCancel}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              className="flex-1 rounded-sm text-sm"
+              onClick={handleSubmit}
+              disabled={!canSubmit}
+            >
+              Apply
+            </Button>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
   )
 }

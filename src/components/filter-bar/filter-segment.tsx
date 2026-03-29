@@ -126,69 +126,35 @@ export function FilterSegmentGroup({
   )
 }
 
-export function FilterSegment({
-  clickable = false,
-  popover,
-  popoverClassName,
-  children,
-}: {
-  clickable?: boolean
-  popover?: React.ReactNode | ((close: () => void) => React.ReactNode)
-  popoverClassName?: string
-  children?: React.ReactNode
-}) {
+export function FilterSegment({ children }: { children?: React.ReactNode }) {
   const state = useContext(FilterStateContext)
   const isDraft = state === "draft"
 
-  const baseStyles = cn(
-    "inline-flex h-full items-center gap-1 px-0.5 text-xs transition-colors",
-    isDraft
-      ? "bg-background-2/60 text-content-muted"
-      : "bg-secondary/20 text-secondary/70",
-  )
-
-  const content = children
-
-  if (!clickable || !popover) {
-    return (
-      <span
-        className={cn(
-          baseStyles,
-          isDraft ? "text-content-subdued" : "text-secondary/70",
-        )}
-      >
-        {content}
-      </span>
-    )
-  }
-
   return (
-    <SegmentPopover
-      popover={popover}
-      popoverClassName={popoverClassName}
-      triggerClassName={cn(
-        baseStyles,
+    <span
+      className={cn(
+        "inline-flex h-full items-center gap-1 px-0.5 text-xs transition-colors",
         isDraft
-          ? "hover:brightness-125"
-          : "text-secondary hover:text-secondary-light",
+          ? "bg-background-2/60 text-content-subdued"
+          : "bg-secondary/20 text-secondary/70",
       )}
     >
-      {content}
-    </SegmentPopover>
+      {children}
+    </span>
   )
 }
 
-export function SegmentPopover({
+export function FilterPopoverSegment({
   popover,
-  popoverClassName,
-  triggerClassName,
+  className,
   children,
 }: {
   popover: React.ReactNode | ((close: () => void) => React.ReactNode)
-  popoverClassName?: string
-  triggerClassName?: string
+  className?: string
   children: React.ReactNode
 }) {
+  const state = useContext(FilterStateContext)
+  const isDraft = state === "draft"
   const [open, setOpen] = useState(false)
   const close = useCallback(() => setOpen(false), [setOpen])
 
@@ -197,14 +163,19 @@ export function SegmentPopover({
       <PopoverTrigger asChild>
         <button
           type="button"
-          className={cn(triggerClassName, "cursor-pointer outline-none")}
+          className={cn(
+            "inline-flex h-full cursor-pointer items-center gap-1 px-0.5 text-xs transition-colors outline-none",
+            isDraft
+              ? "bg-background-2/60 text-content-muted hover:brightness-125"
+              : "bg-secondary/20 text-secondary hover:text-secondary-light",
+          )}
         >
           {children}
         </button>
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className={cn("!bg-background p-1", popoverClassName)}
+        className={cn("!bg-background p-1", className)}
         onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => e.preventDefault()}
       >

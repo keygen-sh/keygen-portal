@@ -1,7 +1,12 @@
 import { type LucideIcon } from "lucide-react"
 
 import { useFilterState } from "@/hooks/use-filter-state"
-import { FilterSegmentGroup, FilterSegment, OptionList } from "./filter-segment"
+import {
+  FilterSegmentGroup,
+  FilterSegment,
+  FilterPopoverSegment,
+  OptionList,
+} from "./filter-segment"
 
 export interface EnumFilterProps {
   label: string
@@ -33,8 +38,8 @@ export default function EnumFilter({
     >
       <FilterSegment>{label}</FilterSegment>
       <FilterSegment>eq</FilterSegment>
-      <FilterSegment
-        clickable
+      <FilterPopoverSegment
+        className="w-36"
         popover={(close) => (
           <OptionList
             options={options}
@@ -45,10 +50,9 @@ export default function EnumFilter({
             }}
           />
         )}
-        popoverClassName="w-36"
       >
         {selected.label}
-      </FilterSegment>
+      </FilterPopoverSegment>
     </FilterSegmentGroup>
   )
 }

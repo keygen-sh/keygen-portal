@@ -13,7 +13,12 @@ import { type LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 import { FilterState, useFilterState } from "@/hooks/use-filter-state"
-import { FilterSegmentGroup, FilterSegment, OptionList } from "./filter-segment"
+import {
+  FilterSegmentGroup,
+  FilterSegment,
+  FilterPopoverSegment,
+  OptionList,
+} from "./filter-segment"
 
 type NumericOption = {
   label: string
@@ -63,8 +68,8 @@ export default function NumericFilter({
       onRemove={filter.handleRemove}
     >
       <FilterSegment>{label}</FilterSegment>
-      <FilterSegment
-        clickable
+      <FilterPopoverSegment
+        className="w-32"
         popover={(close) => (
           <OptionList
             options={ops}
@@ -75,10 +80,9 @@ export default function NumericFilter({
             }}
           />
         )}
-        popoverClassName="w-32"
       >
         {selected.label.toLowerCase()}
-      </FilterSegment>
+      </FilterPopoverSegment>
 
       <NumberInputSegment
         state={filter.state}

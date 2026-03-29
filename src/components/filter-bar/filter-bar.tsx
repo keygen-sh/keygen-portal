@@ -63,6 +63,18 @@ export default function FilterBar({
   const maxOffset = Math.max(0, totalWidth - availableWidth)
   const effectiveOffset = Math.max(0, Math.min(scrollOffset, maxOffset))
 
+  const canScrollLeft = effectiveOffset > 0
+  const canScrollRight = !allVisible && effectiveOffset < maxOffset
+
+  const measureItems = useCallback(() => {
+    const widths = itemRefs.current
+      .slice(0, scrollableCount)
+      .map((el) => el?.offsetWidth ?? 0)
+    if (widths.length > 0 && widths.some((w) => w > 0)) {
+      setItemWidths(widths)
+    }
+  }, [scrollableCount])
+
   // scroll the last item into view when only it changed width (e.g. inactive → draft)
   const prevItemWidths = useRef<number[]>([])
 
@@ -87,28 +99,6 @@ export default function FilterBar({
 
     prevItemWidths.current = itemWidths
   }, [itemWidths, maxOffset])
-
-  const canScrollLeft = effectiveOffset > 0
-  const canScrollRight = !allVisible && effectiveOffset < maxOffset
-
-  function scrollLeft() {
-    const target = itemOffsets.findLast((o) => o < effectiveOffset)
-    setScrollOffset(target ?? 0)
-  }
-
-  function scrollRight() {
-    const target = itemOffsets.find((o) => o > effectiveOffset)
-    setScrollOffset(Math.min(target ?? maxOffset, maxOffset))
-  }
-
-  const measureItems = useCallback(() => {
-    const widths = itemRefs.current
-      .slice(0, scrollableCount)
-      .map((el) => el?.offsetWidth ?? 0)
-    if (widths.length > 0 && widths.some((w) => w > 0)) {
-      setItemWidths(widths)
-    }
-  }, [scrollableCount])
 
   useLayoutEffect(() => {
     measureItems()
@@ -135,6 +125,16 @@ export default function FilterBar({
   useEffect(() => {
     itemRefs.current.length = scrollableCount
   }, [scrollableCount])
+
+  function scrollLeft() {
+    const target = itemOffsets.findLast((o) => o < effectiveOffset)
+    setScrollOffset(target ?? 0)
+  }
+
+  function scrollRight() {
+    const target = itemOffsets.find((o) => o > effectiveOffset)
+    setScrollOffset(Math.min(target ?? maxOffset, maxOffset))
+  }
 
   const contextValue = useMemo(() => ({ remeasure }), [remeasure])
 

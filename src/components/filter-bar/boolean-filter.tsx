@@ -1,7 +1,12 @@
 import { type LucideIcon } from "lucide-react"
 
 import { useFilterState } from "@/hooks/use-filter-state"
-import { FilterSegmentGroup, FilterSegment, OptionList } from "./filter-segment"
+import {
+  FilterSegmentGroup,
+  FilterSegment,
+  FilterPopoverSegment,
+  OptionList,
+} from "./filter-segment"
 
 const BOOLEAN_OPTIONS = [
   { label: "Is", value: "true" },
@@ -40,8 +45,8 @@ export default function BooleanFilter({
       onConfirm={filter.handleConfirm}
       onRemove={filter.handleRemove}
     >
-      <FilterSegment
-        clickable
+      <FilterPopoverSegment
+        className="w-24"
         popover={(close) => (
           <OptionList
             options={BOOLEAN_OPTIONS}
@@ -52,10 +57,9 @@ export default function BooleanFilter({
             }}
           />
         )}
-        popoverClassName="w-24"
       >
         {selected.label.toLowerCase()}
-      </FilterSegment>
+      </FilterPopoverSegment>
       <FilterSegment>{label}</FilterSegment>
     </FilterSegmentGroup>
   )

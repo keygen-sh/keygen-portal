@@ -1,7 +1,12 @@
 import { type LucideIcon } from "lucide-react"
 
 import { FilterState, useFilterState } from "@/hooks/use-filter-state"
-import { FilterSegmentGroup, FilterSegment, OptionList } from "./filter-segment"
+import {
+  FilterSegmentGroup,
+  FilterSegment,
+  FilterPopoverSegment,
+  OptionList,
+} from "./filter-segment"
 import { isoToHumanDuration } from "@/lib/temporal"
 
 export type DurationOption = {
@@ -57,8 +62,8 @@ export default function DurationFilter({
       onRemove={filter.handleRemove}
     >
       <FilterSegment>{label}</FilterSegment>
-      <FilterSegment
-        clickable
+      <FilterPopoverSegment
+        className="w-28"
         popover={(close) => (
           <OptionList
             options={ops}
@@ -69,10 +74,9 @@ export default function DurationFilter({
             }}
           />
         )}
-        popoverClassName="w-28"
       >
         {selected.label.toLowerCase()}
-      </FilterSegment>
+      </FilterPopoverSegment>
       <DurationPickerSegment
         state={filter.state}
         options={selected.options}
@@ -97,8 +101,8 @@ export function DurationPickerSegment({
   onSelect: (duration: string) => void
 }) {
   return (
-    <FilterSegment
-      clickable
+    <FilterPopoverSegment
+      className="w-28"
       popover={(close) => (
         <OptionList
           options={options}
@@ -109,13 +113,12 @@ export function DurationPickerSegment({
           }}
         />
       )}
-      popoverClassName="w-28"
     >
       {displayValue || (
         <span className="bg-background-2/60 text-content-disabled italic hover:brightness-125">
           select...
         </span>
       )}
-    </FilterSegment>
+    </FilterPopoverSegment>
   )
 }

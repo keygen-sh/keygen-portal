@@ -13,7 +13,12 @@ import * as Calendars from "@/components/calendars"
 import { cn } from "@/lib/utils"
 
 import { FilterState, useFilterState } from "@/hooks/use-filter-state"
-import { FilterSegmentGroup, FilterSegment, OptionList } from "./filter-segment"
+import {
+  FilterSegmentGroup,
+  FilterSegment,
+  FilterPopoverSegment,
+  OptionList,
+} from "./filter-segment"
 
 export type DateOption = {
   label: string
@@ -71,8 +76,8 @@ export default function DateFilter({
       confirmDisabled={!currentValue}
     >
       <FilterSegment>{label}</FilterSegment>
-      <FilterSegment
-        clickable
+      <FilterPopoverSegment
+        className="w-28"
         popover={(close) => (
           <OptionList
             options={ops}
@@ -83,10 +88,9 @@ export default function DateFilter({
             }}
           />
         )}
-        popoverClassName="w-28"
       >
         {selected.label.toLowerCase()}
-      </FilterSegment>
+      </FilterPopoverSegment>
       <DatePickerSegment
         state={filter.state}
         value={currentValue}

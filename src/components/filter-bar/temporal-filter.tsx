@@ -1,5 +1,10 @@
 import { useFilterState } from "@/hooks/use-filter-state"
-import { FilterSegmentGroup, FilterSegment, OptionList } from "./filter-segment"
+import {
+  FilterSegmentGroup,
+  FilterSegment,
+  FilterPopoverSegment,
+  OptionList,
+} from "./filter-segment"
 import { DurationOption, DurationPickerSegment } from "./duration-filter"
 import { DateOption, DatePickerSegment } from "./date-filter"
 import { isoToHumanDuration } from "@/lib/temporal"
@@ -72,8 +77,8 @@ export default function TemporalFilter({
       onRemove={filter.handleRemove}
     >
       <FilterSegment>{label}</FilterSegment>
-      <FilterSegment
-        clickable
+      <FilterPopoverSegment
+        className="w-28"
         popover={(close) => (
           <OptionList
             options={ops}
@@ -84,10 +89,9 @@ export default function TemporalFilter({
             }}
           />
         )}
-        popoverClassName="w-28"
       >
         {selected.label.toLowerCase()}
-      </FilterSegment>
+      </FilterPopoverSegment>
 
       {selected.type === "date" ? (
         <DatePickerSegment

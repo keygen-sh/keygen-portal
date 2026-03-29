@@ -56,9 +56,7 @@ export default function DurationFilter({
       onConfirm={filter.handleConfirm}
       onRemove={filter.handleRemove}
     >
-      <FilterSegment first icon={icon}>
-        {label}
-      </FilterSegment>
+      <FilterSegment>{label}</FilterSegment>
       <FilterSegment
         clickable
         popover={(close) => (

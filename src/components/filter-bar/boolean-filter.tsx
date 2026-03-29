@@ -40,7 +40,6 @@ export default function BooleanFilter({
       onConfirm={filter.handleConfirm}
       onRemove={filter.handleRemove}
     >
-      <FilterSegment first icon={icon} />
       <FilterSegment
         clickable
         popover={(close) => (
@@ -57,7 +56,7 @@ export default function BooleanFilter({
       >
         {selected.label.toLowerCase()}
       </FilterSegment>
-      <FilterSegment last>{label}</FilterSegment>
+      <FilterSegment>{label}</FilterSegment>
     </FilterSegmentGroup>
   )
 }

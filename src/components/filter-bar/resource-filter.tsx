@@ -82,9 +82,7 @@ export default function ResourceFilter({
       onConfirm={filter.handleConfirm}
       onRemove={filter.handleRemove}
     >
-      <FilterSegment first icon={icon}>
-        {label}
-      </FilterSegment>
+      <FilterSegment>{label}</FilterSegment>
       <FilterSegment>eq</FilterSegment>
       <ResourceSelectSegment
         state={filter.state}

@@ -214,3 +214,21 @@ export type LicenseFile = Resource<
 >
 
 export type LicenseFileResponse = APIResponse<LicenseFile>
+
+export type LicenseFilters = {
+  status?: string
+  expires?: Record<string, string>
+  expired?: Record<string, string>
+  activity?: Record<string, string>
+  unassigned?: boolean
+  assigned?: boolean
+  activated?: boolean
+  activations?: Record<string, number>
+  product?: string
+  policy?: string
+  owner?: string
+  user?: string
+  group?: string
+  machine?: string
+  metadata?: Record<string, string>
+}

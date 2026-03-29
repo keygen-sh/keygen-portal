@@ -135,7 +135,7 @@ export function NumberInputSegment({
               : "bg-secondary/20 text-secondary hover:text-secondary-light",
           )}
         >
-          {value || "count..."}
+          {value || "edit..."}
         </button>
       </PopoverTrigger>
       <PopoverContent

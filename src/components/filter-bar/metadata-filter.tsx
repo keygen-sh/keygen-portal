@@ -241,7 +241,7 @@ function MetadataInputSegment({
                 : "bg-secondary/20 text-secondary hover:text-secondary-light",
             )}
           >
-            ...
+            edit...
           </button>
         )}
       </PopoverTrigger>

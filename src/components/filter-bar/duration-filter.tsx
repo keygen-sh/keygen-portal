@@ -5,7 +5,7 @@ import {
   FilterSegmentGroup,
   FilterSegment,
   FilterPopoverSegment,
-  OptionList,
+  FilterOptionList,
 } from "./filter-segment"
 import { isoToHumanDuration } from "@/lib/temporal"
 
@@ -65,7 +65,7 @@ export default function DurationFilter({
       <FilterPopoverSegment
         className="w-28"
         popover={(close) => (
-          <OptionList
+          <FilterOptionList
             options={ops}
             value={currentOp}
             onSelect={(op) => {
@@ -104,7 +104,7 @@ export function DurationPickerSegment({
     <FilterPopoverSegment
       className="w-28"
       popover={(close) => (
-        <OptionList
+        <FilterOptionList
           options={options}
           value={value}
           onSelect={(v) => {

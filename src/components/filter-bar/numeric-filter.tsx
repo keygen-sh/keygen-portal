@@ -17,7 +17,7 @@ import {
   FilterSegmentGroup,
   FilterSegment,
   FilterPopoverSegment,
-  OptionList,
+  FilterOptionList,
 } from "./filter-segment"
 
 type NumericOption = {
@@ -71,7 +71,7 @@ export default function NumericFilter({
       <FilterPopoverSegment
         className="w-32"
         popover={(close) => (
-          <OptionList
+          <FilterOptionList
             options={ops}
             value={currentOp}
             onSelect={(v) => {

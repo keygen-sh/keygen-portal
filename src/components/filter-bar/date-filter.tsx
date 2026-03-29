@@ -17,7 +17,7 @@ import {
   FilterSegmentGroup,
   FilterSegment,
   FilterPopoverSegment,
-  OptionList,
+  FilterOptionList,
 } from "./filter-segment"
 
 export type DateOption = {
@@ -79,7 +79,7 @@ export default function DateFilter({
       <FilterPopoverSegment
         className="w-28"
         popover={(close) => (
-          <OptionList
+          <FilterOptionList
             options={ops}
             value={currentOp}
             onSelect={(v) => {

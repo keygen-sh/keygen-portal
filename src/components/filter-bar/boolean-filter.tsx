@@ -5,7 +5,7 @@ import {
   FilterSegmentGroup,
   FilterSegment,
   FilterPopoverSegment,
-  OptionList,
+  FilterOptionList,
 } from "./filter-segment"
 
 const BOOLEAN_OPTIONS = [
@@ -48,7 +48,7 @@ export default function BooleanFilter({
       <FilterPopoverSegment
         className="w-24"
         popover={(close) => (
-          <OptionList
+          <FilterOptionList
             options={BOOLEAN_OPTIONS}
             value={selected.value}
             onSelect={(op) => {

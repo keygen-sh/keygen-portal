@@ -31,9 +31,9 @@ export default function TemporalFilter({
   value, // partial filter object e.g. {within: "P1M"}
   onChange,
 }: TemporalFilterProps) {
-  const filter = useFilterState(value, {}, onChange) // FIXME(ezekg) remove default?
+  const filter = useFilterState(value, {}, onChange)
 
-  // we only allow one operation at a time so we'll just grab the first key
+  // we only allow one operation at a time so we'll just grab the first pair
   const [currentOp] = Object.keys(filter.value)
   const currentValue = filter.value[currentOp]
 

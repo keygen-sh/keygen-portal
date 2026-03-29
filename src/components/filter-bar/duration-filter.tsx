@@ -30,7 +30,7 @@ export default function DurationFilter({
 }: DurationFilterProps) {
   const filter = useFilterState(value, {}, onChange)
 
-  // we only allow one operation at a time so we'll just grab the first key
+  // we only allow one operation at a time so we'll just grab the first pair
   const [currentOp] = Object.keys(filter.value)
   const currentValue = filter.value[currentOp]
 

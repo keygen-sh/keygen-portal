@@ -35,9 +35,9 @@ export default function NumericFilter({
   value, // partial filter e.g. {eq: 1}
   onChange,
 }: NumericFilterProps) {
-  const filter = useFilterState(value, {}, onChange) // FIXME(ezekg) remove default
+  const filter = useFilterState(value, {}, onChange)
 
-  // we only allow one operation at a time so we'll just grab the first key
+  // we only allow one operation at a time so we'll just grab the first pair
   const [currentOp] = Object.keys(filter.value)
   const currentValue = filter.value[currentOp]
 

@@ -1,5 +1,5 @@
 import { useState, useRef } from "react"
-import { X, Braces, type LucideIcon } from "lucide-react"
+import { X, type LucideIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -36,15 +36,15 @@ function rowsToRecord(rows: MetadataRow[]): Record<string, string> | undefined {
 }
 
 export interface MetadataFilterProps {
-  label?: string
+  label: string
   icon?: LucideIcon
   value?: Record<string, string>
   onChange: (value: Record<string, string> | undefined) => void
 }
 
 export default function MetadataFilter({
-  label = "Metadata",
-  icon: Icon = Braces,
+  label,
+  icon,
   value,
   onChange,
 }: MetadataFilterProps) {
@@ -59,13 +59,13 @@ export default function MetadataFilter({
   return (
     <FilterSegmentGroup
       state={filter.state}
-      icon={Icon}
+      icon={icon}
       label={label}
       onActivate={handleActivate}
       onConfirm={filter.handleConfirm}
       onRemove={filter.handleRemove}
     >
-      <FilterSegment first icon={Icon}>
+      <FilterSegment first icon={icon}>
         {label}
       </FilterSegment>
       <MetadataInputSegment

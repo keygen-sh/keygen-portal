@@ -1,17 +1,18 @@
 import {
   CircleDot,
   Clock,
-  CircleOff,
   Activity,
-  Power,
-  Hash,
-  Link,
-  Unlink,
-  Package,
   Shield,
-  Crown,
   User,
   Users,
+  ClockAlert,
+  UserCheck,
+  UserX,
+  Workflow,
+  Box,
+  SquareStack,
+  Network,
+  Braces,
 } from "lucide-react"
 
 import { useState, useCallback } from "react"
@@ -145,7 +146,7 @@ export default function LicenseFilterBar({
       />
       <Filters.TemporalFilter
         label="Expired"
-        icon={CircleOff}
+        icon={ClockAlert}
         options={EXPIRED_OPTIONS}
         value={filters.expired}
         onChange={(expired) => onChange({ ...filters, expired })}
@@ -159,32 +160,32 @@ export default function LicenseFilterBar({
       />
       <Filters.BooleanFilter
         label="Activated"
-        icon={Power}
+        icon={Workflow}
         value={filters.activated}
         onChange={(activated) => onChange({ ...filters, activated })}
       />
       <Filters.NumericFilter
         label="Activations"
-        icon={Hash}
+        icon={Network}
         options={ACTIVATIONS_OPTIONS}
         value={filters.activations}
         onChange={(activations) => onChange({ ...filters, activations })}
       />
       <Filters.BooleanFilter
         label="Assigned"
-        icon={Link}
+        icon={UserCheck}
         value={filters.assigned}
         onChange={(assigned) => onChange({ ...filters, assigned })}
       />
       <Filters.BooleanFilter
         label="Unassigned"
-        icon={Unlink}
+        icon={UserX}
         value={filters.unassigned}
         onChange={(unassigned) => onChange({ ...filters, unassigned })}
       />
       <Filters.ResourceFilter
         label="Product"
-        icon={Package}
+        icon={Box}
         resource="products"
         options={products}
         onActivate={() => enable("products")}
@@ -202,7 +203,7 @@ export default function LicenseFilterBar({
       />
       <Filters.ResourceFilter
         label="Owner"
-        icon={Crown}
+        icon={User}
         resource="users"
         options={users}
         onActivate={() => enable("users")}
@@ -212,7 +213,7 @@ export default function LicenseFilterBar({
       />
       <Filters.ResourceFilter
         label="User"
-        icon={User}
+        icon={Users}
         resource="users"
         options={users}
         onActivate={() => enable("users")}
@@ -222,7 +223,7 @@ export default function LicenseFilterBar({
       />
       <Filters.ResourceFilter
         label="Group"
-        icon={Users}
+        icon={SquareStack}
         resource="groups"
         options={groups}
         onActivate={() => enable("groups")}
@@ -231,6 +232,8 @@ export default function LicenseFilterBar({
         onChange={(group) => onChange({ ...filters, group })}
       />
       <Filters.MetadataFilter
+        label="Metadata"
+        icon={Braces}
         value={filters.metadata}
         onChange={(metadata) => onChange({ ...filters, metadata })}
       />

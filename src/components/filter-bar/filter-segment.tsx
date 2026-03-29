@@ -185,7 +185,7 @@ export function FilterPopoverSegment({
   )
 }
 
-export function OptionList({
+export function FilterOptionList({
   options,
   value,
   onSelect,

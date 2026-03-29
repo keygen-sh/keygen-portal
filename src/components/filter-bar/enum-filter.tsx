@@ -5,7 +5,7 @@ import {
   FilterSegmentGroup,
   FilterSegment,
   FilterPopoverSegment,
-  OptionList,
+  FilterOptionList,
 } from "./filter-segment"
 
 export interface EnumFilterProps {
@@ -41,7 +41,7 @@ export default function EnumFilter({
       <FilterPopoverSegment
         className="w-36"
         popover={(close) => (
-          <OptionList
+          <FilterOptionList
             options={options}
             value={filter.value}
             onSelect={(v) => {

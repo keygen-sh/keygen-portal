@@ -3,7 +3,7 @@ import {
   FilterSegmentGroup,
   FilterSegment,
   FilterPopoverSegment,
-  OptionList,
+  FilterOptionList,
 } from "./filter-segment"
 import { DurationOption, DurationPickerSegment } from "./duration-filter"
 import { DateOption, DatePickerSegment } from "./date-filter"
@@ -80,7 +80,7 @@ export default function TemporalFilter({
       <FilterPopoverSegment
         className="w-28"
         popover={(close) => (
-          <OptionList
+          <FilterOptionList
             options={ops}
             value={selected.op}
             onSelect={(op) => {

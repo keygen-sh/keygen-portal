@@ -6,10 +6,12 @@ import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
 import { Encoding } from "@/types/files"
-import { License, LicenseFile } from "@/types/licenses"
+import { License, LicenseFile, type LicenseFilters } from "@/types/licenses"
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
+
+export type { LicenseFilters }
 
 export function useGetLicense(licenseId: string) {
   const { code } = useEnvironment()
@@ -27,24 +29,6 @@ export function useGetLicense(licenseId: string) {
     },
     enabled: !!licenseId,
   })
-}
-
-export type LicenseFilters = {
-  status?: string
-  expires?: Record<string, string>
-  expired?: Record<string, string>
-  activity?: Record<string, string>
-  unassigned?: boolean
-  assigned?: boolean
-  activated?: boolean
-  activations?: Record<string, number>
-  product?: string
-  policy?: string
-  owner?: string
-  user?: string
-  group?: string
-  machine?: string
-  metadata?: Record<string, string>
 }
 
 export function useListLicenses(params?: {

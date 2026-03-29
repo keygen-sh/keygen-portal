@@ -1,32 +1,14 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
-import { LicenseListResponse } from "@/types/licenses"
+import { LicenseListResponse, type LicenseFilters } from "@/types/licenses"
 
 config.validate()
-
-interface ListFilters {
-  status?: string
-  expires?: Record<string, string>
-  expired?: Record<string, string>
-  activity?: Record<string, string>
-  unassigned?: boolean
-  assigned?: boolean
-  activated?: boolean
-  activations?: Record<string, number>
-  product?: string
-  policy?: string
-  owner?: string
-  user?: string
-  group?: string
-  machine?: string
-  metadata?: Record<string, string>
-}
 
 interface ListProps {
   limit?: number
   pageNumber?: number
   pageSize?: number
-  filters?: ListFilters
+  filters?: LicenseFilters
 }
 
 export default async function list({

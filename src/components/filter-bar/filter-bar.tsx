@@ -63,6 +63,43 @@ export default function FilterBar({
   const maxOffset = Math.max(0, totalWidth - availableWidth)
   const effectiveOffset = Math.max(0, Math.min(scrollOffset, maxOffset))
 
+  // sticky right edge: when scrolled to the end and only the last item changed
+  // width, i.e. we're modifying the last filter, stay pinned after remeasures
+  const wasAtEnd = useRef(false)
+  const prevItemWidths = useRef<number[]>([])
+
+  useLayoutEffect(() => {
+    if (wasAtEnd.current && maxOffset > 0 && effectiveOffset > 0) {
+      const prev = prevItemWidths.current
+      const next = itemWidths
+
+      // only snap when the last item is the one that changed
+      const lastChanged =
+        prev.length > 0 &&
+        next.length > 0 &&
+        prev[prev.length - 1] !== next[next.length - 1]
+      const othersUnchanged =
+        lastChanged &&
+        prev.length === next.length &&
+        prev.slice(0, -1).every((w, i) => w === next[i])
+
+      if (othersUnchanged) {
+        setScrollOffset(maxOffset)
+      }
+    }
+
+    prevItemWidths.current = itemWidths
+  }, [itemWidths, maxOffset, effectiveOffset])
+
+  useEffect(() => {
+    const atStart = effectiveOffset <= 0
+    const atEnd = !allVisible && effectiveOffset >= maxOffset
+
+    // on wide screens both can be true; start wins so we don't
+    // snap right when everything already fits
+    wasAtEnd.current = atEnd && !atStart
+  })
+
   const canScrollLeft = effectiveOffset > 0
   const canScrollRight = !allVisible && effectiveOffset < maxOffset
 
@@ -142,10 +179,10 @@ export default function FilterBar({
         </div>
 
         {/* scroll region */}
-        <div className="relative h-full min-w-0 flex-1 overflow-hidden">
+        <div className="relative h-full min-w-0 flex-1 overflow-hidden pr-1">
           <div
             ref={containerRef}
-            className="h-full overflow-hidden"
+            className="h-full"
             style={{ contain: "inline-size" }}
           >
             <div

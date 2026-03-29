@@ -49,7 +49,7 @@ export default function LicensesList() {
   const [open, setOpen] = useState(false)
 
   return (
-    <section className="flex h-screen flex-col overflow-hidden">
+    <section className="flex h-screen flex-col">
       <PageHeader title="Licenses">
         <Button
           size="sm"

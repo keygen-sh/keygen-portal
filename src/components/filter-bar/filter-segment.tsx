@@ -55,7 +55,7 @@ export function FilterSegmentGroup({
             : undefined
         }
         className={cn(
-          "flex h-full shrink-0 items-center rounded-[3px] text-xs font-normal whitespace-nowrap outline-1 -outline-offset-1 outline-dashed select-none",
+          "flex h-full shrink-0 items-center overflow-hidden rounded-[3px] text-xs font-normal whitespace-nowrap outline-1 -outline-offset-1 outline-dashed select-none",
           isInactive &&
             "cursor-pointer gap-1 bg-background-2 px-1 text-content-loud outline-transparent transition-colors hover:bg-background-3 focus-visible:ring-2 focus-visible:ring-content-subdued focus-visible:ring-offset-1",
           isDraft && "outline-muted/50",
@@ -70,6 +70,18 @@ export function FilterSegmentGroup({
           </>
         ) : (
           <>
+            {Icon && (
+              <span
+                className={cn(
+                  "inline-flex h-full items-center pr-0.5 pl-1",
+                  isDraft
+                    ? "bg-background-2/60 text-content-subdued"
+                    : "bg-secondary/20 text-secondary/70",
+                )}
+              >
+                <Icon className="size-3" />
+              </span>
+            )}
             {children}
 
             {isDraft ? (
@@ -87,7 +99,7 @@ export function FilterSegmentGroup({
                   onClick={onConfirm}
                   disabled={confirmDisabled}
                   className={cn(
-                    "inline-flex h-full items-center rounded-r-[3px] bg-background-2/60 px-1 transition-colors outline-none",
+                    "inline-flex h-full items-center bg-background-2/60 px-1 transition-colors outline-none",
                     confirmDisabled
                       ? "cursor-not-allowed text-content-disabled"
                       : "cursor-pointer text-content-subdued hover:text-primary",
@@ -101,7 +113,7 @@ export function FilterSegmentGroup({
               <button
                 type="button"
                 onClick={onRemove}
-                className="inline-flex h-full cursor-pointer items-center rounded-r-[3px] bg-secondary/20 px-1 text-secondary/70 transition-colors outline-none hover:text-secondary"
+                className="inline-flex h-full cursor-pointer items-center bg-secondary/20 px-1 text-secondary/70 transition-colors outline-none hover:text-secondary"
                 aria-label="Remove filter"
               >
                 <X className="size-3" />
@@ -118,17 +130,11 @@ export function FilterSegment({
   clickable = false,
   popover,
   popoverClassName,
-  first,
-  last,
-  icon: Icon,
   children,
 }: {
   clickable?: boolean
   popover?: React.ReactNode | ((close: () => void) => React.ReactNode)
   popoverClassName?: string
-  first?: boolean
-  last?: boolean
-  icon?: LucideIcon
   children?: React.ReactNode
 }) {
   const state = useContext(FilterStateContext)
@@ -139,16 +145,9 @@ export function FilterSegment({
     isDraft
       ? "bg-background-2/60 text-content-muted"
       : "bg-secondary/20 text-secondary/70",
-    first && "rounded-l-[3px] pl-1",
-    last && "pr-1",
   )
 
-  const content = (
-    <>
-      {Icon && <Icon className="size-3" />}
-      {children}
-    </>
-  )
+  const content = children
 
   if (!clickable || !popover) {
     return (

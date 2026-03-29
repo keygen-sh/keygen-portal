@@ -70,9 +70,7 @@ export default function DateFilter({
       onRemove={filter.handleRemove}
       confirmDisabled={!currentValue}
     >
-      <FilterSegment first icon={icon}>
-        {label}
-      </FilterSegment>
+      <FilterSegment>{label}</FilterSegment>
       <FilterSegment
         clickable
         popover={(close) => (

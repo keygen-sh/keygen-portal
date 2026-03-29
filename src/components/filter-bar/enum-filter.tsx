@@ -31,13 +31,10 @@ export default function EnumFilter({
       onConfirm={filter.handleConfirm}
       onRemove={filter.handleRemove}
     >
-      <FilterSegment first icon={icon}>
-        {label}
-      </FilterSegment>
+      <FilterSegment>{label}</FilterSegment>
       <FilterSegment>eq</FilterSegment>
       <FilterSegment
         clickable
-        last
         popover={(close) => (
           <OptionList
             options={options}

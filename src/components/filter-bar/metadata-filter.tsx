@@ -65,9 +65,7 @@ export default function MetadataFilter({
       onConfirm={filter.handleConfirm}
       onRemove={filter.handleRemove}
     >
-      <FilterSegment first icon={icon}>
-        {label}
-      </FilterSegment>
+      <FilterSegment>{label}</FilterSegment>
       <MetadataInputSegment
         state={filter.state}
         value={filter.value}

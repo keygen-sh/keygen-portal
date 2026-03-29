@@ -109,6 +109,7 @@ function MetadataInputSegment({
     if (rows.length === 0) {
       rows.push({ id: crypto.randomUUID(), key: "", value: "" })
     }
+
     return rows
   })
 
@@ -139,10 +140,18 @@ function MetadataInputSegment({
     focusTargetRef.current = null
   }
 
+  // focus a specific row field directly if the popover is already open,
+  // otherwise deferred via ref until onOpenAutoFocus fires
   function handleOpenWithFocus(index: number, field: "key" | "value") {
-    focusTargetRef.current = { index, field }
-
-    onOpenChange(true)
+    if (open) {
+      const rowId = internalRows[index]?.id
+      if (rowId) {
+        focusField(rowId, field)
+      }
+    } else {
+      focusTargetRef.current = { index, field }
+      onOpenChange(true)
+    }
   }
 
   function handleRowChange(id: string, field: "key" | "value", next: string) {

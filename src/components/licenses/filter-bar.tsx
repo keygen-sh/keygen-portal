@@ -207,7 +207,6 @@ export default function LicenseFilterBar({
         resource="users"
         options={users}
         onActivate={() => enable("users")}
-        clearLabel="Any owner"
         value={filters.owner}
         onChange={(owner) => onChange({ ...filters, owner })}
       />
@@ -217,7 +216,6 @@ export default function LicenseFilterBar({
         resource="users"
         options={users}
         onActivate={() => enable("users")}
-        clearLabel="Any user"
         value={filters.user}
         onChange={(user) => onChange({ ...filters, user })}
       />
@@ -227,7 +225,6 @@ export default function LicenseFilterBar({
         resource="groups"
         options={groups}
         onActivate={() => enable("groups")}
-        clearLabel="Any group"
         value={filters.group}
         onChange={(group) => onChange({ ...filters, group })}
       />

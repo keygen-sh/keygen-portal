@@ -4,8 +4,8 @@ import { useFilterState } from "@/hooks/use-filter-state"
 import { FilterSegmentGroup, FilterSegment, OptionList } from "./filter-segment"
 
 const BOOLEAN_OPTIONS = [
-  { label: "Is", value: "eq" },
-  { label: "Is not", value: "ne" },
+  { label: "Is", value: "true" },
+  { label: "Is not", value: "false" },
 ] as const
 
 export interface BooleanFilterProps {
@@ -24,11 +24,11 @@ export default function BooleanFilter({
   const filter = useFilterState(value, true, onChange)
 
   const selected = BOOLEAN_OPTIONS.find((o) =>
-    filter.value ? o.value === "eq" : o.value === "ne",
+    filter.value ? o.value === "true" : o.value === "false",
   )!
 
   function handleOpChange(op: string) {
-    filter.handleChange(op === "eq")
+    filter.handleChange(op === "true")
   }
 
   return (

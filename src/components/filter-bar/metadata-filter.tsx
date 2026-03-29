@@ -242,7 +242,11 @@ function MetadataInputSegment({
         align="start"
         className="w-80 !bg-background p-0"
         onOpenAutoFocus={(e) => {
-          e.preventDefault()
+          // only focus a field when a specific key/value is clicked
+          // or let the browser autofocus when in draft
+          if (focusTargetRef.current || isActive) {
+            e.preventDefault()
+          }
 
           handleOpenWithAutoFocus()
         }}

@@ -7,7 +7,8 @@ import {
   FilterPopoverSegment,
   FilterOptionList,
 } from "./filter-segment"
-import { isoToHumanDuration } from "@/lib/temporal"
+import { parseISODuration } from "@/lib/temporal"
+import { formatDuration } from "date-fns"
 
 export type DurationOption = {
   label: string
@@ -42,7 +43,7 @@ export default function DurationFilter({
   const ops = options.map((o) => ({ label: o.label, value: o.op }))
   const selected = options.find((o) => o.op === currentOp) ?? options[0]
 
-  const displayValue = isoToHumanDuration(currentValue)
+  const displayValue = formatDuration(parseISODuration(currentValue))
 
   function handleOpChange(op: string) {
     filter.handleChange({ [op]: currentValue })

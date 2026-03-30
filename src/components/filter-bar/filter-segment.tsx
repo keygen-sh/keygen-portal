@@ -55,25 +55,24 @@ export function FilterSegmentGroup({
             : undefined
         }
         className={cn(
-          "flex h-full shrink-0 items-center overflow-hidden rounded-[3px] text-xs font-normal whitespace-nowrap outline-1 -outline-offset-1 outline-dashed select-none",
+          "flex h-full shrink-0 items-center overflow-hidden rounded-[3px] text-xs font-normal whitespace-nowrap outline-1 -outline-offset-1 outline-transparent outline-dashed select-none",
           isInactive &&
-            "cursor-pointer gap-1 bg-background-2 px-1 text-content-loud outline-transparent transition-colors hover:bg-background-3 focus-visible:ring-2 focus-visible:ring-content-subdued focus-visible:ring-offset-1",
+            "cursor-pointer gap-1 bg-background-2 text-content-loud transition-colors hover:bg-background-3 focus-visible:ring-2 focus-visible:ring-content-subdued focus-visible:ring-offset-1",
           isDraft && "outline-muted/50",
-          !isInactive && !isDraft && "outline-transparent",
         )}
       >
         {isInactive ? (
-          <>
+          <span className="inline-flex h-full items-center px-1.5">
             {Icon && <Icon className="size-3 text-content-muted" />}
-            <span className="text-content-muted">{label}</span>
+            <span className="px-1 text-content-muted">{label}</span>
             <ChevronDown className="size-3 text-content-subdued" />
-          </>
+          </span>
         ) : (
           <>
             {Icon && (
               <span
                 className={cn(
-                  "inline-flex h-full items-center pr-0.5 pl-1",
+                  "inline-flex h-full items-center pr-0.5 pl-1.5",
                   isDraft
                     ? "bg-background-2/60 text-content-subdued"
                     : "bg-secondary/20 text-secondary/70",
@@ -89,7 +88,7 @@ export function FilterSegmentGroup({
                 <button
                   type="button"
                   onClick={onRemove}
-                  className="inline-flex h-full cursor-pointer items-center bg-background-2/60 px-1 text-content-subdued transition-colors outline-none hover:text-destructive"
+                  className="inline-flex h-full cursor-pointer items-center bg-background-2/60 pr-0.5 pl-1 text-content-subdued transition-colors outline-none hover:text-destructive"
                   aria-label="Discard filter"
                 >
                   <X className="size-3" />
@@ -99,7 +98,7 @@ export function FilterSegmentGroup({
                   onClick={onConfirm}
                   disabled={confirmDisabled}
                   className={cn(
-                    "inline-flex h-full items-center bg-background-2/60 px-1 transition-colors outline-none",
+                    "inline-flex h-full items-center bg-background-2/60 pr-1.5 pl-0.5 transition-colors outline-none",
                     confirmDisabled
                       ? "cursor-not-allowed text-content-disabled"
                       : "cursor-pointer text-content-subdued hover:text-primary",
@@ -113,7 +112,7 @@ export function FilterSegmentGroup({
               <button
                 type="button"
                 onClick={onRemove}
-                className="inline-flex h-full cursor-pointer items-center bg-secondary/20 px-1 text-secondary/70 transition-colors outline-none hover:text-secondary"
+                className="inline-flex h-full cursor-pointer items-center bg-secondary/20 pr-1.5 pl-1 text-secondary/70 transition-colors outline-none hover:text-secondary"
                 aria-label="Remove filter"
               >
                 <X className="size-3" />

@@ -1,17 +1,36 @@
-const ISO_DURATION_PATTERN =
-  /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/
+import type { Duration } from "date-fns"
 
-export function isoToHumanDuration(iso: string): string {
-  if (!iso) return ""
-  const match = iso.match(ISO_DURATION_PATTERN)
-  if (!match) return iso
-  const [, y, mo, w, d, h, min, s] = match
-  if (y) return `${y} ${parseInt(y) === 1 ? "year" : "years"}`
-  if (mo) return `${mo} ${parseInt(mo) === 1 ? "month" : "months"}`
-  if (w) return `${w} ${parseInt(w) === 1 ? "week" : "weeks"}`
-  if (d) return `${d} ${parseInt(d) === 1 ? "day" : "days"}`
-  if (h) return `${h} ${parseInt(h) === 1 ? "hour" : "hours"}`
-  if (min) return `${min} ${parseInt(min) === 1 ? "minute" : "minutes"}`
-  if (s) return `${s} ${parseInt(s) === 1 ? "second" : "seconds"}`
-  return iso
+const ISO_DURATION_RE =
+  /P(?:([\d]+\.?[\d]*|\.[\d]+)Y)?(?:([\d]+\.?[\d]*|\.[\d]+)M)?(?:([\d]+\.?[\d]*|\.[\d]+)W)?(?:([\d]+\.?[\d]*|\.[\d]+)D)?(?:T(?:([\d]+\.?[\d]*|\.[\d]+)H)?(?:([\d]+\.?[\d]*|\.[\d]+)M)?(?:([\d]+\.?[\d]*|\.[\d]+)S)?)?$/
+
+// FIXME(ezekg) will it ever be merged? https://github.com/date-fns/date-fns/pull/3151
+export function parseISODuration(isoDuration: string): Duration {
+  const match = isoDuration?.match(ISO_DURATION_RE) ?? []
+
+  const [
+    ,
+    years = 0,
+    months = 0,
+    weeks = 0,
+    days = 0,
+    hours = 0,
+    minutes = 0,
+    seconds = 0,
+  ] = match
+
+  const entries = Object.entries({
+    years,
+    months,
+    weeks,
+    days,
+    hours,
+    minutes,
+    seconds,
+  }) as [keyof Duration, string][]
+
+  return entries.reduce<Duration>((obj, [key, value]) => {
+    obj[key] = +value
+
+    return obj
+  }, {})
 }

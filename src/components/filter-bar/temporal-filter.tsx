@@ -7,8 +7,8 @@ import {
 } from "./filter-segment"
 import { type DurationOption, DurationPickerSegment } from "./duration-filter"
 import { type DateOption, DatePickerSegment } from "./date-filter"
-import { isoToHumanDuration } from "@/lib/temporal"
-import { format, formatISO, parseISO } from "date-fns"
+import { parseISODuration } from "@/lib/temporal"
+import { format, formatDuration, formatISO, parseISO } from "date-fns"
 import { type LucideIcon } from "lucide-react"
 
 export type TemporalDurationOption = DurationOption & {
@@ -50,7 +50,7 @@ export default function TemporalFilter({
       ? currentValue
         ? format(parseISO(currentValue), "PPP")
         : ""
-      : isoToHumanDuration(currentValue)
+      : formatDuration(parseISODuration(currentValue))
 
   function handleOpChange(op: string) {
     const nextSelected = options.find((o) => o.op === op)

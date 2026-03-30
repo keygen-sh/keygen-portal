@@ -1,6 +1,6 @@
 import { type LucideIcon } from "lucide-react"
 
-import { FilterState, useFilterState } from "@/hooks/use-filter-state"
+import { type FilterState, useFilterState } from "@/hooks/use-filter-state"
 import {
   FilterSegmentGroup,
   FilterSegment,

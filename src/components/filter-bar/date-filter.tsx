@@ -12,7 +12,7 @@ import * as Calendars from "@/components/calendars"
 
 import { cn } from "@/lib/utils"
 
-import { FilterState, useFilterState } from "@/hooks/use-filter-state"
+import { type FilterState, useFilterState } from "@/hooks/use-filter-state"
 import {
   FilterSegmentGroup,
   FilterSegment,

@@ -8,7 +8,7 @@ import {
 import { type DurationOption, DurationPickerSegment } from "./duration-filter"
 import { type DateOption, DatePickerSegment } from "./date-filter"
 import { isoToHumanDuration } from "@/lib/temporal"
-import { format, parseISO } from "date-fns"
+import { format, formatISO, parseISO } from "date-fns"
 import { type LucideIcon } from "lucide-react"
 
 export type TemporalDurationOption = DurationOption & {
@@ -53,7 +53,15 @@ export default function TemporalFilter({
       : isoToHumanDuration(currentValue)
 
   function handleOpChange(op: string) {
-    filter.handleDraftChange({ [op]: "" })
+    const nextSelected = options.find((o) => o.op === op)
+    const nextValue =
+      nextSelected && nextSelected.type === selected.type ? currentValue : ""
+
+    if (nextValue) {
+      filter.handleChange({ [op]: nextValue })
+    } else {
+      filter.handleDraftChange({ [op]: "" })
+    }
   }
 
   function handleDurationChange(duration: string) {
@@ -62,7 +70,9 @@ export default function TemporalFilter({
 
   function handleDateChange(date: Date | undefined) {
     if (date) {
-      filter.handleChange({ [selected.op]: format(date, "yyyy-MM-dd") })
+      const formattedValue = formatISO(date, { representation: "date" })
+
+      filter.handleChange({ [selected.op]: formattedValue })
     }
   }
 

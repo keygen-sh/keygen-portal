@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { format, parseISO } from "date-fns"
+import { format, formatISO, parseISO } from "date-fns"
 import { type LucideIcon } from "lucide-react"
 
 import {
@@ -61,7 +61,9 @@ export default function DateFilter({
 
   function handleDateChange(date: Date | undefined) {
     if (date) {
-      filter.handleChange({ [selected.op]: format(date, "yyyy-MM-dd") })
+      const formattedValue = formatISO(date, { representation: "date" })
+
+      filter.handleChange({ [selected.op]: formattedValue })
     }
   }
 

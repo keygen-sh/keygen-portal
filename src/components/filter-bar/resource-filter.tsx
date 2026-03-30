@@ -10,7 +10,7 @@ import {
 import * as Search from "@/components/search"
 
 import { type SearchableResource } from "@/types/search"
-import { AnyResource } from "@/types/api"
+import { type AnyResource } from "@/types/api"
 
 import { cn } from "@/lib/utils"
 
@@ -18,7 +18,7 @@ import { type LucideIcon } from "lucide-react"
 
 import { truncator } from "@/lib/truncate"
 
-import { FilterState, useFilterState } from "@/hooks/use-filter-state"
+import { type FilterState, useFilterState } from "@/hooks/use-filter-state"
 import { FilterSegmentGroup, FilterSegment } from "./filter-segment"
 
 const truncate = truncator("clip", { maxLength: 8 })

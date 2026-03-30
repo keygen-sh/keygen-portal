@@ -5,8 +5,8 @@ import {
   FilterPopoverSegment,
   FilterOptionList,
 } from "./filter-segment"
-import { DurationOption, DurationPickerSegment } from "./duration-filter"
-import { DateOption, DatePickerSegment } from "./date-filter"
+import { type DurationOption, DurationPickerSegment } from "./duration-filter"
+import { type DateOption, DatePickerSegment } from "./date-filter"
 import { isoToHumanDuration } from "@/lib/temporal"
 import { format, parseISO } from "date-fns"
 import { type LucideIcon } from "lucide-react"

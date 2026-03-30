@@ -11,7 +11,7 @@ import {
 
 import { cn } from "@/lib/utils"
 
-import { FilterState, useFilterState } from "@/hooks/use-filter-state"
+import { type FilterState, useFilterState } from "@/hooks/use-filter-state"
 import { FilterSegmentGroup, FilterSegment } from "./filter-segment"
 
 type MetadataRow = { id: string; key: string; value: string }

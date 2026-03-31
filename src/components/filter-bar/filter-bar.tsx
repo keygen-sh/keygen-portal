@@ -75,14 +75,14 @@ export default function FilterBar({
     }
   }, [scrollableCount])
 
-  // scroll the last item into view when only it changed width (e.g. inactive → draft)
+  // scroll the last item into view when only it changed width (e.g. inactive -> draft)
   const prevItemWidths = useRef<number[]>([])
 
   useLayoutEffect(() => {
     const prev = prevItemWidths.current
     const next = itemWidths
 
-    // detect when only the last item changed width (e.g. inactive → draft)
+    // detect when only the last item changed width (e.g. inactive -> draft)
     const lastChanged =
       prev.length > 0 &&
       next.length > 0 &&

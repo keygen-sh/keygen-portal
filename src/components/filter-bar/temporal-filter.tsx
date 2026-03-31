@@ -82,9 +82,9 @@ export default function TemporalFilter({
       icon={icon}
       label={label}
       confirmDisabled={!currentValue}
+      onDraft={filter.handleDraft}
       onActivate={filter.handleActivate}
-      onConfirm={filter.handleConfirm}
-      onRemove={filter.handleRemove}
+      onDeactivate={filter.handleDeactivate}
     >
       <FilterSegment>{label}</FilterSegment>
       <FilterPopoverSegment

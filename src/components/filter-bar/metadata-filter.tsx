@@ -51,8 +51,8 @@ export default function MetadataFilter({
   const filter = useFilterState(value, {}, onChange)
   const [open, setOpen] = useState(false)
 
-  function handleActivate() {
-    filter.handleActivate()
+  function handleDraft() {
+    filter.handleDraft()
     setOpen(true)
   }
 
@@ -61,9 +61,9 @@ export default function MetadataFilter({
       state={filter.state}
       icon={icon}
       label={label}
-      onActivate={handleActivate}
-      onConfirm={filter.handleConfirm}
-      onRemove={filter.handleRemove}
+      onDraft={handleDraft}
+      onActivate={filter.handleActivate}
+      onDeactivate={filter.handleDeactivate}
     >
       <FilterSegment>{label}</FilterSegment>
       <MetadataInputSegment
@@ -75,7 +75,7 @@ export default function MetadataFilter({
           if (record) {
             filter.handleChange(record)
           } else {
-            filter.handleRemove()
+            filter.handleDeactivate()
           }
         }}
       />

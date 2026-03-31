@@ -32,9 +32,9 @@ export default function EnumFilter({
       state={filter.state}
       icon={icon}
       label={label}
+      onDraft={filter.handleDraft}
       onActivate={filter.handleActivate}
-      onConfirm={filter.handleConfirm}
-      onRemove={filter.handleRemove}
+      onDeactivate={filter.handleDeactivate}
     >
       <FilterSegment>{label}</FilterSegment>
       <FilterSegment>eq</FilterSegment>

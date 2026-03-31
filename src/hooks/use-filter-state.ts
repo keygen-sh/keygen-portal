@@ -14,9 +14,9 @@ type DraftState<T> = {
 type UseFilterStateResult<T> = {
   state: FilterState
   value: T
+  handleDraft: () => void
   handleActivate: () => void
-  handleConfirm: () => void
-  handleRemove: () => void
+  handleDeactivate: () => void
   handleChange: (nextValue: T) => void
   handleDraftChange: (nextValue: T) => void
 }
@@ -41,7 +41,7 @@ export function useFilterState<T>(
 
   const currentValue = isDraft ? draft.value : (value ?? defaultValue)
 
-  const handleActivate = useCallback(() => {
+  const handleDraft = useCallback(() => {
     setDraft({
       value: value ?? defaultValue,
       initialValue: value,
@@ -49,7 +49,7 @@ export function useFilterState<T>(
     remeasure()
   }, [defaultValue, remeasure, value])
 
-  const handleConfirm = useCallback(() => {
+  const handleActivate = useCallback(() => {
     if (draft == null) {
       return
     }
@@ -59,7 +59,7 @@ export function useFilterState<T>(
     remeasure()
   }, [draft, onChange, remeasure])
 
-  const handleRemove = useCallback(() => {
+  const handleDeactivate = useCallback(() => {
     onChange(undefined)
     setDraft(null)
     remeasure()
@@ -94,9 +94,9 @@ export function useFilterState<T>(
   return {
     state,
     value: currentValue,
+    handleDraft,
     handleActivate,
-    handleConfirm,
-    handleRemove,
+    handleDeactivate,
     handleChange,
     handleDraftChange,
   }

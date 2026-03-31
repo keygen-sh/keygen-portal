@@ -188,8 +188,8 @@ export default function LicenseFilterBar({
         icon={Box}
         resource="products"
         options={products}
-        onActivate={() => enable("products")}
         value={filters.product}
+        onDraft={() => enable("products")}
         onChange={(product) => onChange({ ...filters, product })}
       />
       <Filters.ResourceFilter
@@ -197,8 +197,8 @@ export default function LicenseFilterBar({
         icon={Shield}
         resource="policies"
         options={policies}
-        onActivate={() => enable("policies")}
         value={filters.policy}
+        onDraft={() => enable("policies")}
         onChange={(policy) => onChange({ ...filters, policy })}
       />
       <Filters.ResourceFilter
@@ -206,8 +206,8 @@ export default function LicenseFilterBar({
         icon={User}
         resource="users"
         options={users}
-        onActivate={() => enable("users")}
         value={filters.owner}
+        onDraft={() => enable("users")}
         onChange={(owner) => onChange({ ...filters, owner })}
       />
       <Filters.ResourceFilter
@@ -215,8 +215,8 @@ export default function LicenseFilterBar({
         icon={Users}
         resource="users"
         options={users}
-        onActivate={() => enable("users")}
         value={filters.user}
+        onDraft={() => enable("users")}
         onChange={(user) => onChange({ ...filters, user })}
       />
       <Filters.ResourceFilter
@@ -224,8 +224,8 @@ export default function LicenseFilterBar({
         icon={SquareStack}
         resource="groups"
         options={groups}
-        onActivate={() => enable("groups")}
         value={filters.group}
+        onDraft={() => enable("groups")}
         onChange={(group) => onChange({ ...filters, group })}
       />
       <Filters.MetadataFilter

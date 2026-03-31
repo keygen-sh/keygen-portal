@@ -18,9 +18,9 @@ export function FilterSegmentGroup({
   state,
   icon: Icon,
   label,
+  onDraft,
   onActivate,
-  onConfirm,
-  onRemove,
+  onDeactivate,
   confirmDisabled,
   hideActiveRemove,
   children,
@@ -28,9 +28,9 @@ export function FilterSegmentGroup({
   state: FilterState
   icon?: LucideIcon
   label: string
+  onDraft?: () => void
   onActivate?: () => void
-  onConfirm?: () => void
-  onRemove?: () => void
+  onDeactivate?: () => void
   confirmDisabled?: boolean
   hideActiveRemove?: boolean
   children: React.ReactNode
@@ -43,13 +43,13 @@ export function FilterSegmentGroup({
       <div
         role={isInactive ? "button" : undefined}
         tabIndex={isInactive ? 0 : undefined}
-        onClick={isInactive ? onActivate : undefined}
+        onClick={isInactive ? onDraft : undefined}
         onKeyDown={
           isInactive
             ? (e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault()
-                  onActivate?.()
+                  onDraft?.()
                 }
               }
             : undefined
@@ -87,7 +87,7 @@ export function FilterSegmentGroup({
               <>
                 <button
                   type="button"
-                  onClick={onRemove}
+                  onClick={onDeactivate}
                   className="inline-flex h-full cursor-pointer items-center bg-background-2/60 pr-0.5 pl-1 text-content-subdued transition-colors outline-none hover:text-destructive"
                   aria-label="Discard filter"
                 >
@@ -95,7 +95,7 @@ export function FilterSegmentGroup({
                 </button>
                 <button
                   type="button"
-                  onClick={onConfirm}
+                  onClick={onActivate}
                   disabled={confirmDisabled}
                   className={cn(
                     "inline-flex h-full items-center bg-background-2/60 pr-1.5 pl-0.5 transition-colors outline-none",
@@ -111,7 +111,7 @@ export function FilterSegmentGroup({
             ) : !hideActiveRemove ? (
               <button
                 type="button"
-                onClick={onRemove}
+                onClick={onDeactivate}
                 className="inline-flex h-full cursor-pointer items-center bg-secondary/20 pr-1.5 pl-1 text-secondary/70 transition-colors outline-none hover:text-secondary"
                 aria-label="Remove filter"
               >

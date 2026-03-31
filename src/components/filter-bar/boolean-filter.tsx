@@ -41,9 +41,9 @@ export default function BooleanFilter({
       state={filter.state}
       icon={icon}
       label={label}
+      onDraft={filter.handleDraft}
       onActivate={filter.handleActivate}
-      onConfirm={filter.handleConfirm}
-      onRemove={filter.handleRemove}
+      onDeactivate={filter.handleDeactivate}
     >
       <FilterPopoverSegment
         className="w-24"

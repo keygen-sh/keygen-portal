@@ -28,7 +28,7 @@ export interface ResourceFilterProps {
   icon?: LucideIcon
   resource: SearchableResource
   options?: AnyResource[]
-  onActivate?: () => void
+  onDraft?: () => void
   clearLabel?: string
   value?: string
   onChange: (value: string | undefined) => void
@@ -39,7 +39,7 @@ export default function ResourceFilter({
   icon,
   resource,
   options = [],
-  onActivate,
+  onDraft,
   clearLabel,
   value,
   onChange,
@@ -49,10 +49,10 @@ export default function ResourceFilter({
 
   const displayValue = filter.value ? truncate(filter.value) : null
 
-  // our onActivate callback triggers a query to populate the resource select
-  function handleActivate() {
-    filter.handleActivate()
-    onActivate?.()
+  // our onDraft callback triggers a query to populate the resource select
+  function handleDraft() {
+    filter.handleDraft()
+    onDraft?.()
     setOpen(true)
   }
 
@@ -67,8 +67,8 @@ export default function ResourceFilter({
     setOpen(false)
   }
 
-  function handleSubmit() {
-    filter.handleConfirm()
+  function handleActivate() {
+    filter.handleActivate()
     setOpen(false)
   }
 
@@ -78,9 +78,9 @@ export default function ResourceFilter({
       icon={icon}
       label={label}
       confirmDisabled={!filter.value}
+      onDraft={handleDraft}
       onActivate={handleActivate}
-      onConfirm={filter.handleConfirm}
-      onRemove={filter.handleRemove}
+      onDeactivate={filter.handleDeactivate}
     >
       <FilterSegment>{label}</FilterSegment>
       <FilterSegment>eq</FilterSegment>
@@ -94,7 +94,7 @@ export default function ResourceFilter({
         open={open}
         onOpenChange={handleOpenChange}
         onSelect={handleValueChange}
-        onConfirm={handleSubmit}
+        onActivate={handleActivate}
       />
     </FilterSegmentGroup>
   )
@@ -110,7 +110,7 @@ export function ResourceSelectSegment({
   open,
   onOpenChange,
   onSelect,
-  onConfirm,
+  onActivate,
 }: {
   state: FilterState
   resource: SearchableResource
@@ -121,7 +121,7 @@ export function ResourceSelectSegment({
   open: boolean
   onOpenChange: (open: boolean) => void
   onSelect: (id: string | null) => void
-  onConfirm: () => void
+  onActivate: () => void
 }) {
   const isDraft = state === "draft"
 
@@ -173,7 +173,7 @@ export function ResourceSelectSegment({
               type="button"
               size="sm"
               className="flex-1 rounded-sm text-sm"
-              onClick={onConfirm}
+              onClick={onActivate}
               disabled={isDraft && !currentValue}
             >
               Apply

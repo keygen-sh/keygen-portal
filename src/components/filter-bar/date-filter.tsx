@@ -72,9 +72,9 @@ export default function DateFilter({
       state={filter.state}
       icon={icon}
       label={label}
+      onDraft={filter.handleDraft}
       onActivate={filter.handleActivate}
-      onConfirm={filter.handleConfirm}
-      onRemove={filter.handleRemove}
+      onDeactivate={filter.handleDeactivate}
       confirmDisabled={!currentValue}
     >
       <FilterSegment>{label}</FilterSegment>

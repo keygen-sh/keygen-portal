@@ -117,7 +117,7 @@ function MetadataInputSegment({
   } | null>(null)
 
   // focuses a row's key or value field on the next frame (we're rendering on next
-  // frame because the row may not actually until next render)
+  // frame because the row may not exist until next render)
   function focusField(rowId: string, field: "key" | "value") {
     requestAnimationFrame(() =>
       document.getElementById(`metadata-${field}-${rowId}`)?.focus(),

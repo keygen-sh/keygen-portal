@@ -1,3 +1,6 @@
+import * as Account from "./account"
+export { Account }
+
 import * as Environments from "./environments"
 export { Environments }
 
@@ -36,3 +39,6 @@ export { Releases }
 
 import * as Artifacts from "./artifacts"
 export { Artifacts }
+
+import * as Team from "./team"
+export { Team }

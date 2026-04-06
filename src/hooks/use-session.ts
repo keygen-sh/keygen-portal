@@ -18,10 +18,19 @@ export function useSession() {
       }
 
       try {
-        const user = await keygen.verify({ token, tokenId })
-        if (!user) throw new Error("User not found")
+        const result = await keygen.verify({ token, tokenId })
+        if (!result) throw new Error("User not found")
 
         keygen.client.setRootToken(token)
+
+        // TEMP(cazden) Store bearer ID for current user lookups
+        const bearerId = result.data?.relationships?.bearer?.data?.id
+        if (bearerId) {
+          const storage = localStorage.getItem("token")
+            ? localStorage
+            : sessionStorage
+          storage.setItem("bearerId", bearerId)
+        }
 
         return
       } catch (error) {

@@ -6,19 +6,22 @@ import { Separator } from "@/components/ui/separator"
 
 interface SectionCardProps {
   title: string
+  actions?: React.ReactNode
   children: React.ReactNode
   className?: string
 }
 
 export default function SectionCard({
   title,
+  actions,
   children,
   className,
 }: SectionCardProps): React.ReactElement {
   return (
     <Card className={cn("rounded-sm bg-background pt-0", className)}>
-      <CardHeader className="h-9 rounded-t-sm border-b border-accent bg-background-1 px-4 py-1">
+      <CardHeader className="flex h-12 items-center justify-between rounded-t-sm border-b border-accent bg-background-1 p-3!">
         <CardTitle className="text-content-loud">{title}</CardTitle>
+        {actions}
       </CardHeader>
       <CardContent className="p-4">
         {Children.map(children, (child, index) => (

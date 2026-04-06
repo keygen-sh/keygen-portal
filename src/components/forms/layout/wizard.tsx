@@ -13,7 +13,7 @@ import { useMobile } from "@/hooks/use-mobile"
 import { useSlide } from "@/hooks/use-slide"
 import { useSubmitOnce } from "@/hooks/use-submit-once"
 
-import { useFormDialogGuardContext } from "@/contexts/form-dialog-guard-context"
+import { useFormGuardContext } from "@/contexts/form-guard-context"
 
 import * as Motion from "@/components/motion"
 import * as Loading from "@/components/loading"
@@ -93,7 +93,7 @@ export default function FormsContentWizard<
   className,
 }: FormsContentWizardProps<T>) {
   const form = useFormContext()
-  const guard = useFormDialogGuardContext()
+  const guard = useFormGuardContext()
   const steps = useMemo(() => getStepsFromChildren(children), [children])
 
   const stepIndices = useMemo(() => steps.map((_, i) => i), [steps])

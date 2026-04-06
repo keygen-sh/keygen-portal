@@ -12,7 +12,7 @@ import {
 import { useMobile } from "@/hooks/use-mobile"
 
 import { FormDialogGuard } from "@/components/forms/guard"
-import { useFormDialogGuardContext } from "@/contexts/form-dialog-guard-context"
+import { useFormGuardContext } from "@/contexts/form-guard-context"
 
 import { cn } from "@/lib/utils"
 
@@ -63,7 +63,7 @@ function FormsContainerDialogInner({
   className,
 }: FormsContainerDialogInnerProps) {
   const isMobile = useMobile()
-  const { abandon } = useFormDialogGuardContext()
+  const { abandon } = useFormGuardContext()
 
   const handleOpenChange = useCallback(
     (open: boolean) => {

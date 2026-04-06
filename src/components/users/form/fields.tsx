@@ -28,8 +28,9 @@ import {
   UserRoleLabels,
   UserRoleDescriptions,
   UserFormFieldDescriptions,
-  UserCreateFormFieldDescriptions,
   UserEditFormFieldDescriptions,
+  UserCreateFormFieldDescriptions,
+  UserPasswordFormFieldDescriptions,
 } from "@/types/users"
 import { type FieldVariant } from "@/components/forms/field"
 
@@ -155,6 +156,30 @@ export default function UsersFormFields({
                 autoFocus={autoFocus === "groupId"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+              />
+            )
+          case "oldPassword":
+            return (
+              <OldPasswordField
+                key="oldPassword"
+                autoFocus={autoFocus === "oldPassword"}
+                fieldVariant={fieldVariant}
+              />
+            )
+          case "newPassword":
+            return (
+              <NewPasswordField
+                key="newPassword"
+                autoFocus={autoFocus === "newPassword"}
+                fieldVariant={fieldVariant}
+              />
+            )
+          case "confirmPassword":
+            return (
+              <ConfirmPasswordField
+                key="confirmPassword"
+                autoFocus={autoFocus === "confirmPassword"}
+                fieldVariant={fieldVariant}
               />
             )
           default:
@@ -522,6 +547,117 @@ function GroupIdField({
               invalid={!!fieldState.error}
               autoFocus={autoFocus}
             />
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function OldPasswordField({
+  autoFocus,
+  fieldVariant = "row",
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+}) {
+  const form = useFormContext<Schemas.Users.PasswordValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="oldPassword"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Current password"
+            variant={fieldVariant}
+            tooltip={UserPasswordFormFieldDescriptions.oldPassword}
+          >
+            <FormControl>
+              <Input
+                {...field}
+                type="password"
+                placeholder="Enter your current password"
+                autoComplete="off"
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function NewPasswordField({
+  autoFocus,
+  fieldVariant = "row",
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+}) {
+  const form = useFormContext<Schemas.Users.PasswordValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="newPassword"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="New password"
+            variant={fieldVariant}
+            tooltip={UserPasswordFormFieldDescriptions.newPassword}
+          >
+            <FormControl>
+              <Input
+                {...field}
+                type="password"
+                placeholder="Enter your new password"
+                autoComplete="new-password"
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function ConfirmPasswordField({
+  autoFocus,
+  fieldVariant = "row",
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+}) {
+  const form = useFormContext<Schemas.Users.PasswordValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="confirmPassword"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Confirm new password"
+            variant={fieldVariant}
+            tooltip={UserPasswordFormFieldDescriptions.confirmPassword}
+          >
+            <FormControl>
+              <Input
+                {...field}
+                type="password"
+                placeholder="Confirm your new password"
+                autoComplete="new-password"
+                autoFocus={autoFocus}
+              />
+            </FormControl>
           </Forms.Field.Header>
           <FormMessage />
         </FormItem>

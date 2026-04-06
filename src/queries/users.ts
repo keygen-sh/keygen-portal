@@ -241,3 +241,94 @@ export function useUnbanUser(userId: string) {
     },
   })
 }
+
+export function useChangePassword() {
+  const bearerId =
+    localStorage.getItem("bearerId") ?? sessionStorage.getItem("bearerId")
+
+  return useMutation<
+    User,
+    APIError,
+    { oldPassword: string; newPassword: string }
+  >({
+    mutationFn: async ({ oldPassword, newPassword }) => {
+      if (!bearerId) throw new Error("No bearer ID found")
+
+      const response = await keygen.users.changePassword({
+        id: bearerId,
+        oldPassword,
+        newPassword,
+      })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response.data
+    },
+  })
+}
+
+export function useGetCurrentUser() {
+  const bearerId =
+    localStorage.getItem("bearerId") ?? sessionStorage.getItem("bearerId")
+
+  return useQuery({
+    queryKey: ["users", "me", bearerId],
+    queryFn: async () => {
+      if (!bearerId) throw new Error("No bearer ID found")
+
+      const response = await keygen.users.get({ id: bearerId })
+
+      if (!response.data) {
+        throw new Error("Current user not found")
+      }
+
+      return response.data
+    },
+    enabled: !!bearerId,
+  })
+}
+
+export function useUpdateCurrentUser() {
+  const queryClient = useQueryClient()
+  const bearerId =
+    localStorage.getItem("bearerId") ?? sessionStorage.getItem("bearerId")
+
+  return useMutation<User, APIError, Schemas.Users.UpdateValues>({
+    mutationFn: async (values) => {
+      if (!bearerId) throw new Error("No bearer ID found")
+
+      const getResponse = await keygen.users.get({ id: bearerId })
+
+      if (getResponse.errors) {
+        throw new APIError(getResponse.errors[0])
+      }
+
+      const current = getResponse.data
+
+      const changes = diff(
+        current.attributes,
+        values,
+      ) as Schemas.Users.UpdateValues
+
+      if (Object.keys(changes).length === 0) return current
+
+      const updateResponse = await keygen.users.update({
+        id: bearerId,
+        values: changes,
+      })
+
+      if (updateResponse.errors) {
+        throw new APIError(updateResponse.errors[0])
+      }
+
+      return updateResponse.data
+    },
+
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(["users", "me", bearerId], updated)
+      await queryClient.invalidateQueries({ queryKey: ["users"] })
+    },
+  })
+}

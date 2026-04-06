@@ -1,0 +1,59 @@
+import { useCallback } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+
+import * as Schemas from "@/schemas"
+
+import { useGetCurrentUser, useUpdateCurrentUser } from "@/queries/users"
+
+import { toast } from "@/lib/toast"
+
+import * as Users from "@/components/users"
+import * as Forms from "@/components/forms"
+
+export default function EditProfileForm() {
+  const { data: user, isLoading } = useGetCurrentUser()
+  const updateUser = useUpdateCurrentUser()
+
+  const form = useForm<Schemas.Users.UpdateValues>({
+    resolver: zodResolver(Schemas.Users.UpdateSchema),
+    mode: "onChange",
+    values: {
+      email: user?.attributes.email ?? "",
+      firstName: user?.attributes.firstName ?? null,
+      lastName: user?.attributes.lastName ?? null,
+    },
+  })
+
+  const handleSubmit = useCallback(
+    async (values: Schemas.Users.UpdateValues) => {
+      await updateUser.mutateAsync(values)
+      toast({ message: "Profile updated", variant: "success" })
+    },
+    [updateUser],
+  )
+
+  return (
+    <Forms.Provider form={form}>
+      <Forms.Container.Page>
+        <Forms.Layout.Sheet
+          title="Edit profile"
+          onSubmit={handleSubmit}
+          errorMessage="Failed to update profile"
+          isPending={isLoading}
+          submitLabel="Update"
+        >
+          <Forms.Section.Columns title="Profile">
+            <Forms.Section.Column>
+              <Users.Form.Fields
+                schema="edit"
+                include={["email", "firstName", "lastName"]}
+                fieldVariant="stacking"
+              />
+            </Forms.Section.Column>
+          </Forms.Section.Columns>
+        </Forms.Layout.Sheet>
+      </Forms.Container.Page>
+    </Forms.Provider>
+  )
+}

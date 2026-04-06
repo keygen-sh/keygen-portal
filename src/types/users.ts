@@ -99,6 +99,14 @@ export const UserEditFormFieldDescriptions: typeof UserFormFieldDescriptions = {
     "Manually change the user's password. Leave the password blank if you do not wish to change it.",
 }
 
+export const UserPasswordFormFieldDescriptions = {
+  oldPassword: "The user's current password.",
+  newPassword:
+    "The new password for the user. Must be at least 8 characters. May be set to null for a passwordless user.",
+  confirmPassword:
+    "Confirm the new password by entering it again (if applicable).",
+}
+
 export const UserStatusDescriptions: Readonly<Record<UserStatus, string>> = {
   [UserStatus.Active]:
     "User was created within the last 90 days, or has a license that has been created, validated, checked-out, or checked-in within the last 90 days.",

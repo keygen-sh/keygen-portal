@@ -19,10 +19,11 @@ type Option = {
 interface TabsSwitchProps
   extends React.ComponentPropsWithoutRef<typeof TabsList> {
   options: Option[]
+  borderless?: boolean
 }
 
 const TabsSwitch = React.forwardRef<HTMLDivElement, TabsSwitchProps>(
-  ({ options, className, ...props }, ref) => {
+  ({ options, borderless, className, ...props }, ref) => {
     const wrapRef = useRef<HTMLDivElement>(null)
     const listRef = useRef<HTMLDivElement>(null)
     const barRef = useRef<HTMLSpanElement>(null)
@@ -66,8 +67,13 @@ const TabsSwitch = React.forwardRef<HTMLDivElement, TabsSwitchProps>(
     }
 
     return (
-      <div ref={wrapRef} className="relative w-full p-4 pb-0">
-        <span className="pointer-events-none absolute inset-x-0 bottom-px h-[0.5px] bg-accent" />
+      <div
+        ref={wrapRef}
+        className={cn("relative w-full", !borderless && "p-4 pb-0")}
+      >
+        {!borderless && (
+          <span className="pointer-events-none absolute inset-x-0 bottom-px h-[0.5px] bg-accent" />
+        )}
         <TabsList
           ref={listRef}
           className={cn(
@@ -88,7 +94,8 @@ const TabsSwitch = React.forwardRef<HTMLDivElement, TabsSwitchProps>(
               value={value}
               onClick={handleClick}
               className={cn(
-                "p-0 pb-4 hover:text-content-loud",
+                "p-0 hover:text-content-loud",
+                !borderless && "pb-4",
                 "data-[state=active]:bg-transparent data-[state=active]:shadow-none dark:data-[state=active]:bg-transparent",
                 "[&_svg]:transition-colors [&[data-state=active]_svg]:text-brand-primary",
               )}

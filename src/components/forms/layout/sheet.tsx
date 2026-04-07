@@ -18,6 +18,7 @@ import * as Loading from "@/components/loading"
 interface FormsContentSheetProps<T extends FieldValues = FieldValues> {
   title: string
   onSubmit: (data: T) => void | Promise<void>
+  onClose?: () => void
   errorMessage?: string
   submitLabel?: string
   cancelLabel?: string
@@ -31,6 +32,7 @@ interface FormsContentSheetProps<T extends FieldValues = FieldValues> {
 export default function FormsContentSheet<T extends FieldValues = FieldValues>({
   title,
   onSubmit,
+  onClose,
   errorMessage,
   submitLabel = "Submit",
   cancelLabel = "Cancel",
@@ -49,6 +51,7 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
         try {
           await onSubmit(data as T)
           guard.close()
+          onClose?.()
         } catch (error) {
           if (errorMessage && error instanceof APIError) {
             await handleFormError({
@@ -111,7 +114,7 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
         <Button
           variant="outline"
           type="button"
-          onClick={() => guard.abandon()}
+          onClick={() => guard.abandon(onClose)}
           disabled={isPending}
           className="max-w-48 flex-1 basis-1/2"
         >

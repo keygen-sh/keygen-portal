@@ -11,7 +11,11 @@ import { toast } from "@/lib/toast"
 import * as Users from "@/components/users"
 import * as Forms from "@/components/forms"
 
-export default function EditProfileForm() {
+interface EditProfileFormProps {
+  onClose?: () => void
+}
+
+export default function EditProfileForm({ onClose }: EditProfileFormProps) {
   const { data: user, isLoading } = useGetCurrentUser()
   const updateUser = useUpdateCurrentUser()
 
@@ -42,6 +46,7 @@ export default function EditProfileForm() {
           errorMessage="Failed to update profile"
           isPending={isLoading}
           submitLabel="Update"
+          onClose={onClose}
           inline
         >
           <Forms.Section.Columns title="Profile">

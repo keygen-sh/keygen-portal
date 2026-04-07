@@ -11,7 +11,11 @@ import { toast } from "@/lib/toast"
 import * as Forms from "@/components/forms"
 import * as Account from "@/components/account"
 
-export default function EditAccountForm() {
+interface EditAccountFormProps {
+  onClose?: () => void
+}
+
+export default function EditAccountForm({ onClose }: EditAccountFormProps) {
   const { data: account, isLoading: accountLoading } = useGetAccount()
   const updateAccount = useUpdateAccount()
 
@@ -41,6 +45,7 @@ export default function EditAccountForm() {
           errorMessage="Failed to update account"
           isPending={accountLoading}
           submitLabel="Update"
+          onClose={onClose}
           inline
         >
           <Forms.Section.Columns title="Account Details">

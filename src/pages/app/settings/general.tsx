@@ -38,9 +38,9 @@ export default function General() {
       <PageHeader title="General" />
 
       <ScrollArea className="min-h-0 flex-1 overflow-y-auto">
-        <div className="flex flex-col items-center py-4 md:py-8">
-          <div className="grid grid-cols-1 gap-8 md:w-2/3 md:grid-cols-2">
-            <div className="flex flex-col space-y-2 md:min-w-lg">
+        <div className="flex flex-col items-center px-4 py-4 md:px-10 md:py-8">
+          <div className="grid w-full max-w-5xl grid-cols-1 gap-x-16 gap-y-8 md:grid-cols-[1fr_2fr]">
+            <div className="flex flex-col space-y-2">
               <h2 className="font-owners-wide text-lg text-content-loud">
                 Account
               </h2>
@@ -48,7 +48,7 @@ export default function General() {
                 Manage account settings and information.
               </p>
             </div>
-            <div className="overflow-hidden rounded bg-background-1 md:min-w-lg">
+            <div className="overflow-hidden rounded bg-background-1">
               {account && (
                 <Motion.Resize layoutKey={editingAccount ? "edit" : "view"}>
                   {editingAccount ? (
@@ -147,7 +147,7 @@ export default function General() {
                 Manage current user settings and information.
               </p>
             </div>
-            <div className="overflow-hidden rounded bg-background-1 md:min-w-lg">
+            <div className="overflow-hidden rounded bg-background-1">
               {user && (
                 <Motion.Resize layoutKey={editingProfile ? "edit" : "view"}>
                   {editingProfile ? (

@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { useCallback, type RefObject } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
@@ -11,7 +11,17 @@ import { toast } from "@/lib/toast"
 import * as Users from "@/components/users"
 import * as Forms from "@/components/forms"
 
-export default function ChangePasswordForm() {
+interface ChangePasswordFormProps {
+  onClose?: () => void
+  showCancel?: boolean
+  abandonRef?: RefObject<(() => void) | null>
+}
+
+export default function ChangePasswordForm({
+  onClose,
+  showCancel,
+  abandonRef,
+}: ChangePasswordFormProps) {
   const changePassword = useChangePassword()
 
   const form = useForm<Schemas.Users.PasswordValues>({
@@ -44,6 +54,10 @@ export default function ChangePasswordForm() {
           onSubmit={handleSubmit}
           errorMessage="Failed to change password"
           submitLabel="Change password"
+          onClose={onClose}
+          showCancel={showCancel}
+          abandonRef={abandonRef}
+          inline
         >
           <Forms.Section.Stacking>
             <Users.Form.Fields

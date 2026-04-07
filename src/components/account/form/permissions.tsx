@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { useCallback, type RefObject } from "react"
 import { useForm } from "react-hook-form"
 
 import * as Schemas from "@/schemas"
@@ -10,7 +10,17 @@ import { toast } from "@/lib/toast"
 import * as Forms from "@/components/forms"
 import * as Account from "@/components/account"
 
-export default function EditLicensePermissionsForm() {
+interface EditLicensePermissionsFormProps {
+  onClose?: () => void
+  showCancel?: boolean
+  abandonRef?: RefObject<(() => void) | null>
+}
+
+export default function EditLicensePermissionsForm({
+  onClose,
+  showCancel,
+  abandonRef,
+}: EditLicensePermissionsFormProps) {
   const { data: account, isLoading: accountLoading } = useGetAccountSettings()
   const updateAccount = useUpdateAccount()
 
@@ -45,11 +55,14 @@ export default function EditLicensePermissionsForm() {
     <Forms.Provider form={form}>
       <Forms.Container.Page>
         <Forms.Layout.Sheet
-          title="Default license permissions"
           onSubmit={handleSubmit}
           errorMessage="Failed to update license permissions"
           isPending={accountLoading}
           submitLabel="Save"
+          onClose={onClose}
+          showCancel={showCancel}
+          abandonRef={abandonRef}
+          inline
         >
           <Forms.Section.Stacking>
             <Account.Form.Fields

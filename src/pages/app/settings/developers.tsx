@@ -1,5 +1,5 @@
-import { useMemo, useCallback } from "react"
-import { useForm } from "react-hook-form"
+import { useMemo, useRef, useState } from "react"
+import { X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -7,94 +7,149 @@ import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsContent } from "@/components/ui/tabs"
 
-import { useGetAccount, useUpdateAccount } from "@/queries/accounts"
+import { useGetAccount } from "@/queries/accounts"
 
-import * as Schemas from "@/schemas"
+import {
+  AccountAttributeDescriptions,
+  AccountKeyDescriptions,
+} from "@/types/accounts"
 
-import { toast } from "@/lib/toast"
-
-import { AccountKeyDescriptions } from "@/types/accounts"
-
-import * as Forms from "@/components/forms"
+import * as Motion from "@/components/motion"
 import * as Account from "@/components/account"
+import * as Attribute from "@/components/attribute"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
-import SectionCard from "@/components/section-card"
 import TooltipBadge from "@/components/tooltip-badge"
 import ClipboardValue from "@/components/clipboard-value"
 
 export default function DevelopersPage() {
   const { data: account, isLoading: accountLoading } = useGetAccount()
-  const updateAccount = useUpdateAccount()
 
-  const form = useForm<Schemas.Account.DeveloperValues>({
-    mode: "onChange",
-    values: {
-      apiVersion: account?.attributes.apiVersion ?? "",
-      protected: account?.attributes.protected ?? false,
-    },
-  })
+  const [editingSettings, setEditingSettings] = useState(false)
 
-  const handleSubmit = useCallback(
-    async (values: Schemas.Account.DeveloperValues) => {
-      try {
-        await updateAccount.mutateAsync(values)
-        toast({ message: "Developer settings updated", variant: "success" })
-      } catch {
-        toast({
-          message: "Failed to update developer settings",
-          variant: "error",
-        })
-      }
-    },
-    [updateAccount],
-  )
+  const abandonSettingsRef = useRef<(() => void) | null>(null)
 
   return (
     <section className="flex h-screen flex-col">
       <PageHeader title="Developers" />
 
       <ScrollArea className="min-h-0 flex-1 overflow-y-auto">
-        <div className="space-y-6 px-4 py-6 md:px-10 md:py-8">
-          <SectionCard title="Developer Settings">
-            <Forms.Provider form={form}>
-              <Forms.Section.Stacking>
-                <Account.Form.Fields include={["apiVersion", "protected"]} />
-              </Forms.Section.Stacking>
-              <div className="pt-4">
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={form.handleSubmit(handleSubmit)}
-                  disabled={accountLoading || updateAccount.isPending}
-                >
-                  {updateAccount.isPending ? "Saving..." : "Save"}
-                </Button>
-              </div>
-            </Forms.Provider>
-          </SectionCard>
+        <div className="flex flex-col items-center px-4 py-4 md:px-10 md:py-8">
+          <div className="grid w-full max-w-5xl grid-cols-1 gap-x-16 gap-y-8 md:grid-cols-[1fr_2fr]">
+            <div className="flex flex-col space-y-2">
+              <h2 className="font-owners-wide text-lg text-content-loud">
+                Developer Settings
+              </h2>
+              <p className="font-owners-text text-sm text-content-muted">
+                Configure API version and account protection.
+              </p>
+            </div>
+            <div className="overflow-hidden rounded bg-background-1">
+              {account && (
+                <Motion.Resize layoutKey={editingSettings ? "edit" : "view"}>
+                  {editingSettings ? (
+                    <div className="flex flex-col">
+                      <div className="flex items-center justify-between border-b border-accent p-2">
+                        <h2 className="ml-2 text-sm text-content-muted">
+                          Editing developer settings
+                        </h2>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => abandonSettingsRef.current?.()}
+                        >
+                          <X className="size-3.5 text-content-muted" />
+                        </Button>
+                      </div>
+                      <Account.Form.Developer
+                        onClose={() => setEditingSettings(false)}
+                        showCancel={false}
+                        abandonRef={abandonSettingsRef}
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex flex-col">
+                      <div className="flex items-center justify-end border-b border-accent p-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setEditingSettings(true)}
+                          className="border-none bg-background-2"
+                        >
+                          Edit Settings
+                        </Button>
+                      </div>
+                      <div className="flex flex-col gap-4 p-4">
+                        <Attribute.Field
+                          label="API version"
+                          variant="none"
+                          value={
+                            <Attribute.Value
+                              type="raw"
+                              value={account.attributes.apiVersion}
+                              tooltip={AccountAttributeDescriptions.apiVersion}
+                            />
+                          }
+                        />
+                        <Attribute.Field
+                          label="Protected"
+                          variant="none"
+                          value={
+                            <Attribute.Value
+                              type="boolean"
+                              value={account.attributes.protected}
+                              tooltip={AccountAttributeDescriptions.protected}
+                            />
+                          }
+                        />
+                      </div>
+                    </div>
+                  )}
+                </Motion.Resize>
+              )}
+            </div>
 
-          <SectionCard title="Public Keys">
-            {accountLoading ? (
-              <div className="space-y-4">
-                <Skeleton className="h-20 w-full" />
-                <Skeleton className="h-20 w-full" />
-                <Skeleton className="h-20 w-full" />
+            <div className="flex flex-col space-y-2">
+              <h2 className="font-owners-wide text-lg text-content-loud">
+                Public Keys
+              </h2>
+              <div className="flex flex-col space-y-2 text-sm text-content-muted">
+                <p>
+                  You can use your public keys to verify certain license files,
+                  license keys, webhooks and API response signatures. Please
+                  note that formatting must be exact, newlines and all,
+                  especially for PEM encoded keys.
+                </p>
+                <p>
+                  Use the copy-to-clipboard buttons to ensure the entire public
+                  key is copied correctly.
+                </p>
               </div>
-            ) : account?.meta?.keys ? (
-              <div className="space-y-6">
-                <Ed25519KeyField base64Value={account.meta.keys.ed25519} />
-                <Separator />
-                <EcdsaKeyField base64Value={account.meta.keys.ecdsa} />
-                <Separator />
-                <RsaKeyField base64Value={account.meta.keys.rsa2048} />
+            </div>
+            <div className="overflow-hidden rounded bg-background-1">
+              <div className="p-4">
+                {accountLoading ? (
+                  <div className="space-y-4">
+                    <Skeleton className="h-20 w-full" />
+                    <Skeleton className="h-20 w-full" />
+                    <Skeleton className="h-20 w-full" />
+                  </div>
+                ) : account?.meta?.keys ? (
+                  <div className="space-y-6">
+                    <Ed25519KeyField base64Value={account.meta.keys.ed25519} />
+                    <Separator />
+                    <EcdsaKeyField base64Value={account.meta.keys.ecdsa} />
+                    <Separator />
+                    <RsaKeyField base64Value={account.meta.keys.rsa2048} />
+                  </div>
+                ) : (
+                  <span className="text-sm text-content-muted">
+                    No public keys available.
+                  </span>
+                )}
               </div>
-            ) : (
-              <span className="text-sm text-content-muted">
-                No public keys available.
-              </span>
-            )}
-          </SectionCard>
+            </div>
+          </div>
         </div>
       </ScrollArea>
     </section>

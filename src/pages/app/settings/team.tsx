@@ -1,5 +1,6 @@
 import { useState } from "react"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
@@ -7,6 +8,7 @@ import { useListUsers } from "@/queries/users"
 
 import { useDataTable } from "@/hooks/use-data-table"
 import { useTeamTableColumns } from "@/hooks/use-team-table-columns"
+import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { User } from "@/types/users"
 
@@ -26,13 +28,27 @@ export default function TeamPage() {
   } = useListUsers({ page: table.page, pageSize: table.pageSize })
 
   const totalPages = links?.meta?.pages ?? 1
+  const totalUsers = links?.meta?.count
+
+  const navigateToResource = useResourceNavigate()
 
   const [open, setOpen] = useState({ inviteTeammate: false })
 
   return (
     <section className="flex h-screen flex-col">
       <PageHeader>
-        <h1 className="flex-1 font-semibold text-content-muted">Team</h1>
+        <div className="flex-1">
+          <h1 className="font-semibold text-content-muted">Team</h1>
+          {totalUsers != null && (
+            <p className="text-xs text-content-subdued">
+              You currently have{" "}
+              <Badge className="mx-0.5 min-h-4 min-w-4 text-xs text-content-muted">
+                {totalUsers}
+              </Badge>{" "}
+              {totalUsers === 1 ? "teammate" : "teammates"}.
+            </p>
+          )}
+        </div>
         <Button size="sm" onClick={() => setOpen({ inviteTeammate: true })}>
           Invite Teammate
         </Button>
@@ -45,6 +61,7 @@ export default function TeamPage() {
           columns={columns}
           pageCount={totalPages}
           isLoading={usersLoading}
+          onRowClick={(user) => navigateToResource(user)}
         />
       </ScrollArea>
 

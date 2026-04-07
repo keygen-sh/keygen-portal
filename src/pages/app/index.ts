@@ -1,10 +1,4 @@
 export { default as Dashboard } from "./dashboard"
-export { default as General } from "./general"
-export { default as Team } from "./team"
-export { default as Security } from "./security"
-export { default as Permissions } from "./permissions"
-export { default as Developers } from "./developers"
-export { default as PublicKeys } from "./public-keys"
 export { default as Products } from "./products"
 export { default as Policies } from "./policies"
 export { default as Entitlements } from "./entitlements"
@@ -69,3 +63,6 @@ export { Channel }
 
 import * as Engine from "./engine"
 export { Engine }
+
+import * as Settings from "./settings"
+export { Settings }

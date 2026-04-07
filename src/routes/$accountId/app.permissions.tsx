@@ -3,5 +3,5 @@ import { createFileRoute } from "@tanstack/react-router"
 import * as Page from "@/pages/index"
 
 export const Route = createFileRoute("/$accountId/app/permissions")({
-  component: () => <Page.App.Permissions />,
+  component: () => <Page.App.Settings.Permissions />,
 })

@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { useCallback, type RefObject } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
@@ -13,9 +13,15 @@ import * as Forms from "@/components/forms"
 
 interface EditProfileFormProps {
   onClose?: () => void
+  showCancel?: boolean
+  abandonRef?: RefObject<(() => void) | null>
 }
 
-export default function EditProfileForm({ onClose }: EditProfileFormProps) {
+export default function EditProfileForm({
+  onClose,
+  showCancel,
+  abandonRef,
+}: EditProfileFormProps) {
   const { data: user, isLoading } = useGetCurrentUser()
   const updateUser = useUpdateCurrentUser()
 
@@ -41,23 +47,22 @@ export default function EditProfileForm({ onClose }: EditProfileFormProps) {
     <Forms.Provider form={form}>
       <Forms.Container.Page>
         <Forms.Layout.Sheet
-          title="Edit profile"
           onSubmit={handleSubmit}
           errorMessage="Failed to update profile"
           isPending={isLoading}
           submitLabel="Update"
           onClose={onClose}
+          showCancel={showCancel}
+          abandonRef={abandonRef}
           inline
         >
-          <Forms.Section.Columns title="Profile">
-            <Forms.Section.Column>
-              <Users.Form.Fields
-                schema="edit"
-                include={["email", "firstName", "lastName"]}
-                fieldVariant="stacking"
-              />
-            </Forms.Section.Column>
-          </Forms.Section.Columns>
+          <div className="space-y-4">
+            <Users.Form.Fields
+              schema="edit"
+              include={["email", "firstName", "lastName"]}
+              fieldVariant="stacking"
+            />
+          </div>
         </Forms.Layout.Sheet>
       </Forms.Container.Page>
     </Forms.Provider>

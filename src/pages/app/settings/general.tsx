@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { SquarePen, X } from "lucide-react"
+import { useRef, useState } from "react"
+import { X } from "lucide-react"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
@@ -30,6 +30,9 @@ export default function General() {
   const [editingAccount, setEditingAccount] = useState(false)
   const [editingProfile, setEditingProfile] = useState(false)
 
+  const abandonAccountRef = useRef<(() => void) | null>(null)
+  const abandonProfileRef = useRef<(() => void) | null>(null)
+
   return (
     <section className="flex h-screen flex-col">
       <PageHeader title="General" />
@@ -57,7 +60,7 @@ export default function General() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setEditingAccount(false)}
+                          onClick={() => abandonAccountRef.current?.()}
                         >
                           <X className="size-3.5 text-content-muted" />
                         </Button>
@@ -78,6 +81,8 @@ export default function General() {
                       </div>
                       <Account.Form.Edit
                         onClose={() => setEditingAccount(false)}
+                        showCancel={false}
+                        abandonRef={abandonAccountRef}
                       />
                     </div>
                   ) : (
@@ -142,57 +147,75 @@ export default function General() {
                 Manage current user settings and information.
               </p>
             </div>
-            <div className="overflow-hidden rounded bg-background-1 p-4 md:min-w-lg">
+            <div className="overflow-hidden rounded bg-background-1 md:min-w-lg">
               {user && (
                 <Motion.Resize layoutKey={editingProfile ? "edit" : "view"}>
                   {editingProfile ? (
-                    <Users.Form.Profile
-                      onClose={() => setEditingProfile(false)}
-                    />
+                    <div className="flex flex-col">
+                      <div className="flex items-center justify-between border-b border-accent p-2">
+                        <h2 className="ml-2 text-sm text-content-muted">
+                          Editing profile
+                        </h2>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => abandonProfileRef.current?.()}
+                        >
+                          <X className="size-3.5 text-content-muted" />
+                        </Button>
+                      </div>
+                      <Users.Form.Profile
+                        onClose={() => setEditingProfile(false)}
+                        showCancel={false}
+                        abandonRef={abandonProfileRef}
+                      />
+                    </div>
                   ) : (
-                    <div className="flex flex-col gap-4">
-                      <Attribute.Field
-                        label="Email"
-                        variant="none"
-                        value={
-                          <Attribute.Value
-                            type="raw"
-                            value={user.attributes.email}
-                            tooltip={UserAttributeDescriptions.email}
-                          />
-                        }
-                      />
-                      <Attribute.Field
-                        label="First name"
-                        variant="none"
-                        value={
-                          <Attribute.Value
-                            type="string"
-                            value={user.attributes.firstName ?? "--"}
-                            tooltip={UserAttributeDescriptions.firstName}
-                          />
-                        }
-                      />
-                      <Attribute.Field
-                        label="Last name"
-                        variant="none"
-                        value={
-                          <Attribute.Value
-                            type="string"
-                            value={user.attributes.lastName ?? "--"}
-                            tooltip={UserAttributeDescriptions.lastName}
-                          />
-                        }
-                      />
-                      <div className="flex justify-end">
+                    <div className="flex flex-col">
+                      <div className="flex items-center justify-end border-b border-accent p-2">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setEditingProfile(true)}
+                          className="border-none bg-background-2"
                         >
-                          <SquarePen className="mr-1.5 size-3.5" />
-                          Edit
+                          Edit Profile
                         </Button>
+                      </div>
+                      <div className="flex flex-col gap-4 p-4">
+                        <Attribute.Field
+                          label="Email"
+                          variant="none"
+                          value={
+                            <Attribute.Value
+                              type="raw"
+                              value={user.attributes.email}
+                              tooltip={UserAttributeDescriptions.email}
+                            />
+                          }
+                        />
+                        <Attribute.Field
+                          label="First name"
+                          variant="none"
+                          value={
+                            <Attribute.Value
+                              type="string"
+                              value={user.attributes.firstName ?? "--"}
+                              tooltip={UserAttributeDescriptions.firstName}
+                            />
+                          }
+                        />
+                        <Attribute.Field
+                          label="Last name"
+                          variant="none"
+                          value={
+                            <Attribute.Value
+                              type="string"
+                              value={user.attributes.lastName ?? "--"}
+                              tooltip={UserAttributeDescriptions.lastName}
+                            />
+                          }
+                        />
                       </div>
                     </div>
                   )}

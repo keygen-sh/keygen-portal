@@ -1,4 +1,4 @@
-import { useCallback, type RefObject } from "react"
+import { useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
@@ -12,15 +12,13 @@ import * as Users from "@/components/users"
 import * as Forms from "@/components/forms"
 
 interface ChangePasswordFormProps {
+  title?: string
   onClose?: () => void
-  showCancel?: boolean
-  abandonRef?: RefObject<(() => void) | null>
 }
 
 export default function ChangePasswordForm({
+  title,
   onClose,
-  showCancel,
-  abandonRef,
 }: ChangePasswordFormProps) {
   const changePassword = useChangePassword()
 
@@ -50,13 +48,11 @@ export default function ChangePasswordForm({
     <Forms.Provider form={form}>
       <Forms.Container.Page>
         <Forms.Layout.Sheet
-          title="Change password"
+          title={title}
           onSubmit={handleSubmit}
           errorMessage="Failed to change password"
           submitLabel="Change password"
           onClose={onClose}
-          showCancel={showCancel}
-          abandonRef={abandonRef}
           inline
         >
           <Forms.Section.Stacking>

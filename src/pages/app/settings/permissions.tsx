@@ -1,5 +1,4 @@
-import { useRef, useState } from "react"
-import { X } from "lucide-react"
+import { useState } from "react"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
@@ -18,8 +17,6 @@ export default function PermissionsPage() {
   const { data: settings } = useGetAccountSettings()
 
   const [editingPermissions, setEditingPermissions] = useState(false)
-
-  const abandonPermissionsRef = useRef<(() => void) | null>(null)
 
   const defaultLicensePermissions =
     settings?.find((s) => s.attributes.key === "default_license_permissions")
@@ -46,25 +43,10 @@ export default function PermissionsPage() {
             <div className="overflow-hidden rounded bg-background-1">
               <Motion.Resize layoutKey={editingPermissions ? "edit" : "view"}>
                 {editingPermissions ? (
-                  <div className="flex flex-col">
-                    <div className="flex items-center justify-between border-b border-accent p-2">
-                      <h2 className="ml-2 text-sm text-content-muted">
-                        Editing permissions
-                      </h2>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => abandonPermissionsRef.current?.()}
-                      >
-                        <X className="size-3.5 text-content-muted" />
-                      </Button>
-                    </div>
-                    <Account.Form.Permissions
-                      onClose={() => setEditingPermissions(false)}
-                      showCancel={false}
-                      abandonRef={abandonPermissionsRef}
-                    />
-                  </div>
+                  <Account.Form.Permissions
+                    title="Editing permissions"
+                    onClose={() => setEditingPermissions(false)}
+                  />
                 ) : (
                   <div className="flex flex-col">
                     <div className="flex items-center justify-end border-b border-accent p-2">

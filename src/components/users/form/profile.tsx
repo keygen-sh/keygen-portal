@@ -1,4 +1,4 @@
-import { useCallback, type RefObject } from "react"
+import { useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
@@ -12,15 +12,13 @@ import * as Users from "@/components/users"
 import * as Forms from "@/components/forms"
 
 interface EditProfileFormProps {
+  title?: string
   onClose?: () => void
-  showCancel?: boolean
-  abandonRef?: RefObject<(() => void) | null>
 }
 
 export default function EditProfileForm({
+  title,
   onClose,
-  showCancel,
-  abandonRef,
 }: EditProfileFormProps) {
   const { data: user, isLoading } = useGetCurrentUser()
   const updateUser = useUpdateCurrentUser()
@@ -47,13 +45,12 @@ export default function EditProfileForm({
     <Forms.Provider form={form}>
       <Forms.Container.Page>
         <Forms.Layout.Sheet
+          title={title}
           onSubmit={handleSubmit}
           errorMessage="Failed to update profile"
           isPending={isLoading}
           submitLabel="Update"
           onClose={onClose}
-          showCancel={showCancel}
-          abandonRef={abandonRef}
           inline
         >
           <div className="space-y-4">

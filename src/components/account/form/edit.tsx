@@ -1,4 +1,4 @@
-import { useCallback, type RefObject } from "react"
+import { useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
@@ -12,15 +12,13 @@ import * as Forms from "@/components/forms"
 import * as Account from "@/components/account"
 
 interface EditAccountFormProps {
+  title?: string
   onClose?: () => void
-  showCancel?: boolean
-  abandonRef?: RefObject<(() => void) | null>
 }
 
 export default function EditAccountForm({
+  title,
   onClose,
-  showCancel,
-  abandonRef,
 }: EditAccountFormProps) {
   const { data: account, isLoading: accountLoading } = useGetAccount()
   const updateAccount = useUpdateAccount()
@@ -46,13 +44,12 @@ export default function EditAccountForm({
     <Forms.Provider form={form}>
       <Forms.Container.Page>
         <Forms.Layout.Sheet
+          title={title}
           onSubmit={handleSubmit}
           errorMessage="Failed to update account"
           isPending={accountLoading}
           submitLabel="Update"
           onClose={onClose}
-          showCancel={showCancel}
-          abandonRef={abandonRef}
           inline
         >
           <div className="space-y-4">

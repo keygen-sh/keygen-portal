@@ -1,4 +1,4 @@
-import { useCallback, type RefObject } from "react"
+import { useCallback } from "react"
 import { useForm } from "react-hook-form"
 
 import * as Schemas from "@/schemas"
@@ -11,16 +11,11 @@ import * as Forms from "@/components/forms"
 import * as Account from "@/components/account"
 
 interface DeveloperFormProps {
+  title?: string
   onClose?: () => void
-  showCancel?: boolean
-  abandonRef?: RefObject<(() => void) | null>
 }
 
-export default function DeveloperForm({
-  onClose,
-  showCancel,
-  abandonRef,
-}: DeveloperFormProps) {
+export default function DeveloperForm({ title, onClose }: DeveloperFormProps) {
   const { data: account, isLoading: accountLoading } = useGetAccount()
   const updateAccount = useUpdateAccount()
 
@@ -44,13 +39,12 @@ export default function DeveloperForm({
     <Forms.Provider form={form}>
       <Forms.Container.Page>
         <Forms.Layout.Sheet
+          title={title}
           onSubmit={handleSubmit}
           errorMessage="Failed to update developer settings"
           isPending={accountLoading}
           submitLabel="Save"
           onClose={onClose}
-          showCancel={showCancel}
-          abandonRef={abandonRef}
           inline
         >
           <div className="space-y-4">

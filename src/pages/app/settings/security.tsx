@@ -1,5 +1,4 @@
-import { useRef, useState } from "react"
-import { X } from "lucide-react"
+import { useState } from "react"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
@@ -10,8 +9,6 @@ import PageHeader from "@/components/page-header"
 
 export default function SecurityPage() {
   const [editingPassword, setEditingPassword] = useState(false)
-
-  const abandonPasswordRef = useRef<(() => void) | null>(null)
 
   return (
     <section className="flex h-screen flex-col">
@@ -31,25 +28,10 @@ export default function SecurityPage() {
             <div className="overflow-hidden rounded bg-background-1">
               <Motion.Resize layoutKey={editingPassword ? "edit" : "view"}>
                 {editingPassword ? (
-                  <div className="flex flex-col">
-                    <div className="flex items-center justify-between border-b border-accent p-2">
-                      <h2 className="ml-2 text-sm text-content-muted">
-                        Change password
-                      </h2>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => abandonPasswordRef.current?.()}
-                      >
-                        <X className="size-3.5 text-content-muted" />
-                      </Button>
-                    </div>
-                    <Users.Form.Password
-                      onClose={() => setEditingPassword(false)}
-                      showCancel={false}
-                      abandonRef={abandonPasswordRef}
-                    />
-                  </div>
+                  <Users.Form.Password
+                    title="Change password"
+                    onClose={() => setEditingPassword(false)}
+                  />
                 ) : (
                   <div className="flex flex-col">
                     <div className="flex items-center justify-end border-b border-accent p-2">

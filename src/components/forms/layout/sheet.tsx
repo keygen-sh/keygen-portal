@@ -1,5 +1,6 @@
-import { useCallback, useEffect, type RefObject } from "react"
+import { useCallback } from "react"
 import { useFormContext, type FieldValues } from "react-hook-form"
+import { X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -23,7 +24,6 @@ interface FormsContentSheetProps<T extends FieldValues = FieldValues> {
   submitLabel?: string
   cancelLabel?: string
   showCancel?: boolean
-  abandonRef?: RefObject<(() => void) | null>
   isPending?: boolean
   fullscreen?: boolean
   inline?: boolean
@@ -38,8 +38,7 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
   errorMessage,
   submitLabel = "Submit",
   cancelLabel = "Cancel",
-  showCancel = true,
-  abandonRef,
+  showCancel,
   isPending = false,
   fullscreen = false,
   inline = false,
@@ -78,14 +77,6 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
     guard.abandon(onClose)
   }, [guard, onClose])
 
-  useEffect(() => {
-    if (!abandonRef) return
-    abandonRef.current = handleAbandon
-    return () => {
-      abandonRef.current = null
-    }
-  }, [abandonRef, handleAbandon])
-
   const handleSubmit = useCallback(async () => {
     try {
       await submitOnce()
@@ -93,6 +84,9 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
       resetSubmitOnce()
     }
   }, [submitOnce, resetSubmitOnce])
+
+  const showClose = inline && !!onClose
+  const resolvedShowCancel = showCancel ?? !showClose
 
   return (
     <div
@@ -106,9 +100,33 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
             ),
       )}
     >
-      {title && (
-        <div className="flex items-center border-b border-accent p-3">
-          <h2 className="text-sm text-content-normal">{title}</h2>
+      {(title || showClose) && (
+        <div
+          className={cn(
+            "flex items-center border-b border-accent",
+            showClose ? "justify-between p-2" : "p-3",
+          )}
+        >
+          {title && (
+            <h2
+              className={cn(
+                "text-sm",
+                showClose ? "ml-2 text-content-muted" : "text-content-normal",
+              )}
+            >
+              {title}
+            </h2>
+          )}
+          {showClose && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleAbandon}
+              className="ml-auto"
+            >
+              <X className="size-3.5 text-content-muted" />
+            </Button>
+          )}
         </div>
       )}
 
@@ -129,7 +147,7 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
       </ScrollArea>
 
       <div className="flex items-center gap-4 border-t border-accent p-3 md:justify-end">
-        {showCancel && (
+        {resolvedShowCancel && (
           <Button
             variant="outline"
             type="button"

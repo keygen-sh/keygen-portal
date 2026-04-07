@@ -1,5 +1,4 @@
-import { useMemo, useRef, useState } from "react"
-import { X } from "lucide-react"
+import { useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -27,8 +26,6 @@ export default function DevelopersPage() {
 
   const [editingSettings, setEditingSettings] = useState(false)
 
-  const abandonSettingsRef = useRef<(() => void) | null>(null)
-
   return (
     <section className="flex h-screen flex-col">
       <PageHeader title="Developers" />
@@ -48,25 +45,10 @@ export default function DevelopersPage() {
               {account && (
                 <Motion.Resize layoutKey={editingSettings ? "edit" : "view"}>
                   {editingSettings ? (
-                    <div className="flex flex-col">
-                      <div className="flex items-center justify-between border-b border-accent p-2">
-                        <h2 className="ml-2 text-sm text-content-muted">
-                          Editing developer settings
-                        </h2>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => abandonSettingsRef.current?.()}
-                        >
-                          <X className="size-3.5 text-content-muted" />
-                        </Button>
-                      </div>
-                      <Account.Form.Developer
-                        onClose={() => setEditingSettings(false)}
-                        showCancel={false}
-                        abandonRef={abandonSettingsRef}
-                      />
-                    </div>
+                    <Account.Form.Developer
+                      title="Editing developer settings"
+                      onClose={() => setEditingSettings(false)}
+                    />
                   ) : (
                     <div className="flex flex-col">
                       <div className="flex items-center justify-end border-b border-accent p-2">

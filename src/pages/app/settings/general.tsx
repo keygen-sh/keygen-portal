@@ -1,5 +1,4 @@
-import { useRef, useState } from "react"
-import { X } from "lucide-react"
+import { useState } from "react"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
@@ -30,9 +29,6 @@ export default function General() {
   const [editingAccount, setEditingAccount] = useState(false)
   const [editingProfile, setEditingProfile] = useState(false)
 
-  const abandonAccountRef = useRef<(() => void) | null>(null)
-  const abandonProfileRef = useRef<(() => void) | null>(null)
-
   return (
     <section className="flex h-screen flex-col">
       <PageHeader title="General" />
@@ -52,39 +48,10 @@ export default function General() {
               {account && (
                 <Motion.Resize layoutKey={editingAccount ? "edit" : "view"}>
                   {editingAccount ? (
-                    <div className="flex flex-col">
-                      <div className="flex items-center justify-between border-b border-accent p-2">
-                        <h2 className="ml-2 text-sm text-content-muted">
-                          Editing account
-                        </h2>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => abandonAccountRef.current?.()}
-                        >
-                          <X className="size-3.5 text-content-muted" />
-                        </Button>
-                      </div>
-                      <div className="border-b border-accent p-4">
-                        <Attribute.Field
-                          label="ID"
-                          variant="none"
-                          value={
-                            <ClipboardButton
-                              value={account.id}
-                              truncate={isMobile}
-                              onClick={() => copyToClipboard(account.id)}
-                              className="w-fit text-sm"
-                            />
-                          }
-                        />
-                      </div>
-                      <Account.Form.Edit
-                        onClose={() => setEditingAccount(false)}
-                        showCancel={false}
-                        abandonRef={abandonAccountRef}
-                      />
-                    </div>
+                    <Account.Form.Edit
+                      title="Editing account"
+                      onClose={() => setEditingAccount(false)}
+                    />
                   ) : (
                     <div className="flex flex-col">
                       <div className="flex items-center justify-end border-b border-accent p-2">
@@ -151,25 +118,10 @@ export default function General() {
               {user && (
                 <Motion.Resize layoutKey={editingProfile ? "edit" : "view"}>
                   {editingProfile ? (
-                    <div className="flex flex-col">
-                      <div className="flex items-center justify-between border-b border-accent p-2">
-                        <h2 className="ml-2 text-sm text-content-muted">
-                          Editing profile
-                        </h2>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => abandonProfileRef.current?.()}
-                        >
-                          <X className="size-3.5 text-content-muted" />
-                        </Button>
-                      </div>
-                      <Users.Form.Profile
-                        onClose={() => setEditingProfile(false)}
-                        showCancel={false}
-                        abandonRef={abandonProfileRef}
-                      />
-                    </div>
+                    <Users.Form.Profile
+                      title="Editing profile"
+                      onClose={() => setEditingProfile(false)}
+                    />
                   ) : (
                     <div className="flex flex-col">
                       <div className="flex items-center justify-end border-b border-accent p-2">

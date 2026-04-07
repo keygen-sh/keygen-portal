@@ -5,7 +5,7 @@ import { Writable } from "@/types/utility"
 import { CombineFormValues } from "@/types/forms"
 import { AccountAttributes } from "@/types/accounts"
 
-export type BaseValues = {}
+export type BaseValues = Record<string, unknown>
 export type UpdateValues = Writable<Pick<AccountAttributes, "name" | "slug">>
 export type DeveloperValues = Writable<
   Pick<AccountAttributes, "apiVersion" | "protected">

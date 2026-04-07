@@ -1,8 +1,6 @@
 import { useMemo } from "react"
 
-import { Badge } from "@/components/ui/badge"
-
-import { User, UserRoleLabels } from "@/types/users"
+import { User } from "@/types/users"
 
 import { createTableColumnHelper } from "@/lib/tables"
 

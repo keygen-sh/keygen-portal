@@ -42,6 +42,7 @@ export default function EditProfileForm() {
           errorMessage="Failed to update profile"
           isPending={isLoading}
           submitLabel="Update"
+          inline
         >
           <Forms.Section.Columns title="Profile">
             <Forms.Section.Column>

@@ -23,6 +23,7 @@ interface FormsContentSheetProps<T extends FieldValues = FieldValues> {
   cancelLabel?: string
   isPending?: boolean
   fullscreen?: boolean
+  inline?: boolean
   children: React.ReactNode
   className?: string
 }
@@ -35,6 +36,7 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
   cancelLabel = "Cancel",
   isPending = false,
   fullscreen = false,
+  inline = false,
   children,
   className,
 }: FormsContentSheetProps<T>) {
@@ -76,8 +78,13 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
   return (
     <div
       className={cn(
-        "flex h-[calc(100vh-2rem)] flex-col md:min-w-3xl",
-        !fullscreen && "md:h-auto md:min-h-[50vh]",
+        "flex flex-col",
+        inline
+          ? "h-auto"
+          : cn(
+              "h-[calc(100vh-2rem)] md:min-w-3xl",
+              !fullscreen && "md:h-auto md:min-h-[50vh]",
+            ),
       )}
     >
       <div className="flex items-center border-b border-accent p-3">
@@ -86,8 +93,12 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
 
       <ScrollArea
         className={cn(
-          "min-h-[calc(100vh-6.5rem)]",
-          !fullscreen && "md:h-[50vh] md:min-h-auto",
+          inline
+            ? "h-auto"
+            : cn(
+                "min-h-[calc(100vh-6.5rem)]",
+                !fullscreen && "md:h-[50vh] md:min-h-auto",
+              ),
           className,
         )}
       >

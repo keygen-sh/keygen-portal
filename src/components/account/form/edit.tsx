@@ -41,7 +41,7 @@ export default function EditAccountForm() {
           errorMessage="Failed to update account"
           isPending={accountLoading}
           submitLabel="Update"
-          className="h-fit!"
+          inline
         >
           <Forms.Section.Columns title="Account Details">
             <Forms.Section.Column>

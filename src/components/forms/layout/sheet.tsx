@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { useCallback, useEffect, type RefObject } from "react"
 import { useFormContext, type FieldValues } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
@@ -22,6 +22,8 @@ interface FormsContentSheetProps<T extends FieldValues = FieldValues> {
   errorMessage?: string
   submitLabel?: string
   cancelLabel?: string
+  showCancel?: boolean
+  abandonRef?: RefObject<(() => void) | null>
   isPending?: boolean
   fullscreen?: boolean
   inline?: boolean
@@ -36,6 +38,8 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
   errorMessage,
   submitLabel = "Submit",
   cancelLabel = "Cancel",
+  showCancel = true,
+  abandonRef,
   isPending = false,
   fullscreen = false,
   inline = false,
@@ -69,6 +73,18 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
       },
     )()
   })
+
+  const handleAbandon = useCallback(() => {
+    guard.abandon(onClose)
+  }, [guard, onClose])
+
+  useEffect(() => {
+    if (!abandonRef) return
+    abandonRef.current = handleAbandon
+    return () => {
+      abandonRef.current = null
+    }
+  }, [abandonRef, handleAbandon])
 
   const handleSubmit = useCallback(async () => {
     try {
@@ -113,15 +129,17 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
       </ScrollArea>
 
       <div className="flex items-center gap-4 border-t border-accent p-3 md:justify-end">
-        <Button
-          variant="outline"
-          type="button"
-          onClick={() => guard.abandon(onClose)}
-          disabled={isPending}
-          className="max-w-48 flex-1 basis-1/2"
-        >
-          {cancelLabel}
-        </Button>
+        {showCancel && (
+          <Button
+            variant="outline"
+            type="button"
+            onClick={handleAbandon}
+            disabled={isPending}
+            className="max-w-48 flex-1 basis-1/2"
+          >
+            {cancelLabel}
+          </Button>
+        )}
         <Button
           type="button"
           onClick={handleSubmit}

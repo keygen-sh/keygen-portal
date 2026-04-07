@@ -40,7 +40,6 @@ export default function EditAccountForm({ onClose }: EditAccountFormProps) {
     <Forms.Provider form={form}>
       <Forms.Container.Page>
         <Forms.Layout.Sheet
-          title="Edit account"
           onSubmit={handleSubmit}
           errorMessage="Failed to update account"
           isPending={accountLoading}
@@ -48,14 +47,12 @@ export default function EditAccountForm({ onClose }: EditAccountFormProps) {
           onClose={onClose}
           inline
         >
-          <Forms.Section.Columns title="Account Details">
-            <Forms.Section.Column>
-              <Account.Form.Fields
-                include={["name", "slug"]}
-                fieldVariant="stacking"
-              />
-            </Forms.Section.Column>
-          </Forms.Section.Columns>
+          <div className="space-y-4">
+            <Account.Form.Fields
+              include={["name", "slug"]}
+              fieldVariant="stacking"
+            />
+          </div>
         </Forms.Layout.Sheet>
       </Forms.Container.Page>
     </Forms.Provider>

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { SquarePen } from "lucide-react"
+import { SquarePen, X } from "lucide-react"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
@@ -49,22 +49,50 @@ export default function General() {
               {account && (
                 <Motion.Resize layoutKey={editingAccount ? "edit" : "view"}>
                   {editingAccount ? (
-                    <Account.Form.Edit
-                      onClose={() => setEditingAccount(false)}
-                    />
-                  ) : (
                     <div className="flex flex-col">
-                      <div className="flex justify-end p-2">
+                      <div className="flex items-center justify-between border-b border-accent p-2">
+                        <h2 className="ml-2 text-sm text-content-muted">
+                          Editing account
+                        </h2>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setEditingAccount(true)}
-                          className="group"
+                          onClick={() => setEditingAccount(false)}
                         >
-                          <SquarePen className="size-3.5 text-content-muted transition-colors duration-300 group-hover:text-content-loud" />
+                          <X className="size-3.5 text-content-muted" />
                         </Button>
                       </div>
-                      <div className="flex flex-col gap-4 px-8 pb-4">
+                      <div className="border-b border-accent p-4">
+                        <Attribute.Field
+                          label="ID"
+                          variant="none"
+                          value={
+                            <ClipboardButton
+                              value={account.id}
+                              truncate={isMobile}
+                              onClick={() => copyToClipboard(account.id)}
+                              className="w-fit text-sm"
+                            />
+                          }
+                        />
+                      </div>
+                      <Account.Form.Edit
+                        onClose={() => setEditingAccount(false)}
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex flex-col">
+                      <div className="flex items-center justify-end border-b border-accent p-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setEditingAccount(true)}
+                          className="border-none bg-background-2"
+                        >
+                          Edit Account
+                        </Button>
+                      </div>
+                      <div className="flex flex-col gap-4 p-4">
                         <Attribute.Field
                           label="ID"
                           variant="none"

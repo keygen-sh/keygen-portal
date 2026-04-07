@@ -16,7 +16,7 @@ import { useFormGuardContext } from "@/contexts/form-guard-context"
 import * as Loading from "@/components/loading"
 
 interface FormsContentSheetProps<T extends FieldValues = FieldValues> {
-  title: string
+  title?: string
   onSubmit: (data: T) => void | Promise<void>
   onClose?: () => void
   errorMessage?: string
@@ -90,9 +90,11 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
             ),
       )}
     >
-      <div className="flex items-center border-b border-accent p-3">
-        <h2 className="text-sm text-content-normal">{title}</h2>
-      </div>
+      {title && (
+        <div className="flex items-center border-b border-accent p-3">
+          <h2 className="text-sm text-content-normal">{title}</h2>
+        </div>
+      )}
 
       <ScrollArea
         className={cn(

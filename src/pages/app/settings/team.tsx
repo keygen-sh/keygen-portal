@@ -2,8 +2,10 @@ import { useState } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+import { useGetAccount, useGetAccountPlan } from "@/queries/accounts"
 import { useListUsers } from "@/queries/users"
 
 import { useDataTable } from "@/hooks/use-data-table"
@@ -27,8 +29,16 @@ export default function TeamPage() {
     isLoading: usersLoading,
   } = useListUsers({ page: table.page, pageSize: table.pageSize })
 
+  const { data: account } = useGetAccount()
+  const { data: plan } = useGetAccountPlan(
+    account?.relationships.plan?.data?.id,
+  )
+
   const totalPages = links?.meta?.pages ?? 1
   const totalUsers = links?.meta?.count
+
+  const maxAdmins = plan?.attributes.maxAdmins
+  const planName = plan?.attributes.name
 
   const navigateToResource = useResourceNavigate()
 
@@ -37,15 +47,30 @@ export default function TeamPage() {
   return (
     <section className="flex h-screen flex-col">
       <PageHeader>
-        <div className="flex-1">
+        <div className="flex w-full items-center gap-3">
           <h1 className="font-semibold text-content-muted">Team</h1>
+          <Separator orientation="vertical" className="mt-0.5 ml-1 min-h-4" />
           {totalUsers != null && (
-            <p className="text-xs text-content-subdued">
-              You currently have{" "}
-              <Badge className="mx-0.5 min-h-4 min-w-4 text-xs text-content-muted">
+            <p className="mt-0.25 text-xs text-content-subdued">
+              You currently have
+              <Badge className="mx-1 min-h-4 min-w-4 text-xs text-content-muted">
                 {totalUsers}
-              </Badge>{" "}
+              </Badge>
               {totalUsers === 1 ? "teammate" : "teammates"}.
+              {plan && (
+                <>
+                  {" "}
+                  Invite up to
+                  <Badge className="mx-1 min-h-4 min-w-4 text-xs text-content-muted">
+                    {maxAdmins ?? "Unlimited"}
+                  </Badge>
+                  while on the
+                  <Badge className="mx-1 min-h-4 min-w-4 text-xs text-content-muted">
+                    {planName}
+                  </Badge>
+                  plan.
+                </>
+              )}
             </p>
           )}
         </div>

@@ -23,6 +23,22 @@ export function useGetAccount() {
   })
 }
 
+export function useGetAccountPlan(planId?: string) {
+  return useQuery({
+    queryKey: ["account", "plan", planId],
+    queryFn: async () => {
+      const response = await keygen.accounts.plan(planId!)
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response.data
+    },
+    enabled: !!planId,
+  })
+}
+
 export function useGetAccountSettings() {
   return useQuery({
     queryKey: ["account", "settings"],

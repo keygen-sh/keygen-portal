@@ -21,7 +21,7 @@ export async function authenticate({
 
   const body = otp != null ? JSON.stringify({ meta: { otp } }) : undefined
 
-  const result = (await client.request("/tokens", {
+  const result = (await client.request(`/accounts/${config.id}/tokens`, {
     method: "POST",
     headers: { Authorization: `Basic ${credentials}` },
     body,

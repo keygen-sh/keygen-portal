@@ -54,7 +54,7 @@ export function useUpdateAccount() {
       return updateResponse.data
     },
 
-    onSuccess: async (updated) => {
+    onSuccess: (updated) => {
       queryClient.setQueryData(["account"], updated)
     },
   })

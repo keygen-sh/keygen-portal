@@ -1,0 +1,108 @@
+import { useState } from "react"
+
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Button } from "@/components/ui/button"
+
+import { useGetAccount } from "@/queries/accounts"
+
+import { useMobile } from "@/hooks/use-mobile"
+
+import { AccountAttributeDescriptions } from "@/types/accounts"
+
+import { copyToClipboard } from "@/lib/clipboard"
+
+import * as Motion from "@/components/motion"
+import * as Account from "@/components/account"
+import * as Attribute from "@/components/attribute"
+import PageHeader from "@/components/page-header"
+import ClipboardButton from "@/components/clipboard-button"
+
+export default function General() {
+  const isMobile = useMobile()
+
+  const { data: account } = useGetAccount()
+
+  const [editingAccount, setEditingAccount] = useState(false)
+
+  return (
+    <section className="flex h-screen flex-col">
+      <PageHeader title="General" />
+
+      <ScrollArea className="min-h-0 flex-1 overflow-y-auto">
+        <div className="flex flex-col items-center px-4 py-4 md:px-10 md:py-8">
+          <div className="grid w-full max-w-5xl grid-cols-1 gap-x-16 gap-y-8 md:grid-cols-[1fr_2fr]">
+            <div className="flex flex-col space-y-2">
+              <h2 className="font-owners-wide text-lg text-content-loud">
+                Account
+              </h2>
+              <p className="font-owners-text text-sm text-content-muted">
+                Manage account settings and information.
+              </p>
+            </div>
+            <div className="overflow-hidden rounded bg-background-1">
+              {account && (
+                <Motion.Resize layoutKey={editingAccount ? "edit" : "view"}>
+                  {editingAccount ? (
+                    <Account.Form.Edit
+                      title="Editing account"
+                      onClose={() => setEditingAccount(false)}
+                    />
+                  ) : (
+                    <div className="flex flex-col">
+                      <div className="flex items-center justify-end border-b border-accent p-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setEditingAccount(true)}
+                          className="border-none bg-background-2"
+                        >
+                          Edit Account
+                        </Button>
+                      </div>
+                      <div className="flex flex-col gap-4 p-4">
+                        <Attribute.Field
+                          label="ID"
+                          variant="none"
+                          value={
+                            <ClipboardButton
+                              value={account.id}
+                              truncate={isMobile}
+                              onClick={() => copyToClipboard(account.id)}
+                              className="w-fit text-sm"
+                            />
+                          }
+                        />
+                        <Attribute.Field
+                          label="Name"
+                          variant="none"
+                          value={
+                            <Attribute.Value
+                              type="raw"
+                              value={account.attributes.name}
+                              tooltip={AccountAttributeDescriptions.name}
+                            />
+                          }
+                        />
+                        <Attribute.Field
+                          label="Slug"
+                          variant="none"
+                          value={
+                            <Attribute.Value
+                              type="raw"
+                              value={account.attributes.slug}
+                              tooltip={AccountAttributeDescriptions.slug}
+                            />
+                          }
+                        />
+                      </div>
+                    </div>
+                  )}
+                </Motion.Resize>
+              )}
+            </div>
+          </div>
+        </div>
+      </ScrollArea>
+    </section>
+  )
+}

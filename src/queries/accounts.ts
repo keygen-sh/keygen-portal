@@ -106,14 +106,13 @@ export function useUpdateAccountPermissions() {
           (s) => s.attributes.key === "default_user_permissions",
         )
 
-        if (existing || defaultUserPermissions.length > 0) {
+        if (existing && defaultUserPermissions.length === 0) {
+          await keygen.accounts.removeSetting({ id: existing.id })
+        } else if (defaultUserPermissions.length > 0) {
           const response = await keygen.accounts.updateSetting({
             id: existing?.id,
             key: "default_user_permissions",
-            value:
-              defaultUserPermissions.length > 0
-                ? defaultUserPermissions
-                : null,
+            value: defaultUserPermissions,
           })
 
           if (response.errors) {
@@ -127,14 +126,13 @@ export function useUpdateAccountPermissions() {
           (s) => s.attributes.key === "default_license_permissions",
         )
 
-        if (existing || defaultLicensePermissions.length > 0) {
+        if (existing && defaultLicensePermissions.length === 0) {
+          await keygen.accounts.removeSetting({ id: existing.id })
+        } else if (defaultLicensePermissions.length > 0) {
           const response = await keygen.accounts.updateSetting({
             id: existing?.id,
             key: "default_license_permissions",
-            value:
-              defaultLicensePermissions.length > 0
-                ? defaultLicensePermissions
-                : null,
+            value: defaultLicensePermissions,
           })
 
           if (response.errors) {

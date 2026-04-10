@@ -63,3 +63,6 @@ export { Channel }
 
 import * as Engine from "./engine"
 export { Engine }
+
+import * as Settings from "./settings"
+export { Settings }

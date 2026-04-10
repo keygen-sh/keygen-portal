@@ -105,14 +105,20 @@ export function useUpdateAccountPermissions() {
         const existing = existingSettings.find(
           (s) => s.attributes.key === "default_user_permissions",
         )
-        const response = await keygen.accounts.updateSetting({
-          id: existing?.id,
-          key: "default_user_permissions",
-          value: defaultUserPermissions,
-        })
 
-        if (response.errors) {
-          throw new APIError(response.errors[0])
+        if (existing || defaultUserPermissions.length > 0) {
+          const response = await keygen.accounts.updateSetting({
+            id: existing?.id,
+            key: "default_user_permissions",
+            value:
+              defaultUserPermissions.length > 0
+                ? defaultUserPermissions
+                : null,
+          })
+
+          if (response.errors) {
+            throw new APIError(response.errors[0])
+          }
         }
       }
 
@@ -120,14 +126,20 @@ export function useUpdateAccountPermissions() {
         const existing = existingSettings.find(
           (s) => s.attributes.key === "default_license_permissions",
         )
-        const response = await keygen.accounts.updateSetting({
-          id: existing?.id,
-          key: "default_license_permissions",
-          value: defaultLicensePermissions,
-        })
 
-        if (response.errors) {
-          throw new APIError(response.errors[0])
+        if (existing || defaultLicensePermissions.length > 0) {
+          const response = await keygen.accounts.updateSetting({
+            id: existing?.id,
+            key: "default_license_permissions",
+            value:
+              defaultLicensePermissions.length > 0
+                ? defaultLicensePermissions
+                : null,
+          })
+
+          if (response.errors) {
+            throw new APIError(response.errors[0])
+          }
         }
       }
     },

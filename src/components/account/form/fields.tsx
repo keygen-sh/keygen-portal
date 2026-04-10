@@ -9,9 +9,12 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
-import { Permissions } from "@/types/products" // TODO(cazden) Move to permissions types
 import { type FieldVariant } from "@/components/forms/field"
-import { AccountFormFieldDescriptions } from "@/types/accounts"
+import {
+  AccountFormFieldDescriptions,
+  LicensePermissions,
+  UserPermissions,
+} from "@/types/accounts"
 
 import * as Schemas from "@/schemas"
 
@@ -263,7 +266,7 @@ function LicensePermissionsField({ autoFocus }: { autoFocus?: boolean }) {
             <MultiSelect
               value={field.value ?? []}
               onChange={field.onChange}
-              options={Permissions.map((p) => ({
+              options={LicensePermissions.map((p) => ({
                 label: p,
                 value: p,
               }))}
@@ -295,7 +298,7 @@ function UserPermissionsField({ autoFocus }: { autoFocus?: boolean }) {
             <MultiSelect
               value={field.value ?? []}
               onChange={field.onChange}
-              options={Permissions.map((p) => ({
+              options={UserPermissions.map((p) => ({
                 label: p,
                 value: p,
               }))}

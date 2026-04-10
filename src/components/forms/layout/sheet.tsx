@@ -11,7 +11,7 @@ import { handleFormError } from "@/lib/form-errors"
 
 import { useSubmitOnce } from "@/hooks/use-submit-once"
 
-import { useFormDialogGuardContext } from "@/contexts/form-dialog-guard-context"
+import { useFormGuardContext } from "@/contexts/form-guard-context"
 
 import * as Loading from "@/components/loading"
 
@@ -39,7 +39,7 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
   className,
 }: FormsContentSheetProps<T>) {
   const form = useFormContext()
-  const guard = useFormDialogGuardContext()
+  const guard = useFormGuardContext()
 
   const [submitOnce, resetSubmitOnce] = useSubmitOnce(async () => {
     await form.handleSubmit(

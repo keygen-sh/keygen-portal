@@ -20,7 +20,7 @@ export default function EditAccountForm({
   title,
   onClose,
 }: EditAccountFormProps) {
-  const { data: account, isLoading: accountLoading } = useGetAccount()
+  const { data: account } = useGetAccount()
   const updateAccount = useUpdateAccount()
 
   const form = useForm<Schemas.Account.UpdateValues>({
@@ -47,7 +47,7 @@ export default function EditAccountForm({
           title={title}
           onSubmit={handleSubmit}
           errorMessage="Failed to update account"
-          isPending={accountLoading}
+          isPending={updateAccount.isPending}
           submitLabel="Update"
           onClose={onClose}
           inline

@@ -16,7 +16,7 @@ interface DeveloperFormProps {
 }
 
 export default function DeveloperForm({ title, onClose }: DeveloperFormProps) {
-  const { data: account, isLoading: accountLoading } = useGetAccount()
+  const { data: account } = useGetAccount()
   const updateAccount = useUpdateAccount()
 
   const form = useForm<Schemas.Account.DeveloperValues>({
@@ -42,7 +42,7 @@ export default function DeveloperForm({ title, onClose }: DeveloperFormProps) {
           title={title}
           onSubmit={handleSubmit}
           errorMessage="Failed to update developer settings"
-          isPending={accountLoading}
+          isPending={updateAccount.isPending}
           submitLabel="Save"
           onClose={onClose}
           inline

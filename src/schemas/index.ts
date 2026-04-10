@@ -36,3 +36,6 @@ export { Releases }
 
 import * as Artifacts from "./artifacts"
 export { Artifacts }
+
+import * as Account from "./account"
+export { Account }

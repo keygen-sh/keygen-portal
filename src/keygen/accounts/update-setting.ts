@@ -8,7 +8,7 @@ config.validate()
 interface UpsertSettingProps {
   id?: string
   key: string
-  value: string[] | null
+  value: string[]
 }
 
 export default async function updateSetting({

@@ -10,6 +10,9 @@ export { authenticate }
 import { verify } from "./verify"
 export { verify }
 
+import * as accounts from "./accounts"
+export { accounts }
+
 import * as environments from "./environments"
 export { environments }
 

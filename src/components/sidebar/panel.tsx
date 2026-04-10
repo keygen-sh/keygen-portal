@@ -54,7 +54,7 @@ import {
   Zap,
   Webhook,
   KeyRound,
-  Shield,
+  Settings,
   User,
 } from "lucide-react"
 
@@ -70,7 +70,7 @@ enum ViewId {
   Automate = "automate",
   Webhooks = "webhooks",
   Access = "access",
-  Security = "security",
+  Settings = "settings",
 }
 
 type ViewRoute = {
@@ -196,7 +196,28 @@ const VIEWS: View[] = [
   { id: ViewId.Automate, label: "Automate", icon: Zap, routes: [] },
   { id: ViewId.Webhooks, label: "Webhooks", icon: Webhook, routes: [] },
   { id: ViewId.Access, label: "Access", icon: KeyRound, routes: [] },
-  { id: ViewId.Security, label: "Security", icon: Shield, routes: [] },
+  {
+    id: ViewId.Settings,
+    label: "Settings",
+    icon: Settings,
+    routes: linkOptions([
+      {
+        to: "/$accountId/app/general",
+        label: "General",
+        params: { accountId: keygen.config.id },
+      },
+      {
+        to: "/$accountId/app/permissions",
+        label: "Permissions",
+        params: { accountId: keygen.config.id },
+      },
+      {
+        to: "/$accountId/app/developers",
+        label: "Developers",
+        params: { accountId: keygen.config.id },
+      },
+    ]),
+  },
 ]
 
 function useActiveView(): View {
@@ -309,7 +330,14 @@ export default function SidebarPanel(): React.ReactElement {
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem disabled>Billing</DropdownMenuItem>
-                <DropdownMenuItem disabled>Settings</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    to="/$accountId/app/general"
+                    params={{ accountId: keygen.config.id }}
+                  >
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem disabled>GitHub</DropdownMenuItem>

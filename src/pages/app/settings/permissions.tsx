@@ -12,6 +12,7 @@ import * as Motion from "@/components/motion"
 import * as Account from "@/components/account"
 import * as Attribute from "@/components/attribute"
 import PageHeader from "@/components/page-header"
+import { Separator } from "@radix-ui/react-separator"
 
 export default function PermissionsPage() {
   const { data: settings } = useGetAccountSettings()
@@ -68,15 +69,9 @@ export default function PermissionsPage() {
                         }
                         value={
                           defaultLicensePermissions.length > 0 ? (
-                            <div className="flex flex-wrap gap-1">
+                            <div className="flex flex-wrap gap-1 rounded-sm border border-accent p-2">
                               {defaultLicensePermissions.map((p) => (
-                                <Badge
-                                  key={p}
-                                  variant="outline"
-                                  className="text-xs text-content-muted"
-                                >
-                                  {p}
-                                </Badge>
+                                <Badge key={p}>{p}</Badge>
                               ))}
                             </div>
                           ) : (
@@ -86,6 +81,9 @@ export default function PermissionsPage() {
                           )
                         }
                       />
+
+                      <Separator className="my-2 h-px bg-accent" />
+
                       <Attribute.Field
                         label="User permissions"
                         variant="stacking"
@@ -94,15 +92,9 @@ export default function PermissionsPage() {
                         }
                         value={
                           defaultUserPermissions.length > 0 ? (
-                            <div className="flex flex-wrap gap-1">
+                            <div className="flex flex-wrap gap-1 rounded-sm border border-accent p-2">
                               {defaultUserPermissions.map((p) => (
-                                <Badge
-                                  key={p}
-                                  variant="outline"
-                                  className="text-xs text-content-muted"
-                                >
-                                  {p}
-                                </Badge>
+                                <Badge key={p}>{p}</Badge>
                               ))}
                             </div>
                           ) : (

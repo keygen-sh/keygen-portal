@@ -22,7 +22,7 @@ export default function EditLicensePermissionsForm({
   title,
   onClose,
 }: EditLicensePermissionsFormProps) {
-  const { data: account, isLoading: accountLoading } = useGetAccountSettings()
+  const { data: account } = useGetAccountSettings()
   const updatePermissions = useUpdateAccountPermissions()
 
   const defaultLicensePermissions = account?.find(
@@ -56,7 +56,7 @@ export default function EditLicensePermissionsForm({
           title={title}
           onSubmit={handleSubmit}
           errorMessage="Failed to update license permissions"
-          isPending={accountLoading}
+          isPending={updatePermissions.isPending}
           submitLabel="Save"
           onClose={onClose}
           inline

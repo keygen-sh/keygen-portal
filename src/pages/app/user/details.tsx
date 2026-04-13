@@ -57,6 +57,7 @@ import {
   useRemoveUser,
   useBanUser,
   useUnbanUser,
+  useResetPassword,
 } from "@/queries/users"
 
 import { useMobile } from "@/hooks/use-mobile"
@@ -95,6 +96,7 @@ export default function UserDetails() {
   const deleteUser = useRemoveUser(id)
   const banUser = useBanUser(id)
   const unbanUser = useUnbanUser(id)
+  const resetPassword = useResetPassword()
 
   const navigate = useNavigate()
 
@@ -152,10 +154,16 @@ export default function UserDetails() {
     }
   }
 
-  const handleResetPassword = () => {
-    console.log(`Password reset instructions sent to ${user?.attributes.email}`)
-    toggleOpen("resetPassword", false)
-    // TODO(cazden) Implement API call
+  const handleResetPassword = async () => {
+    if (!user?.attributes.email) return
+
+    try {
+      await resetPassword.mutateAsync({ email: user.attributes.email })
+      toast({ message: "Password reset instructions sent", variant: "success" })
+      toggleOpen("resetPassword", false)
+    } catch {
+      toast({ message: "Failed to send reset instructions", variant: "error" })
+    }
   }
 
   return (
@@ -604,7 +612,7 @@ export default function UserDetails() {
         title="Reset Password"
         description={`Are you sure you want to send password reset instructions to ${user?.attributes.email}?`}
         open={open.resetPassword}
-        disabled={userLoading}
+        disabled={userLoading || resetPassword.isPending}
         onClose={() => toggleOpen("resetPassword", false)}
         onConfirm={handleResetPassword}
       />

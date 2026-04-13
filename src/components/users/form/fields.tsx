@@ -20,7 +20,7 @@ import * as Schemas from "@/schemas"
 
 import { useListGroups } from "@/queries/groups"
 
-import { Permissions } from "@/types/products"
+import { ProductPermissions } from "@/types/products"
 import {
   UserRole,
   ExternalRoles,
@@ -439,7 +439,7 @@ function PermissionsField({
             <MultiSelect
               value={field.value ?? []}
               onChange={field.onChange}
-              options={Permissions.map((p) => ({
+              options={ProductPermissions.map((p) => ({
                 label: p,
                 value: p,
               }))}

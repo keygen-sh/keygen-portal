@@ -9,12 +9,10 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
+import { UserPermissions } from "@/types/users"
+import { LicensePermissions } from "@/types/licenses"
 import { type FieldVariant } from "@/components/forms/field"
-import {
-  AccountFormFieldDescriptions,
-  LicensePermissions,
-  UserPermissions,
-} from "@/types/accounts"
+import { AccountFormFieldDescriptions } from "@/types/accounts"
 
 import * as Schemas from "@/schemas"
 

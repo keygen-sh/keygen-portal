@@ -49,28 +49,23 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
   const guard = useFormGuardContext()
 
   const [submitOnce, resetSubmitOnce] = useSubmitOnce(async () => {
-    await form.handleSubmit(
-      async (data) => {
-        try {
-          await onSubmit(data as T)
-          guard.close()
-          onClose?.()
-        } catch (error) {
-          if (errorMessage && error instanceof APIError) {
-            await handleFormError({
-              form,
-              toastMessage: errorMessage ?? "",
-              apiError: error,
-            })
-          }
-
-          throw error
+    await form.handleSubmit(async (data) => {
+      try {
+        await onSubmit(data as T)
+        guard.close()
+        onClose?.()
+      } catch (error) {
+        if (errorMessage && error instanceof APIError) {
+          await handleFormError({
+            form,
+            toastMessage: errorMessage ?? "",
+            apiError: error,
+          })
         }
-      },
-      () => {
-        throw new Error(`Validation error: ${errorMessage ?? "invalid"}`)
-      },
-    )()
+
+        throw error
+      }
+    })()
   })
 
   const handleAbandon = useCallback(() => {
@@ -81,6 +76,8 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
     try {
       await submitOnce()
     } catch {
+      // API errors are handled inside submitOnce via handleFormError
+    } finally {
       resetSubmitOnce()
     }
   }, [submitOnce, resetSubmitOnce])

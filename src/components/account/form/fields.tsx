@@ -152,7 +152,7 @@ function AccountSlugField({
       render={({ field }) => (
         <FormItem>
           <Forms.Field.Header
-            label="Slug"
+            label="Account slug"
             variant={fieldVariant}
             tooltip={AccountFormFieldDescriptions.slug}
             tooltipVariant="warning"
@@ -259,7 +259,7 @@ function LicensePermissionsField({ autoFocus }: { autoFocus?: boolean }) {
       render={({ field }) => (
         <FormItem>
           <Forms.Field.Header
-            label="Permissions"
+            label="License permissions"
             variant="stacking"
             tooltip={AccountFormFieldDescriptions.defaultLicensePermissions}
           >
@@ -291,7 +291,7 @@ function UserPermissionsField({ autoFocus }: { autoFocus?: boolean }) {
       render={({ field }) => (
         <FormItem>
           <Forms.Field.Header
-            label="Permissions"
+            label="User permissions"
             variant="stacking"
             tooltip={AccountFormFieldDescriptions.defaultUserPermissions}
           >

@@ -155,8 +155,8 @@ function Ed25519KeyField({ base64Value }: { base64Value: string }) {
       <Tabs defaultValue="hex">
         <TabsSwitch
           options={[
-            { value: "hex", label: "hex" },
-            { value: "base64", label: "base64 DER" },
+            { value: "hex", label: "Hexadecimal" },
+            { value: "base64", label: "Base64 DER" },
           ]}
           borderless
         />
@@ -188,7 +188,7 @@ function EcdsaKeyField({ base64Value }: { base64Value: string }) {
       <Tabs defaultValue="base64">
         <TabsSwitch
           options={[
-            { value: "base64", label: "base64 PEM" },
+            { value: "base64", label: "Base64 PEM" },
             { value: "pem", label: "PEM" },
           ]}
           borderless
@@ -221,7 +221,7 @@ function RsaKeyField({ base64Value }: { base64Value: string }) {
       <Tabs defaultValue="base64">
         <TabsSwitch
           options={[
-            { value: "base64", label: "base64 PEM" },
+            { value: "base64", label: "Base64 PEM" },
             { value: "pem", label: "PEM" },
           ]}
           borderless

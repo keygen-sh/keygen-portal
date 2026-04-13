@@ -46,6 +46,9 @@ export { processes }
 import * as users from "./users"
 export { users }
 
+import * as profiles from "./profiles"
+export { profiles }
+
 import * as packages from "./packages"
 export { packages }
 

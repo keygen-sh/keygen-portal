@@ -25,7 +25,7 @@ export default function SecurityPage() {
                 Change your password.
               </p>
             </div>
-            <div className="overflow-hidden rounded bg-background-1">
+            <div className="h-fit overflow-hidden rounded bg-background-1">
               <Motion.Resize layoutKey={editingPassword ? "edit" : "view"}>
                 {editingPassword ? (
                   <Users.Form.Password
@@ -33,7 +33,7 @@ export default function SecurityPage() {
                     onClose={() => setEditingPassword(false)}
                   />
                 ) : (
-                  <div className="flex items-center justify-end gap-2 p-2">
+                  <div className="flex items-center justify-end p-2">
                     <Button
                       variant="outline"
                       size="sm"

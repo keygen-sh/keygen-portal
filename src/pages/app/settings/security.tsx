@@ -29,7 +29,7 @@ export default function SecurityPage() {
               <Motion.Resize layoutKey={editingPassword ? "edit" : "view"}>
                 {editingPassword ? (
                   <Users.Form.Password
-                    title="Change password"
+                    title="Changing password"
                     onClose={() => setEditingPassword(false)}
                   />
                 ) : (

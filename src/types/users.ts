@@ -88,6 +88,12 @@ export const UserFormFieldDescriptions: typeof UserAttributeDescriptions & {
   group: "The group the user belongs to.",
 }
 
+export const UserPasswordFormFieldDescriptions = {
+  oldPassword: "Your current account password.",
+  newPassword: "Your new password. Must be at least 8 characters.",
+  confirmPassword: "Re-enter your new password to confirm.",
+} as const
+
 export const UserCreateFormFieldDescriptions: typeof UserFormFieldDescriptions =
   {
     ...UserFormFieldDescriptions,

@@ -11,11 +11,17 @@ export type BaseValues = Writable<OptionalExcept<UserAttributes, "email">> & {
 }
 export type CreateValues = BaseValues
 export type UpdateValues = Partial<BaseValues>
+export type PasswordValues = {
+  oldPassword: string
+  newPassword: string
+  confirmPassword: string
+}
 export type AllValues = CombineFormValues<
   BaseValues,
   CreateValues,
   UpdateValues
->
+> &
+  PasswordValues
 
 export type FieldNames = FieldPath<AllValues>
 
@@ -35,9 +41,34 @@ const BaseShape = z.object({
 })
 
 const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {
+  // Custom rules can be added here in the future, e.g.
+  // schema.refine(...)
   return schema
 }
 
 export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
 export const CreateSchema: z.ZodType<CreateValues> = BaseSchema
 export const UpdateSchema: z.ZodType<UpdateValues> = BaseSchema
+
+const PasswordShape = z
+  .object({
+    oldPassword: z.string().min(1, "Current password is required"),
+    newPassword: z
+      .string()
+      .min(8, "New password must be at least 8 characters"),
+    confirmPassword: z.string().min(1, "Please confirm your new password"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  })
+
+const PasswordRules = (
+  schema: z.ZodType<PasswordValues>,
+): z.ZodType<PasswordValues> => {
+  return schema
+}
+
+export const PasswordSchema: z.ZodType<PasswordValues> = PasswordRules(
+  PasswordShape as z.ZodType<PasswordValues>,
+)

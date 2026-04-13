@@ -55,7 +55,7 @@ export default function EditLicensePermissionsForm({
         <Forms.Layout.Sheet
           title={title}
           onSubmit={handleSubmit}
-          errorMessage="Failed to update license permissions"
+          errorMessage="Failed to update permissions"
           isPending={updatePermissions.isPending}
           submitLabel="Save"
           onClose={onClose}

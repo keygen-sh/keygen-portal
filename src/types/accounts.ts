@@ -44,7 +44,8 @@ export const AccountAttributeDescriptions: Readonly<
   apiVersion:
     "Your account's pinned API version. Before changing this, we recommend testing against the new API version via the Keygen-Version header first.",
   status: "The current status of the account.",
-  protected: "The default permission set for new users.",
+  protected:
+    "When an account is protected, only admins can create user, license and machine resources.",
 } as const
 
 export const AccountFormFieldDescriptions: Readonly<
@@ -70,11 +71,11 @@ export const AccountKeyDescriptions: Readonly<{
   rsa2048: string
 }> = {
   ed25519:
-    "Your account's Ed25519 verify key, used to verify signed license keys and artifacts.",
+    "Your account's Ed25519 verify key, used to verify signed license files, API responses, and webhooks.",
   ecdsa:
-    "Your account's ECDSA P-256 public key, used to verify signed license keys and artifacts.",
+    "Your account's ECDSA P-256 public key, used to verify signed license files, API responses, and webhooks.",
   rsa2048:
-    "Your account's RSA 2048-bit public key, used to verify signed license keys and artifacts.",
+    "Your account's RSA 2048-bit public key, used to verify signed license files, API responses, and webhooks.",
 } as const
 
 export const UserPermissions = [

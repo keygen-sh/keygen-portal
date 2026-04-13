@@ -31,7 +31,7 @@ export default function DevelopersPage() {
       <PageHeader title="Developers" />
 
       <ScrollArea className="min-h-0 flex-1 overflow-y-auto">
-        <div className="flex flex-col items-center px-4 py-4 md:px-10 md:py-8">
+        <div className="flex flex-col px-4 py-4 md:px-10 md:py-8">
           <div className="grid w-full max-w-5xl grid-cols-1 gap-x-16 gap-y-8 md:grid-cols-[1fr_2fr]">
             <div className="flex flex-col space-y-2">
               <h2 className="font-owners-wide text-lg text-content-loud">

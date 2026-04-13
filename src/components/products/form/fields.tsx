@@ -15,7 +15,7 @@ import {
   DistributionStrategy,
   DistributionStrategyDescriptions,
   KnownPlatforms,
-  Permissions,
+  ProductPermissions,
   ProductFormFieldDescriptions,
   ProductCreateFormFieldDescriptions,
   ProductEditFormFieldDescriptions,
@@ -332,7 +332,7 @@ function PermissionsField({
             <MultiSelect
               value={field.value ?? []}
               onChange={field.onChange}
-              options={Permissions.map((p) => ({
+              options={ProductPermissions.map((p) => ({
                 label: p === "*" ? "*" : p,
                 value: p,
               }))}

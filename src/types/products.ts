@@ -91,7 +91,7 @@ export const DistributionStrategyDescriptions: Readonly<
     "Only admins can access releases. Download links must be generated server-side. API authentication is required.",
 } as const
 
-export const Permissions = [
+export const ProductPermissions = [
   "account.read",
   "arch.read",
   "artifact.create",
@@ -206,4 +206,4 @@ export const Permissions = [
 
 export const KnownPlatforms = ["Windows", "macOS", "Linux", "iOS", "Android"]
 
-export type Permission = (typeof Permissions)[number]
+export type ProductPermission = (typeof ProductPermissions)[number]

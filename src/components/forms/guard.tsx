@@ -224,7 +224,7 @@ export function FormPageGuard({ children }: FormPageGuardProps) {
 
   return (
     <FormGuardContext.Provider value={contextValue}>
-      {registry ? children : <FormRouteGuard>{children}</FormRouteGuard>}
+      {children}
       <UnsavedChangesModal
         open={pendingAction !== null}
         onClose={handleCancel}

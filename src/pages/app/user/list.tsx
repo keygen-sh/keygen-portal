@@ -1,11 +1,12 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
 
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { useUserTableColumns } from "@/hooks/use-user-table-columns"
+import { useFilterSearch } from "@/hooks/use-filter-search"
 import { useDataTable } from "@/hooks/use-data-table"
-import { User } from "@/types/users"
+import { User, type UserFilters } from "@/types/users"
 
 import { useListUsers } from "@/queries/users"
 
@@ -21,6 +22,16 @@ export default function UsersList() {
   const table = useDataTable()
   const columns = useUserTableColumns()
 
+  const [filters, setFilters] = useFilterSearch<UserFilters>()
+
+  const handleFiltersChange = useCallback(
+    (next: UserFilters) => {
+      setFilters(next)
+      table.setPage(1)
+    },
+    [table, setFilters],
+  )
+
   const {
     data: users,
     links,
@@ -28,6 +39,7 @@ export default function UsersList() {
   } = useListUsers({
     page: table.page,
     pageSize: table.pageSize,
+    filters,
   })
 
   const totalPages = links?.meta?.pages ?? 1
@@ -43,6 +55,10 @@ export default function UsersList() {
           New User
         </Button>
       </PageHeader>
+
+      <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-2.5 md:px-4">
+        <Users.FilterBar filters={filters} onChange={handleFiltersChange} />
+      </div>
 
       <Users.Form.Create open={open} onOpenChange={setOpen} />
 

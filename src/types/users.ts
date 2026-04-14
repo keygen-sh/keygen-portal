@@ -160,6 +160,15 @@ export const InternalRoles: UserRole[] = [
 
 export const AllRoles: UserRole[] = [...ExternalRoles, ...InternalRoles]
 
+export type UserFilters = {
+  status?: string
+  assigned?: boolean
+  product?: string
+  group?: string
+  roles?: string[]
+  metadata?: Record<string, string>
+}
+
 export const UserPermissions = [
   "account.read",
   "arch.read",

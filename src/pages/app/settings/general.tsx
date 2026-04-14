@@ -108,10 +108,10 @@ export default function General() {
 
             <div className="flex flex-col space-y-2">
               <h2 className="font-owners-wide text-lg text-content-loud">
-                Current User
+                You
               </h2>
               <p className="font-owners-text text-sm text-content-muted">
-                Manage current user settings and information.
+                Manage your settings and information.
               </p>
             </div>
             <div className="overflow-hidden rounded bg-background-1">

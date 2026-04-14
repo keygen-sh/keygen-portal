@@ -1,4 +1,5 @@
 export { default as FilterBar } from "./filter-bar"
+export { default as ArrayFilter } from "./array-filter"
 export { default as BooleanFilter } from "./boolean-filter"
 export { default as DateFilter } from "./date-filter"
 export { default as DurationFilter } from "./duration-filter"

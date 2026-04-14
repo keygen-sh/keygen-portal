@@ -5,7 +5,7 @@ import { useEnvironment } from "@/hooks/use-environment"
 import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
-import { User } from "@/types/users"
+import { User, type UserFilters } from "@/types/users"
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
@@ -28,8 +28,10 @@ export function useGetUser(userId: string) {
   })
 }
 
+export type { UserFilters }
+
 export function useListUsers(
-  params?: { page: number; pageSize: number },
+  params?: { page: number; pageSize: number; filters?: UserFilters },
   options?: { enabled?: boolean },
 ) {
   const { code } = useEnvironment()
@@ -38,7 +40,13 @@ export function useListUsers(
     queryKey: ["users", { environment: code, ...params }],
     queryFn: async () => {
       const response = await keygen.users.list(
-        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+        params
+          ? {
+              pageNumber: params.page,
+              pageSize: params.pageSize,
+              filters: params.filters,
+            }
+          : {},
       )
 
       if (response.errors) {

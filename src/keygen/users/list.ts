@@ -1,6 +1,6 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
-import { UserListResponse, AllRoles } from "@/types/users"
+import { UserListResponse, AllRoles, type UserFilters } from "@/types/users"
 
 config.validate()
 
@@ -8,12 +8,14 @@ interface ListProps {
   limit?: number
   pageNumber?: number
   pageSize?: number
+  filters?: UserFilters
 }
 
 export default async function list({
   limit,
   pageNumber,
   pageSize,
+  filters,
 }: ListProps): Promise<UserListResponse> {
   const params = new URLSearchParams()
   if (limit != null) {
@@ -25,8 +27,27 @@ export default async function list({
   if (pageSize != null) {
     params.set("page[size]", pageSize.toString())
   }
+  if (filters?.status) {
+    params.set("status", filters.status)
+  }
+  if (filters?.assigned != null) {
+    params.set("assigned", filters.assigned.toString())
+  }
+  if (filters?.product) {
+    params.set("product", filters.product)
+  }
+  if (filters?.group) {
+    params.set("group", filters.group)
+  }
 
-  AllRoles.forEach((role) => params.append("roles[]", role))
+  const roles = filters?.roles ?? AllRoles
+  roles.forEach((role) => params.append("roles[]", role))
+
+  if (filters?.metadata) {
+    for (const [key, value] of Object.entries(filters.metadata)) {
+      params.set(`metadata[${key}]`, value)
+    }
+  }
 
   const result = (await client.request(
     `/accounts/${config.id}/users?${params.toString()}`,

@@ -29,11 +29,10 @@ export function FormRouteGuard({ children }: { children: React.ReactNode }) {
 //           of the main guard to avoid unnecessary re-renders of its children
 function FormRouteGuardModal() {
   const { control } = useFormContext()
-  const { isDirty, isSubmitting, touchedFields } = useFormState({ control })
+  const { isDirty, isSubmitting } = useFormState({ control })
 
   const { status, proceed, reset } = useBlocker({
-    shouldBlockFn: () =>
-      isDirty && !isSubmitting && Object.keys(touchedFields).length > 0,
+    shouldBlockFn: () => isDirty && !isSubmitting,
     withResolver: true,
     enableBeforeUnload: false,
   })

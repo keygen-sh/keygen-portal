@@ -267,6 +267,7 @@ export function useChangePassword() {
         id: meResponse.data.id,
         oldPassword,
         newPassword,
+        root: true,
       })
 
       if (response.errors) {
@@ -328,6 +329,7 @@ export function useUpdateCurrentUser() {
       const updateResponse = await keygen.users.update({
         id: current.id,
         values: changes,
+        root: true,
       })
 
       if (updateResponse.errors) {

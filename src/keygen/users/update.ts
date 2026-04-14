@@ -10,11 +10,13 @@ config.validate()
 interface UpdateProps {
   id: string
   values: Schemas.Users.UpdateValues
+  root?: boolean
 }
 
 export default async function update({
   id,
   values,
+  root,
 }: UpdateProps): Promise<UserResponse> {
   const { groupId, ...attributes } = values
   void groupId
@@ -29,6 +31,7 @@ export default async function update({
   const result = (await client.request(`/accounts/${config.id}/users/${id}`, {
     method: "PATCH",
     body: JSON.stringify(body),
+    root,
   })) as UserResponse
 
   return result

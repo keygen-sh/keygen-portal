@@ -8,12 +8,14 @@ interface ChangePasswordProps {
   id: string
   oldPassword: string
   newPassword: string
+  root?: boolean
 }
 
 export default async function changePassword({
   id,
   oldPassword,
   newPassword,
+  root,
 }: ChangePasswordProps): Promise<UserResponse> {
   const body = {
     meta: {
@@ -27,6 +29,7 @@ export default async function changePassword({
     {
       method: "POST",
       body: JSON.stringify(body),
+      root,
     },
   )) as UserResponse
 

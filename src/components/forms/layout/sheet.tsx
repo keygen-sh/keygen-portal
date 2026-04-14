@@ -76,8 +76,6 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
     try {
       await submitOnce()
     } catch {
-      // API errors are handled inside submitOnce via handleFormError
-    } finally {
       resetSubmitOnce()
     }
   }, [submitOnce, resetSubmitOnce])

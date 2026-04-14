@@ -1,13 +1,4 @@
-import {
-  useId,
-  useRef,
-  useMemo,
-  useState,
-  useEffect,
-  useContext,
-  useCallback,
-  createContext,
-} from "react"
+import { useMemo, useState, useCallback } from "react"
 import { useFormContext, useFormState } from "react-hook-form"
 import { useBlocker } from "@tanstack/react-router"
 
@@ -115,77 +106,16 @@ export function FormDialogGuard({ onClose, children }: FormDialogGuardProps) {
   )
 }
 
-interface FormRouteGuardRegistryValue {
-  setDirty: (id: string, dirty: boolean) => void
-}
-
-const FormRouteGuardRegistryContext =
-  createContext<FormRouteGuardRegistryValue | null>(null)
-
-export function FormPageRouteGuard({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  const dirtyRef = useRef(new Set<string>())
-  const [hasDirty, setHasDirty] = useState(false)
-
-  const setDirty = useCallback((id: string, dirty: boolean) => {
-    if (dirty) {
-      dirtyRef.current.add(id)
-    } else {
-      dirtyRef.current.delete(id)
-    }
-
-    setHasDirty(dirtyRef.current.size > 0)
-  }, [])
-
-  const { status, proceed, reset } = useBlocker({
-    shouldBlockFn: () => hasDirty,
-    withResolver: true,
-    enableBeforeUnload: false,
-  })
-
-  const handleConfirm = useCallback(() => {
-    proceed?.()
-  }, [proceed])
-
-  const handleCancel = useCallback(() => {
-    reset?.()
-  }, [reset])
-
-  const value = useMemo(() => ({ setDirty }), [setDirty])
-
-  return (
-    <FormRouteGuardRegistryContext.Provider value={value}>
-      {children}
-      <UnsavedChangesModal
-        open={status === "blocked"}
-        onClose={handleCancel}
-        onConfirm={handleConfirm}
-      />
-    </FormRouteGuardRegistryContext.Provider>
-  )
-}
-
 interface FormPageGuardProps {
   children: React.ReactNode
 }
 
 export function FormPageGuard({ children }: FormPageGuardProps) {
   const form = useFormContext()
-  const id = useId()
-  const registry = useContext(FormRouteGuardRegistryContext)
 
   const { isDirty } = useFormState({
     control: form.control,
   })
-
-  useEffect(() => {
-    registry?.setDirty(id, isDirty)
-
-    return () => registry?.setDirty(id, false)
-  }, [id, isDirty, registry])
 
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null)
 

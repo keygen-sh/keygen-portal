@@ -58,18 +58,14 @@ export function useCreateEnvironment() {
       return response.data
     },
 
-    onSuccess: (newEnvironment) => {
-      queryClient.setQueryData(
-        ["environments"],
-        (old: Environment[] | undefined) => {
-          if (Array.isArray(old)) return [newEnvironment, ...old]
-          return undefined
-        },
-      )
+    onSuccess: async (newEnvironment) => {
       queryClient.setQueryData(
         ["environment", newEnvironment.id],
         newEnvironment,
       )
+      await queryClient.invalidateQueries({
+        queryKey: ["environments"],
+      })
     },
   })
 }

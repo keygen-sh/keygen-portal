@@ -71,20 +71,16 @@ export function useCreateEntitlement() {
       return response.data
     },
 
-    onSuccess: (newEntitlement) => {
+    onSuccess: async (newEntitlement) => {
       if (!newEntitlement || !newEntitlement.id) return
 
-      queryClient.setQueryData(
-        ["entitlements", { environment: code }],
-        (old: Entitlement[] | undefined) => {
-          if (Array.isArray(old)) return [newEntitlement, ...old]
-          return undefined
-        },
-      )
       queryClient.setQueryData(
         ["entitlements", newEntitlement.id, { environment: code }],
         newEntitlement,
       )
+      await queryClient.invalidateQueries({
+        queryKey: ["entitlements", { environment: code }],
+      })
     },
   })
 }

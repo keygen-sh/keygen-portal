@@ -80,15 +80,11 @@ export function useCreatePolicy() {
       return response.data
     },
 
-    onSuccess: (newPolicy) => {
-      queryClient.setQueryData(
-        ["policies", { environment: code }],
-        (old: Policy[] | undefined) => {
-          if (Array.isArray(old)) return [newPolicy, ...old]
-          return undefined
-        },
-      )
+    onSuccess: async (newPolicy) => {
       queryClient.setQueryData(["policy", newPolicy.id], newPolicy)
+      await queryClient.invalidateQueries({
+        queryKey: ["policies", { environment: code }],
+      })
     },
   })
 }

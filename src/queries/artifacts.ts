@@ -73,18 +73,14 @@ export function useCreateArtifact() {
       return response.data
     },
 
-    onSuccess: (newArtifact) => {
-      queryClient.setQueryData(
-        ["artifacts", { environment: code }],
-        (old: Artifact[] | undefined) => {
-          if (Array.isArray(old)) return [newArtifact, ...old]
-          return undefined
-        },
-      )
+    onSuccess: async (newArtifact) => {
       queryClient.setQueryData(
         ["artifacts", newArtifact.id, { environment: code }],
         newArtifact,
       )
+      await queryClient.invalidateQueries({
+        queryKey: ["artifacts", { environment: code }],
+      })
     },
   })
 }

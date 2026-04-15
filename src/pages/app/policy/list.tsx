@@ -1,13 +1,14 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
 
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { usePolicyTableColumns } from "@/hooks/use-policy-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
+import { useFilterSearch } from "@/hooks/use-filter-search"
 import { Policy } from "@/types/policies"
 
-import { useListPolicies } from "@/queries/policies"
+import { useListPolicies, type PolicyFilters } from "@/queries/policies"
 
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
@@ -21,6 +22,16 @@ export default function PoliciesList() {
   const table = useDataTable()
   const columns = usePolicyTableColumns()
 
+  const [filters, setFilters] = useFilterSearch<PolicyFilters>()
+
+  const handleFiltersChange = useCallback(
+    (next: PolicyFilters) => {
+      setFilters(next)
+      table.setPage(1)
+    },
+    [table, setFilters],
+  )
+
   const {
     data: policies,
     links,
@@ -28,6 +39,7 @@ export default function PoliciesList() {
   } = useListPolicies({
     page: table.page,
     pageSize: table.pageSize,
+    filters,
   })
 
   const totalPages = links?.meta?.pages ?? 1
@@ -49,6 +61,10 @@ export default function PoliciesList() {
 
         <Policies.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
+
+      <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-2.5 md:px-4">
+        <Policies.FilterBar filters={filters} onChange={handleFiltersChange} />
+      </div>
 
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<Policy>

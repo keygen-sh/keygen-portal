@@ -1,6 +1,6 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
-import { PoliciesListResponse } from "@/types/policies"
+import { PoliciesListResponse, type PolicyFilters } from "@/types/policies"
 
 config.validate()
 
@@ -8,12 +8,14 @@ interface ListProps {
   limit?: number
   pageNumber?: number
   pageSize?: number
+  filters?: PolicyFilters
 }
 
 export default async function list({
   limit,
   pageNumber,
   pageSize,
+  filters,
 }: ListProps): Promise<PoliciesListResponse> {
   const params = new URLSearchParams()
   if (limit != null) {
@@ -24,6 +26,9 @@ export default async function list({
   }
   if (pageSize != null) {
     params.set("page[size]", pageSize.toString())
+  }
+  if (filters?.product) {
+    params.set("product", filters.product)
   }
 
   const result = (await client.request(

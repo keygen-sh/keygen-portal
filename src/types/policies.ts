@@ -227,6 +227,10 @@ export type Policy = Resource<"policies", PolicyAttributes, PolicyRelationships>
 export type PolicyResponse = APIResponse<Policy>
 export type PoliciesListResponse = APIResponse<Policy[]>
 
+export type PolicyFilters = {
+  product?: string
+}
+
 export const PolicyAttributeDescriptions: Readonly<
   Record<keyof Writable<PolicyAttributes>, string>
 > = {

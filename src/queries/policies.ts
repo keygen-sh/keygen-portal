@@ -5,10 +5,12 @@ import { useEnvironment } from "@/hooks/use-environment"
 import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
-import { Policy } from "@/types/policies"
+import { Policy, type PolicyFilters } from "@/types/policies"
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
+
+export type { PolicyFilters }
 
 export function useGetPolicy(policyId: string) {
   const { code } = useEnvironment()
@@ -29,7 +31,7 @@ export function useGetPolicy(policyId: string) {
 }
 
 export function useListPolicies(
-  params?: { page: number; pageSize: number },
+  params?: { page: number; pageSize: number; filters?: PolicyFilters },
   options?: { enabled?: boolean },
 ) {
   const { code } = useEnvironment()
@@ -38,7 +40,13 @@ export function useListPolicies(
     queryKey: ["policies", { environment: code, ...params }],
     queryFn: async () => {
       const response = await keygen.policies.list(
-        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+        params
+          ? {
+              pageNumber: params.page,
+              pageSize: params.pageSize,
+              filters: params.filters,
+            }
+          : {},
       )
 
       if (response.errors) {

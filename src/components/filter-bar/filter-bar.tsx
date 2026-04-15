@@ -145,26 +145,28 @@ export default function FilterBar({
         {pinned}
 
         {/* scroll arrows */}
-        <div className="flex shrink-0 items-center gap-0.5 text-content-subdued">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-5"
-            disabled={!canScrollLeft}
-            onClick={scrollLeft}
-          >
-            <ChevronLeft className="size-3" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-5"
-            disabled={!canScrollRight}
-            onClick={scrollRight}
-          >
-            <ChevronRight className="size-3" />
-          </Button>
-        </div>
+        {!allVisible && (
+          <div className="flex shrink-0 items-center gap-0.5 text-content-subdued">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-5"
+              disabled={!canScrollLeft}
+              onClick={scrollLeft}
+            >
+              <ChevronLeft className="size-3" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-5"
+              disabled={!canScrollRight}
+              onClick={scrollRight}
+            >
+              <ChevronRight className="size-3" />
+            </Button>
+          </div>
+        )}
 
         {/* scroll region */}
         <div className="relative h-full min-w-0 flex-1 overflow-hidden pr-1">

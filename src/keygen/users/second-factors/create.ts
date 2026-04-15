@@ -27,6 +27,7 @@ export default async function create({
     {
       method: "POST",
       body: JSON.stringify(body),
+      root: true,
     },
   )) as SecondFactorResponse
 

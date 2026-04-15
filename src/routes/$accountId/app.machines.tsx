@@ -17,6 +17,7 @@ function validateSearch(search: Record<string, unknown>): MachineFilters {
   if (typeof search.policy === "string") filters.policy = search.policy
   if (typeof search.license === "string") filters.license = search.license
   if (typeof search.owner === "string") filters.owner = search.owner
+  if (typeof search.user === "string") filters.user = search.user
   if (typeof search.group === "string") filters.group = search.group
   if (isRecord(search.metadata))
     filters.metadata = search.metadata as Record<string, string>

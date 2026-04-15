@@ -30,7 +30,6 @@ import { handleFormError } from "@/lib/form-errors"
 import { type SecondFactor } from "@/types/second-factors"
 
 import * as Forms from "@/components/forms"
-import * as Motion from "@/components/motion"
 import * as Loading from "@/components/loading"
 
 type Step = "password" | "setup"
@@ -48,7 +47,7 @@ export default function EnableSecondFactorForm({
   const [pendingFactor, setPendingFactor] = useState<SecondFactor | null>(null)
 
   return (
-    <Motion.Resize layoutKey={step}>
+    <>
       {step === "setup" && pendingFactor ? (
         <SetupStep
           factor={pendingFactor}
@@ -75,7 +74,7 @@ export default function EnableSecondFactorForm({
           onClose={onClose}
         />
       )}
-    </Motion.Resize>
+    </>
   )
 }
 
@@ -112,6 +111,8 @@ function PasswordStep({
     const { password } = form.getValues()
 
     try {
+      // If user exits mid-setup, their second factor becomes orphaned,
+      // so we need to clean up previous attempt if they try to set up again
       if (orphanedFactor) {
         await deleteSecondFactor.mutateAsync({ id: orphanedFactor.id })
       }

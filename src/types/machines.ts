@@ -150,3 +150,15 @@ export type MachineFile = Resource<
 >
 
 export type MachineFileResponse = APIResponse<MachineFile>
+
+export type MachineFilters = {
+  fingerprint?: string
+  ip?: string
+  hostname?: string
+  product?: string
+  policy?: string
+  license?: string
+  owner?: string
+  group?: string
+  metadata?: Record<string, string>
+}

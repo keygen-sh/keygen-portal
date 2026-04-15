@@ -1,13 +1,14 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
 
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { useMachineTableColumns } from "@/hooks/use-machine-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
+import { useFilterSearch } from "@/hooks/use-filter-search"
 import { Machine } from "@/types/machines"
 
-import { useListMachines } from "@/queries/machines"
+import { useListMachines, type MachineFilters } from "@/queries/machines"
 
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
@@ -21,6 +22,16 @@ export default function MachinesList() {
   const table = useDataTable()
   const columns = useMachineTableColumns()
 
+  const [filters, setFilters] = useFilterSearch<MachineFilters>()
+
+  const handleFiltersChange = useCallback(
+    (next: MachineFilters) => {
+      setFilters(next)
+      table.setPage(1)
+    },
+    [table, setFilters],
+  )
+
   const {
     data: machines,
     links,
@@ -28,6 +39,7 @@ export default function MachinesList() {
   } = useListMachines({
     page: table.page,
     pageSize: table.pageSize,
+    filters,
   })
 
   const totalPages = links?.meta?.pages ?? 1
@@ -47,6 +59,10 @@ export default function MachinesList() {
           New Machine
         </Button>
       </PageHeader>
+
+      <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-2.5 md:px-4">
+        <Machines.FilterBar filters={filters} onChange={handleFiltersChange} />
+      </div>
 
       <Machines.Form.Create open={open} onOpenChange={setOpen} />
 

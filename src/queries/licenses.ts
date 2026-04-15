@@ -31,11 +31,14 @@ export function useGetLicense(licenseId: string) {
   })
 }
 
-export function useListLicenses(params?: {
-  page: number
-  pageSize: number
-  filters?: LicenseFilters
-}) {
+export function useListLicenses(
+  params?: {
+    page: number
+    pageSize: number
+    filters?: LicenseFilters
+  },
+  options?: { enabled?: boolean },
+) {
   const { code } = useEnvironment()
 
   const query = useQuery({
@@ -57,6 +60,7 @@ export function useListLicenses(params?: {
 
       return response
     },
+    enabled: options?.enabled,
   })
 
   return {

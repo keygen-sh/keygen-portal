@@ -6,7 +6,9 @@ import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
 import { Encoding } from "@/types/files"
-import { Machine, MachineFile } from "@/types/machines"
+import { Machine, MachineFile, type MachineFilters } from "@/types/machines"
+
+export type { MachineFilters }
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
@@ -29,14 +31,24 @@ export function useGetMachine(machineId: string) {
   })
 }
 
-export function useListMachines(params?: { page: number; pageSize: number }) {
+export function useListMachines(params?: {
+  page: number
+  pageSize: number
+  filters?: MachineFilters
+}) {
   const { code } = useEnvironment()
 
   const query = useQuery({
     queryKey: ["machines", { environment: code, ...params }],
     queryFn: async () => {
       const response = await keygen.machines.list(
-        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+        params
+          ? {
+              pageNumber: params.page,
+              pageSize: params.pageSize,
+              filters: params.filters,
+            }
+          : {},
       )
 
       if (response.errors) {

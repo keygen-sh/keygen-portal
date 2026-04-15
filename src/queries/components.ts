@@ -5,7 +5,9 @@ import { useEnvironment } from "@/hooks/use-environment"
 import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
-import { Component } from "@/types/components"
+import { Component, type ComponentFilters } from "@/types/components"
+
+export type { ComponentFilters }
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
@@ -28,14 +30,24 @@ export function useGetComponent(componentId: string) {
   })
 }
 
-export function useListComponents(params?: { page: number; pageSize: number }) {
+export function useListComponents(params?: {
+  page: number
+  pageSize: number
+  filters?: ComponentFilters
+}) {
   const { code } = useEnvironment()
 
   const query = useQuery({
     queryKey: ["components", { environment: code, ...params }],
     queryFn: async () => {
       const response = await keygen.components.list(
-        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+        params
+          ? {
+              pageNumber: params.page,
+              pageSize: params.pageSize,
+              filters: params.filters,
+            }
+          : {},
       )
 
       if (response.errors) {

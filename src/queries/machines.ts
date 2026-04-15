@@ -31,11 +31,14 @@ export function useGetMachine(machineId: string) {
   })
 }
 
-export function useListMachines(params?: {
-  page: number
-  pageSize: number
-  filters?: MachineFilters
-}) {
+export function useListMachines(
+  params?: {
+    page: number
+    pageSize: number
+    filters?: MachineFilters
+  },
+  options?: { enabled?: boolean },
+) {
   const { code } = useEnvironment()
 
   const query = useQuery({
@@ -57,6 +60,7 @@ export function useListMachines(params?: {
 
       return response
     },
+    enabled: options?.enabled,
   })
 
   return {

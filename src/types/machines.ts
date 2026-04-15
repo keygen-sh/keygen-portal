@@ -159,6 +159,7 @@ export type MachineFilters = {
   policy?: string
   license?: string
   owner?: string
+  user?: string
   group?: string
   metadata?: Record<string, string>
 }

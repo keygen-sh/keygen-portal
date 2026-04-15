@@ -6,6 +6,7 @@ import {
   Shield,
   KeyRound,
   User,
+  Users,
   SquareStack,
   Braces,
 } from "lucide-react"
@@ -119,6 +120,15 @@ export default function MachineFilterBar({
         value={filters.owner}
         onDraft={() => enable("users")}
         onChange={(owner) => onChange({ ...filters, owner })}
+      />
+      <Filters.ResourceFilter
+        label="User"
+        icon={Users}
+        resource="users"
+        options={users}
+        value={filters.user}
+        onDraft={() => enable("users")}
+        onChange={(user) => onChange({ ...filters, user })}
       />
       <Filters.ResourceFilter
         label="Group"

@@ -48,6 +48,9 @@ export default async function list({
   if (filters?.owner) {
     params.set("owner", filters.owner)
   }
+  if (filters?.user) {
+    params.set("user", filters.user)
+  }
   if (filters?.group) {
     params.set("group", filters.group)
   }

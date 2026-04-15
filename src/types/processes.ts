@@ -111,3 +111,11 @@ export const ProcessStatusVariants: Readonly<
   [ProcessStatus.Dead]: "disabled",
   [ProcessStatus.Resurrected]: "secondary",
 } as const
+
+export type ProcessFilters = {
+  machine?: string
+  license?: string
+  owner?: string
+  user?: string
+  product?: string
+}

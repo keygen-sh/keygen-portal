@@ -5,7 +5,9 @@ import { useEnvironment } from "@/hooks/use-environment"
 import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
-import { Process } from "@/types/processes"
+import { Process, type ProcessFilters } from "@/types/processes"
+
+export type { ProcessFilters }
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
@@ -28,14 +30,24 @@ export function useGetProcess(processId: string) {
   })
 }
 
-export function useListProcesses(params?: { page: number; pageSize: number }) {
+export function useListProcesses(params?: {
+  page: number
+  pageSize: number
+  filters?: ProcessFilters
+}) {
   const { code } = useEnvironment()
 
   const query = useQuery({
     queryKey: ["processes", { environment: code, ...params }],
     queryFn: async () => {
       const response = await keygen.processes.list(
-        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+        params
+          ? {
+              pageNumber: params.page,
+              pageSize: params.pageSize,
+              filters: params.filters,
+            }
+          : {},
       )
 
       if (response.errors) {

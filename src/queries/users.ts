@@ -80,18 +80,14 @@ export function useCreateUser() {
       return response.data
     },
 
-    onSuccess: (newUser) => {
-      queryClient.setQueryData(
-        ["users", { environment: code }],
-        (old: User[] | undefined) => {
-          if (Array.isArray(old)) return [newUser, ...old]
-          return undefined
-        },
-      )
+    onSuccess: async (newUser) => {
       queryClient.setQueryData(
         ["users", newUser.id, { environment: code }],
         newUser,
       )
+      await queryClient.invalidateQueries({
+        queryKey: ["users", { environment: code }],
+      })
     },
   })
 }

@@ -80,18 +80,14 @@ export function useCreateComponent() {
       return response.data
     },
 
-    onSuccess: (newComponent) => {
-      queryClient.setQueryData(
-        ["components", { environment: code }],
-        (old: Component[] | undefined) => {
-          if (Array.isArray(old)) return [newComponent, ...old]
-          return undefined
-        },
-      )
+    onSuccess: async (newComponent) => {
       queryClient.setQueryData(
         ["components", newComponent.id, { environment: code }],
         newComponent,
       )
+      await queryClient.invalidateQueries({
+        queryKey: ["components", { environment: code }],
+      })
     },
   })
 }

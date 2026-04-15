@@ -74,18 +74,14 @@ export function useCreateGroup() {
       return response.data
     },
 
-    onSuccess: (newGroup) => {
-      queryClient.setQueryData(
-        ["groups", { environment: code }],
-        (old: Group[] | undefined) => {
-          if (Array.isArray(old)) return [newGroup, ...old]
-          return undefined
-        },
-      )
+    onSuccess: async (newGroup) => {
       queryClient.setQueryData(
         ["groups", newGroup.id, { environment: code }],
         newGroup,
       )
+      await queryClient.invalidateQueries({
+        queryKey: ["groups", { environment: code }],
+      })
     },
   })
 }

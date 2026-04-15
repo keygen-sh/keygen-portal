@@ -70,18 +70,14 @@ export function useCreateProduct() {
         return response.data
       }),
 
-    onSuccess: (newProduct) => {
-      queryClient.setQueryData(
-        ["products", { environment: code }],
-        (old: Product[] | undefined) => {
-          if (Array.isArray(old)) return [newProduct, ...old]
-          return undefined
-        },
-      )
+    onSuccess: async (newProduct) => {
       queryClient.setQueryData(
         ["products", newProduct.id, { environment: code }],
         newProduct,
       )
+      await queryClient.invalidateQueries({
+        queryKey: ["products", { environment: code }],
+      })
     },
   })
 }

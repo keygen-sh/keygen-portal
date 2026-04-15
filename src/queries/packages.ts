@@ -66,18 +66,14 @@ export function useCreatePackage() {
         return response.data
       }),
 
-    onSuccess: (newPackage) => {
-      queryClient.setQueryData(
-        ["packages", { environment: code }],
-        (old: Package[] | undefined) => {
-          if (Array.isArray(old)) return [newPackage, ...old]
-          return undefined
-        },
-      )
+    onSuccess: async (newPackage) => {
       queryClient.setQueryData(
         ["packages", newPackage.id, { environment: code }],
         newPackage,
       )
+      await queryClient.invalidateQueries({
+        queryKey: ["packages", { environment: code }],
+      })
     },
   })
 }

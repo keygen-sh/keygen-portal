@@ -87,11 +87,8 @@ export function useCreateLicense() {
 
     onSuccess: async (newLicense) => {
       queryClient.setQueryData(
-        ["licenses", { environment: code }],
-        (old: License[] | undefined) => {
-          if (Array.isArray(old)) return [newLicense, ...old]
-          return undefined
-        },
+        ["licenses", newLicense.id, { environment: code }],
+        newLicense,
       )
       await queryClient.invalidateQueries({
         queryKey: ["licenses", { environment: code }],

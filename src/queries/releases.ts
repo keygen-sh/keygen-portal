@@ -66,18 +66,14 @@ export function useCreateRelease() {
         return response.data
       }),
 
-    onSuccess: (newRelease) => {
-      queryClient.setQueryData(
-        ["releases", { environment: code }],
-        (old: Release[] | undefined) => {
-          if (Array.isArray(old)) return [newRelease, ...old]
-          return undefined
-        },
-      )
+    onSuccess: async (newRelease) => {
       queryClient.setQueryData(
         ["releases", newRelease.id, { environment: code }],
         newRelease,
       )
+      await queryClient.invalidateQueries({
+        queryKey: ["releases", { environment: code }],
+      })
     },
   })
 }

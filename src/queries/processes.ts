@@ -68,18 +68,14 @@ export function useCreateProcess() {
       return response.data
     },
 
-    onSuccess: (newProcess) => {
-      queryClient.setQueryData(
-        ["processes", { environment: code }],
-        (old: Process[] | undefined) => {
-          if (Array.isArray(old)) return [newProcess, ...old]
-          return undefined
-        },
-      )
+    onSuccess: async (newProcess) => {
       queryClient.setQueryData(
         ["processes", newProcess.id, { environment: code }],
         newProcess,
       )
+      await queryClient.invalidateQueries({
+        queryKey: ["processes", { environment: code }],
+      })
     },
   })
 }

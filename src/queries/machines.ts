@@ -85,18 +85,14 @@ export function useCreateMachine() {
       return response.data
     },
 
-    onSuccess: (newMachine) => {
-      queryClient.setQueryData(
-        ["machines", { environment: code }],
-        (old: Machine[] | undefined) => {
-          if (Array.isArray(old)) return [newMachine, ...old]
-          return undefined
-        },
-      )
+    onSuccess: async (newMachine) => {
       queryClient.setQueryData(
         ["machines", newMachine.id, { environment: code }],
         newMachine,
       )
+      await queryClient.invalidateQueries({
+        queryKey: ["machines", { environment: code }],
+      })
     },
   })
 }

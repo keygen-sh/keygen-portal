@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react"
 import { useNavigate } from "@tanstack/react-router"
 
-import { FormLabel } from "@/components/ui/form"
 import { OtpInput } from "@/components/otp-input"
 
 import * as keygen from "@/keygen"
@@ -90,7 +89,9 @@ export default function Verify() {
         <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
           Enter your authentication code
         </h1>
-        <FormLabel>Check your 2FA app and enter the code to log in.</FormLabel>
+        <p className="text-sm text-content-muted">
+          Check your 2FA app and enter the code to log in.
+        </p>
 
         {loading ? (
           <div className="flex h-15 items-center justify-center">

@@ -70,3 +70,11 @@ export const ComponentEditFormFieldDescriptions: typeof ComponentFormFieldDescri
   {
     ...ComponentFormFieldDescriptions,
   }
+
+export type ComponentFilters = {
+  machine?: string
+  license?: string
+  owner?: string
+  user?: string
+  product?: string
+}

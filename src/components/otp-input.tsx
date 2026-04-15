@@ -54,7 +54,7 @@ export function OtpInput({
   className,
 }: OtpInputProps) {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
-  const digits = value.padEnd(DIGIT_COUNT, "").split("").slice(0, DIGIT_COUNT)
+  const digits = Array.from({ length: DIGIT_COUNT }, (_, i) => value[i] ?? "")
 
   const setDigit = (index: number, digit: string) => {
     const next = [...digits]

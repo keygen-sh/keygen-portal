@@ -8,3 +8,6 @@ export { default as unban } from "./unban"
 export { default as changeGroup } from "./change-group"
 export { default as changePassword } from "./change-password"
 export { default as forgotPassword } from "./forgot-password"
+
+import * as secondFactors from "./second-factors"
+export { secondFactors }

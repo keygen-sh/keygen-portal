@@ -3,3 +3,6 @@ export { default as Edit } from "./edit"
 export { default as Fields } from "./fields"
 export { default as Profile } from "./profile"
 export { default as Password } from "./password"
+
+import * as SecondFactor from "./second-factor"
+export { SecondFactor }

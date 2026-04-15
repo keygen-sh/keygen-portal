@@ -17,6 +17,7 @@ export default async function get({
     `/accounts/${config.id}/users/${userId}/second-factors/${id}`,
     {
       method: "GET",
+      root: true,
     },
   )) as SecondFactorResponse
 

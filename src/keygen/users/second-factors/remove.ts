@@ -16,6 +16,7 @@ export default async function remove({
     `/accounts/${config.id}/users/${userId}/second-factors/${id}`,
     {
       method: "DELETE",
+      root: true,
     },
   )
 

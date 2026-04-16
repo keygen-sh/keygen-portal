@@ -56,8 +56,8 @@ export default function TeamPage() {
   const totalPages = links?.meta?.pages ?? 1
   const totalUsers = links?.meta?.count
 
-  const maxAdmins = plan?.attributes.maxAdmins
-  const planName = plan?.attributes.name
+  const maxAdmins = plan?.attributes?.maxAdmins
+  const planName = plan?.attributes?.name
 
   const navigateToResource = useResourceNavigate()
 

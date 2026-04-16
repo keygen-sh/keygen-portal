@@ -57,6 +57,7 @@ export type UserRelationships = {
   licenses: Relationship<Linkage<"licenses">[]>
   machines: Relationship<Linkage<"machines">[]>
   tokens: Relationship<Linkage<"tokens">[]>
+  secondFactors: Relationship<Linkage<"second-factors">[]>
 }
 
 export type User = Resource<"users", UserAttributes, UserRelationships>

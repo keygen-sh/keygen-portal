@@ -1,9 +1,10 @@
 import { useMemo } from "react"
 
-import { User } from "@/types/users"
+import { User, UserRoleLabels } from "@/types/users"
 
 import { createTableColumnHelper } from "@/lib/tables"
 
+import * as Tables from "@/components/tables"
 import ClipboardButton from "@/components/clipboard-button"
 
 const column = createTableColumnHelper<User>()
@@ -27,8 +28,17 @@ export function useTeamTableColumns() {
       }),
       column.attr("role", {
         header: "Role",
-        cell: (info) =>
-          info.getValue() || <span className="text-content-muted">--</span>,
+        cell: (info) => {
+          const role = info.getValue()
+          return UserRoleLabels[role] ?? role
+        },
+      }),
+      column.rel("secondFactors", {
+        header: "2FA",
+        cell: (info) => {
+          const row = info.row.original
+          return <Tables.SecondFactorCell userId={row.id} />
+        },
       }),
       column.attr("created", {
         sortingFn: "datetime",

@@ -5,7 +5,25 @@ import { SecondFactor } from "@/types/second-factors"
 
 import * as keygen from "@/keygen"
 
-export function useListSecondFactors() {
+export function useGetSecondFactor(userId: string | undefined) {
+  return useQuery({
+    queryKey: ["users", userId, "second-factors"],
+    queryFn: async () => {
+      const response = await keygen.users.secondFactors.list({
+        userId: userId!,
+      })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response.data ?? []
+    },
+    enabled: !!userId,
+  })
+}
+
+export function useGetCurrentUserSecondFactor() {
   return useQuery({
     queryKey: ["users", "me", "second-factors"],
     queryFn: async () => {

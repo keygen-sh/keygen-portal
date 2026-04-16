@@ -1,4 +1,5 @@
 import { useState, useRef, KeyboardEvent, useMemo } from "react"
+import { Info } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -26,10 +27,16 @@ interface Option {
   label: string
   value: string
 }
+
+interface RequiredOption extends Option {
+  tooltip: string
+}
+
 interface MultiSelectProps {
   value: string[]
   onChange: (value: string[]) => void
   options: Option[]
+  requiredOptions?: RequiredOption[]
   wildcard?: string
   placeholder?: string
   disabled?: boolean
@@ -42,6 +49,7 @@ export default function MultiSelect({
   value,
   onChange,
   options,
+  requiredOptions = [],
   wildcard,
   placeholder = "Choose...",
   disabled,
@@ -56,6 +64,14 @@ export default function MultiSelect({
   const inputRef = useRef<HTMLInputElement>(null)
   const triggerRef = useRef<HTMLDivElement>(null)
 
+  const requiredSet = useMemo(
+    () => new Set(requiredOptions.map((o) => o.value)),
+    [requiredOptions],
+  )
+  const requiredTooltipMap = useMemo(
+    () => new Map(requiredOptions.map((o) => [o.value, o.tooltip])),
+    [requiredOptions],
+  )
   const labelMap = useMemo(
     () => new Map(options.map((o) => [o.value, o.label])),
     [options],
@@ -75,6 +91,8 @@ export default function MultiSelect({
   }
 
   const toggle = (value: string, focus = true) => {
+    if (requiredSet.has(value)) return
+
     const isActive = selected.includes(value)
     const next =
       wildcard && value === wildcard
@@ -85,7 +103,10 @@ export default function MultiSelect({
     setSelected(next, focus)
   }
 
-  const remove = (value: string) => toggle(value, open)
+  const remove = (value: string) => {
+    if (requiredSet.has(value)) return
+    toggle(value, open)
+  }
 
   const content = (
     <Popover modal open={!disabled && open} onOpenChange={setOpen}>
@@ -119,26 +140,42 @@ export default function MultiSelect({
           )}
         >
           <div className="flex min-h-9 w-full flex-wrap items-center gap-x-2 gap-y-2 p-2 text-sm">
-            {selected.map((value) => (
-              <Badge
-                key={value}
-                className="h-5 cursor-pointer text-content-muted"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  remove(value)
-                }}
-              >
-                {labelMap.get(value) ?? value}{" "}
-                <span className="ml-1">&times;</span>
-              </Badge>
+            {requiredOptions.map(({ label, value, tooltip }) => (
+              <Tooltip key={value}>
+                <TooltipTrigger asChild>
+                  <Badge className="h-5 cursor-default text-content-subdued">
+                    {label}
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent className="text-conent-muted max-w-64 bg-background-5 text-pretty">
+                  {tooltip}
+                </TooltipContent>
+              </Tooltip>
             ))}
+            {selected
+              .filter((v) => !requiredSet.has(v))
+              .map((value) => (
+                <Badge
+                  key={value}
+                  className="h-5 cursor-pointer text-content-muted"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    remove(value)
+                  }}
+                >
+                  {labelMap.get(value) ?? value}{" "}
+                  <span className="ml-1">&times;</span>
+                </Badge>
+              ))}
 
             <Input
               ref={inputRef}
               value={query}
               disabled={disabled}
               autoFocus={autoFocus}
-              placeholder={selected.length ? "" : placeholder}
+              placeholder={
+                selected.length || requiredOptions.length ? "" : placeholder
+              }
               fieldSize="sm"
               className="h-5 flex-1 border-none"
               onChange={(e) => {
@@ -173,24 +210,52 @@ export default function MultiSelect({
         <Command shouldFilter={false}>
           <CommandList>
             <ScrollArea className={cn(visibleOptions.length > 5 && "h-48")}>
-              {visibleOptions.map(({ label, value }) => (
-                <CommandItem
-                  key={value}
-                  tabIndex={-1}
-                  onSelect={() => toggle(value)}
-                  className="cursor-pointer"
-                >
-                  <Checkbox
-                    checked={
-                      wildcard && value === wildcard
-                        ? selected.length === 0
-                        : selected.includes(value)
-                    }
-                    className="pointer-events-none mr-2"
-                  />
-                  {label}
-                </CommandItem>
-              ))}
+              {visibleOptions.map(({ label, value }) => {
+                const isRequired = requiredSet.has(value)
+
+                return (
+                  <CommandItem
+                    key={value}
+                    tabIndex={-1}
+                    onSelect={() => toggle(value)}
+                    className={cn(
+                      isRequired ? "cursor-default" : "cursor-pointer",
+                    )}
+                  >
+                    <Checkbox
+                      checked={
+                        isRequired ||
+                        (wildcard && value === wildcard
+                          ? selected.length === 0
+                          : selected.includes(value))
+                      }
+                      disabled={isRequired}
+                      className="pointer-events-none mr-2"
+                    />
+                    {label}
+                    {isRequired && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span
+                            className="ml-auto flex items-center"
+                            onClick={(e) => e.stopPropagation()}
+                            onPointerDown={(e) => e.stopPropagation()}
+                          >
+                            <Info className="size-3.5 text-muted-foreground" />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent
+                          side="right"
+                          sideOffset={8}
+                          className="pointer-events-none max-w-56 bg-background-5 text-pretty text-content-muted"
+                        >
+                          {requiredTooltipMap.get(value)}
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                  </CommandItem>
+                )
+              })}
             </ScrollArea>
 
             <CommandEmpty className="p-2 text-sm text-content-normal">

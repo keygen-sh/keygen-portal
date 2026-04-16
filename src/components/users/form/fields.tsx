@@ -560,7 +560,7 @@ function PermissionsField({
 const PORTAL_REQUIRED_OPTIONS = PortalRequiredPermissions.map((permission) => ({
   label: permission,
   value: permission,
-  tooltip: "This permission is required for portal access.",
+  tooltip: "This permission is required for Portal access.",
 }))
 
 function InternalPermissionsField({

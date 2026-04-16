@@ -1,18 +1,19 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-import { useGetAccount, useGetAccountPlan } from "@/queries/accounts"
 import { useListUsers } from "@/queries/users"
+import { useGetAccount, useGetAccountPlan } from "@/queries/accounts"
 
 import { useDataTable } from "@/hooks/use-data-table"
+import { useFilterSearch } from "@/hooks/use-filter-search"
 import { useTeamTableColumns } from "@/hooks/use-team-table-columns"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
-import { User, InternalRoles } from "@/types/users"
+import { User, InternalRoles, type UserFilters } from "@/types/users"
 
 import * as Users from "@/components/users"
 import DataTable from "@/components/data-table"
@@ -23,6 +24,17 @@ import Pagination from "@/components/pagination"
 export default function TeamPage() {
   const table = useDataTable()
   const columns = useTeamTableColumns()
+
+  const [filters, setFilters] = useFilterSearch<UserFilters>()
+
+  const handleFiltersChange = useCallback(
+    (next: UserFilters) => {
+      setFilters(next)
+      table.setPage(1)
+    },
+    [table, setFilters],
+  )
+
   const {
     data: users,
     links,
@@ -30,7 +42,10 @@ export default function TeamPage() {
   } = useListUsers({
     page: table.page,
     pageSize: table.pageSize,
-    filters: { roles: InternalRoles },
+    filters: {
+      ...filters,
+      roles: filters.roles?.length ? filters.roles : InternalRoles,
+    },
   })
 
   const { data: account } = useGetAccount()
@@ -82,6 +97,10 @@ export default function TeamPage() {
           Invite Teammate
         </Button>
       </PageHeader>
+
+      <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-2.5 md:px-4">
+        <Users.TeamFilterBar filters={filters} onChange={handleFiltersChange} />
+      </div>
 
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<User>

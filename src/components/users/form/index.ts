@@ -1,6 +1,7 @@
 export { default as Create } from "./create"
 export { default as Edit } from "./edit"
 export { default as Fields } from "./fields"
+export { default as Invite } from "./invite"
 export { default as Profile } from "./profile"
 export { default as Password } from "./password"
 

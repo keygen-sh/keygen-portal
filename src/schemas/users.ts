@@ -27,7 +27,7 @@ export type AllValues = CombineFormValues<
 > &
   PasswordValues
 
-export type FieldNames = FieldPath<AllValues>
+export type FieldNames = FieldPath<AllValues> | "internalRole"
 
 const BaseShape = z.object({
   email: z.string().trim().email("Email is invalid"),

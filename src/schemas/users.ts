@@ -18,6 +18,8 @@ export type PasswordValues = {
 }
 export type InviteValues = {
   email: string
+  firstName?: string | null
+  lastName?: string | null
   role: UserRole
   permissions?: string[]
 }
@@ -83,6 +85,8 @@ export const PasswordSchema: z.ZodType<PasswordValues> = PasswordRules(
 
 const InviteShape = z.object({
   email: z.string().trim().email("Email is invalid"),
+  firstName: z.string().trim().nullable().optional(),
+  lastName: z.string().trim().nullable().optional(),
   role: z.nativeEnum(UserRole),
   permissions: z.array(z.string()).optional(),
 })

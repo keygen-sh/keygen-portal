@@ -158,6 +158,15 @@ export default function UsersFormFields({
                 descriptions={descriptions}
               />
             )
+          case "internalRole":
+            return (
+              <InternalRoleField
+                key="internalRole"
+                autoFocus={autoFocus === "internalRole"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
           case "permissions":
             return (
               <PermissionsField
@@ -417,6 +426,61 @@ function RoleField({
                       </TooltipSelectItem>
                     ))}
                   </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel>Internal</SelectLabel>
+                    {InternalRoles.map((role) => (
+                      <TooltipSelectItem
+                        key={role}
+                        value={role}
+                        tooltip={UserRoleDescriptions[role]}
+                        className="pl-4"
+                      >
+                        {UserRoleLabels[role]}
+                      </TooltipSelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function InternalRoleField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Users.BaseValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="role"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Role"
+            variant={fieldVariant}
+            tooltip={descriptions.role}
+          >
+            <FormControl>
+              <Select
+                value={field.value ?? UserRole.Admin}
+                onValueChange={field.onChange}
+              >
+                <SelectTrigger className="w-full" autoFocus={autoFocus}>
+                  <SelectValue placeholder="Select a role" />
+                </SelectTrigger>
+                <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Internal</SelectLabel>
                     {InternalRoles.map((role) => (

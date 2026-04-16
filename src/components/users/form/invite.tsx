@@ -29,7 +29,7 @@ export default function InviteUserForm({
     mode: "onChange",
     defaultValues: {
       email: "",
-      role: UserRole.Developer,
+      role: UserRole.Admin,
     },
   })
 
@@ -56,7 +56,7 @@ export default function InviteUserForm({
         >
           <Forms.Section.Stacking>
             <Users.Form.Fields
-              include={["email", "role"]}
+              include={["email", "internalRole"]}
               fieldVariant="stacking"
             />
           </Forms.Section.Stacking>

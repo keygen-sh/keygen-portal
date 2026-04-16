@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { useListUsers } from "@/queries/users"
 import { useGetAccount, useGetAccountPlan } from "@/queries/accounts"
 
+import { useMobile } from "@/hooks/use-mobile"
 import { useDataTable } from "@/hooks/use-data-table"
 import { useFilterSearch } from "@/hooks/use-filter-search"
 import { useTeamTableColumns } from "@/hooks/use-team-table-columns"
@@ -22,6 +23,8 @@ import PageFooter from "@/components/page-footer"
 import Pagination from "@/components/pagination"
 
 export default function TeamPage() {
+  const isMobile = useMobile()
+
   const table = useDataTable()
   const columns = useTeamTableColumns()
 
@@ -69,7 +72,7 @@ export default function TeamPage() {
         <div className="flex w-full items-center gap-3">
           <h1 className="font-semibold text-content-muted">Team</h1>
           <Separator orientation="vertical" className="mt-0.5 ml-1 min-h-4" />
-          {totalUsers != null && (
+          {totalUsers != null && !isMobile && (
             <p className="mt-0.25 text-sm text-content-subdued">
               You currently have
               <Badge className="mx-1.5 min-h-4 min-w-4 text-xs text-content-muted">
@@ -98,7 +101,34 @@ export default function TeamPage() {
         </Button>
       </PageHeader>
 
-      <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-2.5 md:px-4">
+      {/* Mobile */}
+      {totalUsers != null && isMobile && (
+        <div className="flex min-w-0 flex-col border-b border-accent p-2 text-sm text-content-subdued">
+          <span>
+            You currently have
+            <Badge className="mx-1.5 min-h-4 min-w-4 text-xs text-content-muted">
+              {totalUsers}
+            </Badge>
+            {totalUsers === 1 ? "teammate" : "teammates"}.
+          </span>
+          {plan && (
+            <span>
+              {" "}
+              Invite up to
+              <Badge className="mx-1.5 min-h-4 min-w-4 text-xs text-content-muted">
+                {maxAdmins ?? "Unlimited"}
+              </Badge>
+              while on the
+              <Badge className="mx-1.5 min-h-4 min-w-4 text-xs text-content-muted">
+                {planName}
+              </Badge>
+              tier.
+            </span>
+          )}
+        </div>
+      )}
+
+      <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-3 md:p-2.5 md:px-4">
         <Users.TeamFilterBar filters={filters} onChange={handleFiltersChange} />
       </div>
 

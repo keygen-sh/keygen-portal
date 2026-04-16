@@ -1,19 +1,8 @@
-import { CircleDot, Shield, Braces } from "lucide-react"
+import { Shield, Braces } from "lucide-react"
 
 import * as Filters from "@/components/filter-bar"
 
-import {
-  UserStatus,
-  UserStatusLabels,
-  UserRoleLabels,
-  InternalRoles,
-  type UserFilters,
-} from "@/types/users"
-
-const STATUS_OPTIONS = Object.values(UserStatus).map((status) => ({
-  label: UserStatusLabels[status],
-  value: status,
-}))
+import { UserRoleLabels, InternalRoles, type UserFilters } from "@/types/users"
 
 const ROLE_OPTIONS = InternalRoles.map((role) => ({
   label: UserRoleLabels[role],
@@ -45,15 +34,6 @@ export default function TeamFilterBar({
     <Filters.FilterBar
       filterCount={filterCount}
       onClearAll={() => onChange({ roles: InternalRoles })}
-      pinned={
-        <Filters.EnumFilter
-          label="Status"
-          icon={CircleDot}
-          options={STATUS_OPTIONS}
-          value={filters.status}
-          onChange={(status) => onChange({ ...filters, status })}
-        />
-      }
     >
       <Filters.ArrayFilter
         label="Roles"

@@ -207,6 +207,16 @@ const VIEWS: View[] = [
         params: { accountId: keygen.config.id },
       },
       {
+        to: "/$accountId/app/security",
+        label: "Security",
+        params: { accountId: keygen.config.id },
+      },
+      {
+        to: "/$accountId/app/team",
+        label: "Team",
+        params: { accountId: keygen.config.id },
+      },
+      {
         to: "/$accountId/app/permissions",
         label: "Permissions",
         params: { accountId: keygen.config.id },
@@ -214,11 +224,6 @@ const VIEWS: View[] = [
       {
         to: "/$accountId/app/developers",
         label: "Developers",
-        params: { accountId: keygen.config.id },
-      },
-      {
-        to: "/$accountId/app/security",
-        label: "Security",
         params: { accountId: keygen.config.id },
       },
     ]),

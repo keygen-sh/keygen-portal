@@ -890,7 +890,7 @@ function ScratchForm({
       <Forms.Container.Dialog
         open={open}
         onOpenChange={onOpenChange}
-        fullscreen
+        size="fullscreen"
         disableOverlay
       >
         <Forms.Layout.Wizard

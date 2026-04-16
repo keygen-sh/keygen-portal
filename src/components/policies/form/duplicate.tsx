@@ -122,7 +122,7 @@ export default function DuplicatePolicyForm({
       <Forms.Container.Dialog
         open={open}
         onOpenChange={onOpenChange}
-        fullscreen
+        size="fullscreen"
       >
         {policyLoading ? (
           <div className="flex w-full justify-center py-8">
@@ -143,7 +143,7 @@ export default function DuplicatePolicyForm({
               attachEntitlements.isPending
             }
             submitLabel="Create"
-            fullscreen
+            size="fullscreen"
           >
             <Forms.Section.Columns title="Attributes">
               <Forms.Section.Column>

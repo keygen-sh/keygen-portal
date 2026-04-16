@@ -6,7 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { SecondFactorMode } from "@/types/second-factors"
 
-import { useListSecondFactors } from "@/queries/second-factors"
+import { useGetCurrentUserSecondFactor } from "@/queries/second-factors"
 
 import * as Users from "@/components/users"
 import * as Motion from "@/components/motion"
@@ -18,7 +18,8 @@ export default function SecurityPage() {
     SecondFactorMode.View,
   )
 
-  const { data: secondFactors = [], isLoading } = useListSecondFactors()
+  const { data: secondFactors = [], isLoading } =
+    useGetCurrentUserSecondFactor()
 
   const enabledFactor = secondFactors.find((f) => f.attributes.enabled)
   const orphanedFactor = secondFactors.find((f) => !f.attributes.enabled)

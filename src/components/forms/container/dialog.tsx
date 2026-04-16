@@ -1,4 +1,5 @@
 import { useCallback } from "react"
+
 import {
   Dialog,
   DialogContent,
@@ -11,6 +12,8 @@ import {
 
 import { useMobile } from "@/hooks/use-mobile"
 
+import { FormSize } from "@/types/forms"
+
 import { FormDialogGuard } from "@/components/forms/guard"
 import { useFormGuardContext } from "@/contexts/form-guard-context"
 
@@ -19,7 +22,7 @@ import { cn } from "@/lib/utils"
 interface FormsContainerDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  fullscreen?: boolean
+  size?: FormSize
   disableOverlay?: boolean
   children: React.ReactNode
   className?: string
@@ -28,7 +31,7 @@ interface FormsContainerDialogProps {
 export default function FormsContainerDialog({
   open,
   onOpenChange,
-  fullscreen = false,
+  size = "default",
   disableOverlay = false,
   children,
   className,
@@ -37,7 +40,7 @@ export default function FormsContainerDialog({
     <FormDialogGuard onClose={() => onOpenChange(false)}>
       <FormsContainerDialogInner
         open={open}
-        fullscreen={fullscreen}
+        size={size}
         disableOverlay={disableOverlay}
         className={className}
       >
@@ -49,7 +52,7 @@ export default function FormsContainerDialog({
 
 interface FormsContainerDialogInnerProps {
   open: boolean
-  fullscreen?: boolean
+  size?: FormSize
   disableOverlay?: boolean
   children: React.ReactNode
   className?: string
@@ -57,7 +60,7 @@ interface FormsContainerDialogInnerProps {
 
 function FormsContainerDialogInner({
   open,
-  fullscreen = false,
+  size = "default",
   disableOverlay = false,
   children,
   className,
@@ -79,7 +82,7 @@ function FormsContainerDialogInner({
       <DialogContent
         disableOverlay={disableOverlay}
         className={cn(
-          fullscreen || isMobile
+          size === "fullscreen" || isMobile
             ? "min-h-screen min-w-screen rounded-none border-none"
             : "md:max-w-fit",
           className,

@@ -106,7 +106,7 @@ export default function EditPolicyForm({
       <Forms.Container.Dialog
         open={open}
         onOpenChange={onOpenChange}
-        fullscreen
+        size="fullscreen"
       >
         <Forms.Layout.Sheet
           title="Editing an existing policy"
@@ -119,7 +119,7 @@ export default function EditPolicyForm({
             createEntitlement.isPending
           }
           submitLabel="Update"
-          fullscreen
+          size="fullscreen"
         >
           <Forms.Section.Columns title="Attributes">
             <Forms.Section.Column>

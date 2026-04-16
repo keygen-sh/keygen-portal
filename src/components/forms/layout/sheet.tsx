@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { APIError } from "@/types/api"
+import { FormSize } from "@/types/forms"
 
 import { cn } from "@/lib/utils"
 import { handleFormError } from "@/lib/form-errors"
@@ -25,7 +26,7 @@ interface FormsContentSheetProps<T extends FieldValues = FieldValues> {
   cancelLabel?: string
   showCancel?: boolean
   isPending?: boolean
-  fullscreen?: boolean
+  size?: FormSize
   inline?: boolean
   children: React.ReactNode
   className?: string
@@ -40,7 +41,7 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
   cancelLabel = "Cancel",
   showCancel,
   isPending = false,
-  fullscreen = false,
+  size = "default",
   inline = false,
   children,
   className,
@@ -89,10 +90,12 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
         "flex flex-col",
         inline
           ? "h-auto"
-          : cn(
-              "h-[calc(100vh-2rem)] md:min-w-3xl",
-              !fullscreen && "md:h-auto md:min-h-[50vh]",
-            ),
+          : {
+              default:
+                "h-[calc(100vh-2rem)] md:h-auto md:min-h-[50vh] md:min-w-3xl",
+              fullscreen: "h-[calc(100vh-2rem)] md:min-w-3xl",
+              compact: "h-[calc(100vh-2rem)] md:h-auto md:min-w-lg",
+            }[size],
       )}
     >
       {(title || showClose) && (
@@ -129,10 +132,11 @@ export default function FormsContentSheet<T extends FieldValues = FieldValues>({
         className={cn(
           inline
             ? "h-auto"
-            : cn(
-                "min-h-[calc(100vh-6.5rem)]",
-                !fullscreen && "md:h-[50vh] md:min-h-auto",
-              ),
+            : {
+                default: "min-h-[calc(100vh-6.5rem)] md:h-[50vh] md:min-h-auto",
+                fullscreen: "min-h-[calc(100vh-6.5rem)]",
+                compact: "min-h-[calc(100vh-6.5rem)] md:h-auto md:min-h-auto",
+              }[size],
           className,
         )}
       >

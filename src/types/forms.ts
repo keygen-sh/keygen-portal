@@ -10,3 +10,5 @@ export type CombineFormValues<
   Create = Base,
   Update = Partial<Base>,
 > = Base & Create & Update
+
+export type FormSize = "default" | "compact" | "fullscreen"

@@ -148,7 +148,7 @@ export default function EditLicenseForm({
       <Forms.Container.Dialog
         open={open}
         onOpenChange={onOpenChange}
-        fullscreen
+        size="fullscreen"
       >
         <Forms.Layout.Sheet
           title="Editing an existing license"
@@ -163,7 +163,7 @@ export default function EditLicenseForm({
             detachUsers.isPending
           }
           submitLabel="Update"
-          fullscreen
+          size="fullscreen"
         >
           <Forms.Section.Columns title="Attributes">
             <Forms.Section.Column>

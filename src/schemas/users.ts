@@ -19,6 +19,7 @@ export type PasswordValues = {
 export type InviteValues = {
   email: string
   role: UserRole
+  permissions?: string[]
 }
 export type AllValues = CombineFormValues<
   BaseValues,
@@ -27,7 +28,10 @@ export type AllValues = CombineFormValues<
 > &
   PasswordValues
 
-export type FieldNames = FieldPath<AllValues> | "internalRole"
+export type FieldNames =
+  | FieldPath<AllValues>
+  | "internalRole"
+  | "internalPermissions"
 
 const BaseShape = z.object({
   email: z.string().trim().email("Email is invalid"),
@@ -80,6 +84,7 @@ export const PasswordSchema: z.ZodType<PasswordValues> = PasswordRules(
 const InviteShape = z.object({
   email: z.string().trim().email("Email is invalid"),
   role: z.nativeEnum(UserRole),
+  permissions: z.array(z.string()).optional(),
 })
 
 const InviteRules = (

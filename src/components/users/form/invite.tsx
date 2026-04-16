@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { UserRole } from "@/types/users"
+import { UserRole, PortalRequiredPermissions } from "@/types/users"
 
 import { useCreateUser, useResetPassword } from "@/queries/users"
 
@@ -30,6 +30,7 @@ export default function InviteUserForm({
     defaultValues: {
       email: "",
       role: UserRole.Admin,
+      permissions: [...PortalRequiredPermissions],
     },
   })
 
@@ -45,6 +46,7 @@ export default function InviteUserForm({
         open={open}
         onOpenChange={onOpenChange}
         size="compact"
+        className="w-1/3"
       >
         <Forms.Layout.Sheet
           title="Inviting a teammate"
@@ -56,7 +58,7 @@ export default function InviteUserForm({
         >
           <Forms.Section.Stacking>
             <Users.Form.Fields
-              include={["email", "internalRole"]}
+              include={["email", "internalRole", "internalPermissions"]}
               fieldVariant="stacking"
             />
           </Forms.Section.Stacking>

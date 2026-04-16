@@ -26,10 +26,12 @@ import {
   ExternalRoles,
   InternalRoles,
   UserRoleLabels,
+  AdminPermissions,
   UserRoleDescriptions,
   UserFormFieldDescriptions,
-  UserCreateFormFieldDescriptions,
+  PortalRequiredPermissions,
   UserEditFormFieldDescriptions,
+  UserCreateFormFieldDescriptions,
   UserPasswordFormFieldDescriptions,
 } from "@/types/users"
 import { type FieldVariant } from "@/components/forms/field"
@@ -172,6 +174,15 @@ export default function UsersFormFields({
               <PermissionsField
                 key="permissions"
                 autoFocus={autoFocus === "permissions"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "internalPermissions":
+            return (
+              <InternalPermissionsField
+                key="internalPermissions"
+                autoFocus={autoFocus === "internalPermissions"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
               />
@@ -536,6 +547,52 @@ function PermissionsField({
                 value: p,
               }))}
               placeholder="Leave blank to use defaults"
+              autoFocus={autoFocus}
+            />
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+const PORTAL_REQUIRED_OPTIONS = PortalRequiredPermissions.map((permission) => ({
+  label: permission,
+  value: permission,
+  tooltip: "This permission is required for portal access.",
+}))
+
+function InternalPermissionsField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Users.BaseValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="permissions"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Permissions"
+            variant={fieldVariant}
+            tooltip={descriptions.permissions}
+          >
+            <MultiSelect
+              value={field.value ?? []}
+              onChange={field.onChange}
+              options={AdminPermissions.map((p) => ({
+                label: p,
+                value: p,
+              }))}
+              requiredOptions={PORTAL_REQUIRED_OPTIONS}
               autoFocus={autoFocus}
             />
           </Forms.Field.Header>

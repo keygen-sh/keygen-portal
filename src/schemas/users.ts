@@ -16,6 +16,10 @@ export type PasswordValues = {
   newPassword: string
   confirmPassword: string
 }
+export type InviteValues = {
+  email: string
+  role: UserRole
+}
 export type AllValues = CombineFormValues<
   BaseValues,
   CreateValues,
@@ -71,4 +75,19 @@ const PasswordRules = (
 
 export const PasswordSchema: z.ZodType<PasswordValues> = PasswordRules(
   PasswordShape as z.ZodType<PasswordValues>,
+)
+
+const InviteShape = z.object({
+  email: z.string().trim().email("Email is invalid"),
+  role: z.nativeEnum(UserRole),
+})
+
+const InviteRules = (
+  schema: z.ZodType<InviteValues>,
+): z.ZodType<InviteValues> => {
+  return schema
+}
+
+export const InviteSchema: z.ZodType<InviteValues> = InviteRules(
+  InviteShape as z.ZodType<InviteValues>,
 )

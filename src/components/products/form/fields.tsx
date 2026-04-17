@@ -27,6 +27,7 @@ import TagInput from "@/components/tag-input"
 import MultiSelect from "@/components/multi-select"
 import KeyValueInput from "@/components/key-value-input"
 import { CardSelector, CardOption } from "@/components/card-selector"
+
 type Descriptions = typeof ProductFormFieldDescriptions
 
 interface ProductsFormFieldsProps {
@@ -35,7 +36,7 @@ interface ProductsFormFieldsProps {
   autoFocus?: Schemas.Products.FieldNames
   titleVariant?: boolean
   fieldVariant?: FieldVariant
-  schema?: "create" | "edit"
+  schema?: Schemas.Products.SchemaNames
 }
 
 const IncludeDefaultFields: Schemas.Products.FieldNames[] = [
@@ -105,6 +106,7 @@ export default function ProductsFormFields({
             return (
               <PermissionsField
                 key="permissions"
+                schema={schema}
                 autoFocus={autoFocus === "permissions"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
@@ -307,10 +309,12 @@ function DistributionStrategyField() {
 }
 
 function PermissionsField({
+  schema,
   autoFocus,
   fieldVariant = "row",
   descriptions,
 }: {
+  schema?: Schemas.Products.SchemaNames
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
@@ -341,7 +345,11 @@ function PermissionsField({
               ]}
               includeNone
               includeWildcard
-              placeholder="Leave blank to use defaults"
+              placeholder={
+                schema === "create"
+                  ? "Leave blank to use defaults"
+                  : "Select permissions..."
+              }
               autoFocus={autoFocus}
             />
           </Forms.Field.Header>

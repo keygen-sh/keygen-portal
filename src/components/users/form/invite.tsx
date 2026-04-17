@@ -76,6 +76,7 @@ export default function InviteUserForm({
           <Separator dashed className="my-8" />
 
           <Users.Form.Fields
+            schema="invite"
             include={["internalPermissions"]}
             fieldVariant="stacking"
           />

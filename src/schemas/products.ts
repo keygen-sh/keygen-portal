@@ -66,3 +66,11 @@ const AttributesRules = (
 }
 export const AttributesSchema = AttributesRules(AttributesShape)
 export type AttributesValues = z.infer<typeof AttributesSchema>
+
+export const SchemaMap = {
+  base: BaseSchema,
+  create: CreateSchema,
+  edit: UpdateSchema,
+} as const
+
+export type SchemaNames = keyof typeof SchemaMap

@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router"
 
-export const useBackNavigate = (path: string = '..'): () => Promise<void> => {
+export const useBackNavigate = (): (() => Promise<void>) => {
   const navigate = useNavigate()
 
   return async () => {
@@ -10,6 +10,6 @@ export const useBackNavigate = (path: string = '..'): () => Promise<void> => {
       return
     }
 
-    await navigate({ to: path })
+    await navigate({ to: ".." })
   }
 }

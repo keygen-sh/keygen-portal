@@ -15,11 +15,10 @@ interface BackProps {
 }
 
 export default function BackButton({
-  path = '..',
   label,
   className,
 }: BackProps): React.ReactElement {
-  const back = useBackNavigate(path)
+  const back = useBackNavigate()
 
   return (
     <div className={cn("group flex h-6 w-fit gap-2", className)}>

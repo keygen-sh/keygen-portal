@@ -115,6 +115,7 @@
   --color-accent-foreground: var(--color-content-loud);
 
   --color-destructive: var(--color-brand-destructive);
+  --color-warning: var(--color-brand-amber);
 
   /* Borders/Inputs/Rings */
   --color-border: var(--color-brand-border-main);

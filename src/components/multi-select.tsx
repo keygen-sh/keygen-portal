@@ -33,11 +33,12 @@ interface RequiredOption extends Option {
 }
 
 interface MultiSelectProps {
-  value: string[]
-  onChange: (value: string[]) => void
+  value: string[] | null | undefined
+  onChange: (value: string[] | null) => void
   options: Option[]
+  noneOption?: boolean
   requiredOptions?: RequiredOption[]
-  wildcard?: string
+  exclusiveOptions?: string[]
   placeholder?: string
   disabled?: boolean
   autoFocus?: boolean
@@ -49,15 +50,18 @@ export default function MultiSelect({
   value,
   onChange,
   options,
+  noneOption,
   requiredOptions = [],
-  wildcard,
+  exclusiveOptions = [],
   placeholder = "Choose...",
   disabled,
   autoFocus,
   disabledTooltip,
   className,
 }: MultiSelectProps) {
-  const selected = value ?? []
+  const items = value ?? []
+  const hasNoneOption = !!noneOption && requiredOptions.length === 0
+  const isNoneActive = hasNoneOption && value != null && value.length === 0
   const [query, setQuery] = useState("")
   const [open, setOpen] = useState(false)
 
@@ -83,24 +87,38 @@ export default function MultiSelect({
       ),
     [query, options],
   )
+  const showNoneOption = useMemo(
+    () => hasNoneOption && "none".includes(query.toLowerCase()),
+    [hasNoneOption, query],
+  )
 
-  const setSelected = (next: string[], focus = true) => {
+  const emit = (next: string[] | null, focus = true) => {
     onChange(next)
     setQuery("")
     if (focus) inputRef.current?.focus()
   }
 
+  const exclusiveSet = useMemo(
+    () => new Set(exclusiveOptions),
+    [exclusiveOptions],
+  )
+
+  const toggleNone = (focus = true) => {
+    emit(isNoneActive ? null : [], focus)
+  }
+
   const toggle = (value: string, focus = true) => {
     if (requiredSet.has(value)) return
 
-    const isActive = selected.includes(value)
-    const next =
-      wildcard && value === wildcard
-        ? []
-        : isActive
-          ? selected.filter((v) => v !== value)
-          : [...selected, value]
-    setSelected(next, focus)
+    if (exclusiveSet.has(value)) {
+      emit(items.includes(value) ? null : [value], focus)
+      return
+    }
+
+    const base = items.filter((v) => !exclusiveSet.has(v))
+    const isActive = base.includes(value)
+    const next = isActive ? base.filter((v) => v !== value) : [...base, value]
+    emit(next.length === 0 ? null : next, focus)
   }
 
   const remove = (value: string) => {
@@ -152,7 +170,18 @@ export default function MultiSelect({
                 </TooltipContent>
               </Tooltip>
             ))}
-            {selected
+            {isNoneActive && (
+              <Badge
+                className="h-5 cursor-pointer text-content-muted"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  toggleNone(open)
+                }}
+              >
+                None <span className="ml-1">&times;</span>
+              </Badge>
+            )}
+            {items
               .filter((v) => !requiredSet.has(v))
               .map((value) => (
                 <Badge
@@ -174,7 +203,9 @@ export default function MultiSelect({
               disabled={disabled}
               autoFocus={autoFocus}
               placeholder={
-                selected.length || requiredOptions.length ? "" : placeholder
+                items.length || isNoneActive || requiredOptions.length
+                  ? ""
+                  : placeholder
               }
               fieldSize="sm"
               className="h-5 flex-1 border-none"
@@ -188,8 +219,12 @@ export default function MultiSelect({
                   return
                 }
 
-                if (e.key === "Backspace" && !query && selected.length) {
-                  remove(selected[selected.length - 1])
+                if (e.key === "Backspace" && !query) {
+                  if (isNoneActive) {
+                    toggleNone(open)
+                  } else if (items.length) {
+                    remove(items[items.length - 1])
+                  }
                 } else if (e.key === "Escape") {
                   setOpen(false)
                   setQuery("")
@@ -209,7 +244,24 @@ export default function MultiSelect({
       >
         <Command shouldFilter={false}>
           <CommandList>
-            <ScrollArea className={cn(visibleOptions.length > 5 && "h-48")}>
+            <ScrollArea
+              className={cn(
+                visibleOptions.length + (showNoneOption ? 1 : 0) > 5 && "h-48",
+              )}
+            >
+              {showNoneOption && (
+                <CommandItem
+                  tabIndex={-1}
+                  onSelect={() => toggleNone()}
+                  className="cursor-pointer"
+                >
+                  <Checkbox
+                    checked={isNoneActive}
+                    className="pointer-events-none mr-2"
+                  />
+                  None
+                </CommandItem>
+              )}
               {visibleOptions.map(({ label, value }) => {
                 const isRequired = requiredSet.has(value)
 
@@ -223,12 +275,7 @@ export default function MultiSelect({
                     )}
                   >
                     <Checkbox
-                      checked={
-                        isRequired ||
-                        (wildcard && value === wildcard
-                          ? selected.length === 0
-                          : selected.includes(value))
-                      }
+                      checked={isRequired || items.includes(value)}
                       disabled={isRequired}
                       className="pointer-events-none mr-2"
                     />

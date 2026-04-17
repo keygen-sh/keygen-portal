@@ -8,6 +8,7 @@ export class Client {
   private rootToken?: string | null
   private environmentToken?: string | null
   private environment?: string | null
+  private user?: string | null
 
   constructor(token?: string | null, environment?: string | null) {
     this.rootToken = token ?? null
@@ -24,6 +25,14 @@ export class Client {
 
   public setEnvironment(code: string | null) {
     this.environment = code
+  }
+
+  public setUser(id: string | null) {
+    this.user = id
+  }
+
+  public get currentUser(): string | null | undefined {
+    return this.user
   }
 
   private get activeToken(): string | null | undefined {

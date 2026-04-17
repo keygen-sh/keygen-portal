@@ -15,7 +15,7 @@ export default async function list({
     `/accounts/${config.id}/users/${userId}/second-factors`,
     {
       method: "GET",
-      root: true,
+      root: client.currentUser === userId,
     },
   )) as SecondFactorListResponse
 

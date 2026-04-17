@@ -22,11 +22,9 @@ export default function UsersList() {
   const table = useDataTable()
   const columns = useUserTableColumns()
 
-  const [rawFilters, setFilters] = useFilterSearch<UserFilters>()
-  const filters: UserFilters = {
-    ...rawFilters,
-    roles: rawFilters.roles ?? [UserRole.User],
-  }
+  const [filters, setFilters] = useFilterSearch<UserFilters>({
+    roles: [UserRole.User],
+  })
 
   const handleFiltersChange = useCallback(
     (next: UserFilters) => {

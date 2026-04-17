@@ -14,7 +14,6 @@ function validateSearch(search: Record<string, unknown>): UserFilters {
   if (typeof search.product === "string") filters.product = search.product
   if (typeof search.group === "string") filters.group = search.group
   if (Array.isArray(search.roles)) filters.roles = search.roles as string[]
-  else filters.roles = ["user"]
   if (isRecord(search.metadata))
     filters.metadata = search.metadata as Record<string, string>
 

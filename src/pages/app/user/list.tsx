@@ -6,7 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { useUserTableColumns } from "@/hooks/use-user-table-columns"
 import { useFilterSearch } from "@/hooks/use-filter-search"
 import { useDataTable } from "@/hooks/use-data-table"
-import { User, type UserFilters } from "@/types/users"
+import { User, UserRole, type UserFilters } from "@/types/users"
 
 import { useListUsers } from "@/queries/users"
 
@@ -22,7 +22,11 @@ export default function UsersList() {
   const table = useDataTable()
   const columns = useUserTableColumns()
 
-  const [filters, setFilters] = useFilterSearch<UserFilters>()
+  const [rawFilters, setFilters] = useFilterSearch<UserFilters>()
+  const filters: UserFilters = {
+    ...rawFilters,
+    roles: rawFilters.roles ?? [UserRole.User],
+  }
 
   const handleFiltersChange = useCallback(
     (next: UserFilters) => {

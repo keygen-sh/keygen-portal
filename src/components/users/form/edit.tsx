@@ -25,7 +25,7 @@ export default function EditUserForm({
   onOpenChange,
 }: EditUserFormProps) {
   const { id } = useParams({ from: "/$accountId/app/users/$id" })
-  const { data: user, isLoading: userLoading } = useGetUser(id)
+  const { data: user } = useGetUser(id)
   const updateUser = useUpdateUser(user?.id ?? "")
   const changeGroup = useChangeUserGroup()
 
@@ -68,7 +68,7 @@ export default function EditUserForm({
           title="Editing an existing user"
           onSubmit={handleSubmit}
           errorMessage="Failed to update user"
-          isPending={userLoading}
+          isPending={updateUser.isPending}
           submitLabel="Update"
           className="md:h-[66vh]!"
         >

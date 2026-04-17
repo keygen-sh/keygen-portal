@@ -19,7 +19,7 @@ export default function PageHeader({
   return (
     <header
       className={cn(
-        "flex items-center gap-2 border-b border-accent p-2 md:p-4",
+        "flex min-h-[60px] items-center gap-2 border-b border-accent p-2 md:min-h-[70px] md:p-4",
         className,
       )}
     >

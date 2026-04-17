@@ -1,9 +1,10 @@
 import * as React from "react"
-import { useNavigate } from "@tanstack/react-router"
 
 import { cn } from "@/lib/utils"
 
 import { Button } from "@/components/ui/button"
+
+import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { ChevronLeft } from "lucide-react"
 
@@ -13,25 +14,12 @@ interface BackProps {
   className?: string
 }
 
-export const useBackNavigate = ({ path = '..' }: Pick<BackProps, 'path'> = {}): () => Promise<void> => {
-  const navigate = useNavigate()
-
-  return async () => {
-    if (window.history.length > 1) {
-      window.history.back()
-      return
-    }
-
-    await navigate({ to: path })
-  }
-}
-
 export default function BackButton({
   path = '..',
   label,
   className,
 }: BackProps): React.ReactElement {
-  const back = useBackNavigate({ path })
+  const back = useBackNavigate(path)
 
   return (
     <div className={cn("group flex h-6 w-fit gap-2", className)}>

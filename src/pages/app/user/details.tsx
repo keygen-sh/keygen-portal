@@ -61,6 +61,7 @@ import {
 } from "@/queries/users"
 
 import { useMobile } from "@/hooks/use-mobile"
+import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
@@ -72,7 +73,7 @@ import * as Attribute from "@/components/attribute"
 import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
-import BackButton, { useBackNavigate } from "@/components/back-button"
+import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
 import ConfirmationModal from "@/components/confirmation-modal"
 import TooltipBadge from "@/components/tooltip-badge"

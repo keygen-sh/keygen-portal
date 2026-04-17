@@ -264,13 +264,10 @@ function LicensePermissionsField({ autoFocus }: { autoFocus?: boolean }) {
             <MultiSelect
               value={field.value}
               onChange={field.onChange}
-              options={[
-                { label: "*", value: "*" },
-                ...LicensePermissions.map((p) => ({
-                  label: p,
-                  value: p,
-                })),
-              ]}
+              options={LicensePermissions.map((p) => ({
+                label: p,
+                value: p,
+              }))}
               includeNone
               includeWildcard
               placeholder="Select permissions..."
@@ -301,13 +298,10 @@ function UserPermissionsField({ autoFocus }: { autoFocus?: boolean }) {
             <MultiSelect
               value={field.value}
               onChange={field.onChange}
-              options={[
-                { label: "*", value: "*" },
-                ...UserPermissions.map((p) => ({
-                  label: p,
-                  value: p,
-                })),
-              ]}
+              options={UserPermissions.map((p) => ({
+                label: p,
+                value: p,
+              }))}
               includeNone
               includeWildcard
               placeholder="Select permissions..."

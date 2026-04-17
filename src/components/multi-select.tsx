@@ -82,12 +82,20 @@ export default function MultiSelect({
     () => new Map(options.map((o) => [o.value, o.label])),
     [options],
   )
+  const normalizedOptions = useMemo(() => {
+    const base = options.slice()
+    if (includeWildcard && !base.some((o) => o.value === "*")) {
+      base.unshift({ label: "*", value: "*" })
+    }
+    return base
+  }, [options, includeWildcard])
+
   const visibleOptions = useMemo(
     () =>
-      options.filter((option) =>
+      normalizedOptions.filter((option) =>
         option.label.toLowerCase().includes(query.toLowerCase()),
       ),
-    [query, options],
+    [query, normalizedOptions],
   )
 
   const emit = (next: string[] | null, focus = true) => {

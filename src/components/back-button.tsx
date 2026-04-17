@@ -8,27 +8,30 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft } from "lucide-react"
 
 interface BackProps {
-  path: string
+  path?: string
   label?: string
   className?: string
-  preferHistory?: boolean
 }
 
-export default function BackButton({
-  path,
-  label,
-  className,
-  preferHistory = true,
-}: BackProps): React.ReactElement {
+export const useBackNavigate = ({ path = '..' }: Pick<BackProps, 'path'> = {}): () => Promise<void> => {
   const navigate = useNavigate()
 
-  const handleClick = async () => {
-    if (preferHistory && window.history.length > 1) {
+  return async () => {
+    if (window.history.length > 1) {
       window.history.back()
       return
     }
+
     await navigate({ to: path })
   }
+}
+
+export default function BackButton({
+  path = '..',
+  label,
+  className,
+}: BackProps): React.ReactElement {
+  const back = useBackNavigate({ path })
 
   return (
     <div className={cn("group flex h-6 w-fit gap-2", className)}>
@@ -39,7 +42,7 @@ export default function BackButton({
         type="button"
         variant="link"
         size="link"
-        onClick={handleClick}
+        onClick={() => back()}
         className="text-content-subdued group-hover:text-content-muted"
         aria-label={label || "Go Back"}
       >

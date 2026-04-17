@@ -50,7 +50,7 @@ interface UsersFormFieldsProps {
   autoFocus?: Schemas.Users.FieldNames
   titleVariant?: boolean
   fieldVariant?: FieldVariant
-  schema?: "create" | "edit"
+  schema?: Schemas.Users.SchemaNames
 }
 
 const IncludeDefaultFields: Schemas.Users.FieldNames[] = [
@@ -173,6 +173,7 @@ export default function UsersFormFields({
             return (
               <PermissionsField
                 key="permissions"
+                schema={schema}
                 autoFocus={autoFocus === "permissions"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
@@ -517,10 +518,12 @@ function InternalRoleField({
 }
 
 function PermissionsField({
+  schema,
   autoFocus,
   fieldVariant = "row",
   descriptions,
 }: {
+  schema?: Schemas.Users.SchemaNames
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
@@ -551,7 +554,11 @@ function PermissionsField({
               ]}
               includeNone
               includeWildcard
-              placeholder="Leave blank to use defaults"
+              placeholder={
+                schema === "create" || schema === "invite"
+                  ? "Leave blank to use defaults"
+                  : "Select permissions..."
+              }
               autoFocus={autoFocus}
             />
           </Forms.Field.Header>

@@ -273,7 +273,7 @@ function LicensePermissionsField({ autoFocus }: { autoFocus?: boolean }) {
               ]}
               includeNone
               includeWildcard
-              placeholder="Leave blank to use defaults"
+              placeholder="Select permissions..."
               autoFocus={autoFocus}
             />
           </Forms.Field.Header>
@@ -310,7 +310,7 @@ function UserPermissionsField({ autoFocus }: { autoFocus?: boolean }) {
               ]}
               includeNone
               includeWildcard
-              placeholder="Leave blank to use defaults"
+              placeholder="Select permissions..."
               autoFocus={autoFocus}
             />
           </Forms.Field.Header>

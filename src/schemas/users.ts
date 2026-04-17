@@ -100,3 +100,14 @@ const InviteRules = (
 export const InviteSchema: z.ZodType<InviteValues> = InviteRules(
   InviteShape as z.ZodType<InviteValues>,
 )
+
+export const SchemaMap = {
+  base: BaseSchema,
+  create: CreateSchema,
+  edit: UpdateSchema,
+  profile: UpdateSchema,
+  password: PasswordSchema,
+  invite: InviteSchema,
+} as const
+
+export type SchemaNames = keyof typeof SchemaMap

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useNavigate, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 import { formatDate } from "date-fns"
 
 import { Button } from "@/components/ui/button"
@@ -77,6 +77,7 @@ import {
 } from "@/queries/licenses"
 
 import { useMobile } from "@/hooks/use-mobile"
+import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
@@ -154,7 +155,7 @@ export default function LicenseDetails() {
 
   const { data: licenseUsers = [] } = useListLicenseUsers(id)
 
-  const navigate = useNavigate()
+  const back = useBackNavigate()
 
   const isMobile = useMobile()
   const [open, setOpen] = useState({
@@ -171,10 +172,10 @@ export default function LicenseDetails() {
   useEffect(() => {
     ;(async () => {
       if (licenseError && !licenseFetching) {
-        await navigate({ to: ".." })
+        await back()
       }
     })()
-  }, [licenseError, licenseFetching, navigate])
+  }, [licenseError, licenseFetching, back])
 
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))
@@ -184,7 +185,7 @@ export default function LicenseDetails() {
     try {
       await removeLicense.mutateAsync()
       toast({ message: "License deleted", variant: "success" })
-      await navigate({ to: ".." })
+      await back()
     } catch {
       toast({ message: "Failed to delete license", variant: "error" })
     }
@@ -257,7 +258,7 @@ export default function LicenseDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => navigate({ to: `..` })}
+                  onClick={() => back()}
                 >
                   Licenses
                 </BreadcrumbLink>
@@ -446,7 +447,7 @@ export default function LicenseDetails() {
         {license ? (
           <ScrollArea className="min-h-0 flex-1 overflow-y-auto">
             <div className="px-4 py-6 md:px-10 md:py-8">
-              <BackButton path=".." className="mb-8" />
+              <BackButton className="mb-8" />
 
               <div className="mb-2 flex flex-wrap gap-2">
                 <TooltipBadge

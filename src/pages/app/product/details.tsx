@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useNavigate, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -44,6 +44,7 @@ import { DistributionStrategy } from "@/types/products"
 
 import { useGetProduct, useRemoveProduct } from "@/queries/products"
 import { useMobile } from "@/hooks/use-mobile"
+import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
@@ -64,7 +65,7 @@ export default function ProductDetails() {
   const { data: product, isLoading, isFetching, isError } = useGetProduct(id)
   const deleteProduct = useRemoveProduct(id)
 
-  const navigate = useNavigate()
+  const back = useBackNavigate()
 
   const isMobile = useMobile()
   const [open, setOpen] = useState({
@@ -75,10 +76,10 @@ export default function ProductDetails() {
   useEffect(() => {
     ;(async () => {
       if (isError && !isFetching) {
-        await navigate({ to: ".." })
+        await back()
       }
     })()
-  }, [isError, isFetching, navigate])
+  }, [isError, isFetching, back])
 
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))
@@ -91,7 +92,7 @@ export default function ProductDetails() {
           message: "Product deleted",
           variant: "success",
         })
-        await navigate({ to: ".." })
+        await back()
       },
     })
   }
@@ -105,7 +106,7 @@ export default function ProductDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => navigate({ to: `..` })}
+                  onClick={() => back()}
                 >
                   Products
                 </BreadcrumbLink>
@@ -177,7 +178,7 @@ export default function ProductDetails() {
         {product ? (
           <ScrollArea className="min-h-0 flex-1 overflow-y-auto">
             <div className="px-4 py-6 md:px-10 md:py-8">
-              <BackButton path=".." className="mb-8" />
+              <BackButton className="mb-8" />
               <div className="mb-2">
                 {product.attributes.distributionStrategy ===
                 DistributionStrategy.Licensed ? (

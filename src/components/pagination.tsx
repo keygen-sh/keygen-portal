@@ -28,7 +28,7 @@ export default function Pagination({
   return (
     <div className="flex items-center gap-2">
       <span className="text-sm text-muted-foreground">
-        Page {page} of {pageCount}
+        Page {page} of {Math.max(1, pageCount)}
       </span>
 
       <Button

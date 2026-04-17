@@ -36,8 +36,8 @@ export default function EditLicensePermissionsForm({
     mode: "onChange",
     values: {
       defaultLicensePermissions:
-        defaultLicensePermissions?.attributes.value ?? [],
-      defaultUserPermissions: defaultUserPermissions?.attributes.value ?? [],
+        defaultLicensePermissions?.attributes.value ?? null,
+      defaultUserPermissions: defaultUserPermissions?.attributes.value ?? null,
     },
   })
 

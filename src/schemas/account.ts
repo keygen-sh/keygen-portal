@@ -11,8 +11,8 @@ export type DeveloperValues = Writable<
   Pick<AccountAttributes, "apiVersion" | "protected">
 >
 export type PermissionsValues = {
-  defaultUserPermissions?: string[]
-  defaultLicensePermissions?: string[]
+  defaultUserPermissions?: string[] | null
+  defaultLicensePermissions?: string[] | null
 }
 export type AllValues = CombineFormValues<BaseValues, UpdateValues> &
   DeveloperValues &
@@ -58,8 +58,8 @@ export const DeveloperSchema: z.ZodType<DeveloperValues> =
   DeveloperRules(DeveloperShape)
 
 const PermissionsShape = z.object({
-  defaultUserPermissions: z.array(z.string()).optional(),
-  defaultLicensePermissions: z.array(z.string()).optional(),
+  defaultUserPermissions: z.array(z.string()).nullable().optional(),
+  defaultLicensePermissions: z.array(z.string()).nullable().optional(),
 })
 
 const PermissionsRules = (

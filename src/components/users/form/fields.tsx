@@ -540,12 +540,17 @@ function PermissionsField({
             tooltip={descriptions.permissions}
           >
             <MultiSelect
-              value={field.value ?? []}
+              value={field.value}
               onChange={field.onChange}
-              options={ProductPermissions.map((p) => ({
-                label: p,
-                value: p,
-              }))}
+              options={[
+                { label: "*", value: "*" },
+                ...ProductPermissions.map((p) => ({
+                  label: p,
+                  value: p,
+                })),
+              ]}
+              noneOption
+              exclusiveOptions={["*"]}
               placeholder="Leave blank to use defaults"
               autoFocus={autoFocus}
             />
@@ -586,12 +591,17 @@ function InternalPermissionsField({
             tooltip={descriptions.permissions}
           >
             <MultiSelect
-              value={field.value ?? []}
+              value={field.value}
               onChange={field.onChange}
-              options={AdminPermissions.map((p) => ({
-                label: p,
-                value: p,
-              }))}
+              options={[
+                { label: "*", value: "*" },
+                ...AdminPermissions.map((p) => ({
+                  label: p,
+                  value: p,
+                })),
+              ]}
+              noneOption
+              exclusiveOptions={["*"]}
               requiredOptions={PORTAL_REQUIRED_OPTIONS}
               autoFocus={autoFocus}
             />

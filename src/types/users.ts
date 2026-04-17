@@ -34,7 +34,7 @@ export type UserAttributes = {
   fullName: string | null
   status: UserStatus
   role: UserRole
-  permissions: string[]
+  permissions: string[] | null
   metadata: Record<string, unknown>
   created: string
   updated: string
@@ -45,7 +45,7 @@ export interface UserInput {
   firstName?: string | null
   lastName?: string | null
   role?: UserRole
-  permissions?: string[]
+  permissions?: string[] | null
   metadata?: Record<string, unknown>
 }
 

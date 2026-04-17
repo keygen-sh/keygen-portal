@@ -34,7 +34,7 @@ const BaseShape = z.object({
     .refine((v) => !v || z.string().url().safeParse(v).success, {
       message: "Must be a valid URL",
     }),
-  permissions: z.array(z.string()).default([]),
+  permissions: z.array(z.string()).nullable().default(null),
   platforms: z.array(z.string()).default([]),
   metadata: z.record(z.string()).default({}),
 })

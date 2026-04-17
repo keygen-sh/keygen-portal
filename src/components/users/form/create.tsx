@@ -32,7 +32,7 @@ export default function CreateUserForm({
       lastName: null,
       password: null,
       role: UserRole.User,
-      permissions: [],
+      permissions: null,
       groupId: null,
       metadata: {},
     },

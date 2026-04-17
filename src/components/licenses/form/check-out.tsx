@@ -40,7 +40,7 @@ import { copyToClipboard } from "@/lib/clipboard"
 import GuardModal from "@/components/guard-modal"
 import DurationInput from "@/components/duration-input"
 
-const IncludeOptions = [
+const INCLUDE_OPTIONS = [
   { value: "entitlements", label: "Entitlements" },
   { value: "product", label: "Product" },
   { value: "policy", label: "Policy" },
@@ -183,7 +183,7 @@ export default function CheckOutLicenseForm({
                           <MultiSelect
                             value={field.value ?? []}
                             onChange={field.onChange}
-                            options={IncludeOptions}
+                            options={INCLUDE_OPTIONS}
                             placeholder="Select relationships..."
                             disabled={!includeEnabled}
                             disabledTooltip="Enable relationship data to configure this field."

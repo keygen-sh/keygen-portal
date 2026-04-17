@@ -41,7 +41,7 @@ interface ArtifactsFormFieldsProps {
   schema?: "create" | "edit"
 }
 
-const IncludeDefaultFields: Schemas.Artifacts.FieldNames[] = [
+const INCLUDE_DEFAULT_FIELDS: Schemas.Artifacts.FieldNames[] = [
   "filename",
   "filetype",
   "filesize",
@@ -70,7 +70,7 @@ export default function ArtifactsFormFields({
 
   const fields = include
     ? include
-    : IncludeDefaultFields.filter((field) => !exclude.includes(field))
+    : INCLUDE_DEFAULT_FIELDS.filter((field) => !exclude.includes(field))
 
   return (
     <>

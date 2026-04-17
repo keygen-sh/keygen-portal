@@ -41,7 +41,7 @@ interface PackagesFormFieldsProps {
   schema?: "create" | "edit"
 }
 
-const IncludeDefaultFields: Schemas.Packages.FieldNames[] = [
+const INCLUDE_DEFAULT_FIELDS: Schemas.Packages.FieldNames[] = [
   "name",
   "key",
   "engine",
@@ -66,7 +66,7 @@ export default function PackagesFormFields({
 
   const fields = include
     ? include
-    : IncludeDefaultFields.filter((field) => !exclude.includes(field))
+    : INCLUDE_DEFAULT_FIELDS.filter((field) => !exclude.includes(field))
 
   return (
     <>

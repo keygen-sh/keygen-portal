@@ -64,7 +64,7 @@ import { useDeferredMount } from "@/hooks/use-deferred-mount"
 
 type Descriptions = typeof PolicyFormFieldDescriptions
 
-const HeartbeatPresets = [
+const HEARTBEAT_PRESETS = [
   { seconds: 60 * 1, label: "1 Minute" },
   { seconds: 60 * 2, label: "2 Minutes" },
   { seconds: 60 * 5, label: "5 Minutes" },
@@ -86,7 +86,7 @@ interface PoliciesFormFieldsProps {
   schema?: "create" | "edit"
 }
 
-const IncludeDefaultFields: Schemas.Policies.FieldNames[] = [
+const INCLUDE_DEFAULT_FIELDS: Schemas.Policies.FieldNames[] = [
   "authenticationStrategy",
   "checkInInterval",
   "checkInIntervalCount",
@@ -150,7 +150,7 @@ export default function PoliciesFormFields({
 
   const fields = include
     ? include
-    : IncludeDefaultFields.filter((field) => !exclude.includes(field))
+    : INCLUDE_DEFAULT_FIELDS.filter((field) => !exclude.includes(field))
 
   return (
     <div className="space-y-4">
@@ -1253,7 +1253,7 @@ function HeartbeatDurationField({
                 value={field.value}
                 onChange={field.onChange}
                 units={["seconds", "minutes", "hours", "days"]}
-                presets={HeartbeatPresets}
+                presets={HEARTBEAT_PRESETS}
                 disabled={isDisabled}
                 autoFocus={autoFocus}
               />

@@ -63,7 +63,7 @@ interface ReleasesFormFieldsProps {
   schema?: "create" | "edit"
 }
 
-const IncludeDefaultFields: Schemas.Releases.FieldNames[] = [
+const INCLUDE_DEFAULT_FIELDS: Schemas.Releases.FieldNames[] = [
   "name",
   "version",
   "tag",
@@ -93,7 +93,7 @@ export default function ReleasesFormFields({
 
   const fields = include
     ? include
-    : IncludeDefaultFields.filter((field) => !exclude.includes(field))
+    : INCLUDE_DEFAULT_FIELDS.filter((field) => !exclude.includes(field))
 
   return (
     <>

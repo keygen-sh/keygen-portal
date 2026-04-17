@@ -28,7 +28,7 @@ interface SettingsFormFieldsProps {
   fieldVariant?: FieldVariant
 }
 
-const IncludeDefaultFields: FieldNames[] = ["name", "slug"]
+const INCLUDE_DEFAULT_FIELDS: FieldNames[] = ["name", "slug"]
 
 export default function SettingsFormFields({
   include,
@@ -38,7 +38,7 @@ export default function SettingsFormFields({
 }: SettingsFormFieldsProps) {
   const fields = include
     ? include
-    : IncludeDefaultFields.filter((field) => !exclude.includes(field))
+    : INCLUDE_DEFAULT_FIELDS.filter((field) => !exclude.includes(field))
 
   return (
     <>

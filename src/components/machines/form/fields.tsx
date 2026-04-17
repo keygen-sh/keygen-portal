@@ -36,7 +36,7 @@ interface MachinesFormFieldsProps {
   schema?: "create" | "edit"
 }
 
-const IncludeDefaultFields: Schemas.Machines.FieldNames[] = [
+const INCLUDE_DEFAULT_FIELDS: Schemas.Machines.FieldNames[] = [
   "name",
   "fingerprint",
   "licenseId",
@@ -68,7 +68,7 @@ export default function MachinesFormFields({
 
   const fields = include
     ? include
-    : IncludeDefaultFields.filter((field) => !exclude.includes(field))
+    : INCLUDE_DEFAULT_FIELDS.filter((field) => !exclude.includes(field))
 
   return (
     <>

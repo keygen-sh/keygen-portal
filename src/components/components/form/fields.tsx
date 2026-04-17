@@ -34,7 +34,7 @@ interface ComponentsFormFieldsProps {
   schema?: "create" | "edit"
 }
 
-const IncludeDefaultFields: Schemas.Components.FieldNames[] = [
+const INCLUDE_DEFAULT_FIELDS: Schemas.Components.FieldNames[] = [
   "name",
   "fingerprint",
   "machineId",
@@ -58,7 +58,7 @@ export default function ComponentsFormFields({
 
   const fields = include
     ? include
-    : IncludeDefaultFields.filter((field) => !exclude.includes(field))
+    : INCLUDE_DEFAULT_FIELDS.filter((field) => !exclude.includes(field))
 
   return (
     <>

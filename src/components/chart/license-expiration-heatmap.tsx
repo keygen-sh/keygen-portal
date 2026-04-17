@@ -33,16 +33,16 @@ import * as Chart from "@/components/chart"
 import * as Motion from "@/components/motion"
 import GoToButton from "@/components/go-to-button"
 
-const DayLabels = ["Mon", "", "Wed", "", "Fri", "", "Sun"]
-const CellWidth = 16
-const CellHeight = 8
-const CellGap = 2
-const LabelWidth = 34
+const DAY_LABELS = ["Mon", "", "Wed", "", "Fri", "", "Sun"]
+const CELL_WIDTH = 16
+const CELL_HEIGHT = 8
+const CELL_GAP = 2
+const LABEL_WIDTH = 34
 
-const MobileCellGap = 4
-const MobileColumnCount = 6
+const MOBILE_CELL_GAP = 4
+const MOBILE_COLUMN_COUNT = 6
 
-const PopoverWidth = 208 // w-52
+const POPOVER_WIDTH = 208 // w-52
 
 function toDisplayRow(y: number): number {
   return (y + 6) % 7
@@ -154,7 +154,7 @@ export default function LicenseExpirationHeatmap() {
     // Position popover within screen bounds below selected cell
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
     const pad = 8
-    const halfW = PopoverWidth / 2
+    const halfW = POPOVER_WIDTH / 2
 
     let x = rect.left + rect.width / 2
     x = Math.max(pad + halfW, Math.min(x, window.innerWidth - pad - halfW))
@@ -286,17 +286,17 @@ export default function LicenseExpirationHeatmap() {
           <div className="relative w-full overflow-x-auto">
             <div
               style={{
-                minWidth: LabelWidth + numWeeks * (CellWidth + CellGap),
+                minWidth: LABEL_WIDTH + numWeeks * (CELL_WIDTH + CELL_GAP),
               }}
             >
               <div
                 onMouseMove={handleGridMouseMove}
                 style={{
                   display: "grid",
-                  gridTemplateColumns: `${LabelWidth}px repeat(${numWeeks}, ${CellWidth}px)`,
-                  gridTemplateRows: `auto repeat(7, ${CellHeight}px)`,
-                  columnGap: CellGap,
-                  rowGap: CellGap,
+                  gridTemplateColumns: `${LABEL_WIDTH}px repeat(${numWeeks}, ${CELL_WIDTH}px)`,
+                  gridTemplateRows: `auto repeat(7, ${CELL_HEIGHT}px)`,
+                  columnGap: CELL_GAP,
+                  rowGap: CELL_GAP,
                 }}
               >
                 {monthLabels.map((month, index) => (
@@ -310,7 +310,7 @@ export default function LicenseExpirationHeatmap() {
                   </div>
                 ))}
 
-                {DayLabels.map((label, index) => (
+                {DAY_LABELS.map((label, index) => (
                   <div
                     key={index}
                     className="flex items-center text-[10px] leading-none text-content-subdued"
@@ -377,8 +377,8 @@ export default function LicenseExpirationHeatmap() {
                   <div
                     key={temperature}
                     style={{
-                      width: CellWidth - 2,
-                      height: CellHeight - 2,
+                      width: CELL_WIDTH - 2,
+                      height: CELL_HEIGHT - 2,
                       backgroundColor: getTemperatureColor(temperature),
                     }}
                   />
@@ -409,7 +409,7 @@ export default function LicenseExpirationHeatmap() {
               "w-52 origin-top rounded-md border border-accent bg-background-2 p-3 text-xs shadow-lg duration-150 animate-in fade-in-0 zoom-in-95",
             )}
             style={{
-              width: PopoverWidth,
+              width: POPOVER_WIDTH,
             }}
           >
             <p className="font-medium text-content-muted">
@@ -509,7 +509,7 @@ function MobileHeatmapGrid({
   const gridCells = useMemo(() => {
     const firstDayRow = toMondayRow(getDay(startOfMonth(currentMonth)))
     const daysInMonth = getDaysInMonth(currentMonth)
-    const totalSlots = MobileColumnCount * 7
+    const totalSlots = MOBILE_COLUMN_COUNT * 7
     const trailingPad = totalSlots - (firstDayRow + daysInMonth)
 
     const year = currentMonth.getFullYear()
@@ -598,14 +598,14 @@ function MobileHeatmapGrid({
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: `${LabelWidth}px repeat(${MobileColumnCount}, 1fr)`,
+              gridTemplateColumns: `${LABEL_WIDTH}px repeat(${MOBILE_COLUMN_COUNT}, 1fr)`,
               gridTemplateRows: `repeat(7, 18px)`,
-              columnGap: MobileCellGap,
-              rowGap: MobileCellGap,
+              columnGap: MOBILE_CELL_GAP,
+              rowGap: MOBILE_CELL_GAP,
             }}
           >
             {/* Day labels */}
-            {DayLabels.map((label, index) => (
+            {DAY_LABELS.map((label, index) => (
               <div
                 key={index}
                 className="flex items-center text-[10px] leading-none text-content-subdued"

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useNavigate, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 import { formatDate } from "date-fns"
 
 import { Button } from "@/components/ui/button"
@@ -72,7 +72,7 @@ import * as Attribute from "@/components/attribute"
 import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
-import BackButton from "@/components/back-button"
+import BackButton, { useBackNavigate } from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
 import ConfirmationModal from "@/components/confirmation-modal"
 import TooltipBadge from "@/components/tooltip-badge"
@@ -97,8 +97,7 @@ export default function UserDetails() {
   const banUser = useBanUser(id)
   const unbanUser = useUnbanUser(id)
   const resetPassword = useResetPassword()
-
-  const navigate = useNavigate()
+  const back = useBackNavigate()
 
   const isMobile = useMobile()
   const [open, setOpen] = useState({
@@ -113,10 +112,10 @@ export default function UserDetails() {
   useEffect(() => {
     ;(async () => {
       if (userError && !userFetching) {
-        await navigate({ to: ".." })
+        await back()
       }
     })()
-  }, [userError, userFetching, navigate])
+  }, [userError, userFetching, back])
 
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))
@@ -129,7 +128,8 @@ export default function UserDetails() {
           message: "User deleted",
           variant: "success",
         })
-        await navigate({ to: ".." })
+
+        await back()
       },
     })
   }
@@ -175,7 +175,7 @@ export default function UserDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => navigate({ to: `..` })}
+                  onClick={() => back()}
                 >
                   Users
                 </BreadcrumbLink>
@@ -319,7 +319,7 @@ export default function UserDetails() {
         {user ? (
           <ScrollArea className="min-h-0 flex-1 overflow-y-auto">
             <div className="px-4 py-6 md:px-10 md:py-8">
-              <BackButton path=".." className="mb-8" />
+              <BackButton className="mb-8" />
 
               <div className="flex flex-wrap items-center gap-1">
                 <TooltipBadge

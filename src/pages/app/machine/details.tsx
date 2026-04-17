@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useNavigate, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 import { formatDate } from "date-fns"
 
 import { Badge } from "@/components/ui/badge"
@@ -52,6 +52,7 @@ import { useGetProduct } from "@/queries/products"
 import { useGetLicense } from "@/queries/licenses"
 
 import { useMobile } from "@/hooks/use-mobile"
+import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { getUserLabel } from "@/lib/users"
@@ -111,7 +112,7 @@ export default function MachineDetails() {
     isError: productError,
   } = useGetProduct(productId)
 
-  const navigate = useNavigate()
+  const back = useBackNavigate()
 
   const isMobile = useMobile()
   const [open, setOpen] = useState({
@@ -125,10 +126,10 @@ export default function MachineDetails() {
   useEffect(() => {
     ;(async () => {
       if (machineError && !machineFetching) {
-        await navigate({ to: ".." })
+        await back()
       }
     })()
-  }, [machineError, machineFetching, navigate])
+  }, [machineError, machineFetching, back])
 
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))
@@ -148,7 +149,7 @@ export default function MachineDetails() {
     try {
       await removeMachine.mutateAsync()
       toast({ message: "Machine deactivated", variant: "success" })
-      await navigate({ to: ".." })
+      await back()
     } catch {
       toast({ message: "Failed to deactivate machine", variant: "error" })
     }
@@ -163,7 +164,7 @@ export default function MachineDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => navigate({ to: `..` })}
+                  onClick={() => back()}
                 >
                   Machines
                 </BreadcrumbLink>
@@ -278,7 +279,7 @@ export default function MachineDetails() {
         {machine ? (
           <ScrollArea className="min-h-0 flex-1 overflow-y-auto">
             <div className="px-4 py-6 md:px-10 md:py-8">
-              <BackButton path=".." className="mb-8" />
+              <BackButton className="mb-8" />
 
               <div className="flex flex-col gap-3 md:flex-row md:items-center">
                 <h1 className="font-owners-wide text-2xl font-medium">

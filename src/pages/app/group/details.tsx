@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useNavigate, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 import { formatDate } from "date-fns"
 
 import { Button } from "@/components/ui/button"
@@ -43,6 +43,7 @@ import { GroupAttributeDescriptions } from "@/types/groups"
 import { useGetGroup, useRemoveGroup } from "@/queries/groups"
 
 import { useMobile } from "@/hooks/use-mobile"
+import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
@@ -71,7 +72,7 @@ export default function GroupDetails() {
   } = useGetGroup(id)
   const removeGroup = useRemoveGroup(id)
 
-  const navigate = useNavigate()
+  const back = useBackNavigate()
 
   const isMobile = useMobile()
   const [open, setOpen] = useState({
@@ -83,10 +84,10 @@ export default function GroupDetails() {
   useEffect(() => {
     ;(async () => {
       if (groupError && !groupFetching) {
-        await navigate({ to: ".." })
+        await back()
       }
     })()
-  }, [groupError, groupFetching, navigate])
+  }, [groupError, groupFetching, back])
 
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))
@@ -96,7 +97,7 @@ export default function GroupDetails() {
     try {
       await removeGroup.mutateAsync()
       toast({ message: "Group deleted", variant: "success" })
-      await navigate({ to: ".." })
+      await back()
     } catch {
       toast({ message: "Failed to delete group", variant: "error" })
     }
@@ -111,7 +112,7 @@ export default function GroupDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => navigate({ to: `..` })}
+                  onClick={() => back()}
                 >
                   Groups
                 </BreadcrumbLink>
@@ -185,7 +186,7 @@ export default function GroupDetails() {
         {group ? (
           <ScrollArea className="min-h-0 flex-1 overflow-y-auto">
             <div className="px-4 py-6 md:px-10 md:py-8">
-              <BackButton path=".." className="mb-8" />
+              <BackButton className="mb-8" />
 
               <div className="flex flex-col gap-3 md:flex-row md:items-center">
                 <h1 className="font-owners-wide text-2xl font-medium">

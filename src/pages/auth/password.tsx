@@ -77,20 +77,22 @@ export default function Password() {
           default:
             throw new Error(errors[0]?.detail)
         }
-      } else {
-        const storage = remember ? localStorage : sessionStorage
 
-        storage.setItem(
-          "token",
-          (data as { attributes: { token: string } }).attributes.token,
-        )
-        storage.setItem("tokenId", (data as { id: string }).id)
-        keygen.client.setRootToken(
-          (data as { attributes: { token: string } }).attributes.token,
-        )
-
-        void navigate({ to: "/" })
+        return
       }
+
+      const storage = remember ? localStorage : sessionStorage
+      const { id: tokenId, attributes, relationships } = data!
+      const { token } = attributes
+      const userId = relationships.bearer.data.id
+
+      storage.setItem("tokenId", tokenId)
+      storage.setItem("token", token)
+
+      keygen.client.setRootToken(token)
+      keygen.client.setUser(userId)
+
+      void navigate({ to: "/" })
     } catch (error) {
       console.error(error)
       auth.setError("Service is unavailable. Please try again later.")

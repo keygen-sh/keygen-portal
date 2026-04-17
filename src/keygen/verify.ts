@@ -1,6 +1,6 @@
 import config from "@/keygen/config"
 import { Client } from "@/keygen/client"
-import { EnvironmentResponse } from "@/types/environments"
+import { TokenResponse } from "@/types/tokens"
 
 config.validate()
 
@@ -16,13 +16,13 @@ interface VerifyProps {
 export async function verify({
   tokenId,
   token,
-}: VerifyProps): Promise<EnvironmentResponse> {
+}: VerifyProps): Promise<TokenResponse> {
   const tempClient = new Client(token)
 
   const result = (await tempClient.request(
     `/accounts/${config.id}/tokens/${tokenId}`,
     { method: "GET" },
-  )) as EnvironmentResponse
+  )) as TokenResponse
 
   return result
 }

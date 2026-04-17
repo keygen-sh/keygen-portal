@@ -31,7 +31,7 @@ export default async function update({
     {
       method: "PATCH",
       body: JSON.stringify(body),
-      root: true,
+      root: client.currentUser === userId,
     },
   )) as SecondFactorResponse
 

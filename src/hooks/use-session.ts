@@ -18,10 +18,13 @@ export function useSession() {
       }
 
       try {
-        const user = await keygen.verify({ token, tokenId })
-        if (!user) throw new Error("User not found")
+        const { data } = await keygen.verify({ token, tokenId })
+        if (!data) throw new Error("User not found")
+
+        const userId = data.relationships.bearer?.data?.id
 
         keygen.client.setRootToken(token)
+        keygen.client.setUser(userId ?? null)
 
         return
       } catch (error) {

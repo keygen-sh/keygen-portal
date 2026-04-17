@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/command"
 import { useMobile } from "@/hooks/use-mobile"
 
+const NONE = "__NONE__"
+
 interface Option {
   label: string
   value: string
@@ -61,7 +63,7 @@ export default function MultiSelect({
 }: MultiSelectProps) {
   const items = value ?? []
   const hasNoneOption = !!noneOption && requiredOptions.length === 0
-  const isNoneActive = hasNoneOption && value != null && value.length === 0
+  const isNoneSelected = hasNoneOption && value != null && value.length === 0
   const [query, setQuery] = useState("")
   const [open, setOpen] = useState(false)
 
@@ -87,10 +89,6 @@ export default function MultiSelect({
       ),
     [query, options],
   )
-  const showNoneOption = useMemo(
-    () => hasNoneOption && "none".includes(query.toLowerCase()),
-    [hasNoneOption, query],
-  )
 
   const emit = (next: string[] | null, focus = true) => {
     onChange(next)
@@ -103,11 +101,12 @@ export default function MultiSelect({
     [exclusiveOptions],
   )
 
-  const toggleNone = (focus = true) => {
-    emit(isNoneActive ? null : [], focus)
-  }
-
   const toggle = (value: string, focus = true) => {
+    if (value === NONE) {
+      emit(isNoneSelected ? null : [], focus)
+      return
+    }
+
     if (requiredSet.has(value)) return
 
     if (exclusiveSet.has(value)) {
@@ -170,12 +169,12 @@ export default function MultiSelect({
                 </TooltipContent>
               </Tooltip>
             ))}
-            {isNoneActive && (
+            {isNoneSelected && (
               <Badge
                 className="h-5 cursor-pointer text-content-muted"
                 onClick={(e) => {
                   e.stopPropagation()
-                  toggleNone(open)
+                  toggle(NONE, open)
                 }}
               >
                 None <span className="ml-1">&times;</span>
@@ -203,7 +202,7 @@ export default function MultiSelect({
               disabled={disabled}
               autoFocus={autoFocus}
               placeholder={
-                items.length || isNoneActive || requiredOptions.length
+                items.length || isNoneSelected || requiredOptions.length
                   ? ""
                   : placeholder
               }
@@ -220,8 +219,8 @@ export default function MultiSelect({
                 }
 
                 if (e.key === "Backspace" && !query) {
-                  if (isNoneActive) {
-                    toggleNone(open)
+                  if (isNoneSelected) {
+                    toggle(NONE, open)
                   } else if (items.length) {
                     remove(items[items.length - 1])
                   }
@@ -246,17 +245,17 @@ export default function MultiSelect({
           <CommandList>
             <ScrollArea
               className={cn(
-                visibleOptions.length + (showNoneOption ? 1 : 0) > 5 && "h-48",
+                visibleOptions.length + (hasNoneOption ? 1 : 0) > 5 && "h-48",
               )}
             >
-              {showNoneOption && (
+              {hasNoneOption && (
                 <CommandItem
                   tabIndex={-1}
-                  onSelect={() => toggleNone()}
+                  onSelect={() => toggle(NONE)}
                   className="cursor-pointer"
                 >
                   <Checkbox
-                    checked={isNoneActive}
+                    checked={isNoneSelected}
                     className="pointer-events-none mr-2"
                   />
                   None

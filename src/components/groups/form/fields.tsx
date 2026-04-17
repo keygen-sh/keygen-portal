@@ -31,7 +31,7 @@ interface GroupsFormFieldsProps {
   schema?: "create" | "edit"
 }
 
-const IncludeDefaultFields: Schemas.Groups.FieldNames[] = [
+const INCLUDE_DEFAULT_FIELDS: Schemas.Groups.FieldNames[] = [
   "name",
   "maxUsers",
   "maxLicenses",
@@ -56,7 +56,7 @@ export default function GroupsFormFields({
 
   const fields = include
     ? include
-    : IncludeDefaultFields.filter((field) => !exclude.includes(field))
+    : INCLUDE_DEFAULT_FIELDS.filter((field) => !exclude.includes(field))
 
   return (
     <>

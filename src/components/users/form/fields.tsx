@@ -53,7 +53,7 @@ interface UsersFormFieldsProps {
   schema?: Schemas.Users.SchemaNames
 }
 
-const IncludeDefaultFields: Schemas.Users.FieldNames[] = [
+const INCLUDE_DEFAULT_FIELDS: Schemas.Users.FieldNames[] = [
   "email",
   "password",
   "firstName",
@@ -81,7 +81,7 @@ export default function UsersFormFields({
 
   const fields = include
     ? include
-    : IncludeDefaultFields.filter((field) => !exclude.includes(field))
+    : INCLUDE_DEFAULT_FIELDS.filter((field) => !exclude.includes(field))
 
   return (
     <>

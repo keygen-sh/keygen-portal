@@ -39,7 +39,7 @@ interface ProductsFormFieldsProps {
   schema?: Schemas.Products.SchemaNames
 }
 
-const IncludeDefaultFields: Schemas.Products.FieldNames[] = [
+const INCLUDE_DEFAULT_FIELDS: Schemas.Products.FieldNames[] = [
   "name",
   "code",
   "url",
@@ -66,7 +66,7 @@ export default function ProductsFormFields({
 
   const fields = include
     ? include
-    : IncludeDefaultFields.filter((field) => !exclude.includes(field))
+    : INCLUDE_DEFAULT_FIELDS.filter((field) => !exclude.includes(field))
 
   return (
     <>

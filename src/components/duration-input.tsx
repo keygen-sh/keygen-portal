@@ -18,63 +18,63 @@ import {
 import { cn } from "@/lib/utils"
 import { useMobile } from "@/hooks/use-mobile"
 
-const SecondsPerMinute = 60
-const SecondsPerHour = 3600
-const SecondsPerDay = 86400
-const SecondsPerWeek = 604800
-const SecondsPerMonth = 2629746
-const SecondsPerYear = 31556952
+const SECONDS_PER_MINUTE = 60
+const SECONDS_PER_HOUR = 3600
+const SECONDS_PER_DAY = 86400
+const SECONDS_PER_WEEK = 604800
+const SECONDS_PER_MONTH = 2629746
+const SECONDS_PER_YEAR = 31556952
 
 type Unit = { key: string; label: string; seconds: number | null }
 
-const DefaultUnits: Unit[] = [
+const DEFAULT_UNITS: Unit[] = [
   { key: "unlimited", label: "Unlimited", seconds: null },
   { key: "seconds", label: "Seconds", seconds: 1 },
-  { key: "minutes", label: "Minutes", seconds: SecondsPerMinute },
-  { key: "hours", label: "Hours", seconds: SecondsPerHour },
-  { key: "days", label: "Days", seconds: SecondsPerDay },
-  { key: "weeks", label: "Weeks", seconds: SecondsPerWeek },
-  { key: "months", label: "Months", seconds: SecondsPerMonth },
-  { key: "years", label: "Years", seconds: SecondsPerYear },
+  { key: "minutes", label: "Minutes", seconds: SECONDS_PER_MINUTE },
+  { key: "hours", label: "Hours", seconds: SECONDS_PER_HOUR },
+  { key: "days", label: "Days", seconds: SECONDS_PER_DAY },
+  { key: "weeks", label: "Weeks", seconds: SECONDS_PER_WEEK },
+  { key: "months", label: "Months", seconds: SECONDS_PER_MONTH },
+  { key: "years", label: "Years", seconds: SECONDS_PER_YEAR },
 ]
 
 type Preset = { label: string; seconds: number | null }
 
-const DefaultPresets: Preset[] = [
+const DEFAULT_PRESETS: Preset[] = [
   { seconds: null, label: "Unlimited" },
 
-  { seconds: SecondsPerDay * 1, label: "1 Day" },
-  { seconds: SecondsPerDay * 2, label: "2 Days" },
-  { seconds: SecondsPerDay * 3, label: "3 Days" },
-  { seconds: SecondsPerDay * 4, label: "4 Days" },
-  { seconds: SecondsPerDay * 5, label: "5 Days" },
+  { seconds: SECONDS_PER_DAY * 1, label: "1 Day" },
+  { seconds: SECONDS_PER_DAY * 2, label: "2 Days" },
+  { seconds: SECONDS_PER_DAY * 3, label: "3 Days" },
+  { seconds: SECONDS_PER_DAY * 4, label: "4 Days" },
+  { seconds: SECONDS_PER_DAY * 5, label: "5 Days" },
 
-  { seconds: SecondsPerWeek * 1, label: "1 Week" },
-  { seconds: SecondsPerWeek * 2, label: "2 Weeks" },
-  { seconds: SecondsPerWeek * 3, label: "3 Weeks" },
-  { seconds: SecondsPerWeek * 4, label: "4 Weeks" },
-  { seconds: SecondsPerWeek * 5, label: "5 Weeks" },
+  { seconds: SECONDS_PER_WEEK * 1, label: "1 Week" },
+  { seconds: SECONDS_PER_WEEK * 2, label: "2 Weeks" },
+  { seconds: SECONDS_PER_WEEK * 3, label: "3 Weeks" },
+  { seconds: SECONDS_PER_WEEK * 4, label: "4 Weeks" },
+  { seconds: SECONDS_PER_WEEK * 5, label: "5 Weeks" },
 
-  { seconds: SecondsPerMonth * 1, label: "1 Month" },
-  { seconds: SecondsPerMonth + SecondsPerDay * 1, label: "31 Days" },
-  { seconds: SecondsPerMonth + SecondsPerDay * 2, label: "32 Days" },
+  { seconds: SECONDS_PER_MONTH * 1, label: "1 Month" },
+  { seconds: SECONDS_PER_MONTH + SECONDS_PER_DAY * 1, label: "31 Days" },
+  { seconds: SECONDS_PER_MONTH + SECONDS_PER_DAY * 2, label: "32 Days" },
 
-  { seconds: SecondsPerMonth * 2, label: "2 Months" },
-  { seconds: SecondsPerMonth * 3, label: "3 Months" },
-  { seconds: SecondsPerMonth * 4, label: "4 Months" },
-  { seconds: SecondsPerMonth * 5, label: "5 Months" },
-  { seconds: SecondsPerMonth * 6, label: "6 Months" },
-  { seconds: SecondsPerMonth * 9, label: "9 Months" },
-  { seconds: SecondsPerMonth * 13, label: "13 Months" },
+  { seconds: SECONDS_PER_MONTH * 2, label: "2 Months" },
+  { seconds: SECONDS_PER_MONTH * 3, label: "3 Months" },
+  { seconds: SECONDS_PER_MONTH * 4, label: "4 Months" },
+  { seconds: SECONDS_PER_MONTH * 5, label: "5 Months" },
+  { seconds: SECONDS_PER_MONTH * 6, label: "6 Months" },
+  { seconds: SECONDS_PER_MONTH * 9, label: "9 Months" },
+  { seconds: SECONDS_PER_MONTH * 13, label: "13 Months" },
 
-  { seconds: SecondsPerYear * 1, label: "1 Year" },
-  { seconds: SecondsPerYear * 2, label: "2 Years" },
-  { seconds: SecondsPerYear * 3, label: "3 Years" },
+  { seconds: SECONDS_PER_YEAR * 1, label: "1 Year" },
+  { seconds: SECONDS_PER_YEAR * 2, label: "2 Years" },
+  { seconds: SECONDS_PER_YEAR * 3, label: "3 Years" },
 ]
 
 function selectUnit(
   totalSeconds?: number | null,
-  allowed: Unit[] = DefaultUnits,
+  allowed: Unit[] = DEFAULT_UNITS,
 ): Unit {
   if (totalSeconds == null) {
     const unlimited = allowed.find((u) => u.seconds == null)
@@ -130,13 +130,13 @@ export default function DurationInput({
   className,
 }: DurationInputProps): React.ReactElement {
   const availableUnits = useMemo(() => {
-    if (!units || units.length === 0) return DefaultUnits
+    if (!units || units.length === 0) return DEFAULT_UNITS
     const allowed = new Set(units)
-    const filtered = DefaultUnits.filter((u) => allowed.has(u.key))
-    return filtered.length > 0 ? filtered : DefaultUnits
+    const filtered = DEFAULT_UNITS.filter((u) => allowed.has(u.key))
+    return filtered.length > 0 ? filtered : DEFAULT_UNITS
   }, [units])
 
-  const availablePresets = presets ?? DefaultPresets
+  const availablePresets = presets ?? DEFAULT_PRESETS
 
   const [unit, setUnit] = useState<Unit>(() =>
     selectUnit(value, availableUnits),

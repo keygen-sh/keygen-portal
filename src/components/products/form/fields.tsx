@@ -339,8 +339,8 @@ function PermissionsField({
                   value: p,
                 })),
               ]}
-              noneOption
-              exclusiveOptions={["*"]}
+              includeNone
+              includeWildcard
               placeholder="Leave blank to use defaults"
               autoFocus={autoFocus}
             />

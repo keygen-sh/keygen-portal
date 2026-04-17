@@ -38,9 +38,9 @@ interface MultiSelectProps {
   value: string[] | null | undefined
   onChange: (value: string[] | null) => void
   options: Option[]
-  noneOption?: boolean
+  includeNone?: boolean
+  includeWildcard?: boolean
   requiredOptions?: RequiredOption[]
-  exclusiveOptions?: string[]
   placeholder?: string
   disabled?: boolean
   autoFocus?: boolean
@@ -52,9 +52,9 @@ export default function MultiSelect({
   value,
   onChange,
   options,
-  noneOption,
+  includeNone,
+  includeWildcard,
   requiredOptions = [],
-  exclusiveOptions = [],
   placeholder = "Choose...",
   disabled,
   autoFocus,
@@ -62,7 +62,7 @@ export default function MultiSelect({
   className,
 }: MultiSelectProps) {
   const items = value ?? []
-  const hasNoneOption = !!noneOption && requiredOptions.length === 0
+  const hasNoneOption = !!includeNone && requiredOptions.length === 0
   const isNoneSelected = hasNoneOption && value != null && value.length === 0
   const [query, setQuery] = useState("")
   const [open, setOpen] = useState(false)
@@ -96,11 +96,6 @@ export default function MultiSelect({
     if (focus) inputRef.current?.focus()
   }
 
-  const exclusiveSet = useMemo(
-    () => new Set(exclusiveOptions),
-    [exclusiveOptions],
-  )
-
   const toggle = (value: string, focus = true) => {
     if (value === NONE) {
       emit(isNoneSelected ? null : [], focus)
@@ -109,12 +104,12 @@ export default function MultiSelect({
 
     if (requiredSet.has(value)) return
 
-    if (exclusiveSet.has(value)) {
+    if (includeWildcard && value === "*") {
       emit(items.includes(value) ? null : [value], focus)
       return
     }
 
-    const base = items.filter((v) => !exclusiveSet.has(v))
+    const base = items.filter((v) => !(includeWildcard && v === "*"))
     const isActive = base.includes(value)
     const next = isActive ? base.filter((v) => v !== value) : [...base, value]
     emit(next.length === 0 ? null : next, focus)

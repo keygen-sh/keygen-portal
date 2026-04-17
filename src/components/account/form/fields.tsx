@@ -271,8 +271,8 @@ function LicensePermissionsField({ autoFocus }: { autoFocus?: boolean }) {
                   value: p,
                 })),
               ]}
-              noneOption
-              exclusiveOptions={["*"]}
+              includeNone
+              includeWildcard
               placeholder="Leave blank to use defaults"
               autoFocus={autoFocus}
             />
@@ -308,8 +308,8 @@ function UserPermissionsField({ autoFocus }: { autoFocus?: boolean }) {
                   value: p,
                 })),
               ]}
-              noneOption
-              exclusiveOptions={["*"]}
+              includeNone
+              includeWildcard
               placeholder="Leave blank to use defaults"
               autoFocus={autoFocus}
             />

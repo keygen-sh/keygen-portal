@@ -549,8 +549,8 @@ function PermissionsField({
                   value: p,
                 })),
               ]}
-              noneOption
-              exclusiveOptions={["*"]}
+              includeNone
+              includeWildcard
               placeholder="Leave blank to use defaults"
               autoFocus={autoFocus}
             />
@@ -600,8 +600,8 @@ function InternalPermissionsField({
                   value: p,
                 })),
               ]}
-              noneOption
-              exclusiveOptions={["*"]}
+              includeNone
+              includeWildcard
               requiredOptions={PORTAL_REQUIRED_OPTIONS}
               autoFocus={autoFocus}
             />

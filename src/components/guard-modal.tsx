@@ -103,7 +103,7 @@ export default function GuardModal({
         <div className="flex flex-col">
           <div className="border-t border-accent p-6">
             {warning && (
-              <p className="mb-6 flex items-start gap-2 rounded-md bg-brand-amber/20 p-2 text-sm text-pretty text-brand-amber">
+              <p className="mb-6 flex items-start gap-2 rounded-md bg-warning/20 p-2 text-sm text-pretty text-warning">
                 <TriangleAlert className="mt-0.5 size-4 shrink-0" />
                 <span className="whitespace-pre-line">{warning}</span>
               </p>

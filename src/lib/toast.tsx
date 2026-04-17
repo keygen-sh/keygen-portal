@@ -21,9 +21,9 @@ const variants = {
     background: "bg-brand-destructive/20",
   },
   warning: {
-    icon: <Info className="size-4 text-brand-amber" />,
-    title: "text-brand-amber",
-    background: "bg-brand-amber/20",
+    icon: <Info className="size-4 text-warning" />,
+    title: "text-warning",
+    background: "bg-warning/20",
   },
 }
 

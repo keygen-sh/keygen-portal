@@ -28,7 +28,7 @@ export type ProductAttributes = {
   distributionStrategy: DistributionStrategy
   url: string
   platforms: string[]
-  permissions: string[]
+  permissions: string[] | null
   metadata: Record<string, unknown>
   created: string
   updated: string

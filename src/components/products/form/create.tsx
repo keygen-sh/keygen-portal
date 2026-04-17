@@ -34,7 +34,7 @@ export default function CreateProductForm({
       code: "",
       url: "",
       platforms: [],
-      permissions: [],
+      permissions: null,
       metadata: {},
       distributionStrategy: DistributionStrategy.Licensed,
     },

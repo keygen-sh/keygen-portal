@@ -40,7 +40,7 @@ export default function EditProductForm({
         product?.attributes.distributionStrategy ??
         DistributionStrategy.Licensed,
       platforms: product?.attributes.platforms ?? [],
-      permissions: product?.attributes.permissions ?? [],
+      permissions: product?.attributes.permissions ?? null,
       metadata: product?.attributes.metadata ?? {},
     },
   })

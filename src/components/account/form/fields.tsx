@@ -262,12 +262,17 @@ function LicensePermissionsField({ autoFocus }: { autoFocus?: boolean }) {
             tooltip={AccountFormFieldDescriptions.defaultLicensePermissions}
           >
             <MultiSelect
-              value={field.value ?? []}
+              value={field.value}
               onChange={field.onChange}
-              options={LicensePermissions.map((p) => ({
-                label: p,
-                value: p,
-              }))}
+              options={[
+                { label: "*", value: "*" },
+                ...LicensePermissions.map((p) => ({
+                  label: p,
+                  value: p,
+                })),
+              ]}
+              noneOption
+              exclusiveOptions={["*"]}
               placeholder="Leave blank to use defaults"
               autoFocus={autoFocus}
             />
@@ -294,12 +299,17 @@ function UserPermissionsField({ autoFocus }: { autoFocus?: boolean }) {
             tooltip={AccountFormFieldDescriptions.defaultUserPermissions}
           >
             <MultiSelect
-              value={field.value ?? []}
+              value={field.value}
               onChange={field.onChange}
-              options={UserPermissions.map((p) => ({
-                label: p,
-                value: p,
-              }))}
+              options={[
+                { label: "*", value: "*" },
+                ...UserPermissions.map((p) => ({
+                  label: p,
+                  value: p,
+                })),
+              ]}
+              noneOption
+              exclusiveOptions={["*"]}
               placeholder="Leave blank to use defaults"
               autoFocus={autoFocus}
             />

@@ -330,13 +330,17 @@ function PermissionsField({
             optional
           >
             <MultiSelect
-              value={field.value ?? []}
+              value={field.value}
               onChange={field.onChange}
-              options={ProductPermissions.map((p) => ({
-                label: p === "*" ? "*" : p,
-                value: p,
-              }))}
-              wildcard="*"
+              options={[
+                { label: "*", value: "*" },
+                ...ProductPermissions.map((p) => ({
+                  label: p,
+                  value: p,
+                })),
+              ]}
+              noneOption
+              exclusiveOptions={["*"]}
               placeholder="Leave blank to use defaults"
               autoFocus={autoFocus}
             />

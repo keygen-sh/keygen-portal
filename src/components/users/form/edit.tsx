@@ -37,7 +37,7 @@ export default function EditUserForm({
       firstName: user?.attributes.firstName ?? null,
       lastName: user?.attributes.lastName ?? null,
       role: user?.attributes.role ?? UserRole.User,
-      permissions: user?.attributes.permissions ?? [],
+      permissions: user?.attributes.permissions ?? null,
       groupId: user?.relationships.group?.data?.id ?? null,
       metadata: user?.attributes.metadata ?? {},
     },

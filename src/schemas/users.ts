@@ -45,7 +45,7 @@ const BaseShape = z.object({
   firstName: z.string().trim().nullable().optional(),
   lastName: z.string().trim().nullable().optional(),
   role: z.nativeEnum(UserRole).optional(),
-  permissions: z.array(z.string()).optional(),
+  permissions: z.array(z.string()).nullable().optional(),
   metadata: z.record(z.unknown()).default({}),
   groupId: z.string().nullable().optional(),
 })
@@ -88,7 +88,7 @@ const InviteShape = z.object({
   firstName: z.string().trim().nullable().optional(),
   lastName: z.string().trim().nullable().optional(),
   role: z.nativeEnum(UserRole),
-  permissions: z.array(z.string()).optional(),
+  permissions: z.array(z.string()).nullable().optional(),
 })
 
 const InviteRules = (

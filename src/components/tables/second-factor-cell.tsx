@@ -23,14 +23,14 @@ function SecondFactorCellContent({
   const { data: secondFactors, isLoading, isError } = useGetSecondFactor(userId)
 
   if (isError) {
-    return <Badge variant="outline">Unknown</Badge>
+    return <Badge variant="disabled">Unknown</Badge>
   }
 
   const enabled = secondFactors?.some((sf) => sf.attributes.enabled) ?? false
 
   return (
     <ResourceCell isEmpty={!secondFactors} isLoading={isLoading}>
-      <Badge variant={enabled ? "secondary" : "disabled"}>
+      <Badge variant={enabled ? "success" : "warning"}>
         {enabled ? "Enabled" : "Disabled"}
       </Badge>
     </ResourceCell>

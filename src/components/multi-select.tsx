@@ -85,7 +85,7 @@ export default function MultiSelect({
   const normalizedOptions = useMemo(() => {
     const base = options.slice()
     if (includeWildcard && !base.some((o) => o.value === "*")) {
-      base.unshift({ label: "*", value: "*" })
+      base.unshift({ label: "All", value: "*" })
     }
     return base
   }, [options, includeWildcard])

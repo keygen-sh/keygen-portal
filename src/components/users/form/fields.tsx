@@ -545,13 +545,10 @@ function PermissionsField({
             <MultiSelect
               value={field.value}
               onChange={field.onChange}
-              options={[
-                { label: "*", value: "*" },
-                ...ProductPermissions.map((p) => ({
-                  label: p,
-                  value: p,
-                })),
-              ]}
+              options={ProductPermissions.map((p) => ({
+                label: p,
+                value: p,
+              }))}
               includeNone
               includeWildcard
               placeholder={
@@ -600,13 +597,10 @@ function InternalPermissionsField({
             <MultiSelect
               value={field.value}
               onChange={field.onChange}
-              options={[
-                { label: "*", value: "*" },
-                ...AdminPermissions.map((p) => ({
-                  label: p,
-                  value: p,
-                })),
-              ]}
+              options={AdminPermissions.map((p) => ({
+                label: p,
+                value: p,
+              }))}
               includeNone
               includeWildcard
               requiredOptions={PORTAL_REQUIRED_OPTIONS}

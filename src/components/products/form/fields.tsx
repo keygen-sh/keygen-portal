@@ -336,13 +336,10 @@ function PermissionsField({
             <MultiSelect
               value={field.value}
               onChange={field.onChange}
-              options={[
-                { label: "*", value: "*" },
-                ...ProductPermissions.map((p) => ({
-                  label: p,
-                  value: p,
-                })),
-              ]}
+              options={ProductPermissions.map((p) => ({
+                label: p,
+                value: p,
+              }))}
               includeNone
               includeWildcard
               placeholder={

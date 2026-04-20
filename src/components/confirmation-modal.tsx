@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react"
+
+import { Input } from "@/components/ui/input"
 import { Button, type ButtonVariant } from "@/components/ui/button"
 import {
   AlertDialog,
@@ -8,6 +11,11 @@ import {
   AlertDialogDescription,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog"
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip"
 
 import * as Loading from "@/components/loading"
 
@@ -20,6 +28,7 @@ interface ConfirmationModalProps {
   disabled?: boolean
   onClose: () => void
   onConfirm: () => void
+  confirmText?: string
   className?: string
 }
 
@@ -32,8 +41,17 @@ export default function ConfirmationModal({
   disabled,
   onClose,
   onConfirm,
+  confirmText,
   className,
 }: ConfirmationModalProps) {
+  const [typedConfirmation, setTypedConfirmation] = useState("")
+
+  useEffect(() => {
+    if (!open) setTypedConfirmation("")
+  }, [open])
+
+  const isConfirmTextMatched = !confirmText || typedConfirmation === confirmText
+
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
       <AlertDialogContent className={className}>
@@ -41,15 +59,50 @@ export default function ConfirmationModal({
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
+        {confirmText && (
+          <label className="flex flex-col gap-2 text-sm text-content-muted">
+            <span>
+              Please type{" "}
+              <span className="font-semibold text-content-loud">
+                {confirmText}
+              </span>{" "}
+              to confirm.
+            </span>
+            <Input
+              autoFocus
+              value={typedConfirmation}
+              onChange={(e) => setTypedConfirmation(e.target.value)}
+              disabled={disabled}
+            />
+          </label>
+        )}
         <AlertDialogFooter className="gap-4">
           <AlertDialogCancel asChild>
             <Button variant="outline" disabled={disabled}>
               Cancel
             </Button>
           </AlertDialogCancel>
-          <Button variant={variant} disabled={disabled} onClick={onConfirm}>
-            {disabled ? <Loading.Dots className="bg-background" /> : label}
-          </Button>
+          {!isConfirmTextMatched ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span
+                  tabIndex={0}
+                  className="rounded-md transition-colors hover:bg-background-1"
+                >
+                  <Button variant={variant} disabled className="w-full">
+                    {label}
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-64 bg-background-4 text-pretty text-content-muted">
+                Enter the above to proceed.
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <Button variant={variant} disabled={disabled} onClick={onConfirm}>
+              {disabled ? <Loading.Dots className="bg-background" /> : label}
+            </Button>
+          )}
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -76,6 +76,63 @@ export function useGetAccountPlan(planId?: string) {
   })
 }
 
+export function useGetAccountBilling(billingId?: string) {
+  return useQuery({
+    queryKey: ["account", "billing", billingId],
+    queryFn: async () => {
+      const response = await keygen.accounts.billing()
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response.data
+    },
+    enabled: !!billingId,
+  })
+}
+
+export function useManageSubscription() {
+  return useMutation<string, APIError>({
+    mutationFn: async () => {
+      const response = await keygen.accounts.manageSubscription()
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      const url = response.meta?.url
+      if (!url) {
+        throw new APIError({
+          title: "Request Error",
+          detail: "Subscription management session missing URL.",
+          code: "CLIENT_ERROR",
+        })
+      }
+
+      return url
+    },
+  })
+}
+
+export function useCancelSubscription() {
+  const queryClient = useQueryClient()
+
+  return useMutation<void, APIError>({
+    mutationFn: async () => {
+      const response = await keygen.accounts.cancelSubscription()
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+    },
+
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["account", "billing"] })
+    },
+  })
+}
+
 export function useGetAccountSettings() {
   return useQuery({
     queryKey: ["account", "settings"],

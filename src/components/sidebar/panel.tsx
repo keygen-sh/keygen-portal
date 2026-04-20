@@ -226,6 +226,11 @@ const VIEWS: View[] = [
         label: "Developers",
         params: { accountId: keygen.config.id },
       },
+      {
+        to: "/$accountId/app/billing",
+        label: "Billing",
+        params: { accountId: keygen.config.id },
+      },
     ]),
   },
 ]
@@ -339,7 +344,14 @@ export default function SidebarPanel(): React.ReactElement {
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem disabled>Billing</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    to="/$accountId/app/billing"
+                    params={{ accountId: keygen.config.id }}
+                  >
+                    Billing
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link
                     to="/$accountId/app/general"

@@ -4,7 +4,9 @@ import { useEnvironment } from "@/hooks/use-environment"
 
 import * as Schemas from "@/schemas"
 import { APIError } from "@/types/api"
-import { Package } from "@/types/packages"
+import { Package, type PackageFilters } from "@/types/packages"
+
+export type { PackageFilters }
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
@@ -27,14 +29,24 @@ export function useGetPackage(packageId: string) {
   })
 }
 
-export function useListPackages(params?: { page: number; pageSize: number }) {
+export function useListPackages(params?: {
+  page: number
+  pageSize: number
+  filters?: PackageFilters
+}) {
   const { code } = useEnvironment()
 
   const query = useQuery({
     queryKey: ["packages", { environment: code, ...params }],
     queryFn: async () => {
       const response = await keygen.packages.list(
-        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+        params
+          ? {
+              pageNumber: params.page,
+              pageSize: params.pageSize,
+              filters: params.filters,
+            }
+          : {},
       )
 
       if (response.errors) {

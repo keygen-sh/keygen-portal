@@ -44,6 +44,11 @@ export type Package = Resource<
 export type PackageResponse = APIResponse<Package>
 export type PackagesListResponse = APIResponse<Package[]>
 
+export type PackageFilters = {
+  product?: string
+  engine?: string
+}
+
 export const PackageAttributeDescriptions: Readonly<
   Record<keyof Writable<PackageAttributes>, string>
 > = {

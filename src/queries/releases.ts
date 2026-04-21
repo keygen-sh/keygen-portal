@@ -27,7 +27,10 @@ export function useGetRelease(releaseId: string) {
   })
 }
 
-export function useListReleases(params?: { page: number; pageSize: number }) {
+export function useListReleases(
+  params?: { page: number; pageSize: number },
+  options?: { enabled?: boolean },
+) {
   const { code } = useEnvironment()
 
   const query = useQuery({
@@ -43,6 +46,7 @@ export function useListReleases(params?: { page: number; pageSize: number }) {
 
       return response
     },
+    enabled: options?.enabled,
   })
 
   return {

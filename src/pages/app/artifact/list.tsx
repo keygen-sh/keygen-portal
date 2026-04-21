@@ -1,13 +1,14 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
 
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { useArtifactTableColumns } from "@/hooks/use-artifact-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
+import { useFilterSearch } from "@/hooks/use-filter-search"
 import { Artifact } from "@/types/artifacts"
 
-import { useListArtifacts } from "@/queries/artifacts"
+import { useListArtifacts, type ArtifactFilters } from "@/queries/artifacts"
 
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
@@ -21,6 +22,16 @@ export default function ArtifactsList() {
   const table = useDataTable()
   const columns = useArtifactTableColumns()
 
+  const [filters, setFilters] = useFilterSearch<ArtifactFilters>()
+
+  const handleFiltersChange = useCallback(
+    (next: ArtifactFilters) => {
+      setFilters(next)
+      table.setPage(1)
+    },
+    [table, setFilters],
+  )
+
   const {
     data: artifacts,
     links,
@@ -28,6 +39,7 @@ export default function ArtifactsList() {
   } = useListArtifacts({
     page: table.page,
     pageSize: table.pageSize,
+    filters,
   })
 
   const totalPages = links?.meta?.pages ?? 1
@@ -48,6 +60,10 @@ export default function ArtifactsList() {
         </Button>
         <Artifacts.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
+
+      <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-2.5 md:px-4">
+        <Artifacts.FilterBar filters={filters} onChange={handleFiltersChange} />
+      </div>
 
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<Artifact>

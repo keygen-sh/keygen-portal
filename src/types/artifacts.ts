@@ -47,6 +47,16 @@ export type Artifact = Resource<
 export type ArtifactResponse = APIResponse<Artifact>
 export type ArtifactsListResponse = APIResponse<Artifact[]>
 
+export type ArtifactFilters = {
+  product?: string
+  release?: string
+  channel?: string
+  filetype?: string
+  platform?: string
+  arch?: string
+  status?: string
+}
+
 export const ArtifactAttributeDescriptions: Readonly<
   Record<keyof Writable<ArtifactAttributes>, string>
 > = {

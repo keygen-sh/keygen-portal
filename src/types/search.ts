@@ -8,6 +8,8 @@ export type SearchableResource =
   | "policies"
   | "packages"
   | "releases"
+  | "platforms"
+  | "arches"
 
 export type SearchOperator = "AND" | "OR"
 

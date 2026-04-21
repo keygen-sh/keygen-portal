@@ -9,10 +9,12 @@ import { useEnvironment } from "@/hooks/use-environment"
 
 import * as Schemas from "@/schemas"
 import { APIError } from "@/types/api"
-import { Artifact } from "@/types/artifacts"
+import { Artifact, type ArtifactFilters } from "@/types/artifacts"
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
+
+export type { ArtifactFilters }
 
 export function useGetArtifact(artifactId: string) {
   const { code } = useEnvironment()
@@ -32,14 +34,27 @@ export function useGetArtifact(artifactId: string) {
   })
 }
 
-export function useListArtifacts(params?: { page: number; pageSize: number }) {
+export function useListArtifacts(
+  params?: {
+    page: number
+    pageSize: number
+    filters?: ArtifactFilters
+  },
+  options?: { enabled?: boolean },
+) {
   const { code } = useEnvironment()
 
   const query = useQuery({
     queryKey: ["artifacts", { environment: code, ...params }],
     queryFn: async () => {
       const response = await keygen.artifacts.list(
-        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+        params
+          ? {
+              pageNumber: params.page,
+              pageSize: params.pageSize,
+              filters: params.filters,
+            }
+          : {},
       )
 
       if (response.errors) {
@@ -49,6 +64,7 @@ export function useListArtifacts(params?: { page: number; pageSize: number }) {
       return response
     },
     placeholderData: params ? keepPreviousData : undefined,
+    enabled: options?.enabled,
   })
 
   return {

@@ -289,15 +289,12 @@ export default function BillingPage() {
                 Billing
               </h2>
               <p className="font-owners-text text-sm text-content-muted">
-                Manage payment, tax, and subscription details.
+                Change plans, add or edit payment methods, edit your address,
+                add your tax ID, and view and download past receipts.
               </p>
             </div>
-            <div className="overflow-hidden rounded bg-background-1">
-              <div className="flex flex-col gap-4 p-4">
-                <p className="text-sm text-content-muted">
-                  Change plans, add or edit payment methods, edit your address,
-                  add your tax ID, and view and download past receipts.
-                </p>
+            <div className="flex h-fit justify-end overflow-hidden rounded bg-background-1">
+              <div className="flex flex-col gap-4 p-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <Button
                     size="sm"
@@ -347,7 +344,7 @@ export default function BillingPage() {
         description={`You are canceling your account's subscription. All API access will be disabled after your current subscription period ends on ${periodEndLabel}.`}
         label="Cancel Subscription"
         variant="destructive"
-        confirmText="CANCEL"
+        confirmText="cancel"
         disabled={cancelSubscription.isPending}
       />
     </section>

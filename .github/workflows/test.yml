@@ -39,11 +39,13 @@ jobs:
           cache: pnpm
       - name: Install
         run: pnpm install --frozen-lockfile
-      - name: Build
+      - name: Generate
         run: pnpm generate:routes
       - name: Lint
         run: pnpm lint:check
       - name: Format
         run: pnpm format:check
+      - name: Build
+        run: pnpm build
       - name: Test
         run: pnpm test

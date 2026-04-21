@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react"
 
+import { Copy } from "lucide-react"
+
 import { Input } from "@/components/ui/input"
 import { Button, type ButtonVariant } from "@/components/ui/button"
 import {
@@ -16,6 +18,8 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip"
+
+import { copyToClipboard } from "@/lib/clipboard"
 
 import * as Loading from "@/components/loading"
 
@@ -60,21 +64,28 @@ export default function ConfirmationModal({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         {confirmText && (
-          <label className="flex flex-col gap-2 text-sm text-content-muted">
-            <span>
-              Please type{" "}
-              <span className="font-semibold text-content-loud">
+          <div className="flex flex-col gap-2 text-sm text-content-muted">
+            <div className="mb-2 inline-flex flex-wrap items-center gap-1.5">
+              Please type
+              <Button
+                variant="clipboard"
+                size="clipboard"
+                type="button"
+                onClick={() => copyToClipboard(confirmText)}
+                className="w-fit"
+              >
                 {confirmText}
-              </span>{" "}
+                <Copy className="size-3" />
+              </Button>
               to confirm.
-            </span>
+            </div>
             <Input
               autoFocus
               value={typedConfirmation}
               onChange={(e) => setTypedConfirmation(e.target.value)}
               disabled={disabled}
             />
-          </label>
+          </div>
         )}
         <AlertDialogFooter className="gap-4">
           <AlertDialogCancel asChild>

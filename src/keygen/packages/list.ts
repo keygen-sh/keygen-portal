@@ -1,6 +1,6 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
-import { PackagesListResponse } from "@/types/packages"
+import { PackagesListResponse, type PackageFilters } from "@/types/packages"
 
 config.validate()
 
@@ -8,12 +8,14 @@ interface ListProps {
   limit?: number
   pageNumber?: number
   pageSize?: number
+  filters?: PackageFilters
 }
 
 export default async function list({
   limit,
   pageNumber,
   pageSize,
+  filters,
 }: ListProps): Promise<PackagesListResponse> {
   const params = new URLSearchParams()
   if (limit != null) {
@@ -24,6 +26,12 @@ export default async function list({
   }
   if (pageSize != null) {
     params.set("page[size]", pageSize.toString())
+  }
+  if (filters?.product) {
+    params.set("product", filters.product)
+  }
+  if (filters?.engine) {
+    params.set("engine", filters.engine)
   }
 
   const result = (await client.request(

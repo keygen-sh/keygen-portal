@@ -1,6 +1,6 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
-import { ArtifactsListResponse } from "@/types/artifacts"
+import { ArtifactsListResponse, type ArtifactFilters } from "@/types/artifacts"
 
 config.validate()
 
@@ -8,26 +8,14 @@ interface ListProps {
   limit?: number
   pageNumber?: number
   pageSize?: number
-  product?: string
-  release?: string
-  channel?: string
-  filetype?: string
-  platform?: string
-  arch?: string
-  status?: string
+  filters?: ArtifactFilters
 }
 
 export default async function list({
   limit,
   pageNumber,
   pageSize,
-  product,
-  release,
-  channel,
-  filetype,
-  platform,
-  arch,
-  status,
+  filters,
 }: ListProps): Promise<ArtifactsListResponse> {
   const params = new URLSearchParams()
   if (limit != null) {
@@ -39,26 +27,26 @@ export default async function list({
   if (pageSize != null) {
     params.set("page[size]", pageSize.toString())
   }
-  if (product != null) {
-    params.set("product", product)
+  if (filters?.product) {
+    params.set("product", filters.product)
   }
-  if (release != null) {
-    params.set("release", release)
+  if (filters?.release) {
+    params.set("release", filters.release)
   }
-  if (channel != null) {
-    params.set("channel", channel)
+  if (filters?.channel) {
+    params.set("channel", filters.channel)
   }
-  if (filetype != null) {
-    params.set("filetype", filetype)
+  if (filters?.filetype) {
+    params.set("filetype", filters.filetype)
   }
-  if (platform != null) {
-    params.set("platform", platform)
+  if (filters?.platform) {
+    params.set("platform", filters.platform)
   }
-  if (arch != null) {
-    params.set("arch", arch)
+  if (filters?.arch) {
+    params.set("arch", filters.arch)
   }
-  if (status != null) {
-    params.set("status", status)
+  if (filters?.status) {
+    params.set("status", filters.status)
   }
 
   const result = (await client.request(

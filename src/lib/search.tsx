@@ -13,6 +13,8 @@ import {
   Policy,
   Package,
   Release,
+  Platform,
+  Arch,
 } from "@/types"
 
 import { getUserLabel } from "@/lib/users"
@@ -240,6 +242,28 @@ export const releasesConfig: ResourceConfig<Release> = {
   }),
 }
 
+export const platformsConfig: ResourceConfig<Platform> = {
+  getLabel: getNamedLabel,
+  placeholder: "Select a platform...",
+  searchPlaceholder: "Search by ID or name...",
+  emptyMessage: <span>No platforms found.</span>,
+  searchQuery: (term) => ({
+    query: { id: term, name: term },
+    op: "OR",
+  }),
+}
+
+export const archesConfig: ResourceConfig<Arch> = {
+  getLabel: getNamedLabel,
+  placeholder: "Select an arch...",
+  searchPlaceholder: "Search by ID or name...",
+  emptyMessage: <span>No arches found.</span>,
+  searchQuery: (term) => ({
+    query: { id: term, name: term },
+    op: "OR",
+  }),
+}
+
 export const resourceConfigs: Record<SearchableResource, ResourceConfig> = {
   licenses: licensesConfig,
   groups: groupsConfig,
@@ -250,4 +274,6 @@ export const resourceConfigs: Record<SearchableResource, ResourceConfig> = {
   policies: policiesConfig,
   packages: packagesConfig,
   releases: releasesConfig,
+  platforms: platformsConfig,
+  arches: archesConfig,
 }

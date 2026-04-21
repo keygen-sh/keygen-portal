@@ -13,7 +13,10 @@ export default function RequireEmail({
   if (!auth.email) {
     console.warn("No email stored in context. Redirecting to login.")
 
-    return Navigate({ to: "/$id/auth/login", params: { id: keygen.config.id } })
+    return Navigate({
+      to: "/$accountId/auth/login",
+      params: { accountId: keygen.config.id },
+    })
   }
 
   return <>{children}</>

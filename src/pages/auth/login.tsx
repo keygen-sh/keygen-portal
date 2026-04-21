@@ -137,9 +137,9 @@ export default function Login() {
           className="text-content-loud"
         >
           <Link
-            to="/$id/auth/register"
+            to="/$accountId/auth/register"
             className="text-content-main underline-slide py-0.5 font-bold"
-            params={{ id: keygen.config.id }}
+            params={{ accountId: keygen.config.id }}
           >
             Create one
           </Link>
@@ -157,7 +157,10 @@ export default function Login() {
               : "pointer-events-auto text-content-loud"
           }`}
         >
-          <Link to="/$id/auth/sso" params={{ id: keygen.config.id }}>
+          <Link
+            to="/$accountId/auth/sso"
+            params={{ accountId: keygen.config.id }}
+          >
             Sign in with SSO
           </Link>
         </Button>

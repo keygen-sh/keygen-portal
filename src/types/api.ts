@@ -132,6 +132,7 @@ export type ResourceType =
   | "components"
   | "processes"
   | "users"
+  | "environments"
   | "packages"
   | "releases"
   | "artifacts"

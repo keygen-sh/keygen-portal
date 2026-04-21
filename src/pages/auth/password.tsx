@@ -97,7 +97,10 @@ export default function Password() {
       console.error(error)
       auth.setError("Service is unavailable. Please try again later.")
 
-      void navigate({ to: "/$id/auth/login", params: { id: keygen.config.id } })
+      void navigate({
+        to: "/$accountId/auth/login",
+        params: { accountId: keygen.config.id },
+      })
     } finally {
       setLoading(false)
     }
@@ -156,8 +159,8 @@ export default function Password() {
                   )}
                 >
                   <Link
-                    to="/$id/auth/recovery"
-                    params={{ id: keygen.config.id }}
+                    to="/$accountId/auth/recovery"
+                    params={{ accountId: keygen.config.id }}
                   >
                     Forgot password?
                   </Link>

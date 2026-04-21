@@ -10,7 +10,7 @@ import {
   PopoverContent,
 } from "@/components/ui/popover"
 
-import { ChevronsUpDown } from "lucide-react"
+import { ChevronsUpDown, X } from "lucide-react"
 
 import { useSearch } from "@/queries/search"
 import { resourceConfigs, getDefaultLabel } from "@/lib/search"
@@ -192,13 +192,13 @@ export default function GroupedSearchSelect<T extends SearchOption>({
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
         <Command shouldFilter={false}>
-          <div className="border-b border-accent p-2">
+          <div className="relative border-b border-accent p-2">
             <Input
               ref={inputRef}
               value={query}
               placeholder={resolvedSearchPlaceholder}
               fieldSize="sm"
-              className="h-8"
+              className="h-8 pr-8"
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Escape") {
@@ -207,6 +207,17 @@ export default function GroupedSearchSelect<T extends SearchOption>({
                 }
               }}
             />
+            <button
+              type="button"
+              aria-label="Dismiss"
+              className="absolute top-1/2 right-4 -translate-y-1/2 cursor-pointer rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden"
+              onClick={() => {
+                setOpen(false)
+                setQuery("")
+              }}
+            >
+              <X className="size-4" />
+            </button>
           </div>
 
           <CommandList className="p-1">

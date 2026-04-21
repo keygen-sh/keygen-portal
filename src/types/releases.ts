@@ -65,6 +65,15 @@ export type Release = Resource<
 export type ReleaseResponse = APIResponse<Release>
 export type ReleasesListResponse = APIResponse<Release[]>
 
+export type ReleaseFilters = {
+  status?: string
+  channel?: string
+  product?: string
+  package?: string
+  engine?: string
+  entitlements?: string[]
+}
+
 export type ReleaseConstraintRelationships = {
   account: Relationship<Linkage<"accounts">>
   release: Relationship<Linkage<"releases">>

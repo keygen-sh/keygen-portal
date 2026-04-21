@@ -1,6 +1,6 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
-import { ReleasesListResponse } from "@/types/releases"
+import { ReleasesListResponse, type ReleaseFilters } from "@/types/releases"
 
 config.validate()
 
@@ -8,12 +8,14 @@ interface ListProps {
   limit?: number
   pageNumber?: number
   pageSize?: number
+  filters?: ReleaseFilters
 }
 
 export default async function list({
   limit,
   pageNumber,
   pageSize,
+  filters,
 }: ListProps): Promise<ReleasesListResponse> {
   const params = new URLSearchParams()
   if (limit != null) {
@@ -24,6 +26,26 @@ export default async function list({
   }
   if (pageSize != null) {
     params.set("page[size]", pageSize.toString())
+  }
+  if (filters?.status) {
+    params.set("status", filters.status)
+  }
+  if (filters?.channel) {
+    params.set("channel", filters.channel)
+  }
+  if (filters?.product) {
+    params.set("product", filters.product)
+  }
+  if (filters?.package) {
+    params.set("package", filters.package)
+  }
+  if (filters?.engine) {
+    params.set("engine", filters.engine)
+  }
+  if (filters?.entitlements) {
+    for (const entitlement of filters.entitlements) {
+      params.append("entitlements[]", entitlement)
+    }
   }
 
   const result = (await client.request(

@@ -28,10 +28,13 @@ export function useGetEntitlement(entitlementId: string) {
   })
 }
 
-export function useListEntitlements(params?: {
-  page: number
-  pageSize: number
-}) {
+export function useListEntitlements(
+  params?: {
+    page: number
+    pageSize: number
+  },
+  options?: { enabled?: boolean },
+) {
   const { code } = useEnvironment()
 
   const query = useQuery({
@@ -47,6 +50,7 @@ export function useListEntitlements(params?: {
 
       return response
     },
+    enabled: options?.enabled,
   })
 
   return {

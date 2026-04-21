@@ -4,10 +4,12 @@ import { useEnvironment } from "@/hooks/use-environment"
 
 import * as Schemas from "@/schemas"
 import { APIError } from "@/types/api"
-import { Release } from "@/types/releases"
+import { Release, type ReleaseFilters } from "@/types/releases"
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
+
+export type { ReleaseFilters }
 
 export function useGetRelease(releaseId: string) {
   const { code } = useEnvironment()
@@ -28,7 +30,7 @@ export function useGetRelease(releaseId: string) {
 }
 
 export function useListReleases(
-  params?: { page: number; pageSize: number },
+  params?: { page: number; pageSize: number; filters?: ReleaseFilters },
   options?: { enabled?: boolean },
 ) {
   const { code } = useEnvironment()
@@ -37,7 +39,13 @@ export function useListReleases(
     queryKey: ["releases", { environment: code, ...params }],
     queryFn: async () => {
       const response = await keygen.releases.list(
-        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+        params
+          ? {
+              pageNumber: params.page,
+              pageSize: params.pageSize,
+              filters: params.filters,
+            }
+          : {},
       )
 
       if (response.errors) {

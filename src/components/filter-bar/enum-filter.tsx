@@ -23,7 +23,7 @@ export default function EnumFilter({
   value,
   onChange,
 }: EnumFilterProps) {
-  const filter = useFilterState(value, "", onChange)
+  const filter = useFilterState(value, options[0]?.value ?? "", onChange)
 
   const selected = options.find((o) => o.value === filter.value) || options[0]
 

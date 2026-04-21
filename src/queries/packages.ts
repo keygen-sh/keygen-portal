@@ -29,11 +29,10 @@ export function useGetPackage(packageId: string) {
   })
 }
 
-export function useListPackages(params?: {
-  page: number
-  pageSize: number
-  filters?: PackageFilters
-}) {
+export function useListPackages(
+  params?: { page: number; pageSize: number; filters?: PackageFilters },
+  options?: { enabled?: boolean },
+) {
   const { code } = useEnvironment()
 
   const query = useQuery({
@@ -55,6 +54,7 @@ export function useListPackages(params?: {
 
       return response
     },
+    enabled: options?.enabled,
   })
 
   return {

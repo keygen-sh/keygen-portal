@@ -250,7 +250,8 @@ export default function ProductDetails() {
                     </div>
                   </div>
                   <CollapsibleMenu title="Permissions" defaultOpen={false}>
-                    {product.attributes.permissions?.length > 0 ? (
+                    {product.attributes.permissions != null &&
+                    product.attributes.permissions.length > 0 ? (
                       <div className="flex max-w-full flex-wrap gap-2">
                         {product.attributes.permissions.map(
                           (permission, index) => (

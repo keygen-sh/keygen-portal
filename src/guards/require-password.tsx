@@ -14,8 +14,8 @@ export default function RequirePassword({
     console.warn("No password stored in context. Redirecting to password.")
 
     return Navigate({
-      to: "/$id/auth/password",
-      params: { id: keygen.config.id },
+      to: "/$accountId/auth/password",
+      params: { accountId: keygen.config.id },
     })
   }
 

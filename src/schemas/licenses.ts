@@ -5,6 +5,7 @@ import { Override } from "@/types/utility"
 import { SigningAlgorithm } from "@/types/files"
 import { CombineFormValues } from "@/types/forms"
 import { LicenseAttributes, LicenseFileAttributes } from "@/types/licenses"
+import { MetadataSchema, MetadataValueSchema } from "@/schemas/metadata"
 
 export type BaseValues = Partial<
   Override<
@@ -75,7 +76,7 @@ const BaseShape = z.object({
   maxUsers: z.number().int().positive().nullable().optional(),
   maxCores: z.number().int().positive().nullable().optional(),
   maxUses: z.number().int().positive().nullable().optional(),
-  metadata: z.record(z.unknown()).default({}),
+  metadata: MetadataSchema,
   entitlements: z
     .object({
       attach: z.array(z.string()).default([]),
@@ -84,7 +85,7 @@ const BaseShape = z.object({
           z.object({
             name: z.string().min(1),
             code: z.string().min(1),
-            metadata: z.record(z.string()).optional(),
+            metadata: z.record(MetadataValueSchema).optional(),
           }),
         )
         .default([]),

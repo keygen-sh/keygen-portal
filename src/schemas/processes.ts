@@ -3,6 +3,7 @@ import { z } from "zod"
 
 import { CombineFormValues } from "@/types/forms"
 import { ProcessAttributes } from "@/types/processes"
+import { MetadataSchema } from "@/schemas/metadata"
 
 export type BaseValues = Partial<Pick<ProcessAttributes, "metadata">>
 export type CreateValues = BaseValues & {
@@ -19,7 +20,7 @@ export type AllValues = CombineFormValues<
 export type FieldNames = FieldPath<AllValues>
 
 const BaseShape = z.object({
-  metadata: z.record(z.unknown()).default({}),
+  metadata: MetadataSchema,
 })
 
 const PidShape = z.object({

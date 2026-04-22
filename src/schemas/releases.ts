@@ -5,6 +5,7 @@ import semver from "semver"
 import { CombineFormValues } from "@/types/forms"
 import { Writable, OptionalExcept } from "@/types/utility"
 import { ReleaseAttributes, ReleaseChannel } from "@/types/releases"
+import { MetadataSchema } from "@/schemas/metadata"
 
 export type BaseValues = Writable<
   OptionalExcept<ReleaseAttributes, "version">
@@ -56,7 +57,7 @@ const BaseShape = z.object({
     .nullable()
     .optional()
     .transform((value) => (value === "" ? null : value)),
-  metadata: z.record(z.unknown()).default({}),
+  metadata: MetadataSchema,
   backdated: z.string().nullable().optional(),
   constraints: z
     .object({

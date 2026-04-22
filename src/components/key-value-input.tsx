@@ -202,9 +202,6 @@ export default function KeyValueInput<
   const [rows, setRows] = useState<Pair[]>(() =>
     entriesToRows(field.value as Record<string, unknown> | undefined),
   )
-  // Tracks which rows the user has interacted with so we only show errors
-  // after blur, not while the user is still mid-type.
-  const [touched, setTouched] = useState<Record<string, boolean>>({})
 
   const lastValueRef = useRef<string | null>(null)
   const value = useMemo(() => JSON.stringify(field.value ?? {}), [field.value])
@@ -224,13 +221,21 @@ export default function KeyValueInput<
 
   const hasErrors = Array.from(rowErrors.values()).some((e) => e !== null)
 
+  // Clear the error on unmount so a stale manual error doesn't persist.
+  useEffect(() => {
+    return () => {
+      formContext?.clearErrors(name)
+    }
+  }, [formContext, name])
+
   // Surface a field-level error on the parent form when any row is invalid so
   // the form submit is blocked and the user gets a consistent validation
-  // signal. Clear it again once all rows are valid.
-  useEffect(() => {
+  // signal. Called at every row mutation site below.
+  const syncFormError = (draft: Pair[]) => {
     if (!formContext) return
 
-    if (hasErrors) {
+    const invalid = draft.some((row) => validateRow(row) !== null)
+    if (invalid) {
       formContext.setError(name, {
         type: "manual",
         message: "Metadata contains invalid values",
@@ -238,14 +243,7 @@ export default function KeyValueInput<
     } else {
       formContext.clearErrors(name)
     }
-  }, [hasErrors, formContext, name])
-
-  // Clear the error on unmount so a stale manual error doesn't persist.
-  useEffect(() => {
-    return () => {
-      formContext?.clearErrors(name)
-    }
-  }, [formContext, name])
+  }
 
   const commit = (draft: Pair[] = rows) => {
     const entries: Record<string, MetadataValue> = {}
@@ -261,10 +259,9 @@ export default function KeyValueInput<
       lastValueRef.current = next
       field.onChange(entries)
     }
-  }
 
-  const markTouched = (id: string) =>
-    setTouched((prev) => (prev[id] ? prev : { ...prev, [id]: true }))
+    syncFormError(draft)
+  }
 
   const addRow = () => {
     const id = crypto.randomUUID()
@@ -280,9 +277,13 @@ export default function KeyValueInput<
     id: string,
     changes: Partial<Pick<Pair, "key" | "type" | "value">>,
   ) => {
-    setRows((prev) =>
-      prev.map((row) => (row.id === id ? { ...row, ...changes } : row)),
-    )
+    setRows((prev) => {
+      const next = prev.map((row) =>
+        row.id === id ? { ...row, ...changes } : row,
+      )
+      syncFormError(next)
+      return next
+    })
   }
 
   const changeType = (id: string, type: MetaType) => {
@@ -311,9 +312,6 @@ export default function KeyValueInput<
 
       return next
     })
-    // Changing the type often surfaces a new error (e.g. "abc" -> float), so
-    // reveal errors immediately rather than waiting for another blur.
-    markTouched(id)
   }
 
   const deleteRow = (id: string, usingKeys: boolean) => {
@@ -321,12 +319,6 @@ export default function KeyValueInput<
       const next = prev.filter((row) => row.id !== id)
       queueMicrotask(() => commit(next))
 
-      return next
-    })
-    setTouched((prev) => {
-      if (!prev[id]) return prev
-      const next = { ...prev }
-      delete next[id]
       return next
     })
 
@@ -356,7 +348,6 @@ export default function KeyValueInput<
         <>
           {rows.map(({ id, key, type, value }) => {
             const error = rowErrors.get(id) ?? null
-            const showError = error !== null && touched[id]
 
             return (
               <div key={id} className="space-y-1">
@@ -366,12 +357,9 @@ export default function KeyValueInput<
                     placeholder={keyPlaceholder}
                     value={key}
                     onChange={(e) => updateRow(id, { key: e.target.value })}
-                    onBlur={() => {
-                      markTouched(id)
-                      commit()
-                    }}
+                    onBlur={() => commit()}
                     disabled={disabled}
-                    aria-invalid={showError && !key.trim() ? true : undefined}
+                    aria-invalid={error && !key.trim() ? true : undefined}
                   />
                   <Select
                     value={type}
@@ -407,7 +395,6 @@ export default function KeyValueInput<
                           queueMicrotask(() => commit(nextRows))
                           return nextRows
                         })
-                        markTouched(id)
                       }}
                       disabled={disabled}
                     >
@@ -424,16 +411,13 @@ export default function KeyValueInput<
                       placeholder='e.g. { "nested": true }'
                       value={value}
                       onChange={(e) => updateRow(id, { value: e.target.value })}
-                      onBlur={() => {
-                        markTouched(id)
-                        commit()
-                      }}
+                      onBlur={() => commit()}
                       disabled={disabled}
                       spellCheck={false}
                       rows={1}
                       className="field-sizing-fixed h-9 min-h-9 resize-y py-1.5 font-mono text-xs"
                       aria-invalid={
-                        showError && key.trim().length > 0 ? true : undefined
+                        error && key.trim().length > 0 ? true : undefined
                       }
                     />
                   ) : (
@@ -441,10 +425,7 @@ export default function KeyValueInput<
                       placeholder={valuePlaceholder}
                       value={value}
                       onChange={(e) => updateRow(id, { value: e.target.value })}
-                      onBlur={() => {
-                        markTouched(id)
-                        commit()
-                      }}
+                      onBlur={() => commit()}
                       disabled={disabled}
                       inputMode={
                         type === "integer"
@@ -454,7 +435,7 @@ export default function KeyValueInput<
                             : undefined
                       }
                       aria-invalid={
-                        showError && key.trim().length > 0 ? true : undefined
+                        error && key.trim().length > 0 ? true : undefined
                       }
                     />
                   )}
@@ -468,7 +449,7 @@ export default function KeyValueInput<
                     <X className="h-4 w-4 stroke-content-subdued" />
                   </Button>
                 </div>
-                {showError ? (
+                {error ? (
                   <p className="pl-1 text-xs text-destructive">{error}</p>
                 ) : null}
               </div>

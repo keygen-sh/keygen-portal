@@ -8,7 +8,7 @@ import { LicenseAttributes, LicenseFileAttributes } from "@/types/licenses"
 import {
   MetadataPairsSchema,
   WithMetadataInput,
-  type Pair,
+  type MetadataPair,
 } from "@/schemas/metadata"
 
 export type BaseValues = Partial<
@@ -60,7 +60,7 @@ export type BaseInputValues = Omit<
 > & {
   entitlements?: {
     attach?: string[]
-    create?: { name: string; code: string; metadata?: Pair[] }[]
+    create?: { name: string; code: string; metadata?: MetadataPair[] }[]
   }
 }
 export type CreateInputValues = BaseInputValues & { policyId: string }

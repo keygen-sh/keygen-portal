@@ -16,9 +16,9 @@ import { X } from "lucide-react"
 
 import {
   META_TYPES,
-  PairSchema,
+  MetadataPairSchema,
   type MetaType,
-  type Pair,
+  type MetadataPair,
 } from "@/schemas/metadata"
 
 import { cn } from "@/lib/utils"
@@ -53,18 +53,18 @@ export default function KeyValueInput<
 }: KeyValueInputProps<TFormValues>): React.ReactElement {
   const { field } = useController<TFormValues, FieldPath<TFormValues>>({ name })
 
-  // The form field's value is the Pair[] itself — the schema owns the
-  // Pair[] → Record transform at parse time, so submit values come out as
-  // `Record<string, MetadataValue>` for the API.
+  // The form field's value is the MetadataPair[] itself — the schema owns
+  // the MetadataPair[] → Record transform at parse time, so submit values
+  // come out as `Record<string, MetadataValue>` for the API.
   const rows = useMemo(
-    () => (field.value as Pair[] | undefined) ?? [],
+    () => (field.value as MetadataPair[] | undefined) ?? [],
     [field.value],
   )
 
-  const setRows = (next: Pair[]) => field.onChange(next)
+  const setRows = (next: MetadataPair[]) => field.onChange(next)
 
   const hasErrors = useMemo(
-    () => rows.some((row) => !PairSchema.safeParse(row).success),
+    () => rows.some((row) => !MetadataPairSchema.safeParse(row).success),
     [rows],
   )
 
@@ -80,7 +80,7 @@ export default function KeyValueInput<
 
   const updateRow = (
     id: string,
-    changes: Partial<Pick<Pair, "key" | "type" | "value">>,
+    changes: Partial<Pick<MetadataPair, "key" | "type" | "value">>,
   ) => {
     setRows(rows.map((row) => (row.id === id ? { ...row, ...changes } : row)))
   }
@@ -137,7 +137,12 @@ export default function KeyValueInput<
       ) : (
         <>
           {rows.map(({ id, key, type, value }) => {
-            const result = PairSchema.safeParse({ id, key, type, value })
+            const result = MetadataPairSchema.safeParse({
+              id,
+              key,
+              type,
+              value,
+            })
             const keyInvalid =
               !result.success &&
               result.error.issues.some((i) => i.path[0] === "key")

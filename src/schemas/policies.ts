@@ -27,7 +27,7 @@ import {
   MetadataPairsSchema,
   WithMetadataInput,
   recordToPairs,
-  type Pair,
+  type MetadataPair,
 } from "@/schemas/metadata"
 
 export type BaseValues = Writable<OptionalExcept<PolicyAttributes, "name">> & {
@@ -54,7 +54,7 @@ export type BaseInputValues = Omit<
 > & {
   entitlements?: {
     attach?: string[]
-    create?: { name: string; code: string; metadata?: Pair[] }[]
+    create?: { name: string; code: string; metadata?: MetadataPair[] }[]
   }
 }
 export type CreateInputValues = BaseInputValues & { product: { id: string } }
@@ -66,8 +66,9 @@ export type AllInputValues = CombineFormValues<
 >
 
 // Short alias for the 3-generic ZodType used throughout this file after the
-// MetadataPairsSchema refactor, where input (form state) has metadata: Pair[]
-// but output (API submission) has metadata: Record<string, unknown>.
+// MetadataPairsSchema refactor, where input (form state) has
+// metadata: MetadataPair[] but output (API submission) has
+// metadata: Record<string, unknown>.
 type PolicySchema = z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>
 
 export type FieldNames = Exclude<
@@ -701,8 +702,8 @@ export function getCreateSchemaDefaults<T extends CreateInputValues>(
   // Empty strings so form initializes with empty fields
   parsed.name = ""
   parsed.product.id = ""
-  // Reset metadata to the form-input shape (Pair[]) since parsing applied the
-  // MetadataPairsSchema transform and produced a Record.
+  // Reset metadata to the form-input shape (MetadataPair[]) since parsing
+  // applied the MetadataPairsSchema transform and produced a Record.
   parsed.metadata = []
 
   return parsed

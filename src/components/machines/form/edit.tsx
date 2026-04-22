@@ -13,7 +13,7 @@ import {
 } from "@/queries/machines"
 
 import { toast } from "@/lib/toast"
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 import { recordToPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
@@ -40,7 +40,7 @@ export default function EditMachineForm({
     unknown,
     Schemas.Machines.UpdateValues
   >({
-    resolver: typedZodResolver(Schemas.Machines.UpdateSchema),
+    resolver: transformingZodResolver(Schemas.Machines.UpdateSchema),
     mode: "onChange",
     values: {
       name: machine?.attributes.name ?? null,

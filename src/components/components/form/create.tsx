@@ -6,7 +6,7 @@ import { useCreateComponent } from "@/queries/components"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { toast } from "@/lib/toast"
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 
 import * as Forms from "@/components/forms"
 import * as Components from "@/components/components"
@@ -26,7 +26,7 @@ export default function CreateComponentForm({
     unknown,
     Schemas.Components.CreateValues
   >({
-    resolver: typedZodResolver(Schemas.Components.CreateSchema),
+    resolver: transformingZodResolver(Schemas.Components.CreateSchema),
     mode: "onChange",
     defaultValues: {
       fingerprint: "",

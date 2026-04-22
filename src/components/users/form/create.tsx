@@ -8,7 +8,7 @@ import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 import { useCreateUser, useChangeUserGroup } from "@/queries/users"
 
 import { toast } from "@/lib/toast"
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 
 import * as Forms from "@/components/forms"
 import * as Users from "@/components/users"
@@ -28,7 +28,7 @@ export default function CreateUserForm({
     unknown,
     Schemas.Users.CreateValues
   >({
-    resolver: typedZodResolver(Schemas.Users.CreateSchema),
+    resolver: transformingZodResolver(Schemas.Users.CreateSchema),
     mode: "onChange",
     defaultValues: {
       email: "",

@@ -8,7 +8,7 @@ import * as Schemas from "@/schemas"
 import { useGetEntitlement, useUpdateEntitlement } from "@/queries/entitlements"
 
 import { toast } from "@/lib/toast"
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 import { recordToPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
@@ -33,7 +33,7 @@ export default function EditEntitlementForm({
     unknown,
     Schemas.Entitlements.UpdateValues
   >({
-    resolver: typedZodResolver(Schemas.Entitlements.UpdateSchema),
+    resolver: transformingZodResolver(Schemas.Entitlements.UpdateSchema),
     mode: "onChange",
     values: {
       name: entitlement?.attributes.name,

@@ -9,7 +9,7 @@ import * as Schemas from "@/schemas"
 import { useGetGroup, useUpdateGroup } from "@/queries/groups"
 
 import { toast } from "@/lib/toast"
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 import { recordToPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
@@ -34,7 +34,7 @@ export default function EditGroupForm({
     unknown,
     Schemas.Groups.UpdateValues
   >({
-    resolver: typedZodResolver(Schemas.Groups.UpdateSchema),
+    resolver: transformingZodResolver(Schemas.Groups.UpdateSchema),
     mode: "onChange",
     values: {
       name: group?.attributes.name,

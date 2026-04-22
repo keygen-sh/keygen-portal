@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react"
 import { useForm } from "react-hook-form"
 import { useParams } from "@tanstack/react-router"
 
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 
 import { toast } from "@/lib/toast"
 
@@ -68,7 +68,7 @@ export default function DuplicatePolicyForm({
     unknown,
     Schemas.Policies.CreateValues
   >({
-    resolver: typedZodResolver(Schemas.Policies.CreateSchema),
+    resolver: transformingZodResolver(Schemas.Policies.CreateSchema),
     mode: "onChange",
     values: defaultValues,
   })

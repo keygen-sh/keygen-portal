@@ -2,7 +2,7 @@ import { useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { useParams } from "@tanstack/react-router"
 
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 
 import { toast } from "@/lib/toast"
 
@@ -50,7 +50,7 @@ export default function EditPolicyForm({
     unknown,
     Schemas.Policies.UpdateValues
   >({
-    resolver: typedZodResolver(Schemas.Policies.UpdateSchema),
+    resolver: transformingZodResolver(Schemas.Policies.UpdateSchema),
     mode: "onChange",
     values: policy
       ? {

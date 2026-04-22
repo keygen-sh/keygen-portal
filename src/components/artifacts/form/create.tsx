@@ -7,7 +7,7 @@ import { useCreateArtifact } from "@/queries/artifacts"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { toast } from "@/lib/toast"
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 
 import { Artifact } from "@/types/artifacts"
 
@@ -34,7 +34,7 @@ export default function CreateArtifactForm({
     unknown,
     Schemas.Artifacts.CreateValues
   >({
-    resolver: typedZodResolver(Schemas.Artifacts.CreateSchema),
+    resolver: transformingZodResolver(Schemas.Artifacts.CreateSchema),
     mode: "onChange",
     defaultValues: {
       filename: "",

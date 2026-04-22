@@ -10,7 +10,7 @@ import { DistributionStrategy } from "@/types/products"
 import { useGetProduct, useUpdateProduct } from "@/queries/products"
 
 import { toast } from "@/lib/toast"
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 import { recordToPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
@@ -35,7 +35,7 @@ export default function EditProductForm({
     unknown,
     Schemas.Products.UpdateValues
   >({
-    resolver: typedZodResolver(Schemas.Products.UpdateSchema),
+    resolver: transformingZodResolver(Schemas.Products.UpdateSchema),
     mode: "onChange",
     values: {
       name: product?.attributes.name,

@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from "react"
 import { useForm, UseFormReturn } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -108,7 +108,7 @@ export default function CreatePolicyForm({
     unknown,
     Schemas.Policies.CreateValues
   >({
-    resolver: typedZodResolver(schema),
+    resolver: transformingZodResolver(schema),
     defaultValues: Schemas.Policies.getCreateSchemaDefaults(schema),
   })
 

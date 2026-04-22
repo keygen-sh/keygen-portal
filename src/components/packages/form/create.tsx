@@ -7,7 +7,7 @@ import { useCreatePackage } from "@/queries/packages"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { toast } from "@/lib/toast"
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 
 import * as Forms from "@/components/forms"
 import * as Packages from "@/components/packages"
@@ -27,7 +27,7 @@ export default function CreatePackageForm({
     unknown,
     Schemas.Packages.CreateValues
   >({
-    resolver: typedZodResolver(Schemas.Packages.CreateSchema),
+    resolver: transformingZodResolver(Schemas.Packages.CreateSchema),
     mode: "onChange",
     defaultValues: {
       name: "",

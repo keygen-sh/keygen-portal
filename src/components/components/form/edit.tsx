@@ -8,7 +8,7 @@ import * as Schemas from "@/schemas"
 import { useGetComponent, useUpdateComponent } from "@/queries/components"
 
 import { toast } from "@/lib/toast"
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 import { recordToPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
@@ -33,7 +33,7 @@ export default function EditComponentForm({
     unknown,
     Schemas.Components.UpdateValues
   >({
-    resolver: typedZodResolver(Schemas.Components.UpdateSchema),
+    resolver: transformingZodResolver(Schemas.Components.UpdateSchema),
     mode: "onChange",
     values: {
       name: component?.attributes.name ?? "",

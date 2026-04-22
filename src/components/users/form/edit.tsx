@@ -10,7 +10,7 @@ import { UserRole } from "@/types/users"
 import { useGetUser, useUpdateUser, useChangeUserGroup } from "@/queries/users"
 
 import { toast } from "@/lib/toast"
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 import { recordToPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
@@ -35,7 +35,7 @@ export default function EditUserForm({
     unknown,
     Schemas.Users.UpdateValues
   >({
-    resolver: typedZodResolver(Schemas.Users.UpdateSchema),
+    resolver: transformingZodResolver(Schemas.Users.UpdateSchema),
     mode: "onChange",
     values: {
       email: user?.attributes.email ?? "",

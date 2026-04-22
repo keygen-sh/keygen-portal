@@ -6,7 +6,7 @@ import { useCreateEntitlement } from "@/queries/entitlements"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { toast } from "@/lib/toast"
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 
 import * as Forms from "@/components/forms"
 import * as Entitlements from "@/components/entitlements"
@@ -26,7 +26,7 @@ export default function CreateEntitlementForm({
     unknown,
     Schemas.Entitlements.CreateValues
   >({
-    resolver: typedZodResolver(Schemas.Entitlements.CreateSchema),
+    resolver: transformingZodResolver(Schemas.Entitlements.CreateSchema),
     mode: "onChange",
     defaultValues: {
       name: "",

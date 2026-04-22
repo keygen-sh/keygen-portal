@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
 
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 
 import * as Schemas from "@/schemas"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
@@ -31,7 +31,7 @@ export default function CreateMachineForm({
     unknown,
     Schemas.Machines.CreateValues
   >({
-    resolver: typedZodResolver(Schemas.Machines.CreateSchema),
+    resolver: transformingZodResolver(Schemas.Machines.CreateSchema),
     mode: "onChange",
     defaultValues: {
       fingerprint: "",

@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 
 import * as Schemas from "@/schemas"
 import {
@@ -34,7 +34,7 @@ export default function CreateLicenseForm({
     unknown,
     Schemas.Licenses.CreateValues
   >({
-    resolver: typedZodResolver(Schemas.Licenses.CreateSchema),
+    resolver: transformingZodResolver(Schemas.Licenses.CreateSchema),
     mode: "onChange",
     defaultValues: {
       name: "",

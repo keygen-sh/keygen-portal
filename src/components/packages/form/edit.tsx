@@ -9,7 +9,7 @@ import * as Schemas from "@/schemas"
 import { useGetPackage, useUpdatePackage } from "@/queries/packages"
 
 import { toast } from "@/lib/toast"
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 import { recordToPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
@@ -34,7 +34,7 @@ export default function EditPackageForm({
     unknown,
     Schemas.Packages.UpdateValues
   >({
-    resolver: typedZodResolver(Schemas.Packages.UpdateSchema),
+    resolver: transformingZodResolver(Schemas.Packages.UpdateSchema),
     mode: "onChange",
     values: {
       name: pkg?.attributes.name ?? "",

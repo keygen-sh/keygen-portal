@@ -6,7 +6,7 @@ import { useCreateGroup } from "@/queries/groups"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { toast } from "@/lib/toast"
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 
 import * as Forms from "@/components/forms"
 import * as Groups from "@/components/groups"
@@ -26,7 +26,7 @@ export default function CreateGroupForm({
     unknown,
     Schemas.Groups.CreateValues
   >({
-    resolver: typedZodResolver(Schemas.Groups.CreateSchema),
+    resolver: transformingZodResolver(Schemas.Groups.CreateSchema),
     mode: "onChange",
     defaultValues: {
       name: "",

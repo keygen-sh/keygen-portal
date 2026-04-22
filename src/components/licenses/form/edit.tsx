@@ -2,7 +2,7 @@ import { useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { useParams } from "@tanstack/react-router"
 
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 import { recordToPairs } from "@/schemas/metadata"
 
 import { Separator } from "@/components/ui/separator"
@@ -58,7 +58,7 @@ export default function EditLicenseForm({
     unknown,
     Schemas.Licenses.UpdateValues
   >({
-    resolver: typedZodResolver(Schemas.Licenses.UpdateSchema),
+    resolver: transformingZodResolver(Schemas.Licenses.UpdateSchema),
     mode: "onChange",
     values: license
       ? {

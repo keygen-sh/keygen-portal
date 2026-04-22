@@ -9,7 +9,7 @@ import * as Schemas from "@/schemas"
 import { useGetArtifact, useUpdateArtifact } from "@/queries/artifacts"
 
 import { toast } from "@/lib/toast"
-import { typedZodResolver } from "@/lib/form"
+import { transformingZodResolver } from "@/lib/form"
 import { recordToPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
@@ -34,7 +34,7 @@ export default function EditArtifactForm({
     unknown,
     Schemas.Artifacts.UpdateValues
   >({
-    resolver: typedZodResolver(Schemas.Artifacts.UpdateSchema),
+    resolver: transformingZodResolver(Schemas.Artifacts.UpdateSchema),
     mode: "onChange",
     values: {
       filesize: artifact?.attributes.filesize ?? 0,

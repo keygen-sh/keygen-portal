@@ -24,9 +24,8 @@ import {
 
 import { cn } from "@/lib/utils"
 
-const TYPE_OPTIONS: { value: MetadataType; label: string }[] = METADATA_TYPES.map(
-  (t) => ({ value: t, label: MetadataTypeLabels[t] }),
-)
+const TYPE_OPTIONS: { value: MetadataType; label: string }[] =
+  METADATA_TYPES.map((t) => ({ value: t, label: MetadataTypeLabels[t] }))
 
 interface KeyValueInputProps<TFormValues extends FieldValues> {
   name: FieldPath<TFormValues>

@@ -4,6 +4,7 @@ import { z } from "zod"
 import { CombineFormValues } from "@/types/forms"
 import { Writable, OptionalExcept } from "@/types/utility"
 import { PackageAttributes, PackageEngine } from "@/types/packages"
+import { MetadataSchema } from "@/schemas/metadata"
 
 export type BaseValues = Writable<
   OptionalExcept<PackageAttributes, "name" | "key">
@@ -32,7 +33,7 @@ const BaseShape = z.object({
     ])
     .nullable()
     .optional(),
-  metadata: z.record(z.unknown()).default({}),
+  metadata: MetadataSchema,
 })
 
 const ProductShape = z.object({

@@ -4,6 +4,7 @@ import { z } from "zod"
 import { CombineFormValues } from "@/types/forms"
 import { UserAttributes, UserRole } from "@/types/users"
 import { Writable, OptionalExcept } from "@/types/utility"
+import { MetadataSchema } from "@/schemas/metadata"
 
 export type BaseValues = Writable<OptionalExcept<UserAttributes, "email">> & {
   groupId?: string | null
@@ -46,7 +47,7 @@ const BaseShape = z.object({
   lastName: z.string().trim().nullable().optional(),
   role: z.nativeEnum(UserRole).optional(),
   permissions: z.array(z.string()).nullable().optional(),
-  metadata: z.record(z.unknown()).default({}),
+  metadata: MetadataSchema,
   groupId: z.string().nullable().optional(),
 })
 

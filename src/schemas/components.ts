@@ -5,6 +5,7 @@ import { CombineFormValues } from "@/types/forms"
 
 import { ComponentAttributes } from "@/types/components"
 import { Writable, OptionalExcept } from "@/types/utility"
+import { MetadataSchema } from "@/schemas/metadata"
 
 export type BaseValues = Writable<OptionalExcept<ComponentAttributes, "name">>
 export type CreateValues = BaseValues & {
@@ -22,7 +23,7 @@ export type FieldNames = FieldPath<AllValues>
 
 const BaseShape = z.object({
   name: z.string().trim().min(1, "Name is required"),
-  metadata: z.record(z.unknown()).default({}),
+  metadata: MetadataSchema,
 })
 
 const FingerprintShape = z.object({

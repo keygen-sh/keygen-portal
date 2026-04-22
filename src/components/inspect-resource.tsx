@@ -33,8 +33,10 @@ export default function InspectResource({
         <Copy className="size-3.5" />
       </Button>
 
-      {/* FIXME(cazden) Text should be scrollable along X on smaller screens */}
-      <ScrollArea className="size-full">
+      <ScrollArea
+        className="size-full"
+        orientation="both"
+      >
         <pre className="w-max min-w-full p-3 font-mono text-sm leading-snug whitespace-pre">
           {JSON.stringify(resource, null, 2)}
         </pre>

@@ -4,6 +4,7 @@ import { z } from "zod"
 import { GroupAttributes } from "@/types/groups"
 import { CombineFormValues } from "@/types/forms"
 import { Writable, OptionalExcept } from "@/types/utility"
+import { MetadataSchema } from "@/schemas/metadata"
 
 export type BaseValues = Writable<OptionalExcept<GroupAttributes, "name">>
 export type CreateValues = BaseValues
@@ -21,7 +22,7 @@ const BaseShape = z.object({
   maxUsers: z.number().int().positive().nullable().optional(),
   maxLicenses: z.number().int().positive().nullable().optional(),
   maxMachines: z.number().int().positive().nullable().optional(),
-  metadata: z.record(z.unknown()).default({}),
+  metadata: MetadataSchema,
 })
 
 const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {

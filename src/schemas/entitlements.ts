@@ -4,6 +4,7 @@ import { z } from "zod"
 import { CombineFormValues, FormFieldError } from "@/types/forms"
 import { Writable, OptionalExcept } from "@/types/utility"
 import { EntitlementAttributes } from "@/types/entitlements"
+import { MetadataSchema } from "@/schemas/metadata"
 
 import * as Forms from "@/schemas"
 
@@ -23,7 +24,7 @@ export type FieldNames = FieldPath<AllValues>
 const BaseShape = z.object({
   name: z.string().trim().min(1, "Entitlement name is required"),
   code: z.string().trim().min(1, "Entitlement code is required"),
-  metadata: z.record(z.string()).default({}),
+  metadata: MetadataSchema,
 })
 
 const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {

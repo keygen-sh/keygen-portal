@@ -4,6 +4,7 @@ import { z } from "zod"
 import { CombineFormValues } from "@/types/forms"
 import { Writable, OptionalExcept } from "@/types/utility"
 import { ProductAttributes, DistributionStrategy } from "@/types/products"
+import { MetadataSchema } from "@/schemas/metadata"
 
 export type BaseValues = Writable<
   OptionalExcept<ProductAttributes, "name" | "code">
@@ -36,7 +37,7 @@ const BaseShape = z.object({
     }),
   permissions: z.array(z.string()).nullable().default(null),
   platforms: z.array(z.string()).default([]),
-  metadata: z.record(z.string()).default({}),
+  metadata: MetadataSchema,
 })
 const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {
   // Custom rules can be added here in the future, e.g.

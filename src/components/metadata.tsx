@@ -39,15 +39,18 @@ export default function Metadata({
             <Copy className="size-3.5" />
           </Button>
 
-          <ScrollArea className="max-h-64 rounded border border-accent">
-            <pre className="p-3 font-mono text-sm leading-snug">
+          <ScrollArea
+            className="max-h-64 rounded border border-accent"
+            orientation="both"
+          >
+            <pre className="w-max min-w-full p-3 font-mono text-sm leading-snug whitespace-pre">
               {JSON.stringify(resource.attributes.metadata, null, 2)}
             </pre>
           </ScrollArea>
         </div>
       ) : (
         <p className="rounded border border-accent p-3 font-mono text-sm text-content-muted">
-          {"{ }"}
+          {"{}"}
         </p>
       )}
     </div>

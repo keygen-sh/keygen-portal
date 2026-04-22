@@ -4,6 +4,7 @@ import { z } from "zod"
 import { CombineFormValues } from "@/types/forms"
 import { ArtifactAttributes } from "@/types/artifacts"
 import { Writable, OptionalExcept } from "@/types/utility"
+import { MetadataSchema } from "@/schemas/metadata"
 
 export type BaseValues = Writable<
   OptionalExcept<ArtifactAttributes, "filename">
@@ -29,7 +30,7 @@ const BaseShape = z.object({
   arch: z.string().trim().nullable().optional(),
   signature: z.string().trim().nullable().optional(),
   checksum: z.string().trim().nullable().optional(),
-  metadata: z.record(z.unknown()).default({}),
+  metadata: MetadataSchema,
 })
 
 const ReleaseShape = z.object({
@@ -40,7 +41,7 @@ const UpdateShape = z.object({
   filesize: z.coerce.number().int().min(0).nullable().optional(),
   signature: z.string().trim().nullable().optional(),
   checksum: z.string().trim().nullable().optional(),
-  metadata: z.record(z.unknown()).default({}),
+  metadata: MetadataSchema,
 })
 
 const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {

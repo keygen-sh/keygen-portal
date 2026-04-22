@@ -23,6 +23,7 @@ import {
   HeartbeatCullStrategy,
   HeartbeatResurrectionStrategy,
 } from "@/types/policies"
+import { MetadataSchema, MetadataValueSchema } from "@/schemas/metadata"
 
 export type BaseValues = Writable<OptionalExcept<PolicyAttributes, "name">> & {
   entitlements?: {
@@ -163,7 +164,7 @@ export const BaseShape = z.object({
     .nativeEnum(OverageStrategy)
     .nullish()
     .default(OverageStrategy.NoOverage),
-  metadata: z.record(z.string()).default({}),
+  metadata: MetadataSchema,
 
   entitlements: z
     .object({
@@ -173,7 +174,7 @@ export const BaseShape = z.object({
           z.object({
             name: z.string().min(1),
             code: z.string().min(1),
-            metadata: z.record(z.string()).optional(),
+            metadata: z.record(MetadataValueSchema).optional(),
           }),
         )
         .default([]),

@@ -5,6 +5,7 @@ import { Writable } from "@/types/utility"
 import { SigningAlgorithm } from "@/types/files"
 import { CombineFormValues } from "@/types/forms"
 import { MachineAttributes, MachineFileAttributes } from "@/types/machines"
+import { MetadataSchema } from "@/schemas/metadata"
 
 export type BaseValues = Writable<
   Partial<
@@ -45,7 +46,7 @@ const BaseShape = z.object({
   cores: z.number().int().positive().nullable().optional(),
   memory: z.number().int().positive().nullable().optional(),
   disk: z.number().int().positive().nullable().optional(),
-  metadata: z.record(z.unknown()).default({}),
+  metadata: MetadataSchema,
   groupId: z.string().nullable().optional(),
   ownerId: z.string().nullable().optional(),
 })

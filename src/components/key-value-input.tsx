@@ -41,9 +41,11 @@ const TYPE_OPTIONS: { value: MetaType; label: string }[] = [
   { value: "json", label: "JSON" },
 ]
 
-// Strict integer: optional sign, digits only.
-const INTEGER_PATTERN = /^-?\d+$/
-// Strict float: optional sign, digits, optional fractional part, optional exponent.
+// Integer: optional sign, digits, optional exponent. The exponent may resolve
+// to a non-integer (e.g. `1e-1` → 0.1), which we catch separately via
+// `Number.isInteger` on the parsed value.
+const INTEGER_PATTERN = /^-?\d+([eE][+-]?\d+)?$/
+// Float: optional sign, digits, optional fractional part, optional exponent.
 const FLOAT_PATTERN = /^-?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$/
 
 function detectType(v: unknown): MetaType {
@@ -98,7 +100,9 @@ function validateRow({ key, type, value }: Pair): string | null {
         return "Must be a valid integer"
       }
       const n = Number(trimmedValue)
-      if (!Number.isFinite(n)) return "Must be a valid integer"
+      if (!Number.isFinite(n) || !Number.isInteger(n)) {
+        return "Must be a valid integer"
+      }
       return null
     }
     case "float": {
@@ -144,7 +148,7 @@ function parseRow({
     case "string":
       return { key: trimmedKey, value: value.trim() }
     case "integer":
-      return { key: trimmedKey, value: Number.parseInt(value.trim(), 10) }
+      return { key: trimmedKey, value: Number(value.trim()) }
     case "float":
       return { key: trimmedKey, value: Number.parseFloat(value.trim()) }
     case "boolean":

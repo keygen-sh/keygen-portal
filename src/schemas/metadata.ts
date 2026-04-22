@@ -30,6 +30,15 @@ export const META_TYPES = [
 
 export type MetaType = (typeof META_TYPES)[number]
 
+export const MetaTypeLabels: Readonly<Record<MetaType, string>> = {
+  string: "String",
+  integer: "Integer",
+  float: "Float",
+  boolean: "Boolean",
+  null: "Null",
+  json: "JSON",
+} as const
+
 // A single row of raw user input as held in KeyValueInput's state.
 export type MetadataPair = {
   id: string

@@ -4,7 +4,7 @@ import type { z } from "zod"
 
 // Typed wrapper around zodResolver that preserves the input-vs-output
 // distinction required by useForm's 3-generic signature when the schema
-// transforms its input (e.g. metadata: Pair[] → Record<string, unknown>).
+// transforms its input (e.g. metadata: MetadataPair[] → Record<string, unknown>).
 export function typedZodResolver<
   TInput extends FieldValues,
   TOutput extends FieldValues,

@@ -31,7 +31,7 @@ export const META_TYPES = [
 export type MetaType = (typeof META_TYPES)[number]
 
 // A single row of raw user input as held in KeyValueInput's state.
-export type Pair = {
+export type MetadataPair = {
   id: string
   key: string
   type: MetaType
@@ -39,10 +39,10 @@ export type Pair = {
 }
 
 // Helper for schema input-type derivation: swaps the `metadata` field's
-// output shape (Record) for its input shape (Pair[]) on form-state types.
+// output shape (Record) for its input shape (MetadataPair[]) on form-state types.
 export type WithMetadataInput<T> = T extends { metadata?: unknown }
-  ? Omit<T, "metadata"> & { metadata?: Pair[] }
-  : T & { metadata?: Pair[] }
+  ? Omit<T, "metadata"> & { metadata?: MetadataPair[] }
+  : T & { metadata?: MetadataPair[] }
 
 // Integer: optional sign, digits, optional exponent. The exponent may resolve
 // to a non-integer (e.g. `1e-1` → 0.1), which we catch separately via
@@ -59,18 +59,19 @@ function tryParseJson(raw: string): { value: unknown } | undefined {
   }
 }
 
-const PairShape = z.object({
+const MetadataPairShape = z.object({
   id: z.string(),
   key: z.string(),
   type: z.enum(META_TYPES),
   value: z.string(),
 })
 
-// Validates a single Pair, attaching issues to the offending field (`key` or
-// `value`) so callers can reason about per-field validity via safeParse. A
-// fully-blank row (no key, no value) is treated as "not yet filled in" and
-// produces no issues — this avoids flashing errors on a freshly-added row.
-export const PairSchema = PairShape.superRefine((pair, ctx) => {
+// Validates a single MetadataPair, attaching issues to the offending field
+// (`key` or `value`) so callers can reason about per-field validity via
+// safeParse. A fully-blank row (no key, no value) is treated as "not yet
+// filled in" and produces no issues — this avoids flashing errors on a
+// freshly-added row.
+export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
   const trimmedKey = pair.key.trim()
   const trimmedValue = pair.value.trim()
 
@@ -168,18 +169,18 @@ export const PairSchema = PairShape.superRefine((pair, ctx) => {
   }
 })
 
-// Schema for the raw Pair[] state in KeyValueInput. Aggregates the first
-// per-row failure into a top-level issue whose message surfaces via the
+// Schema for the raw MetadataPair[] state in KeyValueInput. Aggregates the
+// first per-row failure into a top-level issue whose message surfaces via the
 // parent FormField's FormMessage. On success it transforms to a
 // Record<string, MetadataValue> — the shape the API expects — so the same
 // schema can live on form fields whose output type is a record (input:
-// Pair[], output: Record).
+// MetadataPair[], output: Record).
 export const MetadataPairsSchema = z
-  .array(PairShape)
+  .array(MetadataPairShape)
   .default([])
   .superRefine((pairs, ctx) => {
     for (const [i, pair] of pairs.entries()) {
-      const result = PairSchema.safeParse(pair)
+      const result = MetadataPairSchema.safeParse(pair)
       if (result.success) continue
 
       const label = pair.key.trim() ? `"${pair.key.trim()}"` : `#${i + 1}`
@@ -214,10 +215,10 @@ export function metaValueToString(v: unknown): string {
   return JSON.stringify(v)
 }
 
-// Convert a Record into a Pair[] for initializing KeyValueInput state.
+// Convert a Record into a MetadataPair[] for initializing KeyValueInput state.
 export function recordToPairs(
   entries: Record<string, unknown> | undefined | null,
-): Pair[] {
+): MetadataPair[] {
   if (!entries) return []
   return Object.entries(entries).map(([key, raw], i) => ({
     id: `${i}-${key}`,
@@ -227,11 +228,12 @@ export function recordToPairs(
   }))
 }
 
-// Convert a Pair[] into a Record<string, MetadataValue> for submission. Runs
-// as the MetadataPairsSchema transform, which only executes after per-pair
-// refinement has passed — so every pair here is already well-formed. Empty-
-// keyed rows (blank throwaway rows the user left unfilled) are dropped.
-function pairsToRecord(pairs: Pair[]): Record<string, MetadataValue> {
+// Convert a MetadataPair[] into a Record<string, MetadataValue> for
+// submission. Runs as the MetadataPairsSchema transform, which only executes
+// after per-pair refinement has passed — so every pair here is already
+// well-formed. Empty-keyed rows (blank throwaway rows the user left unfilled)
+// are dropped.
+function pairsToRecord(pairs: MetadataPair[]): Record<string, MetadataValue> {
   const out: Record<string, MetadataValue> = {}
   for (const pair of pairs) {
     const trimmedKey = pair.key.trim()

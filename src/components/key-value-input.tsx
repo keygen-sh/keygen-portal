@@ -16,6 +16,7 @@ import { CircleAlert, X } from "lucide-react"
 
 import {
   META_TYPES,
+  MetaTypeLabels,
   MetadataPairSchema,
   type MetaType,
   type MetadataPair,
@@ -24,10 +25,7 @@ import {
 import { cn } from "@/lib/utils"
 
 const TYPE_OPTIONS: { value: MetaType; label: string }[] = META_TYPES.map(
-  (t) => ({
-    value: t,
-    label: t === "json" ? "JSON" : t.charAt(0).toUpperCase() + t.slice(1),
-  }),
+  (t) => ({ value: t, label: MetaTypeLabels[t] }),
 )
 
 interface KeyValueInputProps<TFormValues extends FieldValues> {

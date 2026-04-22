@@ -207,7 +207,7 @@ export const MetadataPairsSchema = z
   .transform(pairsToRecord)
 
 // Detects the MetadataType of a raw metadata value from the API.
-export function detectMetadataType(v: unknown): MetadataType {
+export function metadataValueToType(v: unknown): MetadataType {
   if (v === null) return "null"
   if (typeof v === "boolean") return "boolean"
   if (typeof v === "number") return Number.isInteger(v) ? "integer" : "float"
@@ -232,7 +232,7 @@ export function recordToPairs(
   return Object.entries(entries).map(([key, raw], i) => ({
     id: `${i}-${key}`,
     key,
-    type: detectMetadataType(raw),
+    type: metadataValueToType(raw),
     value: metadataValueToString(raw),
   }))
 }

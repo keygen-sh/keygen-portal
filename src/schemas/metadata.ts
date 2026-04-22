@@ -59,88 +59,135 @@ function tryParseJson(raw: string): { value: unknown } | undefined {
   }
 }
 
-// Returns a user-facing validation message for the row, or `null` when valid.
-// A row is considered "empty" (and therefore non-erroring) when both key and
-// value are blank — this avoids flashing errors for a brand-new row the user
-// hasn't typed into yet.
-export function validatePair({ key, type, value }: Pair): string | null {
-  const trimmedKey = key.trim()
-  const trimmedValue = value.trim()
-
-  if (!trimmedKey && !trimmedValue && type !== "null" && type !== "boolean") {
-    return null
-  }
-
-  if (!trimmedKey) {
-    return "Key is required"
-  }
-
-  switch (type) {
-    case "string": {
-      // Empty string is a valid metadata value.
-      return null
-    }
-    case "integer": {
-      if (!trimmedValue) return "Value is required"
-      if (!INTEGER_PATTERN.test(trimmedValue)) {
-        return "Must be a valid integer"
-      }
-      const n = Number(trimmedValue)
-      if (!Number.isFinite(n) || !Number.isInteger(n)) {
-        return "Must be a valid integer"
-      }
-      return null
-    }
-    case "float": {
-      if (!trimmedValue) return "Value is required"
-      if (!FLOAT_PATTERN.test(trimmedValue)) {
-        return "Must be a valid number"
-      }
-      const n = Number.parseFloat(trimmedValue)
-      if (!Number.isFinite(n)) return "Must be a valid number"
-      return null
-    }
-    case "json": {
-      if (!trimmedValue) return "Value is required"
-      const parsed = tryParseJson(trimmedValue)
-      if (!parsed) return "Must be valid JSON"
-      if (parsed.value === null || typeof parsed.value !== "object") {
-        return "Must be a JSON object or array"
-      }
-      return null
-    }
-    case "boolean":
-    case "null":
-      return null
-  }
-}
-
-const PairSchema: z.ZodType<Pair> = z.object({
+const PairShape = z.object({
   id: z.string(),
   key: z.string(),
   type: z.enum(META_TYPES),
   value: z.string(),
 })
 
-// Schema for the raw Pair[] state in KeyValueInput. Emits a single top-level
-// issue when any row fails validation, whose message surfaces via the parent
-// FormField's FormMessage so the form owns error visualization. On success it
-// transforms to a Record<string, MetadataValue> — the shape the API expects —
-// which means the same schema can live on form fields whose output type is a
-// record (input: Pair[], output: Record).
+// Validates a single Pair, attaching issues to the offending field (`key` or
+// `value`) so callers can reason about per-field validity via safeParse. A
+// fully-blank row (no key, no value) is treated as "not yet filled in" and
+// produces no issues — this avoids flashing errors on a freshly-added row.
+export const PairSchema = PairShape.superRefine((pair, ctx) => {
+  const trimmedKey = pair.key.trim()
+  const trimmedValue = pair.value.trim()
+
+  if (
+    !trimmedKey &&
+    !trimmedValue &&
+    pair.type !== "null" &&
+    pair.type !== "boolean"
+  ) {
+    return
+  }
+
+  if (!trimmedKey) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["key"],
+      message: "Key is required",
+    })
+  }
+
+  switch (pair.type) {
+    case "string":
+    case "boolean":
+    case "null":
+      return
+    case "integer": {
+      if (!trimmedValue) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["value"],
+          message: "Value is required",
+        })
+        return
+      }
+      const n = Number(trimmedValue)
+      if (
+        !INTEGER_PATTERN.test(trimmedValue) ||
+        !Number.isFinite(n) ||
+        !Number.isInteger(n)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["value"],
+          message: "Must be a valid integer",
+        })
+      }
+      return
+    }
+    case "float": {
+      if (!trimmedValue) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["value"],
+          message: "Value is required",
+        })
+        return
+      }
+      const n = Number.parseFloat(trimmedValue)
+      if (!FLOAT_PATTERN.test(trimmedValue) || !Number.isFinite(n)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["value"],
+          message: "Must be a valid number",
+        })
+      }
+      return
+    }
+    case "json": {
+      if (!trimmedValue) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["value"],
+          message: "Value is required",
+        })
+        return
+      }
+      const parsed = tryParseJson(trimmedValue)
+      if (!parsed) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["value"],
+          message: "Must be valid JSON",
+        })
+        return
+      }
+      if (parsed.value === null || typeof parsed.value !== "object") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["value"],
+          message: "Must be a JSON object or array",
+        })
+      }
+      return
+    }
+  }
+})
+
+// Schema for the raw Pair[] state in KeyValueInput. Aggregates the first
+// per-row failure into a top-level issue whose message surfaces via the
+// parent FormField's FormMessage. On success it transforms to a
+// Record<string, MetadataValue> — the shape the API expects — so the same
+// schema can live on form fields whose output type is a record (input:
+// Pair[], output: Record).
 export const MetadataPairsSchema = z
-  .array(PairSchema)
+  .array(PairShape)
   .default([])
   .superRefine((pairs, ctx) => {
     for (const [i, pair] of pairs.entries()) {
-      const err = validatePair(pair)
-      if (!err) continue
+      const result = PairSchema.safeParse(pair)
+      if (result.success) continue
 
       const label = pair.key.trim() ? `"${pair.key.trim()}"` : `#${i + 1}`
+      const firstMessage = result.error.issues[0].message
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: `Row ${label}: ${err.charAt(0).toLowerCase() + err.slice(1)}`,
         path: [],
+        message: `Row ${label}: ${firstMessage.charAt(0).toLowerCase() + firstMessage.slice(1)}`,
       })
       // Surface the first offending row only; subsequent rows will validate
       // on the next edit.
@@ -180,13 +227,13 @@ export function recordToPairs(
   }))
 }
 
-// Convert a Pair[] back into a Record<string, MetadataValue> for submission.
-// Invalid or empty-keyed rows are dropped silently.
-export function pairsToRecord(pairs: Pair[]): Record<string, MetadataValue> {
+// Convert a Pair[] into a Record<string, MetadataValue> for submission. Runs
+// as the MetadataPairsSchema transform, which only executes after per-pair
+// refinement has passed — so every pair here is already well-formed. Empty-
+// keyed rows (blank throwaway rows the user left unfilled) are dropped.
+function pairsToRecord(pairs: Pair[]): Record<string, MetadataValue> {
   const out: Record<string, MetadataValue> = {}
   for (const pair of pairs) {
-    if (validatePair(pair) !== null) continue
-
     const trimmedKey = pair.key.trim()
     if (!trimmedKey) continue
 

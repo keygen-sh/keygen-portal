@@ -16,7 +16,7 @@ import { X } from "lucide-react"
 
 import {
   META_TYPES,
-  validatePair,
+  PairSchema,
   type MetaType,
   type Pair,
 } from "@/schemas/metadata"
@@ -64,7 +64,7 @@ export default function KeyValueInput<
   const setRows = (next: Pair[]) => field.onChange(next)
 
   const hasErrors = useMemo(
-    () => rows.some((row) => validatePair(row) !== null),
+    () => rows.some((row) => !PairSchema.safeParse(row).success),
     [rows],
   )
 
@@ -137,9 +137,13 @@ export default function KeyValueInput<
       ) : (
         <>
           {rows.map(({ id, key, type, value }) => {
-            const invalid = validatePair({ id, key, type, value }) !== null
-            const keyInvalid = invalid && !key.trim()
-            const valueInvalid = invalid && key.trim().length > 0
+            const result = PairSchema.safeParse({ id, key, type, value })
+            const keyInvalid =
+              !result.success &&
+              result.error.issues.some((i) => i.path[0] === "key")
+            const valueInvalid =
+              !result.success &&
+              result.error.issues.some((i) => i.path[0] === "value")
 
             return (
               <div key={id} className="flex items-start gap-2">

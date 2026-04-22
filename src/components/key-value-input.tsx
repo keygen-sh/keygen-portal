@@ -89,7 +89,7 @@ function validateRow({ key, type, value }: Pair): string | null {
 
   switch (type) {
     case "string": {
-      if (!trimmedValue) return "Value is required"
+      // Empty string is a valid metadata value.
       return null
     }
     case "integer": {
@@ -135,6 +135,10 @@ function parseRow({
   if (validateRow({ id: "", key, type, value }) !== null) return null
 
   const trimmedKey = key.trim()
+  // A blank key is treated as an untyped/empty row and should not be
+  // committed, even when the row itself passes validation (e.g. a brand-new
+  // row where both fields are empty).
+  if (!trimmedKey) return null
 
   switch (type) {
     case "string":

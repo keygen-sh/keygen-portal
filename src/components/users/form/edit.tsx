@@ -1,7 +1,6 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { useParams } from "@tanstack/react-router"
-import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Separator } from "@/components/ui/separator"
 
@@ -11,6 +10,8 @@ import { UserRole } from "@/types/users"
 import { useGetUser, useUpdateUser, useChangeUserGroup } from "@/queries/users"
 
 import { toast } from "@/lib/toast"
+import { typedZodResolver } from "@/lib/form"
+import { recordToPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
 import * as Users from "@/components/users"
@@ -29,8 +30,12 @@ export default function EditUserForm({
   const updateUser = useUpdateUser(user?.id ?? "")
   const changeGroup = useChangeUserGroup()
 
-  const form = useForm<Schemas.Users.UpdateValues>({
-    resolver: zodResolver(Schemas.Users.UpdateSchema),
+  const form = useForm<
+    Schemas.Users.UpdateInputValues,
+    unknown,
+    Schemas.Users.UpdateValues
+  >({
+    resolver: typedZodResolver(Schemas.Users.UpdateSchema),
     mode: "onChange",
     values: {
       email: user?.attributes.email ?? "",
@@ -39,7 +44,7 @@ export default function EditUserForm({
       role: user?.attributes.role ?? UserRole.User,
       permissions: user?.attributes.permissions ?? null,
       groupId: user?.relationships.group?.data?.id ?? null,
-      metadata: user?.attributes.metadata ?? {},
+      metadata: recordToPairs(user?.attributes.metadata),
     },
   })
 

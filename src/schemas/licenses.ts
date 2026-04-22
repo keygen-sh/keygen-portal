@@ -5,7 +5,11 @@ import { Override } from "@/types/utility"
 import { SigningAlgorithm } from "@/types/files"
 import { CombineFormValues } from "@/types/forms"
 import { LicenseAttributes, LicenseFileAttributes } from "@/types/licenses"
-import { MetadataSchema, MetadataValueSchema } from "@/schemas/metadata"
+import {
+  MetadataPairsSchema,
+  WithMetadataInput,
+  type Pair,
+} from "@/schemas/metadata"
 
 export type BaseValues = Partial<
   Override<
@@ -50,6 +54,18 @@ export type AllValues = CombineFormValues<
   UpdateValues
 >
 
+export type BaseInputValues = Omit<
+  WithMetadataInput<BaseValues>,
+  "entitlements"
+> & {
+  entitlements?: {
+    attach?: string[]
+    create?: { name: string; code: string; metadata?: Pair[] }[]
+  }
+}
+export type CreateInputValues = BaseInputValues & { policyId: string }
+export type UpdateInputValues = Partial<BaseInputValues>
+
 export type FieldNames = Exclude<FieldPath<AllValues>, "entitlements" | "users">
 
 const BaseShape = z.object({
@@ -76,7 +92,7 @@ const BaseShape = z.object({
   maxUsers: z.number().int().positive().nullable().optional(),
   maxCores: z.number().int().positive().nullable().optional(),
   maxUses: z.number().int().positive().nullable().optional(),
-  metadata: MetadataSchema,
+  metadata: MetadataPairsSchema,
   entitlements: z
     .object({
       attach: z.array(z.string()).default([]),
@@ -85,7 +101,7 @@ const BaseShape = z.object({
           z.object({
             name: z.string().min(1),
             code: z.string().min(1),
-            metadata: z.record(MetadataValueSchema).optional(),
+            metadata: MetadataPairsSchema.optional(),
           }),
         )
         .default([]),
@@ -102,16 +118,39 @@ const PolicyShape = z.object({
   policyId: z.string().min(1, "Policy is required"),
 })
 
-const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {
+const BaseRules = <
+  S extends z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>,
+>(
+  schema: S,
+): S => {
   // Custom rules can be added here in the future, e.g.
   // schema.refine(...)
   return schema
 }
-export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
-export const CreateSchema: z.ZodType<CreateValues> = BaseRules(
-  BaseShape.merge(PolicyShape),
-) as z.ZodType<CreateValues>
-export const UpdateSchema: z.ZodType<UpdateValues> = BaseSchema
+export const BaseSchema: z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues> =
+  BaseRules(
+    BaseShape as unknown as z.ZodType<
+      BaseValues,
+      z.ZodTypeDef,
+      BaseInputValues
+    >,
+  )
+export const CreateSchema: z.ZodType<
+  CreateValues,
+  z.ZodTypeDef,
+  CreateInputValues
+> = BaseRules(
+  BaseShape.merge(PolicyShape) as unknown as z.ZodType<
+    BaseValues,
+    z.ZodTypeDef,
+    BaseInputValues
+  >,
+) as unknown as z.ZodType<CreateValues, z.ZodTypeDef, CreateInputValues>
+export const UpdateSchema: z.ZodType<
+  UpdateValues,
+  z.ZodTypeDef,
+  UpdateInputValues
+> = BaseSchema
 
 export type CheckOutValues = Pick<
   LicenseFileAttributes,

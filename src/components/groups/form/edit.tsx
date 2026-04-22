@@ -1,6 +1,5 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
 
 import { Separator } from "@/components/ui/separator"
@@ -10,6 +9,8 @@ import * as Schemas from "@/schemas"
 import { useGetGroup, useUpdateGroup } from "@/queries/groups"
 
 import { toast } from "@/lib/toast"
+import { typedZodResolver } from "@/lib/form"
+import { recordToPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
 import * as Groups from "@/components/groups"
@@ -28,15 +29,19 @@ export default function EditGroupForm({
 
   const updateGroup = useUpdateGroup(group?.id ?? "")
 
-  const form = useForm<Schemas.Groups.UpdateValues>({
-    resolver: zodResolver(Schemas.Groups.UpdateSchema),
+  const form = useForm<
+    Schemas.Groups.UpdateInputValues,
+    unknown,
+    Schemas.Groups.UpdateValues
+  >({
+    resolver: typedZodResolver(Schemas.Groups.UpdateSchema),
     mode: "onChange",
     values: {
       name: group?.attributes.name,
       maxUsers: group?.attributes.maxUsers ?? null,
       maxLicenses: group?.attributes.maxLicenses ?? null,
       maxMachines: group?.attributes.maxMachines ?? null,
-      metadata: group?.attributes.metadata ?? {},
+      metadata: recordToPairs(group?.attributes.metadata),
     },
   })
 

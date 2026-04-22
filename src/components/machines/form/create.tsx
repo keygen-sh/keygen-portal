@@ -1,6 +1,7 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
+
+import { typedZodResolver } from "@/lib/form"
 
 import * as Schemas from "@/schemas"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
@@ -25,8 +26,12 @@ export default function CreateMachineForm({
   open,
   onOpenChange,
 }: CreateMachineFormProps) {
-  const form = useForm<Schemas.Machines.CreateValues>({
-    resolver: zodResolver(Schemas.Machines.CreateSchema),
+  const form = useForm<
+    Schemas.Machines.CreateInputValues,
+    unknown,
+    Schemas.Machines.CreateValues
+  >({
+    resolver: typedZodResolver(Schemas.Machines.CreateSchema),
     mode: "onChange",
     defaultValues: {
       fingerprint: "",
@@ -39,7 +44,7 @@ export default function CreateMachineForm({
       cores: null,
       memory: null,
       disk: null,
-      metadata: {},
+      metadata: [],
       ownerId: null,
     },
   })

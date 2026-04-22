@@ -1,10 +1,5 @@
-import { useState, useRef, useMemo, useEffect } from "react"
-import {
-  useController,
-  useFormContext,
-  FieldPath,
-  FieldValues,
-} from "react-hook-form"
+import { useMemo } from "react"
+import { useController, FieldPath, FieldValues } from "react-hook-form"
 
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -20,10 +15,7 @@ import {
 import { X } from "lucide-react"
 
 import {
-  MetadataPairsSchema,
   META_TYPES,
-  pairsToRecord,
-  recordToPairs,
   validatePair,
   type MetaType,
   type Pair,
@@ -60,56 +52,16 @@ export default function KeyValueInput<
   className,
 }: KeyValueInputProps<TFormValues>): React.ReactElement {
   const { field } = useController<TFormValues, FieldPath<TFormValues>>({ name })
-  const formContext = useFormContext<TFormValues>()
 
-  const [rows, setRows] = useState<Pair[]>(() =>
-    recordToPairs(field.value as Record<string, unknown> | undefined),
+  // The form field's value is the Pair[] itself — the schema owns the
+  // Pair[] → Record transform at parse time, so submit values come out as
+  // `Record<string, MetadataValue>` for the API.
+  const rows = useMemo(
+    () => (field.value as Pair[] | undefined) ?? [],
+    [field.value],
   )
 
-  const lastValueRef = useRef<string | null>(null)
-  const value = useMemo(() => JSON.stringify(field.value ?? {}), [field.value])
-
-  if (value !== lastValueRef.current) {
-    lastValueRef.current = value
-
-    setRows(recordToPairs(field.value as Record<string, unknown> | undefined))
-  }
-
-  // Clear the error on unmount so a stale manual error doesn't persist.
-  useEffect(() => {
-    return () => {
-      formContext?.clearErrors(name)
-    }
-  }, [formContext, name])
-
-  // Run the full zod schema over the current rows. The schema owns the
-  // per-row validation logic; we translate its first issue into a form-level
-  // error so the parent FormField's FormMessage can display it consistently
-  // with every other validated field — no inline row errors needed.
-  const syncFormError = (draft: Pair[]) => {
-    if (!formContext) return
-
-    const result = MetadataPairsSchema.safeParse(draft)
-    if (result.success) {
-      formContext.clearErrors(name)
-    } else {
-      const message =
-        result.error.issues[0]?.message ?? "Metadata contains invalid values"
-      formContext.setError(name, { type: "manual", message })
-    }
-  }
-
-  const commit = (draft: Pair[] = rows) => {
-    const entries = pairsToRecord(draft)
-    const next = JSON.stringify(entries)
-
-    if (next !== value) {
-      lastValueRef.current = next
-      field.onChange(entries)
-    }
-
-    syncFormError(draft)
-  }
+  const setRows = (next: Pair[]) => field.onChange(next)
 
   const hasErrors = useMemo(
     () => rows.some((row) => validatePair(row) !== null),
@@ -119,7 +71,7 @@ export default function KeyValueInput<
   const addRow = () => {
     const id = crypto.randomUUID()
 
-    setRows((prev) => [...prev, { id, key: "", type: "string", value: "" }])
+    setRows([...rows, { id, key: "", type: "string", value: "" }])
 
     requestAnimationFrame(() =>
       document.getElementById(`key-value-key-${id}`)?.focus(),
@@ -130,18 +82,12 @@ export default function KeyValueInput<
     id: string,
     changes: Partial<Pick<Pair, "key" | "type" | "value">>,
   ) => {
-    setRows((prev) => {
-      const next = prev.map((row) =>
-        row.id === id ? { ...row, ...changes } : row,
-      )
-      syncFormError(next)
-      return next
-    })
+    setRows(rows.map((row) => (row.id === id ? { ...row, ...changes } : row)))
   }
 
   const changeType = (id: string, type: MetaType) => {
-    setRows((prev) => {
-      const next = prev.map((row) => {
+    setRows(
+      rows.map((row) => {
         if (row.id !== id) return row
         // Reset value to a sensible default when switching to types that
         // have a constrained value space, or when crossing the json boundary
@@ -159,21 +105,12 @@ export default function KeyValueInput<
         }
 
         return { ...row, type, value: nextValue }
-      })
-
-      queueMicrotask(() => commit(next))
-
-      return next
-    })
+      }),
+    )
   }
 
   const deleteRow = (id: string, usingKeys: boolean) => {
-    setRows((prev) => {
-      const next = prev.filter((row) => row.id !== id)
-      queueMicrotask(() => commit(next))
-
-      return next
-    })
+    setRows(rows.filter((row) => row.id !== id))
 
     if (usingKeys)
       requestAnimationFrame(() =>
@@ -211,7 +148,6 @@ export default function KeyValueInput<
                   placeholder={keyPlaceholder}
                   value={key}
                   onChange={(e) => updateRow(id, { key: e.target.value })}
-                  onBlur={() => commit()}
                   disabled={disabled}
                   aria-invalid={keyInvalid ? true : undefined}
                 />
@@ -241,15 +177,7 @@ export default function KeyValueInput<
                 ) : type === "boolean" ? (
                   <Select
                     value={value === "true" ? "true" : "false"}
-                    onValueChange={(next) => {
-                      setRows((prev) => {
-                        const nextRows = prev.map((row) =>
-                          row.id === id ? { ...row, value: next } : row,
-                        )
-                        queueMicrotask(() => commit(nextRows))
-                        return nextRows
-                      })
-                    }}
+                    onValueChange={(next) => updateRow(id, { value: next })}
                     disabled={disabled}
                   >
                     <SelectTrigger className="w-full">
@@ -265,7 +193,6 @@ export default function KeyValueInput<
                     placeholder='e.g. { "nested": true }'
                     value={value}
                     onChange={(e) => updateRow(id, { value: e.target.value })}
-                    onBlur={() => commit()}
                     disabled={disabled}
                     spellCheck={false}
                     rows={1}
@@ -277,7 +204,6 @@ export default function KeyValueInput<
                     placeholder={valuePlaceholder}
                     value={value}
                     onChange={(e) => updateRow(id, { value: e.target.value })}
-                    onBlur={() => commit()}
                     disabled={disabled}
                     inputMode={
                       type === "integer"

@@ -1,7 +1,6 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { useParams } from "@tanstack/react-router"
-import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Separator } from "@/components/ui/separator"
 
@@ -11,6 +10,8 @@ import { DistributionStrategy } from "@/types/products"
 import { useGetProduct, useUpdateProduct } from "@/queries/products"
 
 import { toast } from "@/lib/toast"
+import { typedZodResolver } from "@/lib/form"
+import { recordToPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
 import * as Products from "@/components/products"
@@ -29,8 +30,12 @@ export default function EditProductForm({
 
   const updateProduct = useUpdateProduct(product?.id ?? "")
 
-  const form = useForm<Schemas.Products.UpdateValues>({
-    resolver: zodResolver(Schemas.Products.UpdateSchema),
+  const form = useForm<
+    Schemas.Products.UpdateInputValues,
+    unknown,
+    Schemas.Products.UpdateValues
+  >({
+    resolver: typedZodResolver(Schemas.Products.UpdateSchema),
     mode: "onChange",
     values: {
       name: product?.attributes.name,
@@ -41,7 +46,7 @@ export default function EditProductForm({
         DistributionStrategy.Licensed,
       platforms: product?.attributes.platforms ?? [],
       permissions: product?.attributes.permissions ?? null,
-      metadata: product?.attributes.metadata ?? {},
+      metadata: recordToPairs(product?.attributes.metadata),
     },
   })
 

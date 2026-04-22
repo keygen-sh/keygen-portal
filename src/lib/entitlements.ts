@@ -11,8 +11,12 @@ type EntitlementValues = {
   create?: { name: string; code: string }[]
 }
 
-interface SettleCreateEntitlementsProps<T extends FieldValues> {
-  form: UseFormReturn<T>
+interface SettleCreateEntitlementsProps<
+  T extends FieldValues,
+  TContext = unknown,
+  TTransformedValues = T,
+> {
+  form: UseFormReturn<T, TContext, TTransformedValues>
   values?: EntitlementValues
   createMutation: {
     mutateAsync: (attributes: {
@@ -25,11 +29,15 @@ interface SettleCreateEntitlementsProps<T extends FieldValues> {
 // Settles entitlement creation mutations and associated form state
 export async function settleCreateEntitlements<
   T extends FieldValues & { entitlements?: EntitlementValues },
+  TContext = unknown,
+  TTransformedValues = T,
 >({
   form,
   values,
   createMutation,
-}: SettleCreateEntitlementsProps<T>): Promise<string[] | null> {
+}: SettleCreateEntitlementsProps<T, TContext, TTransformedValues>): Promise<
+  string[] | null
+> {
   const attachIds = values?.attach ?? []
   const toCreate = values?.create ?? []
 

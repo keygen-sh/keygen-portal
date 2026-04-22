@@ -5,7 +5,7 @@ import { CombineFormValues } from "@/types/forms"
 
 import { ComponentAttributes } from "@/types/components"
 import { Writable, OptionalExcept } from "@/types/utility"
-import { MetadataSchema } from "@/schemas/metadata"
+import { MetadataPairsSchema, WithMetadataInput } from "@/schemas/metadata"
 
 export type BaseValues = Writable<OptionalExcept<ComponentAttributes, "name">>
 export type CreateValues = BaseValues & {
@@ -19,11 +19,15 @@ export type AllValues = CombineFormValues<
   UpdateValues
 >
 
+export type BaseInputValues = WithMetadataInput<BaseValues>
+export type CreateInputValues = WithMetadataInput<CreateValues>
+export type UpdateInputValues = WithMetadataInput<UpdateValues>
+
 export type FieldNames = FieldPath<AllValues>
 
 const BaseShape = z.object({
   name: z.string().trim().min(1, "Name is required"),
-  metadata: MetadataSchema,
+  metadata: MetadataPairsSchema,
 })
 
 const FingerprintShape = z.object({
@@ -34,14 +38,29 @@ const MachineRelationshipShape = z.object({
   machineId: z.string().min(1, "Machine is required"),
 })
 
-const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {
+const BaseRules = <
+  S extends z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>,
+>(
+  schema: S,
+): S => {
   // Custom rules can be added here in the future, e.g.
   // schema.refine(...)
   return schema
 }
 
-export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
-export const CreateSchema: z.ZodType<CreateValues> = BaseRules(
-  BaseShape.merge(FingerprintShape).merge(MachineRelationshipShape),
-) as z.ZodType<CreateValues>
-export const UpdateSchema: z.ZodType<UpdateValues> = BaseSchema
+export const BaseSchema: z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues> =
+  BaseRules(BaseShape)
+export const CreateSchema: z.ZodType<
+  CreateValues,
+  z.ZodTypeDef,
+  CreateInputValues
+> = BaseRules(
+  BaseShape.merge(FingerprintShape).merge(
+    MachineRelationshipShape,
+  ) as unknown as z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>,
+) as unknown as z.ZodType<CreateValues, z.ZodTypeDef, CreateInputValues>
+export const UpdateSchema: z.ZodType<
+  UpdateValues,
+  z.ZodTypeDef,
+  UpdateInputValues
+> = BaseSchema

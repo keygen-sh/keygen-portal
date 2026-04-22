@@ -5,7 +5,7 @@ import semver from "semver"
 import { CombineFormValues } from "@/types/forms"
 import { Writable, OptionalExcept } from "@/types/utility"
 import { ReleaseAttributes, ReleaseChannel } from "@/types/releases"
-import { MetadataSchema } from "@/schemas/metadata"
+import { MetadataPairsSchema, WithMetadataInput } from "@/schemas/metadata"
 
 export type BaseValues = Writable<
   OptionalExcept<ReleaseAttributes, "version">
@@ -20,6 +20,10 @@ export type AllValues = CombineFormValues<
   CreateValues,
   UpdateValues
 >
+
+export type BaseInputValues = WithMetadataInput<BaseValues>
+export type CreateInputValues = WithMetadataInput<CreateValues>
+export type UpdateInputValues = WithMetadataInput<UpdateValues>
 
 export type FieldNames =
   | Exclude<FieldPath<AllValues>, "constraints">
@@ -57,7 +61,7 @@ const BaseShape = z.object({
     .nullable()
     .optional()
     .transform((value) => (value === "" ? null : value)),
-  metadata: MetadataSchema,
+  metadata: MetadataPairsSchema,
   backdated: z.string().nullable().optional(),
   constraints: z
     .object({
@@ -71,7 +75,11 @@ const ProductShape = z.object({
   productId: z.string().min(1, "Product is required"),
 })
 
-const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {
+const BaseRules = <
+  S extends z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>,
+>(
+  schema: S,
+): z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues> => {
   return schema.superRefine((data, ctx) => {
     const version = semver.parse(data.version)
     if (!version) {
@@ -99,10 +107,23 @@ const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {
         })
       }
     }
-  })
+  }) as unknown as z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>
 }
-export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
-export const CreateSchema: z.ZodType<CreateValues> = BaseRules(
-  BaseShape.merge(ProductShape),
-) as z.ZodType<CreateValues>
-export const UpdateSchema: z.ZodType<UpdateValues> = BaseSchema
+export const BaseSchema: z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues> =
+  BaseRules(BaseShape)
+export const CreateSchema: z.ZodType<
+  CreateValues,
+  z.ZodTypeDef,
+  CreateInputValues
+> = BaseRules(
+  BaseShape.merge(ProductShape) as unknown as z.ZodType<
+    BaseValues,
+    z.ZodTypeDef,
+    BaseInputValues
+  >,
+) as unknown as z.ZodType<CreateValues, z.ZodTypeDef, CreateInputValues>
+export const UpdateSchema: z.ZodType<
+  UpdateValues,
+  z.ZodTypeDef,
+  UpdateInputValues
+> = BaseSchema

@@ -1,7 +1,9 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
+
+import { typedZodResolver } from "@/lib/form"
+import { recordToPairs } from "@/schemas/metadata"
 
 import { Separator } from "@/components/ui/separator"
 
@@ -51,8 +53,12 @@ export default function EditLicenseForm({
   const attachEntitlements = useAttachLicenseEntitlements()
   const detachEntitlements = useDetachLicenseEntitlements()
 
-  const form = useForm<Schemas.Licenses.UpdateValues>({
-    resolver: zodResolver(Schemas.Licenses.UpdateSchema),
+  const form = useForm<
+    Schemas.Licenses.UpdateInputValues,
+    unknown,
+    Schemas.Licenses.UpdateValues
+  >({
+    resolver: typedZodResolver(Schemas.Licenses.UpdateSchema),
     mode: "onChange",
     values: license
       ? {
@@ -67,7 +73,7 @@ export default function EditLicenseForm({
           maxUsers: license.attributes.maxUsers ?? null,
           maxCores: license.attributes.maxCores ?? null,
           maxUses: license.attributes.maxUses ?? null,
-          metadata: license.attributes.metadata ?? {},
+          metadata: recordToPairs(license.attributes.metadata),
           entitlements: {
             attach: licenseEntitlements.map((e) => e.id),
             create: [],

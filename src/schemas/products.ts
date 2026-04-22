@@ -4,7 +4,7 @@ import { z } from "zod"
 import { CombineFormValues } from "@/types/forms"
 import { Writable, OptionalExcept } from "@/types/utility"
 import { ProductAttributes, DistributionStrategy } from "@/types/products"
-import { MetadataSchema } from "@/schemas/metadata"
+import { MetadataPairsSchema, WithMetadataInput } from "@/schemas/metadata"
 
 export type BaseValues = Writable<
   OptionalExcept<ProductAttributes, "name" | "code">
@@ -16,6 +16,10 @@ export type AllValues = CombineFormValues<
   CreateValues,
   UpdateValues
 >
+
+export type BaseInputValues = WithMetadataInput<BaseValues>
+export type CreateInputValues = WithMetadataInput<CreateValues>
+export type UpdateInputValues = WithMetadataInput<UpdateValues>
 
 export type FieldNames = FieldPath<AllValues>
 
@@ -37,16 +41,29 @@ const BaseShape = z.object({
     }),
   permissions: z.array(z.string()).nullable().default(null),
   platforms: z.array(z.string()).default([]),
-  metadata: MetadataSchema,
+  metadata: MetadataPairsSchema,
 })
-const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {
+const BaseRules = <
+  S extends z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>,
+>(
+  schema: S,
+): S => {
   // Custom rules can be added here in the future, e.g.
   // schema.refine(...)
   return schema
 }
-export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
-export const CreateSchema: z.ZodType<CreateValues> = BaseSchema
-export const UpdateSchema: z.ZodType<UpdateValues> = BaseSchema
+export const BaseSchema: z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues> =
+  BaseRules(BaseShape)
+export const CreateSchema: z.ZodType<
+  CreateValues,
+  z.ZodTypeDef,
+  CreateInputValues
+> = BaseSchema
+export const UpdateSchema: z.ZodType<
+  UpdateValues,
+  z.ZodTypeDef,
+  UpdateInputValues
+> = BaseSchema
 
 const StrategyShape = BaseShape.pick({ distributionStrategy: true })
 const StrategyRules = (

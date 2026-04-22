@@ -1,7 +1,9 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { useParams } from "@tanstack/react-router"
-import { zodResolver } from "@hookform/resolvers/zod"
+
+import { typedZodResolver } from "@/lib/form"
+import { recordToPairs } from "@/schemas/metadata"
 
 import { Separator } from "@/components/ui/separator"
 
@@ -44,8 +46,12 @@ export default function EditReleaseForm({
 
   const currentPackageId = release?.relationships.package?.data?.id ?? null
 
-  const form = useForm<Schemas.Releases.UpdateValues>({
-    resolver: zodResolver(Schemas.Releases.UpdateSchema),
+  const form = useForm<
+    Schemas.Releases.UpdateInputValues,
+    unknown,
+    Schemas.Releases.UpdateValues
+  >({
+    resolver: typedZodResolver(Schemas.Releases.UpdateSchema),
     mode: "onChange",
     values: {
       name: release?.attributes.name ?? "",
@@ -54,7 +60,7 @@ export default function EditReleaseForm({
       channel: release?.attributes.channel ?? ReleaseChannel.Stable,
       description: release?.attributes.description ?? "",
       backdated: release?.attributes.backdated ?? null,
-      metadata: release?.attributes.metadata ?? {},
+      metadata: recordToPairs(release?.attributes.metadata),
       constraints: {
         attach: releaseConstraints
           .map((c) => c.relationships.entitlement?.data?.id ?? "")

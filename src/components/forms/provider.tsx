@@ -6,15 +6,23 @@ import {
 
 import { FormRouteGuard } from "@/components/forms/guard"
 
-interface FormsProviderProps<T extends FieldValues = FieldValues> {
-  form: UseFormReturn<T>
+interface FormsProviderProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TContext = unknown,
+  TTransformedValues = TFieldValues,
+> {
+  form: UseFormReturn<TFieldValues, TContext, TTransformedValues>
   children: React.ReactNode
 }
 
-export default function FormsProvider<T extends FieldValues = FieldValues>({
+export default function FormsProvider<
+  TFieldValues extends FieldValues = FieldValues,
+  TContext = unknown,
+  TTransformedValues = TFieldValues,
+>({
   form,
   children,
-}: FormsProviderProps<T>) {
+}: FormsProviderProps<TFieldValues, TContext, TTransformedValues>) {
   return (
     <FormProvider {...form}>
       <FormRouteGuard>{children}</FormRouteGuard>

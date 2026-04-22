@@ -1,12 +1,12 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 
 import * as Schemas from "@/schemas"
 import { useCreateProcess } from "@/queries/processes"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { toast } from "@/lib/toast"
+import { typedZodResolver } from "@/lib/form"
 
 import * as Forms from "@/components/forms"
 import * as Processes from "@/components/processes"
@@ -21,12 +21,16 @@ export default function CreateProcessForm({
   open,
   onOpenChange,
 }: CreateProcessFormProps) {
-  const form = useForm<Schemas.Processes.CreateValues>({
-    resolver: zodResolver(Schemas.Processes.CreateSchema),
+  const form = useForm<
+    Schemas.Processes.CreateInputValues,
+    unknown,
+    Schemas.Processes.CreateValues
+  >({
+    resolver: typedZodResolver(Schemas.Processes.CreateSchema),
     mode: "onChange",
     defaultValues: {
       pid: "",
-      metadata: {},
+      metadata: [],
       machineId: "",
     },
   })

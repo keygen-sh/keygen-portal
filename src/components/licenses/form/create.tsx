@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react"
 import { useForm, useWatch } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
+
+import { typedZodResolver } from "@/lib/form"
 
 import * as Schemas from "@/schemas"
 import {
@@ -28,8 +29,12 @@ export default function CreateLicenseForm({
   open,
   onOpenChange,
 }: CreateLicenseFormProps) {
-  const form = useForm<Schemas.Licenses.CreateValues>({
-    resolver: zodResolver(Schemas.Licenses.CreateSchema),
+  const form = useForm<
+    Schemas.Licenses.CreateInputValues,
+    unknown,
+    Schemas.Licenses.CreateValues
+  >({
+    resolver: typedZodResolver(Schemas.Licenses.CreateSchema),
     mode: "onChange",
     defaultValues: {
       name: "",
@@ -43,7 +48,7 @@ export default function CreateLicenseForm({
       maxUsers: null,
       maxCores: null,
       maxUses: null,
-      metadata: {},
+      metadata: [],
       entitlements: { attach: [], create: [] },
       users: { attach: [] },
     },

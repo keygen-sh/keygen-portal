@@ -1,7 +1,8 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
+
+import { typedZodResolver } from "@/lib/form"
 
 import { toast } from "@/lib/toast"
 
@@ -44,8 +45,12 @@ export default function EditPolicyForm({
   const attachEntitlements = useAttachPolicyEntitlements()
   const detachEntitlements = useDetachPolicyEntitlements()
 
-  const form = useForm<Schemas.Policies.UpdateValues>({
-    resolver: zodResolver(Schemas.Policies.UpdateSchema),
+  const form = useForm<
+    Schemas.Policies.UpdateInputValues,
+    unknown,
+    Schemas.Policies.UpdateValues
+  >({
+    resolver: typedZodResolver(Schemas.Policies.UpdateSchema),
     mode: "onChange",
     values: policy
       ? {

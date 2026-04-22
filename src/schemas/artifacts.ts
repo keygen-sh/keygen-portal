@@ -4,7 +4,7 @@ import { z } from "zod"
 import { CombineFormValues } from "@/types/forms"
 import { ArtifactAttributes } from "@/types/artifacts"
 import { Writable, OptionalExcept } from "@/types/utility"
-import { MetadataSchema } from "@/schemas/metadata"
+import { MetadataPairsSchema, WithMetadataInput } from "@/schemas/metadata"
 
 export type BaseValues = Writable<
   OptionalExcept<ArtifactAttributes, "filename">
@@ -20,6 +20,10 @@ export type AllValues = CombineFormValues<
   UpdateValues
 >
 
+export type BaseInputValues = WithMetadataInput<BaseValues>
+export type CreateInputValues = WithMetadataInput<CreateValues>
+export type UpdateInputValues = WithMetadataInput<UpdateValues>
+
 export type FieldNames = Exclude<FieldPath<AllValues>, never> | "releaseId"
 
 const BaseShape = z.object({
@@ -30,7 +34,7 @@ const BaseShape = z.object({
   arch: z.string().trim().nullable().optional(),
   signature: z.string().trim().nullable().optional(),
   checksum: z.string().trim().nullable().optional(),
-  metadata: MetadataSchema,
+  metadata: MetadataPairsSchema,
 })
 
 const ReleaseShape = z.object({
@@ -41,15 +45,35 @@ const UpdateShape = z.object({
   filesize: z.coerce.number().int().min(0).nullable().optional(),
   signature: z.string().trim().nullable().optional(),
   checksum: z.string().trim().nullable().optional(),
-  metadata: MetadataSchema,
+  metadata: MetadataPairsSchema,
 })
 
-const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {
+const BaseRules = <
+  S extends z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>,
+>(
+  schema: S,
+): S => {
   return schema
 }
-export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
-export const CreateSchema: z.ZodType<CreateValues> = BaseRules(
-  BaseShape.merge(ReleaseShape),
-) as z.ZodType<CreateValues>
-export const UpdateSchema: z.ZodType<UpdateValues> =
-  UpdateShape as z.ZodType<UpdateValues>
+export const BaseSchema: z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues> =
+  BaseRules(BaseShape)
+export const CreateSchema: z.ZodType<
+  CreateValues,
+  z.ZodTypeDef,
+  CreateInputValues
+> = BaseRules(
+  BaseShape.merge(ReleaseShape) as unknown as z.ZodType<
+    BaseValues,
+    z.ZodTypeDef,
+    BaseInputValues
+  >,
+) as unknown as z.ZodType<CreateValues, z.ZodTypeDef, CreateInputValues>
+export const UpdateSchema: z.ZodType<
+  UpdateValues,
+  z.ZodTypeDef,
+  UpdateInputValues
+> = UpdateShape as unknown as z.ZodType<
+  UpdateValues,
+  z.ZodTypeDef,
+  UpdateInputValues
+>

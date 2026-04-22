@@ -38,6 +38,12 @@ export type Pair = {
   value: string
 }
 
+// Helper for schema input-type derivation: swaps the `metadata` field's
+// output shape (Record) for its input shape (Pair[]) on form-state types.
+export type WithMetadataInput<T> = T extends { metadata?: unknown }
+  ? Omit<T, "metadata"> & { metadata?: Pair[] }
+  : T & { metadata?: Pair[] }
+
 // Integer: optional sign, digits, optional exponent. The exponent may resolve
 // to a non-integer (e.g. `1e-1` → 0.1), which we catch separately via
 // `Number.isInteger` on the parsed value.
@@ -118,9 +124,13 @@ const PairSchema: z.ZodType<Pair> = z.object({
 
 // Schema for the raw Pair[] state in KeyValueInput. Emits a single top-level
 // issue when any row fails validation, whose message surfaces via the parent
-// FormField's FormMessage so the form owns error visualization.
+// FormField's FormMessage so the form owns error visualization. On success it
+// transforms to a Record<string, MetadataValue> — the shape the API expects —
+// which means the same schema can live on form fields whose output type is a
+// record (input: Pair[], output: Record).
 export const MetadataPairsSchema = z
   .array(PairSchema)
+  .default([])
   .superRefine((pairs, ctx) => {
     for (const [i, pair] of pairs.entries()) {
       const err = validatePair(pair)
@@ -137,6 +147,7 @@ export const MetadataPairsSchema = z
       return
     }
   })
+  .transform(pairsToRecord)
 
 // Detects the MetaType of a raw metadata value from the API.
 export function detectMetaType(v: unknown): MetaType {

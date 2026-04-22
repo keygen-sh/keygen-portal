@@ -1,6 +1,5 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
 
 import { Separator } from "@/components/ui/separator"
@@ -9,6 +8,8 @@ import * as Schemas from "@/schemas"
 import { useGetComponent, useUpdateComponent } from "@/queries/components"
 
 import { toast } from "@/lib/toast"
+import { typedZodResolver } from "@/lib/form"
+import { recordToPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
 import * as Components from "@/components/components"
@@ -27,12 +28,16 @@ export default function EditComponentForm({
 
   const updateComponent = useUpdateComponent(component?.id ?? "")
 
-  const form = useForm<Schemas.Components.UpdateValues>({
-    resolver: zodResolver(Schemas.Components.UpdateSchema),
+  const form = useForm<
+    Schemas.Components.UpdateInputValues,
+    unknown,
+    Schemas.Components.UpdateValues
+  >({
+    resolver: typedZodResolver(Schemas.Components.UpdateSchema),
     mode: "onChange",
     values: {
       name: component?.attributes.name ?? "",
-      metadata: component?.attributes.metadata ?? {},
+      metadata: recordToPairs(component?.attributes.metadata),
     },
   })
 

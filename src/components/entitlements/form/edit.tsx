@@ -1,6 +1,5 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
 
 import { Separator } from "@/components/ui/separator"
@@ -9,6 +8,8 @@ import * as Schemas from "@/schemas"
 import { useGetEntitlement, useUpdateEntitlement } from "@/queries/entitlements"
 
 import { toast } from "@/lib/toast"
+import { typedZodResolver } from "@/lib/form"
+import { recordToPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
 import * as Entitlements from "@/components/entitlements"
@@ -27,13 +28,17 @@ export default function EditEntitlementForm({
 
   const updateEntitlement = useUpdateEntitlement(entitlement?.id ?? "")
 
-  const form = useForm<Schemas.Entitlements.UpdateValues>({
-    resolver: zodResolver(Schemas.Entitlements.UpdateSchema),
+  const form = useForm<
+    Schemas.Entitlements.UpdateInputValues,
+    unknown,
+    Schemas.Entitlements.UpdateValues
+  >({
+    resolver: typedZodResolver(Schemas.Entitlements.UpdateSchema),
     mode: "onChange",
     values: {
       name: entitlement?.attributes.name,
       code: entitlement?.attributes.code,
-      metadata: entitlement?.attributes.metadata ?? {},
+      metadata: recordToPairs(entitlement?.attributes.metadata),
     },
   })
 

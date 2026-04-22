@@ -767,7 +767,7 @@ function MetadataField({
   descriptions: Descriptions
   mode?: PolicyMode
 }) {
-  const form = useFormContext<Schemas.Policies.AllValues>()
+  const form = useFormContext<Schemas.Policies.AllInputValues>()
   const { metadata } = form.getValues()
   const shouldMount = useDeferredMount({
     delay: mode === PolicyMode.Create ? 0 : 500,
@@ -777,8 +777,8 @@ function MetadataField({
     return (
       <div className="space-y-2">
         <Skeleton className="h-5 w-48 rounded-sm" />
-        {Object.keys(metadata!).map((key) => (
-          <div key={key} className="flex space-x-2">
+        {(metadata ?? []).map((_, i) => (
+          <div key={i} className="flex space-x-2">
             <Skeleton className="h-9 w-1/2 rounded-sm" />
             <Skeleton className="h-9 w-1/2 rounded-sm" />
           </div>
@@ -800,7 +800,7 @@ function MetadataField({
             tooltip={descriptions.metadata}
           >
             <FormControl>
-              <KeyValueInput<Schemas.Policies.AllValues>
+              <KeyValueInput<Schemas.Policies.AllInputValues>
                 name="metadata"
                 autoFocus={autoFocus}
               />

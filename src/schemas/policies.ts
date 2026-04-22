@@ -23,7 +23,12 @@ import {
   HeartbeatCullStrategy,
   HeartbeatResurrectionStrategy,
 } from "@/types/policies"
-import { MetadataSchema, MetadataValueSchema } from "@/schemas/metadata"
+import {
+  MetadataPairsSchema,
+  WithMetadataInput,
+  recordToPairs,
+  type Pair,
+} from "@/schemas/metadata"
 
 export type BaseValues = Writable<OptionalExcept<PolicyAttributes, "name">> & {
   entitlements?: {
@@ -42,6 +47,28 @@ export type AllValues = CombineFormValues<
   CreateValues,
   UpdateValues
 >
+
+export type BaseInputValues = Omit<
+  WithMetadataInput<BaseValues>,
+  "entitlements"
+> & {
+  entitlements?: {
+    attach?: string[]
+    create?: { name: string; code: string; metadata?: Pair[] }[]
+  }
+}
+export type CreateInputValues = BaseInputValues & { product: { id: string } }
+export type UpdateInputValues = Partial<BaseInputValues>
+export type AllInputValues = CombineFormValues<
+  BaseInputValues,
+  CreateInputValues,
+  UpdateInputValues
+>
+
+// Short alias for the 3-generic ZodType used throughout this file after the
+// MetadataPairsSchema refactor, where input (form state) has metadata: Pair[]
+// but output (API submission) has metadata: Record<string, unknown>.
+type PolicySchema = z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>
 
 export type FieldNames = Exclude<
   FieldPath<AllValues>,
@@ -164,7 +191,7 @@ export const BaseShape = z.object({
     .nativeEnum(OverageStrategy)
     .nullish()
     .default(OverageStrategy.NoOverage),
-  metadata: MetadataSchema,
+  metadata: MetadataPairsSchema,
 
   entitlements: z
     .object({
@@ -174,7 +201,7 @@ export const BaseShape = z.object({
           z.object({
             name: z.string().min(1),
             code: z.string().min(1),
-            metadata: z.record(MetadataValueSchema).optional(),
+            metadata: MetadataPairsSchema.optional(),
           }),
         )
         .default([]),
@@ -182,9 +209,7 @@ export const BaseShape = z.object({
     .default({ attach: [], create: [] }),
 })
 
-export const BaseRules = (
-  schema: z.ZodType<BaseValues>,
-): z.ZodType<BaseValues> =>
+export const BaseRules = (schema: PolicySchema): PolicySchema =>
   schema
     .refine(
       (values: BaseValues) =>
@@ -327,11 +352,20 @@ export const ProductShape = z.object({
   }),
 })
 
-export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
-export const CreateSchema: z.ZodType<CreateValues> = BaseRules(
-  BaseShape.merge(ProductShape),
-) as z.ZodType<CreateValues>
-export const UpdateSchema: z.ZodType<UpdateValues> = BaseSchema
+export const BaseSchema: z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues> =
+  BaseRules(BaseShape as unknown as PolicySchema)
+export const CreateSchema: z.ZodType<
+  CreateValues,
+  z.ZodTypeDef,
+  CreateInputValues
+> = BaseRules(
+  BaseShape.merge(ProductShape) as unknown as PolicySchema,
+) as unknown as z.ZodType<CreateValues, z.ZodTypeDef, CreateInputValues>
+export const UpdateSchema: z.ZodType<
+  UpdateValues,
+  z.ZodTypeDef,
+  UpdateInputValues
+> = BaseSchema
 
 export enum TimingTemplates {
   Perpetual = "PERPETUAL",
@@ -371,9 +405,7 @@ export const TimedShape = z.object({
     .default(TransferStrategy.ResetExpiry),
 })
 
-export const TimedRules = (
-  schema: z.ZodType<BaseValues>,
-): z.ZodType<BaseValues> =>
+export const TimedRules = (schema: PolicySchema): PolicySchema =>
   schema
     .refine(
       (values: BaseValues) => values.duration != null && values.duration > 0,
@@ -403,9 +435,7 @@ export const PerpetualShape = z.object({
   duration: z.null().default(null),
 })
 
-export const PerpetualRules = (
-  schema: z.ZodType<BaseValues>,
-): z.ZodType<BaseValues> =>
+export const PerpetualRules = (schema: PolicySchema): PolicySchema =>
   schema.refine((values: BaseValues) => values.duration == null, {
     path: ["duration"],
     message: "Must be null for Perpetual policies",
@@ -424,9 +454,7 @@ export const NodeLockedShape = z.object({
   maxMachines: z.coerce.number().int().min(1).optional().default(1),
 })
 
-export const NodeLockedRules = (
-  schema: z.ZodType<BaseValues>,
-): z.ZodType<BaseValues> =>
+export const NodeLockedRules = (schema: PolicySchema): PolicySchema =>
   schema
     .refine(
       (values: BaseValues) =>
@@ -519,9 +547,7 @@ export const ProcessBasedShape = z.object({
     .default(ProcessLeasingStrategy.PerMachine),
 })
 
-export const ProcessBasedRules = (
-  schema: z.ZodType<BaseValues>,
-): z.ZodType<BaseValues> =>
+export const ProcessBasedRules = (schema: PolicySchema): PolicySchema =>
   schema
     .refine((values: BaseValues) => values.machineLeasingStrategy != null, {
       path: ["machineLeasingStrategy"],
@@ -554,9 +580,7 @@ export const LeaseBasedShape = z.object({
     .default(HeartbeatResurrectionStrategy.NoRevive),
 })
 
-export const LeaseBasedRules = (
-  schema: z.ZodType<BaseValues>,
-): z.ZodType<BaseValues> =>
+export const LeaseBasedRules = (schema: PolicySchema): PolicySchema =>
   schema
     .refine((values: BaseValues) => values.requireHeartbeat === true, {
       path: ["requireHeartbeat"],
@@ -601,7 +625,10 @@ export type PolicyTemplateSelection = {
   offline?: boolean
 }
 
-export function composePolicySchema<T extends BaseValues = BaseValues>(
+export function composePolicySchema<
+  TOut extends BaseValues = BaseValues,
+  TIn extends BaseInputValues = BaseInputValues,
+>(
   selection: {
     timing?: TimingTemplates | null
     access?: AccessTemplates[]
@@ -609,7 +636,7 @@ export function composePolicySchema<T extends BaseValues = BaseValues>(
     offline?: boolean
   },
   options?: { product?: boolean },
-): z.ZodType<T> {
+): z.ZodType<TOut, z.ZodTypeDef, TIn> {
   const access = selection.access ?? []
   const metered = selection.metered ?? []
   const requiresNodeLocked =
@@ -639,7 +666,7 @@ export function composePolicySchema<T extends BaseValues = BaseValues>(
     shape = shape.merge(LeaseBasedShape)
   if (selection.offline) shape = shape.merge(OfflineShape)
 
-  let schema: z.ZodType<BaseValues> = shape as unknown as z.ZodType<BaseValues>
+  let schema: PolicySchema = shape as unknown as PolicySchema
   if (selection.timing === TimingTemplates.Timed) {
     schema = TimedRules(schema)
   }
@@ -659,29 +686,34 @@ export function composePolicySchema<T extends BaseValues = BaseValues>(
     schema = LeaseBasedRules(schema)
   }
 
-  return schema as unknown as z.ZodType<T>
+  return schema as unknown as z.ZodType<TOut, z.ZodTypeDef, TIn>
 }
 
-export function getCreateSchemaDefaults<T extends CreateValues>(
-  schema: z.ZodType<T>,
+export function getCreateSchemaDefaults<T extends CreateInputValues>(
+  schema: z.ZodType<unknown, z.ZodTypeDef, T>,
 ): T {
   // Parse schema with temporary values since schema requires `name` and `product.id`
-  const parsed = schema.parse({ name: "temp", product: { id: "temp" } })
+  const parsed = schema.parse({
+    name: "temp",
+    product: { id: "temp" },
+  }) as T
 
   // Empty strings so form initializes with empty fields
   parsed.name = ""
   parsed.product.id = ""
+  // Reset metadata to the form-input shape (Pair[]) since parsing applied the
+  // MetadataPairsSchema transform and produced a Record.
+  parsed.metadata = []
 
   return parsed
 }
 
-export function getFormValuesFromPolicy<T extends BaseValues = BaseValues>(
-  policy: Policy,
-  options?: { product?: boolean },
-): T {
-  const base: BaseValues = {
+export function getFormValuesFromPolicy<
+  T extends BaseInputValues = BaseInputValues,
+>(policy: Policy, options?: { product?: boolean }): T {
+  const base: BaseInputValues = {
     name: policy.attributes.name,
-    metadata: policy.attributes.metadata ?? {},
+    metadata: recordToPairs(policy.attributes.metadata),
 
     duration: policy.attributes.duration,
     expirationStrategy: policy.attributes.expirationStrategy,
@@ -740,7 +772,7 @@ export function getFormValuesFromPolicy<T extends BaseValues = BaseValues>(
     return {
       ...base,
       product: { id: policy.relationships.product?.data?.id ?? "" },
-    } as AllValues as T
+    } as unknown as T
   }
 
   return base as T

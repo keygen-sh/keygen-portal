@@ -1,7 +1,8 @@
 import { useCallback, useMemo } from "react"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
+
+import { typedZodResolver } from "@/lib/form"
 
 import { toast } from "@/lib/toast"
 
@@ -51,7 +52,7 @@ export default function DuplicatePolicyForm({
   const defaultValues = useMemo(() => {
     if (!policy) return undefined
     const values =
-      Schemas.Policies.getFormValuesFromPolicy<Schemas.Policies.CreateValues>(
+      Schemas.Policies.getFormValuesFromPolicy<Schemas.Policies.CreateInputValues>(
         policy,
         { product: true },
       )
@@ -62,8 +63,12 @@ export default function DuplicatePolicyForm({
     }
   }, [policy, policyEntitlements])
 
-  const form = useForm<Schemas.Policies.CreateValues>({
-    resolver: zodResolver(Schemas.Policies.CreateSchema),
+  const form = useForm<
+    Schemas.Policies.CreateInputValues,
+    unknown,
+    Schemas.Policies.CreateValues
+  >({
+    resolver: typedZodResolver(Schemas.Policies.CreateSchema),
     mode: "onChange",
     values: defaultValues,
   })

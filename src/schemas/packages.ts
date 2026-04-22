@@ -4,7 +4,7 @@ import { z } from "zod"
 import { CombineFormValues } from "@/types/forms"
 import { Writable, OptionalExcept } from "@/types/utility"
 import { PackageAttributes, PackageEngine } from "@/types/packages"
-import { MetadataSchema } from "@/schemas/metadata"
+import { MetadataPairsSchema, WithMetadataInput } from "@/schemas/metadata"
 
 export type BaseValues = Writable<
   OptionalExcept<PackageAttributes, "name" | "key">
@@ -16,6 +16,10 @@ export type AllValues = CombineFormValues<
   CreateValues,
   UpdateValues
 >
+
+export type BaseInputValues = WithMetadataInput<BaseValues>
+export type CreateInputValues = WithMetadataInput<CreateValues>
+export type UpdateInputValues = WithMetadataInput<UpdateValues>
 
 export type FieldNames = Exclude<FieldPath<AllValues>, never> | "productId"
 
@@ -33,18 +37,35 @@ const BaseShape = z.object({
     ])
     .nullable()
     .optional(),
-  metadata: MetadataSchema,
+  metadata: MetadataPairsSchema,
 })
 
 const ProductShape = z.object({
   productId: z.string().min(1, "Product is required"),
 })
 
-const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {
+const BaseRules = <
+  S extends z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>,
+>(
+  schema: S,
+): S => {
   return schema
 }
-export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
-export const CreateSchema: z.ZodType<CreateValues> = BaseRules(
-  BaseShape.merge(ProductShape),
-) as z.ZodType<CreateValues>
-export const UpdateSchema: z.ZodType<UpdateValues> = BaseSchema
+export const BaseSchema: z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues> =
+  BaseRules(BaseShape)
+export const CreateSchema: z.ZodType<
+  CreateValues,
+  z.ZodTypeDef,
+  CreateInputValues
+> = BaseRules(
+  BaseShape.merge(ProductShape) as unknown as z.ZodType<
+    BaseValues,
+    z.ZodTypeDef,
+    BaseInputValues
+  >,
+) as unknown as z.ZodType<CreateValues, z.ZodTypeDef, CreateInputValues>
+export const UpdateSchema: z.ZodType<
+  UpdateValues,
+  z.ZodTypeDef,
+  UpdateInputValues
+> = BaseSchema

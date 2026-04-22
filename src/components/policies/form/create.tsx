@@ -2,6 +2,8 @@ import { useState, useMemo, useCallback } from "react"
 import { useForm, UseFormReturn } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
+import { typedZodResolver } from "@/lib/form"
+
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -86,7 +88,10 @@ export default function CreatePolicyForm({
 
   const schema = useMemo(
     () =>
-      Schemas.Policies.composePolicySchema<Schemas.Policies.CreateValues>(
+      Schemas.Policies.composePolicySchema<
+        Schemas.Policies.CreateValues,
+        Schemas.Policies.CreateInputValues
+      >(
         {
           timing: selection?.timing ?? null,
           access: selection?.access ?? [],
@@ -98,8 +103,12 @@ export default function CreatePolicyForm({
     [selection],
   )
 
-  const form = useForm<Schemas.Policies.CreateValues>({
-    resolver: zodResolver(schema),
+  const form = useForm<
+    Schemas.Policies.CreateInputValues,
+    unknown,
+    Schemas.Policies.CreateValues
+  >({
+    resolver: typedZodResolver(schema),
     defaultValues: Schemas.Policies.getCreateSchemaDefaults(schema),
   })
 
@@ -115,11 +124,10 @@ export default function CreatePolicyForm({
 
       setSelection(newSelection)
 
-      const newSchema =
-        Schemas.Policies.composePolicySchema<Schemas.Policies.CreateValues>(
-          newSelection,
-          { product: true },
-        )
+      const newSchema = Schemas.Policies.composePolicySchema<
+        Schemas.Policies.CreateValues,
+        Schemas.Policies.CreateInputValues
+      >(newSelection, { product: true })
       form.reset(Schemas.Policies.getCreateSchemaDefaults(newSchema), {
         keepDefaultValues: false,
       })
@@ -504,7 +512,11 @@ function TemplatesSelectionForm({
 }
 
 interface TemplatesFormProps {
-  form: UseFormReturn<Schemas.Policies.CreateValues>
+  form: UseFormReturn<
+    Schemas.Policies.CreateInputValues,
+    unknown,
+    Schemas.Policies.CreateValues
+  >
   open: boolean
   onOpenChange: (open: boolean) => void
   selection: PolicyTemplateSelection
@@ -867,7 +879,11 @@ function TemplatesForm({
 }
 
 interface ScratchFormProps {
-  form: UseFormReturn<Schemas.Policies.CreateValues>
+  form: UseFormReturn<
+    Schemas.Policies.CreateInputValues,
+    unknown,
+    Schemas.Policies.CreateValues
+  >
   open: boolean
   onOpenChange: (open: boolean) => void
   onSubmit: (data: Schemas.Policies.CreateValues) => void | Promise<void>

@@ -1,7 +1,6 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { useParams } from "@tanstack/react-router"
-import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Separator } from "@/components/ui/separator"
 
@@ -10,6 +9,8 @@ import * as Schemas from "@/schemas"
 import { useGetPackage, useUpdatePackage } from "@/queries/packages"
 
 import { toast } from "@/lib/toast"
+import { typedZodResolver } from "@/lib/form"
+import { recordToPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
 import * as Packages from "@/components/packages"
@@ -28,14 +29,18 @@ export default function EditPackageForm({
 
   const updatePackage = useUpdatePackage(pkg?.id ?? "")
 
-  const form = useForm<Schemas.Packages.UpdateValues>({
-    resolver: zodResolver(Schemas.Packages.UpdateSchema),
+  const form = useForm<
+    Schemas.Packages.UpdateInputValues,
+    unknown,
+    Schemas.Packages.UpdateValues
+  >({
+    resolver: typedZodResolver(Schemas.Packages.UpdateSchema),
     mode: "onChange",
     values: {
       name: pkg?.attributes.name ?? "",
       key: pkg?.attributes.key ?? "",
       engine: pkg?.attributes.engine ?? null,
-      metadata: pkg?.attributes.metadata ?? {},
+      metadata: recordToPairs(pkg?.attributes.metadata),
     },
   })
 

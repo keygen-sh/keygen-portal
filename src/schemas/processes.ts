@@ -3,7 +3,7 @@ import { z } from "zod"
 
 import { CombineFormValues } from "@/types/forms"
 import { ProcessAttributes } from "@/types/processes"
-import { MetadataSchema } from "@/schemas/metadata"
+import { MetadataPairsSchema, WithMetadataInput } from "@/schemas/metadata"
 
 export type BaseValues = Partial<Pick<ProcessAttributes, "metadata">>
 export type CreateValues = BaseValues & {
@@ -17,10 +17,14 @@ export type AllValues = CombineFormValues<
   UpdateValues
 >
 
+export type BaseInputValues = WithMetadataInput<BaseValues>
+export type CreateInputValues = WithMetadataInput<CreateValues>
+export type UpdateInputValues = WithMetadataInput<UpdateValues>
+
 export type FieldNames = FieldPath<AllValues>
 
 const BaseShape = z.object({
-  metadata: MetadataSchema,
+  metadata: MetadataPairsSchema,
 })
 
 const PidShape = z.object({
@@ -31,8 +35,17 @@ const MachineRelationshipShape = z.object({
   machineId: z.string().min(1, "Machine is required"),
 })
 
-export const BaseSchema: z.ZodType<BaseValues> = BaseShape
-export const CreateSchema: z.ZodType<CreateValues> = BaseShape.merge(
-  PidShape,
-).merge(MachineRelationshipShape) as z.ZodType<CreateValues>
-export const UpdateSchema: z.ZodType<UpdateValues> = BaseSchema
+export const BaseSchema: z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues> =
+  BaseShape as unknown as z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>
+export const CreateSchema: z.ZodType<
+  CreateValues,
+  z.ZodTypeDef,
+  CreateInputValues
+> = BaseShape.merge(PidShape).merge(
+  MachineRelationshipShape,
+) as unknown as z.ZodType<CreateValues, z.ZodTypeDef, CreateInputValues>
+export const UpdateSchema: z.ZodType<
+  UpdateValues,
+  z.ZodTypeDef,
+  UpdateInputValues
+> = BaseSchema

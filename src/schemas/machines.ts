@@ -5,7 +5,7 @@ import { Writable } from "@/types/utility"
 import { SigningAlgorithm } from "@/types/files"
 import { CombineFormValues } from "@/types/forms"
 import { MachineAttributes, MachineFileAttributes } from "@/types/machines"
-import { MetadataSchema } from "@/schemas/metadata"
+import { MetadataPairsSchema, WithMetadataInput } from "@/schemas/metadata"
 
 export type BaseValues = Writable<
   Partial<
@@ -36,6 +36,10 @@ export type AllValues = CombineFormValues<
   UpdateValues
 >
 
+export type BaseInputValues = WithMetadataInput<BaseValues>
+export type CreateInputValues = WithMetadataInput<CreateValues>
+export type UpdateInputValues = WithMetadataInput<UpdateValues>
+
 export type FieldNames = FieldPath<AllValues>
 
 const BaseShape = z.object({
@@ -46,7 +50,7 @@ const BaseShape = z.object({
   cores: z.number().int().positive().nullable().optional(),
   memory: z.number().int().positive().nullable().optional(),
   disk: z.number().int().positive().nullable().optional(),
-  metadata: MetadataSchema,
+  metadata: MetadataPairsSchema,
   groupId: z.string().nullable().optional(),
   ownerId: z.string().nullable().optional(),
 })
@@ -59,17 +63,32 @@ const LicenseRelationshipShape = z.object({
   licenseId: z.string().min(1, "License is required"),
 })
 
-const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {
+const BaseRules = <
+  S extends z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>,
+>(
+  schema: S,
+): S => {
   // Custom rules can be added here in the future, e.g.
   // schema.refine(...)
   return schema
 }
 
-export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
-export const CreateSchema: z.ZodType<CreateValues> = BaseRules(
-  BaseShape.merge(FingerprintShape).merge(LicenseRelationshipShape),
-) as z.ZodType<CreateValues>
-export const UpdateSchema: z.ZodType<UpdateValues> = BaseSchema
+export const BaseSchema: z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues> =
+  BaseRules(BaseShape)
+export const CreateSchema: z.ZodType<
+  CreateValues,
+  z.ZodTypeDef,
+  CreateInputValues
+> = BaseRules(
+  BaseShape.merge(FingerprintShape).merge(
+    LicenseRelationshipShape,
+  ) as unknown as z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>,
+) as unknown as z.ZodType<CreateValues, z.ZodTypeDef, CreateInputValues>
+export const UpdateSchema: z.ZodType<
+  UpdateValues,
+  z.ZodTypeDef,
+  UpdateInputValues
+> = BaseSchema
 
 export type CheckOutValues = Pick<
   MachineFileAttributes,

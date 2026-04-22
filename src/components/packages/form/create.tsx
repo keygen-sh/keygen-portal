@@ -1,6 +1,5 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 
 import * as Schemas from "@/schemas"
 
@@ -8,6 +7,7 @@ import { useCreatePackage } from "@/queries/packages"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { toast } from "@/lib/toast"
+import { typedZodResolver } from "@/lib/form"
 
 import * as Forms from "@/components/forms"
 import * as Packages from "@/components/packages"
@@ -22,14 +22,18 @@ export default function CreatePackageForm({
   open,
   onOpenChange,
 }: CreatePackageFormProps) {
-  const form = useForm<Schemas.Packages.CreateValues>({
-    resolver: zodResolver(Schemas.Packages.CreateSchema),
+  const form = useForm<
+    Schemas.Packages.CreateInputValues,
+    unknown,
+    Schemas.Packages.CreateValues
+  >({
+    resolver: typedZodResolver(Schemas.Packages.CreateSchema),
     mode: "onChange",
     defaultValues: {
       name: "",
       key: "",
       engine: null,
-      metadata: {},
+      metadata: [],
       productId: "",
     },
   })

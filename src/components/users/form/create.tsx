@@ -1,6 +1,5 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 
 import * as Schemas from "@/schemas"
 import { UserRole } from "@/types/users"
@@ -9,6 +8,7 @@ import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 import { useCreateUser, useChangeUserGroup } from "@/queries/users"
 
 import { toast } from "@/lib/toast"
+import { typedZodResolver } from "@/lib/form"
 
 import * as Forms from "@/components/forms"
 import * as Users from "@/components/users"
@@ -23,8 +23,12 @@ export default function CreateUserForm({
   open,
   onOpenChange,
 }: CreateUserFormProps) {
-  const form = useForm<Schemas.Users.CreateValues>({
-    resolver: zodResolver(Schemas.Users.CreateSchema),
+  const form = useForm<
+    Schemas.Users.CreateInputValues,
+    unknown,
+    Schemas.Users.CreateValues
+  >({
+    resolver: typedZodResolver(Schemas.Users.CreateSchema),
     mode: "onChange",
     defaultValues: {
       email: "",
@@ -34,7 +38,7 @@ export default function CreateUserForm({
       role: UserRole.User,
       permissions: null,
       groupId: null,
-      metadata: {},
+      metadata: [],
     },
   })
 

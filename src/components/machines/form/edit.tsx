@@ -1,6 +1,5 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
 
 import { Separator } from "@/components/ui/separator"
@@ -14,6 +13,8 @@ import {
 } from "@/queries/machines"
 
 import { toast } from "@/lib/toast"
+import { typedZodResolver } from "@/lib/form"
+import { recordToPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
 import * as Machines from "@/components/machines"
@@ -34,8 +35,12 @@ export default function EditMachineForm({
   const changeGroup = useChangeMachineGroup()
   const changeOwner = useChangeMachineOwner()
 
-  const form = useForm<Schemas.Machines.UpdateValues>({
-    resolver: zodResolver(Schemas.Machines.UpdateSchema),
+  const form = useForm<
+    Schemas.Machines.UpdateInputValues,
+    unknown,
+    Schemas.Machines.UpdateValues
+  >({
+    resolver: typedZodResolver(Schemas.Machines.UpdateSchema),
     mode: "onChange",
     values: {
       name: machine?.attributes.name ?? null,
@@ -45,7 +50,7 @@ export default function EditMachineForm({
       cores: machine?.attributes.cores ?? null,
       memory: machine?.attributes.memory ?? null,
       disk: machine?.attributes.disk ?? null,
-      metadata: machine?.attributes.metadata ?? {},
+      metadata: recordToPairs(machine?.attributes.metadata),
       groupId: machine?.relationships.group?.data?.id ?? null,
       ownerId: machine?.relationships.owner?.data?.id ?? null,
     },

@@ -221,7 +221,6 @@ function MetadataField<T extends FieldValues>({
               />
             </FormControl>
           </Forms.Field.Header>
-          <FormMessage />
         </FormItem>
       )}
     />

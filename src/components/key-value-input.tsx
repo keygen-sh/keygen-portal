@@ -15,17 +15,17 @@ import {
 import { CircleAlert, X } from "lucide-react"
 
 import {
-  META_TYPES,
-  MetaTypeLabels,
+  METADATA_TYPES,
+  MetadataTypeLabels,
   MetadataPairSchema,
-  type MetaType,
+  type MetadataType,
   type MetadataPair,
 } from "@/schemas/metadata"
 
 import { cn } from "@/lib/utils"
 
-const TYPE_OPTIONS: { value: MetaType; label: string }[] = META_TYPES.map(
-  (t) => ({ value: t, label: MetaTypeLabels[t] }),
+const TYPE_OPTIONS: { value: MetadataType; label: string }[] = METADATA_TYPES.map(
+  (t) => ({ value: t, label: MetadataTypeLabels[t] }),
 )
 
 interface KeyValueInputProps<TFormValues extends FieldValues> {
@@ -86,7 +86,7 @@ export default function KeyValueInput<
     setRows(rows.map((row) => (row.id === id ? { ...row, ...changes } : row)))
   }
 
-  const changeType = (id: string, type: MetaType) => {
+  const changeType = (id: string, type: MetadataType) => {
     setRows(
       rows.map((row) => {
         if (row.id !== id) return row
@@ -163,7 +163,7 @@ export default function KeyValueInput<
                 />
                 <Select
                   value={type}
-                  onValueChange={(next) => changeType(id, next as MetaType)}
+                  onValueChange={(next) => changeType(id, next as MetadataType)}
                   disabled={disabled}
                 >
                   <SelectTrigger className="w-28 shrink-0">

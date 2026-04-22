@@ -19,7 +19,7 @@ export type MetadataValue = z.infer<typeof MetadataValueSchema>
 export const MetadataSchema = z.record(MetadataValueSchema).default({})
 
 // The discrete set of types KeyValueInput exposes as a type-picker per row.
-export const META_TYPES = [
+export const METADATA_TYPES = [
   "string",
   "integer",
   "float",
@@ -28,9 +28,9 @@ export const META_TYPES = [
   "json",
 ] as const
 
-export type MetaType = (typeof META_TYPES)[number]
+export type MetadataType = (typeof METADATA_TYPES)[number]
 
-export const MetaTypeLabels: Readonly<Record<MetaType, string>> = {
+export const MetadataTypeLabels: Readonly<Record<MetadataType, string>> = {
   string: "String",
   integer: "Integer",
   float: "Float",
@@ -43,7 +43,7 @@ export const MetaTypeLabels: Readonly<Record<MetaType, string>> = {
 export type MetadataPair = {
   id: string
   key: string
-  type: MetaType
+  type: MetadataType
   value: string
 }
 
@@ -71,7 +71,7 @@ function tryParseJson(raw: string): { value: unknown } | undefined {
 const MetadataPairShape = z.object({
   id: z.string(),
   key: z.string(),
-  type: z.enum(META_TYPES),
+  type: z.enum(METADATA_TYPES),
   value: z.string(),
 })
 
@@ -206,8 +206,8 @@ export const MetadataPairsSchema = z
   })
   .transform(pairsToRecord)
 
-// Detects the MetaType of a raw metadata value from the API.
-export function detectMetaType(v: unknown): MetaType {
+// Detects the MetadataType of a raw metadata value from the API.
+export function detectMetadataType(v: unknown): MetadataType {
   if (v === null) return "null"
   if (typeof v === "boolean") return "boolean"
   if (typeof v === "number") return Number.isInteger(v) ? "integer" : "float"
@@ -216,7 +216,7 @@ export function detectMetaType(v: unknown): MetaType {
 }
 
 // Converts a raw metadata value into its input-string representation.
-export function metaValueToString(v: unknown): string {
+export function metadataValueToString(v: unknown): string {
   if (v === null || v === undefined) return ""
   if (typeof v === "boolean") return v ? "true" : "false"
   if (typeof v === "number") return String(v)
@@ -232,8 +232,8 @@ export function recordToPairs(
   return Object.entries(entries).map(([key, raw], i) => ({
     id: `${i}-${key}`,
     key,
-    type: detectMetaType(raw),
-    value: metaValueToString(raw),
+    type: detectMetadataType(raw),
+    value: metadataValueToString(raw),
   }))
 }
 

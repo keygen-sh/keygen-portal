@@ -806,7 +806,6 @@ function MetadataField({
               />
             </FormControl>
           </Forms.Field.Header>
-          <FormMessage />
         </FormItem>
       )}
     />

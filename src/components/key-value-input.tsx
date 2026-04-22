@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-import { X } from "lucide-react"
+import { CircleAlert, X } from "lucide-react"
 
 import {
   META_TYPES,
@@ -51,7 +51,10 @@ export default function KeyValueInput<
   autoFocus,
   className,
 }: KeyValueInputProps<TFormValues>): React.ReactElement {
-  const { field } = useController<TFormValues, FieldPath<TFormValues>>({ name })
+  const { field, fieldState } = useController<
+    TFormValues,
+    FieldPath<TFormValues>
+  >({ name })
 
   // The form field's value is the MetadataPair[] itself — the schema owns
   // the MetadataPair[] → Record transform at parse time, so submit values
@@ -237,18 +240,26 @@ export default function KeyValueInput<
             )
           })}
 
-          <Button
-            id="key-value-add"
-            size="sm"
-            type="button"
-            variant="ghost"
-            onClick={addRow}
-            autoFocus={autoFocus}
-            disabled={!canAdd || disabled}
-            className="text-content-muted"
-          >
-            + {addLabel}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              id="key-value-add"
+              size="sm"
+              type="button"
+              variant="ghost"
+              onClick={addRow}
+              autoFocus={autoFocus}
+              disabled={!canAdd || disabled}
+              className="text-content-muted"
+            >
+              + {addLabel}
+            </Button>
+            {fieldState.error?.message ? (
+              <p className="flex items-center gap-1 text-sm text-destructive">
+                <CircleAlert className="mt-0.25 h-4 w-4 shrink-0" />
+                {fieldState.error.message}
+              </p>
+            ) : null}
+          </div>
         </>
       )}
     </div>

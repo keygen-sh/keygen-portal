@@ -92,15 +92,25 @@ export default function KeyValueInput<
         // Reset value to a sensible default when switching to types that
         // have a constrained value space, or when crossing the json boundary
         // (where the existing text is unlikely to be meaningful in the new
-        // type).
+        // type). Preserve the value across string<->json transitions so the
+        // user doesn't lose in-progress work — a string is valid JSON text
+        // input, and JSON text is a valid string value.
         let nextValue = row.value
         if (type === "boolean") {
           nextValue = row.value === "true" ? "true" : "false"
         } else if (type === "null") {
           nextValue = ""
-        } else if (type === "json" && row.type !== "json") {
+        } else if (
+          type === "json" &&
+          row.type !== "json" &&
+          row.type !== "string"
+        ) {
           nextValue = ""
-        } else if (row.type === "json" && type !== "json") {
+        } else if (
+          row.type === "json" &&
+          type !== "json" &&
+          type !== "string"
+        ) {
           nextValue = ""
         }
 

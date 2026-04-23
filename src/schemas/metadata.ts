@@ -1,14 +1,11 @@
 import { z } from "zod"
 
-// Integer: optional sign, digits, optional exponent. The exponent may resolve
-// to a non-integer (e.g. `1e-1` -> 0.1), which we catch separately via
-// `Number.isInteger` on the parsed value.
+// optional sign, digits, optional exponent
 const INTEGER_PATTERN = /^-?\d+([eE][+-]?\d+)?$/
 
-// Float: optional sign, digits, optional fractional part, optional exponent.
+// optional sign, digits, optional fractional part, optional exponent
 const FLOAT_PATTERN = /^-?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$/
 
-// The discrete set of types KeyValueInput exposes as a type-picker per row.
 export const METADATA_TYPES = [
   "string",
   "integer",
@@ -18,9 +15,6 @@ export const METADATA_TYPES = [
   "json",
 ] as const
 
-// Values supported by the Keygen API for metadata. The API accepts any valid
-// JSON, so we allow scalars (string, number, boolean, null) as well as
-// arbitrarily nested objects and arrays.
 export const MetadataValueSchema: z.ZodType<unknown> = z.lazy(() =>
   z.union([
     z.string(),
@@ -47,7 +41,7 @@ export const MetadataTypeLabels: Readonly<Record<MetadataType, string>> = {
   json: "JSON",
 } as const
 
-// A single row of raw user input as held in KeyValueInput's state.
+// a single row of raw user input as held in form state
 export type MetadataPair = {
   id: string
   key: string
@@ -55,8 +49,8 @@ export type MetadataPair = {
   value: string
 }
 
-// Helper for schema input-type derivation: swaps the `metadata` field's
-// output shape (Record) for its input shape (MetadataPair[]) on form-state types.
+// swaps the metadata field's output shape (Record) for its input shape (MetadataPair[])
+// on form state types
 export type WithMetadataInput<T> = T extends { metadata?: unknown }
   ? Omit<T, "metadata"> & { metadata?: MetadataPair[] }
   : T & { metadata?: MetadataPair[] }
@@ -76,11 +70,6 @@ const MetadataPairShape = z.object({
   value: z.string(),
 })
 
-// Validates a single MetadataPair, attaching issues to the offending field
-// (`key` or `value`) so callers can reason about per-field validity via
-// safeParse. A fully-blank row (no key, no value) is treated as "not yet
-// filled in" and produces no issues — this avoids flashing errors on a
-// freshly-added row.
 export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
   const trimmedKey = pair.key.trim()
   const trimmedValue = pair.value.trim()
@@ -114,8 +103,10 @@ export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
           path: ["value"],
           message: "Value is required",
         })
+
         return
       }
+
       const n = Number(trimmedValue)
       if (
         !INTEGER_PATTERN.test(trimmedValue) ||
@@ -128,6 +119,7 @@ export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
           message: "Must be a valid integer",
         })
       }
+
       return
     }
     case "float": {
@@ -137,8 +129,10 @@ export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
           path: ["value"],
           message: "Value is required",
         })
+
         return
       }
+
       const n = Number.parseFloat(trimmedValue)
       if (!FLOAT_PATTERN.test(trimmedValue) || !Number.isFinite(n)) {
         ctx.addIssue({
@@ -147,6 +141,7 @@ export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
           message: "Must be a valid number",
         })
       }
+
       return
     }
     case "json": {
@@ -156,8 +151,10 @@ export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
           path: ["value"],
           message: "Value is required",
         })
+
         return
       }
+
       const parsed = tryParseJson(trimmedValue)
       if (!parsed) {
         ctx.addIssue({
@@ -165,8 +162,10 @@ export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
           path: ["value"],
           message: "Must be valid JSON",
         })
+
         return
       }
+
       if (parsed.value === null || typeof parsed.value !== "object") {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -174,40 +173,39 @@ export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
           message: "Must be a JSON object or array",
         })
       }
+
       return
     }
   }
 })
 
-// Schema for the raw MetadataPair[] state in KeyValueInput. Aggregates the
-// first per-row failure into a top-level issue whose message surfaces via the
-// parent FormField's FormMessage. On success it transforms to a
-// Record<string, MetadataValue> — the shape the API expects — so the same
-// schema can live on form fields whose output type is a record (input:
-// MetadataPair[], output: Record).
 export const MetadataPairsSchema = z
   .array(MetadataPairShape)
   .default([])
   .superRefine((pairs, ctx) => {
     for (const [i, pair] of pairs.entries()) {
       const result = MetadataPairSchema.safeParse(pair)
-      if (result.success) continue
+      if (result.success) {
+        continue
+      }
 
       const label = pair.key.trim() ? `"${pair.key.trim()}"` : `#${i + 1}`
-      const firstMessage = result.error.issues[0].message
+      const [issue] = result.error.issues
+      const message = issue.message
+
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: [],
-        message: `Row ${label}: ${firstMessage.charAt(0).toLowerCase() + firstMessage.slice(1)}`,
+        message: `Row ${label}: ${message}`,
       })
-      // Surface the first offending row only; subsequent rows will validate
-      // on the next edit.
+
+      // only surface the first offending issue
       return
     }
   })
   .transform(metadataPairsToRecord)
 
-// Detects the MetadataType of a raw metadata value from the API.
+// detect the MetadataType of a raw metadata value
 export function metadataValueToType(v: unknown): MetadataType {
   if (v === null) return "null"
   if (typeof v === "boolean") return "boolean"
@@ -216,7 +214,7 @@ export function metadataValueToType(v: unknown): MetadataType {
   return "string"
 }
 
-// Converts a raw metadata value into its input-string representation.
+// convert a raw metadata value into its input-string representation
 export function metadataValueToString(v: unknown): string {
   if (v === null || v === undefined) return ""
   if (typeof v === "boolean") return v ? "true" : "false"
@@ -225,11 +223,14 @@ export function metadataValueToString(v: unknown): string {
   return JSON.stringify(v)
 }
 
-// Convert a Record into a MetadataPair[] for initializing KeyValueInput state.
+// convert a metadata Record into a MetadataPair[] for initializing form field state
 export function recordToMetadataPairs(
   entries: Record<string, unknown> | undefined | null,
 ): MetadataPair[] {
-  if (!entries) return []
+  if (!entries) {
+    return []
+  }
+
   return Object.entries(entries).map(([key, raw], i) => ({
     id: `${i}-${key}`,
     key,
@@ -238,41 +239,49 @@ export function recordToMetadataPairs(
   }))
 }
 
-// Convert a MetadataPair[] into a Record<string, MetadataValue> for
-// submission. Runs as the MetadataPairsSchema transform, which only executes
-// after per-pair refinement has passed — so every pair here is already
-// well-formed. Empty-keyed rows (blank throwaway rows the user left unfilled)
-// are dropped.
+// convert a MetadataPair[] into a Record<string, MetadataValue> for serialization
 function metadataPairsToRecord(
   pairs: MetadataPair[],
 ): Record<string, MetadataValue> {
   const out: Record<string, MetadataValue> = {}
+
   for (const pair of pairs) {
     const trimmedKey = pair.key.trim()
-    if (!trimmedKey) continue
+    if (!trimmedKey) {
+      continue
+    }
 
     switch (pair.type) {
       case "string":
         out[trimmedKey] = pair.value.trim()
+
         break
       case "integer":
         out[trimmedKey] = Number(pair.value.trim())
+
         break
       case "float":
         out[trimmedKey] = Number.parseFloat(pair.value.trim())
+
         break
       case "boolean":
         out[trimmedKey] = pair.value === "true"
+
         break
       case "null":
         out[trimmedKey] = null
+
         break
       case "json": {
         const parsed = tryParseJson(pair.value)
-        if (parsed) out[trimmedKey] = parsed.value
+        if (parsed) {
+          out[trimmedKey] = parsed.value
+        }
+
         break
       }
     }
   }
+
   return out
 }

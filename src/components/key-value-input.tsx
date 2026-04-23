@@ -53,9 +53,6 @@ export default function KeyValueInput<
     FieldPath<TFormValues>
   >({ name })
 
-  // The form field's value is the MetadataPair[] itself — the schema owns
-  // the MetadataPair[] -> Record transform at parse time, so submit values
-  // come out as `Record<string, MetadataValue>` for the API.
   const rows = useMemo(
     () => (field.value as MetadataPair[] | undefined) ?? [],
     [field.value],
@@ -88,13 +85,13 @@ export default function KeyValueInput<
   const changeType = (id: string, type: MetadataType) => {
     setRows(
       rows.map((row) => {
-        if (row.id !== id) return row
-        // Reset value to a sensible default when switching to types that
-        // have a constrained value space, or when crossing the json boundary
-        // (where the existing text is unlikely to be meaningful in the new
-        // type). Preserve the value across string<->json transitions so the
-        // user doesn't lose in-progress work — a string is valid JSON text
-        // input, and JSON text is a valid string value.
+        if (row.id !== id) {
+          return row
+        }
+
+        // reset the value when changing to a more restricted type, but
+        // keep it when switching between string and json so in-progress
+        // work is not lost.
         let nextValue = row.value
         if (type === "boolean") {
           nextValue = row.value === "true" ? "true" : "false"
@@ -153,6 +150,7 @@ export default function KeyValueInput<
               type,
               value,
             })
+
             const keyInvalid =
               !result.success &&
               result.error.issues.some((i) => i.path[0] === "key")

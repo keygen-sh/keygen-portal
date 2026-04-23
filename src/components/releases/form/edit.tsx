@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form"
 import { useParams } from "@tanstack/react-router"
 
 import { transformingZodResolver } from "@/lib/form"
-import { recordToPairs } from "@/schemas/metadata"
+import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import { Separator } from "@/components/ui/separator"
 
@@ -60,7 +60,7 @@ export default function EditReleaseForm({
       channel: release?.attributes.channel ?? ReleaseChannel.Stable,
       description: release?.attributes.description ?? "",
       backdated: release?.attributes.backdated ?? null,
-      metadata: recordToPairs(release?.attributes.metadata),
+      metadata: recordToMetadataPairs(release?.attributes.metadata),
       constraints: {
         attach: releaseConstraints
           .map((c) => c.relationships.entitlement?.data?.id ?? "")

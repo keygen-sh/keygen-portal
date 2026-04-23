@@ -9,7 +9,7 @@ import { useGetEntitlement, useUpdateEntitlement } from "@/queries/entitlements"
 
 import { toast } from "@/lib/toast"
 import { transformingZodResolver } from "@/lib/form"
-import { recordToPairs } from "@/schemas/metadata"
+import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
 import * as Entitlements from "@/components/entitlements"
@@ -38,7 +38,7 @@ export default function EditEntitlementForm({
     values: {
       name: entitlement?.attributes.name,
       code: entitlement?.attributes.code,
-      metadata: recordToPairs(entitlement?.attributes.metadata),
+      metadata: recordToMetadataPairs(entitlement?.attributes.metadata),
     },
   })
 

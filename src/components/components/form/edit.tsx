@@ -9,7 +9,7 @@ import { useGetComponent, useUpdateComponent } from "@/queries/components"
 
 import { toast } from "@/lib/toast"
 import { transformingZodResolver } from "@/lib/form"
-import { recordToPairs } from "@/schemas/metadata"
+import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
 import * as Components from "@/components/components"
@@ -37,7 +37,7 @@ export default function EditComponentForm({
     mode: "onChange",
     values: {
       name: component?.attributes.name ?? "",
-      metadata: recordToPairs(component?.attributes.metadata),
+      metadata: recordToMetadataPairs(component?.attributes.metadata),
     },
   })
 

@@ -1,5 +1,23 @@
 import { z } from "zod"
 
+// Integer: optional sign, digits, optional exponent. The exponent may resolve
+// to a non-integer (e.g. `1e-1` -> 0.1), which we catch separately via
+// `Number.isInteger` on the parsed value.
+const INTEGER_PATTERN = /^-?\d+([eE][+-]?\d+)?$/
+
+// Float: optional sign, digits, optional fractional part, optional exponent.
+const FLOAT_PATTERN = /^-?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$/
+
+// The discrete set of types KeyValueInput exposes as a type-picker per row.
+export const METADATA_TYPES = [
+  "string",
+  "integer",
+  "float",
+  "boolean",
+  "null",
+  "json",
+] as const
+
 // Values supported by the Keygen API for metadata. The API accepts any valid
 // JSON, so we allow scalars (string, number, boolean, null) as well as
 // arbitrarily nested objects and arrays.
@@ -17,16 +35,6 @@ export const MetadataValueSchema: z.ZodType<unknown> = z.lazy(() =>
 export type MetadataValue = z.infer<typeof MetadataValueSchema>
 
 export const MetadataSchema = z.record(MetadataValueSchema).default({})
-
-// The discrete set of types KeyValueInput exposes as a type-picker per row.
-export const METADATA_TYPES = [
-  "string",
-  "integer",
-  "float",
-  "boolean",
-  "null",
-  "json",
-] as const
 
 export type MetadataType = (typeof METADATA_TYPES)[number]
 
@@ -52,13 +60,6 @@ export type MetadataPair = {
 export type WithMetadataInput<T> = T extends { metadata?: unknown }
   ? Omit<T, "metadata"> & { metadata?: MetadataPair[] }
   : T & { metadata?: MetadataPair[] }
-
-// Integer: optional sign, digits, optional exponent. The exponent may resolve
-// to a non-integer (e.g. `1e-1` → 0.1), which we catch separately via
-// `Number.isInteger` on the parsed value.
-const INTEGER_PATTERN = /^-?\d+([eE][+-]?\d+)?$/
-// Float: optional sign, digits, optional fractional part, optional exponent.
-const FLOAT_PATTERN = /^-?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$/
 
 function tryParseJson(raw: string): { value: unknown } | undefined {
   try {
@@ -204,7 +205,7 @@ export const MetadataPairsSchema = z
       return
     }
   })
-  .transform(pairsToRecord)
+  .transform(metadataPairsToRecord)
 
 // Detects the MetadataType of a raw metadata value from the API.
 export function metadataValueToType(v: unknown): MetadataType {
@@ -225,7 +226,7 @@ export function metadataValueToString(v: unknown): string {
 }
 
 // Convert a Record into a MetadataPair[] for initializing KeyValueInput state.
-export function recordToPairs(
+export function recordToMetadataPairs(
   entries: Record<string, unknown> | undefined | null,
 ): MetadataPair[] {
   if (!entries) return []
@@ -242,7 +243,9 @@ export function recordToPairs(
 // after per-pair refinement has passed — so every pair here is already
 // well-formed. Empty-keyed rows (blank throwaway rows the user left unfilled)
 // are dropped.
-function pairsToRecord(pairs: MetadataPair[]): Record<string, MetadataValue> {
+function metadataPairsToRecord(
+  pairs: MetadataPair[],
+): Record<string, MetadataValue> {
   const out: Record<string, MetadataValue> = {}
   for (const pair of pairs) {
     const trimmedKey = pair.key.trim()

@@ -38,13 +38,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardFooter,
-} from "@/components/ui/card"
 
 import {
   type LucideIcon,
@@ -60,8 +53,10 @@ import {
 
 import * as keygen from "@/keygen"
 import { useMobile } from "@/hooks/use-mobile"
+import { useCloud } from "@/hooks/use-cloud"
 import Combobox from "./combobox"
 import Command from "./command"
+import BillingStatusCard from "./billing-status-card"
 
 enum ViewId {
   Home = "home",
@@ -260,6 +255,11 @@ export default function SidebarPanel(): React.ReactElement {
   const { open, setOpen } = useSidebar()
 
   const isMobile = useMobile()
+  const { isCloud } = useCloud()
+
+  const visibleRoutes = isCloud
+    ? selectedView.routes
+    : selectedView.routes.filter((r) => r.to !== "/$accountId/app/billing")
 
   return (
     <div className={cn("flex h-full", isMobile && "absolute z-50")}>
@@ -344,14 +344,16 @@ export default function SidebarPanel(): React.ReactElement {
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem asChild>
-                  <Link
-                    to="/$accountId/app/billing"
-                    params={{ accountId: keygen.config.id }}
-                  >
-                    Billing
-                  </Link>
-                </DropdownMenuItem>
+                {isCloud && (
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/$accountId/app/billing"
+                      params={{ accountId: keygen.config.id }}
+                    >
+                      Billing
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem asChild>
                   <Link
                     to="/$accountId/app/general"
@@ -444,7 +446,7 @@ export default function SidebarPanel(): React.ReactElement {
               {selectedView && (
                 <>
                   <SidebarGroupLabel>{selectedView.label}</SidebarGroupLabel>
-                  {selectedView.routes.map((route) => (
+                  {visibleRoutes.map((route) => (
                     <SidebarMenuItem key={route.to}>
                       <SidebarMenuButton asChild>
                         <Link
@@ -465,20 +467,7 @@ export default function SidebarPanel(): React.ReactElement {
         </SidebarContent>
 
         <SidebarFooter className="w-60 border-none p-4">
-          <Card className="w-full items-start gap-4 rounded border-none p-4">
-            <CardHeader className="w-full px-0">
-              <CardTitle className="text-sm">
-                Your free trial ends soon
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Upgrade today to enjoy the full set of features from Keygen.
-              </CardDescription>
-            </CardHeader>
-
-            <CardFooter className="w-full px-0">
-              <Button size="sm">Upgrade</Button>
-            </CardFooter>
-          </Card>
+          <BillingStatusCard />
         </SidebarFooter>
       </Sidebar>
     </div>

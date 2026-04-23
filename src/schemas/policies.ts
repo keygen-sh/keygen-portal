@@ -65,16 +65,12 @@ export type AllInputValues = CombineFormValues<
   UpdateInputValues
 >
 
-// Short alias for the 3-generic ZodType used throughout this file after the
-// MetadataPairsSchema refactor, where input (form state) has
-// metadata: MetadataPair[] but output (API submission) has
-// metadata: Record<string, unknown>.
-type PolicySchema = z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>
-
 export type FieldNames = Exclude<
   FieldPath<AllValues>,
   "scheme" | "encrypted" | "entitlements" | "product.id"
 >
+
+type PolicySchema = z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>
 
 export const BaseShape = z.object({
   name: z.string().trim().min(1, "Policy name is required"),
@@ -702,8 +698,7 @@ export function getCreateSchemaDefaults<T extends CreateInputValues>(
   // Empty strings so form initializes with empty fields
   parsed.name = ""
   parsed.product.id = ""
-  // Reset metadata to the form-input shape (MetadataPair[]) since parsing
-  // applied the MetadataPairsSchema transform and produced a Record.
+  // Reset metadata to the form-input shape i.e. MetadataPair[]
   parsed.metadata = []
 
   return parsed

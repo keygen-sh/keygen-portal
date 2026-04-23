@@ -54,7 +54,7 @@ export default function KeyValueInput<
   >({ name })
 
   // The form field's value is the MetadataPair[] itself — the schema owns
-  // the MetadataPair[] → Record transform at parse time, so submit values
+  // the MetadataPair[] -> Record transform at parse time, so submit values
   // come out as `Record<string, MetadataValue>` for the API.
   const rows = useMemo(
     () => (field.value as MetadataPair[] | undefined) ?? [],

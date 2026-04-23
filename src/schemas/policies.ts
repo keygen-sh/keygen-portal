@@ -26,7 +26,7 @@ import {
 import {
   MetadataPairsSchema,
   WithMetadataInput,
-  recordToPairs,
+  recordToMetadataPairs,
   type MetadataPair,
 } from "@/schemas/metadata"
 
@@ -714,7 +714,7 @@ export function getFormValuesFromPolicy<
 >(policy: Policy, options?: { product?: boolean }): T {
   const base: BaseInputValues = {
     name: policy.attributes.name,
-    metadata: recordToPairs(policy.attributes.metadata),
+    metadata: recordToMetadataPairs(policy.attributes.metadata),
 
     duration: policy.attributes.duration,
     expirationStrategy: policy.attributes.expirationStrategy,

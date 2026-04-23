@@ -10,7 +10,7 @@ import { useGetArtifact, useUpdateArtifact } from "@/queries/artifacts"
 
 import { toast } from "@/lib/toast"
 import { transformingZodResolver } from "@/lib/form"
-import { recordToPairs } from "@/schemas/metadata"
+import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
 import * as Artifacts from "@/components/artifacts"
@@ -40,7 +40,7 @@ export default function EditArtifactForm({
       filesize: artifact?.attributes.filesize ?? 0,
       signature: artifact?.attributes.signature ?? null,
       checksum: artifact?.attributes.checksum ?? null,
-      metadata: recordToPairs(artifact?.attributes.metadata),
+      metadata: recordToMetadataPairs(artifact?.attributes.metadata),
     },
   })
 

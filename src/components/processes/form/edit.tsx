@@ -7,7 +7,7 @@ import { useGetProcess, useUpdateProcess } from "@/queries/processes"
 
 import { toast } from "@/lib/toast"
 import { transformingZodResolver } from "@/lib/form"
-import { recordToPairs } from "@/schemas/metadata"
+import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
 import * as Processes from "@/components/processes"
@@ -34,7 +34,7 @@ export default function EditProcessForm({
     resolver: transformingZodResolver(Schemas.Processes.UpdateSchema),
     mode: "onChange",
     values: {
-      metadata: recordToPairs(process?.attributes.metadata),
+      metadata: recordToMetadataPairs(process?.attributes.metadata),
     },
   })
 

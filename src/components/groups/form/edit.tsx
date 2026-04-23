@@ -10,7 +10,7 @@ import { useGetGroup, useUpdateGroup } from "@/queries/groups"
 
 import { toast } from "@/lib/toast"
 import { transformingZodResolver } from "@/lib/form"
-import { recordToPairs } from "@/schemas/metadata"
+import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
 import * as Groups from "@/components/groups"
@@ -41,7 +41,7 @@ export default function EditGroupForm({
       maxUsers: group?.attributes.maxUsers ?? null,
       maxLicenses: group?.attributes.maxLicenses ?? null,
       maxMachines: group?.attributes.maxMachines ?? null,
-      metadata: recordToPairs(group?.attributes.metadata),
+      metadata: recordToMetadataPairs(group?.attributes.metadata),
     },
   })
 

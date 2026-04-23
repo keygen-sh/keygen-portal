@@ -11,7 +11,7 @@ import { useGetUser, useUpdateUser, useChangeUserGroup } from "@/queries/users"
 
 import { toast } from "@/lib/toast"
 import { transformingZodResolver } from "@/lib/form"
-import { recordToPairs } from "@/schemas/metadata"
+import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
 import * as Users from "@/components/users"
@@ -44,7 +44,7 @@ export default function EditUserForm({
       role: user?.attributes.role ?? UserRole.User,
       permissions: user?.attributes.permissions ?? null,
       groupId: user?.relationships.group?.data?.id ?? null,
-      metadata: recordToPairs(user?.attributes.metadata),
+      metadata: recordToMetadataPairs(user?.attributes.metadata),
     },
   })
 

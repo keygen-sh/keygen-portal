@@ -10,7 +10,7 @@ import { useGetPackage, useUpdatePackage } from "@/queries/packages"
 
 import { toast } from "@/lib/toast"
 import { transformingZodResolver } from "@/lib/form"
-import { recordToPairs } from "@/schemas/metadata"
+import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
 import * as Packages from "@/components/packages"
@@ -40,7 +40,7 @@ export default function EditPackageForm({
       name: pkg?.attributes.name ?? "",
       key: pkg?.attributes.key ?? "",
       engine: pkg?.attributes.engine ?? null,
-      metadata: recordToPairs(pkg?.attributes.metadata),
+      metadata: recordToMetadataPairs(pkg?.attributes.metadata),
     },
   })
 

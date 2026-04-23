@@ -11,7 +11,7 @@ import { useGetProduct, useUpdateProduct } from "@/queries/products"
 
 import { toast } from "@/lib/toast"
 import { transformingZodResolver } from "@/lib/form"
-import { recordToPairs } from "@/schemas/metadata"
+import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
 import * as Products from "@/components/products"
@@ -46,7 +46,7 @@ export default function EditProductForm({
         DistributionStrategy.Licensed,
       platforms: product?.attributes.platforms ?? [],
       permissions: product?.attributes.permissions ?? null,
-      metadata: recordToPairs(product?.attributes.metadata),
+      metadata: recordToMetadataPairs(product?.attributes.metadata),
     },
   })
 

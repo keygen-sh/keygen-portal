@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form"
 import { useParams } from "@tanstack/react-router"
 
 import { transformingZodResolver } from "@/lib/form"
-import { recordToPairs } from "@/schemas/metadata"
+import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import { Separator } from "@/components/ui/separator"
 
@@ -73,7 +73,7 @@ export default function EditLicenseForm({
           maxUsers: license.attributes.maxUsers ?? null,
           maxCores: license.attributes.maxCores ?? null,
           maxUses: license.attributes.maxUses ?? null,
-          metadata: recordToPairs(license.attributes.metadata),
+          metadata: recordToMetadataPairs(license.attributes.metadata),
           entitlements: {
             attach: licenseEntitlements.map((e) => e.id),
             create: [],

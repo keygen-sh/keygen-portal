@@ -14,7 +14,7 @@ import {
 
 import { toast } from "@/lib/toast"
 import { transformingZodResolver } from "@/lib/form"
-import { recordToPairs } from "@/schemas/metadata"
+import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
 import * as Machines from "@/components/machines"
@@ -50,7 +50,7 @@ export default function EditMachineForm({
       cores: machine?.attributes.cores ?? null,
       memory: machine?.attributes.memory ?? null,
       disk: machine?.attributes.disk ?? null,
-      metadata: recordToPairs(machine?.attributes.metadata),
+      metadata: recordToMetadataPairs(machine?.attributes.metadata),
       groupId: machine?.relationships.group?.data?.id ?? null,
       ownerId: machine?.relationships.owner?.data?.id ?? null,
     },

@@ -8,7 +8,7 @@ import { toast } from "@/lib/toast"
 
 type EntitlementValues = {
   attach?: string[]
-  create?: { name: string; code: string }[]
+  create?: { name: string; code: string; metadata?: Record<string, unknown> }[]
 }
 
 interface SettleCreateEntitlementsProps<
@@ -22,13 +22,14 @@ interface SettleCreateEntitlementsProps<
     mutateAsync: (attributes: {
       name: string
       code: string
+      metadata?: Record<string, unknown>
     }) => Promise<Entitlement>
   }
 }
 
 // Settles entitlement creation mutations and associated form state
 export async function settleCreateEntitlements<
-  T extends FieldValues & { entitlements?: EntitlementValues },
+  T extends FieldValues,
   TContext = unknown,
   TTransformedValues = T,
 >({

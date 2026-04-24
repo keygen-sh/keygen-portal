@@ -2,40 +2,8 @@ import { FieldPath } from "react-hook-form"
 import { z } from "zod"
 
 import { CombineFormValues } from "@/types/forms"
-import { UserAttributes, UserRole } from "@/types/users"
-import { Writable, OptionalExcept } from "@/types/utility"
+import { UserRole } from "@/types/users"
 import { MetadataPairsSchema } from "@/schemas/metadata"
-
-export type BaseValues = Writable<OptionalExcept<UserAttributes, "email">> & {
-  groupId?: string | null
-  password?: string | null
-}
-export type CreateValues = BaseValues
-export type UpdateValues = Partial<BaseValues>
-
-export type PasswordValues = {
-  oldPassword: string
-  newPassword: string
-  confirmPassword: string
-}
-export type InviteValues = {
-  email: string
-  firstName?: string | null
-  lastName?: string | null
-  role: UserRole
-  permissions?: string[]
-}
-export type AllValues = CombineFormValues<
-  BaseValues,
-  CreateValues,
-  UpdateValues
-> &
-  PasswordValues
-
-export type FieldNames =
-  | FieldPath<AllValues>
-  | "internalRole"
-  | "internalPermissions"
 
 const BaseShape = z.object({
   email: z.string().trim().email("Email is invalid"),
@@ -48,7 +16,7 @@ const BaseShape = z.object({
   lastName: z.string().trim().nullable().optional(),
   role: z.nativeEnum(UserRole).optional(),
   permissions: z.array(z.string()).nullable().optional(),
-  metadata: MetadataPairsSchema,
+  metadata: MetadataPairsSchema.optional(),
   groupId: z.string().nullable().optional(),
 })
 
@@ -69,6 +37,10 @@ export const UpdateSchema = BaseRules(UpdateShape)
 export type BaseFormValues = z.input<typeof BaseSchema>
 export type CreateFormValues = z.input<typeof CreateSchema>
 export type UpdateFormValues = z.input<typeof UpdateSchema>
+
+export type BaseValues = z.output<typeof BaseSchema>
+export type CreateValues = z.output<typeof CreateSchema>
+export type UpdateValues = z.output<typeof UpdateSchema>
 
 const PasswordShape = z
   .object({
@@ -102,6 +74,20 @@ const InviteRules = <S extends typeof InviteShape>(schema: S): S => {
 }
 
 export const InviteSchema = InviteRules(InviteShape)
+
+export type PasswordValues = z.output<typeof PasswordSchema>
+export type InviteValues = z.output<typeof InviteSchema>
+export type AllValues = CombineFormValues<
+  BaseValues,
+  CreateValues,
+  UpdateValues
+> &
+  PasswordValues
+
+export type FieldNames =
+  | FieldPath<AllValues>
+  | "internalRole"
+  | "internalPermissions"
 
 export const SchemaMap = {
   base: BaseSchema,

@@ -2,10 +2,8 @@ import { FieldPath } from "react-hook-form"
 import { z } from "zod"
 
 import { CombineFormValues } from "@/types/forms"
-import { Writable, OptionalExcept } from "@/types/utility"
 import {
   Policy,
-  PolicyAttributes,
   CheckInInterval,
   AuthenticationStrategy,
   ExpirationStrategy,
@@ -24,29 +22,6 @@ import {
   HeartbeatResurrectionStrategy,
 } from "@/types/policies"
 import { MetadataPairsSchema, recordToMetadataPairs } from "@/schemas/metadata"
-
-export type BaseValues = Writable<OptionalExcept<PolicyAttributes, "name">> & {
-  entitlements?: {
-    attach?: string[]
-    create?: {
-      name: string
-      code: string
-      metadata?: Record<string, unknown>
-    }[]
-  }
-}
-export type CreateValues = BaseValues & { product: { id: string } }
-export type UpdateValues = Partial<BaseValues>
-export type AllValues = CombineFormValues<
-  BaseValues,
-  CreateValues,
-  UpdateValues
->
-
-export type FieldNames = Exclude<
-  FieldPath<AllValues>,
-  "scheme" | "encrypted" | "entitlements" | "product.id"
->
 
 // Concrete zod types (ZodObject, ZodEffects) have `_def.typeName` at runtime,
 // but the abstract ZodTypeDef doesn't expose it. This type adds the marker
@@ -176,7 +151,7 @@ export const BaseShape = z.object({
     .nativeEnum(OverageStrategy)
     .nullish()
     .default(OverageStrategy.NoOverage),
-  metadata: MetadataPairsSchema,
+  metadata: MetadataPairsSchema.optional(),
 
   entitlements: z
     .object({
@@ -193,6 +168,8 @@ export const BaseShape = z.object({
     })
     .default({ attach: [], create: [] }),
 })
+
+export type BaseValues = z.output<typeof BaseShape>
 
 export const BaseRules = <TInput, TOutput extends BaseValues>(
   schema: PolicySchema<TInput, TOutput>,
@@ -352,6 +329,19 @@ export type AllFormValues = CombineFormValues<
   UpdateFormValues
 >
 
+export type CreateValues = z.output<typeof CreateSchema>
+export type UpdateValues = z.output<typeof UpdateSchema>
+export type AllValues = CombineFormValues<
+  BaseValues,
+  CreateValues,
+  UpdateValues
+>
+
+export type FieldNames = Exclude<
+  FieldPath<AllValues>,
+  "scheme" | "encrypted" | "entitlements" | "product.id"
+>
+
 export enum TimingTemplates {
   Perpetual = "PERPETUAL",
   Timed = "TIMED",
@@ -376,8 +366,8 @@ export const TemplateSchema = z.object({
   offline: z.boolean().default(false),
 })
 
-export type TemplateValues = z.infer<typeof TemplateSchema>
 export type TemplateFormValues = z.input<typeof TemplateSchema>
+export type TemplateValues = z.output<typeof TemplateSchema>
 
 export const TimedShape = z.object({
   duration: z.coerce.number().int().positive().nullish().default(1209600),

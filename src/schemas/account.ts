@@ -1,24 +1,7 @@
 import { FieldPath } from "react-hook-form"
 import { z } from "zod"
 
-import { Writable } from "@/types/utility"
 import { CombineFormValues } from "@/types/forms"
-import { AccountAttributes } from "@/types/accounts"
-
-export type BaseValues = Record<string, unknown>
-export type UpdateValues = Writable<Pick<AccountAttributes, "name" | "slug">>
-export type DeveloperValues = Writable<
-  Pick<AccountAttributes, "apiVersion" | "protected">
->
-export type PermissionsValues = {
-  defaultUserPermissions?: string[] | null
-  defaultLicensePermissions?: string[] | null
-}
-export type AllValues = CombineFormValues<BaseValues, UpdateValues> &
-  DeveloperValues &
-  PermissionsValues
-
-export type FieldNames = FieldPath<AllValues>
 
 const BaseShape = z.object({})
 
@@ -62,3 +45,13 @@ const PermissionsRules = <S extends typeof PermissionsShape>(schema: S): S => {
 }
 
 export const PermissionsSchema = PermissionsRules(PermissionsShape)
+
+export type BaseValues = z.output<typeof BaseSchema>
+export type UpdateValues = z.output<typeof UpdateSchema>
+export type DeveloperValues = z.output<typeof DeveloperSchema>
+export type PermissionsValues = z.output<typeof PermissionsSchema>
+export type AllValues = CombineFormValues<BaseValues, UpdateValues> &
+  DeveloperValues &
+  PermissionsValues
+
+export type FieldNames = FieldPath<AllValues>

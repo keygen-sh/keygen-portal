@@ -3,28 +3,8 @@ import { z } from "zod"
 import semver from "semver"
 
 import { CombineFormValues } from "@/types/forms"
-import { Writable, OptionalExcept } from "@/types/utility"
-import { ReleaseAttributes, ReleaseChannel } from "@/types/releases"
+import { ReleaseChannel } from "@/types/releases"
 import { MetadataPairsSchema } from "@/schemas/metadata"
-
-export type BaseValues = Writable<
-  OptionalExcept<ReleaseAttributes, "version">
-> & {
-  packageId?: string | null
-  constraints?: { attach?: string[] }
-}
-export type CreateValues = BaseValues & { productId: string }
-export type UpdateValues = Partial<BaseValues>
-export type AllValues = CombineFormValues<
-  BaseValues,
-  CreateValues,
-  UpdateValues
->
-
-export type FieldNames =
-  | Exclude<FieldPath<AllValues>, "constraints">
-  | "constraints.attach"
-  | "productId"
 
 const BaseShape = z.object({
   name: z
@@ -57,7 +37,7 @@ const BaseShape = z.object({
     .nullable()
     .optional()
     .transform((value) => (value === "" ? null : value)),
-  metadata: MetadataPairsSchema,
+  metadata: MetadataPairsSchema.optional(),
   backdated: z.string().nullable().optional(),
   constraints: z
     .object({
@@ -77,7 +57,10 @@ type AnyShape = typeof BaseShape | typeof CreateShape
 
 const BaseRules = <S extends AnyShape>(schema: S): S =>
   (schema as typeof BaseShape).superRefine(
-    (data: { version: string; channel: ReleaseChannel }, ctx: z.RefinementCtx) => {
+    (
+      data: { version: string; channel: ReleaseChannel },
+      ctx: z.RefinementCtx,
+    ) => {
       const version = semver.parse(data.version)
       if (!version) {
         return
@@ -106,10 +89,26 @@ const BaseRules = <S extends AnyShape>(schema: S): S =>
     },
   ) as unknown as S
 
+const UpdateShape = BaseShape.partial()
+
 export const BaseSchema = BaseRules(BaseShape)
 export const CreateSchema = BaseRules(CreateShape)
-export const UpdateSchema = BaseShape.partial()
+export const UpdateSchema = UpdateShape
 
 export type BaseFormValues = z.input<typeof BaseSchema>
 export type CreateFormValues = z.input<typeof CreateSchema>
 export type UpdateFormValues = z.input<typeof UpdateSchema>
+
+export type BaseValues = z.output<typeof BaseSchema>
+export type CreateValues = z.output<typeof CreateSchema>
+export type UpdateValues = z.output<typeof UpdateSchema>
+export type AllValues = CombineFormValues<
+  BaseValues,
+  CreateValues,
+  UpdateValues
+>
+
+export type FieldNames =
+  | Exclude<FieldPath<AllValues>, "constraints">
+  | "constraints.attach"
+  | "productId"

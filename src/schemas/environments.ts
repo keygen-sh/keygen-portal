@@ -1,20 +1,8 @@
 import { FieldPath } from "react-hook-form"
 import { z } from "zod"
 
-import { Writable } from "@/types/utility"
 import { CombineFormValues } from "@/types/forms"
-import { EnvironmentAttributes, IsolationStrategy } from "@/types/environments"
-
-export type BaseValues = Writable<EnvironmentAttributes>
-export type CreateValues = BaseValues
-export type UpdateValues = Partial<BaseValues>
-export type AllValues = CombineFormValues<
-  BaseValues,
-  CreateValues,
-  UpdateValues
->
-
-export type FieldNames = FieldPath<AllValues>
+import { IsolationStrategy } from "@/types/environments"
 
 const BaseShape = z.object({
   name: z.string().trim().min(1, "Environment name is required"),
@@ -33,6 +21,7 @@ const BaseRules = <S extends AnyShape>(schema: S): S => {
   // schema.refine(...)
   return schema
 }
+
 export const BaseSchema = BaseRules(BaseShape)
 export const CreateSchema = BaseSchema
 export const UpdateSchema = BaseRules(UpdateShape)
@@ -40,6 +29,17 @@ export const UpdateSchema = BaseRules(UpdateShape)
 export type BaseFormValues = z.input<typeof BaseSchema>
 export type CreateFormValues = z.input<typeof CreateSchema>
 export type UpdateFormValues = z.input<typeof UpdateSchema>
+
+export type BaseValues = z.output<typeof BaseSchema>
+export type CreateValues = z.output<typeof CreateSchema>
+export type UpdateValues = z.output<typeof UpdateSchema>
+export type AllValues = CombineFormValues<
+  BaseValues,
+  CreateValues,
+  UpdateValues
+>
+
+export type FieldNames = FieldPath<AllValues>
 
 const StrategyShape = BaseShape.pick({ isolationStrategy: true })
 const StrategyRules = <S extends typeof StrategyShape>(schema: S): S => {

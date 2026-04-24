@@ -354,13 +354,13 @@ export const UpdateSchema: z.ZodType<
   Partial<z.input<typeof BaseShape>>
 > = BaseSchema
 
-export type BaseInputValues = z.input<typeof BaseSchema>
-export type CreateInputValues = z.input<typeof CreateSchema>
-export type UpdateInputValues = z.input<typeof UpdateSchema>
-export type AllInputValues = CombineFormValues<
-  BaseInputValues,
-  CreateInputValues,
-  UpdateInputValues
+export type BaseFormValues = z.input<typeof BaseSchema>
+export type CreateFormValues = z.input<typeof CreateSchema>
+export type UpdateFormValues = z.input<typeof UpdateSchema>
+export type AllFormValues = CombineFormValues<
+  BaseFormValues,
+  CreateFormValues,
+  UpdateFormValues
 >
 
 export enum TimingTemplates {
@@ -623,7 +623,7 @@ export type PolicyTemplateSelection = {
 
 export function composePolicySchema<
   TOut extends BaseValues = BaseValues,
-  TIn extends BaseInputValues = BaseInputValues,
+  TIn extends BaseFormValues = BaseFormValues,
 >(
   selection: {
     timing?: TimingTemplates | null
@@ -685,7 +685,7 @@ export function composePolicySchema<
   return schema as unknown as z.ZodType<TOut, z.ZodTypeDef, TIn>
 }
 
-export function getCreateSchemaDefaults<T extends CreateInputValues>(
+export function getCreateSchemaDefaults<T extends CreateFormValues>(
   schema: z.ZodType<unknown, z.ZodTypeDef, T>,
 ): T {
   // Parse schema with temporary values since schema requires `name` and `product.id`
@@ -704,9 +704,9 @@ export function getCreateSchemaDefaults<T extends CreateInputValues>(
 }
 
 export function getFormValuesFromPolicy<
-  T extends BaseInputValues = BaseInputValues,
+  T extends BaseFormValues = BaseFormValues,
 >(policy: Policy, options?: { product?: boolean }): T {
-  const base: BaseInputValues = {
+  const base: BaseFormValues = {
     name: policy.attributes.name,
     metadata: recordToMetadataPairs(policy.attributes.metadata),
 

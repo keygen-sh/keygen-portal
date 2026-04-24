@@ -24,7 +24,7 @@ export default function CreateUserForm({
   onOpenChange,
 }: CreateUserFormProps) {
   const form = useForm<
-    Schemas.Users.CreateInputValues,
+    Schemas.Users.CreateFormValues,
     unknown,
     Schemas.Users.CreateValues
   >({

@@ -30,7 +30,7 @@ export default function EditArtifactForm({
   const updateArtifact = useUpdateArtifact(artifact?.id ?? "")
 
   const form = useForm<
-    Schemas.Artifacts.UpdateInputValues,
+    Schemas.Artifacts.UpdateFormValues,
     unknown,
     Schemas.Artifacts.UpdateValues
   >({

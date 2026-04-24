@@ -29,7 +29,7 @@ export default function EditComponentForm({
   const updateComponent = useUpdateComponent(component?.id ?? "")
 
   const form = useForm<
-    Schemas.Components.UpdateInputValues,
+    Schemas.Components.UpdateFormValues,
     unknown,
     Schemas.Components.UpdateValues
   >({

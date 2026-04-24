@@ -54,7 +54,7 @@ export default function EditLicenseForm({
   const detachEntitlements = useDetachLicenseEntitlements()
 
   const form = useForm<
-    Schemas.Licenses.UpdateInputValues,
+    Schemas.Licenses.UpdateFormValues,
     unknown,
     Schemas.Licenses.UpdateValues
   >({

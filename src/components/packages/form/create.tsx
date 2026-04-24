@@ -23,7 +23,7 @@ export default function CreatePackageForm({
   onOpenChange,
 }: CreatePackageFormProps) {
   const form = useForm<
-    Schemas.Packages.CreateInputValues,
+    Schemas.Packages.CreateFormValues,
     unknown,
     Schemas.Packages.CreateValues
   >({

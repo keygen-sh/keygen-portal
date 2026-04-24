@@ -31,7 +31,7 @@ export default function EditUserForm({
   const changeGroup = useChangeUserGroup()
 
   const form = useForm<
-    Schemas.Users.UpdateInputValues,
+    Schemas.Users.UpdateFormValues,
     unknown,
     Schemas.Users.UpdateValues
   >({

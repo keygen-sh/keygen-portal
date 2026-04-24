@@ -29,7 +29,7 @@ export default function EditEntitlementForm({
   const updateEntitlement = useUpdateEntitlement(entitlement?.id ?? "")
 
   const form = useForm<
-    Schemas.Entitlements.UpdateInputValues,
+    Schemas.Entitlements.UpdateFormValues,
     unknown,
     Schemas.Entitlements.UpdateValues
   >({

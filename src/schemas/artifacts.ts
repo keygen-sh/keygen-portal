@@ -81,6 +81,6 @@ export const UpdateSchema: z.ZodType<
   z.input<typeof UpdateShape>
 >
 
-export type BaseInputValues = z.input<typeof BaseSchema>
-export type CreateInputValues = z.input<typeof CreateSchema>
-export type UpdateInputValues = z.input<typeof UpdateSchema>
+export type BaseFormValues = z.input<typeof BaseSchema>
+export type CreateFormValues = z.input<typeof CreateSchema>
+export type UpdateFormValues = z.input<typeof UpdateSchema>

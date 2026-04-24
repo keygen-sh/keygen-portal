@@ -22,7 +22,7 @@ export default function CreateGroupForm({
   onOpenChange,
 }: CreateGroupFormProps) {
   const form = useForm<
-    Schemas.Groups.CreateInputValues,
+    Schemas.Groups.CreateFormValues,
     unknown,
     Schemas.Groups.CreateValues
   >({

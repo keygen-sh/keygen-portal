@@ -30,7 +30,7 @@ export default function CreateLicenseForm({
   onOpenChange,
 }: CreateLicenseFormProps) {
   const form = useForm<
-    Schemas.Licenses.CreateInputValues,
+    Schemas.Licenses.CreateFormValues,
     unknown,
     Schemas.Licenses.CreateValues
   >({

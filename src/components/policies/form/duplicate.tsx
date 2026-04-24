@@ -52,7 +52,7 @@ export default function DuplicatePolicyForm({
   const defaultValues = useMemo(() => {
     if (!policy) return undefined
     const values =
-      Schemas.Policies.getFormValuesFromPolicy<Schemas.Policies.CreateInputValues>(
+      Schemas.Policies.getFormValuesFromPolicy<Schemas.Policies.CreateFormValues>(
         policy,
         { product: true },
       )
@@ -64,7 +64,7 @@ export default function DuplicatePolicyForm({
   }, [policy, policyEntitlements])
 
   const form = useForm<
-    Schemas.Policies.CreateInputValues,
+    Schemas.Policies.CreateFormValues,
     unknown,
     Schemas.Policies.CreateValues
   >({

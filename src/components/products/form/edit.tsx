@@ -31,7 +31,7 @@ export default function EditProductForm({
   const updateProduct = useUpdateProduct(product?.id ?? "")
 
   const form = useForm<
-    Schemas.Products.UpdateInputValues,
+    Schemas.Products.UpdateFormValues,
     unknown,
     Schemas.Products.UpdateValues
   >({

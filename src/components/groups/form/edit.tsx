@@ -30,7 +30,7 @@ export default function EditGroupForm({
   const updateGroup = useUpdateGroup(group?.id ?? "")
 
   const form = useForm<
-    Schemas.Groups.UpdateInputValues,
+    Schemas.Groups.UpdateFormValues,
     unknown,
     Schemas.Groups.UpdateValues
   >({

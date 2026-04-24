@@ -22,7 +22,7 @@ export default function CreateEntitlementForm({
   onOpenChange,
 }: CreateEntitlementFormProps) {
   const form = useForm<
-    Schemas.Entitlements.CreateInputValues,
+    Schemas.Entitlements.CreateFormValues,
     unknown,
     Schemas.Entitlements.CreateValues
   >({

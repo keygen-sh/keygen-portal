@@ -5,7 +5,7 @@ import { Writable } from "@/types/utility"
 import { SigningAlgorithm } from "@/types/files"
 import { CombineFormValues } from "@/types/forms"
 import { MachineAttributes, MachineFileAttributes } from "@/types/machines"
-import { MetadataPairsSchema, WithMetadataInput } from "@/schemas/metadata"
+import { MetadataPairsSchema } from "@/schemas/metadata"
 
 export type BaseValues = Writable<
   Partial<
@@ -36,10 +36,6 @@ export type AllValues = CombineFormValues<
   UpdateValues
 >
 
-export type BaseInputValues = WithMetadataInput<BaseValues>
-export type CreateInputValues = WithMetadataInput<CreateValues>
-export type UpdateInputValues = WithMetadataInput<UpdateValues>
-
 export type FieldNames = FieldPath<AllValues>
 
 const BaseShape = z.object({
@@ -64,7 +60,7 @@ const LicenseRelationshipShape = z.object({
 })
 
 const BaseRules = <
-  S extends z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>,
+  S extends z.ZodType<BaseValues, z.ZodTypeDef, z.input<typeof BaseShape>>,
 >(
   schema: S,
 ): S => {
@@ -73,22 +69,41 @@ const BaseRules = <
   return schema
 }
 
-export const BaseSchema: z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues> =
-  BaseRules(BaseShape)
+export const BaseSchema: z.ZodType<
+  BaseValues,
+  z.ZodTypeDef,
+  z.input<typeof BaseShape>
+> = BaseRules(BaseShape)
 export const CreateSchema: z.ZodType<
   CreateValues,
   z.ZodTypeDef,
-  CreateInputValues
+  z.input<typeof BaseShape> &
+    z.input<typeof FingerprintShape> &
+    z.input<typeof LicenseRelationshipShape>
 > = BaseRules(
   BaseShape.merge(FingerprintShape).merge(
     LicenseRelationshipShape,
-  ) as unknown as z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>,
-) as unknown as z.ZodType<CreateValues, z.ZodTypeDef, CreateInputValues>
+  ) as unknown as z.ZodType<
+    BaseValues,
+    z.ZodTypeDef,
+    z.input<typeof BaseShape>
+  >,
+) as unknown as z.ZodType<
+  CreateValues,
+  z.ZodTypeDef,
+  z.input<typeof BaseShape> &
+    z.input<typeof FingerprintShape> &
+    z.input<typeof LicenseRelationshipShape>
+>
 export const UpdateSchema: z.ZodType<
   UpdateValues,
   z.ZodTypeDef,
-  UpdateInputValues
+  Partial<z.input<typeof BaseShape>>
 > = BaseSchema
+
+export type BaseInputValues = z.input<typeof BaseSchema>
+export type CreateInputValues = z.input<typeof CreateSchema>
+export type UpdateInputValues = z.input<typeof UpdateSchema>
 
 export type CheckOutValues = Pick<
   MachineFileAttributes,

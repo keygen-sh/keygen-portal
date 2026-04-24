@@ -49,12 +49,6 @@ export type MetadataPair = {
   value: string
 }
 
-// swaps the metadata field's output shape (Record) for its input shape (MetadataPair[])
-// on form state types
-export type WithMetadataInput<T> = T extends { metadata?: unknown }
-  ? Omit<T, "metadata"> & { metadata?: MetadataPair[] }
-  : T & { metadata?: MetadataPair[] }
-
 function tryParseJson(raw: string): { value: unknown } | undefined {
   try {
     return { value: JSON.parse(raw) }

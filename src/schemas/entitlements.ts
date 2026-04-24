@@ -4,7 +4,7 @@ import { z } from "zod"
 import { CombineFormValues, FormFieldError } from "@/types/forms"
 import { Writable, OptionalExcept } from "@/types/utility"
 import { EntitlementAttributes } from "@/types/entitlements"
-import { MetadataPairsSchema, WithMetadataInput } from "@/schemas/metadata"
+import { MetadataPairsSchema } from "@/schemas/metadata"
 
 import * as Forms from "@/schemas"
 
@@ -19,10 +19,6 @@ export type AllValues = CombineFormValues<
   UpdateValues
 >
 
-export type BaseInputValues = WithMetadataInput<BaseValues>
-export type CreateInputValues = WithMetadataInput<CreateValues>
-export type UpdateInputValues = WithMetadataInput<UpdateValues>
-
 export type FieldNames = FieldPath<AllValues>
 
 const BaseShape = z.object({
@@ -32,7 +28,7 @@ const BaseShape = z.object({
 })
 
 const BaseRules = <
-  S extends z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>,
+  S extends z.ZodType<BaseValues, z.ZodTypeDef, z.input<typeof BaseShape>>,
 >(
   schema: S,
 ): S => {
@@ -41,18 +37,25 @@ const BaseRules = <
   return schema
 }
 
-export const BaseSchema: z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues> =
-  BaseRules(BaseShape)
+export const BaseSchema: z.ZodType<
+  BaseValues,
+  z.ZodTypeDef,
+  z.input<typeof BaseShape>
+> = BaseRules(BaseShape)
 export const CreateSchema: z.ZodType<
   CreateValues,
   z.ZodTypeDef,
-  CreateInputValues
+  z.input<typeof BaseShape>
 > = BaseSchema
 export const UpdateSchema: z.ZodType<
   UpdateValues,
   z.ZodTypeDef,
-  UpdateInputValues
+  Partial<z.input<typeof BaseShape>>
 > = BaseSchema
+
+export type BaseInputValues = z.input<typeof BaseSchema>
+export type CreateInputValues = z.input<typeof CreateSchema>
+export type UpdateInputValues = z.input<typeof UpdateSchema>
 
 export class CreateValidationError<
   T extends Forms.Policies.BaseValues = Forms.Policies.BaseValues,

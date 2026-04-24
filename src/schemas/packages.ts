@@ -4,7 +4,7 @@ import { z } from "zod"
 import { CombineFormValues } from "@/types/forms"
 import { Writable, OptionalExcept } from "@/types/utility"
 import { PackageAttributes, PackageEngine } from "@/types/packages"
-import { MetadataPairsSchema, WithMetadataInput } from "@/schemas/metadata"
+import { MetadataPairsSchema } from "@/schemas/metadata"
 
 export type BaseValues = Writable<
   OptionalExcept<PackageAttributes, "name" | "key">
@@ -16,10 +16,6 @@ export type AllValues = CombineFormValues<
   CreateValues,
   UpdateValues
 >
-
-export type BaseInputValues = WithMetadataInput<BaseValues>
-export type CreateInputValues = WithMetadataInput<CreateValues>
-export type UpdateInputValues = WithMetadataInput<UpdateValues>
 
 export type FieldNames = Exclude<FieldPath<AllValues>, never> | "productId"
 
@@ -45,27 +41,38 @@ const ProductShape = z.object({
 })
 
 const BaseRules = <
-  S extends z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>,
+  S extends z.ZodType<BaseValues, z.ZodTypeDef, z.input<typeof BaseShape>>,
 >(
   schema: S,
 ): S => {
   return schema
 }
-export const BaseSchema: z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues> =
-  BaseRules(BaseShape)
+export const BaseSchema: z.ZodType<
+  BaseValues,
+  z.ZodTypeDef,
+  z.input<typeof BaseShape>
+> = BaseRules(BaseShape)
 export const CreateSchema: z.ZodType<
   CreateValues,
   z.ZodTypeDef,
-  CreateInputValues
+  z.input<typeof BaseShape> & z.input<typeof ProductShape>
 > = BaseRules(
   BaseShape.merge(ProductShape) as unknown as z.ZodType<
     BaseValues,
     z.ZodTypeDef,
-    BaseInputValues
+    z.input<typeof BaseShape>
   >,
-) as unknown as z.ZodType<CreateValues, z.ZodTypeDef, CreateInputValues>
+) as unknown as z.ZodType<
+  CreateValues,
+  z.ZodTypeDef,
+  z.input<typeof BaseShape> & z.input<typeof ProductShape>
+>
 export const UpdateSchema: z.ZodType<
   UpdateValues,
   z.ZodTypeDef,
-  UpdateInputValues
+  Partial<z.input<typeof BaseShape>>
 > = BaseSchema
+
+export type BaseInputValues = z.input<typeof BaseSchema>
+export type CreateInputValues = z.input<typeof CreateSchema>
+export type UpdateInputValues = z.input<typeof UpdateSchema>

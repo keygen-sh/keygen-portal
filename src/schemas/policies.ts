@@ -66,7 +66,7 @@ export const BaseShape = z.object({
     .nullish()
     .transform((value) => (value == null ? value : value === 0 ? null : value)),
   strict: z.boolean().default(true),
-  floating: z.boolean().default(false),
+  floating: z.boolean().default(true),
 
   requireProductScope: z.boolean().default(false),
   requirePolicyScope: z.boolean().default(false),

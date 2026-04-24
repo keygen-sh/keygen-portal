@@ -90,7 +90,7 @@ export default function CreatePolicyForm({
     () =>
       Schemas.Policies.composePolicySchema<
         Schemas.Policies.CreateValues,
-        Schemas.Policies.CreateInputValues
+        Schemas.Policies.CreateFormValues
       >(
         {
           timing: selection?.timing ?? null,
@@ -104,7 +104,7 @@ export default function CreatePolicyForm({
   )
 
   const form = useForm<
-    Schemas.Policies.CreateInputValues,
+    Schemas.Policies.CreateFormValues,
     unknown,
     Schemas.Policies.CreateValues
   >({
@@ -126,7 +126,7 @@ export default function CreatePolicyForm({
 
       const newSchema = Schemas.Policies.composePolicySchema<
         Schemas.Policies.CreateValues,
-        Schemas.Policies.CreateInputValues
+        Schemas.Policies.CreateFormValues
       >(newSelection, { product: true })
       form.reset(Schemas.Policies.getCreateSchemaDefaults(newSchema), {
         keepDefaultValues: false,
@@ -513,7 +513,7 @@ function TemplatesSelectionForm({
 
 interface TemplatesFormProps {
   form: UseFormReturn<
-    Schemas.Policies.CreateInputValues,
+    Schemas.Policies.CreateFormValues,
     unknown,
     Schemas.Policies.CreateValues
   >
@@ -880,7 +880,7 @@ function TemplatesForm({
 
 interface ScratchFormProps {
   form: UseFormReturn<
-    Schemas.Policies.CreateInputValues,
+    Schemas.Policies.CreateFormValues,
     unknown,
     Schemas.Policies.CreateValues
   >

@@ -64,9 +64,9 @@ export const UpdateSchema: z.ZodType<
   Partial<z.input<typeof BaseShape>>
 > = BaseSchema
 
-export type BaseInputValues = z.input<typeof BaseSchema>
-export type CreateInputValues = z.input<typeof CreateSchema>
-export type UpdateInputValues = z.input<typeof UpdateSchema>
+export type BaseFormValues = z.input<typeof BaseSchema>
+export type CreateFormValues = z.input<typeof CreateSchema>
+export type UpdateFormValues = z.input<typeof UpdateSchema>
 
 const StrategyShape = BaseShape.pick({ distributionStrategy: true })
 const StrategyRules = (

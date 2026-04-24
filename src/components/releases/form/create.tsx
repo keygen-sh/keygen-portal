@@ -38,7 +38,7 @@ export default function CreateReleaseForm({
   onOpenChange,
 }: CreateReleaseFormProps) {
   const form = useForm<
-    Schemas.Releases.CreateInputValues,
+    Schemas.Releases.CreateFormValues,
     unknown,
     Schemas.Releases.CreateValues
   >({

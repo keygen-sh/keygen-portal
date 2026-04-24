@@ -30,7 +30,7 @@ export default function CreateArtifactForm({
   } | null>(null)
 
   const form = useForm<
-    Schemas.Artifacts.CreateInputValues,
+    Schemas.Artifacts.CreateFormValues,
     unknown,
     Schemas.Artifacts.CreateValues
   >({

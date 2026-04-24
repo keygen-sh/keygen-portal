@@ -22,7 +22,7 @@ export default function CreateComponentForm({
   onOpenChange,
 }: CreateComponentFormProps) {
   const form = useForm<
-    Schemas.Components.CreateInputValues,
+    Schemas.Components.CreateFormValues,
     unknown,
     Schemas.Components.CreateValues
   >({

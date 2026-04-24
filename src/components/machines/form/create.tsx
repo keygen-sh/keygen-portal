@@ -27,7 +27,7 @@ export default function CreateMachineForm({
   onOpenChange,
 }: CreateMachineFormProps) {
   const form = useForm<
-    Schemas.Machines.CreateInputValues,
+    Schemas.Machines.CreateFormValues,
     unknown,
     Schemas.Machines.CreateValues
   >({

@@ -767,7 +767,7 @@ function MetadataField({
   descriptions: Descriptions
   mode?: PolicyMode
 }) {
-  const form = useFormContext<Schemas.Policies.AllInputValues>()
+  const form = useFormContext<Schemas.Policies.AllFormValues>()
   const { metadata } = form.getValues()
   const shouldMount = useDeferredMount({
     delay: mode === PolicyMode.Create ? 0 : 500,
@@ -800,7 +800,7 @@ function MetadataField({
             tooltip={descriptions.metadata}
           >
             <FormControl>
-              <KeyValueInput<Schemas.Policies.AllInputValues>
+              <KeyValueInput<Schemas.Policies.AllFormValues>
                 name="metadata"
                 autoFocus={autoFocus}
               />

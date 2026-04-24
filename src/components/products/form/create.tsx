@@ -27,7 +27,7 @@ export default function CreateProductForm({
   onOpenChange,
 }: CreateProductFormProps) {
   const form = useForm<
-    Schemas.Products.CreateInputValues,
+    Schemas.Products.CreateFormValues,
     unknown,
     Schemas.Products.CreateValues
   >({

@@ -22,7 +22,7 @@ export default function CreateProcessForm({
   onOpenChange,
 }: CreateProcessFormProps) {
   const form = useForm<
-    Schemas.Processes.CreateInputValues,
+    Schemas.Processes.CreateFormValues,
     unknown,
     Schemas.Processes.CreateValues
   >({

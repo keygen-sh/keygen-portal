@@ -27,7 +27,7 @@ export default function EditProcessForm({
   const updateProcess = useUpdateProcess(process?.id ?? "")
 
   const form = useForm<
-    Schemas.Processes.UpdateInputValues,
+    Schemas.Processes.UpdateFormValues,
     unknown,
     Schemas.Processes.UpdateValues
   >({

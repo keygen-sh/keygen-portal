@@ -30,7 +30,7 @@ export default function EditPackageForm({
   const updatePackage = useUpdatePackage(pkg?.id ?? "")
 
   const form = useForm<
-    Schemas.Packages.UpdateInputValues,
+    Schemas.Packages.UpdateFormValues,
     unknown,
     Schemas.Packages.UpdateValues
   >({

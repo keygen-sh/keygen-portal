@@ -36,7 +36,7 @@ export default function EditMachineForm({
   const changeOwner = useChangeMachineOwner()
 
   const form = useForm<
-    Schemas.Machines.UpdateInputValues,
+    Schemas.Machines.UpdateFormValues,
     unknown,
     Schemas.Machines.UpdateValues
   >({

@@ -47,7 +47,7 @@ export default function EditReleaseForm({
   const currentPackageId = release?.relationships.package?.data?.id ?? null
 
   const form = useForm<
-    Schemas.Releases.UpdateInputValues,
+    Schemas.Releases.UpdateFormValues,
     unknown,
     Schemas.Releases.UpdateValues
   >({

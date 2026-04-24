@@ -46,7 +46,7 @@ export default function EditPolicyForm({
   const detachEntitlements = useDetachPolicyEntitlements()
 
   const form = useForm<
-    Schemas.Policies.UpdateInputValues,
+    Schemas.Policies.UpdateFormValues,
     unknown,
     Schemas.Policies.UpdateValues
   >({

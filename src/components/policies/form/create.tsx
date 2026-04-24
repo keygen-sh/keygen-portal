@@ -87,8 +87,8 @@ export default function CreatePolicyForm({
   const schema = useMemo(
     () =>
       Schemas.Policies.composePolicySchema<
-        Schemas.Policies.CreateValues,
-        Schemas.Policies.CreateFormValues
+        Schemas.Policies.CreateFormValues,
+        Schemas.Policies.CreateValues
       >(
         {
           timing: selection?.timing ?? null,
@@ -124,8 +124,8 @@ export default function CreatePolicyForm({
       setSelection(newSelection)
 
       const newSchema = Schemas.Policies.composePolicySchema<
-        Schemas.Policies.CreateValues,
-        Schemas.Policies.CreateFormValues
+        Schemas.Policies.CreateFormValues,
+        Schemas.Policies.CreateValues
       >(newSelection, { product: true })
       form.reset(Schemas.Policies.getCreateSchemaDefaults(newSchema), {
         keepDefaultValues: false,

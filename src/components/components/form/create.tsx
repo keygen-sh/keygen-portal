@@ -1,12 +1,12 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 import * as Schemas from "@/schemas"
 import { useCreateComponent } from "@/queries/components"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { toast } from "@/lib/toast"
-import { transformingZodResolver } from "@/lib/form"
 
 import * as Forms from "@/components/forms"
 import * as Components from "@/components/components"
@@ -26,7 +26,7 @@ export default function CreateComponentForm({
     unknown,
     Schemas.Components.CreateValues
   >({
-    resolver: transformingZodResolver(Schemas.Components.CreateSchema),
+    resolver: zodResolver(Schemas.Components.CreateSchema),
     mode: "onChange",
     defaultValues: {
       fingerprint: "",

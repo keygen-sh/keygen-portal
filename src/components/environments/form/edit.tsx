@@ -26,7 +26,11 @@ export default function EditEnvironmentForm({
 }: EditEnvironmentFormProps) {
   const updateEnvironment = useUpdateEnvironment(environment.id)
 
-  const form = useForm<Schemas.Environments.UpdateValues>({
+  const form = useForm<
+    Schemas.Environments.UpdateFormValues,
+    unknown,
+    Schemas.Environments.UpdateValues
+  >({
     resolver: zodResolver(Schemas.Environments.UpdateSchema),
     mode: "onChange",
     values: {

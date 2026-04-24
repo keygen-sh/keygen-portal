@@ -1,5 +1,6 @@
 import { useCallback } from "react"
 import { useForm, useWatch } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Award, Lock, Unlock } from "lucide-react"
 
@@ -10,7 +11,6 @@ import { useCreateProduct } from "@/queries/products"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { toast } from "@/lib/toast"
-import { transformingZodResolver } from "@/lib/form"
 
 import * as Forms from "@/components/forms"
 import * as Products from "@/components/products"
@@ -31,7 +31,7 @@ export default function CreateProductForm({
     unknown,
     Schemas.Products.CreateValues
   >({
-    resolver: transformingZodResolver(Schemas.Products.CreateSchema),
+    resolver: zodResolver(Schemas.Products.CreateSchema),
     mode: "onChange",
     defaultValues: {
       name: "",

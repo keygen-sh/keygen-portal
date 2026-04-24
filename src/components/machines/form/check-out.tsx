@@ -66,7 +66,11 @@ export default function CheckOutMachineForm({
   const [showResult, setShowResult] = useState(false)
   const [certificate, setCertificate] = useState("")
 
-  const form = useForm<Schemas.Machines.CheckOutValues>({
+  const form = useForm<
+    Schemas.Machines.CheckOutFormValues,
+    unknown,
+    Schemas.Machines.CheckOutValues
+  >({
     resolver: zodResolver(Schemas.Machines.CheckOutSchema),
     mode: "onChange",
     defaultValues: {
@@ -88,11 +92,12 @@ export default function CheckOutMachineForm({
     control: form.control,
     name: "encryptEnabled",
   })
-  const include = useWatch({
-    control: form.control,
-    name: "include",
-  })
-  const ttl = useWatch({ control: form.control, name: "ttl" })
+  const include =
+    useWatch({
+      control: form.control,
+      name: "include",
+    }) ?? []
+  const ttl = useWatch({ control: form.control, name: "ttl" }) ?? null
   const algorithm = useWatch({ control: form.control, name: "algorithm" })
 
   const handleCheckOut = useCallback(

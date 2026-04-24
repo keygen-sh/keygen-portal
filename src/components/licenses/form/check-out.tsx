@@ -64,7 +64,11 @@ export default function CheckOutLicenseForm({
   const [showResult, setShowResult] = useState(false)
   const [certificate, setCertificate] = useState("")
 
-  const form = useForm<Schemas.Licenses.CheckOutValues>({
+  const form = useForm<
+    Schemas.Licenses.CheckOutFormValues,
+    unknown,
+    Schemas.Licenses.CheckOutValues
+  >({
     resolver: zodResolver(Schemas.Licenses.CheckOutSchema),
     mode: "onChange",
     defaultValues: {
@@ -86,11 +90,12 @@ export default function CheckOutLicenseForm({
     control: form.control,
     name: "encryptEnabled",
   })
-  const include = useWatch({
-    control: form.control,
-    name: "include",
-  })
-  const ttl = useWatch({ control: form.control, name: "ttl" })
+  const include =
+    useWatch({
+      control: form.control,
+      name: "include",
+    }) ?? []
+  const ttl = useWatch({ control: form.control, name: "ttl" }) ?? null
   const algorithm = useWatch({ control: form.control, name: "algorithm" })
 
   const handleCheckOut = useCallback(

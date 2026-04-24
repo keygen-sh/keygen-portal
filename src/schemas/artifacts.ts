@@ -44,42 +44,12 @@ const UpdateShape = z.object({
   metadata: MetadataPairsSchema,
 })
 
-const BaseRules = <
-  S extends z.ZodType<BaseValues, z.ZodTypeDef, z.input<typeof BaseShape>>,
->(
-  schema: S,
-): S => {
+const BaseRules = <S extends z.ZodTypeAny>(schema: S): S => {
   return schema
 }
-export const BaseSchema: z.ZodType<
-  BaseValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape>
-> = BaseRules(BaseShape)
-export const CreateSchema: z.ZodType<
-  CreateValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape> & z.input<typeof ReleaseShape>
-> = BaseRules(
-  BaseShape.merge(ReleaseShape) as unknown as z.ZodType<
-    BaseValues,
-    z.ZodTypeDef,
-    z.input<typeof BaseShape>
-  >,
-) as unknown as z.ZodType<
-  CreateValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape> & z.input<typeof ReleaseShape>
->
-export const UpdateSchema: z.ZodType<
-  UpdateValues,
-  z.ZodTypeDef,
-  z.input<typeof UpdateShape>
-> = UpdateShape as unknown as z.ZodType<
-  UpdateValues,
-  z.ZodTypeDef,
-  z.input<typeof UpdateShape>
->
+export const BaseSchema = BaseRules(BaseShape)
+export const CreateSchema = BaseRules(BaseShape.merge(ReleaseShape))
+export const UpdateSchema = UpdateShape
 
 export type BaseFormValues = z.input<typeof BaseSchema>
 export type CreateFormValues = z.input<typeof CreateSchema>

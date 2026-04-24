@@ -1,8 +1,8 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
 
-import { transformingZodResolver } from "@/lib/form"
 import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import { Separator } from "@/components/ui/separator"
@@ -51,7 +51,7 @@ export default function EditReleaseForm({
     unknown,
     Schemas.Releases.UpdateValues
   >({
-    resolver: transformingZodResolver(Schemas.Releases.UpdateSchema),
+    resolver: zodResolver(Schemas.Releases.UpdateSchema),
     mode: "onChange",
     values: {
       name: release?.attributes.name ?? "",

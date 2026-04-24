@@ -2,8 +2,6 @@ import { useState, useMemo, useCallback } from "react"
 import { useForm, UseFormReturn } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { transformingZodResolver } from "@/lib/form"
-
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -108,7 +106,7 @@ export default function CreatePolicyForm({
     unknown,
     Schemas.Policies.CreateValues
   >({
-    resolver: transformingZodResolver(schema),
+    resolver: zodResolver(schema),
     defaultValues: Schemas.Policies.getCreateSchemaDefaults(schema),
   })
 
@@ -262,7 +260,11 @@ function TemplatesSelectionForm({
 }: TemplatesSelectionFormProps) {
   const isMobile = useMobile()
 
-  const form = useForm<Schemas.Policies.TemplateValues>({
+  const form = useForm<
+    Schemas.Policies.TemplateFormValues,
+    unknown,
+    Schemas.Policies.TemplateValues
+  >({
     resolver: zodResolver(Schemas.Policies.TemplateSchema),
     defaultValues: {
       timing: null,

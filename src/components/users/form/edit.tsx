@@ -1,5 +1,6 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
 
 import { Separator } from "@/components/ui/separator"
@@ -10,7 +11,6 @@ import { UserRole } from "@/types/users"
 import { useGetUser, useUpdateUser, useChangeUserGroup } from "@/queries/users"
 
 import { toast } from "@/lib/toast"
-import { transformingZodResolver } from "@/lib/form"
 import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
@@ -35,7 +35,7 @@ export default function EditUserForm({
     unknown,
     Schemas.Users.UpdateValues
   >({
-    resolver: transformingZodResolver(Schemas.Users.UpdateSchema),
+    resolver: zodResolver(Schemas.Users.UpdateSchema),
     mode: "onChange",
     values: {
       email: user?.attributes.email ?? "",

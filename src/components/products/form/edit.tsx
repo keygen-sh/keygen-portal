@@ -1,5 +1,6 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
 
 import { Separator } from "@/components/ui/separator"
@@ -10,7 +11,6 @@ import { DistributionStrategy } from "@/types/products"
 import { useGetProduct, useUpdateProduct } from "@/queries/products"
 
 import { toast } from "@/lib/toast"
-import { transformingZodResolver } from "@/lib/form"
 import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
@@ -35,7 +35,7 @@ export default function EditProductForm({
     unknown,
     Schemas.Products.UpdateValues
   >({
-    resolver: transformingZodResolver(Schemas.Products.UpdateSchema),
+    resolver: zodResolver(Schemas.Products.UpdateSchema),
     mode: "onChange",
     values: {
       name: product?.attributes.name,

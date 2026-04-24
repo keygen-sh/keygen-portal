@@ -1,7 +1,6 @@
 import { useCallback } from "react"
 import { useForm, useWatch } from "react-hook-form"
-
-import { transformingZodResolver } from "@/lib/form"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 import {
   Binary,
@@ -42,7 +41,7 @@ export default function CreateReleaseForm({
     unknown,
     Schemas.Releases.CreateValues
   >({
-    resolver: transformingZodResolver(Schemas.Releases.CreateSchema),
+    resolver: zodResolver(Schemas.Releases.CreateSchema),
     mode: "onChange",
     defaultValues: {
       name: "",

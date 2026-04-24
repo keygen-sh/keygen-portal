@@ -1,12 +1,12 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
 
 import * as Schemas from "@/schemas"
 import { useGetProcess, useUpdateProcess } from "@/queries/processes"
 
 import { toast } from "@/lib/toast"
-import { transformingZodResolver } from "@/lib/form"
 import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
@@ -31,7 +31,7 @@ export default function EditProcessForm({
     unknown,
     Schemas.Processes.UpdateValues
   >({
-    resolver: transformingZodResolver(Schemas.Processes.UpdateSchema),
+    resolver: zodResolver(Schemas.Processes.UpdateSchema),
     mode: "onChange",
     values: {
       metadata: recordToMetadataPairs(process?.attributes.metadata),

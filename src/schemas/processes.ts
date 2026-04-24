@@ -31,35 +31,11 @@ const MachineRelationshipShape = z.object({
   machineId: z.string().min(1, "Machine is required"),
 })
 
-export const BaseSchema: z.ZodType<
-  BaseValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape>
-> = BaseShape as unknown as z.ZodType<
-  BaseValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape>
->
-export const CreateSchema: z.ZodType<
-  CreateValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape> &
-    z.input<typeof PidShape> &
-    z.input<typeof MachineRelationshipShape>
-> = BaseShape.merge(PidShape).merge(
+export const BaseSchema = BaseShape
+export const CreateSchema = BaseShape.merge(PidShape).merge(
   MachineRelationshipShape,
-) as unknown as z.ZodType<
-  CreateValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape> &
-    z.input<typeof PidShape> &
-    z.input<typeof MachineRelationshipShape>
->
-export const UpdateSchema: z.ZodType<
-  UpdateValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape>
-> = BaseSchema
+)
+export const UpdateSchema = BaseSchema
 
 export type BaseFormValues = z.input<typeof BaseSchema>
 export type CreateFormValues = z.input<typeof CreateSchema>

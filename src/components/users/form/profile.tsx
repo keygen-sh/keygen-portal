@@ -23,7 +23,11 @@ export default function EditProfileForm({
   const { data: user } = useGetCurrentUser()
   const updateUser = useUpdateCurrentUser()
 
-  const form = useForm<Schemas.Users.UpdateValues>({
+  const form = useForm<
+    Schemas.Users.UpdateFormValues,
+    unknown,
+    Schemas.Users.UpdateValues
+  >({
     resolver: zodResolver(Schemas.Users.UpdateSchema),
     mode: "onChange",
     values: {

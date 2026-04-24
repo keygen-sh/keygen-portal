@@ -71,9 +71,13 @@ const ProductShape = z.object({
   productId: z.string().min(1, "Product is required"),
 })
 
-const BaseRules = <S extends z.ZodTypeAny>(schema: S): S =>
-  schema.superRefine(
-    (data: { version: string; channel: ReleaseChannel }, ctx) => {
+const CreateShape = BaseShape.merge(ProductShape)
+
+type AnyShape = typeof BaseShape | typeof CreateShape
+
+const BaseRules = <S extends AnyShape>(schema: S): S =>
+  (schema as typeof BaseShape).superRefine(
+    (data: { version: string; channel: ReleaseChannel }, ctx: z.RefinementCtx) => {
       const version = semver.parse(data.version)
       if (!version) {
         return
@@ -103,7 +107,7 @@ const BaseRules = <S extends z.ZodTypeAny>(schema: S): S =>
   ) as unknown as S
 
 export const BaseSchema = BaseRules(BaseShape)
-export const CreateSchema = BaseRules(BaseShape.merge(ProductShape))
+export const CreateSchema = BaseRules(CreateShape)
 export const UpdateSchema = BaseShape.partial()
 
 export type BaseFormValues = z.input<typeof BaseSchema>

@@ -22,7 +22,7 @@ export type FieldNames = FieldPath<AllValues>
 
 const BaseShape = z.object({})
 
-const BaseRules = <S extends z.ZodTypeAny>(schema: S): S => {
+const BaseRules = <S extends typeof BaseShape>(schema: S): S => {
   // Custom rules can be added here in the future, e.g.
   // schema.refine(...)
   return schema
@@ -35,7 +35,7 @@ const UpdateShape = z.object({
   slug: z.string().trim().min(1, "Slug is required"),
 })
 
-const UpdateRules = <S extends z.ZodTypeAny>(schema: S): S => {
+const UpdateRules = <S extends typeof UpdateShape>(schema: S): S => {
   return schema
 }
 
@@ -46,7 +46,7 @@ const DeveloperShape = z.object({
   protected: z.boolean(),
 })
 
-const DeveloperRules = <S extends z.ZodTypeAny>(schema: S): S => {
+const DeveloperRules = <S extends typeof DeveloperShape>(schema: S): S => {
   return schema
 }
 
@@ -57,7 +57,7 @@ const PermissionsShape = z.object({
   defaultLicensePermissions: z.array(z.string()).nullable().optional(),
 })
 
-const PermissionsRules = <S extends z.ZodTypeAny>(schema: S): S => {
+const PermissionsRules = <S extends typeof PermissionsShape>(schema: S): S => {
   return schema
 }
 

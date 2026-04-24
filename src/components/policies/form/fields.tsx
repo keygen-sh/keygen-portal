@@ -768,7 +768,7 @@ function MetadataField({
   mode?: PolicyMode
 }) {
   const form = useFormContext<Schemas.Policies.AllFormValues>()
-  const { metadata } = form.getValues()
+  const { metadata = [] } = form.getValues()
   const shouldMount = useDeferredMount({
     delay: mode === PolicyMode.Create ? 0 : 500,
   })
@@ -777,7 +777,7 @@ function MetadataField({
     return (
       <div className="space-y-2">
         <Skeleton className="h-5 w-48 rounded-sm" />
-        {(metadata ?? []).map((_, i) => (
+        {metadata.map((_, i) => (
           <div key={i} className="flex space-x-2">
             <Skeleton className="h-9 w-1/2 rounded-sm" />
             <Skeleton className="h-9 w-1/2 rounded-sm" />

@@ -71,49 +71,40 @@ const ProductShape = z.object({
   productId: z.string().min(1, "Product is required"),
 })
 
-const versionChannelRefinement = (
-  data: { version: string; channel: ReleaseChannel },
-  ctx: z.RefinementCtx,
-) => {
-  const version = semver.parse(data.version)
-  if (!version) {
-    return
-  }
+const BaseRules = <S extends z.ZodTypeAny>(schema: S): S =>
+  schema.superRefine(
+    (data: { version: string; channel: ReleaseChannel }, ctx) => {
+      const version = semver.parse(data.version)
+      if (!version) {
+        return
+      }
 
-  const preTag =
-    version.prerelease.length > 0 ? String(version.prerelease[0]) : null
+      const preTag =
+        version.prerelease.length > 0 ? String(version.prerelease[0]) : null
 
-  if (data.channel === ReleaseChannel.Stable) {
-    if (preTag !== null) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Stable versions must not include a prerelease tag",
-        path: ["version"],
-      })
-    }
-  } else {
-    if (preTag !== data.channel) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `Version must include a -${data.channel}.x prerelease tag`,
-        path: ["version"],
-      })
-    }
-  }
-}
+      if (data.channel === ReleaseChannel.Stable) {
+        if (preTag !== null) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Stable versions must not include a prerelease tag",
+            path: ["version"],
+          })
+        }
+      } else {
+        if (preTag !== data.channel) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `Version must include a -${data.channel}.x prerelease tag`,
+            path: ["version"],
+          })
+        }
+      }
+    },
+  ) as unknown as S
 
-export const BaseSchema = BaseShape.superRefine(versionChannelRefinement)
-export const CreateSchema = BaseShape.merge(ProductShape).superRefine(
-  versionChannelRefinement,
-)
-export const UpdateSchema = BaseShape.partial().superRefine((data, ctx) => {
-  // Only validate version/channel when both are present in the partial update.
-  if (data.version == null || data.channel == null) return
-  versionChannelRefinement(
-    { version: data.version, channel: data.channel },
-    ctx,
-  )
-})
+export const BaseSchema = BaseRules(BaseShape)
+export const CreateSchema = BaseRules(BaseShape.merge(ProductShape))
+export const UpdateSchema = BaseShape.partial()
 
 export type BaseFormValues = z.input<typeof BaseSchema>
 export type CreateFormValues = z.input<typeof CreateSchema>

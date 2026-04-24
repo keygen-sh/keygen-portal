@@ -24,21 +24,25 @@ const BaseShape = z.object({
     IsolationStrategy.Shared,
   ]),
 })
-const BaseRules = <S extends z.ZodTypeAny>(schema: S): S => {
+const UpdateShape = BaseShape.partial()
+
+type AnyShape = typeof BaseShape | typeof UpdateShape
+
+const BaseRules = <S extends AnyShape>(schema: S): S => {
   // Custom rules can be added here in the future, e.g.
   // schema.refine(...)
   return schema
 }
 export const BaseSchema = BaseRules(BaseShape)
 export const CreateSchema = BaseSchema
-export const UpdateSchema = BaseRules(BaseShape.partial())
+export const UpdateSchema = BaseRules(UpdateShape)
 
 export type BaseFormValues = z.input<typeof BaseSchema>
 export type CreateFormValues = z.input<typeof CreateSchema>
 export type UpdateFormValues = z.input<typeof UpdateSchema>
 
 const StrategyShape = BaseShape.pick({ isolationStrategy: true })
-const StrategyRules = <S extends z.ZodTypeAny>(schema: S): S => {
+const StrategyRules = <S extends typeof StrategyShape>(schema: S): S => {
   // schema.refine(...)
   return schema
 }
@@ -46,7 +50,7 @@ export const StrategySchema = StrategyRules(StrategyShape)
 export type StrategyValues = z.infer<typeof StrategySchema>
 
 const AttributesShape = BaseShape.omit({ isolationStrategy: true })
-const AttributesRules = <S extends z.ZodTypeAny>(schema: S): S => {
+const AttributesRules = <S extends typeof AttributesShape>(schema: S): S => {
   // schema.refine(...)
   return schema
 }

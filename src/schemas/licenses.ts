@@ -102,13 +102,17 @@ const PolicyShape = z.object({
   policyId: z.string().min(1, "Policy is required"),
 })
 
-const BaseRules = <S extends z.ZodTypeAny>(schema: S): S => {
+const CreateShape = BaseShape.merge(PolicyShape)
+
+type AnyShape = typeof BaseShape | typeof CreateShape
+
+const BaseRules = <S extends AnyShape>(schema: S): S => {
   // Custom rules can be added here in the future, e.g.
   // schema.refine(...)
   return schema
 }
 export const BaseSchema = BaseRules(BaseShape)
-export const CreateSchema = BaseRules(BaseShape.merge(PolicyShape))
+export const CreateSchema = BaseRules(CreateShape)
 export const UpdateSchema = BaseSchema
 
 export type BaseFormValues = z.input<typeof BaseSchema>
@@ -133,7 +137,7 @@ const CheckOutShape = z.object({
   algorithm: z.string().default(SigningAlgorithm.Ed25519),
 })
 
-const CheckOutRules = <S extends z.ZodTypeAny>(schema: S): S => {
+const CheckOutRules = <S extends typeof CheckOutShape>(schema: S): S => {
   return schema
 }
 

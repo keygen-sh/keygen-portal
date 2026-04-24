@@ -34,16 +34,20 @@ const MachineRelationshipShape = z.object({
   machineId: z.string().min(1, "Machine is required"),
 })
 
-const BaseRules = <S extends z.ZodTypeAny>(schema: S): S => {
+const CreateShape = BaseShape.merge(FingerprintShape).merge(
+  MachineRelationshipShape,
+)
+
+type AnyShape = typeof BaseShape | typeof CreateShape
+
+const BaseRules = <S extends AnyShape>(schema: S): S => {
   // Custom rules can be added here in the future, e.g.
   // schema.refine(...)
   return schema
 }
 
 export const BaseSchema = BaseRules(BaseShape)
-export const CreateSchema = BaseRules(
-  BaseShape.merge(FingerprintShape).merge(MachineRelationshipShape),
-)
+export const CreateSchema = BaseRules(CreateShape)
 export const UpdateSchema = BaseSchema
 
 export type BaseFormValues = z.input<typeof BaseSchema>

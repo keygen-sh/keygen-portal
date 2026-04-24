@@ -25,7 +25,11 @@ const BaseShape = z.object({
   metadata: MetadataPairsSchema,
 })
 
-const BaseRules = <S extends z.ZodTypeAny>(schema: S): S => {
+const UpdateShape = BaseShape.partial()
+
+type AnyShape = typeof BaseShape | typeof UpdateShape
+
+const BaseRules = <S extends AnyShape>(schema: S): S => {
   // Custom rules can be added here in the future, e.g.
   // schema.refine(...)
   return schema
@@ -33,7 +37,7 @@ const BaseRules = <S extends z.ZodTypeAny>(schema: S): S => {
 
 export const BaseSchema = BaseRules(BaseShape)
 export const CreateSchema = BaseSchema
-export const UpdateSchema = BaseRules(BaseShape.partial())
+export const UpdateSchema = BaseRules(UpdateShape)
 
 export type BaseFormValues = z.input<typeof BaseSchema>
 export type CreateFormValues = z.input<typeof CreateSchema>

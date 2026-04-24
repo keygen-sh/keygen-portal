@@ -92,26 +92,27 @@ export default function KeyValueInput<
         // reset the value when changing to a more restricted type, but
         // keep it when switching between string and json so in-progress
         // work is not lost.
-        let nextValue = row.value
+        let { value } = row
+
         if (type === "boolean") {
-          nextValue = row.value === "true" ? "true" : "false"
+          value = value === "true" ? "true" : "false"
         } else if (type === "null") {
-          nextValue = ""
+          value = ""
         } else if (
           type === "json" &&
           row.type !== "json" &&
           row.type !== "string"
         ) {
-          nextValue = ""
+          value = ""
         } else if (
           row.type === "json" &&
           type !== "json" &&
           type !== "string"
         ) {
-          nextValue = ""
+          value = ""
         }
 
-        return { ...row, type, value: nextValue }
+        return { ...row, type, value }
       }),
     )
   }

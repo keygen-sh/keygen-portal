@@ -107,6 +107,7 @@ export default function CreatePolicyForm({
     Schemas.Policies.CreateValues
   >({
     resolver: zodResolver(schema),
+    mode: "onChange",
     defaultValues: Schemas.Policies.getCreateSchemaDefaults(schema),
   })
 

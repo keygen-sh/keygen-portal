@@ -14,6 +14,8 @@ import { BillingState } from "@/types/billings"
 
 import { useGetAccount, useGetAccountBilling } from "@/queries/accounts"
 
+import { DATE_FORMAT } from "@/lib/billing"
+
 import * as keygen from "@/keygen"
 
 type StateContent = {
@@ -27,7 +29,7 @@ const STATE_CONTENT: Partial<Record<BillingState, StateContent>> = {
     title: "Your free trial ends soon",
     description: (end) =>
       end
-        ? `Your trial ends on ${formatDate(new Date(end), "MM/dd/yyyy")}. Upgrade to keep full access.`
+        ? `Your trial ends on ${formatDate(new Date(end), DATE_FORMAT)}. Upgrade to keep full access.`
         : "Upgrade today to enjoy the full set of features from Keygen.",
     ctaLabel: "Upgrade",
   },
@@ -40,7 +42,7 @@ const STATE_CONTENT: Partial<Record<BillingState, StateContent>> = {
     title: "Your subscription is ending",
     description: (end) =>
       end
-        ? `Access ends ${formatDate(new Date(end), "MM/dd/yyyy")}. Reactivate to keep your subscription.`
+        ? `Access ends ${formatDate(new Date(end), DATE_FORMAT)}. Reactivate to keep your subscription.`
         : "Access ends soon. Reactivate to keep your subscription.",
     ctaLabel: "Reactivate",
   },

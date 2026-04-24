@@ -21,6 +21,7 @@ import {
 } from "@/queries/accounts"
 
 import { toast } from "@/lib/toast"
+import { DATE_FORMAT, formatPrice, formatRange } from "@/lib/billing"
 
 import { PlanAttributeDescriptions } from "@/types/plans"
 import {
@@ -33,30 +34,6 @@ import {
 import * as Attribute from "@/components/attribute"
 import PageHeader from "@/components/page-header"
 import ConfirmationModal from "@/components/confirmation-modal"
-
-const DATE_FORMAT = "MM/dd/yyyy"
-
-function formatRange(start?: string | null, end?: string | null) {
-  if (!start || !end) return null
-
-  return `${formatDate(new Date(start), DATE_FORMAT)} - ${formatDate(
-    new Date(end),
-    DATE_FORMAT,
-  )}`
-}
-
-function formatPrice(price: number | null, interval: string | null) {
-  if (price == null) return "Custom"
-  if (price === 0) return "Free"
-
-  const amount = (price / 100).toLocaleString("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-  })
-
-  return interval ? `${amount} / ${interval}` : amount
-}
 
 export default function BillingPage() {
   const [confirmingCancel, setConfirmingCancel] = useState(false)
@@ -93,10 +70,7 @@ export default function BillingPage() {
 
       window.location.href = url
     } catch {
-      toast({
-        message: "Unable to open billing portal.",
-        variant: "error",
-      })
+      toast({ message: "Unable to open billing portal.", variant: "error" })
     }
   }
 
@@ -110,10 +84,7 @@ export default function BillingPage() {
       })
       setConfirmingCancel(false)
     } catch {
-      toast({
-        message: "Unable to cancel subscription.",
-        variant: "error",
-      })
+      toast({ message: "Unable to cancel subscription.", variant: "error" })
     }
   }
 

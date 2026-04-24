@@ -65,19 +65,14 @@ const MetadataPairShape = z.object({
 })
 
 export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
-  const trimmedKey = pair.key.trim()
-  const trimmedValue = pair.value.trim()
+  const key = pair.key.trim()
+  const value = pair.value.trim()
 
-  if (
-    !trimmedKey &&
-    !trimmedValue &&
-    pair.type !== "null" &&
-    pair.type !== "boolean"
-  ) {
+  if (!key && !value && pair.type !== "null" && pair.type !== "boolean") {
     return
   }
 
-  if (!trimmedKey) {
+  if (!key) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["key"],
@@ -91,7 +86,7 @@ export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
     case "null":
       return
     case "integer": {
-      if (!trimmedValue) {
+      if (!value) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["value"],
@@ -101,9 +96,9 @@ export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
         return
       }
 
-      const n = Number(trimmedValue)
+      const n = Number(value)
       if (
-        !INTEGER_PATTERN.test(trimmedValue) ||
+        !INTEGER_PATTERN.test(value) ||
         !Number.isFinite(n) ||
         !Number.isInteger(n)
       ) {
@@ -117,7 +112,7 @@ export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
       return
     }
     case "float": {
-      if (!trimmedValue) {
+      if (!value) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["value"],
@@ -127,8 +122,8 @@ export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
         return
       }
 
-      const n = Number.parseFloat(trimmedValue)
-      if (!FLOAT_PATTERN.test(trimmedValue) || !Number.isFinite(n)) {
+      const n = Number.parseFloat(value)
+      if (!FLOAT_PATTERN.test(value) || !Number.isFinite(n)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["value"],
@@ -139,7 +134,7 @@ export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
       return
     }
     case "json": {
-      if (!trimmedValue) {
+      if (!value) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["value"],
@@ -149,7 +144,7 @@ export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
         return
       }
 
-      const parsed = tryParseJson(trimmedValue)
+      const parsed = tryParseJson(value)
       if (!parsed) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -240,36 +235,36 @@ function metadataPairsToRecord(
   const out: Record<string, MetadataValue> = {}
 
   for (const pair of pairs) {
-    const trimmedKey = pair.key.trim()
-    if (!trimmedKey) {
+    const key = pair.key.trim()
+    if (!key) {
       continue
     }
 
     switch (pair.type) {
       case "string":
-        out[trimmedKey] = pair.value.trim()
+        out[key] = pair.value.trim()
 
         break
       case "integer":
-        out[trimmedKey] = Number(pair.value.trim())
+        out[key] = Number(pair.value.trim())
 
         break
       case "float":
-        out[trimmedKey] = Number.parseFloat(pair.value.trim())
+        out[key] = Number.parseFloat(pair.value.trim())
 
         break
       case "boolean":
-        out[trimmedKey] = pair.value === "true"
+        out[key] = pair.value === "true"
 
         break
       case "null":
-        out[trimmedKey] = null
+        out[key] = null
 
         break
       case "json": {
         const parsed = tryParseJson(pair.value)
         if (parsed) {
-          out[trimmedKey] = parsed.value
+          out[key] = parsed.value
         }
 
         break

@@ -5,11 +5,7 @@ import { Override } from "@/types/utility"
 import { SigningAlgorithm } from "@/types/files"
 import { CombineFormValues } from "@/types/forms"
 import { LicenseAttributes, LicenseFileAttributes } from "@/types/licenses"
-import {
-  MetadataPairsSchema,
-  WithMetadataInput,
-  type MetadataPair,
-} from "@/schemas/metadata"
+import { MetadataPairsSchema } from "@/schemas/metadata"
 
 export type BaseValues = Partial<
   Override<
@@ -53,18 +49,6 @@ export type AllValues = CombineFormValues<
   CreateValues,
   UpdateValues
 >
-
-export type BaseInputValues = Omit<
-  WithMetadataInput<BaseValues>,
-  "entitlements"
-> & {
-  entitlements?: {
-    attach?: string[]
-    create?: { name: string; code: string; metadata?: MetadataPair[] }[]
-  }
-}
-export type CreateInputValues = BaseInputValues & { policyId: string }
-export type UpdateInputValues = Partial<BaseInputValues>
 
 export type FieldNames = Exclude<FieldPath<AllValues>, "entitlements" | "users">
 
@@ -119,7 +103,7 @@ const PolicyShape = z.object({
 })
 
 const BaseRules = <
-  S extends z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>,
+  S extends z.ZodType<BaseValues, z.ZodTypeDef, z.input<typeof BaseShape>>,
 >(
   schema: S,
 ): S => {
@@ -127,30 +111,41 @@ const BaseRules = <
   // schema.refine(...)
   return schema
 }
-export const BaseSchema: z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues> =
-  BaseRules(
-    BaseShape as unknown as z.ZodType<
-      BaseValues,
-      z.ZodTypeDef,
-      BaseInputValues
-    >,
-  )
+export const BaseSchema: z.ZodType<
+  BaseValues,
+  z.ZodTypeDef,
+  z.input<typeof BaseShape>
+> = BaseRules(
+  BaseShape as unknown as z.ZodType<
+    BaseValues,
+    z.ZodTypeDef,
+    z.input<typeof BaseShape>
+  >,
+)
 export const CreateSchema: z.ZodType<
   CreateValues,
   z.ZodTypeDef,
-  CreateInputValues
+  z.input<typeof BaseShape> & z.input<typeof PolicyShape>
 > = BaseRules(
   BaseShape.merge(PolicyShape) as unknown as z.ZodType<
     BaseValues,
     z.ZodTypeDef,
-    BaseInputValues
+    z.input<typeof BaseShape>
   >,
-) as unknown as z.ZodType<CreateValues, z.ZodTypeDef, CreateInputValues>
+) as unknown as z.ZodType<
+  CreateValues,
+  z.ZodTypeDef,
+  z.input<typeof BaseShape> & z.input<typeof PolicyShape>
+>
 export const UpdateSchema: z.ZodType<
   UpdateValues,
   z.ZodTypeDef,
-  UpdateInputValues
+  Partial<z.input<typeof BaseShape>>
 > = BaseSchema
+
+export type BaseInputValues = z.input<typeof BaseSchema>
+export type CreateInputValues = z.input<typeof CreateSchema>
+export type UpdateInputValues = z.input<typeof UpdateSchema>
 
 export type CheckOutValues = Pick<
   LicenseFileAttributes,

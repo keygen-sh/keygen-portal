@@ -23,12 +23,7 @@ import {
   HeartbeatCullStrategy,
   HeartbeatResurrectionStrategy,
 } from "@/types/policies"
-import {
-  MetadataPairsSchema,
-  WithMetadataInput,
-  recordToMetadataPairs,
-  type MetadataPair,
-} from "@/schemas/metadata"
+import { MetadataPairsSchema, recordToMetadataPairs } from "@/schemas/metadata"
 
 export type BaseValues = Writable<OptionalExcept<PolicyAttributes, "name">> & {
   entitlements?: {
@@ -48,29 +43,16 @@ export type AllValues = CombineFormValues<
   UpdateValues
 >
 
-export type BaseInputValues = Omit<
-  WithMetadataInput<BaseValues>,
-  "entitlements"
-> & {
-  entitlements?: {
-    attach?: string[]
-    create?: { name: string; code: string; metadata?: MetadataPair[] }[]
-  }
-}
-export type CreateInputValues = BaseInputValues & { product: { id: string } }
-export type UpdateInputValues = Partial<BaseInputValues>
-export type AllInputValues = CombineFormValues<
-  BaseInputValues,
-  CreateInputValues,
-  UpdateInputValues
->
-
 export type FieldNames = Exclude<
   FieldPath<AllValues>,
   "scheme" | "encrypted" | "entitlements" | "product.id"
 >
 
-type PolicySchema = z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues>
+type PolicySchema = z.ZodType<
+  BaseValues,
+  z.ZodTypeDef,
+  z.input<typeof BaseShape>
+>
 
 export const BaseShape = z.object({
   name: z.string().trim().min(1, "Policy name is required"),
@@ -120,6 +102,7 @@ export const BaseShape = z.object({
     .nullish()
     .transform((value) => (value == null ? value : value === 0 ? null : value)),
   maxUses: z.coerce.number().int().positive().nullish(),
+  maxCores: z.coerce.number().int().positive().nullish(),
   protected: z.boolean().default(true),
 
   requireHeartbeat: z.boolean().default(false),
@@ -349,20 +332,36 @@ export const ProductShape = z.object({
   }),
 })
 
-export const BaseSchema: z.ZodType<BaseValues, z.ZodTypeDef, BaseInputValues> =
-  BaseRules(BaseShape as unknown as PolicySchema)
+export const BaseSchema: z.ZodType<
+  BaseValues,
+  z.ZodTypeDef,
+  z.input<typeof BaseShape>
+> = BaseRules(BaseShape as unknown as PolicySchema)
 export const CreateSchema: z.ZodType<
   CreateValues,
   z.ZodTypeDef,
-  CreateInputValues
+  z.input<typeof BaseShape> & z.input<typeof ProductShape>
 > = BaseRules(
   BaseShape.merge(ProductShape) as unknown as PolicySchema,
-) as unknown as z.ZodType<CreateValues, z.ZodTypeDef, CreateInputValues>
+) as unknown as z.ZodType<
+  CreateValues,
+  z.ZodTypeDef,
+  z.input<typeof BaseShape> & z.input<typeof ProductShape>
+>
 export const UpdateSchema: z.ZodType<
   UpdateValues,
   z.ZodTypeDef,
-  UpdateInputValues
+  Partial<z.input<typeof BaseShape>>
 > = BaseSchema
+
+export type BaseInputValues = z.input<typeof BaseSchema>
+export type CreateInputValues = z.input<typeof CreateSchema>
+export type UpdateInputValues = z.input<typeof UpdateSchema>
+export type AllInputValues = CombineFormValues<
+  BaseInputValues,
+  CreateInputValues,
+  UpdateInputValues
+>
 
 export enum TimingTemplates {
   Perpetual = "PERPETUAL",

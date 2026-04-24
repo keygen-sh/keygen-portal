@@ -59,47 +59,17 @@ const LicenseRelationshipShape = z.object({
   licenseId: z.string().min(1, "License is required"),
 })
 
-const BaseRules = <
-  S extends z.ZodType<BaseValues, z.ZodTypeDef, z.input<typeof BaseShape>>,
->(
-  schema: S,
-): S => {
+const BaseRules = <S extends z.ZodTypeAny>(schema: S): S => {
   // Custom rules can be added here in the future, e.g.
   // schema.refine(...)
   return schema
 }
 
-export const BaseSchema: z.ZodType<
-  BaseValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape>
-> = BaseRules(BaseShape)
-export const CreateSchema: z.ZodType<
-  CreateValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape> &
-    z.input<typeof FingerprintShape> &
-    z.input<typeof LicenseRelationshipShape>
-> = BaseRules(
-  BaseShape.merge(FingerprintShape).merge(
-    LicenseRelationshipShape,
-  ) as unknown as z.ZodType<
-    BaseValues,
-    z.ZodTypeDef,
-    z.input<typeof BaseShape>
-  >,
-) as unknown as z.ZodType<
-  CreateValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape> &
-    z.input<typeof FingerprintShape> &
-    z.input<typeof LicenseRelationshipShape>
->
-export const UpdateSchema: z.ZodType<
-  UpdateValues,
-  z.ZodTypeDef,
-  Partial<z.input<typeof BaseShape>>
-> = BaseSchema
+export const BaseSchema = BaseRules(BaseShape)
+export const CreateSchema = BaseRules(
+  BaseShape.merge(FingerprintShape).merge(LicenseRelationshipShape),
+)
+export const UpdateSchema = BaseSchema
 
 export type BaseFormValues = z.input<typeof BaseSchema>
 export type CreateFormValues = z.input<typeof CreateSchema>
@@ -123,10 +93,10 @@ const CheckOutShape = z.object({
   algorithm: z.string().default(SigningAlgorithm.Ed25519),
 })
 
-const CheckOutRules = (
-  schema: z.ZodType<CheckOutValues, z.ZodTypeDef, unknown>,
-): z.ZodType<CheckOutValues, z.ZodTypeDef, unknown> => {
+const CheckOutRules = <S extends z.ZodTypeAny>(schema: S): S => {
   return schema
 }
 
 export const CheckOutSchema = CheckOutRules(CheckOutShape)
+
+export type CheckOutFormValues = z.input<typeof CheckOutSchema>

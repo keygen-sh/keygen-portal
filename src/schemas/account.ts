@@ -22,51 +22,43 @@ export type FieldNames = FieldPath<AllValues>
 
 const BaseShape = z.object({})
 
-const BaseRules = (schema: z.ZodType<BaseValues>): z.ZodType<BaseValues> => {
+const BaseRules = <S extends z.ZodTypeAny>(schema: S): S => {
   // Custom rules can be added here in the future, e.g.
   // schema.refine(...)
   return schema
 }
 
-export const BaseSchema: z.ZodType<BaseValues> = BaseRules(BaseShape)
+export const BaseSchema = BaseRules(BaseShape)
 
 const UpdateShape = z.object({
   name: z.string().trim().min(1, "Name is required"),
   slug: z.string().trim().min(1, "Slug is required"),
 })
 
-const UpdateRules = (
-  schema: z.ZodType<UpdateValues>,
-): z.ZodType<UpdateValues> => {
+const UpdateRules = <S extends z.ZodTypeAny>(schema: S): S => {
   return schema
 }
 
-export const UpdateSchema: z.ZodType<UpdateValues> = UpdateRules(UpdateShape)
+export const UpdateSchema = UpdateRules(UpdateShape)
 
 const DeveloperShape = z.object({
   apiVersion: z.string().trim().min(1, "API Version is required"),
   protected: z.boolean(),
 })
 
-const DeveloperRules = (
-  schema: z.ZodType<DeveloperValues>,
-): z.ZodType<DeveloperValues> => {
+const DeveloperRules = <S extends z.ZodTypeAny>(schema: S): S => {
   return schema
 }
 
-export const DeveloperSchema: z.ZodType<DeveloperValues> =
-  DeveloperRules(DeveloperShape)
+export const DeveloperSchema = DeveloperRules(DeveloperShape)
 
 const PermissionsShape = z.object({
   defaultUserPermissions: z.array(z.string()).nullable().optional(),
   defaultLicensePermissions: z.array(z.string()).nullable().optional(),
 })
 
-const PermissionsRules = (
-  schema: z.ZodType<PermissionsValues>,
-): z.ZodType<PermissionsValues> => {
+const PermissionsRules = <S extends z.ZodTypeAny>(schema: S): S => {
   return schema
 }
 
-export const PermissionsSchema: z.ZodType<PermissionsValues> =
-  PermissionsRules(PermissionsShape)
+export const PermissionsSchema = PermissionsRules(PermissionsShape)

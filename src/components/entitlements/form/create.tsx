@@ -1,12 +1,12 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 import * as Schemas from "@/schemas"
 import { useCreateEntitlement } from "@/queries/entitlements"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { toast } from "@/lib/toast"
-import { transformingZodResolver } from "@/lib/form"
 
 import * as Forms from "@/components/forms"
 import * as Entitlements from "@/components/entitlements"
@@ -26,7 +26,7 @@ export default function CreateEntitlementForm({
     unknown,
     Schemas.Entitlements.CreateValues
   >({
-    resolver: transformingZodResolver(Schemas.Entitlements.CreateSchema),
+    resolver: zodResolver(Schemas.Entitlements.CreateSchema),
     mode: "onChange",
     defaultValues: {
       name: "",

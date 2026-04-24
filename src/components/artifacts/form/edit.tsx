@@ -1,5 +1,6 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
 
 import { Separator } from "@/components/ui/separator"
@@ -9,7 +10,6 @@ import * as Schemas from "@/schemas"
 import { useGetArtifact, useUpdateArtifact } from "@/queries/artifacts"
 
 import { toast } from "@/lib/toast"
-import { transformingZodResolver } from "@/lib/form"
 import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
@@ -34,7 +34,7 @@ export default function EditArtifactForm({
     unknown,
     Schemas.Artifacts.UpdateValues
   >({
-    resolver: transformingZodResolver(Schemas.Artifacts.UpdateSchema),
+    resolver: zodResolver(Schemas.Artifacts.UpdateSchema),
     mode: "onChange",
     values: {
       filesize: artifact?.attributes.filesize ?? 0,

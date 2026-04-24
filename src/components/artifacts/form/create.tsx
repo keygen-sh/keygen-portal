@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react"
 import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 import * as Schemas from "@/schemas"
 
@@ -7,7 +8,6 @@ import { useCreateArtifact } from "@/queries/artifacts"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { toast } from "@/lib/toast"
-import { transformingZodResolver } from "@/lib/form"
 
 import { Artifact } from "@/types/artifacts"
 
@@ -34,7 +34,7 @@ export default function CreateArtifactForm({
     unknown,
     Schemas.Artifacts.CreateValues
   >({
-    resolver: transformingZodResolver(Schemas.Artifacts.CreateSchema),
+    resolver: zodResolver(Schemas.Artifacts.CreateSchema),
     mode: "onChange",
     defaultValues: {
       filename: "",

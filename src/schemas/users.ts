@@ -52,31 +52,15 @@ const BaseShape = z.object({
   groupId: z.string().nullable().optional(),
 })
 
-const BaseRules = <
-  S extends z.ZodType<BaseValues, z.ZodTypeDef, z.input<typeof BaseShape>>,
->(
-  schema: S,
-): S => {
+const BaseRules = <S extends z.ZodTypeAny>(schema: S): S => {
   // Custom rules can be added here in the future, e.g.
   // schema.refine(...)
   return schema
 }
 
-export const BaseSchema: z.ZodType<
-  BaseValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape>
-> = BaseRules(BaseShape)
-export const CreateSchema: z.ZodType<
-  CreateValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape>
-> = BaseSchema
-export const UpdateSchema: z.ZodType<
-  UpdateValues,
-  z.ZodTypeDef,
-  Partial<z.input<typeof BaseShape>>
-> = BaseSchema
+export const BaseSchema = BaseRules(BaseShape)
+export const CreateSchema = BaseSchema
+export const UpdateSchema = BaseRules(BaseShape.partial())
 
 export type BaseFormValues = z.input<typeof BaseSchema>
 export type CreateFormValues = z.input<typeof CreateSchema>
@@ -95,33 +79,25 @@ const PasswordShape = z
     path: ["confirmPassword"],
   })
 
-const PasswordRules = (
-  schema: z.ZodType<PasswordValues>,
-): z.ZodType<PasswordValues> => {
+const PasswordRules = <S extends z.ZodTypeAny>(schema: S): S => {
   return schema
 }
 
-export const PasswordSchema: z.ZodType<PasswordValues> = PasswordRules(
-  PasswordShape as z.ZodType<PasswordValues>,
-)
+export const PasswordSchema = PasswordRules(PasswordShape)
 
 const InviteShape = z.object({
   email: z.string().trim().email("Email is invalid"),
   firstName: z.string().trim().nullable().optional(),
   lastName: z.string().trim().nullable().optional(),
   role: z.nativeEnum(UserRole),
-  permissions: z.array(z.string()).nullable().optional(),
+  permissions: z.array(z.string()).optional(),
 })
 
-const InviteRules = (
-  schema: z.ZodType<InviteValues>,
-): z.ZodType<InviteValues> => {
+const InviteRules = <S extends z.ZodTypeAny>(schema: S): S => {
   return schema
 }
 
-export const InviteSchema: z.ZodType<InviteValues> = InviteRules(
-  InviteShape as z.ZodType<InviteValues>,
-)
+export const InviteSchema = InviteRules(InviteShape)
 
 export const SchemaMap = {
   base: BaseSchema,

@@ -40,38 +40,12 @@ const ProductShape = z.object({
   productId: z.string().min(1, "Product is required"),
 })
 
-const BaseRules = <
-  S extends z.ZodType<BaseValues, z.ZodTypeDef, z.input<typeof BaseShape>>,
->(
-  schema: S,
-): S => {
+const BaseRules = <S extends z.ZodTypeAny>(schema: S): S => {
   return schema
 }
-export const BaseSchema: z.ZodType<
-  BaseValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape>
-> = BaseRules(BaseShape)
-export const CreateSchema: z.ZodType<
-  CreateValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape> & z.input<typeof ProductShape>
-> = BaseRules(
-  BaseShape.merge(ProductShape) as unknown as z.ZodType<
-    BaseValues,
-    z.ZodTypeDef,
-    z.input<typeof BaseShape>
-  >,
-) as unknown as z.ZodType<
-  CreateValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape> & z.input<typeof ProductShape>
->
-export const UpdateSchema: z.ZodType<
-  UpdateValues,
-  z.ZodTypeDef,
-  Partial<z.input<typeof BaseShape>>
-> = BaseSchema
+export const BaseSchema = BaseRules(BaseShape)
+export const CreateSchema = BaseRules(BaseShape.merge(ProductShape))
+export const UpdateSchema = BaseSchema
 
 export type BaseFormValues = z.input<typeof BaseSchema>
 export type CreateFormValues = z.input<typeof CreateSchema>

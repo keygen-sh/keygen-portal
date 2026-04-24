@@ -71,69 +71,49 @@ const ProductShape = z.object({
   productId: z.string().min(1, "Product is required"),
 })
 
-const BaseRules = <
-  S extends z.ZodType<BaseValues, z.ZodTypeDef, z.input<typeof BaseShape>>,
->(
-  schema: S,
-): z.ZodType<BaseValues, z.ZodTypeDef, z.input<typeof BaseShape>> => {
-  return schema.superRefine((data, ctx) => {
-    const version = semver.parse(data.version)
-    if (!version) {
-      return
-    }
+const versionChannelRefinement = (
+  data: { version: string; channel: ReleaseChannel },
+  ctx: z.RefinementCtx,
+) => {
+  const version = semver.parse(data.version)
+  if (!version) {
+    return
+  }
 
-    const channel = data.channel
-    const preTag =
-      version.prerelease.length > 0 ? String(version.prerelease[0]) : null
+  const preTag =
+    version.prerelease.length > 0 ? String(version.prerelease[0]) : null
 
-    if (channel === ReleaseChannel.Stable) {
-      if (preTag !== null) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Stable versions must not include a prerelease tag",
-          path: ["version"],
-        })
-      }
-    } else {
-      if (preTag !== channel) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: `Version must include a -${channel}.x prerelease tag`,
-          path: ["version"],
-        })
-      }
+  if (data.channel === ReleaseChannel.Stable) {
+    if (preTag !== null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Stable versions must not include a prerelease tag",
+        path: ["version"],
+      })
     }
-  }) as unknown as z.ZodType<
-    BaseValues,
-    z.ZodTypeDef,
-    z.input<typeof BaseShape>
-  >
+  } else {
+    if (preTag !== data.channel) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Version must include a -${data.channel}.x prerelease tag`,
+        path: ["version"],
+      })
+    }
+  }
 }
-export const BaseSchema: z.ZodType<
-  BaseValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape>
-> = BaseRules(BaseShape)
-export const CreateSchema: z.ZodType<
-  CreateValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape> & z.input<typeof ProductShape>
-> = BaseRules(
-  BaseShape.merge(ProductShape) as unknown as z.ZodType<
-    BaseValues,
-    z.ZodTypeDef,
-    z.input<typeof BaseShape>
-  >,
-) as unknown as z.ZodType<
-  CreateValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape> & z.input<typeof ProductShape>
->
-export const UpdateSchema: z.ZodType<
-  UpdateValues,
-  z.ZodTypeDef,
-  Partial<z.input<typeof BaseShape>>
-> = BaseSchema
+
+export const BaseSchema = BaseShape.superRefine(versionChannelRefinement)
+export const CreateSchema = BaseShape.merge(ProductShape).superRefine(
+  versionChannelRefinement,
+)
+export const UpdateSchema = BaseShape.partial().superRefine((data, ctx) => {
+  // Only validate version/channel when both are present in the partial update.
+  if (data.version == null || data.channel == null) return
+  versionChannelRefinement(
+    { version: data.version, channel: data.channel },
+    ctx,
+  )
+})
 
 export type BaseFormValues = z.input<typeof BaseSchema>
 export type CreateFormValues = z.input<typeof CreateSchema>

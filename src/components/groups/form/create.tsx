@@ -1,12 +1,12 @@
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 import * as Schemas from "@/schemas"
 import { useCreateGroup } from "@/queries/groups"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { toast } from "@/lib/toast"
-import { transformingZodResolver } from "@/lib/form"
 
 import * as Forms from "@/components/forms"
 import * as Groups from "@/components/groups"
@@ -26,7 +26,7 @@ export default function CreateGroupForm({
     unknown,
     Schemas.Groups.CreateValues
   >({
-    resolver: transformingZodResolver(Schemas.Groups.CreateSchema),
+    resolver: zodResolver(Schemas.Groups.CreateSchema),
     mode: "onChange",
     defaultValues: {
       name: "",

@@ -48,10 +48,13 @@ export type FieldNames = Exclude<
   "scheme" | "encrypted" | "entitlements" | "product.id"
 >
 
-type PolicySchema = z.ZodType<
-  BaseValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape>
+// Concrete zod types (ZodObject, ZodEffects) have `_def.typeName` at runtime,
+// but the abstract ZodTypeDef doesn't expose it. This type adds the marker
+// needed for @hookform/resolvers/zod overload resolution.
+type PolicySchema<TOutput, TInput = TOutput> = z.ZodType<
+  TOutput,
+  z.ZodTypeDef & { typeName: string },
+  TInput
 >
 
 export const BaseShape = z.object({
@@ -189,7 +192,9 @@ export const BaseShape = z.object({
     .default({ attach: [], create: [] }),
 })
 
-export const BaseRules = (schema: PolicySchema): PolicySchema =>
+export const BaseRules = <TOutput extends BaseValues, TInput>(
+  schema: PolicySchema<TOutput, TInput>,
+): PolicySchema<TOutput, TInput> =>
   schema
     .refine(
       (values: BaseValues) =>
@@ -322,7 +327,7 @@ export const BaseRules = (schema: PolicySchema): PolicySchema =>
         path: ["checkInIntervalCount"],
         message: "Must be a number between 1 and 365",
       },
-    )
+    ) as PolicySchema<TOutput, TInput>
 
 export const ProductShape = z.object({
   product: z.object({
@@ -332,27 +337,9 @@ export const ProductShape = z.object({
   }),
 })
 
-export const BaseSchema: z.ZodType<
-  BaseValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape>
-> = BaseRules(BaseShape as unknown as PolicySchema)
-export const CreateSchema: z.ZodType<
-  CreateValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape> & z.input<typeof ProductShape>
-> = BaseRules(
-  BaseShape.merge(ProductShape) as unknown as PolicySchema,
-) as unknown as z.ZodType<
-  CreateValues,
-  z.ZodTypeDef,
-  z.input<typeof BaseShape> & z.input<typeof ProductShape>
->
-export const UpdateSchema: z.ZodType<
-  UpdateValues,
-  z.ZodTypeDef,
-  Partial<z.input<typeof BaseShape>>
-> = BaseSchema
+export const BaseSchema = BaseRules(BaseShape)
+export const CreateSchema = BaseRules(BaseShape.merge(ProductShape))
+export const UpdateSchema = BaseSchema
 
 export type BaseFormValues = z.input<typeof BaseSchema>
 export type CreateFormValues = z.input<typeof CreateSchema>
@@ -388,6 +375,7 @@ export const TemplateSchema = z.object({
 })
 
 export type TemplateValues = z.infer<typeof TemplateSchema>
+export type TemplateFormValues = z.input<typeof TemplateSchema>
 
 export const TimedShape = z.object({
   duration: z.coerce.number().int().positive().nullish().default(1209600),
@@ -401,7 +389,9 @@ export const TimedShape = z.object({
     .default(TransferStrategy.ResetExpiry),
 })
 
-export const TimedRules = (schema: PolicySchema): PolicySchema =>
+export const TimedRules = <TOutput extends BaseValues, TInput>(
+  schema: PolicySchema<TOutput, TInput>,
+): PolicySchema<TOutput, TInput> =>
   schema
     .refine(
       (values: BaseValues) => values.duration != null && values.duration > 0,
@@ -425,17 +415,19 @@ export const TimedRules = (schema: PolicySchema): PolicySchema =>
     .refine((values: BaseValues) => values.transferStrategy != null, {
       path: ["transferStrategy"],
       message: "Required for Timed policies",
-    })
+    }) as PolicySchema<TOutput, TInput>
 
 export const PerpetualShape = z.object({
   duration: z.null().default(null),
 })
 
-export const PerpetualRules = (schema: PolicySchema): PolicySchema =>
+export const PerpetualRules = <TOutput extends BaseValues, TInput>(
+  schema: PolicySchema<TOutput, TInput>,
+): PolicySchema<TOutput, TInput> =>
   schema.refine((values: BaseValues) => values.duration == null, {
     path: ["duration"],
     message: "Must be null for Perpetual policies",
-  })
+  }) as PolicySchema<TOutput, TInput>
 
 export const PerpetualFallbackShape = z.object({
   expirationStrategy: z
@@ -450,7 +442,9 @@ export const NodeLockedShape = z.object({
   maxMachines: z.coerce.number().int().min(1).optional().default(1),
 })
 
-export const NodeLockedRules = (schema: PolicySchema): PolicySchema =>
+export const NodeLockedRules = <TOutput extends BaseValues, TInput>(
+  schema: PolicySchema<TOutput, TInput>,
+): PolicySchema<TOutput, TInput> =>
   schema
     .refine(
       (values: BaseValues) =>
@@ -459,7 +453,7 @@ export const NodeLockedRules = (schema: PolicySchema): PolicySchema =>
         values.maxMachines === 1,
       {
         path: ["maxMachines"],
-        message: "Non‑floating must be 1 or unlimited",
+        message: "Non-floating must be 1 or unlimited",
       },
     )
     .refine(
@@ -526,7 +520,7 @@ export const NodeLockedRules = (schema: PolicySchema): PolicySchema =>
         path: ["overageStrategy"],
         message: "Required for Node-locked policies",
       },
-    )
+    ) as PolicySchema<TOutput, TInput>
 
 export const UserLockedShape = z.object({
   requireUserScope: z.boolean().default(true),
@@ -543,7 +537,9 @@ export const ProcessBasedShape = z.object({
     .default(ProcessLeasingStrategy.PerMachine),
 })
 
-export const ProcessBasedRules = (schema: PolicySchema): PolicySchema =>
+export const ProcessBasedRules = <TOutput extends BaseValues, TInput>(
+  schema: PolicySchema<TOutput, TInput>,
+): PolicySchema<TOutput, TInput> =>
   schema
     .refine((values: BaseValues) => values.machineLeasingStrategy != null, {
       path: ["machineLeasingStrategy"],
@@ -552,7 +548,7 @@ export const ProcessBasedRules = (schema: PolicySchema): PolicySchema =>
     .refine((values: BaseValues) => values.processLeasingStrategy != null, {
       path: ["processLeasingStrategy"],
       message: "Required for Process-based policies",
-    })
+    }) as PolicySchema<TOutput, TInput>
 
 export const LeaseBasedShape = z.object({
   requireHeartbeat: z.boolean().default(true),
@@ -576,11 +572,13 @@ export const LeaseBasedShape = z.object({
     .default(HeartbeatResurrectionStrategy.NoRevive),
 })
 
-export const LeaseBasedRules = (schema: PolicySchema): PolicySchema =>
+export const LeaseBasedRules = <TOutput extends BaseValues, TInput>(
+  schema: PolicySchema<TOutput, TInput>,
+): PolicySchema<TOutput, TInput> =>
   schema
     .refine((values: BaseValues) => values.requireHeartbeat === true, {
       path: ["requireHeartbeat"],
-      message: "Required for Lease‑based policies",
+      message: "Required for Lease-based policies",
     })
     .refine(
       (values: BaseValues) =>
@@ -592,19 +590,19 @@ export const LeaseBasedRules = (schema: PolicySchema): PolicySchema =>
     )
     .refine((values: BaseValues) => values.heartbeatBasis != null, {
       path: ["heartbeatBasis"],
-      message: "Required for Lease‑based policies",
+      message: "Required for Lease-based policies",
     })
     .refine((values: BaseValues) => values.heartbeatCullStrategy != null, {
       path: ["heartbeatCullStrategy"],
-      message: "Required for Lease‑based policies",
+      message: "Required for Lease-based policies",
     })
     .refine(
       (values: BaseValues) => values.heartbeatResurrectionStrategy != null,
       {
         path: ["heartbeatResurrectionStrategy"],
-        message: "Required for Lease‑based policies",
+        message: "Required for Lease-based policies",
       },
-    )
+    ) as PolicySchema<TOutput, TInput>
 
 export const OfflineShape = z.object({
   authenticationStrategy: z
@@ -622,8 +620,8 @@ export type PolicyTemplateSelection = {
 }
 
 export function composePolicySchema<
-  TOut extends BaseValues = BaseValues,
-  TIn extends BaseFormValues = BaseFormValues,
+  TOutput extends BaseValues = BaseValues,
+  TInput extends BaseFormValues = BaseFormValues,
 >(
   selection: {
     timing?: TimingTemplates | null
@@ -632,7 +630,7 @@ export function composePolicySchema<
     offline?: boolean
   },
   options?: { product?: boolean },
-): z.ZodType<TOut, z.ZodTypeDef, TIn> {
+): PolicySchema<TOutput, TInput> {
   const access = selection.access ?? []
   const metered = selection.metered ?? []
   const requiresNodeLocked =
@@ -662,7 +660,7 @@ export function composePolicySchema<
     shape = shape.merge(LeaseBasedShape)
   if (selection.offline) shape = shape.merge(OfflineShape)
 
-  let schema: PolicySchema = shape as unknown as PolicySchema
+  let schema = shape as unknown as PolicySchema<BaseValues, BaseFormValues>
   if (selection.timing === TimingTemplates.Timed) {
     schema = TimedRules(schema)
   }
@@ -682,7 +680,7 @@ export function composePolicySchema<
     schema = LeaseBasedRules(schema)
   }
 
-  return schema as unknown as z.ZodType<TOut, z.ZodTypeDef, TIn>
+  return schema as PolicySchema<TOutput, TInput>
 }
 
 export function getCreateSchemaDefaults<T extends CreateFormValues>(

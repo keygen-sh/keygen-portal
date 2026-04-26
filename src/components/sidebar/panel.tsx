@@ -52,10 +52,14 @@ import {
 } from "lucide-react"
 
 import * as keygen from "@/keygen"
-import { useMobile } from "@/hooks/use-mobile"
+
 import { useCloud } from "@/hooks/use-cloud"
-import Combobox from "./combobox"
+import { useMobile } from "@/hooks/use-mobile"
+import { useAppVersion } from "@/hooks/use-app-version"
+
 import Command from "./command"
+import Combobox from "./combobox"
+import NewVersionCard from "./new-version-card"
 import BillingStatusCard from "./billing-status-card"
 
 enum ViewId {
@@ -246,9 +250,6 @@ function useActiveView(): View {
   return VIEWS.find((view) => view.id === ViewId.Home)!
 }
 
-/**
- * Renders the main app sidebar with a rail sidebar and a content sidebar.
- */
 export default function SidebarPanel(): React.ReactElement {
   const activeView = useActiveView()
   const [selectedView, setSelectedView] = useState(activeView)
@@ -256,6 +257,7 @@ export default function SidebarPanel(): React.ReactElement {
 
   const isMobile = useMobile()
   const { isCloud } = useCloud()
+  const { hasUpdate, reload } = useAppVersion()
 
   const visibleRoutes = isCloud
     ? selectedView.routes
@@ -467,7 +469,11 @@ export default function SidebarPanel(): React.ReactElement {
         </SidebarContent>
 
         <SidebarFooter className="w-60 border-none p-4">
-          <BillingStatusCard />
+          {hasUpdate ? (
+            <NewVersionCard onReload={reload} />
+          ) : (
+            <BillingStatusCard />
+          )}
         </SidebarFooter>
       </Sidebar>
     </div>

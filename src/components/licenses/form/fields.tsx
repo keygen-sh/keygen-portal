@@ -288,7 +288,7 @@ function KeyField({
   fieldVariant?: FieldVariant
   descriptions: Descriptions
 }) {
-  const form = useFormContext<Schemas.Licenses.BaseValues>()
+  const form = useFormContext<Schemas.Licenses.CreateValues>()
 
   return (
     <FormField

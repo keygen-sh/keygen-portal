@@ -12,15 +12,6 @@ const BaseShape = z.object({
     .nullable()
     .optional()
     .transform((value) => (value === "" ? null : value)),
-  key: z
-    .string()
-    .trim()
-    .optional()
-    .transform((value) => (value === "" ? null : value))
-    .refine(
-      (value) => !value || value.length >= 8,
-      "Key must be at least 8 characters",
-    ),
   expiry: z.string().nullable().optional(),
   suspended: z.boolean().optional().nullable().default(null),
   protected: z.boolean().optional().nullable().default(null),
@@ -51,12 +42,23 @@ const BaseShape = z.object({
     .default({ attach: [] }),
 })
 
+const KeyShape = z.object({
+  key: z
+    .string()
+    .trim()
+    .optional()
+    .transform((value) => (value === "" ? null : value))
+    .refine(
+      (value) => !value || value.length >= 8,
+      "Key must be at least 8 characters",
+    ),
+})
+
 const PolicyShape = z.object({
   policyId: z.string().min(1, "Policy is required"),
 })
 
-const CreateShape = BaseShape.merge(PolicyShape)
-
+const CreateShape = BaseShape.merge(KeyShape).merge(PolicyShape)
 const UpdateShape = BaseShape.partial()
 
 type AnyShape = typeof BaseShape | typeof CreateShape | typeof UpdateShape

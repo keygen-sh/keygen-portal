@@ -12,11 +12,11 @@ type EntitlementValues = {
 }
 
 interface SettleCreateEntitlementsProps<
-  T extends FieldValues,
+  TFieldValues extends FieldValues,
   TContext = unknown,
-  TTransformedValues = T,
+  TTransformedValues = TFieldValues,
 > {
-  form: UseFormReturn<T, TContext, TTransformedValues>
+  form: UseFormReturn<TFieldValues, TContext, TTransformedValues>
   values?: EntitlementValues
   createMutation: {
     mutateAsync: (attributes: {
@@ -29,16 +29,18 @@ interface SettleCreateEntitlementsProps<
 
 // Settles entitlement creation mutations and associated form state
 export async function settleCreateEntitlements<
-  T extends FieldValues,
+  TFieldValues extends FieldValues,
   TContext = unknown,
-  TTransformedValues = T,
+  TTransformedValues = TFieldValues,
 >({
   form,
   values,
   createMutation,
-}: SettleCreateEntitlementsProps<T, TContext, TTransformedValues>): Promise<
-  string[] | null
-> {
+}: SettleCreateEntitlementsProps<
+  TFieldValues,
+  TContext,
+  TTransformedValues
+>): Promise<string[] | null> {
   const attachIds = values?.attach ?? []
   const toCreate = values?.create ?? []
 
@@ -51,12 +53,12 @@ export async function settleCreateEntitlements<
   const nextCreate = errors.map(({ index }) => toCreate[index])
 
   form.setValue(
-    "entitlements.attach" as Path<T>,
-    nextAttach as PathValue<T, Path<T>>,
+    "entitlements.attach" as Path<TFieldValues>,
+    nextAttach as PathValue<TFieldValues, Path<TFieldValues>>,
   )
   form.setValue(
-    "entitlements.create" as Path<T>,
-    nextCreate as PathValue<T, Path<T>>,
+    "entitlements.create" as Path<TFieldValues>,
+    nextCreate as PathValue<TFieldValues, Path<TFieldValues>>,
   )
 
   if (errors.length > 0) {
@@ -66,7 +68,7 @@ export async function settleCreateEntitlements<
         message = "Code already exists"
       }
 
-      form.setError(`entitlements.create.${index}.code` as Path<T>, {
+      form.setError(`entitlements.create.${index}.code` as Path<TFieldValues>, {
         type: "validate",
         message,
       })

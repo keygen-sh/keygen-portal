@@ -68,7 +68,8 @@ export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
   const key = pair.key.trim()
   const value = pair.value.trim()
 
-  if (!key && !value && pair.type !== "null" && pair.type !== "boolean") {
+  // skip validations for new fields without a key or value
+  if (!key && !value && pair.type === "string") {
     return
   }
 

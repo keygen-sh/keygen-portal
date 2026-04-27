@@ -777,8 +777,8 @@ function MetadataField({
     return (
       <div className="space-y-2">
         <Skeleton className="h-5 w-48 rounded-sm" />
-        {metadata.map((_, i) => (
-          <div key={i} className="flex space-x-2">
+        {metadata.map(({ id }) => (
+          <div key={id} className="flex space-x-2">
             <Skeleton className="h-9 w-1/2 rounded-sm" />
             <Skeleton className="h-9 w-1/2 rounded-sm" />
           </div>

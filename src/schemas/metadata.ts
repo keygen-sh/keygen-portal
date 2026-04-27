@@ -127,7 +127,7 @@ export const MetadataPairSchema = MetadataPairShape.superRefine((pair, ctx) => {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["value"],
-          message: "Must be a valid number",
+          message: "Must be a valid float",
         })
       }
 

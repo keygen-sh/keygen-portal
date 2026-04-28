@@ -1,4 +1,4 @@
-import { defineConfig, type PluginOption } from "vite"
+import { defineConfig, loadEnv, type PluginOption } from "vite"
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite"
 import tsconfigPaths from "vite-tsconfig-paths"
 import { execSync } from "node:child_process"
@@ -35,13 +35,23 @@ function appVersion(): PluginOption {
   }
 }
 
-export default defineConfig({
-  plugins: [
-    appVersion(),
-    TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
-    tsconfigPaths(),
-    tailwindcss(),
-    react(),
-    svgr(),
-  ],
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "")
+
+  return {
+    server: {
+      host: "0.0.0.0",
+      allowedHosts: env.VITE_ALLOWED_HOSTS
+        ? env.VITE_ALLOWED_HOSTS.split(",").map((host) => host.trim())
+        : [],
+    },
+    plugins: [
+      appVersion(),
+      TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
+      tsconfigPaths(),
+      tailwindcss(),
+      react(),
+      svgr(),
+    ],
+  }
 })

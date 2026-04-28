@@ -43,15 +43,12 @@ export class Client {
     endpoint: string,
     options: RequestInit & { root?: boolean; signal?: AbortSignal } = {},
   ): Promise<APIResponse<T>> {
+    const authToken = options.root ? this.rootToken : this.activeToken
     const defaultHeaders = {
       Accept: "application/vnd.api+json",
       "Content-Type": "application/vnd.api+json",
       "Keygen-Version": config.version,
-      ...(options.root
-        ? { Authorization: `Bearer ${this.rootToken ?? ""}` }
-        : this.activeToken
-          ? { Authorization: `Bearer ${this.activeToken}` }
-          : {}),
+      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
       ...(options.root || !this.environment
         ? {}
         : { "Keygen-Environment": this.environment }),
@@ -68,6 +65,7 @@ export class Client {
     const response = await fetch(`${this.url}${endpoint}`, {
       ...fetchOptions,
       headers,
+      credentials: "include",
     })
 
     const data = (await response.json().catch(() => ({}))) as APIResponse<T>

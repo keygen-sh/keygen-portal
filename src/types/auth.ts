@@ -6,6 +6,8 @@ export enum AuthErrorCode {
   EmailInvalid = "EMAIL_INVALID",
   OtpRequired = "OTP_REQUIRED",
   OtpInvalid = "OTP_INVALID",
+  SsoRequired = "SSO_REQUIRED",
+  SsoNotSupported = "SSO_NOT_SUPPORTED",
 }
 
 export interface AuthAttributes {

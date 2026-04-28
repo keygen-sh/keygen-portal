@@ -1,4 +1,5 @@
-import { useNavigate, Link } from "@tanstack/react-router"
+import { useState } from "react"
+import { Link } from "@tanstack/react-router"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -15,25 +16,66 @@ import {
 import { Input } from "@/components/ui/input"
 
 import * as keygen from "@/keygen"
+import { useAuth } from "@/hooks/use-auth"
+import * as Loading from "@/components/loading"
+import { AuthErrorCode } from "@/types/auth"
 
 const ssoSchema = z.object({
   username: z.string().email("Please enter a valid email."),
 })
 
 export default function SSO() {
-  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const [localError, setLocalError] = useState<string | null>(null)
+
+  const auth = useAuth()
+  const error = localError || auth.error
 
   const ssoForm = useForm<z.infer<typeof ssoSchema>>({
     resolver: zodResolver(ssoSchema),
-    defaultValues: { username: "" },
+    defaultValues: { username: auth.email ?? undefined },
   })
 
-  function onSubmitSSO() {
-    // TODO(cazden) Handle SSO
-    void navigate({
-      to: "/$accountId/app/dashboard",
-      params: { accountId: keygen.config.id },
-    })
+  async function onSubmitSSO() {
+    setLoading(true)
+    setLocalError(null)
+    auth.setError(null)
+
+    const email = ssoForm.getValues().username
+    auth.setEmail(email)
+
+    try {
+      const response = await keygen.authenticate({ email })
+      const { errors } = response || {}
+
+      if (!errors?.length) {
+        throw new Error("Service is unavailable.")
+      }
+
+      const err = errors[0] as {
+        code?: AuthErrorCode
+        detail?: string
+        links?: { redirect?: string | null }
+      }
+
+      if (err.code === AuthErrorCode.SsoRequired && err.links?.redirect) {
+        window.location.href = err.links.redirect
+        return
+      }
+
+      if (err.code === AuthErrorCode.SsoNotSupported) {
+        setLocalError("Single sign-on is not enabled for this account.")
+        setLoading(false)
+        return
+      }
+
+      setLocalError(err.detail ?? "Single sign-on is unavailable.")
+      setLoading(false)
+    } catch (error) {
+      console.error(error)
+      setLocalError("Service is unavailable. Please try again later.")
+      setLoading(false)
+    }
   }
 
   return (
@@ -60,18 +102,25 @@ export default function SSO() {
                 </FormLabel>
                 <FormControl>
                   <Input
+                    {...field}
                     type="email"
                     autoComplete="username"
+                    autoFocus
                     placeholder="Enter email..."
-                    {...field}
+                    disabled={loading}
+                    onChange={(e) => {
+                      field.onChange(e)
+                      setLocalError(null)
+                      auth.setError(null)
+                    }}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage>{error}</FormMessage>
               </FormItem>
             )}
           />
-          <Button type="submit" size="lg" className="w-full">
-            Continue
+          <Button type="submit" size="lg" className="w-full" disabled={loading}>
+            {loading ? <Loading.Dots className="bg-background" /> : "Continue"}
           </Button>
         </form>
       </Form>

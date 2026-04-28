@@ -57,19 +57,30 @@ export default function Login() {
         throw new Error("Service is unavailable.")
       }
 
-      const { code } = errors[0] as { code: AuthErrorCode }
+      const err = errors[0] as {
+        code: AuthErrorCode
+        detail?: string
+        links?: { redirect?: string | null }
+      }
 
       auth.setEmail(email)
 
-      switch (code) {
+      switch (err.code) {
         case AuthErrorCode.PasswordRequired:
           void navigate({ to: `/${keygen.config.id}/auth/password` })
+          break
+        case AuthErrorCode.SsoRequired:
+          if (err.links?.redirect) {
+            window.location.href = err.links.redirect
+            return
+          }
+          void navigate({ to: `/${keygen.config.id}/auth/sso` })
           break
         case AuthErrorCode.OtpRequired:
           setLocalError("Invalid email. Please try again.")
           break
         default:
-          throw new Error(errors[0]?.detail)
+          throw new Error(err.detail)
       }
     } catch (error) {
       console.error(error)

@@ -12,21 +12,24 @@ export function useSession() {
         (key) => localStorage.getItem(key) ?? sessionStorage.getItem(key),
       )
 
-      if (!token || !tokenId) {
-        keygen.logout()
-        return
-      }
-
       try {
-        const { data } = await keygen.verify({ token, tokenId })
-        if (!data) throw new Error("User not found")
+        if (token && tokenId) {
+          const { data } = await keygen.verify({ token, tokenId })
+          if (data) {
+            const userId = data.relationships.bearer?.data?.id
+            keygen.client.setRootToken(token)
+            keygen.client.setUser(userId ?? null)
+            return
+          }
+        }
 
-        const userId = data.relationships.bearer?.data?.id
+        const { data: me } = await keygen.profiles.me()
+        if (me) {
+          keygen.client.setUser(me.id)
+          return
+        }
 
-        keygen.client.setRootToken(token)
-        keygen.client.setUser(userId ?? null)
-
-        return
+        keygen.logout()
       } catch (error) {
         console.error(error)
         keygen.logout()

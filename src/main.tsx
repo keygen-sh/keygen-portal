@@ -4,8 +4,6 @@ import { RouterProvider, createRouter } from "@tanstack/react-router"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { routeTree } from "./routeTree.gen"
 
-import * as Page from "@/pages/index"
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -17,7 +15,6 @@ const queryClient = new QueryClient({
 
 const router = createRouter({
   routeTree,
-  defaultNotFoundComponent: () => <Page.Error />,
 })
 
 declare module "@tanstack/react-router" {

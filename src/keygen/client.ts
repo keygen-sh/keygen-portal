@@ -9,6 +9,7 @@ export class Client {
   private environmentToken?: string | null
   private environment?: string | null
   private user?: string | null
+  private tokenId?: string | null
 
   constructor(token?: string | null, environment?: string | null) {
     this.rootToken = token ?? null
@@ -31,8 +32,16 @@ export class Client {
     this.user = id
   }
 
+  public setTokenId(id: string | null) {
+    this.tokenId = id
+  }
+
   public get currentUser(): string | null | undefined {
     return this.user
+  }
+
+  public get currentTokenId(): string | null | undefined {
+    return this.tokenId
   }
 
   private get activeToken(): string | null | undefined {
@@ -69,6 +78,18 @@ export class Client {
     })
 
     const data = (await response.json().catch(() => ({}))) as APIResponse<T>
+
+    if (response.status === 401 && "errors" in data) {
+      const code = data.errors?.[0]?.code
+      if (
+        code === "SESSION_INVALID" ||
+        code === "SESSION_EXPIRED" ||
+        code === "TOKEN_INVALID" ||
+        code === "TOKEN_EXPIRED"
+      ) {
+        window.dispatchEvent(new CustomEvent("keygen:session-expired"))
+      }
+    }
 
     // Server error, i.e. "PASSWORD_REQUIRED"
     if ("errors" in data) {

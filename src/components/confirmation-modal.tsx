@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import { Copy } from "lucide-react"
 
@@ -19,6 +19,7 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip"
 
+import { cn } from "@/lib/utils"
 import { copyToClipboard } from "@/lib/clipboard"
 
 import * as Loading from "@/components/loading"
@@ -34,6 +35,7 @@ interface ConfirmationModalProps {
   onConfirm: () => void
   confirmText?: string
   className?: string
+  children?: React.ReactNode
 }
 
 export default function ConfirmationModal({
@@ -47,6 +49,7 @@ export default function ConfirmationModal({
   onConfirm,
   confirmText,
   className,
+  children,
 }: ConfirmationModalProps) {
   const [typedConfirmation, setTypedConfirmation] = useState("")
 
@@ -58,36 +61,46 @@ export default function ConfirmationModal({
 
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
-      <AlertDialogContent className={className}>
-        <AlertDialogHeader className="text-start">
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+      <AlertDialogContent className={cn("p-0", className)}>
+        <AlertDialogHeader
+          className={cn(
+            "px-6 pt-6 text-start",
+            children && "gap-0 border-b border-accent p-4",
+          )}
+        >
+          <AlertDialogTitle className="text-base">{title}</AlertDialogTitle>
+          <AlertDialogDescription className={description ? "" : "sr-only"}>
+            {description}
+          </AlertDialogDescription>
         </AlertDialogHeader>
-        {confirmText && (
-          <div className="flex flex-col gap-2 text-sm text-content-muted">
-            <div className="mb-2 inline-flex flex-wrap items-center gap-1.5">
-              Please type
-              <Button
-                variant="clipboard"
-                size="clipboard"
-                type="button"
-                onClick={() => copyToClipboard(confirmText)}
-                className="w-fit"
-              >
-                {confirmText}
-                <Copy className="size-3" />
-              </Button>
-              to confirm.
+        <div className={cn("px-6", children && "px-4")}>
+          {children}
+          {confirmText && (
+            <div className="flex flex-col gap-2 text-sm text-content-muted">
+              <div className="mb-2 inline-flex flex-wrap items-center gap-1.5">
+                Please type
+                <Button
+                  variant="clipboard"
+                  size="clipboard"
+                  type="button"
+                  onClick={() => copyToClipboard(confirmText)}
+                  className="w-fit"
+                >
+                  {confirmText}
+                  <Copy className="size-3" />
+                </Button>
+                to confirm.
+              </div>
+              <Input
+                autoFocus
+                value={typedConfirmation}
+                onChange={(e) => setTypedConfirmation(e.target.value)}
+                disabled={disabled}
+              />
             </div>
-            <Input
-              autoFocus
-              value={typedConfirmation}
-              onChange={(e) => setTypedConfirmation(e.target.value)}
-              disabled={disabled}
-            />
-          </div>
-        )}
-        <AlertDialogFooter className="gap-4">
+          )}
+        </div>
+        <AlertDialogFooter className="gap-4 border-t border-accent p-4">
           <AlertDialogCancel asChild>
             <Button variant="outline" disabled={disabled}>
               Cancel

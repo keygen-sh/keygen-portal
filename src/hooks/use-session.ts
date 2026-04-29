@@ -18,21 +18,29 @@ export function useSession() {
           if (data) {
             const userId = data.relationships.bearer?.data?.id
             keygen.client.setRootToken(token)
+            keygen.client.setTokenId(tokenId)
             keygen.client.setUser(userId ?? null)
             return
           }
         }
 
-        const { data: me } = await keygen.profiles.me()
-        if (me) {
-          keygen.client.setUser(me.id)
+        const meResponse = (await keygen.profiles.me()) as {
+          data?: { id: string }
+          included?: { type: string; id: string }[]
+        }
+        if (meResponse.data) {
+          const tokenResource = meResponse.included?.find(
+            (r) => r.type === "tokens",
+          )
+          keygen.client.setUser(meResponse.data.id)
+          keygen.client.setTokenId(tokenResource?.id ?? null)
           return
         }
 
-        keygen.logout()
+        await keygen.logout()
       } catch (error) {
         console.error(error)
-        keygen.logout()
+        await keygen.logout()
       } finally {
         setInitializing(false)
       }
@@ -46,12 +54,20 @@ export function useSession() {
         (e.key === "token" || e.key === "tokenId") &&
         e.newValue === null
       ) {
-        keygen.logout()
+        void keygen.logout()
       }
     }
 
+    function handleSessionExpired() {
+      void keygen.logout()
+    }
+
     window.addEventListener("storage", handleStorage)
-    return () => window.removeEventListener("storage", handleStorage)
+    window.addEventListener("keygen:session-expired", handleSessionExpired)
+    return () => {
+      window.removeEventListener("storage", handleStorage)
+      window.removeEventListener("keygen:session-expired", handleSessionExpired)
+    }
   }, [])
 
   return { initializing }

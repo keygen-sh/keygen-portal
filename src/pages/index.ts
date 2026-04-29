@@ -1,7 +1,8 @@
-import * as App from "./app/index"
-import * as Auth from "./auth/index"
-
+import * as App from "./app"
 export { App }
+
+import * as Auth from "./auth"
 export { Auth }
 
-export { default as Error } from "./error"
+import * as Error from "./error"
+export { Error }

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link } from "@tanstack/react-router"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import ConfirmationModal from "@/components/confirmation-modal"
 
 import * as keygen from "@/keygen"
 import { useAuth } from "@/hooks/use-auth"
@@ -27,6 +28,7 @@ const ssoSchema = z.object({
 export default function SSO() {
   const [loading, setLoading] = useState(false)
   const [localError, setLocalError] = useState<string | null>(null)
+  const [ssoRedirectUrl, setSsoRedirectUrl] = useState<string | null>(null)
 
   const auth = useAuth()
   const error = localError || auth.error
@@ -36,12 +38,10 @@ export default function SSO() {
     defaultValues: { username: auth.email ?? undefined },
   })
 
-  async function onSubmitSSO() {
+  async function fetchSsoRedirect(email: string) {
     setLoading(true)
     setLocalError(null)
     auth.setError(null)
-
-    const email = ssoForm.getValues().username
     auth.setEmail(email)
 
     try {
@@ -59,24 +59,34 @@ export default function SSO() {
       }
 
       if (err.code === AuthErrorCode.SsoRequired && err.links?.redirect) {
-        window.location.href = err.links.redirect
+        setSsoRedirectUrl(err.links.redirect)
         return
       }
 
       if (err.code === AuthErrorCode.SsoNotSupported) {
         setLocalError("Single sign-on is not enabled for this account.")
-        setLoading(false)
         return
       }
 
       setLocalError(err.detail ?? "Single sign-on is unavailable.")
-      setLoading(false)
     } catch (error) {
       console.error(error)
       setLocalError("Service is unavailable. Please try again later.")
+    } finally {
       setLoading(false)
     }
   }
+
+  function onSubmitSSO() {
+    void fetchSsoRedirect(ssoForm.getValues().username)
+  }
+
+  useEffect(() => {
+    if (auth.email) {
+      void fetchSsoRedirect(auth.email)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <section className="flex w-80 flex-col justify-center">
@@ -153,6 +163,22 @@ export default function SSO() {
           </Link>
         </Button>
       </div>
+
+      <ConfirmationModal
+        open={ssoRedirectUrl !== null}
+        title="Single Sign-On"
+        label="Continue to IdP"
+        onClose={() => setSsoRedirectUrl(null)}
+        onConfirm={() => {
+          if (ssoRedirectUrl) window.location.href = ssoRedirectUrl
+        }}
+      >
+        <p className="text-sm text-content-subdued">
+          <b>Your organization requires single sign-on</b>. You will be
+          redirected to your organization's identity provider for
+          authentication.
+        </p>
+      </ConfirmationModal>
     </section>
   )
 }

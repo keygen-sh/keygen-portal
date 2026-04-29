@@ -14,7 +14,6 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import ConfirmationModal from "@/components/confirmation-modal"
 
 import * as keygen from "@/keygen"
 import { useAuth } from "@/hooks/use-auth"
@@ -32,7 +31,6 @@ const emailSchema = z.object({
 export default function Login() {
   const [loading, setLoading] = useState(false)
   const [localError, setLocalError] = useState<string | null>(null)
-  const [ssoRedirectUrl, setSsoRedirectUrl] = useState<string | null>(null)
 
   const auth = useAuth()
   const error = localError || auth.error
@@ -72,11 +70,7 @@ export default function Login() {
           void navigate({ to: `/${keygen.config.id}/auth/password` })
           break
         case AuthErrorCode.SsoRequired:
-          if (err.links?.redirect) {
-            setSsoRedirectUrl(err.links.redirect)
-            return
-          }
-          void navigate({ to: `/${keygen.config.id}/sso` })
+          void navigate({ to: `/${keygen.config.id}/auth/sso` })
           break
         case AuthErrorCode.OtpRequired:
           setLocalError("Invalid email. Please try again.")
@@ -178,22 +172,6 @@ export default function Login() {
           </Link>
         </Button>
       </div>
-
-      <ConfirmationModal
-        open={ssoRedirectUrl !== null}
-        title="Single Sign-On"
-        label="Continue to IdP"
-        onClose={() => setSsoRedirectUrl(null)}
-        onConfirm={() => {
-          if (ssoRedirectUrl) window.location.href = ssoRedirectUrl
-        }}
-      >
-        <p className="text-sm text-content-subdued">
-          <b>Your organization requires single sign-on</b>. You will be
-          redirected to your organization's identity provider for
-          authentication.
-        </p>
-      </ConfirmationModal>
     </section>
   )
 }

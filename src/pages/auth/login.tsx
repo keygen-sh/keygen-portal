@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import ConfirmationModal from "@/components/confirmation-modal"
 
 import * as keygen from "@/keygen"
 import { useAuth } from "@/hooks/use-auth"
@@ -31,6 +32,7 @@ const emailSchema = z.object({
 export default function Login() {
   const [loading, setLoading] = useState(false)
   const [localError, setLocalError] = useState<string | null>(null)
+  const [ssoRedirectUrl, setSsoRedirectUrl] = useState<string | null>(null)
 
   const auth = useAuth()
   const error = localError || auth.error
@@ -71,10 +73,10 @@ export default function Login() {
           break
         case AuthErrorCode.SsoRequired:
           if (err.links?.redirect) {
-            window.location.href = err.links.redirect
+            setSsoRedirectUrl(err.links.redirect)
             return
           }
-          void navigate({ to: `/${keygen.config.id}/auth/sso` })
+          void navigate({ to: `/${keygen.config.id}/sso` })
           break
         case AuthErrorCode.OtpRequired:
           setLocalError("Invalid email. Please try again.")
@@ -101,7 +103,7 @@ export default function Login() {
           noValidate
           className="my-3 w-full space-y-7"
         >
-          <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
+          <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl text-transparent select-none">
             Sign in to your account
           </h1>
 
@@ -176,6 +178,22 @@ export default function Login() {
           </Link>
         </Button>
       </div>
+
+      <ConfirmationModal
+        open={ssoRedirectUrl !== null}
+        title="Single Sign-On"
+        label="Continue to IdP"
+        onClose={() => setSsoRedirectUrl(null)}
+        onConfirm={() => {
+          if (ssoRedirectUrl) window.location.href = ssoRedirectUrl
+        }}
+      >
+        <p className="text-sm text-content-subdued">
+          <b>Your organization requires single sign-on</b>. You will be
+          redirected to your organization's identity provider for
+          authentication.
+        </p>
+      </ConfirmationModal>
     </section>
   )
 }

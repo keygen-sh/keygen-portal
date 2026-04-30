@@ -18,10 +18,14 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 
 import * as keygen from "@/keygen"
-import { useAuth } from "@/hooks/use-auth"
-import BackButton from "@/components/back-button"
-import * as Loading from "@/components/loading"
+
 import { AuthErrorCode } from "@/types/auth"
+
+import { useAuth } from "@/hooks/use-auth"
+import { useSession } from "@/hooks/use-session"
+
+import * as Loading from "@/components/loading"
+import BackButton from "@/components/back-button"
 
 const passwordSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters."),
@@ -37,6 +41,7 @@ export default function Password() {
   const [localError, setLocalError] = useState<string | null>(null)
 
   const auth = useAuth()
+  const session = useSession()
   const error = localError || auth.error
 
   const navigate = useNavigate()
@@ -90,7 +95,7 @@ export default function Password() {
       storage.setItem("token", token)
 
       keygen.client.setRootToken(token)
-      keygen.client.setUser(userId)
+      session.setUser(userId)
 
       void navigate({ to: "/" })
     } catch (error) {

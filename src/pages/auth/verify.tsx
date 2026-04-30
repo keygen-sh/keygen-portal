@@ -6,6 +6,7 @@ import { OtpInput } from "@/components/otp-input"
 import * as keygen from "@/keygen"
 import { AuthErrorCode } from "@/types/auth"
 import { useAuth } from "@/hooks/use-auth"
+import { useSession } from "@/hooks/use-session"
 import BackButton from "@/components/back-button"
 import * as Loading from "@/components/loading"
 
@@ -15,6 +16,7 @@ export default function Verify() {
   const [otp, setOtp] = useState("")
 
   const auth = useAuth()
+  const session = useSession()
 
   const navigate = useNavigate()
 
@@ -62,7 +64,7 @@ export default function Verify() {
         storage.setItem("token", token)
 
         keygen.client.setRootToken(token)
-        keygen.client.setUser(userId)
+        session.setUser(userId)
 
         void navigate({ to: "/" })
       } catch (error) {
@@ -77,7 +79,7 @@ export default function Verify() {
         setLoading(false)
       }
     },
-    [auth, navigate],
+    [auth, session, navigate],
   )
 
   return (

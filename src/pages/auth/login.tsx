@@ -21,8 +21,6 @@ import { useAuth } from "@/hooks/use-auth"
 
 import { AuthErrorCode } from "@/types/auth"
 
-import { setSsoRedirect, useSsoRedirect } from "@/lib/sso"
-
 import * as Loading from "@/components/loading"
 import ConfirmationModal from "@/components/confirmation-modal"
 
@@ -33,10 +31,10 @@ const emailSchema = z.object({
 export default function Login() {
   const [loading, setLoading] = useState(false)
   const [localError, setLocalError] = useState<string | null>(null)
+  const [ssoRedirectUrl, setSsoRedirectUrl] = useState<string | null>(null)
 
   const auth = useAuth()
   const error = localError || auth.error
-  const ssoRedirectUrl = useSsoRedirect()
 
   const navigate = useNavigate()
 
@@ -74,7 +72,7 @@ export default function Login() {
           break
         case AuthErrorCode.SsoRequired:
           if (err.links?.redirect) {
-            setSsoRedirect(err.links.redirect)
+            setSsoRedirectUrl(err.links.redirect)
           } else {
             setLocalError("Single sign-on is unavailable.")
           }
@@ -164,7 +162,7 @@ export default function Login() {
         open={ssoRedirectUrl !== null}
         title="Single Sign-On"
         label="Continue to IdP"
-        onClose={() => setSsoRedirect(null)}
+        onClose={() => setSsoRedirectUrl(null)}
         onConfirm={() => {
           if (ssoRedirectUrl) window.location.href = ssoRedirectUrl
         }}

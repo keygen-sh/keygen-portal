@@ -14,12 +14,15 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import ConfirmationModal from "@/components/confirmation-modal"
+
+import { useAuth } from "@/hooks/use-auth"
 
 import * as keygen from "@/keygen"
-import { useAuth } from "@/hooks/use-auth"
-import * as Loading from "@/components/loading"
+
 import { AuthErrorCode } from "@/types/auth"
+
+import * as Loading from "@/components/loading"
+import ConfirmationModal from "@/components/confirmation-modal"
 
 const ssoSchema = z.object({
   username: z.string().email("Please enter a valid email."),

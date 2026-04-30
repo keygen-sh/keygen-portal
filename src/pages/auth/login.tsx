@@ -1,9 +1,10 @@
 import { useState } from "react"
+import { useForm } from "react-hook-form"
 import { useNavigate, Link } from "@tanstack/react-router"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 
+import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -13,27 +14,29 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
 
 import * as keygen from "@/keygen"
+
 import { useAuth } from "@/hooks/use-auth"
-import * as Loading from "@/components/loading"
+
 import { AuthErrorCode } from "@/types/auth"
+
+import { setSsoRedirect, useSsoRedirect } from "@/lib/sso"
+
+import * as Loading from "@/components/loading"
+import ConfirmationModal from "@/components/confirmation-modal"
 
 const emailSchema = z.object({
   username: z.string().email("Please enter a valid email."),
 })
 
-/**
- * Login component that validates user email and determines next authentication step.
- * Routes users to either password or OTP verification based on account settings.
- */
 export default function Login() {
   const [loading, setLoading] = useState(false)
   const [localError, setLocalError] = useState<string | null>(null)
 
   const auth = useAuth()
   const error = localError || auth.error
+  const ssoRedirectUrl = useSsoRedirect()
 
   const navigate = useNavigate()
 
@@ -60,6 +63,7 @@ export default function Login() {
       const err = errors[0] as {
         code: AuthErrorCode
         detail?: string
+        links?: { redirect?: string | null }
       }
 
       auth.setEmail(email)
@@ -69,7 +73,11 @@ export default function Login() {
           void navigate({ to: `/${keygen.config.id}/auth/password` })
           break
         case AuthErrorCode.SsoRequired:
-          void navigate({ to: `/${keygen.config.id}/auth/sso` })
+          if (err.links?.redirect) {
+            setSsoRedirect(err.links.redirect)
+          } else {
+            setLocalError("Single sign-on is unavailable.")
+          }
           break
         case AuthErrorCode.OtpRequired:
           setLocalError("Invalid email. Please try again.")
@@ -152,25 +160,21 @@ export default function Login() {
         </Button>
       </div>
 
-      <div className="mt-2 flex w-full justify-center select-none">
-        <Button
-          variant="link"
-          size="link"
-          asChild
-          className={`${
-            loading
-              ? "pointer-events-none text-content-disabled"
-              : "pointer-events-auto text-content-loud"
-          }`}
-        >
-          <Link
-            to="/$accountId/auth/sso"
-            params={{ accountId: keygen.config.id }}
-          >
-            Sign in with SSO
-          </Link>
-        </Button>
-      </div>
+      <ConfirmationModal
+        open={ssoRedirectUrl !== null}
+        title="Single Sign-On"
+        label="Continue to IdP"
+        onClose={() => setSsoRedirect(null)}
+        onConfirm={() => {
+          if (ssoRedirectUrl) window.location.href = ssoRedirectUrl
+        }}
+      >
+        <p className="text-sm text-content-subdued">
+          <b>Your organization requires single sign-on</b>. You will be
+          redirected to your organization's identity provider for
+          authentication.
+        </p>
+      </ConfirmationModal>
     </section>
   )
 }

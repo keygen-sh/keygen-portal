@@ -1,5 +1,10 @@
 import { useState } from "react"
-import { Link, linkOptions, useMatchRoute } from "@tanstack/react-router"
+import {
+  Link,
+  linkOptions,
+  useMatchRoute,
+  useNavigate,
+} from "@tanstack/react-router"
 
 import { Search } from "lucide-react"
 
@@ -56,6 +61,7 @@ import * as keygen from "@/keygen"
 import { useCloud } from "@/hooks/use-cloud"
 import { useMobile } from "@/hooks/use-mobile"
 import { useAppVersion } from "@/hooks/use-app-version"
+import { useLogout } from "@/queries/auth"
 
 import Command from "./command"
 import Combobox from "./combobox"
@@ -259,6 +265,18 @@ export default function SidebarPanel(): React.ReactElement {
   const { isCloud } = useCloud()
   const { hasUpdate, reload } = useAppVersion()
 
+  const navigate = useNavigate()
+  const { mutateAsync: logout } = useLogout()
+
+  async function handleLogout() {
+    await logout()
+    void navigate({
+      to: "/$accountId/auth/login",
+      params: { accountId: keygen.config.id },
+      replace: true,
+    })
+  }
+
   const visibleRoutes = isCloud
     ? selectedView.routes
     : selectedView.routes.filter((r) => r.to !== "/$accountId/app/billing")
@@ -370,7 +388,7 @@ export default function SidebarPanel(): React.ReactElement {
               <DropdownMenuItem disabled>Support</DropdownMenuItem>
               <DropdownMenuItem disabled>API</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => keygen.logout()}>
+              <DropdownMenuItem onClick={() => void handleLogout()}>
                 Logout
               </DropdownMenuItem>
             </DropdownMenuContent>

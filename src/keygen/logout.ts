@@ -1,4 +1,3 @@
-import config from "@/keygen/config"
 import client from "@/keygen/client"
 import * as tokens from "@/keygen/tokens"
 
@@ -25,6 +24,4 @@ export async function logout() {
     localStorage.removeItem(key)
     sessionStorage.removeItem(key)
   }
-
-  window.location.replace(`/${config.id}/auth/login`)
 }

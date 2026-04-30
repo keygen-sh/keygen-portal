@@ -1,31 +1,39 @@
-import { Outlet } from "@tanstack/react-router"
-import { cn } from "@/lib/utils"
+import { useEffect } from "react"
+import { Outlet, useNavigate } from "@tanstack/react-router"
 
 import { Toaster } from "@/components/ui/sonner"
-import { useSidebar, SidebarProvider } from "@/components/ui/sidebar"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { useSidebar, SidebarProvider } from "@/components/ui/sidebar"
 
-import { EnvironmentProvider } from "@/providers/environment-provider"
-import { useSession } from "@/hooks/use-session"
 import { useMobile } from "@/hooks/use-mobile"
+import { useSession } from "@/hooks/use-session"
+import { EnvironmentProvider } from "@/providers/environment-provider"
+
+import { cn } from "@/lib/utils"
+
+import * as keygen from "@/keygen"
 
 import * as Sidebar from "@/components/sidebar"
-import * as Loading from "@/components/loading"
 
 /**
  * Render provider first then delegate the rest of the component,
  * so we can call hooks without violating rules and pushing the provider further up the tree.
  */
 export default function AppLayout() {
-  const { initializing } = useSession()
+  const navigate = useNavigate()
+  const { user } = useSession()
 
-  if (initializing) {
-    return (
-      <div className="flex h-screen w-screen items-center justify-center">
-        <Loading.Dots />
-      </div>
-    )
-  }
+  useEffect(() => {
+    if (!user) {
+      void navigate({
+        to: "/$accountId/auth/login",
+        params: { accountId: keygen.config.id },
+        replace: true,
+      })
+    }
+  }, [user, navigate])
+
+  if (!user) return null
 
   return (
     <EnvironmentProvider>

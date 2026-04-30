@@ -1,12 +1,42 @@
-import { Outlet, useMatches } from "@tanstack/react-router"
+import { useEffect } from "react"
+import { Outlet, useMatches, useNavigate } from "@tanstack/react-router"
+
 import logo from "/logo.svg"
 
-import { AuthProvider } from "@/providers/auth-provider"
+import * as keygen from "@/keygen"
 
+import { AuthProvider } from "@/providers/auth-provider"
+import { useSession } from "@/hooks/use-session"
+
+import * as Loading from "@/components/loading"
 import BackButton from "@/components/back-button"
 
 export default function AuthLayout() {
+  const navigate = useNavigate()
+  const { user } = useSession()
   const matches = useMatches()
+
+  // Redirect already-authenticated users
+  useEffect(() => {
+    if (!user) return
+    void navigate({
+      to: "/$accountId/app/dashboard",
+      params: { accountId: keygen.config.id },
+      replace: true,
+    })
+  }, [user, navigate])
+
+  // NB(cazden) Loading state to eliminate jarring UI transitions during redirects, e.g.
+  //            if user navs to login page but has a valid session, they're redirected to
+  //            app dashboard, and without this check they'd briefly see the login page.
+  if (user) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <Loading.Dots />
+      </div>
+    )
+  }
+
   const currentRoute = matches[matches.length - 1] as { routeId: string }
 
   const label = (() => {

@@ -8,6 +8,14 @@ export enum AuthErrorCode {
   OtpInvalid = "OTP_INVALID",
   SsoRequired = "SSO_REQUIRED",
   SsoNotSupported = "SSO_NOT_SUPPORTED",
+  SsoAccountNotFound = "SSO_ACCOUNT_NOT_FOUND",
+  SsoUserNotAllowed = "SSO_USER_NOT_ALLOWED",
+  SsoStateMissing = "SSO_STATE_MISSING",
+  SsoStateInvalid = "SSO_STATE_INVALID",
+  SsoEnvironmentNotFound = "SSO_ENVIRONMENT_NOT_FOUND",
+  SsoUserNotFound = "SSO_USER_NOT_FOUND",
+  SsoUserInvalid = "SSO_USER_INVALID",
+  SsoSessionInvalid = "SSO_SESSION_INVALID",
 }
 
 export interface AuthAttributes {

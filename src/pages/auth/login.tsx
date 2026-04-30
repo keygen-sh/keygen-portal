@@ -60,7 +60,6 @@ export default function Login() {
       const err = errors[0] as {
         code: AuthErrorCode
         detail?: string
-        links?: { redirect?: string | null }
       }
 
       auth.setEmail(email)
@@ -97,7 +96,7 @@ export default function Login() {
           noValidate
           className="my-3 w-full space-y-7"
         >
-          <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl text-transparent select-none">
+          <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
             Sign in to your account
           </h1>
 

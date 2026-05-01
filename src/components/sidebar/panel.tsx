@@ -1,10 +1,5 @@
 import { useState } from "react"
-import {
-  Link,
-  linkOptions,
-  useMatchRoute,
-  useNavigate,
-} from "@tanstack/react-router"
+import { Link, linkOptions, useMatchRoute } from "@tanstack/react-router"
 
 import { Search } from "lucide-react"
 
@@ -265,17 +260,7 @@ export default function SidebarPanel(): React.ReactElement {
   const { isCloud } = useCloud()
   const { hasUpdate, reload } = useAppVersion()
 
-  const navigate = useNavigate()
-  const { mutateAsync: logout } = useLogout()
-
-  async function handleLogout() {
-    await logout()
-    void navigate({
-      to: "/$accountId/auth/login",
-      params: { accountId: keygen.config.id },
-      replace: true,
-    })
-  }
+  const logout = useLogout()
 
   const visibleRoutes = isCloud
     ? selectedView.routes
@@ -388,7 +373,7 @@ export default function SidebarPanel(): React.ReactElement {
               <DropdownMenuItem disabled>Support</DropdownMenuItem>
               <DropdownMenuItem disabled>API</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => void handleLogout()}>
+              <DropdownMenuItem onClick={() => logout.mutate()}>
                 Logout
               </DropdownMenuItem>
             </DropdownMenuContent>

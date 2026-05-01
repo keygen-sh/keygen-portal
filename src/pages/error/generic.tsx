@@ -12,7 +12,7 @@ export default function GenericError() {
   return (
     <div className="flex flex-col">
       <div className="w-full border-b border-accent p-4">
-        <h1 className="font-owners-wide text-2xl font-semibold">Error 404</h1>
+        <h1 className="font-owners-wide text-xl">Error 404</h1>
       </div>
       <div className="flex flex-col gap-2 p-4">
         <p className="text-content-muted">

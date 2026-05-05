@@ -166,6 +166,7 @@ export default function Login() {
         onConfirm={() => {
           if (ssoRedirectUrl) window.location.href = ssoRedirectUrl
         }}
+        autoFocus="confirm"
       >
         <p className="text-sm text-content-subdued">
           <b>Your organization requires single sign-on</b>. You will be

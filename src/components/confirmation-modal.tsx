@@ -34,6 +34,7 @@ interface ConfirmationModalProps {
   onClose: () => void
   onConfirm: () => void
   confirmText?: string
+  autoFocus?: "confirm" | "cancel"
   className?: string
   children?: React.ReactNode
 }
@@ -48,6 +49,7 @@ export default function ConfirmationModal({
   onClose,
   onConfirm,
   confirmText,
+  autoFocus,
   className,
   children,
 }: ConfirmationModalProps) {
@@ -102,7 +104,11 @@ export default function ConfirmationModal({
         </div>
         <AlertDialogFooter className="gap-4 border-t border-accent p-4">
           <AlertDialogCancel asChild>
-            <Button variant="outline" disabled={disabled}>
+            <Button
+              autoFocus={autoFocus === "cancel"}
+              variant="outline"
+              disabled={disabled}
+            >
               Cancel
             </Button>
           </AlertDialogCancel>
@@ -123,7 +129,12 @@ export default function ConfirmationModal({
               </TooltipContent>
             </Tooltip>
           ) : (
-            <Button variant={variant} disabled={disabled} onClick={onConfirm}>
+            <Button
+              autoFocus={autoFocus === "confirm" && !confirmText}
+              variant={variant}
+              disabled={disabled}
+              onClick={onConfirm}
+            >
               {disabled ? <Loading.Dots className="bg-background" /> : label}
             </Button>
           )}

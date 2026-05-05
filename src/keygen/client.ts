@@ -57,7 +57,9 @@ export class Client {
       Accept: "application/vnd.api+json",
       "Content-Type": "application/vnd.api+json",
       "Keygen-Version": config.version,
-      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+      ...(authToken && !config.isCloud
+        ? { Authorization: `Bearer ${authToken}` }
+        : {}),
       ...(options.root || !this.environment
         ? {}
         : { "Keygen-Environment": this.environment }),

@@ -1,6 +1,7 @@
 const config = {
   host: import.meta.env.VITE_KEYGEN_HOST,
   mode: import.meta.env.VITE_KEYGEN_MODE,
+  isCloud: import.meta.env.VITE_KEYGEN_MODE === "multiplayer",
   version: import.meta.env.VITE_KEYGEN_VERSION,
   id: import.meta.env.VITE_KEYGEN_ACCOUNT_ID,
 

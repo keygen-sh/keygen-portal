@@ -1,7 +1,8 @@
 import client from "@/keygen/client"
+import config from "@/keygen/config"
 import * as tokens from "@/keygen/tokens"
 
-const STORAGE_KEYS = ["token", "tokenId"]
+const STORAGE_KEYS = config.isCloud ? ["tokenId"] : ["token", "tokenId"]
 
 export async function logout() {
   const tokenId = client.currentTokenId

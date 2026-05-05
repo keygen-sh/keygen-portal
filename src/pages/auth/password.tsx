@@ -92,9 +92,13 @@ export default function Password() {
       const userId = relationships.bearer.data.id
 
       storage.setItem("tokenId", tokenId)
-      storage.setItem("token", token)
+      keygen.client.setTokenId(tokenId)
 
-      keygen.client.setRootToken(token)
+      if (!keygen.config.isCloud) {
+        storage.setItem("token", token)
+        keygen.client.setRootToken(token)
+      }
+
       session.setUser(userId)
 
       void navigate({ to: "/" })

@@ -22,7 +22,6 @@ import { useAuth } from "@/hooks/use-auth"
 import { AuthErrorCode } from "@/types/auth"
 
 import * as Loading from "@/components/loading"
-import ConfirmationModal from "@/components/confirmation-modal"
 
 const emailSchema = z.object({
   username: z.string().email("Please enter a valid email."),
@@ -31,7 +30,6 @@ const emailSchema = z.object({
 export default function Login() {
   const [loading, setLoading] = useState(false)
   const [localError, setLocalError] = useState<string | null>(null)
-  const [ssoRedirectUrl, setSsoRedirectUrl] = useState<string | null>(null)
 
   const auth = useAuth()
   const error = localError || auth.error
@@ -61,7 +59,6 @@ export default function Login() {
       const err = errors[0] as {
         code: AuthErrorCode
         detail?: string
-        links?: { redirect?: string | null }
       }
 
       auth.setEmail(email)
@@ -71,11 +68,7 @@ export default function Login() {
           void navigate({ to: `/${keygen.config.id}/auth/password` })
           break
         case AuthErrorCode.SsoRequired:
-          if (err.links?.redirect) {
-            setSsoRedirectUrl(err.links.redirect)
-          } else {
-            setLocalError("Single sign-on is unavailable.")
-          }
+          void navigate({ to: `/${keygen.config.id}/auth/sso` })
           break
         case AuthErrorCode.OtpRequired:
           setLocalError("Invalid email. Please try again.")
@@ -157,23 +150,6 @@ export default function Login() {
           </Link>
         </Button>
       </div>
-
-      <ConfirmationModal
-        open={ssoRedirectUrl !== null}
-        title="Single Sign-On"
-        label="Continue to IdP"
-        onClose={() => setSsoRedirectUrl(null)}
-        onConfirm={() => {
-          if (ssoRedirectUrl) window.location.href = ssoRedirectUrl
-        }}
-        autoFocus="confirm"
-      >
-        <p className="text-sm text-content-subdued">
-          <b>Your organization requires single sign-on</b>. You will be
-          redirected to your organization's identity provider for
-          authentication.
-        </p>
-      </ConfirmationModal>
     </section>
   )
 }

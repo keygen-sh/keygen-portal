@@ -6,9 +6,7 @@ import * as keygen from "@/keygen"
 import * as Page from "@/pages/index"
 
 function BillingRoute() {
-  const { isCloud, isLoading } = useCloud()
-
-  if (isLoading) return null
+  const { isCloud } = useCloud()
 
   if (!isCloud) {
     return (

@@ -59,6 +59,7 @@ export default function Login() {
       const err = errors[0] as {
         code: AuthErrorCode
         detail?: string
+        links?: { redirect?: string | null }
       }
 
       auth.setEmail(email)
@@ -68,7 +69,12 @@ export default function Login() {
           void navigate({ to: `/${keygen.config.id}/auth/password` })
           break
         case AuthErrorCode.SsoRequired:
-          void navigate({ to: `/${keygen.config.id}/auth/sso` })
+          if (err.links?.redirect) {
+            auth.setSsoRedirectUrl(err.links.redirect)
+            void navigate({ to: `/${keygen.config.id}/auth/sso` })
+          } else {
+            setLocalError("Single sign-on is unavailable.")
+          }
           break
         case AuthErrorCode.OtpRequired:
           setLocalError("Invalid email. Please try again.")

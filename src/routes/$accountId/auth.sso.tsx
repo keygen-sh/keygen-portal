@@ -5,9 +5,9 @@ import * as Guard from "@/guards/index"
 export const Route = createFileRoute("/$accountId/auth/sso")({
   component: () => {
     return (
-      <Guard.RequireEmail>
+      <Guard.RequireSsoRedirect>
         <Page.Auth.Sso />
-      </Guard.RequireEmail>
+      </Guard.RequireSsoRedirect>
     )
   },
 })

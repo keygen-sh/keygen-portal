@@ -15,11 +15,13 @@ export function AuthProvider({
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [remember, setRemember] = useState(false)
+  const [ssoRedirectUrl, setSsoRedirectUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const clearCredentials = useCallback(() => {
     setEmail("")
     setPassword("")
+    setSsoRedirectUrl(null)
   }, [])
 
   return (
@@ -31,6 +33,8 @@ export function AuthProvider({
         setPassword,
         remember,
         setRemember,
+        ssoRedirectUrl,
+        setSsoRedirectUrl,
         error,
         setError,
         clearCredentials,

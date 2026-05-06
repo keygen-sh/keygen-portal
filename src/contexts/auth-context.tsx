@@ -7,6 +7,8 @@ export interface AuthContextValue {
   setPassword: (password: string) => void
   remember: boolean
   setRemember: (remember: boolean) => void
+  ssoRedirectUrl: string | null
+  setSsoRedirectUrl: (url: string | null) => void
   error: string | null
   setError: (error: string | null) => void
   clearCredentials: () => void
@@ -19,6 +21,8 @@ export const AuthContext = createContext<AuthContextValue>({
   setPassword: () => {},
   remember: false,
   setRemember: () => {},
+  ssoRedirectUrl: null,
+  setSsoRedirectUrl: () => {},
   error: null,
   setError: () => {},
   clearCredentials: () => {},

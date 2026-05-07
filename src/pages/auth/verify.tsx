@@ -1,14 +1,18 @@
 import { useState, useCallback } from "react"
 import { useNavigate } from "@tanstack/react-router"
 
-import { OtpInput } from "@/components/otp-input"
-
 import * as keygen from "@/keygen"
+
 import { AuthErrorCode } from "@/types/auth"
+
 import { useAuth } from "@/hooks/use-auth"
 import { useSession } from "@/hooks/use-session"
-import BackButton from "@/components/back-button"
+
+import { isPortalAllowed } from "@/lib/permissions"
+
 import * as Loading from "@/components/loading"
+import { OtpInput } from "@/components/otp-input"
+import BackButton from "@/components/back-button"
 
 export default function Verify() {
   const [loading, setLoading] = useState(false)
@@ -55,11 +59,30 @@ export default function Verify() {
           return
         }
 
-        const storage = auth.remember ? localStorage : sessionStorage
         const { id: tokenId, attributes, relationships } = data!
         const { token } = attributes
         const userId = relationships.bearer.data.id
 
+        keygen.client.setRootToken(token)
+        keygen.client.setTokenId(tokenId)
+
+        const meResponse = await keygen.profiles.me()
+        if (
+          !meResponse.data ||
+          !isPortalAllowed(meResponse.data.attributes.role)
+        ) {
+          await keygen.logout()
+          auth.setError(
+            "This account does not have access to the portal. Please contact your administrator.",
+          )
+          void navigate({
+            to: "/$accountId/auth/login",
+            params: { accountId: keygen.config.id },
+          })
+          return
+        }
+
+        const storage = auth.remember ? localStorage : sessionStorage
         storage.setItem("tokenId", tokenId)
         keygen.client.setTokenId(tokenId)
 

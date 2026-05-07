@@ -7,6 +7,7 @@ import { useSidebar, SidebarProvider } from "@/components/ui/sidebar"
 import { useMobile } from "@/hooks/use-mobile"
 import { useSession } from "@/hooks/use-session"
 import { EnvironmentProvider } from "@/providers/environment-provider"
+import { PermissionsProvider } from "@/providers/permissions-provider"
 
 import { cn } from "@/lib/utils"
 
@@ -36,15 +37,17 @@ export default function AppLayout() {
 
   return (
     <EnvironmentProvider>
-      <TooltipProvider
-        delayDuration={120}
-        skipDelayDuration={400}
-        disableHoverableContent
-      >
-        <SidebarProvider>
-          <AppLayoutContent />
-        </SidebarProvider>
-      </TooltipProvider>
+      <PermissionsProvider>
+        <TooltipProvider
+          delayDuration={120}
+          skipDelayDuration={400}
+          disableHoverableContent
+        >
+          <SidebarProvider>
+            <AppLayoutContent />
+          </SidebarProvider>
+        </TooltipProvider>
+      </PermissionsProvider>
     </EnvironmentProvider>
   )
 }

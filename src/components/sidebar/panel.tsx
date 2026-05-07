@@ -56,7 +56,11 @@ import * as keygen from "@/keygen"
 import { useCloud } from "@/hooks/use-cloud"
 import { useMobile } from "@/hooks/use-mobile"
 import { useAppVersion } from "@/hooks/use-app-version"
+import { usePermissions } from "@/hooks/use-permissions"
+
 import { useLogout } from "@/queries/auth"
+
+import type { Permission } from "@/types/users"
 
 import Command from "./command"
 import Combobox from "./combobox"
@@ -77,6 +81,7 @@ type ViewRoute = {
   to: string
   label: string
   params: Record<string, unknown>
+  requires?: readonly Permission[]
 }
 
 type View = {
@@ -108,46 +113,55 @@ const VIEWS: View[] = [
         to: "/$accountId/app/products",
         label: "Products",
         params: { accountId: keygen.config.id },
+        requires: ["product.read"],
       },
       {
         to: "/$accountId/app/entitlements",
         label: "Entitlements",
         params: { accountId: keygen.config.id },
+        requires: ["entitlement.read"],
       },
       {
         to: "/$accountId/app/groups",
         label: "Groups",
         params: { accountId: keygen.config.id },
+        requires: ["group.read"],
       },
       {
         to: "/$accountId/app/policies",
         label: "Policies",
         params: { accountId: keygen.config.id },
+        requires: ["policy.read"],
       },
       {
         to: "/$accountId/app/licenses",
         label: "Licenses",
         params: { accountId: keygen.config.id },
+        requires: ["license.read"],
       },
       {
         to: "/$accountId/app/machines",
         label: "Machines",
         params: { accountId: keygen.config.id },
+        requires: ["machine.read"],
       },
       {
         to: "/$accountId/app/components",
         label: "Components",
         params: { accountId: keygen.config.id },
+        requires: ["component.read"],
       },
       {
         to: "/$accountId/app/processes",
         label: "Processes",
         params: { accountId: keygen.config.id },
+        requires: ["process.read"],
       },
       {
         to: "/$accountId/app/users",
         label: "Users",
         params: { accountId: keygen.config.id },
+        requires: ["user.read"],
       },
     ]),
   },
@@ -160,36 +174,43 @@ const VIEWS: View[] = [
         to: "/$accountId/app/packages",
         label: "Packages",
         params: { accountId: keygen.config.id },
+        requires: ["package.read"],
       },
       {
         to: "/$accountId/app/releases",
         label: "Releases",
         params: { accountId: keygen.config.id },
+        requires: ["release.read"],
       },
       {
         to: "/$accountId/app/artifacts",
         label: "Artifacts",
         params: { accountId: keygen.config.id },
+        requires: ["artifact.read"],
       },
       {
         to: "/$accountId/app/platforms",
         label: "Platforms",
         params: { accountId: keygen.config.id },
+        requires: ["platform.read"],
       },
       {
         to: "/$accountId/app/arches",
         label: "Architectures",
         params: { accountId: keygen.config.id },
+        requires: ["arch.read"],
       },
       {
         to: "/$accountId/app/channels",
         label: "Channels",
         params: { accountId: keygen.config.id },
+        requires: ["channel.read"],
       },
       {
         to: "/$accountId/app/engines",
         label: "Engines",
         params: { accountId: keygen.config.id },
+        requires: ["engine.read"],
       },
     ]),
   },
@@ -215,21 +236,25 @@ const VIEWS: View[] = [
         to: "/$accountId/app/team",
         label: "Team",
         params: { accountId: keygen.config.id },
+        requires: ["admin.read", "user.read"],
       },
       {
         to: "/$accountId/app/permissions",
         label: "Permissions",
         params: { accountId: keygen.config.id },
+        requires: ["account.update"],
       },
       {
         to: "/$accountId/app/developers",
         label: "Developers",
         params: { accountId: keygen.config.id },
+        requires: ["token.read"],
       },
       {
         to: "/$accountId/app/billing",
         label: "Billing",
         params: { accountId: keygen.config.id },
+        requires: ["account.billing.read"],
       },
     ]),
   },
@@ -251,8 +276,29 @@ function useActiveView(): View {
   return VIEWS.find((view) => view.id === ViewId.Home)!
 }
 
+function useVisibleViews(): View[] {
+  const { canAny } = usePermissions()
+
+  const isRouteVisible = (route: ViewRoute): boolean =>
+    route.requires == null || canAny(route.requires)
+
+  const filtered = VIEWS.map((view) => ({
+    ...view,
+    routes: view.routes.filter(isRouteVisible),
+  }))
+
+  return filtered.filter((view) => {
+    if (view.id === ViewId.Home) return true
+    const original = VIEWS.find((v) => v.id === view.id)!
+    if (original.routes.length === 0) return true
+    return view.routes.length > 0
+  })
+}
+
 export default function SidebarPanel(): React.ReactElement {
   const activeView = useActiveView()
+  const visibleViews = useVisibleViews()
+  const { can } = usePermissions()
   const [selectedView, setSelectedView] = useState(activeView)
   const { open, setOpen } = useSidebar()
 
@@ -262,9 +308,14 @@ export default function SidebarPanel(): React.ReactElement {
 
   const logout = useLogout()
 
+  const currentView =
+    visibleViews.find((v) => v.id === selectedView.id) ?? visibleViews[0]
+
   const visibleRoutes = isCloud
-    ? selectedView.routes
-    : selectedView.routes.filter((r) => r.to !== "/$accountId/app/billing")
+    ? (currentView?.routes ?? [])
+    : (currentView?.routes ?? []).filter(
+        (r) => r.to !== "/$accountId/app/billing",
+      )
 
   return (
     <div className={cn("flex h-full", isMobile && "absolute z-50")}>
@@ -301,14 +352,14 @@ export default function SidebarPanel(): React.ReactElement {
           )}
         >
           <RailGroup className="flex flex-col items-center">
-            {VIEWS.map((view) => (
+            {visibleViews.map((view) => (
               <Tooltip key={view.id} delayDuration={300}>
                 <TooltipTrigger asChild>
                   <Button
                     variant="rail"
                     size="rail"
                     className={cn(
-                      selectedView.id === view.id && "bg-background-3",
+                      currentView?.id === view.id && "bg-background-3",
                     )}
                     onClick={() => {
                       setSelectedView(view)
@@ -318,7 +369,7 @@ export default function SidebarPanel(): React.ReactElement {
                     <view.icon
                       className={cn(
                         "size-6 md:size-5",
-                        selectedView.id === view.id
+                        currentView?.id === view.id
                           ? "text-content-loud"
                           : "group-hover:text-primary",
                       )}
@@ -349,7 +400,7 @@ export default function SidebarPanel(): React.ReactElement {
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                {isCloud && (
+                {isCloud && can("account.billing.read") && (
                   <DropdownMenuItem asChild>
                     <Link
                       to="/$accountId/app/billing"
@@ -441,16 +492,16 @@ export default function SidebarPanel(): React.ReactElement {
                 )}
               </Button>
             </div>
-            <Command routes={VIEWS.flatMap((v) => v.routes)} />
+            <Command routes={visibleViews.flatMap((v) => v.routes)} />
           </SidebarGroup>
         </SidebarHeader>
 
         <SidebarContent className="overflow-hidden">
           <SidebarGroup>
             <SidebarMenu>
-              {selectedView && (
+              {currentView && (
                 <>
-                  <SidebarGroupLabel>{selectedView.label}</SidebarGroupLabel>
+                  <SidebarGroupLabel>{currentView.label}</SidebarGroupLabel>
                   {visibleRoutes.map((route) => (
                     <SidebarMenuItem key={route.to}>
                       <SidebarMenuButton asChild>

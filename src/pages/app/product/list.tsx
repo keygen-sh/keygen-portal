@@ -12,6 +12,7 @@ import { useListProducts } from "@/queries/products"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import * as Products from "@/components/products"
+import Can from "@/components/can"
 import DataTable from "@/components/data-table"
 import Pagination from "@/components/pagination"
 import PageHeader from "@/components/page-header"
@@ -39,13 +40,15 @@ export default function ProductsList() {
   return (
     <section className="flex h-screen flex-col">
       <PageHeader title="Products">
-        <Button
-          size="sm"
-          disabled={productsLoading}
-          onClick={() => setOpen(true)}
-        >
-          New Product
-        </Button>
+        <Can permission="product.create">
+          <Button
+            size="sm"
+            disabled={productsLoading}
+            onClick={() => setOpen(true)}
+          >
+            New Product
+          </Button>
+        </Can>
         <Products.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 

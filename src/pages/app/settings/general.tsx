@@ -17,6 +17,7 @@ import * as Users from "@/components/users"
 import * as Motion from "@/components/motion"
 import * as Account from "@/components/account"
 import * as Attribute from "@/components/attribute"
+import Can from "@/components/can"
 import PageHeader from "@/components/page-header"
 import ClipboardButton from "@/components/clipboard-button"
 
@@ -55,14 +56,16 @@ export default function General() {
                   ) : (
                     <div className="flex flex-col">
                       <div className="flex items-center justify-end border-b border-accent p-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setEditingAccount(true)}
-                          className="border-none bg-background-2"
-                        >
-                          Edit Account
-                        </Button>
+                        <Can permission="account.update">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setEditingAccount(true)}
+                            className="border-none bg-background-2"
+                          >
+                            Edit Account
+                          </Button>
+                        </Can>
                       </div>
                       <div className="flex flex-col gap-4 p-4">
                         <Attribute.Field

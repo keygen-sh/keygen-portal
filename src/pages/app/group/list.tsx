@@ -12,6 +12,7 @@ import { useListGroups } from "@/queries/groups"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import * as Groups from "@/components/groups"
+import Can from "@/components/can"
 import DataTable from "@/components/data-table"
 import Pagination from "@/components/pagination"
 import PageHeader from "@/components/page-header"
@@ -39,13 +40,15 @@ export default function GroupsList() {
   return (
     <section className="flex h-screen flex-col">
       <PageHeader title="Groups">
-        <Button
-          size="sm"
-          disabled={groupsLoading}
-          onClick={() => setOpen(true)}
-        >
-          New Group
-        </Button>
+        <Can permission="group.create">
+          <Button
+            size="sm"
+            disabled={groupsLoading}
+            onClick={() => setOpen(true)}
+          >
+            New Group
+          </Button>
+        </Can>
         <Groups.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 

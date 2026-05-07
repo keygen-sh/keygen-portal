@@ -13,6 +13,7 @@ import { useListReleases, type ReleaseFilters } from "@/queries/releases"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import * as Releases from "@/components/releases"
+import Can from "@/components/can"
 import DataTable from "@/components/data-table"
 import Pagination from "@/components/pagination"
 import PageHeader from "@/components/page-header"
@@ -51,13 +52,15 @@ export default function ReleasesList() {
   return (
     <section className="flex h-screen flex-col">
       <PageHeader title="Releases">
-        <Button
-          size="sm"
-          disabled={releasesLoading}
-          onClick={() => setOpen(true)}
-        >
-          New Release
-        </Button>
+        <Can permission="release.create">
+          <Button
+            size="sm"
+            disabled={releasesLoading}
+            onClick={() => setOpen(true)}
+          >
+            New Release
+          </Button>
+        </Can>
         <Releases.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 

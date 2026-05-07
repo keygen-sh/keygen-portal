@@ -176,7 +176,7 @@ export type UserFilters = {
   metadata?: Record<string, string>
 }
 
-export const AdminPermissions = [
+export const Permissions = [
   "account.analytics.read",
   "account.billing.read",
   "account.billing.update",
@@ -323,7 +323,9 @@ export const AdminPermissions = [
   "webhook-event.retry",
 ] as const
 
-export const PortalRequiredPermissions = [
+export type Permission = (typeof Permissions)[number]
+
+export const PortalRequiredPermissions: readonly Permission[] = [
   "account.read",
   "user.read",
   "user.password.update",
@@ -335,9 +337,9 @@ export const PortalRequiredPermissions = [
   "token.generate",
   "token.read",
   "token.revoke",
-] as const
+]
 
-export const UserPermissions = [
+export const UserPermissions: readonly Permission[] = [
   "account.read",
   "arch.read",
   "artifact.read",

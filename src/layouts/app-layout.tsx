@@ -1,7 +1,6 @@
 import { useEffect } from "react"
 import { Outlet, useNavigate } from "@tanstack/react-router"
 
-import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { useSidebar, SidebarProvider } from "@/components/ui/sidebar"
 
@@ -65,7 +64,6 @@ function AppLayoutContent() {
       >
         <Outlet />
       </main>
-      <Toaster />
     </div>
   )
 }

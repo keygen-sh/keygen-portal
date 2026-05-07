@@ -1,5 +1,7 @@
 import { Outlet } from "@tanstack/react-router"
 
+import { Toaster } from "@/components/ui/sonner"
+
 import { SessionProvider } from "@/providers/session-provider"
 import { useSession } from "@/hooks/use-session"
 
@@ -24,5 +26,10 @@ function TenantLayoutContent() {
     )
   }
 
-  return <Outlet />
+  return (
+    <>
+      <Outlet />
+      <Toaster />
+    </>
+  )
 }

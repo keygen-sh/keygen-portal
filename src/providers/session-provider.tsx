@@ -2,8 +2,14 @@ import { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
 import { useQueryClient } from "@tanstack/react-query"
 
-import * as keygen from "@/keygen"
+import { UserRole } from "@/types/users"
+
 import { SessionContext } from "@/contexts/session-context"
+
+import { toast } from "@/lib/toast"
+import { isPortalAllowed } from "@/lib/permissions"
+
+import * as keygen from "@/keygen"
 
 const STORAGE_KEYS = ["token", "tokenId"] as const
 
@@ -44,36 +50,65 @@ export function SessionProvider({
       )
 
       try {
+        let verified = false
+
         if (token && tokenId) {
           const { data } = await keygen.verify({ token, tokenId })
           if (data) {
-            const userId = data.relationships.bearer?.data?.id ?? null
             keygen.client.setRootToken(token)
             keygen.client.setTokenId(tokenId)
-            setUser(userId)
-            return
+            verified = true
           }
         }
 
         const meResponse = (await keygen.profiles.me()) as {
-          data?: { id: string }
+          data?: { id: string; attributes: { role: UserRole } }
           included?: { type: string; id: string }[]
         }
-        if (meResponse.data) {
+
+        if (!meResponse.data) {
+          setInitializing(false)
+          return
+        }
+
+        // Reject portal-disallowed roles, e.g. end-users
+        //
+        // FIXME(cazden) We don't have an endpoint to invalidate a session yet, so if
+        // the browser holds a disallowed role session (i.e. logging in as a User via SSO),
+        // there's no way to clear it except by manually clearing storage etc.,
+        // putting the user in a redirect loop if they try to go back to the login page.
+        if (!isPortalAllowed(meResponse.data.attributes.role)) {
+          await keygen.logout()
+
+          if (window.location.pathname.includes("/auth/")) {
+            setInitializing(false)
+          } else {
+            toast({
+              message: "This account does not have access to the portal.",
+              variant: "error",
+            })
+            void navigate({ to: "/sso/error", replace: true })
+          }
+          return
+        }
+
+        if (!verified) {
           const tokenResource = meResponse.included?.find(
             (r) => r.type === "tokens",
           )
           keygen.client.setTokenId(tokenResource?.id ?? null)
-          setUser(meResponse.data.id)
-          return
         }
+
+        queryClient.setQueryData(["users", "me"], meResponse.data)
+
+        setUser(meResponse.data.id)
+        setInitializing(false)
       } catch (error) {
         console.error(error)
-      } finally {
         setInitializing(false)
       }
     })()
-  }, [setUser])
+  }, [setUser, navigate, queryClient])
 
   // Sync logout when another tab clears the token for multitab cases
   useEffect(() => {

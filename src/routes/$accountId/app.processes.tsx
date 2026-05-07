@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { type ProcessFilters } from "@/queries/processes"
 import * as Page from "@/pages/index"
+import { requirePermission } from "@/lib/permissions"
 
 function validateSearch(search: Record<string, unknown>): ProcessFilters {
   const filters: ProcessFilters = {}
@@ -17,4 +18,6 @@ function validateSearch(search: Record<string, unknown>): ProcessFilters {
 export const Route = createFileRoute("/$accountId/app/processes")({
   component: () => <Page.App.Processes />,
   validateSearch,
+  beforeLoad: ({ context }) =>
+    requirePermission(context.queryClient, "process.read"),
 })

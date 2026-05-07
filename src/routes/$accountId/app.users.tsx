@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { type UserFilters } from "@/queries/users"
 import * as Page from "@/pages/index"
+import { requirePermission } from "@/lib/permissions"
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value)
@@ -23,4 +24,6 @@ function validateSearch(search: Record<string, unknown>): UserFilters {
 export const Route = createFileRoute("/$accountId/app/users")({
   component: () => <Page.App.Users />,
   validateSearch,
+  beforeLoad: ({ context }) =>
+    requirePermission(context.queryClient, "user.read"),
 })

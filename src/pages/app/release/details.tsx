@@ -5,6 +5,7 @@ import { formatDate } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsContent } from "@/components/ui/tabs"
 import {
@@ -84,6 +85,7 @@ import { copyToClipboard } from "@/lib/clipboard"
 import * as Releases from "@/components/releases"
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
+import Can from "@/components/can"
 import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
@@ -91,7 +93,6 @@ import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleCard from "@/components/collapsible-card"
-import { Separator } from "@/components/ui/separator"
 import ConfirmationModal from "@/components/confirmation-modal"
 
 const ReleaseChannelIcons: Record<ReleaseChannel, React.ReactNode> = {
@@ -279,7 +280,7 @@ export default function ReleaseDetails() {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="mr-4 p-0">
                 {release?.attributes.status === ReleaseStatus.Draft && (
-                  <>
+                  <Can permission="release.publish">
                     <DropdownMenuItem
                       onClick={(e) => {
                         toggleOpen("publish", true)
@@ -290,10 +291,10 @@ export default function ReleaseDetails() {
                       Publish
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                  </>
+                  </Can>
                 )}
                 {release?.attributes.status === ReleaseStatus.Published && (
-                  <>
+                  <Can permission="release.yank">
                     <DropdownMenuItem
                       onClick={(e) => {
                         toggleOpen("yank", true)
@@ -304,63 +305,75 @@ export default function ReleaseDetails() {
                       Yank
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                  </>
+                  </Can>
                 )}
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    toggleOpen("edit", true)
-                    e.currentTarget.blur()
-                  }}
-                  className="pb-2 text-base"
-                >
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    toggleOpen("delete", true)
-                    e.currentTarget.blur()
-                  }}
-                  className="pb-2 text-base"
-                >
-                  Delete
-                </DropdownMenuItem>
+                <Can permission="release.update">
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("edit", true)
+                      e.currentTarget.blur()
+                    }}
+                    className="pb-2 text-base"
+                  >
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                </Can>
+                <Can permission="release.delete">
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("delete", true)
+                      e.currentTarget.blur()
+                    }}
+                    className="pb-2 text-base"
+                  >
+                    Delete
+                  </DropdownMenuItem>
+                </Can>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <div className="flex items-center space-x-2">
               {release?.attributes.status === ReleaseStatus.Draft && (
-                <Button
-                  variant="outline"
-                  disabled={isLoading}
-                  onClick={() => toggleOpen("publish", true)}
-                >
-                  Publish
-                </Button>
+                <Can permission="release.publish">
+                  <Button
+                    variant="outline"
+                    disabled={isLoading}
+                    onClick={() => toggleOpen("publish", true)}
+                  >
+                    Publish
+                  </Button>
+                </Can>
               )}
               {release?.attributes.status === ReleaseStatus.Published && (
+                <Can permission="release.yank">
+                  <Button
+                    variant="outline"
+                    disabled={isLoading}
+                    onClick={() => toggleOpen("yank", true)}
+                  >
+                    Yank
+                  </Button>
+                </Can>
+              )}
+              <Can permission="release.update">
                 <Button
                   variant="outline"
                   disabled={isLoading}
-                  onClick={() => toggleOpen("yank", true)}
+                  onClick={() => toggleOpen("edit", true)}
                 >
-                  Yank
+                  Edit
                 </Button>
-              )}
-              <Button
-                variant="outline"
-                disabled={isLoading}
-                onClick={() => toggleOpen("edit", true)}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="outline"
-                disabled={isLoading}
-                onClick={() => toggleOpen("delete", true)}
-              >
-                Delete
-              </Button>
+              </Can>
+              <Can permission="release.delete">
+                <Button
+                  variant="outline"
+                  disabled={isLoading}
+                  onClick={() => toggleOpen("delete", true)}
+                >
+                  Delete
+                </Button>
+              </Can>
             </div>
           )}
         </PageHeader>

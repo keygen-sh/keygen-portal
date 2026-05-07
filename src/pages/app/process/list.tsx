@@ -13,6 +13,7 @@ import { useListProcesses, type ProcessFilters } from "@/queries/processes"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import * as Processes from "@/components/processes"
+import Can from "@/components/can"
 import DataTable from "@/components/data-table"
 import Pagination from "@/components/pagination"
 import PageHeader from "@/components/page-header"
@@ -51,13 +52,15 @@ export default function ProcessesList() {
   return (
     <section className="flex h-screen flex-col">
       <PageHeader title="Processes">
-        <Button
-          size="sm"
-          disabled={processesLoading}
-          onClick={() => setOpen(true)}
-        >
-          Spawn Process
-        </Button>
+        <Can permission="process.create">
+          <Button
+            size="sm"
+            disabled={processesLoading}
+            onClick={() => setOpen(true)}
+          >
+            Spawn Process
+          </Button>
+        </Can>
       </PageHeader>
 
       <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-2.5 md:px-4">

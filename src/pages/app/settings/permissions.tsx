@@ -1,8 +1,9 @@
 import { useState } from "react"
 
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { useGetAccountSettings } from "@/queries/accounts"
 
@@ -11,8 +12,8 @@ import { AccountFormFieldDescriptions } from "@/types/accounts"
 import * as Motion from "@/components/motion"
 import * as Account from "@/components/account"
 import * as Attribute from "@/components/attribute"
+import Can from "@/components/can"
 import PageHeader from "@/components/page-header"
-import { Separator } from "@radix-ui/react-separator"
 
 export default function PermissionsPage() {
   const { data: settings } = useGetAccountSettings()
@@ -51,14 +52,16 @@ export default function PermissionsPage() {
                 ) : (
                   <div className="flex flex-col">
                     <div className="flex items-center justify-end border-b border-accent p-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setEditingPermissions(true)}
-                        className="border-none bg-background-2"
-                      >
-                        Edit Permissions
-                      </Button>
+                      <Can permission="account.update">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setEditingPermissions(true)}
+                          className="border-none bg-background-2"
+                        >
+                          Edit Permissions
+                        </Button>
+                      </Can>
                     </div>
                     <div className="flex flex-col gap-4 p-4">
                       <Attribute.Field

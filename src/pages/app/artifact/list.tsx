@@ -13,6 +13,7 @@ import { useListArtifacts, type ArtifactFilters } from "@/queries/artifacts"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import * as Artifacts from "@/components/artifacts"
+import Can from "@/components/can"
 import DataTable from "@/components/data-table"
 import Pagination from "@/components/pagination"
 import PageHeader from "@/components/page-header"
@@ -51,13 +52,15 @@ export default function ArtifactsList() {
   return (
     <section className="flex h-screen flex-col">
       <PageHeader title="Artifacts">
-        <Button
-          size="sm"
-          disabled={artifactsLoading}
-          onClick={() => setOpen(true)}
-        >
-          New Artifact
-        </Button>
+        <Can permission="artifact.create">
+          <Button
+            size="sm"
+            disabled={artifactsLoading}
+            onClick={() => setOpen(true)}
+          >
+            New Artifact
+          </Button>
+        </Can>
         <Artifacts.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 

@@ -13,6 +13,7 @@ import { useListUsers } from "@/queries/users"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import * as Users from "@/components/users"
+import Can from "@/components/can"
 import DataTable from "@/components/data-table"
 import Pagination from "@/components/pagination"
 import PageHeader from "@/components/page-header"
@@ -53,9 +54,15 @@ export default function UsersList() {
   return (
     <section className="flex h-screen flex-col">
       <PageHeader title="Users">
-        <Button size="sm" disabled={usersLoading} onClick={() => setOpen(true)}>
-          New User
-        </Button>
+        <Can.Any permissions={["user.create", "user.invite"]}>
+          <Button
+            size="sm"
+            disabled={usersLoading}
+            onClick={() => setOpen(true)}
+          >
+            New User
+          </Button>
+        </Can.Any>
       </PageHeader>
 
       <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-2.5 md:px-4">

@@ -52,6 +52,7 @@ import { copyToClipboard } from "@/lib/clipboard"
 import * as Products from "@/components/products"
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
+import Can from "@/components/can"
 import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
@@ -134,43 +135,51 @@ export default function ProductDetails() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="mr-4 p-0">
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    toggleOpen("edit", true)
-                    e.currentTarget.blur()
-                  }}
-                  className="pb-2 text-base"
-                >
-                  Edit
-                </DropdownMenuItem>
-                <Separator />
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    toggleOpen("delete", true)
-                    e.currentTarget.blur()
-                  }}
-                  className="pb-2 text-base"
-                >
-                  Delete
-                </DropdownMenuItem>
+                <Can permission="product.update">
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("edit", true)
+                      e.currentTarget.blur()
+                    }}
+                    className="pb-2 text-base"
+                  >
+                    Edit
+                  </DropdownMenuItem>
+                  <Separator />
+                </Can>
+                <Can permission="product.delete">
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("delete", true)
+                      e.currentTarget.blur()
+                    }}
+                    className="pb-2 text-base"
+                  >
+                    Delete
+                  </DropdownMenuItem>
+                </Can>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                disabled={isLoading}
-                onClick={() => toggleOpen("edit", true)}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="outline"
-                disabled={isLoading}
-                onClick={() => toggleOpen("delete", true)}
-              >
-                Delete
-              </Button>
+              <Can permission="product.update">
+                <Button
+                  variant="outline"
+                  disabled={isLoading}
+                  onClick={() => toggleOpen("edit", true)}
+                >
+                  Edit
+                </Button>
+              </Can>
+              <Can permission="product.delete">
+                <Button
+                  variant="outline"
+                  disabled={isLoading}
+                  onClick={() => toggleOpen("delete", true)}
+                >
+                  Delete
+                </Button>
+              </Can>
             </div>
           )}
         </PageHeader>

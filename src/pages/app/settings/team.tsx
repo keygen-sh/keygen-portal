@@ -17,6 +17,7 @@ import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 import { User, InternalRoles, type UserFilters } from "@/types/users"
 
 import * as Users from "@/components/users"
+import Can from "@/components/can"
 import DataTable from "@/components/data-table"
 import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
@@ -96,9 +97,11 @@ export default function TeamPage() {
             </p>
           )}
         </div>
-        <Button size="sm" onClick={() => setOpen({ inviteTeammate: true })}>
-          Invite Teammate
-        </Button>
+        <Can permission="admin.invite">
+          <Button size="sm" onClick={() => setOpen({ inviteTeammate: true })}>
+            Invite Teammate
+          </Button>
+        </Can>
       </PageHeader>
 
       {/* Mobile */}

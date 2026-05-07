@@ -13,6 +13,7 @@ import { useListComponents, type ComponentFilters } from "@/queries/components"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import * as Components from "@/components/components"
+import Can from "@/components/can"
 import DataTable from "@/components/data-table"
 import Pagination from "@/components/pagination"
 import PageHeader from "@/components/page-header"
@@ -51,13 +52,15 @@ export default function ComponentsList() {
   return (
     <section className="flex h-screen flex-col">
       <PageHeader title="Components">
-        <Button
-          size="sm"
-          disabled={componentsLoading}
-          onClick={() => setOpen(true)}
-        >
-          New Component
-        </Button>
+        <Can permission="component.create">
+          <Button
+            size="sm"
+            disabled={componentsLoading}
+            onClick={() => setOpen(true)}
+          >
+            New Component
+          </Button>
+        </Can>
       </PageHeader>
 
       <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-2.5 md:px-4">

@@ -12,6 +12,7 @@ import { useListEntitlements } from "@/queries/entitlements"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import * as Entitlements from "@/components/entitlements"
+import Can from "@/components/can"
 import DataTable from "@/components/data-table"
 import Pagination from "@/components/pagination"
 import PageHeader from "@/components/page-header"
@@ -39,13 +40,15 @@ export default function EntitlementsList() {
   return (
     <section className="flex h-screen flex-col">
       <PageHeader title="Entitlements">
-        <Button
-          size="sm"
-          disabled={entitlementsLoading}
-          onClick={() => setOpen(true)}
-        >
-          New Entitlement
-        </Button>
+        <Can permission="entitlement.create">
+          <Button
+            size="sm"
+            disabled={entitlementsLoading}
+            onClick={() => setOpen(true)}
+          >
+            New Entitlement
+          </Button>
+        </Can>
         <Entitlements.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 

@@ -16,6 +16,7 @@ import {
 import * as Motion from "@/components/motion"
 import * as Account from "@/components/account"
 import * as Attribute from "@/components/attribute"
+import Can from "@/components/can"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import TooltipBadge from "@/components/tooltip-badge"
@@ -41,8 +42,13 @@ export default function DevelopersPage() {
                 Configure API version and account protection.
               </p>
             </div>
-            <div className="overflow-hidden rounded bg-background-1">
-              {account && (
+            <div className="overflow-hidden rounded bg-background-1 p-4">
+              {accountLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-3/4" />
+                </div>
+              ) : account ? (
                 <Motion.Resize layoutKey={editingSettings ? "edit" : "view"}>
                   {editingSettings ? (
                     <Account.Form.Developer
@@ -52,14 +58,16 @@ export default function DevelopersPage() {
                   ) : (
                     <div className="flex flex-col">
                       <div className="flex items-center justify-end border-b border-accent p-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setEditingSettings(true)}
-                          className="border-none bg-background-2"
-                        >
-                          Edit Settings
-                        </Button>
+                        <Can permission="account.update">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setEditingSettings(true)}
+                            className="border-none bg-background-2"
+                          >
+                            Edit Settings
+                          </Button>
+                        </Can>
                       </div>
                       <div className="flex flex-col gap-4 p-4">
                         <Attribute.Field
@@ -88,6 +96,12 @@ export default function DevelopersPage() {
                     </div>
                   )}
                 </Motion.Resize>
+              ) : (
+                <span className="text-sm text-content-subdued">
+                  Cannot access developer settings. This could be due to
+                  insufficient permissions or an issue with your account. Please
+                  contact your administrator for assistance.
+                </span>
               )}
             </div>
 
@@ -125,8 +139,10 @@ export default function DevelopersPage() {
                     <RsaKeyField base64Value={account.meta.keys.rsa2048} />
                   </div>
                 ) : (
-                  <span className="text-sm text-content-muted">
-                    No public keys available.
+                  <span className="text-sm text-content-subdued">
+                    Cannot access public keys. This could be due to insufficient
+                    permissions or an issue with your account. Please contact
+                    your administrator for assistance.
                   </span>
                 )}
               </div>

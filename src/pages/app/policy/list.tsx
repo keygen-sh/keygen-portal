@@ -13,6 +13,7 @@ import { useListPolicies, type PolicyFilters } from "@/queries/policies"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import * as Policies from "@/components/policies"
+import Can from "@/components/can"
 import DataTable from "@/components/data-table"
 import Pagination from "@/components/pagination"
 import PageHeader from "@/components/page-header"
@@ -51,13 +52,15 @@ export default function PoliciesList() {
   return (
     <section className="flex h-screen flex-col">
       <PageHeader title="Policies">
-        <Button
-          size="sm"
-          disabled={policiesLoading}
-          onClick={() => setOpen(true)}
-        >
-          New Policy
-        </Button>
+        <Can permission="policy.create">
+          <Button
+            size="sm"
+            disabled={policiesLoading}
+            onClick={() => setOpen(true)}
+          >
+            New Policy
+          </Button>
+        </Can>
 
         <Policies.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>

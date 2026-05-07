@@ -63,6 +63,7 @@ import { copyToClipboard } from "@/lib/clipboard"
 import * as Artifacts from "@/components/artifacts"
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
+import Can from "@/components/can"
 import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
@@ -172,25 +173,29 @@ export default function ArtifactDetails() {
                       <DropdownMenuSeparator />
                     </>
                   )}
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    toggleOpen("edit", true)
-                    e.currentTarget.blur()
-                  }}
-                  className="pb-2 text-base"
-                >
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    toggleOpen("delete", true)
-                    e.currentTarget.blur()
-                  }}
-                  className="pb-2 text-base"
-                >
-                  Delete
-                </DropdownMenuItem>
+                <Can permission="artifact.update">
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("edit", true)
+                      e.currentTarget.blur()
+                    }}
+                    className="pb-2 text-base"
+                  >
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                </Can>
+                <Can permission="artifact.delete">
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("delete", true)
+                      e.currentTarget.blur()
+                    }}
+                    className="pb-2 text-base"
+                  >
+                    Delete
+                  </DropdownMenuItem>
+                </Can>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
@@ -206,20 +211,24 @@ export default function ArtifactDetails() {
                     Download
                   </Button>
                 )}
-              <Button
-                variant="outline"
-                disabled={isLoading}
-                onClick={() => toggleOpen("edit", true)}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="outline"
-                disabled={isLoading}
-                onClick={() => toggleOpen("delete", true)}
-              >
-                Delete
-              </Button>
+              <Can permission="artifact.update">
+                <Button
+                  variant="outline"
+                  disabled={isLoading}
+                  onClick={() => toggleOpen("edit", true)}
+                >
+                  Edit
+                </Button>
+              </Can>
+              <Can permission="artifact.delete">
+                <Button
+                  variant="outline"
+                  disabled={isLoading}
+                  onClick={() => toggleOpen("delete", true)}
+                >
+                  Delete
+                </Button>
+              </Can>
             </div>
           )}
         </PageHeader>

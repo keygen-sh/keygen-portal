@@ -13,6 +13,7 @@ import { useListPackages, type PackageFilters } from "@/queries/packages"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import * as Packages from "@/components/packages"
+import Can from "@/components/can"
 import DataTable from "@/components/data-table"
 import Pagination from "@/components/pagination"
 import PageHeader from "@/components/page-header"
@@ -51,13 +52,15 @@ export default function PackagesList() {
   return (
     <section className="flex h-screen flex-col">
       <PageHeader title="Packages">
-        <Button
-          size="sm"
-          disabled={packagesLoading}
-          onClick={() => setOpen(true)}
-        >
-          New Package
-        </Button>
+        <Can permission="package.create">
+          <Button
+            size="sm"
+            disabled={packagesLoading}
+            onClick={() => setOpen(true)}
+          >
+            New Package
+          </Button>
+        </Can>
         <Packages.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 

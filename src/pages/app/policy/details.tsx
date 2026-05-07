@@ -74,6 +74,7 @@ import * as keygen from "@/keygen"
 import * as Policies from "@/components/policies"
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
+import Can from "@/components/can"
 import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
@@ -180,59 +181,71 @@ export default function PolicyDetails() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="mr-4 p-0">
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    toggleOpen("duplicate", true)
-                    e.currentTarget.blur()
-                  }}
-                  className="pb-2 text-base"
-                >
-                  Duplicate
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    toggleOpen("edit", true)
-                    e.currentTarget.blur()
-                  }}
-                  className="pb-2 text-base"
-                >
-                  Edit
-                </DropdownMenuItem>
-                <Separator />
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    toggleOpen("delete", true)
-                    e.currentTarget.blur()
-                  }}
-                  className="pb-2 text-base"
-                >
-                  Delete
-                </DropdownMenuItem>
+                <Can permission="policy.create">
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("duplicate", true)
+                      e.currentTarget.blur()
+                    }}
+                    className="pb-2 text-base"
+                  >
+                    Duplicate
+                  </DropdownMenuItem>
+                </Can>
+                <Can permission="policy.update">
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("edit", true)
+                      e.currentTarget.blur()
+                    }}
+                    className="pb-2 text-base"
+                  >
+                    Edit
+                  </DropdownMenuItem>
+                  <Separator />
+                </Can>
+                <Can permission="policy.delete">
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("delete", true)
+                      e.currentTarget.blur()
+                    }}
+                    className="pb-2 text-base"
+                  >
+                    Delete
+                  </DropdownMenuItem>
+                </Can>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                disabled={policyLoading}
-                onClick={() => toggleOpen("duplicate", true)}
-              >
-                Duplicate
-              </Button>
-              <Button
-                variant="outline"
-                disabled={policyLoading}
-                onClick={() => toggleOpen("edit", true)}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="outline"
-                disabled={policyLoading}
-                onClick={() => toggleOpen("delete", true)}
-              >
-                Delete
-              </Button>
+              <Can permission="policy.create">
+                <Button
+                  variant="outline"
+                  disabled={policyLoading}
+                  onClick={() => toggleOpen("duplicate", true)}
+                >
+                  Duplicate
+                </Button>
+              </Can>
+              <Can permission="policy.update">
+                <Button
+                  variant="outline"
+                  disabled={policyLoading}
+                  onClick={() => toggleOpen("edit", true)}
+                >
+                  Edit
+                </Button>
+              </Can>
+              <Can permission="policy.delete">
+                <Button
+                  variant="outline"
+                  disabled={policyLoading}
+                  onClick={() => toggleOpen("delete", true)}
+                >
+                  Delete
+                </Button>
+              </Can>
             </div>
           )}
         </PageHeader>

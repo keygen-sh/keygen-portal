@@ -70,6 +70,7 @@ import * as keygen from "@/keygen"
 import * as Users from "@/components/users"
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
+import Can from "@/components/can"
 import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
@@ -207,56 +208,67 @@ export default function UserDetails() {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="mr-4 p-0">
                 {user?.attributes.status === UserStatus.Banned ? (
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      toggleOpen("unban", true)
-                      e.currentTarget.blur()
-                    }}
-                    className="pb-2 text-base"
-                  >
-                    Unban
-                  </DropdownMenuItem>
+                  <Can permission="user.unban">
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        toggleOpen("unban", true)
+                        e.currentTarget.blur()
+                      }}
+                      className="pb-2 text-base"
+                    >
+                      Unban
+                    </DropdownMenuItem>
+                    <Separator />
+                  </Can>
                 ) : (
+                  <Can permission="user.ban">
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        toggleOpen("ban", true)
+                        e.currentTarget.blur()
+                      }}
+                      className="pb-2 text-base"
+                    >
+                      Ban
+                    </DropdownMenuItem>
+                    <Separator />
+                  </Can>
+                )}
+                <Can permission="user.password.reset">
                   <DropdownMenuItem
                     onClick={(e) => {
-                      toggleOpen("ban", true)
+                      toggleOpen("resetPassword", true)
                       e.currentTarget.blur()
                     }}
                     className="pb-2 text-base"
                   >
-                    Ban
+                    Reset password
                   </DropdownMenuItem>
-                )}
-                <Separator />
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    toggleOpen("resetPassword", true)
-                    e.currentTarget.blur()
-                  }}
-                  className="pb-2 text-base"
-                >
-                  Reset password
-                </DropdownMenuItem>
-                <Separator />
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    toggleOpen("edit", true)
-                    e.currentTarget.blur()
-                  }}
-                  className="pb-2 text-base"
-                >
-                  Edit
-                </DropdownMenuItem>
-                <Separator />
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    toggleOpen("delete", true)
-                    e.currentTarget.blur()
-                  }}
-                  className="pb-2 text-base"
-                >
-                  Delete
-                </DropdownMenuItem>
+                  <Separator />
+                </Can>
+                <Can permission="user.update">
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("edit", true)
+                      e.currentTarget.blur()
+                    }}
+                    className="pb-2 text-base"
+                  >
+                    Edit
+                  </DropdownMenuItem>
+                  <Separator />
+                </Can>
+                <Can permission="user.delete">
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      toggleOpen("delete", true)
+                      e.currentTarget.blur()
+                    }}
+                    className="pb-2 text-base"
+                  >
+                    Delete
+                  </DropdownMenuItem>
+                </Can>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
@@ -270,49 +282,59 @@ export default function UserDetails() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   {user?.attributes.status === UserStatus.Banned ? (
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        toggleOpen("unban", true)
-                        e.currentTarget.blur()
-                      }}
-                    >
-                      Unban
-                    </DropdownMenuItem>
+                    <Can permission="user.unban">
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          toggleOpen("unban", true)
+                          e.currentTarget.blur()
+                        }}
+                      >
+                        Unban
+                      </DropdownMenuItem>
+                    </Can>
                   ) : (
+                    <Can permission="user.ban">
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          toggleOpen("ban", true)
+                          e.currentTarget.blur()
+                        }}
+                      >
+                        Ban
+                      </DropdownMenuItem>
+                    </Can>
+                  )}
+                  <Can permission="user.password.reset">
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={(e) => {
-                        toggleOpen("ban", true)
+                        toggleOpen("resetPassword", true)
                         e.currentTarget.blur()
                       }}
                     >
-                      Ban
+                      Reset password
                     </DropdownMenuItem>
-                  )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      toggleOpen("resetPassword", true)
-                      e.currentTarget.blur()
-                    }}
-                  >
-                    Reset password
-                  </DropdownMenuItem>
+                  </Can>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <Button
-                variant="outline"
-                disabled={userLoading}
-                onClick={() => toggleOpen("edit", true)}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="outline"
-                disabled={userLoading}
-                onClick={() => toggleOpen("delete", true)}
-              >
-                Delete
-              </Button>
+              <Can permission="user.update">
+                <Button
+                  variant="outline"
+                  disabled={userLoading}
+                  onClick={() => toggleOpen("edit", true)}
+                >
+                  Edit
+                </Button>
+              </Can>
+              <Can permission="user.delete">
+                <Button
+                  variant="outline"
+                  disabled={userLoading}
+                  onClick={() => toggleOpen("delete", true)}
+                >
+                  Delete
+                </Button>
+              </Can>
             </div>
           )}
         </PageHeader>

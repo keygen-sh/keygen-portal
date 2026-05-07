@@ -23,13 +23,13 @@ import { useListGroups } from "@/queries/groups"
 import { ProductPermissions } from "@/types/products"
 import {
   UserRole,
+  Permissions,
   ExternalRoles,
   InternalRoles,
   UserRoleLabels,
-  AdminPermissions,
   UserRoleDescriptions,
-  UserFormFieldDescriptions,
   PortalRequiredPermissions,
+  UserFormFieldDescriptions,
   UserEditFormFieldDescriptions,
   UserCreateFormFieldDescriptions,
   UserPasswordFormFieldDescriptions,
@@ -597,7 +597,7 @@ function InternalPermissionsField({
             <MultiSelect
               value={field.value}
               onChange={field.onChange}
-              options={AdminPermissions.map((p) => ({
+              options={Permissions.map((p) => ({
                 label: p,
                 value: p,
               }))}

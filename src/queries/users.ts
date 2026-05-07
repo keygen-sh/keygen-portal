@@ -287,19 +287,21 @@ export function useResetPassword() {
   })
 }
 
+export const currentUserQueryOptions = () => ({
+  queryKey: ["users", "me"] as const,
+  queryFn: async () => {
+    const response = await keygen.profiles.me()
+
+    if (!response.data) {
+      throw new Error("Current user not found")
+    }
+
+    return response.data
+  },
+})
+
 export function useGetCurrentUser() {
-  return useQuery({
-    queryKey: ["users", "me"],
-    queryFn: async () => {
-      const response = await keygen.profiles.me()
-
-      if (!response.data) {
-        throw new Error("Current user not found")
-      }
-
-      return response.data
-    },
-  })
+  return useQuery(currentUserQueryOptions())
 }
 
 export function useUpdateCurrentUser() {

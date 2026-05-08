@@ -236,7 +236,7 @@ const VIEWS: View[] = [
         to: "/$accountId/app/team",
         label: "Team",
         params: { accountId: keygen.config.id },
-        requires: ["admin.read", "user.read"],
+        requires: ["user.read"],
       },
       {
         to: "/$accountId/app/permissions",
@@ -277,10 +277,10 @@ function useActiveView(): View {
 }
 
 function useVisibleViews(): View[] {
-  const { canAny } = usePermissions()
+  const { canAll } = usePermissions()
 
   const isRouteVisible = (route: ViewRoute): boolean =>
-    route.requires == null || canAny(route.requires)
+    route.requires == null || canAll(route.requires)
 
   const filtered = VIEWS.map((view) => ({
     ...view,

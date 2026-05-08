@@ -46,7 +46,7 @@ export default function TeamPage() {
   const requestRoles = useMemo(
     () =>
       (filters.roles?.length ? filters.roles : InternalRoles).filter(
-        (r) => can("admin.read") || r !== UserRole.Admin,
+        (r) => can("admin.read") || (r as UserRole) !== UserRole.Admin,
       ),
     [filters.roles, can],
   )

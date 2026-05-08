@@ -281,126 +281,60 @@ export default function LicenseDetails() {
           </Breadcrumb>
 
           {isMobile ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  disabled={licenseLoading}
-                  className="text-content-muted"
-                >
-                  <EllipsisVertical className="size-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="mr-4 p-0">
-                <Can permission="license.update">
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      toggleOpen("edit", true)
-                      e.currentTarget.blur()
-                    }}
-                    className="pb-2 text-base"
+            <Can.Any
+              permissions={[
+                "license.update",
+                "license.delete",
+                "license.renew",
+                "license.suspend",
+                "license.reinstate",
+                "license.check-in",
+                "license.check-out",
+                "license.usage.reset",
+              ]}
+            >
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    disabled={licenseLoading}
+                    className="text-content-muted"
                   >
-                    Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                </Can>
-                <Can permission="license.delete">
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      toggleOpen("delete", true)
-                      e.currentTarget.blur()
-                    }}
-                    className="pb-2 text-base text-destructive"
-                  >
-                    Delete
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                </Can>
-                <Can permission="license.renew">
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      toggleOpen("renew", true)
-                      e.currentTarget.blur()
-                    }}
-                    className="pb-2 text-base"
-                  >
-                    Renew
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                </Can>
-                <Can
-                  permission={
-                    license?.attributes.suspended
-                      ? "license.reinstate"
-                      : "license.suspend"
-                  }
-                >
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      toggleOpen("suspend", true)
-                      e.currentTarget.blur()
-                    }}
-                    className="pb-2 text-base"
-                  >
-                    {license?.attributes.suspended ? "Reinstate" : "Suspend"}
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                </Can>
-                {license?.attributes.requireCheckIn && (
-                  <Can permission="license.check-in">
+                    <EllipsisVertical className="size-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="mr-4 p-0">
+                  <Can permission="license.update">
                     <DropdownMenuItem
                       onClick={(e) => {
-                        toggleOpen("checkIn", true)
+                        toggleOpen("edit", true)
                         e.currentTarget.blur()
                       }}
                       className="pb-2 text-base"
                     >
-                      Check-in
+                      Edit
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                   </Can>
-                )}
-                <Can permission="license.check-out">
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      toggleOpen("checkOut", true)
-                      e.currentTarget.blur()
-                    }}
-                    className="pb-2 text-base"
-                  >
-                    Checkout
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                </Can>
-                <Can permission="license.usage.reset">
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      toggleOpen("resetUsage", true)
-                      e.currentTarget.blur()
-                    }}
-                    className="pb-2 text-base"
-                  >
-                    Reset usage
-                  </DropdownMenuItem>
-                </Can>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <div className="flex items-center space-x-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" disabled={licenseLoading}>
-                    Actions
-                    <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]_&]:rotate-180" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                  <Can permission="license.delete">
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        toggleOpen("delete", true)
+                        e.currentTarget.blur()
+                      }}
+                      className="pb-2 text-base text-destructive"
+                    >
+                      Delete
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </Can>
                   <Can permission="license.renew">
                     <DropdownMenuItem
                       onClick={(e) => {
                         toggleOpen("renew", true)
                         e.currentTarget.blur()
                       }}
+                      className="pb-2 text-base"
                     >
                       Renew
                     </DropdownMenuItem>
@@ -418,6 +352,7 @@ export default function LicenseDetails() {
                         toggleOpen("suspend", true)
                         e.currentTarget.blur()
                       }}
+                      className="pb-2 text-base"
                     >
                       {license?.attributes.suspended ? "Reinstate" : "Suspend"}
                     </DropdownMenuItem>
@@ -430,6 +365,7 @@ export default function LicenseDetails() {
                           toggleOpen("checkIn", true)
                           e.currentTarget.blur()
                         }}
+                        className="pb-2 text-base"
                       >
                         Check-in
                       </DropdownMenuItem>
@@ -442,6 +378,7 @@ export default function LicenseDetails() {
                         toggleOpen("checkOut", true)
                         e.currentTarget.blur()
                       }}
+                      className="pb-2 text-base"
                     >
                       Checkout
                     </DropdownMenuItem>
@@ -453,12 +390,101 @@ export default function LicenseDetails() {
                         toggleOpen("resetUsage", true)
                         e.currentTarget.blur()
                       }}
+                      className="pb-2 text-base"
                     >
                       Reset usage
                     </DropdownMenuItem>
                   </Can>
                 </DropdownMenuContent>
               </DropdownMenu>
+            </Can.Any>
+          ) : (
+            <div className="flex items-center space-x-2">
+              <Can.Any
+                permissions={[
+                  "license.renew",
+                  "license.suspend",
+                  "license.reinstate",
+                  "license.check-in",
+                  "license.check-out",
+                  "license.usage.reset",
+                ]}
+              >
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" disabled={licenseLoading}>
+                      Actions
+                      <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]_&]:rotate-180" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <Can permission="license.renew">
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          toggleOpen("renew", true)
+                          e.currentTarget.blur()
+                        }}
+                      >
+                        Renew
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </Can>
+                    <Can
+                      permission={
+                        license?.attributes.suspended
+                          ? "license.reinstate"
+                          : "license.suspend"
+                      }
+                    >
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          toggleOpen("suspend", true)
+                          e.currentTarget.blur()
+                        }}
+                      >
+                        {license?.attributes.suspended
+                          ? "Reinstate"
+                          : "Suspend"}
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </Can>
+                    {license?.attributes.requireCheckIn && (
+                      <Can permission="license.check-in">
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            toggleOpen("checkIn", true)
+                            e.currentTarget.blur()
+                          }}
+                        >
+                          Check-in
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                      </Can>
+                    )}
+                    <Can permission="license.check-out">
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          toggleOpen("checkOut", true)
+                          e.currentTarget.blur()
+                        }}
+                      >
+                        Checkout
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </Can>
+                    <Can permission="license.usage.reset">
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          toggleOpen("resetUsage", true)
+                          e.currentTarget.blur()
+                        }}
+                      >
+                        Reset usage
+                      </DropdownMenuItem>
+                    </Can>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </Can.Any>
               <Can permission="license.update">
                 <Button
                   variant="outline"

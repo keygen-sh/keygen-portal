@@ -57,8 +57,8 @@ export default function DevelopersPage() {
                     />
                   ) : (
                     <div className="flex flex-col">
-                      <div className="flex items-center justify-end border-b border-accent p-2">
-                        <Can permission="account.update">
+                      <Can permission="account.update">
+                        <div className="flex items-center justify-end border-b border-accent p-2">
                           <Button
                             variant="outline"
                             size="sm"
@@ -67,8 +67,8 @@ export default function DevelopersPage() {
                           >
                             Edit Settings
                           </Button>
-                        </Can>
-                      </div>
+                        </div>
+                      </Can>
                       <div className="flex flex-col gap-4 p-4">
                         <Attribute.Field
                           label="API version"

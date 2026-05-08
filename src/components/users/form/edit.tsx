@@ -1,12 +1,12 @@
 import { useCallback } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
 
 import { Separator } from "@/components/ui/separator"
 
 import * as Schemas from "@/schemas"
-import { UserRole } from "@/types/users"
+import { UserRole, InternalRoles } from "@/types/users"
 
 import { useGetUser, useUpdateUser, useChangeUserGroup } from "@/queries/users"
 
@@ -48,6 +48,9 @@ export default function EditUserForm({
     },
   })
 
+  const role = useWatch({ control: form.control, name: "role" })
+  const isInternal = role != null && InternalRoles.includes(role)
+
   const handleSubmit = useCallback(
     async (values: Schemas.Users.UpdateValues) => {
       const currentGroupId = user?.relationships.group?.data?.id ?? null
@@ -88,7 +91,11 @@ export default function EditUserForm({
             <Forms.Section.Column>
               <Users.Form.Fields
                 schema="edit"
-                include={["password", "permissions", "role"]}
+                include={[
+                  "password",
+                  isInternal ? "internalPermissions" : "permissions",
+                  "role",
+                ]}
                 fieldVariant="stacking"
               />
             </Forms.Section.Column>

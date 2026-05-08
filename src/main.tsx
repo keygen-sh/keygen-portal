@@ -9,6 +9,7 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 1000 * 60 * 5, // don't refetch if data is < 5m old
       refetchOnWindowFocus: false, // disable refetch on refocus
+      retry: false, // disable default retries to prevent cascading failures
     },
   },
 })

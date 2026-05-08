@@ -24,8 +24,6 @@ import { AuthErrorCode } from "@/types/auth"
 import { useAuth } from "@/hooks/use-auth"
 import { useSession } from "@/hooks/use-session"
 
-import { isPortalAllowed } from "@/lib/permissions"
-
 import * as Loading from "@/components/loading"
 import BackButton from "@/components/back-button"
 
@@ -91,21 +89,6 @@ export default function Password() {
       const { id: tokenId, attributes, relationships } = data!
       const { token } = attributes
       const userId = relationships.bearer.data.id
-
-      keygen.client.setRootToken(token)
-      keygen.client.setTokenId(tokenId)
-
-      const meResponse = await keygen.profiles.me()
-      if (
-        !meResponse.data ||
-        !isPortalAllowed(meResponse.data.attributes.role)
-      ) {
-        await keygen.logout()
-        setLocalError(
-          "This account does not have access to the portal. Please contact your administrator.",
-        )
-        return
-      }
 
       const storage = remember ? localStorage : sessionStorage
       storage.setItem("tokenId", tokenId)

@@ -1,15 +1,12 @@
-import { useEffect, useMemo } from "react"
+import { useMemo } from "react"
 
 import { PermissionsContext } from "@/contexts/permissions-context"
 
-import { useLogout } from "@/queries/auth"
 import { useGetCurrentUser } from "@/queries/users"
 
 import { type Permission } from "@/types/users"
 
-import { toast } from "@/lib/toast"
 import { isPermission } from "@/lib/permissions"
-import { isPortalAllowed } from "@/lib/permissions"
 
 import * as Loading from "@/components/loading"
 
@@ -21,7 +18,6 @@ export function PermissionsProvider({
   children,
 }: PermissionsProviderProps): React.ReactElement {
   const { data: currentUser, isLoading } = useGetCurrentUser()
-  const logout = useLogout()
 
   const value = useMemo(() => {
     const permissions: ReadonlySet<Permission> = new Set(
@@ -39,25 +35,7 @@ export function PermissionsProvider({
     }
   }, [currentUser, isLoading])
 
-  useEffect(() => {
-    if (currentUser && !isPortalAllowed(currentUser.attributes.role)) {
-      toast({
-        message: "This account does not have access to the portal.",
-        variant: "error",
-      })
-      logout.mutate()
-    }
-  }, [currentUser, logout])
-
   if (!currentUser) {
-    return (
-      <div className="flex h-screen w-screen items-center justify-center">
-        <Loading.Dots />
-      </div>
-    )
-  }
-
-  if (!isPortalAllowed(currentUser.attributes.role)) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
         <Loading.Dots />

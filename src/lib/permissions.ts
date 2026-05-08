@@ -2,7 +2,7 @@ import type { QueryClient } from "@tanstack/react-query"
 
 import { currentUserQueryOptions } from "@/queries/users"
 
-import { UserRole, Permissions, Permission } from "@/types/users"
+import { Permissions, Permission } from "@/types/users"
 
 const PERMISSION_SET: ReadonlySet<Permission> = new Set(Permissions)
 
@@ -43,10 +43,4 @@ export async function requireAllPermissions(
   if (!permissions.every((p) => perms.has(p))) {
     throw new Error("Permission denied")
   }
-}
-
-export const PORTAL_DISALLOWED_ROLES: readonly UserRole[] = [UserRole.User]
-
-export function isPortalAllowed(role: UserRole): boolean {
-  return !PORTAL_DISALLOWED_ROLES.includes(role)
 }

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react"
+import { useState, useCallback, useMemo } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -11,10 +11,11 @@ import { useGetAccount, useGetAccountPlan } from "@/queries/accounts"
 import { useMobile } from "@/hooks/use-mobile"
 import { useDataTable } from "@/hooks/use-data-table"
 import { useFilterSearch } from "@/hooks/use-filter-search"
+import { usePermissions } from "@/hooks/use-permissions"
 import { useTeamTableColumns } from "@/hooks/use-team-table-columns"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
-import { User, InternalRoles, type UserFilters } from "@/types/users"
+import { User, UserRole, InternalRoles, type UserFilters } from "@/types/users"
 
 import * as Users from "@/components/users"
 import Can from "@/components/can"
@@ -28,6 +29,7 @@ export default function TeamPage() {
 
   const table = useDataTable()
   const columns = useTeamTableColumns()
+  const { can } = usePermissions()
 
   const [filters, setFilters] = useFilterSearch<UserFilters>()
 
@@ -39,6 +41,16 @@ export default function TeamPage() {
     [table, setFilters],
   )
 
+  // NB(cazden) API requires 'admin.read' whenever an admin appears in the response,
+  // remove it from the request if current user can't read admins to avoid 403.
+  const requestRoles = useMemo(
+    () =>
+      (filters.roles?.length ? filters.roles : InternalRoles).filter(
+        (r) => can("admin.read") || r !== UserRole.Admin,
+      ),
+    [filters.roles, can],
+  )
+
   const {
     data: users,
     links,
@@ -48,7 +60,7 @@ export default function TeamPage() {
     pageSize: table.pageSize,
     filters: {
       ...filters,
-      roles: filters.roles?.length ? filters.roles : InternalRoles,
+      roles: requestRoles,
     },
   })
 

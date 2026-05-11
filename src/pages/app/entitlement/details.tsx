@@ -297,6 +297,7 @@ export default function EntitlementDetails() {
         onConfirm={handleDeleteEntitlement}
         label="Delete"
         variant="destructive"
+        confirmText={entitlement?.attributes.name || "delete entitlement"}
       />
     </section>
   )

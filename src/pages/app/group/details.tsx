@@ -452,6 +452,7 @@ export default function GroupDetails() {
         onConfirm={handleDeleteGroup}
         label="Delete"
         variant="destructive"
+        confirmText={group?.attributes.name || "delete group"}
       />
 
       {group && (

@@ -510,6 +510,7 @@ export default function ComponentDetails() {
         onConfirm={handleDeleteComponent}
         label="Delete"
         variant="destructive"
+        confirmText={component?.attributes.name || "delete component"}
       />
 
       {component && (

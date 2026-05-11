@@ -1147,6 +1147,7 @@ export default function LicenseDetails() {
           onConfirm={handleDeleteLicense}
           label="Delete"
           variant="destructive"
+          confirmText={license.attributes.name || "delete license"}
         />
       )}
 

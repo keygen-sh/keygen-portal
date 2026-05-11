@@ -759,6 +759,7 @@ export default function MachineDetails() {
         onConfirm={handleDeleteMachine}
         label="Deactivate"
         variant="destructive"
+        confirmText={machine?.attributes.name || "delete machine"}
       />
 
       {machine && (

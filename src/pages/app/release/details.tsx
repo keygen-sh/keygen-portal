@@ -705,6 +705,7 @@ export default function ReleaseDetails() {
         onConfirm={handleDeleteRelease}
         label="Delete"
         variant="destructive"
+        confirmText={release?.attributes.name || "delete release"}
       />
 
       <ConfirmationModal

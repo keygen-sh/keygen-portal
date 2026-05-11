@@ -581,6 +581,7 @@ export default function ProcessDetails() {
         onConfirm={handleDeleteProcess}
         label="Delete"
         variant="destructive"
+        confirmText="delete process"
       />
 
       {process && (

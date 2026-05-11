@@ -704,6 +704,7 @@ export default function PolicyDetails() {
         onConfirm={handleDeletePolicy}
         label="Delete"
         variant="destructive"
+        confirmText={policy?.attributes.name || "delete policy"}
       />
     </section>
   )

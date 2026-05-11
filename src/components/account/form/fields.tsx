@@ -153,7 +153,7 @@ function AccountSlugField({
             label="Account slug"
             variant={fieldVariant}
             tooltip={AccountFormFieldDescriptions.slug}
-            tooltipVariant="warning"
+            tooltipVariant="destructive"
           >
             <FormControl>
               <Input

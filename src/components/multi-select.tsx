@@ -1,5 +1,5 @@
 import { useState, useRef, KeyboardEvent, useMemo } from "react"
-import { Info } from "lucide-react"
+import { Info, TriangleAlert } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -62,18 +62,15 @@ export default function MultiSelect({
   className,
 }: MultiSelectProps) {
   const items = value ?? []
-  const hasNoneOption = !!includeNone && requiredOptions.length === 0
+  const hasNoneOption = !!includeNone
   const isNoneSelected = hasNoneOption && value != null && value.length === 0
+  const isWildcardSelected = !!includeWildcard && items.includes("*")
   const [query, setQuery] = useState("")
   const [open, setOpen] = useState(false)
 
   const inputRef = useRef<HTMLInputElement>(null)
   const triggerRef = useRef<HTMLDivElement>(null)
 
-  const requiredSet = useMemo(
-    () => new Set(requiredOptions.map((o) => o.value)),
-    [requiredOptions],
-  )
   const requiredTooltipMap = useMemo(
     () => new Map(requiredOptions.map((o) => [o.value, o.tooltip])),
     [requiredOptions],
@@ -110,8 +107,6 @@ export default function MultiSelect({
       return
     }
 
-    if (requiredSet.has(value)) return
-
     if (includeWildcard && value === "*") {
       emit(items.includes(value) ? null : [value], focus)
       return
@@ -124,7 +119,6 @@ export default function MultiSelect({
   }
 
   const remove = (value: string) => {
-    if (requiredSet.has(value)) return
     toggle(value, open)
   }
 
@@ -160,18 +154,6 @@ export default function MultiSelect({
           )}
         >
           <div className="flex min-h-9 w-full flex-wrap items-center gap-x-2 gap-y-2 p-2 text-sm">
-            {requiredOptions.map(({ label, value, tooltip }) => (
-              <Tooltip key={value}>
-                <TooltipTrigger asChild>
-                  <Badge className="h-5 cursor-default text-content-subdued">
-                    {label}
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent className="text-conent-muted max-w-64 bg-background-5 text-pretty">
-                  {tooltip}
-                </TooltipContent>
-              </Tooltip>
-            ))}
             {isNoneSelected && (
               <Badge
                 className="h-5 cursor-pointer text-content-muted"
@@ -183,12 +165,15 @@ export default function MultiSelect({
                 None <span className="ml-1">&times;</span>
               </Badge>
             )}
-            {items
-              .filter((v) => !requiredSet.has(v))
-              .map((value) => (
+            {items.map((value) => {
+              const tooltip = requiredTooltipMap.get(value)
+              const badge = (
                 <Badge
                   key={value}
-                  className="h-5 cursor-pointer text-content-muted"
+                  className={cn(
+                    "h-5 cursor-pointer text-content-muted",
+                    tooltip != null && "hover:bg-warning/20 hover:text-warning",
+                  )}
                   onClick={(e) => {
                     e.stopPropagation()
                     remove(value)
@@ -197,18 +182,30 @@ export default function MultiSelect({
                   {labelMap.get(value) ?? value}{" "}
                   <span className="ml-1">&times;</span>
                 </Badge>
-              ))}
+              )
+
+              if (tooltip == null) return badge
+
+              return (
+                <Tooltip key={value}>
+                  <TooltipTrigger asChild>{badge}</TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    sideOffset={4}
+                    className="pointer-events-none max-w-56 bg-background-5 text-pretty text-content-muted"
+                  >
+                    {tooltip}
+                  </TooltipContent>
+                </Tooltip>
+              )
+            })}
 
             <Input
               ref={inputRef}
               value={query}
               disabled={disabled}
               autoFocus={autoFocus}
-              placeholder={
-                items.length || isNoneSelected || requiredOptions.length
-                  ? ""
-                  : placeholder
-              }
+              placeholder={items.length || isNoneSelected ? "" : placeholder}
               fieldSize="sm"
               className="h-5 flex-1 border-none"
               onChange={(e) => {
@@ -265,24 +262,24 @@ export default function MultiSelect({
                 </CommandItem>
               )}
               {visibleOptions.map(({ label, value }) => {
-                const isRequired = requiredSet.has(value)
+                const tooltip = requiredTooltipMap.get(value)
+                const isCovered =
+                  items.includes(value) || (isWildcardSelected && value !== "*")
+                const showWarning = tooltip != null && !isCovered
 
                 return (
                   <CommandItem
                     key={value}
                     tabIndex={-1}
                     onSelect={() => toggle(value)}
-                    className={cn(
-                      isRequired ? "cursor-default" : "cursor-pointer",
-                    )}
+                    className="cursor-pointer"
                   >
                     <Checkbox
-                      checked={isRequired || items.includes(value)}
-                      disabled={isRequired}
+                      checked={items.includes(value)}
                       className="pointer-events-none mr-2"
                     />
                     {label}
-                    {isRequired && (
+                    {tooltip != null && (
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <span
@@ -290,7 +287,11 @@ export default function MultiSelect({
                             onClick={(e) => e.stopPropagation()}
                             onPointerDown={(e) => e.stopPropagation()}
                           >
-                            <Info className="size-3.5 text-muted-foreground" />
+                            {showWarning ? (
+                              <TriangleAlert className="size-3.5 text-warning" />
+                            ) : (
+                              <Info className="size-3.5 text-muted-foreground" />
+                            )}
                           </span>
                         </TooltipTrigger>
                         <TooltipContent
@@ -298,7 +299,7 @@ export default function MultiSelect({
                           sideOffset={8}
                           className="pointer-events-none max-w-56 bg-background-5 text-pretty text-content-muted"
                         >
-                          {requiredTooltipMap.get(value)}
+                          {tooltip}
                         </TooltipContent>
                       </Tooltip>
                     )}

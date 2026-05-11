@@ -293,7 +293,7 @@ function PasswordField({
             variant={fieldVariant}
             optional
             tooltip={descriptions.password}
-            tooltipVariant="warning"
+            tooltipVariant="destructive"
           >
             <FormControl>
               <Input
@@ -587,29 +587,51 @@ function InternalPermissionsField({
     <FormField
       control={form.control}
       name="permissions"
-      render={({ field }) => (
-        <FormItem>
-          <Forms.Field.Header
-            label="Permissions"
-            variant={fieldVariant}
-            tooltip={descriptions.permissions}
-          >
-            <MultiSelect
-              value={field.value}
-              onChange={field.onChange}
-              options={Permissions.map((p) => ({
-                label: p,
-                value: p,
-              }))}
-              includeNone
-              includeWildcard
-              requiredOptions={PORTAL_REQUIRED_OPTIONS}
-              autoFocus={autoFocus}
-            />
-          </Forms.Field.Header>
-          <FormMessage />
-        </FormItem>
-      )}
+      render={({ field }) => {
+        const selected = field.value ?? []
+        const isWildcardSelected = selected.includes("*")
+        const missingPortalPermissions = isWildcardSelected
+          ? []
+          : PortalRequiredPermissions.filter((p) => !selected.includes(p))
+
+        return (
+          <FormItem>
+            <Forms.Field.Header
+              label="Permissions"
+              variant={fieldVariant}
+              tooltip={descriptions.permissions}
+              warning={
+                missingPortalPermissions.length > 0 ? (
+                  <>
+                    <div>
+                      Missing some permissions required for Portal access:
+                    </div>
+                    <ul className="mt-1 list-disc pl-4">
+                      {missingPortalPermissions.map((p) => (
+                        <li key={p}>{p}</li>
+                      ))}
+                    </ul>
+                  </>
+                ) : undefined
+              }
+            >
+              <MultiSelect
+                value={field.value}
+                onChange={field.onChange}
+                options={Permissions.map((p) => ({
+                  label: p,
+                  value: p,
+                }))}
+                includeNone
+                includeWildcard
+                requiredOptions={PORTAL_REQUIRED_OPTIONS}
+                autoFocus={autoFocus}
+              />
+            </Forms.Field.Header>
+            <FormMessage />
+          </FormItem>
+        )
+      }}
     />
   )
 }

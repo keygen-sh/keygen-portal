@@ -499,6 +499,7 @@ export default function ArtifactDetails() {
         onConfirm={handleDeleteArtifact}
         label="Delete"
         variant="destructive"
+        confirmText="delete artifact"
       />
 
       {artifact && (

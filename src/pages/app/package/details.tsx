@@ -404,6 +404,7 @@ export default function PackageDetails() {
         onConfirm={handleDeletePackage}
         label="Delete"
         variant="destructive"
+        confirmText={pkg?.attributes.name || "delete package"}
       />
 
       {pkg && (

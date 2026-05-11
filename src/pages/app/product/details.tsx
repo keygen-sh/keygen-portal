@@ -400,6 +400,7 @@ export default function ProductDetails() {
         onConfirm={handleDeleteProduct}
         label="Delete"
         variant="destructive"
+        confirmText={product?.attributes.name || "delete product"}
       />
     </section>
   )

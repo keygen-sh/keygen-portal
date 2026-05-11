@@ -599,6 +599,7 @@ export default function UserDetails() {
         onConfirm={handleDeleteUser}
         label="Delete"
         variant="destructive"
+        confirmText={user?.attributes.email || "delete user"}
       />
 
       {user && (

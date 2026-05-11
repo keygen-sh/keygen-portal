@@ -9,19 +9,20 @@ import {
   PopoverContent,
 } from "@/components/ui/popover"
 
-import { Info } from "lucide-react"
+import { Info, TriangleAlert } from "lucide-react"
 
 import { cn, splitLastWord } from "@/lib/utils"
 
 import { useMobile } from "@/hooks/use-mobile"
 
 export type FieldVariant = "row" | "stacking" | "inline" | "none"
-type TooltipVariant = "default" | "warning"
+type TooltipVariant = "default" | "destructive"
 
 interface FieldHeaderProps {
   label: string
   tooltip?: string | null
   tooltipVariant?: TooltipVariant
+  warning?: string | React.ReactNode
   variant?: FieldVariant
   optional?: boolean
   hint?: string
@@ -33,6 +34,7 @@ export default function FieldHeader({
   label,
   tooltip = null,
   tooltipVariant = "default",
+  warning,
   variant = "row",
   optional = false,
   hint,
@@ -58,7 +60,7 @@ export default function FieldHeader({
             {head && <>{head} </>}
             <span className="inline-flex gap-2 whitespace-nowrap">
               {tail}
-              {tooltip && (
+              {(tooltip || warning) && (
                 <>
                   <span className="inline-flex md:hidden">
                     <Popover>
@@ -66,34 +68,42 @@ export default function FieldHeader({
                         onClick={(e) => e.stopPropagation()}
                         asChild
                       >
-                        <Info
-                          className={cn(
-                            "inline size-5",
-                            tooltipVariant === "warning"
-                              ? "text-destructive"
-                              : "text-content-subdued",
-                          )}
-                        />
+                        {warning ? (
+                          <TriangleAlert className="inline size-5 text-warning" />
+                        ) : (
+                          <Info
+                            className={cn(
+                              "inline size-5",
+                              tooltipVariant === "destructive"
+                                ? "text-destructive"
+                                : "text-content-subdued",
+                            )}
+                          />
+                        )}
                       </PopoverTrigger>
                       <PopoverContent className="m-1 max-w-64 bg-background-4 text-pretty text-content-muted">
-                        {tooltip}
+                        {warning ? warning : tooltip}
                       </PopoverContent>
                     </Popover>
                   </span>
                   <span className="hidden md:inline-flex">
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Info
-                          className={cn(
-                            "inline size-4 self-center transition-all duration-200",
-                            tooltipVariant === "warning"
-                              ? "text-destructive"
-                              : "translate-x-2 text-content-subdued opacity-0 group-hover:translate-x-0 group-hover:opacity-100 data-[state=delayed-open]:translate-x-0 data-[state=delayed-open]:opacity-100 data-[state=open]:translate-x-0 data-[state=open]:opacity-100",
-                          )}
-                        />
+                        {warning ? (
+                          <TriangleAlert className="inline size-4 self-center text-warning" />
+                        ) : (
+                          <Info
+                            className={cn(
+                              "inline size-4 self-center transition-all duration-200",
+                              tooltipVariant === "destructive"
+                                ? "text-destructive"
+                                : "translate-x-2 text-content-subdued opacity-0 group-hover:translate-x-0 group-hover:opacity-100 data-[state=delayed-open]:translate-x-0 data-[state=delayed-open]:opacity-100 data-[state=open]:translate-x-0 data-[state=open]:opacity-100",
+                            )}
+                          />
+                        )}
                       </TooltipTrigger>
                       <TooltipContent className="m-1 max-w-80 bg-background-4 text-pretty text-content-muted">
-                        {tooltip}
+                        {warning ? warning : tooltip}
                       </TooltipContent>
                     </Tooltip>
                   </span>

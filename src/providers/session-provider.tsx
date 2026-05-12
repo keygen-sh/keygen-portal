@@ -2,11 +2,8 @@ import { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
 import { useQueryClient } from "@tanstack/react-query"
 
-import { UserRole } from "@/types/users"
-
-import { SessionContext } from "@/contexts/session-context"
-
 import * as keygen from "@/keygen"
+import { SessionContext } from "@/contexts/session-context"
 
 const STORAGE_KEYS = ["token", "tokenId"] as const
 
@@ -47,44 +44,36 @@ export function SessionProvider({
       )
 
       try {
-        let verified = false
-
         if (token && tokenId) {
           const { data } = await keygen.verify({ token, tokenId })
           if (data) {
+            const userId = data.relationships.bearer?.data?.id ?? null
             keygen.client.setRootToken(token)
             keygen.client.setTokenId(tokenId)
-            verified = true
+            setUser(userId)
+            return
           }
         }
 
         const meResponse = (await keygen.profiles.me()) as {
-          data?: { id: string; attributes: { role: UserRole } }
+          data?: { id: string }
           included?: { type: string; id: string }[]
         }
-
-        if (!meResponse.data) {
-          setInitializing(false)
-          return
-        }
-
-        if (!verified) {
+        if (meResponse.data) {
           const tokenResource = meResponse.included?.find(
             (r) => r.type === "tokens",
           )
           keygen.client.setTokenId(tokenResource?.id ?? null)
+          setUser(meResponse.data.id)
+          return
         }
-
-        queryClient.setQueryData(["users", "me"], meResponse.data)
-
-        setUser(meResponse.data.id)
-        setInitializing(false)
       } catch (error) {
         console.error(error)
+      } finally {
         setInitializing(false)
       }
     })()
-  }, [setUser, navigate, queryClient])
+  }, [setUser])
 
   // Sync logout when another tab clears the token for multitab cases
   useEffect(() => {

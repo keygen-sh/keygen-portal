@@ -236,7 +236,7 @@ const VIEWS: View[] = [
         to: "/$accountId/app/team",
         label: "Team",
         params: { accountId: keygen.config.id },
-        requires: ["user.read"],
+        requires: ["admin.read", "user.read"],
       },
       {
         to: "/$accountId/app/permissions",

@@ -1,4 +1,5 @@
 import {
+  CircleDot,
   Fingerprint,
   Globe,
   Monitor,
@@ -21,6 +22,12 @@ import { useListLicenses } from "@/queries/licenses"
 import { useListUsers } from "@/queries/users"
 import { useListGroups } from "@/queries/groups"
 import { type MachineFilters } from "@/queries/machines"
+import { HeartbeatStatus } from "@/types/machines"
+
+const STATUS_OPTIONS = [
+  { label: "Alive", value: HeartbeatStatus.Alive },
+  { label: "Dead", value: HeartbeatStatus.Dead },
+]
 
 interface MachineFilterBarProps {
   filters: MachineFilters
@@ -63,6 +70,15 @@ export default function MachineFilterBar({
     <Filters.FilterBar
       filterCount={filterCount}
       onClearAll={() => onChange({})}
+      pinned={
+        <Filters.EnumFilter
+          label="Status"
+          icon={CircleDot}
+          options={STATUS_OPTIONS}
+          value={filters.status}
+          onChange={(status) => onChange({ ...filters, status })}
+        />
+      }
     >
       <Filters.StringFilter
         label="Fingerprint"

@@ -1,14 +1,18 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
 
-import { SearchOperator, SearchableResource } from "@/types/search"
+import {
+  SearchOperator,
+  type SearchQuery,
+  SearchableResource,
+} from "@/types/search"
 import { type APIResponse, type AnyResource } from "@/types/api"
 
 config.validate()
 
 interface SearchProps {
   type: SearchableResource
-  query: Record<string, string>
+  query: SearchQuery
   op?: SearchOperator
 }
 

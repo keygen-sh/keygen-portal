@@ -66,7 +66,7 @@ export const licensesConfig: ResourceConfig<License> = {
     </span>
   ),
   searchQuery: (term) => ({
-    query: { id: term, name: term, key: term },
+    query: { id: term, name: term },
     op: "OR",
   }),
 }

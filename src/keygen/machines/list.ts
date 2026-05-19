@@ -27,6 +27,9 @@ export default async function list({
   if (pageSize != null) {
     params.set("page[size]", pageSize.toString())
   }
+  if (filters?.status) {
+    params.set("status", filters.status)
+  }
   if (filters?.fingerprint) {
     params.set("fingerprint", filters.fingerprint)
   }

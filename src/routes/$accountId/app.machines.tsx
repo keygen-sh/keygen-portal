@@ -10,6 +10,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function validateSearch(search: Record<string, unknown>): MachineFilters {
   const filters: MachineFilters = {}
 
+  if (typeof search.status === "string") filters.status = search.status
   if (typeof search.fingerprint === "string")
     filters.fingerprint = search.fingerprint
   if (typeof search.ip === "string") filters.ip = search.ip

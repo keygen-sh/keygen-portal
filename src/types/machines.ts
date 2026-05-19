@@ -152,6 +152,7 @@ export type MachineFile = Resource<
 export type MachineFileResponse = APIResponse<MachineFile>
 
 export type MachineFilters = {
+  status?: string
   fingerprint?: string
   ip?: string
   hostname?: string

@@ -14,3 +14,5 @@ export type SearchableResource =
 export type SearchOperator = "AND" | "OR"
 
 export type SearchOption = { id: string }
+
+export type SearchQuery = Record<string, string | Record<string, string>>

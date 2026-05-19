@@ -1,7 +1,5 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Link, linkOptions, useMatchRoute } from "@tanstack/react-router"
-
-import { Search } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -62,7 +60,7 @@ import { useLogout } from "@/queries/auth"
 
 import type { Permission } from "@/types/users"
 
-import Command from "./command"
+import * as Palette from "@/components/palette"
 import Combobox from "./combobox"
 import NewVersionCard from "./new-version-card"
 import BillingStatusCard from "./billing-status-card"
@@ -301,12 +299,24 @@ export default function SidebarPanel(): React.ReactElement {
   const { can } = usePermissions()
   const [selectedView, setSelectedView] = useState(activeView)
   const { open, setOpen } = useSidebar()
+  const [paletteOpen, setPaletteOpen] = useState(false)
 
   const isMobile = useMobile()
   const { isCloud } = useCloud()
   const { hasUpdate, reload } = useAppVersion()
 
   const logout = useLogout()
+
+  useEffect(() => {
+    function handler(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault()
+        setPaletteOpen((prev) => !prev)
+      }
+    }
+    window.addEventListener("keydown", handler)
+    return () => window.removeEventListener("keydown", handler)
+  }, [])
 
   const currentView =
     visibleViews.find((v) => v.id === selectedView.id) ?? visibleViews[0]
@@ -449,50 +459,22 @@ export default function SidebarPanel(): React.ReactElement {
           </SidebarGroup>
           <SidebarGroup className="flex-row justify-between px-1 pt-0 pb-2">
             <div className="flex w-full gap-2">
-              {/* Quick actions */}
               <Button
-                onClick={() => {
-                  window.dispatchEvent(
-                    new KeyboardEvent("keydown", { key: "k", metaKey: true }),
-                  )
-                }}
+                onClick={() => setPaletteOpen(true)}
                 variant="command"
                 size="command"
-                className="flex items-center justify-between"
+                className="flex w-full items-center justify-between"
               >
                 {isMobile && <span className="text-lg">⌘</span>}
-                Quick actions
+                Quick actions / search...
                 {!isMobile && (
                   <kbd className="rounded-[3px] border-t border-content-subdued bg-background-3 px-1 text-xs text-nowrap text-content-subdued">
                     ⌘ K
                   </kbd>
                 )}
               </Button>
-
-              {/* Search */}
-              <Button
-                onClick={() =>
-                  window.dispatchEvent(
-                    new KeyboardEvent("keydown", { key: "/" }),
-                  )
-                }
-                variant="command"
-                size="command"
-                className="flex items-center justify-between"
-              >
-                <Search className="size-3 md:size-4" />
-                {isMobile ? (
-                  <span className="text-nowrap text-content-subdued">
-                    Search
-                  </span>
-                ) : (
-                  <kbd className="rounded-[3px] border-t border-content-subdued bg-background-3 px-1.5 text-xs text-nowrap text-content-subdued">
-                    /
-                  </kbd>
-                )}
-              </Button>
             </div>
-            <Command routes={visibleViews.flatMap((v) => v.routes)} />
+            <Palette.Menu open={paletteOpen} onOpenChange={setPaletteOpen} />
           </SidebarGroup>
         </SidebarHeader>
 

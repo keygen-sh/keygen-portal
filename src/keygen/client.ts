@@ -76,7 +76,9 @@ export class Client {
     const response = await fetch(`${this.url}${endpoint}`, {
       ...fetchOptions,
       headers,
-      credentials: "include",
+      ...(config.isCloud
+        ? { credentials: "include" } // cookies are only supported on cloud
+        : {}),
     })
 
     const data = (await response.json().catch(() => ({}))) as APIResponse<T>

@@ -1,11 +1,10 @@
 import { useNavigate } from "@tanstack/react-router"
 
+import type { AnyResource } from "@/types/api"
+
 import * as keygen from "@/keygen"
 
-export interface NavigableResource {
-  type: string
-  id: string
-}
+export type NavigableResource = Pick<AnyResource, "type" | "id">
 
 export function useResourceNavigate() {
   const navigate = useNavigate()

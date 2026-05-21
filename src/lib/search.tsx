@@ -1,4 +1,5 @@
 import {
+  SearchQuery,
   SearchOption,
   SearchOperator,
   SearchableResource,
@@ -43,6 +44,22 @@ export function labelFor(item: { type: string } & SearchOption): string {
   const config = resourceConfigs[item.type as SearchableResource]
   const getLabel = config?.getLabel ?? getDefaultLabel
   return getLabel(item)
+}
+
+export const MIN_SEARCH_LENGTH = 3
+
+function hasMinimumSearchValue(value: SearchQuery[string]): boolean {
+  if (typeof value === "string") {
+    return value.length >= MIN_SEARCH_LENGTH
+  }
+
+  return Object.values(value).some(
+    (nested) => nested.length >= MIN_SEARCH_LENGTH,
+  )
+}
+
+export function hasMinimumSearchQuery(query: SearchQuery): boolean {
+  return Object.values(query).some(hasMinimumSearchValue)
 }
 
 export interface ResourceConfig<T extends SearchOption = SearchOption> {

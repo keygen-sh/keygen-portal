@@ -8,7 +8,7 @@ import {
 
 import { useEnvironment } from "@/hooks/use-environment"
 
-import { MIN_SEARCH_LENGTH } from "@/lib/palette"
+import { hasMinimumSearchQuery } from "@/lib/search"
 
 import * as keygen from "@/keygen"
 
@@ -18,11 +18,7 @@ export function useSearch(
   op?: SearchOperator,
 ) {
   const { code } = useEnvironment()
-  const enabled =
-    type != null &&
-    Object.values(query).some(
-      (v) => typeof v === "string" && v.length >= MIN_SEARCH_LENGTH,
-    )
+  const enabled = type != null && hasMinimumSearchQuery(query)
 
   return useQuery({
     queryKey: ["search", type, query, op, { environment: code }],

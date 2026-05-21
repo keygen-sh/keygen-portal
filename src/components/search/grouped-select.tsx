@@ -13,7 +13,11 @@ import {
 import { ChevronsUpDown, X } from "lucide-react"
 
 import { useSearch } from "@/queries/search"
-import { resourceConfigs, getDefaultLabel } from "@/lib/search"
+import {
+  resourceConfigs,
+  getDefaultLabel,
+  MIN_SEARCH_LENGTH,
+} from "@/lib/search"
 import {
   SearchOption,
   SearchOperator,
@@ -87,7 +91,7 @@ export default function GroupedSearchSelect<T extends SearchOption>({
       SearchOperator | undefined,
     ]
   >(() => {
-    if (query.length < 3) {
+    if (query.length < MIN_SEARCH_LENGTH) {
       return [null, {}, undefined]
     }
     const search = config.searchQuery(query)

@@ -45,8 +45,6 @@ import type { AnyResource } from "@/types/api"
 import { useCloud } from "@/hooks/use-cloud"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
-import { useLogout } from "@/queries/auth"
-
 import * as keygen from "@/keygen"
 
 import * as Users from "@/components/users"
@@ -57,13 +55,11 @@ import * as Policies from "@/components/policies"
 import * as Products from "@/components/products"
 import * as Releases from "@/components/releases"
 import * as Licenses from "@/components/licenses"
-import ConfirmationModal from "@/components/confirmation-modal"
 
 import Home from "./home"
 import Find from "./find"
 import Filter from "./filter"
 import New from "./new"
-import Footer from "./footer"
 import * as Chip from "./chip"
 
 type Screen =
@@ -118,11 +114,9 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
   const [dialog, setDialog] = useState<DialogKey | null>(null)
   const [recents, setRecents] = useState<RecentItem[]>(() => loadRecents())
   const [chipFocusSignal, setChipFocusSignal] = useState(0)
-  const [confirmingSignOut, setConfirmingSignOut] = useState(false)
 
   const navigate = useNavigate()
   const navigateToResource = useResourceNavigate()
-  const logout = useLogout()
 
   const findCommandCandidates = useMemo(
     () =>
@@ -451,82 +445,52 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
           </Chip.Tip>
         )}
 
-        <CommandList className="max-h-none! overflow-visible!">
-          <div className="flex max-h-[480px] flex-col">
-            <div className="min-h-0 flex-1 overflow-y-auto">
-              <Motion.Slide direction={direction} offset={40} duration={0.2}>
-                {screen.kind === "home" || screen.kind === "command" ? (
-                  <Home
-                    key={screen.kind}
-                    filterText={filterText}
-                    recents={recents}
-                    commandsById={commandsById}
-                    findCommands={findCommands}
-                    filterCommands={filterCommands}
-                    newCommands={newCommands}
-                    accountCommands={accountCommands}
-                    helpCommands={helpCommands}
-                    onOpenFind={() => transitionTo({ kind: "find" }, 1)}
-                    onOpenFilter={() => transitionTo({ kind: "filter" }, 1)}
-                    onOpenNew={() => transitionTo({ kind: "new" }, 1)}
-                    onCommandSelect={executeCommand}
-                    onRecentSelect={handleRecentSelect}
-                  />
-                ) : screen.kind === "find" ? (
-                  <Find
-                    key="find"
-                    commands={findCommands}
-                    resource={activeFindResource}
-                    chipState={chipState}
-                    validationError={findValidationError}
-                    onSelect={executeCommand}
-                    onResourceSelect={handleResourceSelect}
-                    onFirstResultValueChange={
-                      handleFirstSearchResultValueChange
-                    }
-                  />
-                ) : screen.kind === "filter" ? (
-                  <Filter
-                    key="filter"
-                    commands={filterCommands}
-                    onSelect={executeCommand}
-                  />
-                ) : screen.kind === "new" ? (
-                  <New
-                    key="new"
-                    commands={newCommands}
-                    onSelect={executeCommand}
-                  />
-                ) : null}
-              </Motion.Slide>
-            </div>
-
-            <Footer
-              onCopyAccountId={() => {
-                void copyToClipboard(keygen.config.id)
-                close()
-              }}
-              onSignOut={() => {
-                setConfirmingSignOut(true)
-              }}
-            />
-          </div>
+        <CommandList className="max-h-[480px]">
+          <Motion.Slide direction={direction} offset={40} duration={0.2}>
+            {screen.kind === "home" || screen.kind === "command" ? (
+              <Home
+                key={screen.kind}
+                filterText={filterText}
+                recents={recents}
+                commandsById={commandsById}
+                findCommands={findCommands}
+                filterCommands={filterCommands}
+                newCommands={newCommands}
+                accountCommands={accountCommands}
+                helpCommands={helpCommands}
+                onOpenFind={() => transitionTo({ kind: "find" }, 1)}
+                onOpenFilter={() => transitionTo({ kind: "filter" }, 1)}
+                onOpenNew={() => transitionTo({ kind: "new" }, 1)}
+                onCopyAccountId={() => {
+                  void copyToClipboard(keygen.config.id)
+                  close()
+                }}
+                onCommandSelect={executeCommand}
+                onRecentSelect={handleRecentSelect}
+              />
+            ) : screen.kind === "find" ? (
+              <Find
+                key="find"
+                commands={findCommands}
+                resource={activeFindResource}
+                chipState={chipState}
+                validationError={findValidationError}
+                onSelect={executeCommand}
+                onResourceSelect={handleResourceSelect}
+                onFirstResultValueChange={handleFirstSearchResultValueChange}
+              />
+            ) : screen.kind === "filter" ? (
+              <Filter
+                key="filter"
+                commands={filterCommands}
+                onSelect={executeCommand}
+              />
+            ) : screen.kind === "new" ? (
+              <New key="new" commands={newCommands} onSelect={executeCommand} />
+            ) : null}
+          </Motion.Slide>
         </CommandList>
       </CommandDialog>
-
-      <ConfirmationModal
-        title="Are you sure you want to sign out?"
-        description="You will need to re-authenticate to access this account."
-        label="Sign out"
-        variant="destructive"
-        open={confirmingSignOut}
-        onClose={() => setConfirmingSignOut(false)}
-        onConfirm={() => {
-          setConfirmingSignOut(false)
-          close()
-          logout.mutate()
-        }}
-      />
 
       <Licenses.Form.Create
         open={dialog === DialogKey.License}

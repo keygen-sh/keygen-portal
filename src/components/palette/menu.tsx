@@ -25,6 +25,7 @@ import {
   validateSearchInput,
   getSearchSuggestions,
   applySearchSuggestion,
+  getTopCommandSearchValue,
   getInvalidSearchChipIndexes,
 } from "@/lib/palette"
 import { cn } from "@/lib/utils"
@@ -123,6 +124,15 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
   const navigateToResource = useResourceNavigate()
   const logout = useLogout()
 
+  const findCommandCandidates = useMemo(
+    () =>
+      findCommands.map((command) => ({
+        value: command.id,
+        keywords: [command.label, ...(command.keywords ?? [])],
+      })),
+    [findCommands],
+  )
+
   useEffect(() => {
     if (!open) {
       setScreen({ kind: "home" })
@@ -164,6 +174,15 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
     }
   }
 
+  const activeFindResource = useMemo(() => {
+    if (screen.kind !== "find") return null
+
+    const typeChip = chipState.chips.find((c) => c.keyword === KEYWORD.Type)
+    const chipResource = typeChip ? resolveType(typeChip.value) : null
+
+    return chipResource
+  }, [screen, chipState])
+
   useEffect(() => {
     switch (screen.kind) {
       case "home":
@@ -172,7 +191,16 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
       case "command":
         return
       case "find":
-        setSelectedValue(findCommands[0]?.id ?? NO_COMMAND_SELECTION)
+        if (activeFindResource || chipState.pending) {
+          setSelectedValue(NO_COMMAND_SELECTION)
+          return
+        }
+
+        setSelectedValue(
+          getTopCommandSearchValue(findCommandCandidates, chipState.text) ??
+            (chipState.text.trim() ? null : findCommands[0]?.id) ??
+            NO_COMMAND_SELECTION,
+        )
         return
       case "filter":
         setSelectedValue(filterCommands[0]?.id ?? NO_COMMAND_SELECTION)
@@ -181,7 +209,15 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
         setSelectedValue(newCommands[0]?.id ?? NO_COMMAND_SELECTION)
         return
     }
-  }, [screen, findCommands, filterCommands, newCommands])
+  }, [
+    screen,
+    chipState,
+    activeFindResource,
+    findCommands,
+    newCommands,
+    filterCommands,
+    findCommandCandidates,
+  ])
 
   const handleFirstSearchResultValueChange = useCallback(
     (value: string | null) => {
@@ -267,10 +303,12 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
   function handleFilterTextChange(next: string) {
     setFilterText(next)
 
-    if (screen.kind === "home" && next.trim().length > 0) {
+    const isSearching = next.trim().length > 0
+
+    if (screen.kind === "home" && isSearching) {
       setDirection(1)
       setScreen({ kind: "command" })
-    } else if (screen.kind === "command" && next.trim().length === 0) {
+    } else if (screen.kind === "command" && !isSearching) {
       transitionTo({ kind: "home" }, -1)
     }
   }
@@ -278,15 +316,6 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
   function onDialogOpenChange(isOpen: boolean) {
     if (!isOpen) setDialog(null)
   }
-
-  const activeFindResource = useMemo(() => {
-    if (screen.kind !== "find") return null
-
-    const typeChip = chipState.chips.find((c) => c.keyword === KEYWORD.Type)
-    const chipResource = typeChip ? resolveType(typeChip.value) : null
-
-    return chipResource
-  }, [screen, chipState])
 
   const findValidationError = useMemo(
     () =>
@@ -304,12 +333,6 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
     [screen, activeFindResource, chipState],
   )
 
-  useEffect(() => {
-    if (screen.kind === "find" && !activeFindResource) {
-      setSelectedValue(findCommands[0]?.id ?? NO_COMMAND_SELECTION)
-    }
-  }, [screen, activeFindResource, findCommands])
-
   const usesChipInput = screen.kind === "find"
   const usesCmdkFilter = screen.kind !== "find"
   const chipSuggestions = useMemo(
@@ -319,8 +342,8 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
         : [],
     [screen, chipState, activeFindResource],
   )
-  const canGoBack = screen.kind !== "home"
   const chipFocusKey = screen.kind
+  const canGoBack = screen.kind !== "home"
 
   return (
     <>

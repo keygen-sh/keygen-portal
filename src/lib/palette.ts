@@ -377,6 +377,31 @@ export function commandFilter(
   return 1
 }
 
+export interface CommandSearchCandidate {
+  value: string
+  keywords?: readonly string[]
+}
+
+export function getTopCommandSearchValue(
+  candidates: readonly CommandSearchCandidate[],
+  search: string,
+): string | null {
+  if (!search.trim()) return null
+
+  let topValue: string | null = null
+  let topScore = 0
+
+  for (const candidate of candidates) {
+    const score = commandFilter(candidate.value, search, candidate.keywords)
+    if (score > topScore) {
+      topValue = candidate.value
+      topScore = score
+    }
+  }
+
+  return topValue
+}
+
 function normalizeCommandSearchText(text: string): string {
   return text
     .toLowerCase()

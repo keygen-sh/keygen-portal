@@ -20,7 +20,6 @@ import {
 import type { AnyResource } from "@/types/api"
 
 import { useSearch } from "@/queries/search"
-import { useDebounced } from "@/hooks/use-debounced"
 
 import * as Loading from "@/components/loading"
 
@@ -39,15 +38,9 @@ export default function Search({
   onResourceSelect,
   onFirstResultValueChange,
 }: SearchProps) {
-  const debouncedChipState = useDebounced(chipState, 300)
-  const debouncedParsed = useMemo(
-    () => parseCommittedInputState(debouncedChipState),
-    [debouncedChipState],
-  )
+  const parsed = useMemo(() => parseCommittedInputState(chipState), [chipState])
 
-  const built = validationError
-    ? null
-    : buildResourceSearch(resource, debouncedParsed)
+  const built = validationError ? null : buildResourceSearch(resource, parsed)
   const search = useSearch(
     built ? resource : null,
     built?.query ?? {},

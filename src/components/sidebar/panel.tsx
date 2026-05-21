@@ -463,7 +463,12 @@ export default function SidebarPanel(): React.ReactElement {
                 onClick={() => setPaletteOpen(true)}
                 variant="command"
                 size="command"
-                className="flex w-full items-center justify-between"
+                className={cn(
+                  "flex w-full items-center",
+                  isMobile
+                    ? "justify-start gap-2 text-left"
+                    : "justify-between",
+                )}
               >
                 {isMobile && <span className="text-lg">⌘</span>}
                 Quick actions / search...

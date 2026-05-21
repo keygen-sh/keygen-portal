@@ -49,12 +49,18 @@ import * as keygen from "@/keygen"
 import * as Users from "@/components/users"
 import * as Groups from "@/components/groups"
 import * as Motion from "@/components/motion"
-import * as Palette from "@/components/palette"
 import * as Packages from "@/components/packages"
 import * as Policies from "@/components/policies"
 import * as Products from "@/components/products"
 import * as Releases from "@/components/releases"
 import * as Licenses from "@/components/licenses"
+
+import Home from "./home"
+import Find from "./find"
+import Filter from "./filter"
+import New from "./new"
+import Footer from "./footer"
+import * as Chip from "./chip"
 
 type Screen =
   | { kind: "home" }
@@ -312,7 +318,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
         onValueChange={setSelectedValue}
       >
         {usesChipInput ? (
-          <Palette.Chip.Input
+          <Chip.Input
             state={chipState}
             onChange={setChipState}
             suggestions={chipSuggestions}
@@ -339,18 +345,18 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
         )}
 
         {screen.kind === "find" && activeFindResource && (
-          <Palette.Chip.Tip
+          <Chip.Tip
             resource={activeFindResource}
             onKeywordSelect={(keyword) =>
               setChipState((prev) => ({ ...prev, pending: keyword, text: "" }))
             }
           >
             Search by entering an attribute.
-          </Palette.Chip.Tip>
+          </Chip.Tip>
         )}
 
         {screen.kind === "find" && !activeFindResource && (
-          <Palette.Chip.Tip fields={[]}>
+          <Chip.Tip fields={[]}>
             <p>
               Enter a{" "}
               <button
@@ -369,7 +375,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
               </button>{" "}
               or select an option below.
             </p>
-          </Palette.Chip.Tip>
+          </Chip.Tip>
         )}
 
         <CommandList className="max-h-none! overflow-visible!">
@@ -377,7 +383,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
             <div className="min-h-0 flex-1 overflow-y-auto">
               <Motion.Slide direction={direction} offset={40} duration={0.2}>
                 {screen.kind === "home" || screen.kind === "command" ? (
-                  <Palette.Home
+                  <Home
                     key={screen.kind}
                     filterText={filterText}
                     recents={recents}
@@ -395,7 +401,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
                     onRecentSelect={handleRecentSelect}
                   />
                 ) : screen.kind === "find" ? (
-                  <Palette.Find
+                  <Find
                     key="find"
                     commands={findCommands}
                     resource={activeFindResource}
@@ -409,14 +415,14 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
                     }
                   />
                 ) : screen.kind === "filter" ? (
-                  <Palette.Filter
+                  <Filter
                     key="filter"
                     commands={filterCommands}
                     onSelect={executeCommand}
                     onBack={() => transitionTo({ kind: "home" }, -1)}
                   />
                 ) : screen.kind === "new" ? (
-                  <Palette.New
+                  <New
                     key="new"
                     commands={newCommands}
                     onSelect={executeCommand}
@@ -426,7 +432,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
               </Motion.Slide>
             </div>
 
-            <Palette.Footer
+            <Footer
               onCopyAccountId={() => {
                 void copyToClipboard(keygen.config.id)
                 close()

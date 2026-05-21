@@ -22,7 +22,9 @@ export interface InputProps {
   onChange: (next: SearchInputState) => void
   suggestions?: SearchSuggestion[]
   onSuggestionSelect?: (suggestion: SearchSuggestion) => void
+  invalidChipIndexes?: ReadonlySet<number>
   focusKey?: string
+  focusSignal?: number
   placeholder?: string
 }
 
@@ -31,7 +33,9 @@ export default function Input({
   onChange,
   suggestions = [],
   onSuggestionSelect,
+  invalidChipIndexes,
   focusKey,
+  focusSignal,
   placeholder = "Search...",
 }: InputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -40,7 +44,7 @@ export default function Input({
 
   useEffect(() => {
     inputRef.current?.focus()
-  }, [focusKey])
+  }, [focusKey, focusSignal])
 
   function acceptSuggestion() {
     if (!suggestion || !onSuggestionSelect) return false
@@ -78,6 +82,7 @@ export default function Input({
           <Committed
             key={`${chip.keyword}:${chip.value}:${i}`}
             chip={chip}
+            invalid={invalidChipIndexes?.has(i)}
             onRemove={() => onChange(removeChipAt(state, i))}
           />
         ))}

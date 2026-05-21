@@ -528,13 +528,9 @@ export function validateSearchInput(
   resource: CommandSearchResource | null,
   state: SearchInputState,
 ): string | null {
-  const typeChip = state.chips.find((chip) => chip.keyword === KEYWORD.Type)
-
-  if (typeChip) {
-    const value = typeChip.value.trim()
-    if (value && !resolveType(value)) {
-      return `type:${value} is not a searchable resource type.`
-    }
+  for (const chip of state.chips) {
+    const error = getSearchChipError(resource, chip)
+    if (error) return error
   }
 
   if (!state.pending) {
@@ -544,43 +540,66 @@ export function validateSearchInput(
     }
   }
 
+  return null
+}
+
+function getSearchChipError(
+  resource: CommandSearchResource | null,
+  chip: SearchChip,
+): string | null {
+  const value = chip.value.trim()
+
+  if (chip.keyword === KEYWORD.Type) {
+    if (value && !resolveType(value)) {
+      return `type:${value} is not a searchable resource type.`
+    }
+
+    return null
+  }
+
   if (!resource) return null
 
   const allowed = new Set<Keyword>(COMMAND_SEARCH_FIELDS[resource])
+  if (!allowed.has(chip.keyword)) {
+    return `${displayKeyword(chip.keyword)} is not searchable for ${RESOURCE_LABEL[resource].toLowerCase()}.`
+  }
 
-  for (const chip of state.chips) {
-    if (chip.keyword === KEYWORD.Type) continue
-
-    if (!allowed.has(chip.keyword)) {
-      return `${displayKeyword(chip.keyword)} is not searchable for ${RESOURCE_SINGULAR[resource]}s.`
+  if (chip.keyword === KEYWORD.Metadata) {
+    const eq = value.indexOf("=")
+    if (eq < 0) {
+      return "Must use key=value format."
     }
 
-    const value = chip.value.trim()
-
-    if (chip.keyword === KEYWORD.Metadata) {
-      const eq = value.indexOf("=")
-      if (eq < 0) {
-        return "metadata: must use key=value."
-      }
-
-      const key = value.slice(0, eq).trim()
-      const metadataValue = value.slice(eq + 1).trim()
-      if (!key) {
-        return "metadata: must include a key."
-      }
-      if (metadataValue.length < MIN_SEARCH_LENGTH) {
-        return `metadata: values must be at least ${MIN_SEARCH_LENGTH} characters.`
-      }
-
-      continue
+    const key = value.slice(0, eq).trim()
+    const metadataValue = value.slice(eq + 1).trim()
+    if (!key) {
+      return "Must include a key."
+    }
+    if (metadataValue.length < MIN_SEARCH_LENGTH) {
+      return `Values must be at least ${MIN_SEARCH_LENGTH} characters.`
     }
 
-    if (value.length < MIN_SEARCH_LENGTH) {
-      return `${displayKeyword(chip.keyword)} values must be at least ${MIN_SEARCH_LENGTH} characters.`
-    }
+    return null
+  }
+
+  if (value.length < MIN_SEARCH_LENGTH) {
+    return `Values must be at least ${MIN_SEARCH_LENGTH} characters.`
   }
 
   return null
+}
+
+export function getInvalidSearchChipIndexes(
+  resource: CommandSearchResource | null,
+  state: SearchInputState,
+): ReadonlySet<number> {
+  const indexes = new Set<number>()
+
+  state.chips.forEach((chip, i) => {
+    if (getSearchChipError(resource, chip)) indexes.add(i)
+  })
+
+  return indexes
 }
 
 export const EMPTY_SEARCH_INPUT: SearchInputState = {

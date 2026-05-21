@@ -24,6 +24,7 @@ import {
   validateSearchInput,
   getSearchSuggestions,
   applySearchSuggestion,
+  getInvalidSearchChipIndexes,
 } from "@/lib/palette"
 import { cn } from "@/lib/utils"
 import { labelFor } from "@/lib/search"
@@ -117,6 +118,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
   const [selectedValue, setSelectedValue] = useState("action:find")
   const [dialog, setDialog] = useState<DialogKey | null>(null)
   const [recents, setRecents] = useState<RecentItem[]>(() => loadRecents())
+  const [chipFocusSignal, setChipFocusSignal] = useState(0)
 
   const navigate = useNavigate()
   const navigateToResource = useResourceNavigate()
@@ -134,6 +136,10 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
 
   function close() {
     onOpenChange(false)
+  }
+
+  function focusChipInput() {
+    setChipFocusSignal((prev) => prev + 1)
   }
 
   function recordRecent(item: RecentItem) {
@@ -194,6 +200,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
       text: "",
     })
     setScreen({ kind: "find" })
+    focusChipInput()
   }
 
   function executeCommand(command: Command) {
@@ -290,6 +297,14 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
     [screen, activeFindResource, chipState],
   )
 
+  const invalidChipIndexes = useMemo(
+    () =>
+      screen.kind === "find"
+        ? getInvalidSearchChipIndexes(activeFindResource, chipState)
+        : new Set<number>(),
+    [screen, activeFindResource, chipState],
+  )
+
   useEffect(() => {
     if (screen.kind === "find" && !activeFindResource) {
       setSelectedValue(findCommands[0]?.id ?? "find:back")
@@ -322,10 +337,13 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
             state={chipState}
             onChange={setChipState}
             suggestions={chipSuggestions}
-            onSuggestionSelect={(suggestion) =>
+            onSuggestionSelect={(suggestion) => {
               setChipState((prev) => applySearchSuggestion(prev, suggestion))
-            }
+              focusChipInput()
+            }}
+            invalidChipIndexes={invalidChipIndexes}
             focusKey={chipFocusKey}
+            focusSignal={chipFocusSignal}
             placeholder={placeholderFor(screen)}
           />
         ) : (
@@ -347,9 +365,10 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
         {screen.kind === "find" && activeFindResource && (
           <Chip.Tip
             resource={activeFindResource}
-            onKeywordSelect={(keyword) =>
+            onKeywordSelect={(keyword) => {
               setChipState((prev) => ({ ...prev, pending: keyword, text: "" }))
-            }
+              focusChipInput()
+            }}
           >
             Search by entering an attribute.
           </Chip.Tip>
@@ -362,13 +381,14 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
               <button
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={() =>
+                onClick={() => {
                   setChipState((prev) => ({
                     ...prev,
                     pending: KEYWORD.Type,
                     text: "",
                   }))
-                }
+                  focusChipInput()
+                }}
                 className="rounded-sm bg-accent px-1 text-xs font-medium text-content-normal transition-colors hover:bg-accent/80 hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
               >
                 type:

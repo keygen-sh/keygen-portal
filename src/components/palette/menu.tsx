@@ -55,6 +55,7 @@ import * as Policies from "@/components/policies"
 import * as Products from "@/components/products"
 import * as Releases from "@/components/releases"
 import * as Licenses from "@/components/licenses"
+import ConfirmationModal from "@/components/confirmation-modal"
 
 import Home from "./home"
 import Find from "./find"
@@ -119,6 +120,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
   const [dialog, setDialog] = useState<DialogKey | null>(null)
   const [recents, setRecents] = useState<RecentItem[]>(() => loadRecents())
   const [chipFocusSignal, setChipFocusSignal] = useState(0)
+  const [confirmingSignOut, setConfirmingSignOut] = useState(false)
 
   const navigate = useNavigate()
   const navigateToResource = useResourceNavigate()
@@ -458,13 +460,26 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
                 close()
               }}
               onSignOut={() => {
-                close()
-                logout.mutate()
+                setConfirmingSignOut(true)
               }}
             />
           </div>
         </CommandList>
       </CommandDialog>
+
+      <ConfirmationModal
+        title="Are you sure you want to sign out?"
+        description="You will need to re-authenticate to access this account."
+        label="Sign out"
+        variant="destructive"
+        open={confirmingSignOut}
+        onClose={() => setConfirmingSignOut(false)}
+        onConfirm={() => {
+          setConfirmingSignOut(false)
+          close()
+          logout.mutate()
+        }}
+      />
 
       <Licenses.Form.Create
         open={dialog === DialogKey.License}

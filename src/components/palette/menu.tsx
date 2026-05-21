@@ -228,14 +228,6 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
         window.location.href = `mailto:${command.email}`
         close()
         return
-      case "copy-account-id":
-        void copyToClipboard(keygen.config.id)
-        close()
-        return
-      case "sign-out":
-        close()
-        logout.mutate()
-        return
     }
   }
 

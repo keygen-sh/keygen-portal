@@ -31,12 +31,6 @@ export enum DialogKey {
   Release = "release",
 }
 
-export interface CreateAction {
-  key: DialogKey
-  label: string
-  icon: LucideIcon
-}
-
 export type RecentItem =
   | { kind: "command"; commandId: string; label: string }
   | {
@@ -65,8 +59,6 @@ export type Command = CommandBase &
     | { kind: "navigate"; to: string }
     | { kind: "external"; url: string }
     | { kind: "mailto"; email: string }
-    | { kind: "copy-account-id" }
-    | { kind: "sign-out" }
   )
 
 export interface FilterPresetBase {
@@ -113,7 +105,6 @@ export interface SearchChip {
 export interface ParsedSearch {
   type: CommandSearchResource | null
   fields: Partial<Record<FieldKeyword, string>>
-  freeTerm: string | null
 }
 
 export interface SearchInputState {
@@ -127,12 +118,9 @@ export type SearchSuggestion =
       kind: "keyword"
       keyword: Keyword
       label: string
-      detail: string
     }
   | {
       kind: "type"
-      resource: CommandSearchResource
       value: string
       label: string
-      detail: string
     }

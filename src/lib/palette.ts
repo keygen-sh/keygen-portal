@@ -41,7 +41,6 @@ import {
   type RecentItem,
   type FilterPreset,
   type FieldKeyword,
-  type CreateAction,
   type ParsedSearch,
   type SearchSuggestion,
   type SearchInputState,
@@ -106,6 +105,12 @@ export const RESOURCE_SINGULAR: Record<CommandSearchResource, string> = {
   products: "product",
   policies: "policy",
   releases: "release",
+}
+
+interface CreateAction {
+  key: DialogKey
+  label: string
+  icon: LucideIcon
 }
 
 const CREATE_ACTIONS: ReadonlyArray<CreateAction> = [
@@ -438,7 +443,7 @@ function isFieldKeyword(s: string): s is FieldKeyword {
   return RECOGNIZED_FIELDS.has(s as FieldKeyword)
 }
 
-function fieldDisplay(keyword: Keyword): string {
+export function displayKeyword(keyword: Keyword): string {
   return keyword === KEYWORD.Metadata ? "metadata:k=v" : `${keyword}:`
 }
 
@@ -460,10 +465,7 @@ export function resolveType(value: string): CommandSearchResource | null {
     : null
 }
 
-export function parseChips(
-  chips: SearchChip[],
-  freeText: string,
-): ParsedSearch {
+function parseChips(chips: SearchChip[]): ParsedSearch {
   let type: CommandSearchResource | null = null
   const fields: Partial<Record<FieldKeyword, string>> = {}
 
@@ -477,10 +479,7 @@ export function parseChips(
     fields[chip.keyword] = value
   }
 
-  const free = freeText.trim()
-  const freeTerm = free.length > 0 ? free : null
-
-  return { type, fields, freeTerm }
+  return { type, fields }
 }
 
 export function buildResourceSearch(
@@ -555,7 +554,7 @@ export function validateSearchInput(
     if (chip.keyword === KEYWORD.Type) continue
 
     if (!allowed.has(chip.keyword)) {
-      return `${fieldDisplay(chip.keyword)} is not searchable for ${RESOURCE_SINGULAR[resource]}s.`
+      return `${displayKeyword(chip.keyword)} is not searchable for ${RESOURCE_SINGULAR[resource]}s.`
     }
 
     const value = chip.value.trim()
@@ -579,7 +578,7 @@ export function validateSearchInput(
     }
 
     if (value.length < MIN_SEARCH_LENGTH) {
-      return `${fieldDisplay(chip.keyword)} values must be at least ${MIN_SEARCH_LENGTH} characters.`
+      return `${displayKeyword(chip.keyword)} values must be at least ${MIN_SEARCH_LENGTH} characters.`
     }
   }
 
@@ -656,10 +655,8 @@ export function getSearchSuggestions(
         const value = RESOURCE_SINGULAR[candidate]
         return {
           kind: "type",
-          resource: candidate,
           value,
           label: `type:${value}`,
-          detail: `Find ${RESOURCE_SINGULAR[candidate]}s`,
         }
       })
   }
@@ -673,7 +670,7 @@ export function getSearchSuggestions(
 
   return keywords
     .filter((keyword) => {
-      const display = fieldDisplay(keyword).toLowerCase()
+      const display = displayKeyword(keyword).toLowerCase()
       return keyword.toLowerCase().startsWith(text) || display.startsWith(text)
     })
     .slice(0, 1)
@@ -681,10 +678,6 @@ export function getSearchSuggestions(
       kind: "keyword",
       keyword,
       label: keyword,
-      detail:
-        keyword === KEYWORD.Type
-          ? "Choose a resource type"
-          : `Search by ${keyword}`,
     }))
 }
 
@@ -744,16 +737,8 @@ export function removeChipAt(
   return { ...state, chips: state.chips.filter((_, i) => i !== idx) }
 }
 
-export function parseInputState(state: SearchInputState): ParsedSearch {
-  const effectiveChips = state.pending
-    ? [...state.chips, { keyword: state.pending, value: state.text }]
-    : state.chips
-  const freeText = state.pending ? "" : state.text
-  return parseChips(effectiveChips, freeText)
-}
-
 export function parseCommittedInputState(
   state: SearchInputState,
 ): ParsedSearch {
-  return parseChips(state.chips, "")
+  return parseChips(state.chips)
 }

@@ -604,13 +604,7 @@ export function reduceInputText(
       const idx = next.text.indexOf(" ")
       const value = next.text.slice(0, idx).trim()
       const rest = next.text.slice(idx + 1)
-      next = {
-        chips: value
-          ? [...next.chips, { keyword: next.pending, value }]
-          : next.chips,
-        pending: null,
-        text: rest,
-      }
+      next = commitPendingValue(next, value, rest)
       continue
     }
 
@@ -703,8 +697,18 @@ export function applySearchSuggestion(
 
 export function commitPendingInput(state: SearchInputState): SearchInputState {
   if (!state.pending) return state
-  const value = state.text.trim()
-  if (!value) return { ...state, pending: null }
+  return commitPendingValue(state, state.text, "")
+}
+
+function commitPendingValue(
+  state: SearchInputState,
+  rawValue: string,
+  text: string,
+): SearchInputState {
+  if (!state.pending) return { ...state, text }
+
+  const value = rawValue.trim()
+  if (!value) return { ...state, pending: null, text }
   const chips =
     state.pending === KEYWORD.Type
       ? state.chips.filter((chip) => chip.keyword !== KEYWORD.Type)
@@ -713,7 +717,7 @@ export function commitPendingInput(state: SearchInputState): SearchInputState {
   return {
     chips: [...chips, { keyword: state.pending, value }],
     pending: null,
-    text: "",
+    text,
   }
 }
 

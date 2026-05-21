@@ -4,7 +4,7 @@ import {
   CommandItem,
 } from "@/components/ui/command"
 
-import { Plus, Search, Filter, ChevronRight } from "lucide-react"
+import { Plus, Search, Filter, Copy, ChevronRight } from "lucide-react"
 
 import { recentKey } from "@/lib/palette"
 
@@ -25,6 +25,7 @@ export interface HomeProps {
   onOpenFind: () => void
   onOpenFilter: () => void
   onOpenNew: () => void
+  onCopyAccountId: () => void
   onCommandSelect: (command: Command) => void
   onRecentSelect: (item: RecentItem) => void
 }
@@ -41,6 +42,7 @@ export default function Home({
   onOpenFind,
   onOpenFilter,
   onOpenNew,
+  onCopyAccountId,
   onCommandSelect,
   onRecentSelect,
 }: HomeProps) {
@@ -137,6 +139,15 @@ export default function Home({
       )}
 
       <CommandGroup heading="Account">
+        <CommandItem
+          value="account:copy-id"
+          keywords={["copy", "account", "id"]}
+          tabbable
+          onSelect={onCopyAccountId}
+        >
+          <Copy />
+          <span>Copy account ID</span>
+        </CommandItem>
         {accountCommands.map((command) => (
           <CommandRow
             key={command.id}

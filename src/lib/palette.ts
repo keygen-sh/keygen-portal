@@ -287,7 +287,7 @@ export function buildCommands(opts: { isCloud: boolean }): Command[] {
     },
     {
       id: "account:team",
-      label: "Team",
+      label: "View team",
       icon: UsersIcon,
       group: "account",
       keywords: ["team", "members"],

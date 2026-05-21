@@ -6,15 +6,18 @@ import type { MachineFilters } from "@/types/machines"
 import type { ReleaseFilters } from "@/types/releases"
 import type { ArtifactFilters } from "@/types/artifacts"
 
-export type CommandSearchResource =
-  | "licenses"
-  | "groups"
-  | "users"
-  | "machines"
-  | "entitlements"
-  | "products"
-  | "policies"
-  | "releases"
+export const COMMAND_SEARCH_RESOURCES = [
+  "licenses",
+  "groups",
+  "users",
+  "machines",
+  "entitlements",
+  "products",
+  "policies",
+  "releases",
+] as const
+
+export type CommandSearchResource = (typeof COMMAND_SEARCH_RESOURCES)[number]
 
 export type FilterableResource = CommandSearchResource | "artifacts"
 
@@ -28,29 +31,43 @@ export enum DialogKey {
   Release = "release",
 }
 
-export interface AccountAction {
-  id: string
-  label: string
-  icon: LucideIcon
-  to: string
-  cloudOnly?: boolean
-}
-
 export interface CreateAction {
   key: DialogKey
   label: string
   icon: LucideIcon
 }
 
-interface RecentItemBase {
+export type RecentItem =
+  | { kind: "command"; commandId: string; label: string }
+  | {
+      kind: "resource"
+      resource: CommandSearchResource
+      id: string
+      label: string
+    }
+
+export type CommandGroup = "find" | "filter" | "new" | "account" | "help"
+
+interface CommandBase {
   id: string
   label: string
+  icon: LucideIcon
+  group: CommandGroup
+  keywords?: ReadonlyArray<string>
+  cloudOnly?: boolean
 }
 
-export type RecentItem =
-  | (RecentItemBase & { kind: "resource"; resource: CommandSearchResource })
-  | (RecentItemBase & { kind: "preset"; presetId: string })
-  | (RecentItemBase & { kind: "create"; dialog: DialogKey })
+export type Command = CommandBase &
+  (
+    | { kind: "find"; resource: CommandSearchResource }
+    | { kind: "preset"; preset: FilterPreset }
+    | { kind: "create"; dialog: DialogKey }
+    | { kind: "navigate"; to: string }
+    | { kind: "external"; url: string }
+    | { kind: "mailto"; email: string }
+    | { kind: "copy-account-id" }
+    | { kind: "sign-out" }
+  )
 
 export interface FilterPresetBase {
   id: string
@@ -65,25 +82,28 @@ export type FilterPreset =
   | (FilterPresetBase & { type: "releases"; search: ReleaseFilters })
   | (FilterPresetBase & { type: "artifacts"; search: ArtifactFilters })
 
-export type Keyword =
-  | "type"
-  | "id"
-  | "name"
-  | "key"
-  | "email"
-  | "firstName"
-  | "lastName"
-  | "fullName"
-  | "fingerprint"
-  | "code"
-  | "version"
-  | "tag"
-  | "role"
-  | "metadata"
-  | "owner"
-  | "user"
+export const KEYWORD = {
+  Type: "type",
+  Id: "id",
+  Name: "name",
+  Key: "key",
+  Email: "email",
+  FirstName: "firstName",
+  LastName: "lastName",
+  FullName: "fullName",
+  Fingerprint: "fingerprint",
+  Code: "code",
+  Version: "version",
+  Tag: "tag",
+  Role: "role",
+  Metadata: "metadata",
+  Owner: "owner",
+  User: "user",
+} as const
 
-export type FieldKeyword = Exclude<Keyword, "type">
+export type Keyword = (typeof KEYWORD)[keyof typeof KEYWORD]
+
+export type FieldKeyword = Exclude<Keyword, typeof KEYWORD.Type>
 
 export interface SearchChip {
   keyword: Keyword
@@ -101,3 +121,18 @@ export interface SearchInputState {
   pending: Keyword | null
   text: string
 }
+
+export type SearchSuggestion =
+  | {
+      kind: "keyword"
+      keyword: Keyword
+      label: string
+      detail: string
+    }
+  | {
+      kind: "type"
+      resource: CommandSearchResource
+      value: string
+      label: string
+      detail: string
+    }

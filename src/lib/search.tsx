@@ -39,6 +39,12 @@ export const getDefaultLabel = (option: SearchOption): string => {
   return option.id
 }
 
+export function labelFor(item: { type: string } & SearchOption): string {
+  const config = resourceConfigs[item.type as SearchableResource]
+  const getLabel = config?.getLabel ?? getDefaultLabel
+  return getLabel(item)
+}
+
 export interface ResourceConfig<T extends SearchOption = SearchOption> {
   getLabel?(this: void, option: T): string
   renderOption?(this: void, option: T): React.ReactNode

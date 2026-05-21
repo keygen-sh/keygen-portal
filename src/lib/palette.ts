@@ -2,6 +2,7 @@ import {
   Box,
   Cpu,
   Key,
+  Code,
   User,
   UserX,
   Clock,
@@ -11,6 +12,8 @@ import {
   Archive,
   Package,
   UserCog,
+  BookOpen,
+  LifeBuoy,
   FileText,
   PowerOff,
   UserPlus,
@@ -29,7 +32,10 @@ import {
 } from "lucide-react"
 
 import {
+  KEYWORD,
   DialogKey,
+  COMMAND_SEARCH_RESOURCES,
+  type Command,
   type Keyword,
   type SearchChip,
   type RecentItem,
@@ -37,7 +43,7 @@ import {
   type FieldKeyword,
   type CreateAction,
   type ParsedSearch,
-  type AccountAction,
+  type SearchSuggestion,
   type SearchInputState,
   type FilterableResource,
   type CommandSearchResource,
@@ -51,9 +57,9 @@ import { type SearchOperator, type SearchQuery } from "@/types/search"
 
 import { resourceConfigs } from "@/lib/search"
 
-export const DOCS_URL = "https://keygen.sh/docs"
-export const API_URL = "https://keygen.sh/docs/api"
-export const SUPPORT_EMAIL = "support@keygen.sh"
+const DOCS_URL = "https://keygen.sh/docs"
+const API_URL = "https://keygen.sh/docs/api"
+const SUPPORT_EMAIL = "support@keygen.sh"
 
 export const RESOURCE_LABEL: Record<FilterableResource, string> = {
   licenses: "Licenses",
@@ -91,28 +97,18 @@ export const RESOURCE_ICON: Record<FilterableResource, LucideIcon> = {
   artifacts: Archive,
 }
 
-export const ACCOUNT_ACTIONS: ReadonlyArray<AccountAction> = [
-  {
-    id: "profile",
-    label: "Update profile",
-    icon: UserCog,
-    to: "/$accountId/app/general",
-  },
-  {
-    id: "password",
-    label: "Change password",
-    icon: KeyRound,
-    to: "/$accountId/app/security",
-  },
-  {
-    id: "invite",
-    label: "Invite a teammate",
-    icon: UserPlus,
-    to: "/$accountId/app/team",
-  },
-]
+export const RESOURCE_SINGULAR: Record<CommandSearchResource, string> = {
+  licenses: "license",
+  groups: "group",
+  users: "user",
+  machines: "machine",
+  entitlements: "entitlement",
+  products: "product",
+  policies: "policy",
+  releases: "release",
+}
 
-export const CREATE_ACTIONS: ReadonlyArray<CreateAction> = [
+const CREATE_ACTIONS: ReadonlyArray<CreateAction> = [
   { key: DialogKey.License, label: "License", icon: Key },
   { key: DialogKey.User, label: "User", icon: User },
   { key: DialogKey.Group, label: "Group", icon: UsersIcon },
@@ -122,7 +118,7 @@ export const CREATE_ACTIONS: ReadonlyArray<CreateAction> = [
   { key: DialogKey.Release, label: "Release", icon: Rocket },
 ]
 
-export const FILTER_PRESETS: ReadonlyArray<FilterPreset> = [
+const FILTER_PRESETS: ReadonlyArray<FilterPreset> = [
   {
     id: "licenses-expiring-week",
     label: "Licenses expiring this week",
@@ -216,8 +212,122 @@ export const FILTER_PRESETS: ReadonlyArray<FilterPreset> = [
   },
 ]
 
+export function buildCommands(opts: { isCloud: boolean }): Command[] {
+  const all: Command[] = []
+
+  for (const resource of COMMAND_SEARCH_RESOURCES) {
+    all.push({
+      id: `find:${resource}`,
+      label: `Find ${RESOURCE_SINGULAR[resource]}`,
+      icon: RESOURCE_ICON[resource],
+      group: "find",
+      keywords: ["search", resource, RESOURCE_SINGULAR[resource]],
+      kind: "find",
+      resource,
+    })
+  }
+
+  for (const preset of FILTER_PRESETS) {
+    all.push({
+      id: `preset:${preset.id}`,
+      label: preset.label,
+      icon: preset.icon,
+      group: "filter",
+      keywords: ["filter", preset.type],
+      kind: "preset",
+      preset,
+    })
+  }
+
+  for (const action of CREATE_ACTIONS) {
+    all.push({
+      id: `new:${action.key}`,
+      label: `New ${action.label.toLowerCase()}`,
+      icon: action.icon,
+      group: "new",
+      keywords: ["create", action.label.toLowerCase()],
+      kind: "create",
+      dialog: action.key,
+    })
+  }
+
+  all.push(
+    {
+      id: "account:profile",
+      label: "Update profile",
+      icon: UserCog,
+      group: "account",
+      keywords: ["settings", "general", "account"],
+      kind: "navigate",
+      to: "/$accountId/app/general",
+    },
+    {
+      id: "account:password",
+      label: "Change password",
+      icon: KeyRound,
+      group: "account",
+      keywords: ["security", "credentials"],
+      kind: "navigate",
+      to: "/$accountId/app/security",
+    },
+    {
+      id: "account:invite",
+      label: "Invite a teammate",
+      icon: UserPlus,
+      group: "account",
+      keywords: ["team", "invite"],
+      cloudOnly: true,
+      kind: "navigate",
+      to: "/$accountId/app/team",
+    },
+    {
+      id: "account:team",
+      label: "Team",
+      icon: UsersIcon,
+      group: "account",
+      keywords: ["team", "members"],
+      kind: "navigate",
+      to: "/$accountId/app/team",
+    },
+  )
+
+  all.push(
+    {
+      id: "help:docs",
+      label: "Documentation",
+      icon: BookOpen,
+      group: "help",
+      keywords: ["docs", "documentation", "help"],
+      kind: "external",
+      url: DOCS_URL,
+    },
+    {
+      id: "help:api",
+      label: "API reference",
+      icon: Code,
+      group: "help",
+      keywords: ["api", "reference", "developer"],
+      kind: "external",
+      url: API_URL,
+    },
+    {
+      id: "help:support",
+      label: "Get support",
+      icon: LifeBuoy,
+      group: "help",
+      keywords: ["support", "help", "contact", "email"],
+      kind: "mailto",
+      email: SUPPORT_EMAIL,
+    },
+  )
+
+  return all.filter((c) => opts.isCloud || !c.cloudOnly)
+}
+
 export const RECENTS_LIMIT = 3
-export const RECENTS_KEY = "keygen.command.recent.v1"
+export const RECENTS_KEY = "keygen.command.recent.v2"
+
+export const MIN_SEARCH_LENGTH = 3
 
 export function loadRecents(): RecentItem[] {
   if (typeof window === "undefined") return []
@@ -232,39 +342,45 @@ export function loadRecents(): RecentItem[] {
   }
 }
 
+export function recentKey(item: RecentItem): string {
+  return item.kind === "command"
+    ? `command:${item.commandId}`
+    : `resource:${item.resource}:${item.id}`
+}
+
 export function saveRecents(items: RecentItem[]): void {
   window.localStorage.setItem(RECENTS_KEY, JSON.stringify(items))
 }
 
-export const KEYWORD = {
-  Type: "type",
-  Id: "id",
-  Name: "name",
-  Key: "key",
-  Email: "email",
-  FirstName: "firstName",
-  LastName: "lastName",
-  FullName: "fullName",
-  Fingerprint: "fingerprint",
-  Code: "code",
-  Version: "version",
-  Tag: "tag",
-  Role: "role",
-  Metadata: "metadata",
-  Owner: "owner",
-  User: "user",
-} as const
+export function commandFilter(
+  value: string,
+  search: string,
+  keywords?: readonly string[],
+): number {
+  const query = normalizeCommandSearchText(search)
+  if (!query) return 1
 
-export const COMMAND_SEARCH_RESOURCES: ReadonlyArray<CommandSearchResource> = [
-  "licenses",
-  "groups",
-  "users",
-  "machines",
-  "entitlements",
-  "products",
-  "policies",
-  "releases",
-]
+  const fields = [value, ...(keywords ?? [])]
+    .map(normalizeCommandSearchText)
+    .filter(Boolean)
+  const terms = query.split(" ")
+
+  if (!terms.every((term) => fields.some((field) => field.includes(term)))) {
+    return 0
+  }
+
+  if (fields.some((field) => field === query)) return 3
+  if (fields.some((field) => field.startsWith(query))) return 2
+  return 1
+}
+
+function normalizeCommandSearchText(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ")
+}
 
 export const COMMAND_SEARCH_FIELDS: Record<
   CommandSearchResource,
@@ -278,7 +394,7 @@ export const COMMAND_SEARCH_FIELDS: Record<
     KEYWORD.Owner,
     KEYWORD.User,
   ],
-  groups: [KEYWORD.Name],
+  groups: [KEYWORD.Id, KEYWORD.Name, KEYWORD.Metadata],
   users: [
     KEYWORD.Id,
     KEYWORD.Email,
@@ -297,29 +413,14 @@ export const COMMAND_SEARCH_FIELDS: Record<
     KEYWORD.Owner,
     KEYWORD.User,
   ],
-  entitlements: [KEYWORD.Id, KEYWORD.Code, KEYWORD.Name],
+  entitlements: [KEYWORD.Id, KEYWORD.Code, KEYWORD.Name, KEYWORD.Metadata],
   products: [KEYWORD.Id, KEYWORD.Name, KEYWORD.Metadata],
   policies: [KEYWORD.Id, KEYWORD.Name, KEYWORD.Metadata],
   releases: [KEYWORD.Id, KEYWORD.Version, KEYWORD.Tag, KEYWORD.Metadata],
 }
 
-const TYPE_ALIASES: Record<string, CommandSearchResource> = {
-  license: "licenses",
-  licenses: "licenses",
-  group: "groups",
-  groups: "groups",
-  user: "users",
-  users: "users",
-  machine: "machines",
-  machines: "machines",
-  entitlement: "entitlements",
-  entitlements: "entitlements",
-  product: "products",
-  products: "products",
+const IRREGULAR_TYPE_PLURALS: Record<string, CommandSearchResource> = {
   policy: "policies",
-  policies: "policies",
-  release: "releases",
-  releases: "releases",
 }
 
 const FIELD_ALIASES: Record<string, FieldKeyword> = {
@@ -337,6 +438,10 @@ function isFieldKeyword(s: string): s is FieldKeyword {
   return RECOGNIZED_FIELDS.has(s as FieldKeyword)
 }
 
+function fieldDisplay(keyword: Keyword): string {
+  return keyword === KEYWORD.Metadata ? "metadata:k=v" : `${keyword}:`
+}
+
 export function resolveKeyword(raw: string): Keyword | null {
   const lower = raw.trim().toLowerCase()
   if (!lower) return null
@@ -347,7 +452,12 @@ export function resolveKeyword(raw: string): Keyword | null {
 }
 
 export function resolveType(value: string): CommandSearchResource | null {
-  return TYPE_ALIASES[value.trim().toLowerCase()] ?? null
+  const lower = value.trim().toLowerCase()
+  if (lower in IRREGULAR_TYPE_PLURALS) return IRREGULAR_TYPE_PLURALS[lower]
+  const plural = lower.endsWith("s") ? lower : `${lower}s`
+  return (COMMAND_SEARCH_RESOURCES as readonly string[]).includes(plural)
+    ? (plural as CommandSearchResource)
+    : null
 }
 
 export function parseChips(
@@ -387,25 +497,15 @@ export function buildResourceSearch(
   ) as [FieldKeyword, string][]
 
   if (entries.length > 0) {
-    if (!entries.some(([, v]) => v.length >= 3)) return null
+    if (!entries.some(([, v]) => v.length >= MIN_SEARCH_LENGTH)) return null
 
-    if (resource === "users") {
-      const idx = entries.findIndex(([k]) => k === KEYWORD.Name)
-      if (idx >= 0) {
-        const term = entries[idx][1]
-        const others = entries.filter((_, i) => i !== idx)
-        const { query, op } = resourceConfigs.users.searchQuery(term)
-        const expanded = Object.fromEntries(
-          Object.entries(query).filter(([k]) => allowedSet.has(k)),
-        )
-
-        if (others.length === 0) {
-          return { query: expanded, op }
-        }
-        return {
-          query: { ...Object.fromEntries(others), lastName: term },
-        }
-      }
+    if (entries.length === 1 && entries[0][0] === KEYWORD.Name) {
+      const term = entries[0][1]
+      const { query, op } = resourceConfigs[resource].searchQuery(term)
+      const expanded = Object.fromEntries(
+        Object.entries(query).filter(([k]) => allowedSet.has(k)),
+      )
+      if (Object.keys(expanded).length > 0) return { query: expanded, op }
     }
 
     const out: SearchQuery = {}
@@ -415,7 +515,7 @@ export function buildResourceSearch(
         if (eq < 0) return null
         const mk = v.slice(0, eq).trim()
         const mv = v.slice(eq + 1).trim()
-        if (!mk || mv.length < 3) return null
+        if (!mk || mv.length < MIN_SEARCH_LENGTH) return null
         out[k] = { [mk]: mv }
       } else {
         out[k] = v
@@ -424,24 +524,66 @@ export function buildResourceSearch(
     return { query: out }
   }
 
-  if (parsed.freeTerm && parsed.freeTerm.length >= 3) {
-    const { query, op } = resourceConfigs[resource].searchQuery(parsed.freeTerm)
-    const safe = Object.fromEntries(
-      Object.entries(query).filter(([k]) => allowedSet.has(k)),
-    )
-    if (Object.keys(safe).length === 0) return null
-    return { query: safe, op }
-  }
-
   return null
 }
 
-export function isTypeOnlyBrowse(parsed: ParsedSearch): boolean {
-  return (
-    parsed.type != null &&
-    Object.keys(parsed.fields).length === 0 &&
-    !parsed.freeTerm
-  )
+export function validateSearchInput(
+  resource: CommandSearchResource | null,
+  state: SearchInputState,
+): string | null {
+  const typeChip = state.chips.find((chip) => chip.keyword === KEYWORD.Type)
+
+  if (typeChip) {
+    const value = typeChip.value.trim()
+    if (value && !resolveType(value)) {
+      return `type:${value} is not a searchable resource type.`
+    }
+  }
+
+  if (!state.pending) {
+    const invalidKeyword = state.text.trim().match(/^([A-Za-z]+):/)
+    if (invalidKeyword && !resolveKeyword(invalidKeyword[1])) {
+      return `${invalidKeyword[1]}: is not a searchable keyword.`
+    }
+  }
+
+  if (!resource) return null
+
+  const allowed = new Set<Keyword>(COMMAND_SEARCH_FIELDS[resource])
+
+  for (const chip of state.chips) {
+    if (chip.keyword === KEYWORD.Type) continue
+
+    if (!allowed.has(chip.keyword)) {
+      return `${fieldDisplay(chip.keyword)} is not searchable for ${RESOURCE_SINGULAR[resource]}s.`
+    }
+
+    const value = chip.value.trim()
+
+    if (chip.keyword === KEYWORD.Metadata) {
+      const eq = value.indexOf("=")
+      if (eq < 0) {
+        return "metadata: must use key=value."
+      }
+
+      const key = value.slice(0, eq).trim()
+      const metadataValue = value.slice(eq + 1).trim()
+      if (!key) {
+        return "metadata: must include a key."
+      }
+      if (metadataValue.length < MIN_SEARCH_LENGTH) {
+        return `metadata: values must be at least ${MIN_SEARCH_LENGTH} characters.`
+      }
+
+      continue
+    }
+
+    if (value.length < MIN_SEARCH_LENGTH) {
+      return `${fieldDisplay(chip.keyword)} values must be at least ${MIN_SEARCH_LENGTH} characters.`
+    }
+  }
+
+  return null
 }
 
 export const EMPTY_SEARCH_INPUT: SearchInputState = {
@@ -494,12 +636,91 @@ export function reduceInputText(
   return next
 }
 
+export function getSearchSuggestions(
+  resource: CommandSearchResource | null,
+  state: SearchInputState,
+): SearchSuggestion[] {
+  const text = state.text.trim().toLowerCase()
+
+  if (state.pending === KEYWORD.Type) {
+    return COMMAND_SEARCH_RESOURCES.filter((candidate) => {
+      const singular = RESOURCE_SINGULAR[candidate]
+      return (
+        text.length === 0 ||
+        singular.startsWith(text) ||
+        candidate.startsWith(text)
+      )
+    })
+      .slice(0, 1)
+      .map((candidate) => {
+        const value = RESOURCE_SINGULAR[candidate]
+        return {
+          kind: "type",
+          resource: candidate,
+          value,
+          label: `type:${value}`,
+          detail: `Find ${RESOURCE_SINGULAR[candidate]}s`,
+        }
+      })
+  }
+
+  if (state.pending || text.length === 0) return []
+
+  const used = new Set(state.chips.map((chip) => chip.keyword))
+  const keywords: readonly Keyword[] = resource
+    ? COMMAND_SEARCH_FIELDS[resource].filter((field) => !used.has(field))
+    : [KEYWORD.Type]
+
+  return keywords
+    .filter((keyword) => {
+      const display = fieldDisplay(keyword).toLowerCase()
+      return keyword.toLowerCase().startsWith(text) || display.startsWith(text)
+    })
+    .slice(0, 1)
+    .map((keyword) => ({
+      kind: "keyword",
+      keyword,
+      label: keyword,
+      detail:
+        keyword === KEYWORD.Type
+          ? "Choose a resource type"
+          : `Search by ${keyword}`,
+    }))
+}
+
+export function applySearchSuggestion(
+  state: SearchInputState,
+  suggestion: SearchSuggestion,
+): SearchInputState {
+  if (suggestion.kind === "type") {
+    return {
+      chips: [
+        ...state.chips.filter((chip) => chip.keyword !== KEYWORD.Type),
+        { keyword: KEYWORD.Type, value: suggestion.value },
+      ],
+      pending: null,
+      text: "",
+    }
+  }
+
+  return {
+    ...state,
+    pending: suggestion.keyword,
+    text: "",
+  }
+}
+
 export function commitPendingInput(state: SearchInputState): SearchInputState {
   if (!state.pending) return state
   const value = state.text.trim()
   if (!value) return { ...state, pending: null }
+  const chips =
+    state.pending === KEYWORD.Type
+      ? state.chips.filter((chip) => chip.keyword !== KEYWORD.Type)
+      : state.chips
+
   return {
-    chips: [...state.chips, { keyword: state.pending, value }],
+    chips: [...chips, { keyword: state.pending, value }],
     pending: null,
     text: "",
   }
@@ -529,4 +750,10 @@ export function parseInputState(state: SearchInputState): ParsedSearch {
     : state.chips
   const freeText = state.pending ? "" : state.text
   return parseChips(effectiveChips, freeText)
+}
+
+export function parseCommittedInputState(
+  state: SearchInputState,
+): ParsedSearch {
+  return parseChips(state.chips, "")
 }

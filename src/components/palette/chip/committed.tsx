@@ -2,12 +2,12 @@ import { X } from "lucide-react"
 
 import type { SearchChip } from "@/types/palette"
 
-export interface CommittedChipProps {
+export interface CommittedProps {
   chip: SearchChip
   onRemove: () => void
 }
 
-export default function CommittedChip({ chip, onRemove }: CommittedChipProps) {
+export default function Committed({ chip, onRemove }: CommittedProps) {
   return (
     <div className="flex h-6 shrink-0 items-center overflow-hidden rounded-[3px] text-xs font-normal whitespace-nowrap">
       <span className="inline-flex h-full items-center bg-secondary/20 pr-0.5 pl-1.5 text-secondary/70">

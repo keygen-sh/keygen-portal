@@ -1,45 +1,30 @@
-import { Copy, LogOut } from "lucide-react"
-
 import { CommandGroup, CommandItem } from "@/components/ui/command"
 
-import { copyToClipboard } from "@/lib/clipboard"
-
-import { useLogout } from "@/queries/auth"
-
-import * as keygen from "@/keygen"
+import { Copy, LogOut } from "lucide-react"
 
 export interface FooterProps {
-  onClose: () => void
+  onCopyAccountId: () => void
+  onSignOut: () => void
 }
 
-export default function Footer({ onClose }: FooterProps) {
-  const logout = useLogout()
-
-  async function handleCopyAccountId() {
-    await copyToClipboard(keygen.config.id)
-    onClose()
-  }
-
-  function handleSignOut() {
-    onClose()
-    logout.mutate()
-  }
-
+export default function Footer({ onCopyAccountId, onSignOut }: FooterProps) {
   return (
     <div className="border-t bg-popover" data-slot="command-footer">
       <CommandGroup forceMount>
         <CommandItem
-          value="account:copy-id"
+          value="footer:copy-id"
           forceMount
-          onSelect={handleCopyAccountId}
+          tabbable
+          onSelect={onCopyAccountId}
         >
           <Copy />
           <span>Copy account ID</span>
         </CommandItem>
         <CommandItem
-          value="account:sign-out"
+          value="footer:sign-out"
           forceMount
-          onSelect={handleSignOut}
+          tabbable
+          onSelect={onSignOut}
         >
           <LogOut />
           <span>Sign out</span>

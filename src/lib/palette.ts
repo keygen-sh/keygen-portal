@@ -54,7 +54,7 @@ import { ArtifactStatus } from "@/types/artifacts"
 import { HeartbeatStatus } from "@/types/machines"
 import { type SearchOperator, type SearchQuery } from "@/types/search"
 
-import { resourceConfigs } from "@/lib/search"
+import { resourceConfigs, MIN_SEARCH_LENGTH } from "@/lib/search"
 
 const DOCS_URL = "https://keygen.sh/docs"
 const API_URL = "https://keygen.sh/docs/api"
@@ -331,8 +331,6 @@ export function buildCommands(opts: { isCloud: boolean }): Command[] {
 
 export const RECENTS_LIMIT = 3
 export const RECENTS_KEY = "keygen.command.recent.v2"
-
-export const MIN_SEARCH_LENGTH = 3
 
 export function loadRecents(): RecentItem[] {
   if (typeof window === "undefined") return []

@@ -176,17 +176,17 @@ function CommandItem({
     return value ?? element.getAttribute("data-value") ?? ""
   }
 
-  function paletteTabbableItems(element: HTMLElement) {
+  function commandTabbableItems(element: HTMLElement) {
     const root = element.closest("[cmdk-root]") ?? element.ownerDocument
     return Array.from(
       root.querySelectorAll<HTMLElement>(
-        '[data-palette-tabbable="true"]:not([aria-disabled="true"])',
+        '[data-command-tabbable="true"]:not([aria-disabled="true"])',
       ),
     ).filter((item) => !item.closest("[hidden]"))
   }
 
   function focusRelativeItem(element: HTMLElement, offset: 1 | -1) {
-    const items = paletteTabbableItems(element)
+    const items = commandTabbableItems(element)
     const current = items.indexOf(element)
     const next = items[current + offset]
 
@@ -194,7 +194,7 @@ function CommandItem({
   }
 
   function focusEdgeItem(element: HTMLElement, edge: "first" | "last") {
-    const items = paletteTabbableItems(element)
+    const items = commandTabbableItems(element)
     const next = edge === "first" ? items[0] : items.at(-1)
 
     next?.focus()
@@ -254,7 +254,7 @@ function CommandItem({
   return (
     <CommandPrimitive.Item
       data-slot="command-item"
-      data-palette-tabbable={tabbable ? "true" : undefined}
+      data-command-tabbable={tabbable ? "true" : undefined}
       tabIndex={tabbable && !disabled ? 0 : undefined}
       value={value}
       onFocus={handleFocus}

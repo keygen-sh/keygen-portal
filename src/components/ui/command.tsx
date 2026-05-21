@@ -48,6 +48,7 @@ function CommandDialog({
   filter,
   value,
   onValueChange,
+  hideCloseButton = false,
   children,
   ...props
 }: React.ComponentProps<typeof Dialog> & {
@@ -57,6 +58,7 @@ function CommandDialog({
   filter?: React.ComponentProps<typeof CommandPrimitive>["filter"]
   value?: React.ComponentProps<typeof CommandPrimitive>["value"]
   onValueChange?: React.ComponentProps<typeof CommandPrimitive>["onValueChange"]
+  hideCloseButton?: boolean
 }) {
   return (
     <Dialog {...props}>
@@ -64,7 +66,10 @@ function CommandDialog({
         <DialogTitle>{title}</DialogTitle>
         <DialogDescription>{description}</DialogDescription>
       </DialogHeader>
-      <DialogContent className="overflow-hidden p-0">
+      <DialogContent
+        className="overflow-hidden p-0"
+        hideCloseButton={hideCloseButton}
+      >
         <Command
           shouldFilter={shouldFilter}
           filter={filter}

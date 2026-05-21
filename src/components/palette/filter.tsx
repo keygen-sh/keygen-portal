@@ -1,8 +1,6 @@
 import { useMemo } from "react"
 
-import { CommandGroup, CommandItem } from "@/components/ui/command"
-
-import { ChevronLeft } from "lucide-react"
+import { CommandGroup } from "@/components/ui/command"
 
 import { RESOURCE_LABEL } from "@/lib/palette"
 
@@ -13,10 +11,9 @@ import CommandRow from "./command-row"
 export interface FilterProps {
   commands: Command[]
   onSelect: (command: Command) => void
-  onBack: () => void
 }
 
-export default function Filter({ commands, onSelect, onBack }: FilterProps) {
+export default function Filter({ commands, onSelect }: FilterProps) {
   const grouped = useMemo(() => {
     const map = new Map<FilterableResource, Command[]>()
     for (const command of commands) {
@@ -30,12 +27,6 @@ export default function Filter({ commands, onSelect, onBack }: FilterProps) {
 
   return (
     <>
-      <CommandGroup>
-        <CommandItem value="filter:back" forceMount tabbable onSelect={onBack}>
-          <ChevronLeft />
-          <span>Back</span>
-        </CommandItem>
-      </CommandGroup>
       {grouped.map(([resource, group]) => (
         <CommandGroup key={resource} heading={RESOURCE_LABEL[resource]}>
           {group.map((command) => (

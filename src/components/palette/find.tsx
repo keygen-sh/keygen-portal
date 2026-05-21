@@ -1,6 +1,4 @@
-import { CommandGroup, CommandItem } from "@/components/ui/command"
-
-import { ChevronLeft } from "lucide-react"
+import { CommandGroup } from "@/components/ui/command"
 
 import type { Command } from "@/types/palette"
 import type { AnyResource } from "@/types/api"
@@ -15,7 +13,6 @@ export interface FindProps {
   chipState: SearchInputState
   validationError?: string | null
   onSelect: (command: Command) => void
-  onBack: () => void
   onResourceSelect: (item: AnyResource) => void
   onFirstResultValueChange?: (value: string | null) => void
 }
@@ -26,18 +23,11 @@ export default function Find({
   chipState,
   validationError = null,
   onSelect,
-  onBack,
   onResourceSelect,
   onFirstResultValueChange,
 }: FindProps) {
   return (
     <>
-      <CommandGroup>
-        <CommandItem value="find:back" forceMount tabbable onSelect={onBack}>
-          <ChevronLeft />
-          <span>Back</span>
-        </CommandItem>
-      </CommandGroup>
       {resource ? (
         <Search
           resource={resource}

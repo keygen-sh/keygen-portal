@@ -7,6 +7,7 @@ import {
 } from "react"
 import { useNavigate } from "@tanstack/react-router"
 import { Command as CommandPrimitive } from "cmdk"
+import { ChevronLeft, X } from "lucide-react"
 
 import { CommandDialog, CommandList } from "@/components/ui/command"
 
@@ -76,11 +77,7 @@ export interface MenuProps {
   onOpenChange: (open: boolean) => void
 }
 
-const INPUT_CLASS = cn(
-  "flex h-12 w-full bg-transparent px-4 py-3 text-sm outline-hidden",
-  "placeholder:text-muted-foreground",
-  "border-b",
-)
+const NO_COMMAND_SELECTION = "__palette:none"
 
 export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
   const { isCloud } = useCloud()
@@ -175,20 +172,20 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
       case "command":
         return
       case "find":
-        setSelectedValue(findCommands[0]?.id ?? "find:back")
+        setSelectedValue(findCommands[0]?.id ?? NO_COMMAND_SELECTION)
         return
       case "filter":
-        setSelectedValue(filterCommands[0]?.id ?? "filter:back")
+        setSelectedValue(filterCommands[0]?.id ?? NO_COMMAND_SELECTION)
         return
       case "new":
-        setSelectedValue(newCommands[0]?.id ?? "new:back")
+        setSelectedValue(newCommands[0]?.id ?? NO_COMMAND_SELECTION)
         return
     }
   }, [screen, findCommands, filterCommands, newCommands])
 
   const handleFirstSearchResultValueChange = useCallback(
     (value: string | null) => {
-      setSelectedValue(value ?? "find:back")
+      setSelectedValue(value ?? NO_COMMAND_SELECTION)
     },
     [],
   )
@@ -309,7 +306,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
 
   useEffect(() => {
     if (screen.kind === "find" && !activeFindResource) {
-      setSelectedValue(findCommands[0]?.id ?? "find:back")
+      setSelectedValue(findCommands[0]?.id ?? NO_COMMAND_SELECTION)
     }
   }, [screen, activeFindResource, findCommands])
 
@@ -322,6 +319,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
         : [],
     [screen, chipState, activeFindResource],
   )
+  const canGoBack = screen.kind !== "home"
   const chipFocusKey = screen.kind
 
   return (
@@ -329,34 +327,64 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
       <CommandDialog
         open={open}
         onOpenChange={onOpenChange}
+        hideCloseButton
         shouldFilter={usesCmdkFilter}
         filter={commandFilter}
         value={selectedValue}
         onValueChange={setSelectedValue}
       >
-        {usesChipInput ? (
-          <Chip.Input
-            state={chipState}
-            onChange={setChipState}
-            suggestions={chipSuggestions}
-            onSuggestionSelect={(suggestion) => {
-              setChipState((prev) => applySearchSuggestion(prev, suggestion))
-              focusChipInput()
-            }}
-            invalidChipIndexes={invalidChipIndexes}
-            focusKey={chipFocusKey}
-            focusSignal={chipFocusSignal}
-            placeholder={placeholderFor(screen)}
-          />
-        ) : (
-          <CommandPrimitive.Input
-            autoFocus
-            value={filterText}
-            onValueChange={handleFilterTextChange}
-            placeholder={placeholderFor(screen)}
-            className={INPUT_CLASS}
-          />
-        )}
+        <div className="flex min-h-12 items-stretch border-b">
+          {canGoBack && (
+            <button
+              type="button"
+              aria-label="Back"
+              onClick={() => transitionTo({ kind: "home" }, -1)}
+              className="inline-flex w-12 shrink-0 cursor-pointer items-center justify-center text-muted-foreground transition-colors outline-none hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <ChevronLeft className="size-4" />
+            </button>
+          )}
+          <div className="min-w-0 flex-1">
+            {usesChipInput ? (
+              <Chip.Input
+                state={chipState}
+                onChange={setChipState}
+                suggestions={chipSuggestions}
+                onSuggestionSelect={(suggestion) => {
+                  setChipState((prev) =>
+                    applySearchSuggestion(prev, suggestion),
+                  )
+                  focusChipInput()
+                }}
+                invalidChipIndexes={invalidChipIndexes}
+                focusKey={chipFocusKey}
+                focusSignal={chipFocusSignal}
+                placeholder={placeholderFor(screen)}
+                bordered={false}
+                showIcon={false}
+              />
+            ) : (
+              <CommandPrimitive.Input
+                autoFocus
+                value={filterText}
+                onValueChange={handleFilterTextChange}
+                placeholder={placeholderFor(screen)}
+                className={cn(
+                  "flex h-12 w-full bg-transparent px-4 py-3 text-sm outline-hidden",
+                  "placeholder:text-muted-foreground",
+                )}
+              />
+            )}
+          </div>
+          <button
+            type="button"
+            aria-label="Close command menu"
+            onClick={close}
+            className="inline-flex w-12 shrink-0 cursor-pointer items-center justify-center text-muted-foreground transition-colors outline-none hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
 
         {findValidationError && (
           <div className="border-t border-destructive/20 px-3 py-2 text-xs text-destructive">
@@ -418,7 +446,6 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
                     onOpenFind={() => transitionTo({ kind: "find" }, 1)}
                     onOpenFilter={() => transitionTo({ kind: "filter" }, 1)}
                     onOpenNew={() => transitionTo({ kind: "new" }, 1)}
-                    onBack={() => transitionTo({ kind: "home" }, -1)}
                     onCommandSelect={executeCommand}
                     onRecentSelect={handleRecentSelect}
                   />
@@ -430,7 +457,6 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
                     chipState={chipState}
                     validationError={findValidationError}
                     onSelect={executeCommand}
-                    onBack={() => transitionTo({ kind: "home" }, -1)}
                     onResourceSelect={handleResourceSelect}
                     onFirstResultValueChange={
                       handleFirstSearchResultValueChange
@@ -441,14 +467,12 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
                     key="filter"
                     commands={filterCommands}
                     onSelect={executeCommand}
-                    onBack={() => transitionTo({ kind: "home" }, -1)}
                   />
                 ) : screen.kind === "new" ? (
                   <New
                     key="new"
                     commands={newCommands}
                     onSelect={executeCommand}
-                    onBack={() => transitionTo({ kind: "home" }, -1)}
                   />
                 ) : null}
               </Motion.Slide>

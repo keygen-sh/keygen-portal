@@ -4,7 +4,7 @@ import {
   CommandItem,
 } from "@/components/ui/command"
 
-import { Plus, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react"
+import { Plus, Search, Filter, ChevronRight } from "lucide-react"
 
 import { recentKey } from "@/lib/palette"
 
@@ -25,7 +25,6 @@ export interface HomeProps {
   onOpenFind: () => void
   onOpenFilter: () => void
   onOpenNew: () => void
-  onBack: () => void
   onCommandSelect: (command: Command) => void
   onRecentSelect: (item: RecentItem) => void
 }
@@ -42,7 +41,6 @@ export default function Home({
   onOpenFind,
   onOpenFilter,
   onOpenNew,
-  onBack,
   onCommandSelect,
   onRecentSelect,
 }: HomeProps) {
@@ -54,21 +52,6 @@ export default function Home({
 
   return (
     <div>
-      {isTyping && (
-        <CommandGroup forceMount>
-          <CommandItem
-            value="home:back"
-            keywords={["back", filterText]}
-            forceMount
-            tabbable
-            onSelect={onBack}
-          >
-            <ChevronLeft />
-            <span>Back</span>
-          </CommandItem>
-        </CommandGroup>
-      )}
-
       <CommandEmpty>No matching commands.</CommandEmpty>
 
       <CommandGroup heading="Quick actions">

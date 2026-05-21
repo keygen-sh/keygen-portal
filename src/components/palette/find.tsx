@@ -1,5 +1,8 @@
+import { useMemo } from "react"
+
 import { CommandGroup } from "@/components/ui/command"
 
+import { commandFilter } from "@/lib/palette"
 import type { Command } from "@/types/palette"
 import type { AnyResource } from "@/types/api"
 import type { SearchInputState, CommandSearchResource } from "@/types/palette"
@@ -26,6 +29,25 @@ export default function Find({
   onResourceSelect,
   onFirstResultValueChange,
 }: FindProps) {
+  const commandSearchText =
+    !resource && !chipState.pending ? chipState.text : ""
+  const visibleCommands = useMemo(() => {
+    const query = commandSearchText.trim()
+    if (!query) return commands
+
+    return commands
+      .map((command) => ({
+        command,
+        score: commandFilter(command.id, query, [
+          command.label,
+          ...(command.keywords ?? []),
+        ]),
+      }))
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(({ command }) => command)
+  }, [commands, commandSearchText])
+
   return (
     <>
       {resource ? (
@@ -36,9 +58,11 @@ export default function Find({
           onResourceSelect={onResourceSelect}
           onFirstResultValueChange={onFirstResultValueChange}
         />
+      ) : commandSearchText.trim() && visibleCommands.length === 0 ? (
+        <div className="py-6 text-center text-sm">No matching commands.</div>
       ) : (
         <CommandGroup heading="Find">
-          {commands.map((command) => (
+          {visibleCommands.map((command) => (
             <CommandRow
               key={command.id}
               command={command}

@@ -1,21 +1,34 @@
 import { X } from "lucide-react"
 
+import { cn } from "@/lib/utils"
+
 import type { SearchChip } from "@/types/palette"
 
 export interface CommittedProps {
   chip: SearchChip
+  invalid?: boolean
   onRemove: () => void
 }
 
-export default function Committed({ chip, onRemove }: CommittedProps) {
+export default function Committed({
+  chip,
+  invalid = false,
+  onRemove,
+}: CommittedProps) {
+  const segmentClassName = cn(
+    "inline-flex h-full items-center bg-secondary/20 text-secondary/70",
+    invalid && "bg-destructive/20 text-destructive",
+  )
+
   return (
-    <div className="flex h-6 shrink-0 items-center overflow-hidden rounded-[3px] text-xs font-normal whitespace-nowrap">
-      <span className="inline-flex h-full items-center bg-secondary/20 pr-0.5 pl-1.5 text-secondary/70">
+    <div
+      aria-invalid={invalid || undefined}
+      className="flex h-6 shrink-0 items-center overflow-hidden rounded-[3px] text-xs font-normal whitespace-nowrap"
+    >
+      <span className={cn(segmentClassName, "pr-0.5 pl-1.5")}>
         {chip.keyword}:
       </span>
-      <span className="inline-flex h-full items-center bg-secondary/20 px-1 text-secondary/70">
-        {chip.value}
-      </span>
+      <span className={cn(segmentClassName, "px-1")}>{chip.value}</span>
       <button
         type="button"
         aria-label={`Remove ${chip.keyword} filter`}
@@ -24,7 +37,11 @@ export default function Committed({ chip, onRemove }: CommittedProps) {
           e.stopPropagation()
           onRemove()
         }}
-        className="inline-flex h-full cursor-pointer items-center bg-secondary/20 pr-1.5 pl-0.5 text-secondary/70 transition-colors outline-none hover:text-secondary"
+        className={cn(
+          "inline-flex h-full cursor-pointer items-center bg-secondary/20 pr-1.5 pl-0.5 text-secondary/70 transition-colors outline-none hover:text-secondary",
+          invalid &&
+            "bg-destructive/20 text-destructive hover:text-destructive",
+        )}
       >
         <X className="size-3" />
       </button>

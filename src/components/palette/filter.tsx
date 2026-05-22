@@ -10,10 +10,15 @@ import CommandRow from "./command-row"
 
 export interface FilterProps {
   commands: Command[]
+  selectedValue: string
   onSelect: (command: Command) => void
 }
 
-export default function Filter({ commands, onSelect }: FilterProps) {
+export default function Filter({
+  commands,
+  selectedValue,
+  onSelect,
+}: FilterProps) {
   const grouped = useMemo(() => {
     const map = new Map<FilterableResource, Command[]>()
     for (const command of commands) {
@@ -33,6 +38,7 @@ export default function Filter({ commands, onSelect }: FilterProps) {
             <CommandRow
               key={command.id}
               command={command}
+              selectedValue={selectedValue}
               onSelect={() => onSelect(command)}
             />
           ))}

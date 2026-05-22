@@ -14,6 +14,7 @@ export interface FindProps {
   commands: Command[]
   resource: CommandSearchResource | null
   chipState: SearchInputState
+  selectedValue: string
   validationError?: string | null
   onSelect: (command: Command) => void
   onResourceSelect: (item: AnyResource) => void
@@ -24,6 +25,7 @@ export default function Find({
   commands,
   resource,
   chipState,
+  selectedValue,
   validationError = null,
   onSelect,
   onResourceSelect,
@@ -54,6 +56,7 @@ export default function Find({
         <Search
           resource={resource}
           chipState={chipState}
+          selectedValue={selectedValue}
           validationError={validationError}
           onResourceSelect={onResourceSelect}
           onFirstResultValueChange={onFirstResultValueChange}
@@ -66,6 +69,7 @@ export default function Find({
             <CommandRow
               key={command.id}
               command={command}
+              selectedValue={selectedValue}
               onSelect={() => onSelect(command)}
             />
           ))}

@@ -1,4 +1,5 @@
 import {
+  useRef,
   useMemo,
   useState,
   useEffect,
@@ -56,10 +57,10 @@ import * as Products from "@/components/products"
 import * as Releases from "@/components/releases"
 import * as Licenses from "@/components/licenses"
 
+import New from "./new"
 import Home from "./home"
 import Find from "./find"
 import Filter from "./filter"
-import New from "./new"
 import * as Chip from "./chip"
 
 type Screen =
@@ -115,6 +116,10 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
   const [recents, setRecents] = useState<RecentItem[]>(() => loadRecents())
   const [chipFocusSignal, setChipFocusSignal] = useState(0)
 
+  // cmdk emits value changes for pointer hover; Enter hints should follow
+  // keyboard/search selection because that's what Enter activates.
+  const ignorePointerValueChangeRef = useRef(false)
+
   const navigate = useNavigate()
   const navigateToResource = useResourceNavigate()
 
@@ -133,6 +138,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
       setChipState(EMPTY_SEARCH_INPUT)
       setFilterText("")
       setSelectedValue("action:find")
+      ignorePointerValueChangeRef.current = false
       setDirection(1)
     }
   }, [open])
@@ -160,6 +166,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
   function transitionTo(next: Screen, dir: 1 | -1) {
     setDirection(dir)
     setScreen(next)
+    ignorePointerValueChangeRef.current = false
     if (next.kind === "home" || next.kind === "find") {
       setChipState(EMPTY_SEARCH_INPUT)
       setFilterText("")
@@ -295,6 +302,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
   }
 
   function handleFilterTextChange(next: string) {
+    ignorePointerValueChangeRef.current = false
     setFilterText(next)
 
     const isSearching = next.trim().length > 0
@@ -339,6 +347,20 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
   const chipFocusKey = screen.kind
   const canGoBack = screen.kind !== "home"
 
+  function ignorePointerValueChanges() {
+    ignorePointerValueChangeRef.current = true
+  }
+
+  function acceptKeyboardValueChanges() {
+    ignorePointerValueChangeRef.current = false
+  }
+
+  function handleSelectedValueChange(value: string) {
+    if (ignorePointerValueChangeRef.current) return
+
+    setSelectedValue(value)
+  }
+
   return (
     <>
       <CommandDialog
@@ -348,7 +370,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
         shouldFilter={usesCmdkFilter}
         filter={commandFilter}
         value={selectedValue}
-        onValueChange={setSelectedValue}
+        onValueChange={handleSelectedValueChange}
       >
         <div className="flex min-h-12 items-stretch border-b">
           {canGoBack && (
@@ -363,28 +385,31 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
           )}
           <div className="min-w-0 flex-1">
             {usesChipInput ? (
-              <Chip.Input
-                state={chipState}
-                onChange={setChipState}
-                suggestions={chipSuggestions}
-                onSuggestionSelect={(suggestion) => {
-                  setChipState((prev) =>
-                    applySearchSuggestion(prev, suggestion),
-                  )
-                  focusChipInput()
-                }}
-                invalidChipIndexes={invalidChipIndexes}
-                focusKey={chipFocusKey}
-                focusSignal={chipFocusSignal}
-                placeholder={placeholderFor(screen)}
-                bordered={false}
-                showIcon={false}
-              />
+              <div onKeyDownCapture={acceptKeyboardValueChanges}>
+                <Chip.Input
+                  state={chipState}
+                  onChange={setChipState}
+                  suggestions={chipSuggestions}
+                  onSuggestionSelect={(suggestion) => {
+                    setChipState((prev) =>
+                      applySearchSuggestion(prev, suggestion),
+                    )
+                    focusChipInput()
+                  }}
+                  invalidChipIndexes={invalidChipIndexes}
+                  focusKey={chipFocusKey}
+                  focusSignal={chipFocusSignal}
+                  placeholder={placeholderFor(screen)}
+                  bordered={false}
+                  showIcon={false}
+                />
+              </div>
             ) : (
               <CommandPrimitive.Input
                 autoFocus
                 value={filterText}
                 onValueChange={handleFilterTextChange}
+                onKeyDownCapture={acceptKeyboardValueChanges}
                 placeholder={placeholderFor(screen)}
                 className={cn(
                   "flex h-12 w-full bg-transparent px-4 py-3 text-sm outline-hidden",
@@ -445,12 +470,18 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
           </Chip.Tip>
         )}
 
-        <CommandList className="min-h-[calc(100dvh-5rem)] flex-1 pb-1 md:max-h-[480px] md:min-h-auto">
+        <CommandList
+          className="min-h-[calc(100dvh-5rem)] flex-1 pb-1 md:max-h-[480px] md:min-h-auto"
+          onKeyDownCapture={acceptKeyboardValueChanges}
+          onPointerOverCapture={ignorePointerValueChanges}
+          onPointerMoveCapture={ignorePointerValueChanges}
+        >
           <Motion.Slide direction={direction} offset={40} duration={0.2}>
             {screen.kind === "home" || screen.kind === "command" ? (
               <Home
                 key={screen.kind}
                 filterText={filterText}
+                selectedValue={selectedValue}
                 recents={recents}
                 commandsById={commandsById}
                 findCommands={findCommands}
@@ -474,6 +505,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
                 commands={findCommands}
                 resource={activeFindResource}
                 chipState={chipState}
+                selectedValue={selectedValue}
                 validationError={findValidationError}
                 onSelect={executeCommand}
                 onResourceSelect={handleResourceSelect}
@@ -483,10 +515,16 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
               <Filter
                 key="filter"
                 commands={filterCommands}
+                selectedValue={selectedValue}
                 onSelect={executeCommand}
               />
             ) : screen.kind === "new" ? (
-              <New key="new" commands={newCommands} onSelect={executeCommand} />
+              <New
+                key="new"
+                commands={newCommands}
+                selectedValue={selectedValue}
+                onSelect={executeCommand}
+              />
             ) : null}
           </Motion.Slide>
         </CommandList>

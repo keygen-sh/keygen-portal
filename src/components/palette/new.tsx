@@ -6,10 +6,11 @@ import CommandRow from "./command-row"
 
 export interface NewProps {
   commands: Command[]
+  selectedValue: string
   onSelect: (command: Command) => void
 }
 
-export default function New({ commands, onSelect }: NewProps) {
+export default function New({ commands, selectedValue, onSelect }: NewProps) {
   return (
     <>
       <CommandGroup heading="New">
@@ -17,6 +18,7 @@ export default function New({ commands, onSelect }: NewProps) {
           <CommandRow
             key={command.id}
             command={command}
+            selectedValue={selectedValue}
             onSelect={() => onSelect(command)}
           />
         ))}

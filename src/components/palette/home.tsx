@@ -10,11 +10,15 @@ import { recentKey } from "@/lib/palette"
 
 import type { Command, RecentItem } from "@/types/palette"
 
+import EnterHint, {
+  ENTER_HINT_SELECTED_ROW_CLASS,
+} from "@/components/enter-hint"
 import RecentRow from "./recent-row"
 import CommandRow from "./command-row"
 
 export interface HomeProps {
   filterText: string
+  selectedValue: string
   recents: RecentItem[]
   commandsById: Map<string, Command>
   findCommands: Command[]
@@ -32,6 +36,7 @@ export interface HomeProps {
 
 export default function Home({
   filterText,
+  selectedValue,
   recents,
   commandsById,
   findCommands,
@@ -47,6 +52,10 @@ export default function Home({
   onRecentSelect,
 }: HomeProps) {
   const isTyping = filterText.trim().length > 0
+  const showFindEnterHint = selectedValue === "action:find"
+  const showFilterEnterHint = selectedValue === "action:filter"
+  const showNewEnterHint = selectedValue === "action:new"
+  const showCopyAccountIdEnterHint = selectedValue === "account:copy-id"
 
   const liveRecents = recents.filter((r) =>
     r.kind === "resource" ? true : commandsById.has(r.commandId),
@@ -60,32 +69,50 @@ export default function Home({
         <CommandItem
           value="action:find"
           keywords={["find", "search"]}
+          className={
+            showFindEnterHint ? ENTER_HINT_SELECTED_ROW_CLASS : undefined
+          }
           tabbable
           onSelect={onOpenFind}
         >
           <Search />
-          <span>Find</span>
-          <ChevronRight className="ml-auto size-4 text-muted-foreground" />
+          <span className="min-w-0 flex-1 truncate">Find</span>
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+            <EnterHint visible={showFindEnterHint} />
+            <ChevronRight className="size-4 text-muted-foreground" />
+          </div>
         </CommandItem>
         <CommandItem
           value="action:filter"
           keywords={["filter", "presets"]}
+          className={
+            showFilterEnterHint ? ENTER_HINT_SELECTED_ROW_CLASS : undefined
+          }
           tabbable
           onSelect={onOpenFilter}
         >
           <Filter />
-          <span>Filter</span>
-          <ChevronRight className="ml-auto size-4 text-muted-foreground" />
+          <span className="min-w-0 flex-1 truncate">Filter</span>
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+            <EnterHint visible={showFilterEnterHint} />
+            <ChevronRight className="size-4 text-muted-foreground" />
+          </div>
         </CommandItem>
         <CommandItem
           value="action:new"
           keywords={["new", "create"]}
+          className={
+            showNewEnterHint ? ENTER_HINT_SELECTED_ROW_CLASS : undefined
+          }
           tabbable
           onSelect={onOpenNew}
         >
           <Plus />
-          <span>New</span>
-          <ChevronRight className="ml-auto size-4 text-muted-foreground" />
+          <span className="min-w-0 flex-1 truncate">New</span>
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+            <EnterHint visible={showNewEnterHint} />
+            <ChevronRight className="size-4 text-muted-foreground" />
+          </div>
         </CommandItem>
       </CommandGroup>
 
@@ -95,6 +122,7 @@ export default function Home({
             <RecentRow
               key={recentKey(item)}
               item={item}
+              selectedValue={selectedValue}
               command={
                 item.kind === "command"
                   ? commandsById.get(item.commandId)
@@ -113,6 +141,7 @@ export default function Home({
               <CommandRow
                 key={command.id}
                 command={command}
+                selectedValue={selectedValue}
                 onSelect={() => onCommandSelect(command)}
               />
             ))}
@@ -122,6 +151,7 @@ export default function Home({
               <CommandRow
                 key={command.id}
                 command={command}
+                selectedValue={selectedValue}
                 onSelect={() => onCommandSelect(command)}
               />
             ))}
@@ -131,6 +161,7 @@ export default function Home({
               <CommandRow
                 key={command.id}
                 command={command}
+                selectedValue={selectedValue}
                 onSelect={() => onCommandSelect(command)}
               />
             ))}
@@ -142,16 +173,23 @@ export default function Home({
         <CommandItem
           value="account:copy-id"
           keywords={["copy", "account", "id"]}
+          className={
+            showCopyAccountIdEnterHint
+              ? ENTER_HINT_SELECTED_ROW_CLASS
+              : undefined
+          }
           tabbable
           onSelect={onCopyAccountId}
         >
           <Copy />
-          <span>Copy account ID</span>
+          <span className="min-w-0 flex-1 truncate">Copy account ID</span>
+          <EnterHint visible={showCopyAccountIdEnterHint} className="ml-auto" />
         </CommandItem>
         {accountCommands.map((command) => (
           <CommandRow
             key={command.id}
             command={command}
+            selectedValue={selectedValue}
             onSelect={() => onCommandSelect(command)}
           />
         ))}
@@ -162,6 +200,7 @@ export default function Home({
           <CommandRow
             key={command.id}
             command={command}
+            selectedValue={selectedValue}
             onSelect={() => onCommandSelect(command)}
           />
         ))}

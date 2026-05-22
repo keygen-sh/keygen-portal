@@ -22,13 +22,48 @@ import type { AnyResource } from "@/types/api"
 
 import { useSearch } from "@/queries/search"
 
+import EnterHint, {
+  ENTER_HINT_SELECTED_ROW_CLASS,
+} from "@/components/enter-hint"
 import * as Loading from "@/components/loading"
 
 const truncateId = truncator("clip", { maxLength: 8 })
 
+function SearchRow({
+  item,
+  selectedValue,
+  onResourceSelect,
+}: {
+  item: AnyResource
+  selectedValue: string
+  onResourceSelect: (item: AnyResource) => void
+}) {
+  const value = `${item.type}:${item.id}`
+  const showEnterHint = selectedValue === value
+
+  return (
+    <CommandItem
+      value={value}
+      className={showEnterHint ? ENTER_HINT_SELECTED_ROW_CLASS : undefined}
+      forceMount
+      tabbable
+      onSelect={() => onResourceSelect(item)}
+    >
+      <span className="min-w-0 flex-1 truncate">{labelFor(item)}</span>
+      <div className="ml-auto flex shrink-0 items-center gap-2">
+        <span className="truncate text-xs text-muted-foreground">
+          {truncateId(item.id)}
+        </span>
+        <EnterHint visible={showEnterHint} />
+      </div>
+    </CommandItem>
+  )
+}
+
 export interface SearchProps {
   resource: CommandSearchResource
   chipState: SearchInputState
+  selectedValue: string
   validationError?: string | null
   onResourceSelect: (item: AnyResource) => void
   onFirstResultValueChange?: (value: string | null) => void
@@ -37,6 +72,7 @@ export interface SearchProps {
 export default function Search({
   resource,
   chipState,
+  selectedValue,
   validationError = null,
   onResourceSelect,
   onFirstResultValueChange,
@@ -82,18 +118,12 @@ export default function Search({
       {canSearch && (search.data?.length ?? 0) > 0 && (
         <CommandGroup heading={RESOURCE_LABEL[resource]} forceMount>
           {search.data!.map((item) => (
-            <CommandItem
+            <SearchRow
               key={`${item.type}:${item.id}`}
-              value={`${item.type}:${item.id}`}
-              forceMount
-              tabbable
-              onSelect={() => onResourceSelect(item)}
-            >
-              <span className="truncate">{labelFor(item)}</span>
-              <span className="ml-auto truncate text-xs text-muted-foreground">
-                {truncateId(item.id)}
-              </span>
-            </CommandItem>
+              item={item}
+              selectedValue={selectedValue}
+              onResourceSelect={onResourceSelect}
+            />
           ))}
         </CommandGroup>
       )}

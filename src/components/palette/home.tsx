@@ -3,6 +3,7 @@ import {
   CommandGroup,
   CommandItem,
 } from "@/components/ui/command"
+import EnterHint from "@/components/enter-hint"
 
 import { Plus, Search, Filter, Copy, ChevronRight } from "lucide-react"
 
@@ -10,9 +11,6 @@ import { recentKey } from "@/lib/palette"
 
 import type { Command, RecentItem } from "@/types/palette"
 
-import EnterHint, {
-  ENTER_HINT_SELECTED_ROW_CLASS,
-} from "@/components/enter-hint"
 import RecentRow from "./recent-row"
 import CommandRow from "./command-row"
 
@@ -69,9 +67,7 @@ export default function Home({
         <CommandItem
           value="action:find"
           keywords={["find", "search"]}
-          className={
-            showFindEnterHint ? ENTER_HINT_SELECTED_ROW_CLASS : undefined
-          }
+          highlighted={showFindEnterHint}
           tabbable
           onSelect={onOpenFind}
         >
@@ -85,9 +81,7 @@ export default function Home({
         <CommandItem
           value="action:filter"
           keywords={["filter", "presets"]}
-          className={
-            showFilterEnterHint ? ENTER_HINT_SELECTED_ROW_CLASS : undefined
-          }
+          highlighted={showFilterEnterHint}
           tabbable
           onSelect={onOpenFilter}
         >
@@ -101,9 +95,7 @@ export default function Home({
         <CommandItem
           value="action:new"
           keywords={["new", "create"]}
-          className={
-            showNewEnterHint ? ENTER_HINT_SELECTED_ROW_CLASS : undefined
-          }
+          highlighted={showNewEnterHint}
           tabbable
           onSelect={onOpenNew}
         >
@@ -173,11 +165,7 @@ export default function Home({
         <CommandItem
           value="account:copy-id"
           keywords={["copy", "account", "id"]}
-          className={
-            showCopyAccountIdEnterHint
-              ? ENTER_HINT_SELECTED_ROW_CLASS
-              : undefined
-          }
+          highlighted={showCopyAccountIdEnterHint}
           tabbable
           onSelect={onCopyAccountId}
         >

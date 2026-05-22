@@ -1,14 +1,11 @@
 import { CommandItem } from "@/components/ui/command"
+import EnterHint from "@/components/enter-hint"
 
 import { History } from "lucide-react"
 
 import { RESOURCE_ICON, recentKey } from "@/lib/palette"
 
 import type { Command, RecentItem } from "@/types/palette"
-
-import EnterHint, {
-  ENTER_HINT_SELECTED_ROW_CLASS,
-} from "@/components/enter-hint"
 
 export interface RecentRowProps {
   item: RecentItem
@@ -34,7 +31,7 @@ export default function RecentRow({
     <CommandItem
       value={value}
       keywords={[item.label]}
-      className={showEnterHint ? ENTER_HINT_SELECTED_ROW_CLASS : undefined}
+      highlighted={showEnterHint}
       tabbable
       onSelect={onSelect}
     >

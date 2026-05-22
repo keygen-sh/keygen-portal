@@ -445,7 +445,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
           </Chip.Tip>
         )}
 
-        <CommandList className="min-h-[calc(100dvh-5rem)] flex-1 md:max-h-[480px] md:min-h-auto">
+        <CommandList className="min-h-[calc(100dvh-5rem)] flex-1 pb-1 md:max-h-[480px] md:min-h-auto">
           <Motion.Slide direction={direction} offset={40} duration={0.2}>
             {screen.kind === "home" || screen.kind === "command" ? (
               <Home

@@ -22,9 +22,7 @@ import type { AnyResource } from "@/types/api"
 
 import { useSearch } from "@/queries/search"
 
-import EnterHint, {
-  ENTER_HINT_SELECTED_ROW_CLASS,
-} from "@/components/enter-hint"
+import EnterHint from "@/components/enter-hint"
 import * as Loading from "@/components/loading"
 
 const truncateId = truncator("clip", { maxLength: 8 })
@@ -44,7 +42,7 @@ function SearchRow({
   return (
     <CommandItem
       value={value}
-      className={showEnterHint ? ENTER_HINT_SELECTED_ROW_CLASS : undefined}
+      highlighted={showEnterHint}
       forceMount
       tabbable
       onSelect={() => onResourceSelect(item)}

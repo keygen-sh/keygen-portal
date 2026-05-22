@@ -1,10 +1,7 @@
 import { CommandItem } from "@/components/ui/command"
+import EnterHint from "@/components/enter-hint"
 
 import type { Command } from "@/types/palette"
-
-import EnterHint, {
-  ENTER_HINT_SELECTED_ROW_CLASS,
-} from "@/components/enter-hint"
 
 export interface CommandRowProps {
   command: Command
@@ -23,7 +20,7 @@ export default function CommandRow({
     <CommandItem
       value={command.id}
       keywords={[command.label, ...(command.keywords ?? [])]}
-      className={showEnterHint ? ENTER_HINT_SELECTED_ROW_CLASS : undefined}
+      highlighted={showEnterHint}
       tabbable
       onSelect={onSelect}
     >

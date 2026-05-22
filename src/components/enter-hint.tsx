@@ -1,8 +1,5 @@
 import { cn } from "@/lib/utils"
 
-export const ENTER_HINT_SELECTED_ROW_CLASS =
-  "bg-accent text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground"
-
 export interface EnterHintProps {
   visible?: boolean
   className?: string

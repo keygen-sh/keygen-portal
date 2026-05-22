@@ -12,6 +12,7 @@ import {
   parseCommittedInputState,
 } from "@/lib/palette"
 import { labelFor } from "@/lib/search"
+import { truncator } from "@/lib/truncate"
 
 import {
   type SearchInputState,
@@ -22,6 +23,8 @@ import type { AnyResource } from "@/types/api"
 import { useSearch } from "@/queries/search"
 
 import * as Loading from "@/components/loading"
+
+const truncateId = truncator("clip", { maxLength: 8 })
 
 export interface SearchProps {
   resource: CommandSearchResource
@@ -88,7 +91,7 @@ export default function Search({
             >
               <span className="truncate">{labelFor(item)}</span>
               <span className="ml-auto truncate text-xs text-muted-foreground">
-                {item.id}
+                {truncateId(item.id)}
               </span>
             </CommandItem>
           ))}

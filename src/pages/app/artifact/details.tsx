@@ -330,7 +330,7 @@ export default function ArtifactDetails() {
                         variant="none"
                         value={
                           <Attribute.Value
-                            type="number"
+                            type="bytes"
                             value={artifact.attributes.filesize}
                             tooltip={ArtifactAttributeDescriptions.filesize}
                           />

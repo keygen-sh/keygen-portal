@@ -141,6 +141,28 @@ function OverriddenBadge(): React.ReactElement {
   )
 }
 
+function UsageLimitBadge({
+  value,
+  enabled,
+  tooltip,
+  hoverValue,
+  overridden,
+  wrap = false,
+}: UsageLimitBadgeProps): React.ReactElement {
+  return (
+    <span className="group/license-limit flex flex-wrap items-center gap-1.5">
+      <TooltipBadge
+        value={value}
+        variant={enabled ? "default" : "disabled"}
+        hoverValue={hoverValue}
+        tooltip={tooltip}
+        suffix={overridden && <OverriddenBadge />}
+        wrap={wrap}
+      />
+    </span>
+  )
+}
+
 export default function LicenseDetails() {
   const { id } = useParams({ from: "/$accountId/app/licenses/$id" })
 
@@ -878,7 +900,7 @@ export default function LicenseDetails() {
                                   value={getCoresLimitDisplay(
                                     license,
                                     policy,
-                                    0,
+                                    getMachineMetricCount(license, "cores"),
                                   )}
                                   variant={
                                     license.attributes.maxCores ||
@@ -902,6 +924,24 @@ export default function LicenseDetails() {
                                   </Badge>
                                 )}
                               </span>
+                            }
+                          />
+                          <Attribute.Field
+                            label="Memory"
+                            variant="none"
+                            value={
+                              memoryUsageLimit && (
+                                <UsageLimitBadge {...memoryUsageLimit} />
+                              )
+                            }
+                          />
+                          <Attribute.Field
+                            label="Disk"
+                            variant="none"
+                            value={
+                              diskUsageLimit && (
+                                <UsageLimitBadge {...diskUsageLimit} />
+                              )
                             }
                           />
                           <Attribute.Field

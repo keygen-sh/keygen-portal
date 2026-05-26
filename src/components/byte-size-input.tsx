@@ -9,44 +9,13 @@ import {
 } from "@/components/ui/popover"
 
 import { cn } from "@/lib/utils"
-
-const BYTE_UNITS = [
-  { key: "B", label: "Bytes", bytes: 1 },
-  { key: "KB", label: "KB", bytes: 1024 },
-  { key: "MB", label: "MB", bytes: 1024 ** 2 },
-  { key: "GB", label: "GB", bytes: 1024 ** 3 },
-  { key: "TB", label: "TB", bytes: 1024 ** 4 },
-  { key: "PB", label: "PB", bytes: 1024 ** 5 },
-] as const
-
-type ByteUnit = (typeof BYTE_UNITS)[number]
-type ByteUnitKey = ByteUnit["key"]
-
-function findUnit(key: ByteUnitKey): ByteUnit {
-  return BYTE_UNITS.find((u) => u.key === key) ?? BYTE_UNITS[0]
-}
-
-function selectUnit(
-  bytes?: number | null,
-  defaultUnit: ByteUnitKey = "GB",
-): ByteUnit {
-  if (bytes == null || bytes <= 0) return findUnit(defaultUnit)
-
-  for (let i = BYTE_UNITS.length - 1; i >= 0; i--) {
-    if (bytes >= BYTE_UNITS[i].bytes) return BYTE_UNITS[i]
-  }
-
-  return BYTE_UNITS[0]
-}
-
-function formatUnitValue(bytes: number | null | undefined, unit: ByteUnit) {
-  if (bytes == null) return ""
-
-  const value = bytes / unit.bytes
-  return Number.isInteger(value)
-    ? String(value)
-    : String(Number(value.toFixed(2)))
-}
+import {
+  BYTE_UNITS,
+  type ByteUnit,
+  selectByteUnit,
+  type ByteUnitKey,
+  formatByteUnitValue,
+} from "@/lib/bytes"
 
 interface ByteSizeInputProps {
   value?: number | null
@@ -68,7 +37,7 @@ export default function ByteSizeInput({
   className,
 }: ByteSizeInputProps): React.ReactElement {
   const [unit, setUnit] = useState<ByteUnit>(() =>
-    selectUnit(value, defaultUnit),
+    selectByteUnit(value, defaultUnit),
   )
   const [unitsOpen, setUnitsOpen] = useState(false)
 
@@ -89,13 +58,13 @@ export default function ByteSizeInput({
     setUnitsOpen(false)
   }
 
-  const valueInUnit = formatUnitValue(value, unit)
+  const valueInUnit = formatByteUnitValue(value, unit)
   const placeholderInUnit =
     placeholderBytes === undefined
       ? placeholder
       : placeholderBytes === null
         ? "Unlimited"
-        : formatUnitValue(placeholderBytes, unit)
+        : formatByteUnitValue(placeholderBytes, unit)
 
   return (
     <div className={cn("flex items-stretch", className)}>

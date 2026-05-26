@@ -19,6 +19,8 @@ const BaseShape = z.object({
   maxProcesses: z.number().int().positive().nullable().optional(),
   maxUsers: z.number().int().positive().nullable().optional(),
   maxCores: z.number().int().positive().nullable().optional(),
+  maxMemory: z.number().int().positive().nullable().optional(),
+  maxDisk: z.number().int().positive().nullable().optional(),
   maxUses: z.number().int().positive().nullable().optional(),
   metadata: MetadataPairsSchema.optional(),
   entitlements: z

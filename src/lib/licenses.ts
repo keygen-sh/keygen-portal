@@ -19,6 +19,8 @@ export const licenseAttributeTypeSchema: Record<
   maxProcesses: "number",
   maxUsers: "number",
   maxCores: "number",
+  maxMemory: "bytes",
+  maxDisk: "bytes",
   maxUses: "number",
   requireHeartbeat: "boolean",
   requireCheckIn: "boolean",

@@ -131,6 +131,8 @@ export type PolicyAttributes = {
   maxProcesses: number | null
   maxUsers: number | null
   maxCores: number | null
+  maxMemory: number | null
+  maxDisk: number | null
   maxUses: number | null
 
   encrypted: boolean
@@ -194,6 +196,8 @@ export interface PolicyInput {
   maxProcesses?: number | null
   maxUsers?: number | null
   maxCores?: number | null
+  maxMemory?: number | null
+  maxDisk?: number | null
   maxUses?: number | null
 
   requireHeartbeat?: boolean
@@ -238,7 +242,7 @@ export const PolicyAttributeDescriptions: Readonly<
   duration:
     "Duration in seconds. Licenses that implement this policy do not expire when this is null.",
   strict:
-    "When enabled, a license will be invalidated if its machine limit is not met.",
+    "When enabled, a license will be invalidated if its machine, core, memory, disk, or process limits are exceeded.",
   floating:
     "When enabled, a license is valid across multiple machines. This is not enforced unless the policy is strict.",
   scheme:
@@ -275,6 +279,10 @@ export const PolicyAttributeDescriptions: Readonly<
     "The maximum number of users a license implementing the policy can have attached.",
   maxCores:
     "The maximum number of machine CPU cores a license implementing the policy can have activated.",
+  maxMemory:
+    "The maximum amount of machine memory, in bytes, a license implementing the policy can have activated.",
+  maxDisk:
+    "The maximum amount of machine disk, in bytes, a license implementing the policy can have activated.",
   maxUses:
     'The maximum number of recorded uses a license implementing the policy can have (what constitutes as "usage" is up to you).',
   encrypted: "--",
@@ -313,7 +321,7 @@ export const PolicyAttributeDescriptions: Readonly<
   processLeasingStrategy:
     "The strategy used for leasing and counting machine processes.",
   overageStrategy:
-    "The strategy used for a license's overage allowance, affecting max machines, max cores and max processes.",
+    "The strategy used for a license's overage allowance, affecting max machines, max cores, max memory, max disk and max processes.",
   metadata:
     "Store arbitray key-value data on the policy for book keeping purposes, additional rules, etc.",
 } as const

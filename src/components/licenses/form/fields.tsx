@@ -42,6 +42,7 @@ import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
 import * as Calendars from "@/components/calendars"
 import KeyValueInput from "@/components/key-value-input"
+import ByteSizeInput from "@/components/byte-size-input"
 
 type Descriptions = typeof LicenseFormFieldDescriptions
 
@@ -64,6 +65,8 @@ const INCLUDE_DEFAULT_FIELDS: Schemas.Licenses.FieldNames[] = [
   "maxProcesses",
   "maxUsers",
   "maxCores",
+  "maxMemory",
+  "maxDisk",
   "maxUses",
   "suspended",
   "protected",
@@ -169,6 +172,26 @@ export default function LicensesFormFields({
               <MaxCoresField
                 key="maxCores"
                 autoFocus={autoFocus === "maxCores"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                selectedPolicy={selectedPolicy}
+              />
+            )
+          case "maxMemory":
+            return (
+              <MaxMemoryField
+                key="maxMemory"
+                autoFocus={autoFocus === "maxMemory"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                selectedPolicy={selectedPolicy}
+              />
+            )
+          case "maxDisk":
+            return (
+              <MaxDiskField
+                key="maxDisk"
+                autoFocus={autoFocus === "maxDisk"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
                 selectedPolicy={selectedPolicy}
@@ -690,6 +713,91 @@ function MaxCoresField({
                     e.target.value ? parseInt(e.target.value) : null,
                   )
                 }
+              />
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function MaxMemoryField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  selectedPolicy,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  selectedPolicy?: Policy | null
+}) {
+  const form = useFormContext<Schemas.Licenses.BaseValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="maxMemory"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Max memory"
+            variant={fieldVariant}
+            optional
+            tooltip={descriptions.maxMemory}
+          >
+            <FormControl>
+              <ByteSizeInput
+                value={field.value}
+                onChange={field.onChange}
+                placeholder={selectedPolicy ? undefined : "Inherit from policy"}
+                placeholderBytes={selectedPolicy?.attributes.maxMemory}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function MaxDiskField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  selectedPolicy,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  selectedPolicy?: Policy | null
+}) {
+  const form = useFormContext<Schemas.Licenses.BaseValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="maxDisk"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Max disk"
+            variant={fieldVariant}
+            optional
+            tooltip={descriptions.maxDisk}
+          >
+            <FormControl>
+              <ByteSizeInput
+                value={field.value}
+                onChange={field.onChange}
+                placeholder={selectedPolicy ? undefined : "Inherit from policy"}
+                placeholderBytes={selectedPolicy?.attributes.maxDisk}
+                defaultUnit="TB"
+                autoFocus={autoFocus}
               />
             </FormControl>
           </Forms.Field.Header>

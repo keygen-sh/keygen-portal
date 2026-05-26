@@ -72,6 +72,8 @@ export default function EditLicenseForm({
           maxProcesses: license.attributes.maxProcesses ?? null,
           maxUsers: license.attributes.maxUsers ?? null,
           maxCores: license.attributes.maxCores ?? null,
+          maxMemory: license.attributes.maxMemory ?? null,
+          maxDisk: license.attributes.maxDisk ?? null,
           maxUses: license.attributes.maxUses ?? null,
           metadata: recordToMetadataPairs(license.attributes.metadata),
           entitlements: {
@@ -175,8 +177,15 @@ export default function EditLicenseForm({
             <Forms.Section.Column>
               <Licenses.Form.Fields
                 schema="edit"
-                include={["expiry", "maxCores", "maxMachines", "maxProcesses"]}
+                include={[
+                  "expiry",
+                  "maxCores",
+                  "maxMemory",
+                  "maxDisk",
+                  "maxProcesses",
+                ]}
                 fieldVariant="stacking"
+                selectedPolicy={policy}
               />
             </Forms.Section.Column>
             <Forms.Section.Column>
@@ -184,6 +193,7 @@ export default function EditLicenseForm({
                 schema="edit"
                 include={[
                   "maxUsers",
+                  "maxMachines",
                   "maxUses",
                   "name",
                   "protected",

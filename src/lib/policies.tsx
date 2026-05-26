@@ -86,6 +86,8 @@ export const policyAttributeTypeSchema: Record<
   maxProcesses: "number",
   maxUsers: "number",
   maxCores: "number",
+  maxMemory: "bytes",
+  maxDisk: "bytes",
   maxUses: "number",
 
   encrypted: "boolean",

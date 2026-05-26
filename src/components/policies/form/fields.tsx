@@ -60,6 +60,7 @@ import * as Search from "@/components/search"
 import KeyValueInput from "@/components/key-value-input"
 import NullableSelect from "@/components/nullable-select"
 import DurationInput from "@/components/duration-input"
+import ByteSizeInput from "@/components/byte-size-input"
 import { useDeferredMount } from "@/hooks/use-deferred-mount"
 
 type Descriptions = typeof PolicyFormFieldDescriptions
@@ -106,6 +107,8 @@ const INCLUDE_DEFAULT_FIELDS: Schemas.Policies.FieldNames[] = [
   "machineMatchingStrategy",
   "machineUniquenessStrategy",
   "maxCores",
+  "maxMemory",
+  "maxDisk",
   "maxMachines",
   "maxProcesses",
   "maxUsers",
@@ -328,6 +331,26 @@ export default function PoliciesFormFields({
               <MaxCoresField
                 key="maxCores"
                 autoFocus={autoFocus === "maxCores"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                mode={mode}
+              />
+            )
+          case "maxMemory":
+            return (
+              <MaxMemoryField
+                key="maxMemory"
+                autoFocus={autoFocus === "maxMemory"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                mode={mode}
+              />
+            )
+          case "maxDisk":
+            return (
+              <MaxDiskField
+                key="maxDisk"
+                autoFocus={autoFocus === "maxDisk"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
                 mode={mode}
@@ -2444,6 +2467,111 @@ function MaxCoresField({
                 placeholder="e.g. 1"
                 {...field}
                 value={field.value ?? ""}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function MaxMemoryField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  mode = PolicyMode.Create,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  mode?: PolicyMode
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return (
+      <div className="w-full justify-between space-y-2 md:flex">
+        <Skeleton className="h-5 w-28 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
+      </div>
+    )
+  }
+
+  return (
+    <FormField
+      control={form.control}
+      name="maxMemory"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Max memory"
+            variant={fieldVariant}
+            tooltip={descriptions.maxMemory}
+          >
+            <FormControl>
+              <ByteSizeInput
+                value={field.value}
+                onChange={field.onChange}
+                placeholder="e.g. 32"
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function MaxDiskField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  mode = PolicyMode.Create,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  mode?: PolicyMode
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return (
+      <div className="w-full justify-between space-y-2 md:flex">
+        <Skeleton className="h-5 w-24 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
+      </div>
+    )
+  }
+
+  return (
+    <FormField
+      control={form.control}
+      name="maxDisk"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Max disk"
+            variant={fieldVariant}
+            tooltip={descriptions.maxDisk}
+          >
+            <FormControl>
+              <ByteSizeInput
+                value={field.value}
+                onChange={field.onChange}
+                placeholder="e.g. 1"
+                defaultUnit="TB"
                 autoFocus={autoFocus}
               />
             </FormControl>

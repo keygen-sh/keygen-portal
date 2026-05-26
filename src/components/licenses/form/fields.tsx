@@ -239,7 +239,14 @@ export default function LicensesFormFields({
           case "entitlements.create":
             return <CreateEntitlementsField key="entitlements.create" />
           case "users.attach":
-            return <AttachUsersField key="users.attach" />
+            return (
+              <AttachUsersField
+                key="users.attach"
+                autoFocus={autoFocus === "users.attach"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
           case "metadata":
             return (
               <MetadataField
@@ -1077,7 +1084,15 @@ function CreateEntitlementsField() {
   )
 }
 
-function AttachUsersField() {
+function AttachUsersField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
   const form = useFormContext<Schemas.Licenses.AllValues>()
   const { data: users = [], isLoading: usersLoading } = useListUsers()
   const ownerId = useWatch({ control: form.control, name: "ownerId" })
@@ -1101,18 +1116,25 @@ function AttachUsersField() {
       name="users.attach"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Attach users</FormLabel>
-          <FormControl>
-            <Search.MultiSelect
-              value={(field.value ?? []).filter((id) => id !== ownerId)}
-              onChange={(value) =>
-                field.onChange(value.filter((id) => id !== ownerId))
-              }
-              options={attachableUsers}
-              resource="users"
-              placeholder="Search users"
-            />
-          </FormControl>
+          <Forms.Field.Header
+            label="Attach users"
+            tooltip={descriptions.users}
+            variant={fieldVariant}
+            optional
+          >
+            <FormControl>
+              <Search.MultiSelect
+                value={(field.value ?? []).filter((id) => id !== ownerId)}
+                onChange={(value) =>
+                  field.onChange(value.filter((id) => id !== ownerId))
+                }
+                autoFocus={autoFocus}
+                options={attachableUsers}
+                resource="users"
+                placeholder="Search users"
+              />
+            </FormControl>
+          </Forms.Field.Header>
           <FormMessage />
         </FormItem>
       )}

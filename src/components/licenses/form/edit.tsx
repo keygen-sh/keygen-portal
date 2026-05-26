@@ -249,7 +249,7 @@ export default function EditLicenseForm({
             <Forms.Section.Column>
               <Licenses.Form.Fields
                 schema="edit"
-                include={["ownerId", "users.attach"]}
+                include={["users.attach", "ownerId"]}
               />
             </Forms.Section.Column>
           </Forms.Section.Columns>

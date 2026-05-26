@@ -133,7 +133,11 @@ export const LicenseAttributeDescriptions: Readonly<
 } as const
 
 export const LicenseFormFieldDescriptions: Readonly<
-  typeof LicenseAttributeDescriptions & { owner: string; policy: string }
+  typeof LicenseAttributeDescriptions & {
+    owner: string
+    users: string
+    policy: string
+  }
 > = {
   ...LicenseAttributeDescriptions,
   key: "The unique license key. Key will be auto-generated if left blank.",
@@ -147,6 +151,7 @@ export const LicenseFormFieldDescriptions: Readonly<
   maxDisk: "Override the policy's max disk limit for this license.",
   maxUses: "Override the policy's max uses limit for this license.",
   owner: "The user that owns the license.",
+  users: "The user(s) that the license is associated with.",
   policy: "The policy to implement for this license.",
 }
 

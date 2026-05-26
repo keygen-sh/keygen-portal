@@ -85,8 +85,8 @@ export const MachineAttributeDescriptions: Readonly<
   hostname: "The hostname of the machine.",
   platform: "The platform of the machine.",
   cores: "The number of CPU cores for the machine.",
-  memory: "The amount of memory for the machine.",
-  disk: "The amount of disk for the machine.",
+  memory: "The amount of memory, in bytes, for the machine.",
+  disk: "The amount of disk, in bytes, for the machine.",
   requireHeartbeat:
     "Whether or not the machine requires heartbeat pings, i.e. the policy requires heartbeats, or the machine has an active heartbeat monitor.",
   heartbeatStatus: "The status of the machine's heartbeat.",

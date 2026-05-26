@@ -67,6 +67,7 @@ export default function PropertyField({
       {" "}
     </span>
   ) : null
+
   const tooltipIcon = tooltip ? (
     <span className="inline-flex w-0 shrink-0 align-middle transition-[width] duration-200 group-hover/property-field:w-3 group-data-[state=delayed-open]/property-field:w-3 group-data-[state=open]/property-field:w-3">
       <Info
@@ -75,11 +76,13 @@ export default function PropertyField({
       />
     </span>
   ) : null
+
   const suffixSlot = suffix ? (
     <span className="inline-flex align-middle [&_[data-slot=badge]]:ml-0">
       {suffix}
     </span>
   ) : null
+
   const renderReverseText = (displayValue: React.ReactNode) => {
     const { head, tail } = splitLastWord(label)
 

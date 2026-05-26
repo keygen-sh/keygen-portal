@@ -11,7 +11,8 @@ config.validate()
 export default async function create(
   values: Schemas.Licenses.CreateValues,
 ): Promise<LicenseResponse> {
-  const { policyId, entitlements, users, ...attributes } = values
+  const { policyId, ownerId, entitlements, users, ...attributes } = values
+  void ownerId
   void entitlements
   void users
 

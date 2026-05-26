@@ -382,9 +382,20 @@ export default function MachineDetails() {
                         variant="none"
                         value={
                           <Attribute.Value
-                            type="number"
+                            type="bytes"
                             value={machine.attributes.memory ?? null}
                             tooltip={MachineAttributeDescriptions.memory}
+                          />
+                        }
+                      />
+                      <Attribute.Field
+                        label="Disk"
+                        variant="none"
+                        value={
+                          <Attribute.Value
+                            type="bytes"
+                            value={machine.attributes.disk ?? null}
+                            tooltip={MachineAttributeDescriptions.disk}
                           />
                         }
                       />

@@ -506,6 +506,45 @@ export default function PolicyDetails() {
                           className="space-y-2"
                         >
                           <Attribute.Field
+                            label="Max cores"
+                            variant="none"
+                            value={
+                              <TooltipBadge
+                                value={policy.attributes.maxCores || "Not set"}
+                                variant={
+                                  policy.attributes.maxCores
+                                    ? "default"
+                                    : "disabled"
+                                }
+                                tooltip={PolicyAttributeDescriptions.maxCores}
+                              />
+                            }
+                          />
+                          <Attribute.Field
+                            label="Max memory"
+                            variant="none"
+                            value={
+                              <Attribute.Value
+                                type="bytes"
+                                value={policy.attributes.maxMemory}
+                                emptyLabel="Not set"
+                                tooltip={PolicyAttributeDescriptions.maxMemory}
+                              />
+                            }
+                          />
+                          <Attribute.Field
+                            label="Max disk"
+                            variant="none"
+                            value={
+                              <Attribute.Value
+                                type="bytes"
+                                value={policy.attributes.maxDisk}
+                                emptyLabel="Not set"
+                                tooltip={PolicyAttributeDescriptions.maxDisk}
+                              />
+                            }
+                          />
+                          <Attribute.Field
                             label="Max machines"
                             variant="none"
                             value={
@@ -518,7 +557,9 @@ export default function PolicyDetails() {
                                     ? "default"
                                     : "disabled"
                                 }
-                                tooltip="Todo"
+                                tooltip={
+                                  PolicyAttributeDescriptions.maxMachines
+                                }
                               />
                             }
                           />
@@ -535,7 +576,9 @@ export default function PolicyDetails() {
                                     ? "default"
                                     : "disabled"
                                 }
-                                tooltip="Todo"
+                                tooltip={
+                                  PolicyAttributeDescriptions.maxProcesses
+                                }
                               />
                             }
                           />
@@ -550,7 +593,7 @@ export default function PolicyDetails() {
                                     ? "default"
                                     : "disabled"
                                 }
-                                tooltip="Todo"
+                                tooltip={PolicyAttributeDescriptions.maxUsers}
                               />
                             }
                           />

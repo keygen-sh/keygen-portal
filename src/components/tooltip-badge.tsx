@@ -1,5 +1,5 @@
-import React from "react"
-import { cn } from "@/lib/utils"
+import React, { useState } from "react"
+
 import { Badge, type BadgeVariant } from "@/components/ui/badge"
 import {
   Tooltip,
@@ -11,42 +11,95 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover"
+
 import { Info } from "lucide-react"
+
+import { cn, splitLastWord } from "@/lib/utils"
+
 import { useMobile } from "@/hooks/use-mobile"
+
+import * as Motion from "@/components/motion"
 
 type TooltipBadgeProps<T> = {
   value: T
+  hoverValue?: T
   icon?: React.ReactNode
   tooltip: string
+  suffix?: React.ReactNode
+  wrap?: boolean
   variant?: BadgeVariant
   className?: string
 }
 
 export default function TooltipBadge<T>({
   value,
+  hoverValue,
   icon,
   tooltip,
+  suffix,
+  wrap = false,
   variant,
   className,
 }: TooltipBadgeProps<T>) {
   const isMobile = useMobile()
+  const [hovered, setHovered] = useState(false)
+
+  const tooltipSpace = (
+    <span className="hidden [word-spacing:0.25em] group-hover/tooltip-badge:inline">
+      {" "}
+    </span>
+  )
+  const tooltipIcon = (
+    <span className="pointer-events-none inline-flex w-0 transition-[width] duration-200 ease-out group-hover/tooltip-badge:w-3">
+      <Info
+        aria-hidden
+        className="size-3 shrink-0 translate-x-3 opacity-0 transition-[transform,opacity] duration-200 ease-out group-hover/tooltip-badge:translate-x-0 group-hover/tooltip-badge:opacity-100"
+      />
+    </span>
+  )
+
+  const suffixSlot = suffix ? (
+    <span className="inline-flex align-middle [&_[data-slot=badge]]:ml-0">
+      {suffix}
+    </span>
+  ) : null
+
+  const renderValue = (displayValue: T) => {
+    const { head, tail } = splitLastWord(String(displayValue))
+
+    return (
+      <>
+        {head && <>{head} </>}
+        {tail}
+        {tooltipSpace}
+        {tooltipIcon}
+        {suffixSlot && <> {suffixSlot}</>}
+      </>
+    )
+  }
 
   const badge = (
     <Badge
       asChild
       variant={variant}
-      className={cn("group pl-2 text-sm", className)}
+      className={cn(
+        "group/tooltip-badge cursor-default pl-2 text-sm",
+        wrap && hovered && "overflow-visible whitespace-normal",
+        className,
+      )}
     >
-      <span className="inline-flex items-center">
+      <span
+        className={cn("inline-flex items-center", wrap && "flex-wrap")}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
         {icon ? <span className="size-3">{icon}</span> : null}
-        <span className="cursor-default">{String(value)}</span>
-
-        <span className="pointer-events-none ml-0 inline-flex w-0 overflow-hidden transition-[width,margin] duration-200 ease-out group-hover:ml-1 group-hover:w-3">
-          <Info
-            aria-hidden
-            className="size-3 shrink-0 origin-right translate-x-2 scale-0 opacity-0 transition-all duration-200 ease-out group-hover:translate-x-0 group-hover:scale-100 group-hover:opacity-100"
-          />
-        </span>
+        <Motion.Text
+          value={renderValue(value)}
+          hoverValue={hoverValue == null ? undefined : renderValue(hoverValue)}
+          hovered={hovered}
+          wrap={wrap && hovered}
+        />
       </span>
     </Badge>
   )

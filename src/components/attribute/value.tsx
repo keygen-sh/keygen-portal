@@ -4,6 +4,7 @@ import TooltipBadge from "@/components/tooltip-badge"
 
 import { truncateKey } from "@/lib/licenses"
 import { cn, secondsToParts, labelize } from "@/lib/utils"
+import { formatByteSize, formatRawByteSize } from "@/lib/bytes"
 
 import { useMobile } from "@/hooks/use-mobile"
 
@@ -13,6 +14,7 @@ export type AttributeType =
   | "string"
   | "raw"
   | "number"
+  | "bytes"
   | "code"
   | "json"
   | "enum"
@@ -66,6 +68,7 @@ export default function AttributeValue({
   }
 
   let value: string
+  let hoverValue: string | undefined
 
   switch (type) {
     case "duration": {
@@ -93,6 +96,13 @@ export default function AttributeValue({
     case "date":
       value = isUnset ? emptyLabel : formatDate(new Date(String(raw)), "PPp")
       break
+    case "bytes":
+      value = isUnset ? emptyLabel : formatByteSize(Number(raw), { emptyLabel })
+      hoverValue =
+        isUnset || Number(raw) === 0
+          ? undefined
+          : formatRawByteSize(Number(raw))
+      break
     case "code":
     case "number":
     default:
@@ -113,6 +123,7 @@ export default function AttributeValue({
   return (
     <TooltipBadge
       value={value}
+      hoverValue={hoverValue}
       variant={variant}
       tooltip={tooltip!}
       className={className}

@@ -109,16 +109,10 @@ export function useUpdateLicense(licenseId: string) {
         }
 
         const current = response.data
-        const { ownerId, entitlements, users, ...attributes } = values
-
-        // Handled in separate query hooks
-        void ownerId
-        void entitlements
-        void users
 
         const changes = diff(
           current.attributes,
-          attributes as Partial<typeof current.attributes>,
+          values as Partial<typeof current.attributes>,
         ) as Schemas.Licenses.UpdateValues
         if (Object.keys(changes).length === 0) return current
 

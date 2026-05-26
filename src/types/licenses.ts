@@ -39,6 +39,8 @@ export type LicenseAttributes = {
   maxProcesses: number | null
   maxUsers: number | null
   maxCores: number | null
+  maxMemory: number | null
+  maxDisk: number | null
   maxUses: number | null
   requireHeartbeat: boolean
   requireCheckIn: boolean
@@ -61,6 +63,8 @@ export interface LicenseInput {
   maxProcesses?: number | null
   maxUsers?: number | null
   maxCores?: number | null
+  maxMemory?: number | null
+  maxDisk?: number | null
   maxUses?: number | null
   metadata?: Record<string, unknown>
 }
@@ -102,6 +106,10 @@ export const LicenseAttributeDescriptions: Readonly<
     "The license's current machine count, along with the policy's maximum machine limit.",
   maxCores:
     "The license's current machine CPU core count, along with the policy's maximum core limit.",
+  maxMemory:
+    "The license's current machine memory count, along with the policy's maximum memory limit.",
+  maxDisk:
+    "The license's current machine disk count, along with the policy's maximum disk limit.",
   maxProcesses:
     "The license's current process count, along with the policy's maximum process limit.",
   maxUsers:
@@ -135,6 +143,8 @@ export const LicenseFormFieldDescriptions: Readonly<
   maxProcesses: "Override the policy's max processes limit for this license.",
   maxUsers: "Override the policy's max users limit for this license.",
   maxCores: "Override the policy's max cores limit for this license.",
+  maxMemory: "Override the policy's max memory limit for this license.",
+  maxDisk: "Override the policy's max disk limit for this license.",
   maxUses: "Override the policy's max uses limit for this license.",
   policy: "The policy to implement for this license.",
 }

@@ -148,8 +148,9 @@ export default function EditPolicyForm({
                   "machineMatchingStrategy",
                   "machineUniquenessStrategy",
                   "maxCores",
+                  "maxMemory",
+                  "maxDisk",
                   "maxMachines",
-                  "maxProcesses",
                 ]}
               />
             </Forms.Section.Column>
@@ -158,6 +159,7 @@ export default function EditPolicyForm({
                 schema="edit"
                 mode={PolicyMode.Edit}
                 include={[
+                  "maxProcesses",
                   "maxUses",
                   "maxUsers",
                   "name",

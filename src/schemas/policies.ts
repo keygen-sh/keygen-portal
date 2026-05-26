@@ -81,6 +81,8 @@ export const BaseShape = z.object({
     .transform((value) => (value == null ? value : value === 0 ? null : value)),
   maxUses: z.coerce.number().int().positive().nullish(),
   maxCores: z.coerce.number().int().positive().nullish(),
+  maxMemory: z.coerce.number().int().positive().nullish(),
+  maxDisk: z.coerce.number().int().positive().nullish(),
   protected: z.boolean().default(true),
 
   requireHeartbeat: z.boolean().default(false),
@@ -718,6 +720,8 @@ export function getFormValuesFromPolicy<
     maxUsers: policy.attributes.maxUsers,
     maxUses: policy.attributes.maxUses,
     maxCores: policy.attributes.maxCores,
+    maxMemory: policy.attributes.maxMemory,
+    maxDisk: policy.attributes.maxDisk,
 
     requireProductScope: policy.attributes.requireProductScope,
     requirePolicyScope: policy.attributes.requirePolicyScope,

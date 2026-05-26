@@ -46,6 +46,8 @@ export default function CreateLicenseForm({
       maxProcesses: null,
       maxUsers: null,
       maxCores: null,
+      maxMemory: null,
+      maxDisk: null,
       maxUses: null,
       metadata: [],
       entitlements: { attach: [], create: [] },
@@ -171,6 +173,8 @@ export default function CreateLicenseForm({
               "maxProcesses",
               "maxUsers",
               "maxCores",
+              "maxMemory",
+              "maxDisk",
               "maxUses",
             ]}
           >
@@ -179,7 +183,12 @@ export default function CreateLicenseForm({
                 <Forms.Section.Column>
                   <Licenses.Form.Fields
                     schema="create"
-                    include={["maxMachines", "maxProcesses", "maxUsers"]}
+                    include={[
+                      "maxUsers",
+                      "maxMachines",
+                      "maxProcesses",
+                      "maxCores",
+                    ]}
                     fieldVariant="stacking"
                     selectedPolicy={selectedPolicy}
                   />
@@ -187,7 +196,7 @@ export default function CreateLicenseForm({
                 <Forms.Section.Column>
                   <Licenses.Form.Fields
                     schema="create"
-                    include={["maxCores", "maxUses"]}
+                    include={["maxUses", "maxMemory", "maxDisk"]}
                     fieldVariant="stacking"
                     selectedPolicy={selectedPolicy}
                   />

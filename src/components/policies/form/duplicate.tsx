@@ -172,8 +172,9 @@ export default function DuplicatePolicyForm({
                     "machineMatchingStrategy",
                     "machineUniquenessStrategy",
                     "maxCores",
+                    "maxMemory",
+                    "maxDisk",
                     "maxMachines",
-                    "maxProcesses",
                   ]}
                 />
               </Forms.Section.Column>
@@ -182,6 +183,7 @@ export default function DuplicatePolicyForm({
                   schema="create"
                   mode={mode}
                   include={[
+                    "maxProcesses",
                     "maxUses",
                     "maxUsers",
                     "name",

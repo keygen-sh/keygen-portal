@@ -681,6 +681,9 @@ function TemplatesForm({
               crumb="Node-locked configuration"
               fields={[
                 "maxMachines",
+                "maxCores",
+                "maxMemory",
+                "maxDisk",
                 "requireFingerprintScope",
                 "machineUniquenessStrategy",
                 "machineMatchingStrategy",
@@ -691,10 +694,20 @@ function TemplatesForm({
               ]}
             >
               <Forms.Section.Card title="Machine configuration">
-                <Policies.Form.Fields
-                  schema="create"
-                  include={["maxMachines"]}
-                />
+                <Forms.Section.Columns>
+                  <Forms.Section.Column>
+                    <Policies.Form.Fields
+                      schema="create"
+                      include={["maxMachines", "maxCores"]}
+                    />
+                  </Forms.Section.Column>
+                  <Forms.Section.Column>
+                    <Policies.Form.Fields
+                      schema="create"
+                      include={["maxMemory", "maxDisk"]}
+                    />
+                  </Forms.Section.Column>
+                </Forms.Section.Columns>
                 <Forms.Section.Toggled>
                   <Forms.Section.Columns>
                     <Forms.Section.Column>
@@ -981,6 +994,9 @@ function ScratchForm({
               "heartbeatCullStrategy",
               "heartbeatResurrectionStrategy",
               "maxMachines",
+              "maxCores",
+              "maxMemory",
+              "maxDisk",
               "maxProcesses",
               "machineUniquenessStrategy",
               "machineMatchingStrategy",
@@ -1001,6 +1017,9 @@ function ScratchForm({
                   "heartbeatCullStrategy",
                   "heartbeatResurrectionStrategy",
                   "maxMachines",
+                  "maxCores",
+                  "maxMemory",
+                  "maxDisk",
                   "machineUniquenessStrategy",
                   "machineMatchingStrategy",
                   "componentUniquenessStrategy",

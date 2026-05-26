@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import { useFormContext, useFieldArray } from "react-hook-form"
+import { useFormContext, useFieldArray, useWatch } from "react-hook-form"
 import { format, parseISO } from "date-fns"
 import { CalendarIcon, X } from "lucide-react"
 
@@ -68,6 +68,7 @@ const INCLUDE_DEFAULT_FIELDS: Schemas.Licenses.FieldNames[] = [
   "maxMemory",
   "maxDisk",
   "maxUses",
+  "ownerId",
   "suspended",
   "protected",
   "metadata",
@@ -222,6 +223,15 @@ export default function LicensesFormFields({
                 autoFocus={autoFocus === "protected"}
                 descriptions={descriptions}
                 selectedPolicy={selectedPolicy}
+              />
+            )
+          case "ownerId":
+            return (
+              <OwnerIdField
+                key="ownerId"
+                autoFocus={autoFocus === "ownerId"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
               />
             )
           case "entitlements.attach":
@@ -1070,6 +1080,57 @@ function CreateEntitlementsField() {
 function AttachUsersField() {
   const form = useFormContext<Schemas.Licenses.AllValues>()
   const { data: users = [], isLoading: usersLoading } = useListUsers()
+  const ownerId = useWatch({ control: form.control, name: "ownerId" })
+
+  if (usersLoading) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-48 rounded-sm" />
+        <Skeleton className="h-8 w-3/4" />
+      </div>
+    )
+  }
+
+  const attachableUsers = ownerId
+    ? users.filter((user) => user.id !== ownerId)
+    : users
+
+  return (
+    <FormField
+      control={form.control}
+      name="users.attach"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Attach users</FormLabel>
+          <FormControl>
+            <Search.MultiSelect
+              value={(field.value ?? []).filter((id) => id !== ownerId)}
+              onChange={(value) =>
+                field.onChange(value.filter((id) => id !== ownerId))
+              }
+              options={attachableUsers}
+              resource="users"
+              placeholder="Search users"
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function OwnerIdField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Licenses.BaseValues>()
+  const { data: users = [], isLoading: usersLoading } = useListUsers()
 
   if (usersLoading) {
     return (
@@ -1083,19 +1144,26 @@ function AttachUsersField() {
   return (
     <FormField
       control={form.control}
-      name="users.attach"
-      render={({ field }) => (
+      name="ownerId"
+      render={({ field, fieldState }) => (
         <FormItem>
-          <FormLabel>Attach users</FormLabel>
-          <FormControl>
-            <Search.MultiSelect
-              value={field.value ?? []}
-              onChange={field.onChange}
-              options={users}
-              resource="users"
-              placeholder="Search users"
-            />
-          </FormControl>
+          <Forms.Field.Header
+            label="Owner"
+            variant={fieldVariant}
+            tooltip={descriptions.owner}
+            optional
+          >
+            <FormControl>
+              <Search.Select
+                resource="users"
+                value={field.value ?? null}
+                onChange={(value) => field.onChange(value)}
+                options={users}
+                invalid={!!fieldState.error}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
           <FormMessage />
         </FormItem>
       )}

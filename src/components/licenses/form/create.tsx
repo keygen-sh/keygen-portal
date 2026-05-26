@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as Schemas from "@/schemas"
 import {
   useCreateLicense,
+  useChangeLicenseOwner,
   useAttachLicenseUsers,
   useAttachLicenseEntitlements,
 } from "@/queries/licenses"
@@ -49,12 +50,14 @@ export default function CreateLicenseForm({
       maxMemory: null,
       maxDisk: null,
       maxUses: null,
+      ownerId: null,
       metadata: [],
       entitlements: { attach: [], create: [] },
       users: { attach: [] },
     },
   })
   const createLicense = useCreateLicense()
+  const changeOwner = useChangeLicenseOwner()
   const attachUsers = useAttachLicenseUsers()
   const createEntitlement = useCreateEntitlement()
   const attachEntitlements = useAttachLicenseEntitlements()
@@ -76,11 +79,18 @@ export default function CreateLicenseForm({
       })
       if (!createdEntitlementIds) return
 
-      const license = await createLicense.mutateAsync({
+      let license = await createLicense.mutateAsync({
         ...values,
         entitlements: { attach: [], create: [] },
         users: { attach: [] },
       })
+
+      if (values.ownerId) {
+        license = await changeOwner.mutateAsync({
+          licenseId: license.id,
+          ownerId: values.ownerId,
+        })
+      }
 
       if (createdEntitlementIds.length > 0)
         await attachEntitlements.mutateAsync({
@@ -88,7 +98,9 @@ export default function CreateLicenseForm({
           entitlementIds: createdEntitlementIds,
         })
 
-      const userIds = values.users?.attach ?? []
+      const userIds = (values.users?.attach ?? []).filter(
+        (id) => id !== values.ownerId,
+      )
       if (userIds.length > 0)
         await attachUsers.mutateAsync({ licenseId: license.id, userIds })
 
@@ -98,6 +110,7 @@ export default function CreateLicenseForm({
     [
       form,
       createLicense,
+      changeOwner,
       createEntitlement,
       attachEntitlements,
       attachUsers,
@@ -112,6 +125,7 @@ export default function CreateLicenseForm({
           onSubmit={handleSubmit}
           isPending={
             createLicense.isPending ||
+            changeOwner.isPending ||
             createEntitlement.isPending ||
             attachEntitlements.isPending ||
             attachUsers.isPending
@@ -216,6 +230,7 @@ export default function CreateLicenseForm({
             fields={[
               "entitlements.attach",
               "entitlements.create",
+              "ownerId",
               "users.attach",
             ]}
           >
@@ -227,7 +242,7 @@ export default function CreateLicenseForm({
 
               <Licenses.Form.Fields
                 schema="create"
-                include={["users.attach"]}
+                include={["ownerId", "users.attach"]}
               />
             </Forms.Section.Card>
 

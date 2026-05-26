@@ -24,6 +24,7 @@ import { type FieldVariant } from "@/components/forms/field"
 import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
 import KeyValueInput from "@/components/key-value-input"
+import ByteSizeInput from "@/components/byte-size-input"
 
 type Descriptions = typeof MachineFormFieldDescriptions
 
@@ -513,17 +514,11 @@ function MemoryField({
             optional
           >
             <FormControl>
-              <Input
-                type="number"
-                min={1}
+              <ByteSizeInput
+                value={field.value}
+                onChange={field.onChange}
                 placeholder="e.g. 8"
-                {...field}
-                value={field.value ?? ""}
                 autoFocus={autoFocus}
-                onChange={(e) => {
-                  const value = e.target.value
-                  field.onChange(value === "" ? null : Number(value))
-                }}
               />
             </FormControl>
           </Forms.Field.Header>
@@ -558,17 +553,11 @@ function DiskField({
             optional
           >
             <FormControl>
-              <Input
-                type="number"
-                min={1}
+              <ByteSizeInput
+                value={field.value}
+                onChange={field.onChange}
                 placeholder="e.g. 256"
-                {...field}
-                value={field.value ?? ""}
                 autoFocus={autoFocus}
-                onChange={(e) => {
-                  const value = e.target.value
-                  field.onChange(value === "" ? null : Number(value))
-                }}
               />
             </FormControl>
           </Forms.Field.Header>

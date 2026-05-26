@@ -88,11 +88,8 @@ import {
   getUsersLimitDisplay,
   getProcessesLimitDisplay,
   getCoresLimitDisplay,
-  getMemoryLimitDisplay,
-  getMemoryLimitRawDisplay,
-  getDiskLimitDisplay,
-  getDiskLimitRawDisplay,
   getMachineMetricCount,
+  getByteUsageLimit,
   getUsesLimitDisplay,
   isLimitOverridden,
   truncateKey,
@@ -104,14 +101,15 @@ import * as Licenses from "@/components/licenses"
 import * as Attribute from "@/components/attribute"
 import Can from "@/components/can"
 import Metadata from "@/components/metadata"
-import TooltipBadge from "@/components/tooltip-badge"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
-import ConfirmationModal from "@/components/confirmation-modal"
+import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
+import ConfirmationModal from "@/components/confirmation-modal"
+import LimitBadge, { OverriddenBadge } from "@/components/limit-badge"
 
 const LicenseStatusIcons: Record<LicenseStatus, React.ReactNode> = {
   [LicenseStatus.Active]: <CircleCheck className="size-3" />,
@@ -120,47 +118,6 @@ const LicenseStatusIcons: Record<LicenseStatus, React.ReactNode> = {
   [LicenseStatus.Expired]: <CircleOff className="size-3" />,
   [LicenseStatus.Suspended]: <CircleX className="size-3" />,
   [LicenseStatus.Banned]: <Ban className="size-3" />,
-}
-
-type UsageLimitBadgeProps = {
-  value: string
-  enabled: boolean
-  tooltip: string
-  hoverValue?: string
-  overridden: boolean
-  wrap?: boolean
-}
-
-type ByteUsageMetric = "memory" | "disk"
-
-function OverriddenBadge(): React.ReactElement {
-  return (
-    <Badge variant="secondary" className="ml-1.5 text-[10px]">
-      Overridden
-    </Badge>
-  )
-}
-
-function UsageLimitBadge({
-  value,
-  enabled,
-  tooltip,
-  hoverValue,
-  overridden,
-  wrap = false,
-}: UsageLimitBadgeProps): React.ReactElement {
-  return (
-    <span className="group/license-limit flex flex-wrap items-center gap-1.5">
-      <TooltipBadge
-        value={value}
-        variant={enabled ? "default" : "disabled"}
-        hoverValue={hoverValue}
-        tooltip={tooltip}
-        suffix={overridden && <OverriddenBadge />}
-        wrap={wrap}
-      />
-    </span>
-  )
 }
 
 export default function LicenseDetails() {
@@ -298,44 +255,12 @@ export default function LicenseDetails() {
     }
   }
 
-  const getByteUsageLimit = (metric: ByteUsageMetric): UsageLimitBadgeProps => {
-    if (!license) {
-      return {
-        value: "",
-        enabled: false,
-        tooltip: "",
-        overridden: false,
-      }
-    }
-
-    const count = getMachineMetricCount(license, metric)
-    const attribute = metric === "memory" ? "maxMemory" : "maxDisk"
-    const licenseLimit = license.attributes[attribute]
-    const policyLimit = policy?.attributes[attribute]
-    const limit = licenseLimit ?? policyLimit
-    const getDisplay =
-      metric === "memory" ? getMemoryLimitDisplay : getDiskLimitDisplay
-    const getRawDisplay =
-      metric === "memory" ? getMemoryLimitRawDisplay : getDiskLimitRawDisplay
-
-    return {
-      value: getDisplay(license, policy, count),
-      enabled: Boolean(licenseLimit || policyLimit),
-      hoverValue:
-        count === 0 && limit == null
-          ? undefined
-          : getRawDisplay(license, policy, count),
-      tooltip:
-        metric === "memory"
-          ? LicenseAttributeDescriptions.maxMemory
-          : LicenseAttributeDescriptions.maxDisk,
-      overridden: isLimitOverridden(licenseLimit, policyLimit),
-      wrap: true,
-    }
-  }
-
-  const memoryUsageLimit = license ? getByteUsageLimit("memory") : undefined
-  const diskUsageLimit = license ? getByteUsageLimit("disk") : undefined
+  const memoryUsageLimit = license
+    ? getByteUsageLimit(license, policy, "memory")
+    : undefined
+  const diskUsageLimit = license
+    ? getByteUsageLimit(license, policy, "disk")
+    : undefined
 
   return (
     <section className="flex h-screen w-full">
@@ -915,14 +840,7 @@ export default function LicenseDetails() {
                                 {isLimitOverridden(
                                   license.attributes.maxCores,
                                   policy?.attributes.maxCores,
-                                ) && (
-                                  <Badge
-                                    variant="secondary"
-                                    className="text-[10px]"
-                                  >
-                                    Overridden
-                                  </Badge>
-                                )}
+                                ) && <OverriddenBadge className="ml-0" />}
                               </span>
                             }
                           />
@@ -931,7 +849,7 @@ export default function LicenseDetails() {
                             variant="none"
                             value={
                               memoryUsageLimit && (
-                                <UsageLimitBadge {...memoryUsageLimit} />
+                                <LimitBadge {...memoryUsageLimit} />
                               )
                             }
                           />
@@ -940,7 +858,7 @@ export default function LicenseDetails() {
                             variant="none"
                             value={
                               diskUsageLimit && (
-                                <UsageLimitBadge {...diskUsageLimit} />
+                                <LimitBadge {...diskUsageLimit} />
                               )
                             }
                           />
@@ -969,14 +887,7 @@ export default function LicenseDetails() {
                                 {isLimitOverridden(
                                   license.attributes.maxMachines,
                                   policy?.attributes.maxMachines,
-                                ) && (
-                                  <Badge
-                                    variant="secondary"
-                                    className="text-[10px]"
-                                  >
-                                    Overridden
-                                  </Badge>
-                                )}
+                                ) && <OverriddenBadge className="ml-0" />}
                               </span>
                             }
                           />
@@ -1004,14 +915,7 @@ export default function LicenseDetails() {
                                 {isLimitOverridden(
                                   license.attributes.maxProcesses,
                                   policy?.attributes.maxProcesses,
-                                ) && (
-                                  <Badge
-                                    variant="secondary"
-                                    className="text-[10px]"
-                                  >
-                                    Overridden
-                                  </Badge>
-                                )}
+                                ) && <OverriddenBadge className="ml-0" />}
                               </span>
                             }
                           />
@@ -1040,14 +944,7 @@ export default function LicenseDetails() {
                                 {isLimitOverridden(
                                   license.attributes.maxUsers,
                                   policy?.attributes.maxUsers,
-                                ) && (
-                                  <Badge
-                                    variant="secondary"
-                                    className="text-[10px]"
-                                  >
-                                    Overridden
-                                  </Badge>
-                                )}
+                                ) && <OverriddenBadge className="ml-0" />}
                               </span>
                             }
                           />
@@ -1069,14 +966,7 @@ export default function LicenseDetails() {
                                 {isLimitOverridden(
                                   license.attributes.maxUses,
                                   policy?.attributes.maxUses,
-                                ) && (
-                                  <Badge
-                                    variant="secondary"
-                                    className="text-[10px]"
-                                  >
-                                    Overridden
-                                  </Badge>
-                                )}
+                                ) && <OverriddenBadge className="ml-0" />}
                               </span>
                             }
                           />
@@ -1182,14 +1072,7 @@ export default function LicenseDetails() {
                           isLimitOverridden(
                             license.attributes.maxCores,
                             policy?.attributes.maxCores,
-                          ) && (
-                            <Badge
-                              variant="secondary"
-                              className="ml-1.5 text-[10px]"
-                            >
-                              Overridden
-                            </Badge>
-                          )
+                          ) && <OverriddenBadge />
                         }
                       />
                       <Property.Field
@@ -1228,14 +1111,7 @@ export default function LicenseDetails() {
                           isLimitOverridden(
                             license.attributes.maxMachines,
                             policy?.attributes.maxMachines,
-                          ) && (
-                            <Badge
-                              variant="secondary"
-                              className="ml-1.5 text-[10px]"
-                            >
-                              Overridden
-                            </Badge>
-                          )
+                          ) && <OverriddenBadge />
                         }
                       />
                       <Property.Field
@@ -1248,14 +1124,7 @@ export default function LicenseDetails() {
                           isLimitOverridden(
                             license.attributes.maxProcesses,
                             policy?.attributes.maxProcesses,
-                          ) && (
-                            <Badge
-                              variant="secondary"
-                              className="ml-1.5 text-[10px]"
-                            >
-                              Overridden
-                            </Badge>
-                          )
+                          ) && <OverriddenBadge />
                         }
                       />
                       <Property.Field
@@ -1272,14 +1141,7 @@ export default function LicenseDetails() {
                           isLimitOverridden(
                             license.attributes.maxUsers,
                             policy?.attributes.maxUsers,
-                          ) && (
-                            <Badge
-                              variant="secondary"
-                              className="ml-1.5 text-[10px]"
-                            >
-                              Overridden
-                            </Badge>
-                          )
+                          ) && <OverriddenBadge />
                         }
                       />
                       <Property.Field
@@ -1292,14 +1154,7 @@ export default function LicenseDetails() {
                           isLimitOverridden(
                             license.attributes.maxUses,
                             policy?.attributes.maxUses,
-                          ) && (
-                            <Badge
-                              variant="secondary"
-                              className="ml-1.5 text-[10px]"
-                            >
-                              Overridden
-                            </Badge>
-                          )
+                          ) && <OverriddenBadge />
                         }
                       />
                     </Property.Section>

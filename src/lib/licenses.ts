@@ -1,6 +1,6 @@
 import { AttributeType } from "@/components/attribute/value"
 
-import { License } from "@/types/licenses"
+import { License, LicenseAttributeDescriptions } from "@/types/licenses"
 import { Policy } from "@/types/policies"
 import { formatByteLimitDisplay, formatRawByteLimitDisplay } from "@/lib/bytes"
 
@@ -65,6 +65,29 @@ type LimitAttribute =
   | "maxDisk"
   | "maxUses"
 
+type ByteLimitAttribute = "maxMemory" | "maxDisk"
+
+export type ByteUsageMetric = "memory" | "disk"
+
+export type UsageLimitDisplay = {
+  value: string
+  enabled: boolean
+  tooltip: string
+  hoverValue?: string
+  overridden: boolean
+  wrap?: boolean
+}
+
+const ByteUsageLimitAttributes: Record<ByteUsageMetric, ByteLimitAttribute> = {
+  memory: "maxMemory",
+  disk: "maxDisk",
+}
+
+const ByteUsageLimitTooltips: Record<ByteUsageMetric, string> = {
+  memory: LicenseAttributeDescriptions.maxMemory,
+  disk: LicenseAttributeDescriptions.maxDisk,
+}
+
 function getAttributeLimit(
   license: License,
   policy: Policy | null | undefined,
@@ -83,6 +106,55 @@ export function getMachineMetricCount(
   const value = license.relationships.machines?.meta?.[metric]
 
   return typeof value === "number" ? value : 0
+}
+
+function getByteLimitDisplay(
+  license: License,
+  policy: Policy | null | undefined,
+  attribute: ByteLimitAttribute,
+  current: number = 0,
+): string {
+  return formatByteLimitDisplay(
+    current,
+    getAttributeLimit(license, policy, attribute),
+  )
+}
+
+function getByteLimitRawDisplay(
+  license: License,
+  policy: Policy | null | undefined,
+  attribute: ByteLimitAttribute,
+  current: number = 0,
+): string {
+  return formatRawByteLimitDisplay(
+    current,
+    getAttributeLimit(license, policy, attribute),
+    { compactZeroCurrent: true },
+  )
+}
+
+export function getByteUsageLimit(
+  license: License,
+  policy: Policy | null | undefined,
+  metric: ByteUsageMetric,
+): UsageLimitDisplay {
+  const count = getMachineMetricCount(license, metric)
+  const attribute = ByteUsageLimitAttributes[metric]
+  const licenseLimit = license.attributes[attribute]
+  const policyLimit = policy?.attributes[attribute]
+  const limit = licenseLimit ?? policyLimit
+
+  return {
+    value: getByteLimitDisplay(license, policy, attribute, count),
+    enabled: Boolean(licenseLimit || policyLimit),
+    hoverValue:
+      count === 0 && limit == null
+        ? undefined
+        : getByteLimitRawDisplay(license, policy, attribute, count),
+    tooltip: ByteUsageLimitTooltips[metric],
+    overridden: isLimitOverridden(licenseLimit, policyLimit),
+    wrap: true,
+  }
 }
 
 export function getMachinesLimitDisplay(
@@ -126,52 +198,6 @@ export function getCoresLimitDisplay(
   return formatLimitDisplay(
     coreCount,
     getAttributeLimit(license, policy, "maxCores"),
-  )
-}
-
-export function getMemoryLimitDisplay(
-  license: License,
-  policy: Policy | null | undefined,
-  memoryCount: number = 0,
-): string {
-  return formatByteLimitDisplay(
-    memoryCount,
-    getAttributeLimit(license, policy, "maxMemory"),
-  )
-}
-
-export function getMemoryLimitRawDisplay(
-  license: License,
-  policy: Policy | null | undefined,
-  memoryCount: number = 0,
-): string {
-  return formatRawByteLimitDisplay(
-    memoryCount,
-    getAttributeLimit(license, policy, "maxMemory"),
-    { compactZeroCurrent: true },
-  )
-}
-
-export function getDiskLimitDisplay(
-  license: License,
-  policy: Policy | null | undefined,
-  diskCount: number = 0,
-): string {
-  return formatByteLimitDisplay(
-    diskCount,
-    getAttributeLimit(license, policy, "maxDisk"),
-  )
-}
-
-export function getDiskLimitRawDisplay(
-  license: License,
-  policy: Policy | null | undefined,
-  diskCount: number = 0,
-): string {
-  return formatRawByteLimitDisplay(
-    diskCount,
-    getAttributeLimit(license, policy, "maxDisk"),
-    { compactZeroCurrent: true },
   )
 }
 

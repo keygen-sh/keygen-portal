@@ -64,6 +64,7 @@ import {
   LicenseAttributeDescriptions,
 } from "@/types/licenses"
 
+import { useGetUser } from "@/queries/users"
 import { useGetPolicy } from "@/queries/policies"
 import { useGetProduct } from "@/queries/products"
 import {
@@ -82,6 +83,7 @@ import { useMobile } from "@/hooks/use-mobile"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
+import { getUserLabel } from "@/lib/users"
 import { copyToClipboard } from "@/lib/clipboard"
 import {
   getMachinesLimitDisplay,
@@ -151,6 +153,14 @@ export default function LicenseDetails() {
     isFetching: productFetching,
     isError: productError,
   } = useGetProduct(productId)
+
+  const ownerId = license?.relationships.owner?.data?.id || ""
+  const {
+    data: owner,
+    isLoading: ownerLoading,
+    isFetching: ownerFetching,
+    isError: ownerError,
+  } = useGetUser(ownerId)
 
   const {
     data: entitlements = [],
@@ -771,6 +781,28 @@ export default function LicenseDetails() {
                           />
                         ) : policyId ? (
                           policyId
+                        ) : (
+                          "--"
+                        )
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Owner"
+                      value={
+                        ownerError ? (
+                          <Badge variant="destructive">ERROR</Badge>
+                        ) : ownerLoading || ownerFetching ? (
+                          <Skeleton className="h-5 w-32 rounded-sm" />
+                        ) : owner ? (
+                          <GoToButton
+                            path="/$accountId/app/users/$id"
+                            params={{
+                              accountId: keygen.config.id,
+                              id: owner.id,
+                            }}
+                            label={getUserLabel(owner)}
+                          />
                         ) : (
                           "--"
                         )

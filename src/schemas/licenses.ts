@@ -23,6 +23,7 @@ const BaseShape = z.object({
   maxDisk: z.number().int().positive().nullable().optional(),
   maxUses: z.number().int().positive().nullable().optional(),
   metadata: MetadataPairsSchema.optional(),
+  ownerId: z.string().nullable().optional(),
   entitlements: z
     .object({
       attach: z.array(z.string()).default([]),

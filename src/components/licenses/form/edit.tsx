@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { useCallback, useMemo } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
@@ -11,6 +11,7 @@ import * as Schemas from "@/schemas"
 import {
   useGetLicense,
   useUpdateLicense,
+  useChangeLicenseOwner,
   useListLicenseUsers,
   useAttachLicenseUsers,
   useDetachLicenseUsers,
@@ -45,8 +46,14 @@ export default function EditLicenseForm({
     license?.id ?? "",
   )
   const { data: licenseUsers = [] } = useListLicenseUsers(license?.id ?? "")
+  const currentOwnerId = license?.relationships.owner?.data?.id ?? null
+  const attachedLicenseUsers = useMemo(
+    () => licenseUsers.filter((user) => user.id !== currentOwnerId),
+    [licenseUsers, currentOwnerId],
+  )
 
   const updateLicense = useUpdateLicense(license?.id ?? "")
+  const changeOwner = useChangeLicenseOwner()
   const attachUsers = useAttachLicenseUsers()
   const detachUsers = useDetachLicenseUsers()
   const createEntitlement = useCreateEntitlement()
@@ -75,13 +82,14 @@ export default function EditLicenseForm({
           maxMemory: license.attributes.maxMemory ?? null,
           maxDisk: license.attributes.maxDisk ?? null,
           maxUses: license.attributes.maxUses ?? null,
+          ownerId: currentOwnerId,
           metadata: recordToMetadataPairs(license.attributes.metadata),
           entitlements: {
             attach: licenseEntitlements.map((e) => e.id),
             create: [],
           },
           users: {
-            attach: licenseUsers.map((u) => u.id),
+            attach: attachedLicenseUsers.map((u) => u.id),
           },
         }
       : undefined,
@@ -116,11 +124,16 @@ export default function EditLicenseForm({
           entitlementIds: attachEntitlementIds,
         })
 
-      const attachUserIds = (values.users?.attach ?? []).filter(
-        (id) => !licenseUsers.some((u) => u.id === id),
+      const newOwnerId = values.ownerId ?? null
+      const selectedUserIds = (values.users?.attach ?? []).filter(
+        (id) => id !== newOwnerId,
       )
-      const detachUserIds = licenseUsers
-        .filter((u) => !(values.users?.attach ?? []).includes(u.id))
+
+      const attachUserIds = selectedUserIds.filter(
+        (id) => !attachedLicenseUsers.some((u) => u.id === id),
+      )
+      const detachUserIds = attachedLicenseUsers
+        .filter((u) => !selectedUserIds.includes(u.id))
         .map((u) => u.id)
 
       if (detachUserIds.length > 0)
@@ -128,6 +141,14 @@ export default function EditLicenseForm({
           licenseId: license.id,
           userIds: detachUserIds,
         })
+
+      if (newOwnerId !== currentOwnerId) {
+        await changeOwner.mutateAsync({
+          licenseId: license.id,
+          ownerId: newOwnerId,
+        })
+      }
+
       if (attachUserIds.length > 0)
         await attachUsers.mutateAsync({
           licenseId: license.id,
@@ -145,7 +166,9 @@ export default function EditLicenseForm({
       attachEntitlements,
       detachEntitlements,
       createEntitlement,
-      licenseUsers,
+      currentOwnerId,
+      attachedLicenseUsers,
+      changeOwner,
       attachUsers,
       detachUsers,
     ],
@@ -164,6 +187,7 @@ export default function EditLicenseForm({
           errorMessage="Failed to update license"
           isPending={
             updateLicense.isPending ||
+            changeOwner.isPending ||
             attachEntitlements.isPending ||
             detachEntitlements.isPending ||
             createEntitlement.isPending ||
@@ -223,7 +247,10 @@ export default function EditLicenseForm({
               />
             </Forms.Section.Column>
             <Forms.Section.Column>
-              <Licenses.Form.Fields schema="edit" include={["users.attach"]} />
+              <Licenses.Form.Fields
+                schema="edit"
+                include={["ownerId", "users.attach"]}
+              />
             </Forms.Section.Column>
           </Forms.Section.Columns>
         </Forms.Layout.Sheet>

@@ -8,7 +8,7 @@ import {
   ArtifactStatusVariants,
 } from "@/types/artifacts"
 
-import { formatFileSize } from "@/lib/artifacts"
+import { formatByteSize } from "@/lib/bytes"
 import { createTableColumnHelper } from "@/lib/tables"
 
 import ClipboardButton from "@/components/clipboard-button"
@@ -31,7 +31,7 @@ export function useArtifactTableColumns() {
       }),
       column.attr("filesize", {
         header: "Filesize",
-        cell: (info) => formatFileSize(info.getValue()),
+        cell: (info) => formatByteSize(info.getValue()),
       }),
       column.attr("platform", {
         header: "Platform",

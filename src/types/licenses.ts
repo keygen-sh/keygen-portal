@@ -107,9 +107,9 @@ export const LicenseAttributeDescriptions: Readonly<
   maxCores:
     "The license's current machine CPU core count, along with the policy's maximum core limit.",
   maxMemory:
-    "The license's current machine memory count, along with the policy's maximum memory limit.",
+    "The license's current machine memory, in bytes, along with the policy's maximum memory limit.",
   maxDisk:
-    "The license's current machine disk count, along with the policy's maximum disk limit.",
+    "The license's current machine disk, in bytes, along with the policy's maximum disk limit.",
   maxProcesses:
     "The license's current process count, along with the policy's maximum process limit.",
   maxUsers:

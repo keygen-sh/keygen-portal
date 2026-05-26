@@ -2,6 +2,7 @@ import { AttributeType } from "@/components/attribute/value"
 
 import { License } from "@/types/licenses"
 import { Policy } from "@/types/policies"
+import { formatByteLimitDisplay, formatRawByteLimitDisplay } from "@/lib/bytes"
 
 export const licenseAttributeTypeSchema: Record<
   keyof Omit<License["attributes"], "metadata" | "created" | "updated">,
@@ -55,16 +56,44 @@ export function formatLimitDisplay(
   return `${current} of ${formatLimitValue(max)}`
 }
 
+type LimitAttribute =
+  | "maxMachines"
+  | "maxProcesses"
+  | "maxUsers"
+  | "maxCores"
+  | "maxMemory"
+  | "maxDisk"
+  | "maxUses"
+
+function getAttributeLimit(
+  license: License,
+  policy: Policy | null | undefined,
+  attribute: LimitAttribute,
+): number | null {
+  return getLimit(
+    license.attributes[attribute],
+    policy?.attributes[attribute] ?? null,
+  )
+}
+
+export function getMachineMetricCount(
+  license: License,
+  metric: "cores" | "memory" | "disk",
+): number {
+  const value = license.relationships.machines?.meta?.[metric]
+
+  return typeof value === "number" ? value : 0
+}
+
 export function getMachinesLimitDisplay(
   license: License,
   policy: Policy | null | undefined,
   machineCount: number = 0,
 ): string {
-  const limit = getLimit(
-    license.attributes.maxMachines,
-    policy?.attributes.maxMachines ?? null,
+  return formatLimitDisplay(
+    machineCount,
+    getAttributeLimit(license, policy, "maxMachines"),
   )
-  return formatLimitDisplay(machineCount, limit)
 }
 
 export function getUsersLimitDisplay(
@@ -72,11 +101,10 @@ export function getUsersLimitDisplay(
   policy: Policy | null | undefined,
   userCount: number = 0,
 ): string {
-  const limit = getLimit(
-    license.attributes.maxUsers,
-    policy?.attributes.maxUsers ?? null,
+  return formatLimitDisplay(
+    userCount,
+    getAttributeLimit(license, policy, "maxUsers"),
   )
-  return formatLimitDisplay(userCount, limit)
 }
 
 export function getProcessesLimitDisplay(
@@ -84,11 +112,10 @@ export function getProcessesLimitDisplay(
   policy: Policy | null | undefined,
   processCount: number = 0,
 ): string {
-  const limit = getLimit(
-    license.attributes.maxProcesses,
-    policy?.attributes.maxProcesses ?? null,
+  return formatLimitDisplay(
+    processCount,
+    getAttributeLimit(license, policy, "maxProcesses"),
   )
-  return formatLimitDisplay(processCount, limit)
 }
 
 export function getCoresLimitDisplay(
@@ -96,22 +123,66 @@ export function getCoresLimitDisplay(
   policy: Policy | null | undefined,
   coreCount: number = 0,
 ): string {
-  const limit = getLimit(
-    license.attributes.maxCores,
-    policy?.attributes.maxCores ?? null,
+  return formatLimitDisplay(
+    coreCount,
+    getAttributeLimit(license, policy, "maxCores"),
   )
-  return formatLimitDisplay(coreCount, limit)
+}
+
+export function getMemoryLimitDisplay(
+  license: License,
+  policy: Policy | null | undefined,
+  memoryCount: number = 0,
+): string {
+  return formatByteLimitDisplay(
+    memoryCount,
+    getAttributeLimit(license, policy, "maxMemory"),
+  )
+}
+
+export function getMemoryLimitRawDisplay(
+  license: License,
+  policy: Policy | null | undefined,
+  memoryCount: number = 0,
+): string {
+  return formatRawByteLimitDisplay(
+    memoryCount,
+    getAttributeLimit(license, policy, "maxMemory"),
+    { compactZeroCurrent: true },
+  )
+}
+
+export function getDiskLimitDisplay(
+  license: License,
+  policy: Policy | null | undefined,
+  diskCount: number = 0,
+): string {
+  return formatByteLimitDisplay(
+    diskCount,
+    getAttributeLimit(license, policy, "maxDisk"),
+  )
+}
+
+export function getDiskLimitRawDisplay(
+  license: License,
+  policy: Policy | null | undefined,
+  diskCount: number = 0,
+): string {
+  return formatRawByteLimitDisplay(
+    diskCount,
+    getAttributeLimit(license, policy, "maxDisk"),
+    { compactZeroCurrent: true },
+  )
 }
 
 export function getUsesLimitDisplay(
   license: License,
   policy: Policy | null | undefined,
 ): string {
-  const limit = getLimit(
-    license.attributes.maxUses,
-    policy?.attributes.maxUses ?? null,
+  return formatLimitDisplay(
+    license.attributes.uses,
+    getAttributeLimit(license, policy, "maxUses"),
   )
-  return formatLimitDisplay(license.attributes.uses, limit)
 }
 
 export function getLimitPlaceholder(

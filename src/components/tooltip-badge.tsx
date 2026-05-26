@@ -18,8 +18,6 @@ import { cn, splitLastWord } from "@/lib/utils"
 
 import { useMobile } from "@/hooks/use-mobile"
 
-import * as Motion from "@/components/motion"
-
 type TooltipBadgeProps<T> = {
   value: T
   hoverValue?: T
@@ -43,17 +41,19 @@ export default function TooltipBadge<T>({
 }: TooltipBadgeProps<T>) {
   const isMobile = useMobile()
   const [hovered, setHovered] = useState(false)
+  const displayValue = hovered && hoverValue != null ? hoverValue : value
 
   const tooltipSpace = (
-    <span className="hidden [word-spacing:0.25em] group-hover/tooltip-badge:inline">
+    <span className="hidden [word-spacing:0.25em] group-hover/tooltip-badge:inline group-data-[hovered=true]/tooltip-badge:inline">
       {" "}
     </span>
   )
+
   const tooltipIcon = (
-    <span className="pointer-events-none inline-flex w-0 transition-[width] duration-200 ease-out group-hover/tooltip-badge:w-3">
+    <span className="pointer-events-none inline-flex w-0 transition-[width] duration-200 ease-out group-hover/tooltip-badge:w-3 group-data-[hovered=true]/tooltip-badge:w-3">
       <Info
         aria-hidden
-        className="size-3 shrink-0 translate-x-3 opacity-0 transition-[transform,opacity] duration-200 ease-out group-hover/tooltip-badge:translate-x-0 group-hover/tooltip-badge:opacity-100"
+        className="size-3 shrink-0 translate-x-3 opacity-0 transition-[transform,opacity] duration-200 ease-out group-hover/tooltip-badge:translate-x-0 group-hover/tooltip-badge:opacity-100 group-data-[hovered=true]/tooltip-badge:translate-x-0 group-data-[hovered=true]/tooltip-badge:opacity-100"
       />
     </span>
   )
@@ -65,6 +65,8 @@ export default function TooltipBadge<T>({
   ) : null
 
   const renderValue = (displayValue: T) => {
+    if (!wrap) return String(displayValue)
+
     const { head, tail } = splitLastWord(String(displayValue))
 
     return (
@@ -90,16 +92,31 @@ export default function TooltipBadge<T>({
     >
       <span
         className={cn("inline-flex items-center", wrap && "flex-wrap")}
+        data-hovered={hovered || undefined}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
         {icon ? <span className="size-3">{icon}</span> : null}
-        <Motion.Text
-          value={renderValue(value)}
-          hoverValue={hoverValue == null ? undefined : renderValue(hoverValue)}
-          hovered={hovered}
-          wrap={wrap && hovered}
-        />
+        <span
+          className={cn(
+            "inline-flex cursor-default align-middle select-text",
+            wrap && hovered ? "min-w-0 overflow-visible" : "overflow-hidden",
+          )}
+        >
+          <span
+            className={cn(
+              "items-center",
+              wrap && hovered
+                ? "inline min-w-0 whitespace-normal"
+                : "inline whitespace-nowrap",
+            )}
+          >
+            {renderValue(displayValue)}
+          </span>
+        </span>
+        {!wrap && tooltipSpace}
+        {!wrap && tooltipIcon}
+        {!wrap && suffixSlot && <> {suffixSlot}</>}
       </span>
     </Badge>
   )

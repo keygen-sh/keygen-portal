@@ -44,9 +44,11 @@ import {
   Monitor,
   GitFork,
   CircleX,
-  CircleOff,
+  HardDrive,
   SquarePen,
+  CircleOff,
   SquarePlus,
+  MemoryStick,
   CircleCheck,
   CirclePause,
   ChevronDown,
@@ -86,6 +88,11 @@ import {
   getUsersLimitDisplay,
   getProcessesLimitDisplay,
   getCoresLimitDisplay,
+  getMemoryLimitDisplay,
+  getMemoryLimitRawDisplay,
+  getDiskLimitDisplay,
+  getDiskLimitRawDisplay,
+  getMachineMetricCount,
   getUsesLimitDisplay,
   isLimitOverridden,
   truncateKey,
@@ -113,6 +120,25 @@ const LicenseStatusIcons: Record<LicenseStatus, React.ReactNode> = {
   [LicenseStatus.Expired]: <CircleOff className="size-3" />,
   [LicenseStatus.Suspended]: <CircleX className="size-3" />,
   [LicenseStatus.Banned]: <Ban className="size-3" />,
+}
+
+type UsageLimitBadgeProps = {
+  value: string
+  enabled: boolean
+  tooltip: string
+  hoverValue?: string
+  overridden: boolean
+  wrap?: boolean
+}
+
+type ByteUsageMetric = "memory" | "disk"
+
+function OverriddenBadge(): React.ReactElement {
+  return (
+    <Badge variant="secondary" className="ml-1.5 text-[10px]">
+      Overridden
+    </Badge>
+  )
 }
 
 export default function LicenseDetails() {
@@ -249,6 +275,45 @@ export default function LicenseDetails() {
       toast({ message: "Failed to reset license usage", variant: "error" })
     }
   }
+
+  const getByteUsageLimit = (metric: ByteUsageMetric): UsageLimitBadgeProps => {
+    if (!license) {
+      return {
+        value: "",
+        enabled: false,
+        tooltip: "",
+        overridden: false,
+      }
+    }
+
+    const count = getMachineMetricCount(license, metric)
+    const attribute = metric === "memory" ? "maxMemory" : "maxDisk"
+    const licenseLimit = license.attributes[attribute]
+    const policyLimit = policy?.attributes[attribute]
+    const limit = licenseLimit ?? policyLimit
+    const getDisplay =
+      metric === "memory" ? getMemoryLimitDisplay : getDiskLimitDisplay
+    const getRawDisplay =
+      metric === "memory" ? getMemoryLimitRawDisplay : getDiskLimitRawDisplay
+
+    return {
+      value: getDisplay(license, policy, count),
+      enabled: Boolean(licenseLimit || policyLimit),
+      hoverValue:
+        count === 0 && limit == null
+          ? undefined
+          : getRawDisplay(license, policy, count),
+      tooltip:
+        metric === "memory"
+          ? LicenseAttributeDescriptions.maxMemory
+          : LicenseAttributeDescriptions.maxDisk,
+      overridden: isLimitOverridden(licenseLimit, policyLimit),
+      wrap: true,
+    }
+  }
+
+  const memoryUsageLimit = license ? getByteUsageLimit("memory") : undefined
+  const diskUsageLimit = license ? getByteUsageLimit("disk") : undefined
 
   return (
     <section className="flex h-screen w-full">
@@ -1067,7 +1132,12 @@ export default function LicenseDetails() {
                         icon={Cpu}
                         label="cores"
                         variant="reverse"
-                        value={getCoresLimitDisplay(license, policy, 0)}
+                        value={getCoresLimitDisplay(
+                          license,
+                          policy,
+                          getMachineMetricCount(license, "cores"),
+                        )}
+                        tooltip={LicenseAttributeDescriptions.maxCores}
                         suffix={
                           isLimitOverridden(
                             license.attributes.maxCores,
@@ -1083,6 +1153,28 @@ export default function LicenseDetails() {
                         }
                       />
                       <Property.Field
+                        icon={MemoryStick}
+                        label="memory"
+                        variant="reverse"
+                        value={memoryUsageLimit?.value}
+                        hoverValue={memoryUsageLimit?.hoverValue}
+                        tooltip={memoryUsageLimit?.tooltip}
+                        suffix={
+                          memoryUsageLimit?.overridden && <OverriddenBadge />
+                        }
+                      />
+                      <Property.Field
+                        icon={HardDrive}
+                        label="disk"
+                        variant="reverse"
+                        value={diskUsageLimit?.value}
+                        hoverValue={diskUsageLimit?.hoverValue}
+                        tooltip={diskUsageLimit?.tooltip}
+                        suffix={
+                          diskUsageLimit?.overridden && <OverriddenBadge />
+                        }
+                      />
+                      <Property.Field
                         icon={Monitor}
                         label="machines"
                         variant="reverse"
@@ -1091,6 +1183,7 @@ export default function LicenseDetails() {
                           policy,
                           license.relationships.machines?.data?.length ?? 0,
                         )}
+                        tooltip={LicenseAttributeDescriptions.maxMachines}
                         suffix={
                           isLimitOverridden(
                             license.attributes.maxMachines,
@@ -1110,6 +1203,7 @@ export default function LicenseDetails() {
                         label="processes"
                         variant="reverse"
                         value={getProcessesLimitDisplay(license, policy, 0)}
+                        tooltip={LicenseAttributeDescriptions.maxProcesses}
                         suffix={
                           isLimitOverridden(
                             license.attributes.maxProcesses,
@@ -1133,6 +1227,7 @@ export default function LicenseDetails() {
                           policy,
                           licenseUsers.length,
                         )}
+                        tooltip={LicenseAttributeDescriptions.maxUsers}
                         suffix={
                           isLimitOverridden(
                             license.attributes.maxUsers,
@@ -1152,6 +1247,7 @@ export default function LicenseDetails() {
                         label="uses"
                         variant="reverse"
                         value={getUsesLimitDisplay(license, policy)}
+                        tooltip={LicenseAttributeDescriptions.maxUses}
                         suffix={
                           isLimitOverridden(
                             license.attributes.maxUses,

@@ -32,6 +32,7 @@ import {
 
 import {
   Box,
+  Cpu,
   Logs,
   Copy,
   Menu,
@@ -40,6 +41,8 @@ import {
   Repeat,
   GitFork,
   Monitor,
+  HardDrive,
+  MemoryStick,
   SquarePen,
   SquarePlus,
   EllipsisVertical,
@@ -57,6 +60,7 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
+import { formatByteSize, formatRawByteSize } from "@/lib/bytes"
 
 import {
   isPerpetual,
@@ -69,6 +73,7 @@ import {
   isFeatureBased,
   isUsageBased,
 } from "@/lib/policies"
+import { PolicyAttributeDescriptions } from "@/types/policies"
 
 import * as keygen from "@/keygen"
 import * as Policies from "@/components/policies"
@@ -641,11 +646,56 @@ export default function PolicyDetails() {
                       className="p-4"
                     >
                       <Property.Field
+                        icon={Cpu}
+                        variant="reverse"
+                        label="max cores"
+                        emptyLabel="No max cores set"
+                        value={policy.attributes.maxCores}
+                        tooltip={PolicyAttributeDescriptions.maxCores}
+                      />
+                      <Property.Field
+                        icon={MemoryStick}
+                        variant="reverse"
+                        label="max memory"
+                        emptyLabel="No max memory set"
+                        value={
+                          policy.attributes.maxMemory == null
+                            ? null
+                            : formatByteSize(policy.attributes.maxMemory)
+                        }
+                        hoverValue={
+                          policy.attributes.maxMemory == null ||
+                          policy.attributes.maxMemory === 0
+                            ? undefined
+                            : formatRawByteSize(policy.attributes.maxMemory)
+                        }
+                        tooltip={PolicyAttributeDescriptions.maxMemory}
+                      />
+                      <Property.Field
+                        icon={HardDrive}
+                        variant="reverse"
+                        label="max disk"
+                        emptyLabel="No max disk set"
+                        value={
+                          policy.attributes.maxDisk == null
+                            ? null
+                            : formatByteSize(policy.attributes.maxDisk)
+                        }
+                        hoverValue={
+                          policy.attributes.maxDisk == null ||
+                          policy.attributes.maxDisk === 0
+                            ? undefined
+                            : formatRawByteSize(policy.attributes.maxDisk)
+                        }
+                        tooltip={PolicyAttributeDescriptions.maxDisk}
+                      />
+                      <Property.Field
                         icon={Monitor}
                         variant="reverse"
                         label="max machines"
                         emptyLabel="No max machines set"
                         value={policy.attributes.maxMachines}
+                        tooltip={PolicyAttributeDescriptions.maxMachines}
                       />
                       <Property.Field
                         icon={Repeat}
@@ -653,6 +703,7 @@ export default function PolicyDetails() {
                         label="max processes"
                         emptyLabel="No max processes set"
                         value={policy.attributes.maxProcesses}
+                        tooltip={PolicyAttributeDescriptions.maxProcesses}
                       />
                       <Property.Field
                         icon={Users}
@@ -660,6 +711,7 @@ export default function PolicyDetails() {
                         label="max users"
                         emptyLabel="No max users set"
                         value={policy.attributes.maxUsers}
+                        tooltip={PolicyAttributeDescriptions.maxUsers}
                       />
                     </Property.Section>
 

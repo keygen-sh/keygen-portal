@@ -240,10 +240,23 @@ export default function CreateLicenseForm({
                 include={["entitlements.attach", "entitlements.create"]}
               />
 
-              <Licenses.Form.Fields
-                schema="create"
-                include={["ownerId", "users.attach"]}
-              />
+              <Forms.Section.Columns>
+                <Forms.Section.Column>
+                  <Licenses.Form.Fields
+                    schema="create"
+                    fieldVariant="stacking"
+                    include={["ownerId"]}
+                  />
+                </Forms.Section.Column>
+
+                <Forms.Section.Column>
+                  <Licenses.Form.Fields
+                    schema="create"
+                    fieldVariant="stacking"
+                    include={["users.attach"]}
+                  />
+                </Forms.Section.Column>
+              </Forms.Section.Columns>
             </Forms.Section.Card>
 
             <DocumentationLink page="licenses" />

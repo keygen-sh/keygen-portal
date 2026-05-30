@@ -5,6 +5,7 @@ interface ImportMetaEnv {
   readonly VITE_KEYGEN_MODE: string
   readonly VITE_KEYGEN_VERSION: string
   readonly VITE_KEYGEN_ACCOUNT_ID: string
+  readonly VITE_KEYGEN_EDITION?: string
 }
 
 interface ImportMeta {

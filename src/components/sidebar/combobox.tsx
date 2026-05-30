@@ -20,6 +20,7 @@ import { Environment } from "@/types/environments"
 
 import { useListEnvironments } from "@/queries/environments"
 import { useEnvironment } from "@/hooks/use-environment"
+import { useEdition } from "@/hooks/use-edition"
 
 import * as Environments from "@/components/environments"
 
@@ -29,7 +30,20 @@ const GLOBAL_ENVIRONMENT = {
   name: "Global",
 }
 
-export default function SidebarCombobox(): React.ReactElement {
+function CeCombobox(): React.ReactElement {
+  return (
+    <div className="flex h-9 items-center px-1">
+      {/* TODO(cazden) Use company logo */}
+      <Droplet className="mr-2 size-6 rounded-sm bg-content-loud p-1 text-background" />
+      <div className="flex max-w-32 flex-col text-left text-content-loud">
+        {/* TODO(cazden) Get company name */}
+        <span className="truncate">Umbral</span>
+      </div>
+    </div>
+  )
+}
+
+function EeCombobox(): React.ReactElement {
   const { code, select } = useEnvironment()
 
   const [openModal, setOpenModal] = useState(false)
@@ -156,4 +170,9 @@ export default function SidebarCombobox(): React.ReactElement {
       />
     </>
   )
+}
+
+export default function SidebarCombobox(): React.ReactElement {
+  const { isCE } = useEdition()
+  return isCE ? <CeCombobox /> : <EeCombobox />
 }

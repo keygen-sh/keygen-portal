@@ -5,13 +5,27 @@ import { EnvironmentContext } from "@/contexts/environment-context"
 import { useCreateEnvironmentToken } from "@/queries/tokens"
 
 import * as keygen from "@/keygen"
+import config from "@/keygen/config"
 import { toast } from "@/lib/toast"
 
-export function EnvironmentProvider({
+function CeEnvironmentProvider({
   children,
 }: {
   children: React.ReactNode
-}) {
+}): React.ReactElement {
+  const value = useMemo(() => ({ code: null, select: async () => {} }), [])
+  return (
+    <EnvironmentContext.Provider value={value}>
+      {children}
+    </EnvironmentContext.Provider>
+  )
+}
+
+function EeEnvironmentProvider({
+  children,
+}: {
+  children: React.ReactNode
+}): React.ReactElement {
   const [code, setCode] = useState<string | null>(null)
   const queryClient = useQueryClient()
   const { mutateAsync: createEnvironmentToken } = useCreateEnvironmentToken()
@@ -68,4 +82,15 @@ export function EnvironmentProvider({
       {children}
     </EnvironmentContext.Provider>
   )
+}
+
+export function EnvironmentProvider({
+  children,
+}: {
+  children: React.ReactNode
+}): React.ReactElement {
+  if (config.isCE) {
+    return <CeEnvironmentProvider>{children}</CeEnvironmentProvider>
+  }
+  return <EeEnvironmentProvider>{children}</EeEnvironmentProvider>
 }

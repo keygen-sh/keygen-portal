@@ -3,6 +3,7 @@ const CLOUD_HOSTS = ["api.keygen.sh", "api.keygen.dev"]
 const config = {
   host: import.meta.env.VITE_KEYGEN_HOST,
   mode: import.meta.env.VITE_KEYGEN_MODE,
+  isCE: import.meta.env.VITE_KEYGEN_EDITION !== "EE",
   isCloud:
     import.meta.env.VITE_KEYGEN_EDITION === "EE" &&
     import.meta.env.VITE_KEYGEN_MODE === "multiplayer" &&

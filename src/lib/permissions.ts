@@ -2,7 +2,13 @@ import type { QueryClient } from "@tanstack/react-query"
 
 import { currentUserQueryOptions } from "@/queries/users"
 
-import { Permissions, Permission } from "@/types/users"
+import {
+  Permissions,
+  Permission,
+  DefaultPermissionsByRole,
+} from "@/types/users"
+
+import config from "@/keygen/config"
 
 const PERMISSION_SET: ReadonlySet<Permission> = new Set(Permissions)
 
@@ -14,7 +20,17 @@ async function effectivePermissions(
   queryClient: QueryClient,
 ): Promise<ReadonlySet<Permission>> {
   const me = await queryClient.ensureQueryData(currentUserQueryOptions())
-  return new Set((me.attributes.permissions ?? []).filter(isPermission))
+  const raw = me.attributes.permissions
+
+  if (raw != null) {
+    return new Set(raw.filter(isPermission))
+  }
+
+  if (config.isCE) {
+    return new Set(DefaultPermissionsByRole[me.attributes.role] ?? [])
+  }
+
+  return new Set()
 }
 
 export async function requirePermission(

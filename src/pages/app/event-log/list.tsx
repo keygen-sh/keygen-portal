@@ -3,10 +3,13 @@ import { useNavigate } from "@tanstack/react-router"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+import { EventLogMockData } from "@/mock/event-logs"
+
 import {
-  useEventLogCursors,
   cursorFromLink,
+  useEventLogCursors,
 } from "@/hooks/use-event-log-cursors"
+import { useEdition } from "@/hooks/use-edition"
 import { useDataTable } from "@/hooks/use-data-table"
 import { useFilterSearch } from "@/hooks/use-filter-search"
 import { useCursorFollowTooltip } from "@/hooks/use-cursor-follow-tooltip"
@@ -33,6 +36,7 @@ export default function EventLogList() {
   const table = useDataTable()
   const { page, pageSize, setPage } = table
   const navigate = useNavigate()
+  const { isEE } = useEdition()
 
   const [filters, setFilters] = useFilterSearch<EventLogFilters>()
   const { cursor, reset, goToPage } = useEventLogCursors(page, setPage)
@@ -71,11 +75,14 @@ export default function EventLogList() {
     links,
     isLoading,
     isFetching,
-  } = useListEventLogs({
-    cursor,
-    pageSize,
-    filters,
-  })
+  } = useListEventLogs(
+    {
+      cursor,
+      pageSize,
+      filters,
+    },
+    { enabled: isEE },
+  )
 
   const nextCursor = cursorFromLink(links?.next)
   const loading = isLoading || isFetching
@@ -92,29 +99,30 @@ export default function EventLogList() {
     [closePreviewNow, goToPage, nextCursor],
   )
 
-  return (
-    <section className="flex h-screen flex-col">
-      <PageHeader title="Event Logs" />
-
+  const content = (
+    <>
       <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-2.5 md:px-4">
         <EventLogs.FilterBar filters={filters} onChange={handleFiltersChange} />
       </div>
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<EventLog>
-          data={eventLogs}
-          table={table}
-          columns={columns}
-          pageCount={pageCount}
-          isLoading={loading}
-          onRowClick={(eventLog) =>
-            navigate({
-              to: "/$accountId/app/event-logs/$id",
-              params: { accountId: keygen.config.id, id: eventLog.id },
-            })
-          }
-        />
-      </ScrollArea>
+      <div className="min-h-0 flex-1 overflow-hidden">
+        {" "}
+        <ScrollArea className="h-full overflow-auto">
+          <DataTable<EventLog>
+            data={isEE ? eventLogs : EventLogMockData}
+            table={table}
+            columns={columns}
+            pageCount={pageCount}
+            isLoading={loading}
+            onRowClick={(eventLog) =>
+              navigate({
+                to: "/$accountId/app/event-logs/$id",
+                params: { accountId: keygen.config.id, id: eventLog.id },
+              })
+            }
+          />
+        </ScrollArea>
+      </div>
 
       <PageFooter>
         <Pagination
@@ -124,6 +132,20 @@ export default function EventLogList() {
           isLoading={loading}
         />
       </PageFooter>
+    </>
+  )
+
+  return (
+    <section className="flex h-screen flex-col">
+      <PageHeader title="Event Logs" />
+
+      {isEE ? (
+        content
+      ) : (
+        <EventLogs.Upgrade className="min-h-0 flex-1">
+          {content}
+        </EventLogs.Upgrade>
+      )}
 
       <CursorTooltip
         open={!!preview}

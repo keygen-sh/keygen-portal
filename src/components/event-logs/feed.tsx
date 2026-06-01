@@ -5,6 +5,9 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 import { ChevronRight, GitCommitHorizontal } from "lucide-react"
 
+import { EventLogMockData } from "@/mock/event-logs"
+
+import { useEdition } from "@/hooks/use-edition"
 import {
   cursorFromLink,
   useEventLogCursors,
@@ -28,6 +31,7 @@ import * as Motion from "@/components/motion"
 import Pagination from "@/components/pagination"
 import GoToButton from "@/components/go-to-button"
 import ResourceLink from "@/components/resource-link"
+import EventLogsUpgrade from "@/components/event-logs/upgrade"
 
 interface EventLogFeedProps {
   filters?: EventLogFilters
@@ -171,6 +175,7 @@ export default function EventLogFeed({
 }: EventLogFeedProps) {
   const isMobile = useMobile()
   const { can } = usePermissions()
+  const { isEE } = useEdition()
   const [page, setPage] = useState(1)
   const { cursor, reset, goToPage } = useEventLogCursors(page, setPage)
 
@@ -205,8 +210,25 @@ export default function EventLogFeed({
       pageSize: resolvedPageSize,
       filters,
     },
-    { enabled: can("event-log.read") },
+    { enabled: isEE && can("event-log.read") },
   )
+
+  if (!isEE) {
+    const mockRows = EventLogMockData.slice(0, resolvedPageSize)
+
+    return (
+      <EventLogsUpgrade className={cn("min-h-0 flex-1", className)}>
+        {mockRows.map((eventLog, index) => (
+          <EventLogRow
+            key={eventLog.id}
+            eventLog={eventLog}
+            isFirst={index === 0}
+            isLast={index === mockRows.length - 1}
+          />
+        ))}
+      </EventLogsUpgrade>
+    )
+  }
 
   if (!can("event-log.read")) {
     return (

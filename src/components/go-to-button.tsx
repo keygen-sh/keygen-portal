@@ -13,6 +13,7 @@ interface GoToProps {
   label: string
   disabled?: boolean
   className?: string
+  buttonClassName?: string
 }
 
 export default function GoToButton({
@@ -21,6 +22,7 @@ export default function GoToButton({
   label,
   disabled = false,
   className,
+  buttonClassName,
 }: GoToProps): React.ReactElement {
   const navigate = useNavigate()
 
@@ -31,7 +33,7 @@ export default function GoToButton({
   return (
     <div
       className={cn(
-        "group flex h-6 min-w-0 gap-1",
+        "group/go-to-button flex h-6 min-w-0 gap-1",
         disabled && "pointer-events-none",
         className,
       )}
@@ -42,13 +44,16 @@ export default function GoToButton({
         size="link"
         onClick={handleClick}
         disabled={disabled}
-        className="min-w-0 shrink text-primary group-hover:text-primary/80"
+        className={cn(
+          "min-w-0 shrink text-primary group-hover/go-to-button:text-primary/80",
+          buttonClassName,
+        )}
         aria-label={label}
       >
         <span className="truncate">{label}</span>
       </Button>
       <div className="flex h-full shrink-0 items-center">
-        <ChevronRight className="mt-0.5 size-3.5 text-primary transition-all duration-200 group-hover:translate-x-2 group-hover:text-primary!" />
+        <ChevronRight className="mt-0.5 size-3.5 text-primary transition-all duration-200 group-hover/go-to-button:translate-x-2 group-hover/go-to-button:text-primary!" />
       </div>
     </div>
   )

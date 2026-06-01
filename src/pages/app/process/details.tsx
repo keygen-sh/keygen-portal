@@ -66,6 +66,7 @@ import * as keygen from "@/keygen"
 import * as Processes from "@/components/processes"
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
+import * as EventLogs from "@/components/event-logs"
 import Can from "@/components/can"
 import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
@@ -478,9 +479,10 @@ export default function ProcessDetails() {
 
                 {isMobile && (
                   <CollapsibleCard title="Events">
-                    <p className="text-sm text-content-subdued">
-                      Nothing here yet.
-                    </p>
+                    <EventLogs.Feed
+                      compact
+                      filters={{ resource: { type: "processes", id } }}
+                    />
                   </CollapsibleCard>
                 )}
 
@@ -560,7 +562,15 @@ export default function ProcessDetails() {
                 )}
               </TabsContent>
 
-              <TabsContent value="events" className="p-4"></TabsContent>
+              <TabsContent
+                value="events"
+                className="flex min-h-0 flex-1 flex-col p-0"
+              >
+                <EventLogs.Feed
+                  compact
+                  filters={{ resource: { type: "processes", id } }}
+                />
+              </TabsContent>
             </SidebarContent>
             <SidebarFooter className="p-4">
               <Button

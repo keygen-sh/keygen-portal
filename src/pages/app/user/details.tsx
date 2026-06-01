@@ -61,6 +61,7 @@ import {
 } from "@/queries/users"
 
 import { useMobile } from "@/hooks/use-mobile"
+import { useSidebarTab } from "@/hooks/use-sidebar-tab"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
@@ -103,6 +104,7 @@ export default function UserDetails() {
   const back = useBackNavigate()
 
   const isMobile = useMobile()
+  const [tab, setTab] = useSidebarTab()
   const [open, setOpen] = useState({
     edit: false,
     delete: false,
@@ -560,7 +562,7 @@ export default function UserDetails() {
       </div>
 
       {!isMobile && (
-        <Tabs defaultValue="overview">
+        <Tabs value={tab} onValueChange={setTab}>
           <Sidebar className="w-64 shrink-0" side="right">
             <SidebarHeader className="p-0 pt-4">
               <TabsSwitch

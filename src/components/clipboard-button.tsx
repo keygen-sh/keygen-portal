@@ -40,7 +40,7 @@ const ClipboardButton = forwardRef<HTMLDivElement, ClipboardButtonProps>(
           props.onClick?.(e)
         }}
         className={
-          "group inline-flex w-[var(--width)] items-center text-content-muted " +
+          "group/clipboard-button inline-flex w-[var(--width)] items-center text-content-muted " +
           (className ?? "")
         }
         style={
@@ -51,8 +51,8 @@ const ClipboardButton = forwardRef<HTMLDivElement, ClipboardButtonProps>(
       >
         <span className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-2 py-0.5 font-mono text-content-muted">
           {display}
-          <span className="inline-flex w-0 overflow-hidden transition-[width] duration-200 group-hover:w-5">
-            <Copy className="ml-2 h-3 w-3 translate-x-2 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100" />
+          <span className="inline-flex w-0 overflow-hidden transition-[width] duration-200 group-hover/clipboard-button:w-5">
+            <Copy className="ml-2 h-3 w-3 translate-x-2 opacity-0 transition-all duration-200 group-hover/clipboard-button:translate-x-0 group-hover/clipboard-button:opacity-100" />
           </span>
         </span>
       </div>

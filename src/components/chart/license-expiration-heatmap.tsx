@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import {
   format,
   getDay,
@@ -28,10 +28,12 @@ import { cn } from "@/lib/utils"
 import { truncateKey } from "@/lib/licenses"
 
 import { useMobile } from "@/hooks/use-mobile"
+import { useCursorFollowTooltip } from "@/hooks/use-cursor-follow-tooltip"
 
 import * as Chart from "@/components/chart"
 import * as Motion from "@/components/motion"
 import GoToButton from "@/components/go-to-button"
+import CursorTooltip from "@/components/cursor-tooltip"
 
 const DAY_LABELS = ["Mon", "", "Wed", "", "Fri", "", "Sun"]
 const CELL_WIDTH = 16
@@ -69,72 +71,46 @@ export default function LicenseExpirationHeatmap() {
   const isMobile = useMobile()
 
   const [expanded, setExpanded] = useState(false)
-  const [hoveredEntry, setHoveredEntry] =
-    useState<ExpirationHeatmapEntry | null>(null)
 
-  const targetPosRef = useRef({ x: 0, y: 0 })
-  const currentPosRef = useRef({ x: 0, y: 0 })
-  const rafRef = useRef<number | null>(null)
-
-  const lingerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const tooltipRef = useRef<HTMLDivElement>(null)
-
-  const clearLingerTimer = useCallback(() => {
-    if (lingerTimerRef.current) {
-      clearTimeout(lingerTimerRef.current)
-      lingerTimerRef.current = null
-    }
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      clearLingerTimer()
-    }
-  }, [clearLingerTimer])
+  const {
+    active: hoveredEntry,
+    tooltipRef,
+    currentPos,
+    open,
+    openAt,
+    move,
+    close: closeTooltip,
+    closeNow,
+  } = useCursorFollowTooltip<ExpirationHeatmapEntry>({
+    paused: expanded,
+    disabled: isMobile,
+  })
 
   // Resets all popover state back to closed
   const close = useCallback(() => {
     setExpanded(false)
-    setHoveredEntry(null)
-    clearLingerTimer()
-  }, [clearLingerTimer])
+    closeNow()
+  }, [closeNow])
 
-  // Update tooltip target position while not expanded as cursor moves within the grid
   const handleGridMouseMove = (e: React.MouseEvent) => {
-    if (!expanded) {
-      targetPosRef.current = { x: e.clientX, y: e.clientY }
-    }
+    if (!expanded) move(e)
   }
 
   const handleCellMouseEnter = (
     entry: ExpirationHeatmapEntry,
     e: React.MouseEvent,
   ) => {
-    clearLingerTimer()
-
     // Close other expanded cells if any are open
     if (hoveredEntry?.date !== entry.date) {
       setExpanded(false)
     }
 
-    const pos = { x: e.clientX, y: e.clientY }
-    targetPosRef.current = pos
-
-    // Snap tooltip to cursor on first hover so it doesn't lerp
-    if (!hoveredEntry) {
-      currentPosRef.current = { ...pos }
-    }
-
-    setHoveredEntry(entry)
+    open(entry, e)
   }
 
-  // Short linger timer to allow cursor to move between cells without interrupting styles
+  // Short linger lets the cursor move between cells without dropping the tooltip
   const handleCellMouseLeave = () => {
-    if (!expanded) {
-      lingerTimerRef.current = setTimeout(() => {
-        close()
-      }, 100)
-    }
+    if (!expanded) closeTooltip()
   }
 
   const handleCellClick = () => {
@@ -159,11 +135,7 @@ export default function LicenseExpirationHeatmap() {
     let x = rect.left + rect.width / 2
     x = Math.max(pad + halfW, Math.min(x, window.innerWidth - pad - halfW))
 
-    const pos = { x, y: rect.bottom }
-    targetPosRef.current = pos
-    currentPosRef.current = { ...pos }
-
-    setHoveredEntry(entry)
+    openAt(entry, { x, y: rect.bottom })
     setExpanded(true)
   }
 
@@ -184,46 +156,7 @@ export default function LicenseExpirationHeatmap() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
     }
-  }, [expanded, close])
-
-  // Interpolate the tooltip position toward the cursor while not expanded
-  useEffect(() => {
-    if (isMobile || !hoveredEntry || expanded) {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current)
-        rafRef.current = null
-      }
-      return
-    }
-
-    const loop = () => {
-      const target = targetPosRef.current
-      const current = currentPosRef.current
-      const factor = 0.15
-
-      current.x += (target.x - current.x) * factor
-      current.y += (target.y - current.y) * factor
-
-      if (Math.abs(target.x - current.x) < 0.5) current.x = target.x
-      if (Math.abs(target.y - current.y) < 0.5) current.y = target.y
-
-      if (tooltipRef.current) {
-        tooltipRef.current.style.left = `${current.x}px`
-        tooltipRef.current.style.top = `${current.y}px`
-      }
-
-      rafRef.current = requestAnimationFrame(loop)
-    }
-
-    rafRef.current = requestAnimationFrame(loop)
-
-    return () => {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current)
-        rafRef.current = null
-      }
-    }
-  }, [hoveredEntry, expanded, isMobile])
+  }, [expanded, close, tooltipRef])
 
   // Derive grid layout metadata from the heatmap data
   const { monthLabels, numWeeks, occupiedCells } = useMemo(() => {
@@ -391,27 +324,16 @@ export default function LicenseExpirationHeatmap() {
       ) : null}
 
       {/* Popover/tooltip */}
-      {hoveredEntry && (
-        <div
-          ref={tooltipRef}
-          className={cn(
-            "fixed z-50 transition-transform duration-200 ease-out",
-            !expanded && "pointer-events-none",
-          )}
-          style={{
-            left: currentPosRef.current.x,
-            top: currentPosRef.current.y,
-            transform: "translate(-50%, 8px)",
-          }}
-        >
-          <div
-            className={cn(
-              "w-52 origin-top rounded-md border border-accent bg-background-2 p-3 text-xs shadow-lg duration-150 animate-in fade-in-0 zoom-in-95",
-            )}
-            style={{
-              width: POPOVER_WIDTH,
-            }}
-          >
+      <CursorTooltip
+        open={!!hoveredEntry}
+        tooltipRef={tooltipRef}
+        currentPos={currentPos}
+        offset={8}
+        interactive={expanded}
+        className="w-52 origin-top"
+      >
+        {hoveredEntry && (
+          <>
             <p className="font-medium text-content-muted">
               {format(parseISO(hoveredEntry.date), "MMM do, yyyy")}
             </p>
@@ -443,9 +365,9 @@ export default function LicenseExpirationHeatmap() {
                 </div>
               </div>
             )}
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </CursorTooltip>
     </Chart.Card>
   )
 }

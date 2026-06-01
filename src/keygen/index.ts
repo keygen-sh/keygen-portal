@@ -70,6 +70,9 @@ export { channels }
 import * as engines from "./engines"
 export { engines }
 
+import * as eventLogs from "./event-logs"
+export { eventLogs }
+
 import { logout } from "./logout"
 export { logout }
 

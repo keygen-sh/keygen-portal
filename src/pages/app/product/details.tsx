@@ -44,6 +44,7 @@ import { DistributionStrategy } from "@/types/products"
 
 import { useGetProduct, useRemoveProduct } from "@/queries/products"
 import { useMobile } from "@/hooks/use-mobile"
+import { useSidebarTab } from "@/hooks/use-sidebar-tab"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
@@ -70,6 +71,7 @@ export default function ProductDetails() {
   const back = useBackNavigate()
 
   const isMobile = useMobile()
+  const [tab, setTab] = useSidebarTab()
   const [open, setOpen] = useState({
     edit: false,
     delete: false,
@@ -349,7 +351,7 @@ export default function ProductDetails() {
       </div>
 
       {!isMobile && (
-        <Tabs defaultValue="overview">
+        <Tabs value={tab} onValueChange={setTab}>
           <Sidebar className="w-64 shrink-0" side="right">
             <SidebarHeader className="border-b border-accent pt-8 pb-0">
               <TabsSwitch

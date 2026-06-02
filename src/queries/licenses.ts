@@ -70,6 +70,40 @@ export function useListLicenses(
   }
 }
 
+export function useExpiringLicenses(options?: { within?: string }) {
+  const { code } = useEnvironment()
+  const within = options?.within ?? "P1Y"
+
+  return useQuery({
+    queryKey: ["licenses", "expirations", { environment: code, within }],
+    queryFn: async () => {
+      const pageSize = 100
+      const maxPages = 50
+      const licenses: License[] = []
+
+      for (let page = 1; page <= maxPages; page++) {
+        const response = await keygen.licenses.list({
+          pageNumber: page,
+          pageSize,
+          filters: { expires: { within } },
+        })
+
+        if (response.errors) {
+          throw new APIError(response.errors[0])
+        }
+
+        const data = response.data ?? []
+        licenses.push(...data)
+
+        if (data.length < pageSize) break
+      }
+
+      return licenses
+    },
+    retry: false,
+  })
+}
+
 export function useCreateLicense() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()

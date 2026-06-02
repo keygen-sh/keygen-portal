@@ -1,7 +1,16 @@
+import {
+  format,
+  getDay,
+  addWeeks,
+  parseISO,
+  startOfWeek,
+  differenceInCalendarWeeks,
+} from "date-fns"
+
 import { AttributeType } from "@/components/attribute/value"
 
-import { License, LicenseAttributeDescriptions } from "@/types/licenses"
 import { Policy } from "@/types/policies"
+import { License, LicenseAttributeDescriptions } from "@/types/licenses"
 import { formatByteLimitDisplay, formatRawByteLimitDisplay } from "@/lib/bytes"
 
 export const licenseAttributeTypeSchema: Record<
@@ -248,4 +257,81 @@ export function formatTtlLabel(seconds: number | null): string {
   if (hours >= 1) return `${hours} hour${hours === 1 ? "" : "s"}`
 
   return `${seconds} seconds`
+}
+
+export type ExpiringLicense = {
+  id: string
+  name: string | null
+  key: string
+}
+
+export type ExpirationHeatmapEntry = {
+  date: string
+  x: number
+  y: number
+  temperature: number
+  count: number
+}
+
+export type ExpirationHeatmap = {
+  entries: ExpirationHeatmapEntry[]
+  licensesByDate: Map<string, ExpiringLicense[]>
+  numWeeks: number
+  monthLabels: { label: string; weekIndex: number }[]
+}
+
+export function buildExpirationHeatmap(
+  licenses: License[],
+  { start, end }: { start: Date; end: Date },
+): ExpirationHeatmap {
+  const licensesByDate = new Map<string, ExpiringLicense[]>()
+
+  for (const license of licenses) {
+    const { expiry, name, key } = license.attributes
+    if (!expiry) continue
+
+    const date = format(parseISO(expiry), "yyyy-MM-dd")
+    const bucket = licensesByDate.get(date) ?? []
+    bucket.push({ id: license.id, name, key })
+    licensesByDate.set(date, bucket)
+  }
+
+  const firstWeekStart = startOfWeek(start, { weekStartsOn: 1 })
+  const numWeeks =
+    differenceInCalendarWeeks(end, firstWeekStart, { weekStartsOn: 1 }) + 1
+
+  const monthLabels: { label: string; weekIndex: number }[] = []
+  const seenMonths = new Set<number>()
+  for (let week = 0; week < numWeeks; week++) {
+    const weekDate = addWeeks(firstWeekStart, week)
+    const monthKey = weekDate.getFullYear() * 12 + weekDate.getMonth()
+    if (!seenMonths.has(monthKey)) {
+      seenMonths.add(monthKey)
+      monthLabels.push({ label: format(weekDate, "MMM"), weekIndex: week })
+    }
+  }
+
+  const maxCount = Math.max(
+    1,
+    ...Array.from(licensesByDate.values(), (bucket) => bucket.length),
+  )
+
+  const entries = Array.from(licensesByDate.keys())
+    .sort()
+    .map((date) => {
+      const parsed = parseISO(date)
+      const count = licensesByDate.get(date)!.length
+
+      return {
+        date,
+        x: differenceInCalendarWeeks(parsed, firstWeekStart, {
+          weekStartsOn: 1,
+        }),
+        y: getDay(parsed),
+        count,
+        temperature: count / maxCount,
+      }
+    })
+
+  return { entries, licensesByDate, numWeeks, monthLabels }
 }

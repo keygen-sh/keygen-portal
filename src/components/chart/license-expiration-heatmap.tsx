@@ -14,18 +14,18 @@ import {
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
-
-import {
-  ExpirationHeatmapEntry,
-  ExpiringLicensesMockData,
-  ExpirationHeatmapMockData,
-} from "@/mock/metrics"
 
 import * as keygen from "@/keygen"
 
 import { cn } from "@/lib/utils"
-import { truncateKey } from "@/lib/licenses"
+import {
+  buildExpirationHeatmap,
+  truncateKey,
+  type ExpirationHeatmapEntry,
+  type ExpiringLicense,
+} from "@/lib/licenses"
+
+import { useExpiringLicenses } from "@/queries/licenses"
 
 import { useMobile } from "@/hooks/use-mobile"
 import { useCursorFollowTooltip } from "@/hooks/use-cursor-follow-tooltip"
@@ -43,6 +43,8 @@ const LABEL_WIDTH = 34
 
 const MOBILE_CELL_GAP = 4
 const MOBILE_COLUMN_COUNT = 6
+
+const HEATMAP_WINDOW_DAYS = 365
 
 const POPOVER_WIDTH = 208 // w-52
 
@@ -66,9 +68,19 @@ function getTemperatureColor(temperature: number): string {
 }
 
 export default function LicenseExpirationHeatmap() {
-  // TODO(cazden) Refactor with query
-  const licensesLoading = false
+  const { data: licenses = [], isLoading: licensesLoading } =
+    useExpiringLicenses({ within: `P${HEATMAP_WINDOW_DAYS}D` })
   const isMobile = useMobile()
+
+  const { start, end } = useMemo((): { start: Date; end: Date } => {
+    const start = new Date()
+    return { start, end: addDays(start, HEATMAP_WINDOW_DAYS) }
+  }, [])
+
+  const { entries, licensesByDate, numWeeks, monthLabels } = useMemo(
+    () => buildExpirationHeatmap(licenses, { start, end }),
+    [licenses, start, end],
+  )
 
   const [expanded, setExpanded] = useState(false)
 
@@ -158,40 +170,13 @@ export default function LicenseExpirationHeatmap() {
     }
   }, [expanded, close, tooltipRef])
 
-  // Derive grid layout metadata from the heatmap data
-  const { monthLabels, numWeeks, occupiedCells } = useMemo(() => {
-    if (!ExpirationHeatmapMockData?.length)
-      return { monthLabels: [], numWeeks: 0, occupiedCells: new Set<string>() }
-
-    let maxX = 0
+  const occupiedCells = useMemo(() => {
     const occupied = new Set<string>()
-    const monthFirstWeek = new Map<
-      number,
-      { label: string; weekIndex: number }
-    >()
-
-    for (const entry of ExpirationHeatmapMockData) {
-      if (entry.x > maxX) maxX = entry.x
+    for (const entry of entries) {
       occupied.add(`${entry.x},${toDisplayRow(entry.y)}`)
-
-      // Track the earliest week each month appears in for label placement
-      const date = parseISO(entry.date)
-      const monthKey = date.getFullYear() * 12 + date.getMonth()
-      const existing = monthFirstWeek.get(monthKey)
-      if (!existing || entry.x < existing.weekIndex) {
-        monthFirstWeek.set(monthKey, {
-          label: format(date, "MMM"),
-          weekIndex: entry.x,
-        })
-      }
     }
-
-    const months = Array.from(monthFirstWeek.values()).sort(
-      (a, b) => a.weekIndex - b.weekIndex,
-    )
-
-    return { monthLabels: months, numWeeks: maxX + 1, occupiedCells: occupied }
-  }, [])
+    return occupied
+  }, [entries])
 
   return (
     <Chart.Card
@@ -208,9 +193,12 @@ export default function LicenseExpirationHeatmap() {
         />
       }
     >
-      {ExpirationHeatmapMockData?.length ? (
+      {entries.length ? (
         isMobile ? (
           <MobileHeatmapGrid
+            entries={entries}
+            windowStart={start}
+            windowEnd={end}
             hoveredEntry={hoveredEntry}
             onCellTap={handleCellTap}
             close={close}
@@ -273,7 +261,7 @@ export default function LicenseExpirationHeatmap() {
                   }),
                 )}
 
-                {ExpirationHeatmapMockData.map((entry) =>
+                {entries.map((entry) =>
                   entry.count > 0 ? (
                     <div
                       key={entry.date}
@@ -350,7 +338,9 @@ export default function LicenseExpirationHeatmap() {
             )}
 
             {isMobile ? (
-              <HeatmapCellExpandedContent date={hoveredEntry.date} />
+              <HeatmapCellExpandedContent
+                licenses={licensesByDate.get(hoveredEntry.date) ?? []}
+              />
             ) : (
               <div
                 className="grid transition-[grid-template-rows] duration-200 ease-out"
@@ -359,7 +349,9 @@ export default function LicenseExpirationHeatmap() {
                 <div className="overflow-hidden">
                   {expanded && (
                     <div className="duration-200 ease-out animate-in [animation-delay:200ms] [animation-fill-mode:both] fade-in-0">
-                      <HeatmapCellExpandedContent date={hoveredEntry.date} />
+                      <HeatmapCellExpandedContent
+                        licenses={licensesByDate.get(hoveredEntry.date) ?? []}
+                      />
                     </div>
                   )}
                 </div>
@@ -373,27 +365,22 @@ export default function LicenseExpirationHeatmap() {
 }
 
 function MobileHeatmapGrid({
+  entries,
+  windowStart,
+  windowEnd,
   hoveredEntry,
   onCellTap,
   close,
 }: {
+  entries: ExpirationHeatmapEntry[]
+  windowStart: Date
+  windowEnd: Date
   hoveredEntry: ExpirationHeatmapEntry | null
   onCellTap: (entry: ExpirationHeatmapEntry, e: React.MouseEvent) => void
   close: () => void
 }) {
-  // Derive the date range from the data to bound navigation
-  const { minMonth, maxMonth } = useMemo((): {
-    minMonth: Date
-    maxMonth: Date
-  } => {
-    if (!ExpirationHeatmapMockData?.length)
-      return { minMonth: new Date(), maxMonth: new Date() }
-    const dates = ExpirationHeatmapMockData.map((e) => parseISO(e.date))
-    return {
-      minMonth: startOfMonth(dates.reduce((a, b) => (a < b ? a : b))),
-      maxMonth: startOfMonth(dates.reduce((a, b) => (a > b ? a : b))),
-    }
-  }, [])
+  const minMonth = useMemo(() => startOfMonth(windowStart), [windowStart])
+  const maxMonth = useMemo(() => startOfMonth(windowEnd), [windowEnd])
 
   const [currentMonth, setCurrentMonth] = useState(() => minMonth)
   const [direction, setDirection] = useState<1 | -1>(1)
@@ -419,14 +406,14 @@ function MobileHeatmapGrid({
   // Build lookup of date/entry for current month
   const entryByDate = useMemo(() => {
     const map = new Map<string, ExpirationHeatmapEntry>()
-    for (const entry of ExpirationHeatmapMockData) {
+    for (const entry of entries) {
       const d = parseISO(entry.date)
       if (isSameMonth(d, currentMonth)) {
         map.set(entry.date, entry)
       }
     }
     return map
-  }, [currentMonth])
+  }, [entries, currentMonth])
 
   const gridCells = useMemo(() => {
     const firstDayRow = toMondayRow(getDay(startOfMonth(currentMonth)))
@@ -609,20 +596,12 @@ function MobileHeatmapGrid({
   )
 }
 
-function HeatmapCellExpandedContent({ date }: { date: string }) {
-  // TODO(cazden) Refactor with query
-  const licenses = ExpiringLicensesMockData.get(date)
-  const licensesLoading = false
-
-  if (licensesLoading) {
-    return (
-      <div className="mt-2 space-y-2">
-        <Skeleton className="h-4 w-full rounded-xs" />
-      </div>
-    )
-  }
-
-  if (!licenses?.length) return null
+function HeatmapCellExpandedContent({
+  licenses,
+}: {
+  licenses: ExpiringLicense[]
+}) {
+  if (!licenses.length) return null
 
   return (
     <>

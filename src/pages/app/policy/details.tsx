@@ -616,7 +616,7 @@ export default function PolicyDetails() {
                   <CollapsibleCard title="Events">
                     <EventLogs.Feed
                       compact
-                      filters={{ resource: { type: "policies", id } }}
+                      filters={{ resource: { type: "policy", id } }}
                     />
                   </CollapsibleCard>
                 )}
@@ -779,7 +779,7 @@ export default function PolicyDetails() {
               >
                 <EventLogs.Feed
                   compact
-                  filters={{ resource: { type: "policies", id } }}
+                  filters={{ resource: { type: "policy", id } }}
                 />
               </TabsContent>
             </SidebarContent>

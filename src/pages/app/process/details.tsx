@@ -483,7 +483,7 @@ export default function ProcessDetails() {
                   <CollapsibleCard title="Events">
                     <EventLogs.Feed
                       compact
-                      filters={{ resource: { type: "processes", id } }}
+                      filters={{ resource: { type: "process", id } }}
                     />
                   </CollapsibleCard>
                 )}
@@ -570,7 +570,7 @@ export default function ProcessDetails() {
               >
                 <EventLogs.Feed
                   compact
-                  filters={{ resource: { type: "processes", id } }}
+                  filters={{ resource: { type: "process", id } }}
                 />
               </TabsContent>
             </SidebarContent>

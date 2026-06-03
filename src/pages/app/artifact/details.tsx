@@ -404,7 +404,7 @@ export default function ArtifactDetails() {
                   <CollapsibleCard title="Events">
                     <EventLogs.Feed
                       compact
-                      filters={{ resource: { type: "artifacts", id } }}
+                      filters={{ resource: { type: "artifact", id } }}
                     />
                   </CollapsibleCard>
                 )}
@@ -488,7 +488,7 @@ export default function ArtifactDetails() {
               >
                 <EventLogs.Feed
                   compact
-                  filters={{ resource: { type: "artifacts", id } }}
+                  filters={{ resource: { type: "artifact", id } }}
                 />
               </TabsContent>
             </SidebarContent>

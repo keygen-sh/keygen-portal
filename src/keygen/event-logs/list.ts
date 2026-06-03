@@ -15,9 +15,6 @@ interface ListProps {
   filters?: EventLogFilters
 }
 
-// resource and whodunnit are polymorphic — they can target many types via the
-// type+id form (e.g. resource[type]=license&resource[id]=...), unlike plain
-// scalar filters such as request.
 function applyPolymorphicResourceFilter(
   params: URLSearchParams,
   key: "resource" | "whodunnit",

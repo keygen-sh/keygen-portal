@@ -96,28 +96,10 @@ export function metadataDiffEntries(
   if (!diff || typeof diff !== "object" || Array.isArray(diff)) return []
 
   return Object.entries(diff as Record<string, unknown>).map(([key, value]) => {
-    if (Array.isArray(value) && value.length >= 2) {
-      const pair = value as unknown[]
-      return {
-        key,
-        before: pair[0],
-        after: pair[1],
-      }
-    }
+    const [before = null, after = null] = Array.isArray(value)
+      ? value
+      : [null, value]
 
-    if (value && typeof value === "object" && !Array.isArray(value)) {
-      const record = value as Record<string, unknown>
-      return {
-        key,
-        before: record.from ?? record.before ?? record.old ?? null,
-        after: record.to ?? record.after ?? record.new ?? null,
-      }
-    }
-
-    return {
-      key,
-      before: null,
-      after: value,
-    }
+    return { key, before, after }
   })
 }

@@ -15,7 +15,10 @@ interface ListProps {
   filters?: EventLogFilters
 }
 
-function applyResourceFilter(
+// resource and whodunnit are polymorphic — they can target many types via the
+// type+id form (e.g. resource[type]=license&resource[id]=...), unlike plain
+// scalar filters such as request.
+function applyPolymorphicResourceFilter(
   params: URLSearchParams,
   key: "resource" | "whodunnit",
   value: EventLogResourceFilter | undefined,
@@ -46,8 +49,10 @@ export default async function list({
     params.set("page[size]", pageSize.toString())
     params.set("page[cursor]", pageCursor ?? "")
   }
-  if (filters?.event) {
-    params.set("event", filters.event)
+  if (filters?.events?.length) {
+    for (const event of filters.events) {
+      params.append("events[]", event)
+    }
   }
   if (filters?.request) {
     params.set("request", filters.request)
@@ -57,8 +62,8 @@ export default async function list({
     params.set("date[end]", filters.date.end)
   }
 
-  applyResourceFilter(params, "resource", filters?.resource)
-  applyResourceFilter(params, "whodunnit", filters?.whodunnit)
+  applyPolymorphicResourceFilter(params, "resource", filters?.resource)
+  applyPolymorphicResourceFilter(params, "whodunnit", filters?.whodunnit)
 
   const result = (await client.request(
     `/accounts/${config.id}/event-logs?${params.toString()}`,

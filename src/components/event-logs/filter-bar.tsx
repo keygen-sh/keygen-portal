@@ -8,36 +8,49 @@ import {
 
 import * as Filters from "@/components/filter-bar"
 
+import { EVENT_TYPES, type EventLogResourceFilter } from "@/types/event-logs"
 import { type EventLogFilters } from "@/queries/event-logs"
 
-const DATE_OPTIONS = [{ label: "On", op: "on" }] as const
+const EVENT_TYPE_OPTIONS = EVENT_TYPES.map((event) => ({
+  value: event,
+  label: event,
+}))
+
+const toOptions = (types: readonly string[]) =>
+  types.map((type) => ({ value: type, label: type }))
+
+const RESOURCE_TYPES = toOptions([
+  "account",
+  "artifact",
+  "component",
+  "entitlement",
+  "environment",
+  "group",
+  "key",
+  "license",
+  "machine",
+  "package",
+  "policy",
+  "process",
+  "product",
+  "release",
+  "second-factor",
+  "token",
+  "user",
+])
+
+// whodunnit is the token bearer
+const ACTOR_TYPES = toOptions(["user", "product", "license", "environment"])
 
 interface EventLogFilterBarProps {
   filters: EventLogFilters
   onChange: (filters: EventLogFilters) => void
 }
 
-function updateDateFilter(
-  filters: EventLogFilters,
-  key: "start" | "end",
-  value?: Record<string, string>,
-): EventLogFilters {
-  const date = {
-    ...filters.date,
-    [key]: value?.on,
-  }
-
-  if (!date.start && !date.end) {
-    return { ...filters, date: undefined }
-  }
-
-  return { ...filters, date }
-}
-
-function asStringFilter(
-  value: EventLogFilters["resource"],
-): string | undefined {
-  return typeof value === "string" ? value : undefined
+function asPolymorphic(
+  value: EventLogResourceFilter | undefined,
+): { type: string; id: string } | undefined {
+  return value && typeof value === "object" ? value : undefined
 }
 
 export default function EventLogFilterBar({
@@ -47,6 +60,7 @@ export default function EventLogFilterBar({
   const filterCount = Object.entries(filters).filter(([key, value]) => {
     if (value == null) return false
     if (key === "date") return !!(filters.date?.start && filters.date?.end)
+    if (key === "events") return (filters.events?.length ?? 0) > 0
     return true
   }).length
 
@@ -55,43 +69,36 @@ export default function EventLogFilterBar({
       filterCount={filterCount}
       onClearAll={() => onChange({})}
       pinned={
-        <Filters.StringFilter
+        <Filters.SearchSelectFilter
           label="Event"
           icon={GitCommitHorizontal}
-          placeholder="e.g. license.updated"
-          value={filters.event}
-          onChange={(event) => onChange({ ...filters, event })}
+          placeholder="Search event types..."
+          options={EVENT_TYPE_OPTIONS}
+          value={filters.events}
+          onChange={(events) => onChange({ ...filters, events })}
         />
       }
     >
-      <Filters.DateFilter
-        label="Start"
+      <Filters.DateRangeFilter
+        label="Date"
         icon={CalendarRange}
-        options={DATE_OPTIONS}
-        value={filters.date?.start ? { on: filters.date.start } : undefined}
-        onChange={(value) =>
-          onChange(updateDateFilter(filters, "start", value))
-        }
+        value={filters.date}
+        onChange={(date) => onChange({ ...filters, date })}
       />
-      <Filters.DateFilter
-        label="End"
-        icon={CalendarRange}
-        options={DATE_OPTIONS}
-        value={filters.date?.end ? { on: filters.date.end } : undefined}
-        onChange={(value) => onChange(updateDateFilter(filters, "end", value))}
-      />
-      <Filters.StringFilter
+      <Filters.PolymorphicResourceFilter
         label="Resource"
         icon={MonitorCog}
         placeholder="Resource ID"
-        value={asStringFilter(filters.resource)}
+        types={RESOURCE_TYPES}
+        value={asPolymorphic(filters.resource)}
         onChange={(resource) => onChange({ ...filters, resource })}
       />
-      <Filters.StringFilter
+      <Filters.PolymorphicResourceFilter
         label="Actor"
         icon={UserRound}
         placeholder="Actor ID"
-        value={asStringFilter(filters.whodunnit)}
+        types={ACTOR_TYPES}
+        value={asPolymorphic(filters.whodunnit)}
         onChange={(whodunnit) => onChange({ ...filters, whodunnit })}
       />
       <Filters.StringFilter

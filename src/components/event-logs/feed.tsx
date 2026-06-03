@@ -240,10 +240,6 @@ export default function EventLogFeed({
 
   const nextCursor = cursorFromLink(links?.next)
   const loading = isLoading || isFetching
-  const pageCount = Math.max(
-    1,
-    links?.meta?.pages ?? page + (nextCursor ? 1 : 0),
-  )
 
   return (
     <div className={cn("flex min-h-0 flex-1 flex-col", className)}>
@@ -281,7 +277,7 @@ export default function EventLogFeed({
       <div className="flex items-center justify-end gap-2 border-t border-accent bg-background p-3">
         <Pagination
           page={page}
-          pageCount={pageCount}
+          hasNext={!!nextCursor}
           onPageChange={(nextPage) => goToPage(nextPage, nextCursor)}
           isLoading={loading}
         />

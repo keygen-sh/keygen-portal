@@ -86,10 +86,6 @@ export default function EventLogList() {
 
   const nextCursor = cursorFromLink(links?.next)
   const loading = isLoading || isFetching
-  const pageCount = Math.max(
-    1,
-    links?.meta?.pages ?? page + (nextCursor ? 1 : 0),
-  )
 
   const handlePageChange = useCallback(
     (nextPage: number) => {
@@ -112,7 +108,7 @@ export default function EventLogList() {
             data={isEE ? eventLogs : EventLogMockData}
             table={table}
             columns={columns}
-            pageCount={pageCount}
+            pageCount={-1}
             isLoading={loading}
             onRowClick={(eventLog) =>
               navigate({
@@ -127,7 +123,7 @@ export default function EventLogList() {
       <PageFooter>
         <Pagination
           page={page}
-          pageCount={pageCount}
+          hasNext={!!nextCursor}
           onPageChange={handlePageChange}
           isLoading={loading}
         />

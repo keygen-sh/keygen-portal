@@ -4,7 +4,10 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 
 interface PaginationProps {
   page: number
-  pageCount: number
+  // FIXME(cazden) refactor based on cursor-based pagination,
+  // but for now support both cursor and page-based
+  pageCount?: number
+  hasNext?: boolean
   onPageChange: (page: number) => void
   isLoading?: boolean
 }
@@ -12,9 +15,12 @@ interface PaginationProps {
 export default function Pagination({
   page,
   pageCount,
+  hasNext,
   onPageChange,
   isLoading = false,
 }: PaginationProps) {
+  const canNext = pageCount == null ? !!hasNext : page < pageCount
+
   if (isLoading) {
     return (
       <div className="flex items-center gap-2">
@@ -28,7 +34,8 @@ export default function Pagination({
   return (
     <div className="flex items-center gap-2">
       <span className="text-sm text-muted-foreground">
-        Page {page} of {Math.max(1, pageCount)}
+        Page {page}
+        {pageCount != null && ` of ${Math.max(1, pageCount)}`}
       </span>
 
       <Button
@@ -46,7 +53,7 @@ export default function Pagination({
         size="icon"
         className="h-8 w-8"
         onClick={() => onPageChange(page + 1)}
-        disabled={page >= pageCount}
+        disabled={!canNext}
       >
         <ChevronRight className="h-4 w-4" />
       </Button>

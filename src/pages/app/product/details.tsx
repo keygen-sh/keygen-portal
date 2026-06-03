@@ -325,7 +325,7 @@ export default function ProductDetails() {
                   <CollapsibleCard title="Events">
                     <EventLogs.Feed
                       compact
-                      filters={{ resource: { type: "products", id } }}
+                      filters={{ resource: { type: "product", id } }}
                     />
                   </CollapsibleCard>
                 )}
@@ -398,7 +398,7 @@ export default function ProductDetails() {
               >
                 <EventLogs.Feed
                   compact
-                  filters={{ resource: { type: "products", id } }}
+                  filters={{ resource: { type: "product", id } }}
                 />
               </TabsContent>
             </SidebarContent>

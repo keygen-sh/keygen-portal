@@ -525,7 +525,7 @@ export default function UserDetails() {
                   <CollapsibleCard title="Events">
                     <EventLogs.Feed
                       compact
-                      filters={{ resource: { type: "users", id } }}
+                      filters={{ resource: { type: "user", id } }}
                     />
                   </CollapsibleCard>
                 )}
@@ -612,7 +612,7 @@ export default function UserDetails() {
               >
                 <EventLogs.Feed
                   compact
-                  filters={{ resource: { type: "users", id } }}
+                  filters={{ resource: { type: "user", id } }}
                 />
               </TabsContent>
             </SidebarContent>

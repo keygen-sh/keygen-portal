@@ -309,7 +309,7 @@ export default function PackageDetails() {
                   <CollapsibleCard title="Events">
                     <EventLogs.Feed
                       compact
-                      filters={{ resource: { type: "packages", id } }}
+                      filters={{ resource: { type: "package", id } }}
                     />
                   </CollapsibleCard>
                 )}
@@ -393,7 +393,7 @@ export default function PackageDetails() {
               >
                 <EventLogs.Feed
                   compact
-                  filters={{ resource: { type: "packages", id } }}
+                  filters={{ resource: { type: "package", id } }}
                 />
               </TabsContent>
             </SidebarContent>

@@ -1021,7 +1021,7 @@ export default function LicenseDetails() {
                   <CollapsibleCard title="Events">
                     <EventLogs.Feed
                       compact
-                      filters={{ resource: { type: "licenses", id } }}
+                      filters={{ resource: { type: "license", id } }}
                     />
                   </CollapsibleCard>
                 )}
@@ -1212,7 +1212,7 @@ export default function LicenseDetails() {
               >
                 <EventLogs.Feed
                   compact
-                  filters={{ resource: { type: "licenses", id } }}
+                  filters={{ resource: { type: "license", id } }}
                 />
               </TabsContent>
             </SidebarContent>

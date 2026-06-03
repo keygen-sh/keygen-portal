@@ -658,7 +658,7 @@ export default function MachineDetails() {
                   <CollapsibleCard title="Events">
                     <EventLogs.Feed
                       compact
-                      filters={{ resource: { type: "machines", id } }}
+                      filters={{ resource: { type: "machine", id } }}
                     />
                   </CollapsibleCard>
                 )}
@@ -745,7 +745,7 @@ export default function MachineDetails() {
               >
                 <EventLogs.Feed
                   compact
-                  filters={{ resource: { type: "machines", id } }}
+                  filters={{ resource: { type: "machine", id } }}
                 />
               </TabsContent>
             </SidebarContent>

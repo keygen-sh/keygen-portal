@@ -294,7 +294,7 @@ export default function EntitlementDetails() {
               >
                 <EventLogs.Feed
                   compact
-                  filters={{ resource: { type: "entitlements", id } }}
+                  filters={{ resource: { type: "entitlement", id } }}
                 />
               </TabsContent>
             </SidebarContent>

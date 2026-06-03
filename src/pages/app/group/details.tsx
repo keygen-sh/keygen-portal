@@ -354,7 +354,7 @@ export default function GroupDetails() {
                   <CollapsibleCard title="Events">
                     <EventLogs.Feed
                       compact
-                      filters={{ resource: { type: "groups", id } }}
+                      filters={{ resource: { type: "group", id } }}
                     />
                   </CollapsibleCard>
                 )}
@@ -441,7 +441,7 @@ export default function GroupDetails() {
               >
                 <EventLogs.Feed
                   compact
-                  filters={{ resource: { type: "groups", id } }}
+                  filters={{ resource: { type: "group", id } }}
                 />
               </TabsContent>
             </SidebarContent>

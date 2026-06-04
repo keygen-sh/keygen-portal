@@ -4,7 +4,6 @@ import tsconfigPaths from "vite-tsconfig-paths"
 import { execSync } from "node:child_process"
 import tailwindcss from "@tailwindcss/vite"
 import react from "@vitejs/plugin-react"
-import svgr from "vite-plugin-svgr"
 
 function resolveAppVersion(): string {
   try {
@@ -51,7 +50,6 @@ export default defineConfig(({ mode }) => {
       tsconfigPaths(),
       tailwindcss(),
       react(),
-      svgr(),
     ],
   }
 })

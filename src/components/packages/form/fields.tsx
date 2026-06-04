@@ -221,7 +221,7 @@ function EngineField() {
       value: PackageEngine.PyPI,
       label: PackageEngineLabels[PackageEngine.PyPI],
       icon: (
-        <Icons.PyPi className="size-6 text-content-subdued transition-colors duration-150 group-hover:text-[#3775A9] md:size-5" />
+        <Icons.PyPi className="size-6 text-content-subdued transition-colors duration-150 group-hover:text-(--brand) md:size-5" />
       ),
       tooltip: PackageEngineDescriptions[PackageEngine.PyPI],
     },
@@ -229,7 +229,7 @@ function EngineField() {
       value: PackageEngine.Tauri,
       label: PackageEngineLabels[PackageEngine.Tauri],
       icon: (
-        <Icons.Tauri className="size-6 text-content-subdued transition-colors duration-150 group-hover:text-[#FFC131] md:size-5" />
+        <Icons.Tauri className="size-6 text-content-subdued transition-colors duration-150 group-hover:text-(--brand) md:size-5" />
       ),
       tooltip: PackageEngineDescriptions[PackageEngine.Tauri],
     },
@@ -237,7 +237,7 @@ function EngineField() {
       value: PackageEngine.RubyGems,
       label: PackageEngineLabels[PackageEngine.RubyGems],
       icon: (
-        <Icons.RubyGems className="size-6 text-content-subdued transition-colors duration-150 group-hover:text-[#E9573F] md:size-5" />
+        <Icons.RubyGems className="size-6 text-content-subdued transition-colors duration-150 group-hover:text-(--brand) md:size-5" />
       ),
       tooltip: PackageEngineDescriptions[PackageEngine.RubyGems],
     },
@@ -245,7 +245,7 @@ function EngineField() {
       value: PackageEngine.Npm,
       label: PackageEngineLabels[PackageEngine.Npm],
       icon: (
-        <Icons.Npm className="size-6 text-content-subdued transition-colors duration-150 group-hover:text-[#CB3837] md:size-5" />
+        <Icons.Npm className="size-6 text-content-subdued transition-colors duration-150 group-hover:text-(--brand) md:size-5" />
       ),
       tooltip: PackageEngineDescriptions[PackageEngine.Npm],
     },

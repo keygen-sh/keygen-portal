@@ -235,11 +235,11 @@ function ResourceSearchSegment({
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="w-72 p-0"
+        className="w-72 !bg-background p-0"
         onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
-        <Command shouldFilter={false}>
+        <Command shouldFilter={false} className="!bg-background">
           <div className={cn("p-2", showResults && "border-b border-accent")}>
             <Input
               ref={inputRef}
@@ -289,7 +289,7 @@ function ResourceSearchSegment({
             type="button"
             variant="outline"
             size="sm"
-            className="flex-1 rounded-sm bg-popover text-sm"
+            className="flex-1 rounded-sm text-sm"
             onClick={() => onOpenChange(false)}
           >
             Cancel
@@ -368,7 +368,7 @@ function IdInputSegment({
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="w-64 p-0"
+        className="w-64 !bg-background p-0"
         onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => e.preventDefault()}
       >

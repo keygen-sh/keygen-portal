@@ -1,5 +1,4 @@
-import { useCallback, useContext, useState } from "react"
-import { ChevronDown, Check, X, type LucideIcon } from "lucide-react"
+import { useState, useCallback, useContext } from "react"
 
 import {
   Popover,
@@ -7,11 +6,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
+import { ChevronDown, Check, X, type LucideIcon } from "lucide-react"
+
 import { cn } from "@/lib/utils"
 
 import {
-  FilterStateContext,
   type FilterState,
+  FilterStateContext,
 } from "@/contexts/filter-bar-context"
 
 export function FilterSegmentGroup({
@@ -174,7 +175,7 @@ export function FilterPopoverSegment({
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className={cn("!bg-background p-1", className)}
+        className={cn("p-1", className)}
         onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => e.preventDefault()}
       >

@@ -235,7 +235,11 @@ export default function ProductDetails() {
                       <Attribute.Field
                         variant="text"
                         label="URL"
-                        value={product.attributes.url || "--"}
+                        value={
+                          product.attributes.url || (
+                            <Badge variant="disabled">Not set</Badge>
+                          )
+                        }
                       />
                     </div>
                     <div className="mx-4 hidden md:block">

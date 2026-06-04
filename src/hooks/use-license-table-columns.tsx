@@ -25,7 +25,7 @@ export function useLicenseTableColumns() {
       column.attr("name", {
         header: "Name",
         cell: (info) =>
-          info.getValue() || <span className="text-content-muted">--</span>,
+          info.getValue() || <Badge variant="disabled">Not set</Badge>,
       }),
       column.attr("key", {
         header: "Key",

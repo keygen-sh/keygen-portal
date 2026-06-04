@@ -1,5 +1,7 @@
 import { useMemo } from "react"
 
+import { Badge } from "@/components/ui/badge"
+
 import { Machine } from "@/types/machines"
 
 import { createTableColumnHelper } from "@/lib/tables"
@@ -19,12 +21,12 @@ export function useMachineTableColumns() {
       column.attr("fingerprint", {
         header: "Fingerprint",
         cell: (info) =>
-          info.getValue() || <span className="text-content-muted">--</span>,
+          info.getValue() || <Badge variant="disabled">Not set</Badge>,
       }),
       column.attr("name", {
         header: "Name",
         cell: (info) =>
-          info.getValue() || <span className="text-content-muted">--</span>,
+          info.getValue() || <Badge variant="disabled">Not set</Badge>,
       }),
       column.rel("license", {
         sortingFn: "alphanumeric",

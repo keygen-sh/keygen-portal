@@ -732,7 +732,11 @@ export default function LicenseDetails() {
                       </div>
                     ))
                   ) : (
-                    <Attribute.Field variant="text" label="None" value="--" />
+                    <Attribute.Field
+                      variant="text"
+                      label="None"
+                      value={<Badge variant="disabled">Not set</Badge>}
+                    />
                   )}
                 </CollapsibleCard>
 
@@ -758,7 +762,7 @@ export default function LicenseDetails() {
                         ) : productId ? (
                           productId
                         ) : (
-                          "--"
+                          <Badge variant="disabled">Not set</Badge>
                         )
                       }
                     />
@@ -782,7 +786,7 @@ export default function LicenseDetails() {
                         ) : policyId ? (
                           policyId
                         ) : (
-                          "--"
+                          <Badge variant="disabled">Not set</Badge>
                         )
                       }
                     />
@@ -804,7 +808,7 @@ export default function LicenseDetails() {
                             label={getUserLabel(owner)}
                           />
                         ) : (
-                          "--"
+                          <Badge variant="disabled">Not set</Badge>
                         )
                       }
                     />

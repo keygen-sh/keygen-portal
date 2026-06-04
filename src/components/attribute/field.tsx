@@ -59,7 +59,7 @@ export default function AttributeField({
         {tooltip && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <Info className="mt-1 size-3.5 text-content-subdued" />
+              <Info className="size-3.5 self-center text-content-subdued" />
             </TooltipTrigger>
             <TooltipContent className="max-w-80 bg-background-4 text-pretty whitespace-pre-line text-content-muted">
               {tooltip}

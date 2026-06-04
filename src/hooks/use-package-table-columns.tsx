@@ -1,5 +1,7 @@
 import { useMemo } from "react"
 
+import { Badge } from "@/components/ui/badge"
+
 import { Package, PackageEngineLabels } from "@/types/packages"
 import { createTableColumnHelper } from "@/lib/tables"
 
@@ -17,7 +19,8 @@ export function usePackageTableColumns() {
       }),
       column.attr("name", {
         header: "Name",
-        cell: (info) => info.getValue() ?? "--",
+        cell: (info) =>
+          info.getValue() ?? <Badge variant="disabled">Not set</Badge>,
       }),
       column.attr("key", {
         header: "Key",
@@ -26,7 +29,11 @@ export function usePackageTableColumns() {
         header: "Engine",
         cell: (info) => {
           const value = info.getValue()
-          return value ? PackageEngineLabels[value] : "--"
+          return value ? (
+            PackageEngineLabels[value]
+          ) : (
+            <Badge variant="disabled">Not set</Badge>
+          )
         },
       }),
       column.rel("product", {

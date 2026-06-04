@@ -546,7 +546,11 @@ export default function ReleaseDetails() {
                       />
                     ))
                   ) : (
-                    <Attribute.Field variant="text" label="None" value="--" />
+                    <Attribute.Field
+                      variant="text"
+                      label="None"
+                      value={<Badge variant="disabled">Not set</Badge>}
+                    />
                   )}
                 </CollapsibleCard>
 
@@ -570,7 +574,11 @@ export default function ReleaseDetails() {
                       <ArtifactRow key={artifact.id} artifact={artifact} />
                     ))
                   ) : (
-                    <Attribute.Field variant="text" label="None" value="--" />
+                    <Attribute.Field
+                      variant="text"
+                      label="None"
+                      value={<Badge variant="disabled">Not set</Badge>}
+                    />
                   )}
                 </CollapsibleCard>
 

@@ -561,7 +561,7 @@ export default function MachineDetails() {
                           label={getUserLabel(owner)}
                         />
                       ) : (
-                        "--"
+                        <Badge variant="disabled">Not set</Badge>
                       )
                     }
                   />
@@ -584,7 +584,7 @@ export default function MachineDetails() {
                           label={group.attributes.name}
                         />
                       ) : (
-                        "--"
+                        <Badge variant="disabled">Not set</Badge>
                       )
                     }
                   />

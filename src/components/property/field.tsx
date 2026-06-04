@@ -2,6 +2,8 @@ import { useState } from "react"
 
 import { cn, splitLastWord } from "@/lib/utils"
 
+import { Badge } from "@/components/ui/badge"
+
 import {
   Tooltip,
   TooltipTrigger,
@@ -31,7 +33,7 @@ interface PropertyFieldProps {
   tooltip?: React.ReactNode
   suffix?: React.ReactNode
   isEmpty?: EmptyCase
-  emptyLabel?: string
+  emptyLabel?: React.ReactNode
   className?: string
 }
 
@@ -49,7 +51,7 @@ export default function PropertyField({
   tooltip,
   suffix,
   isEmpty = defaultIsEmpty,
-  emptyLabel = "--",
+  emptyLabel = <Badge variant="disabled">Not set</Badge>,
   className,
 }: PropertyFieldProps): React.ReactElement {
   const isMobile = useMobile()
@@ -162,11 +164,11 @@ export default function PropertyField({
             onMouseLeave={() => setHovered(false)}
           >
             {Icon && (
-              <Icon className="mt-1 mr-2 size-3.5 shrink-0 text-content-normal" />
+              <Icon className="mr-2 size-3.5 shrink-0 self-center text-content-normal" />
             )}
             {isEmpty(value) ? (
               <>
-                <p className="text-xs text-content-normal">{emptyLabel}</p>
+                {emptyLabel}
                 {tooltipIcon}
               </>
             ) : (
@@ -189,16 +191,12 @@ export default function PropertyField({
             onMouseLeave={() => setHovered(false)}
           >
             {Icon && (
-              <Icon className="mt-1 mr-2 size-3.5 shrink-0 text-content-normal" />
+              <Icon className="mr-2 size-3.5 shrink-0 self-center text-content-normal" />
             )}
             {isEmpty(value) ? (
               <>
                 <p className="text-xs text-content-muted">{label}</p>
-                <span
-                  className={cn("ml-1 text-xs text-content-loud", className)}
-                >
-                  {value}
-                </span>
+                <span className="ml-1">{emptyLabel}</span>
                 {tooltipIcon}
               </>
             ) : (

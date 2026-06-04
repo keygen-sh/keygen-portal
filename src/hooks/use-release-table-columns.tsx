@@ -1,5 +1,7 @@
 import { useMemo } from "react"
 
+import { Badge } from "@/components/ui/badge"
+
 import { Release, ReleaseChannelLabels } from "@/types/releases"
 import { createTableColumnHelper } from "@/lib/tables"
 
@@ -17,14 +19,16 @@ export function useReleaseTableColumns() {
       }),
       column.attr("name", {
         header: "Name",
-        cell: (info) => info.getValue() ?? "--",
+        cell: (info) =>
+          info.getValue() ?? <Badge variant="disabled">Not set</Badge>,
       }),
       column.attr("version", {
         header: "Version",
       }),
       column.attr("tag", {
         header: "Tag",
-        cell: (info) => info.getValue() ?? "--",
+        cell: (info) =>
+          info.getValue() ?? <Badge variant="disabled">Not set</Badge>,
       }),
       column.attr("channel", {
         header: "Channel",

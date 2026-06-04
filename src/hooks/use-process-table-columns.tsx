@@ -1,5 +1,7 @@
 import { useMemo } from "react"
 
+import { Badge } from "@/components/ui/badge"
+
 import { Process } from "@/types/processes"
 
 import { createTableColumnHelper } from "@/lib/tables"
@@ -19,7 +21,7 @@ export function useProcessTableColumns() {
       column.attr("pid", {
         header: "Pid",
         cell: (info) =>
-          info.getValue() || <span className="text-content-muted">--</span>,
+          info.getValue() || <Badge variant="disabled">Not set</Badge>,
       }),
       column.rel("machine", {
         sortingFn: "alphanumeric",

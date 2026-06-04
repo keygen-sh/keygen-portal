@@ -432,7 +432,11 @@ export default function PolicyDetails() {
                       </div>
                     ))
                   ) : (
-                    <Attribute.Field variant="text" label="None" value="--" />
+                    <Attribute.Field
+                      variant="text"
+                      label="None"
+                      value={<Badge variant="disabled">Not set</Badge>}
+                    />
                   )}
                 </CollapsibleCard>
 
@@ -462,7 +466,7 @@ export default function PolicyDetails() {
                         ) : productId ? (
                           productId
                         ) : (
-                          "--"
+                          <Badge variant="disabled">Not set</Badge>
                         )
                       }
                     />

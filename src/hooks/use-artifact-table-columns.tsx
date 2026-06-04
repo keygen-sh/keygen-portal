@@ -27,7 +27,8 @@ export function useArtifactTableColumns() {
       }),
       column.attr("filetype", {
         header: "Filetype",
-        cell: (info) => info.getValue() ?? "--",
+        cell: (info) =>
+          info.getValue() ?? <Badge variant="disabled">Not set</Badge>,
       }),
       column.attr("filesize", {
         header: "Filesize",
@@ -35,11 +36,13 @@ export function useArtifactTableColumns() {
       }),
       column.attr("platform", {
         header: "Platform",
-        cell: (info) => info.getValue() ?? "--",
+        cell: (info) =>
+          info.getValue() ?? <Badge variant="disabled">Not set</Badge>,
       }),
       column.attr("arch", {
         header: "Arch",
-        cell: (info) => info.getValue() ?? "--",
+        cell: (info) =>
+          info.getValue() ?? <Badge variant="disabled">Not set</Badge>,
       }),
       column.attr("status", {
         header: "Status",

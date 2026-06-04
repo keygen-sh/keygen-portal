@@ -1,5 +1,7 @@
 import { useMemo } from "react"
 
+import { Badge } from "@/components/ui/badge"
+
 import { User, UserRoleLabels } from "@/types/users"
 
 import { createTableColumnHelper } from "@/lib/tables"
@@ -19,12 +21,12 @@ export function useTeamTableColumns() {
       column.attr("fullName", {
         header: "Name",
         cell: (info) =>
-          info.getValue() || <span className="text-content-muted">--</span>,
+          info.getValue() || <Badge variant="disabled">Not set</Badge>,
       }),
       column.attr("email", {
         header: "Email",
         cell: (info) =>
-          info.getValue() || <span className="text-content-muted">--</span>,
+          info.getValue() || <Badge variant="disabled">Not set</Badge>,
       }),
       column.attr("role", {
         header: "Role",

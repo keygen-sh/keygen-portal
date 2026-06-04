@@ -339,17 +339,9 @@ export const PortalRequiredPermissions: readonly Permission[] = [
   "token.revoke",
 ]
 
-const BillingPermissions: readonly Permission[] = [
-  "account.billing.read",
-  "account.billing.update",
-  "account.plan.read",
-  "account.plan.update",
-  "account.subscription.read",
-  "account.subscription.update",
-]
-
 const ReadOnlyPermissions: readonly Permission[] = [
   "account.analytics.read",
+  "account.billing.read",
   "account.plan.read",
   "account.read",
   "account.subscription.read",
@@ -381,51 +373,15 @@ const ReadOnlyPermissions: readonly Permission[] = [
   "release.read",
   "release.upgrade",
   "request-log.read",
+  "token.generate",
   "token.read",
+  "user.password.reset",
+  "user.password.update",
   "user.read",
+  "user.second-factors.read",
   "webhook-endpoint.read",
   "webhook-event.read",
 ]
-
-const SalesAgentPermissions: readonly Permission[] = [
-  ...ReadOnlyPermissions,
-  "license.check-in",
-  "license.check-out",
-  "license.create",
-  "license.delete",
-  "license.reinstate",
-  "license.renew",
-  "license.revoke",
-  "license.suspend",
-  "license.update",
-  "machine.create",
-  "machine.delete",
-  "machine.update",
-  "token.generate",
-  "token.regenerate",
-  "token.revoke",
-  "user.create",
-  "user.delete",
-  "user.invite",
-  "user.update",
-]
-
-const BillingPermissionSet = new Set<string>(BillingPermissions)
-
-const DeveloperPermissions: readonly Permission[] = Permissions.filter(
-  (p) => !BillingPermissionSet.has(p),
-)
-
-export const DefaultPermissionsByRole: Readonly<
-  Record<UserRole, readonly Permission[]>
-> = {
-  [UserRole.Admin]: [...Permissions],
-  [UserRole.Developer]: DeveloperPermissions,
-  [UserRole.ReadOnly]: ReadOnlyPermissions,
-  [UserRole.SalesAgent]: SalesAgentPermissions,
-  [UserRole.SupportAgent]: ReadOnlyPermissions,
-  [UserRole.User]: [],
-}
 
 export const UserPermissions: readonly Permission[] = [
   "account.read",
@@ -439,6 +395,8 @@ export const UserPermissions: readonly Permission[] = [
   "constraint.read",
   "engine.read",
   "entitlement.read",
+  "group.licenses.read",
+  "group.machines.read",
   "group.owners.read",
   "group.read",
   "group.users.read",
@@ -477,6 +435,7 @@ export const UserPermissions: readonly Permission[] = [
   "token.read",
   "token.regenerate",
   "token.revoke",
+  "user.password.reset",
   "user.password.update",
   "user.read",
   "user.second-factors.create",
@@ -485,3 +444,33 @@ export const UserPermissions: readonly Permission[] = [
   "user.second-factors.update",
   "user.update",
 ]
+
+// The API omits these permissions from a user's default permission set
+// for backwards compatibility, see User#has_permissions in keygen-api.
+const DefaultOmittedUserPermissions: ReadonlySet<Permission> = new Set([
+  "account.read",
+  "license.users.attach",
+  "license.users.detach",
+  "policy.read",
+  "product.read",
+])
+
+const DefaultUserPermissions: readonly Permission[] = UserPermissions.filter(
+  (p) => !DefaultOmittedUserPermissions.has(p),
+)
+
+const AdminPermissions: readonly Permission[] = [...Permissions]
+
+// Mirrors the API's default permissions per role, see User#has_permissions
+// in keygen-api. All roles except read-only and user default to the full
+// permission set.
+export const DefaultPermissionsByRole: Readonly<
+  Record<UserRole, readonly Permission[]>
+> = {
+  [UserRole.Admin]: AdminPermissions,
+  [UserRole.Developer]: AdminPermissions,
+  [UserRole.ReadOnly]: ReadOnlyPermissions,
+  [UserRole.SalesAgent]: AdminPermissions,
+  [UserRole.SupportAgent]: AdminPermissions,
+  [UserRole.User]: DefaultUserPermissions,
+}

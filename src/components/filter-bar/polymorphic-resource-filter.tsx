@@ -301,7 +301,7 @@ function ResourceSearchSegment({
             onClick={handleApply}
             disabled={!canApply}
           >
-            Apply
+            Search
           </Button>
         </div>
       </PopoverContent>

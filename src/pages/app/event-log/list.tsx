@@ -5,10 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { EventLogMockData } from "@/mock/event-logs"
 
-import {
-  cursorFromLink,
-  useEventLogCursors,
-} from "@/hooks/use-event-log-cursors"
+import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
 import { useEdition } from "@/hooks/use-edition"
 import { useDataTable } from "@/hooks/use-data-table"
 import { useFilterSearch } from "@/hooks/use-filter-search"
@@ -39,7 +36,7 @@ export default function EventLogList() {
   const { isEE } = useEdition()
 
   const [filters, setFilters] = useFilterSearch<EventLogFilters>()
-  const { cursor, reset, goToPage } = useEventLogCursors(page, setPage)
+  const { cursor, reset, goToPage } = useCursors(page, setPage)
   const {
     active: preview,
     tooltipRef,

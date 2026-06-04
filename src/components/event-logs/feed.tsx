@@ -8,10 +8,7 @@ import { ChevronRight, GitCommitHorizontal } from "lucide-react"
 import { EventLogMockData } from "@/mock/event-logs"
 
 import { useEdition } from "@/hooks/use-edition"
-import {
-  cursorFromLink,
-  useEventLogCursors,
-} from "@/hooks/use-event-log-cursors"
+import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
 import { useMobile } from "@/hooks/use-mobile"
 import { usePermissions } from "@/hooks/use-permissions"
 
@@ -177,7 +174,7 @@ export default function EventLogFeed({
   const { can } = usePermissions()
   const { isEE } = useEdition()
   const [page, setPage] = useState(1)
-  const { cursor, reset, goToPage } = useEventLogCursors(page, setPage)
+  const { cursor, reset, goToPage } = useCursors(page, setPage)
 
   const resolvedPageSize = pageSize ?? (isMobile ? 10 : 12)
 

@@ -281,19 +281,21 @@ function TemplatesSelectionForm({
       value: TimingTemplates.Perpetual,
       label: "Perpetual",
       icon: <InfinityIcon className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip: "Licenses that never expire and remain valid forever",
     },
     {
       value: TimingTemplates.Timed,
       label: "Timed",
       icon: <Clock className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip:
+        "Licenses that expire after a fixed duration, e.g. for trials and subscriptions",
     },
     {
       value: TimingTemplates.PerpetualFallback,
       label: "Perpetual-fallback",
       icon: <ClockFading className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip:
+        "Licenses that expire after a fixed duration, but maintain access to versions released before their expiry",
     },
   ]
 
@@ -302,13 +304,15 @@ function TemplatesSelectionForm({
       value: AccessTemplates.NodeLocked,
       label: "Node-locked",
       icon: <Hexagon className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip:
+        "Licenses that can only be used on a limited number of activated devices, identified by fingerprint",
     },
     {
       value: AccessTemplates.UserLocked,
       label: "User-locked",
       icon: <User className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip:
+        "Licenses that can only be used by a particular user, validated within a user scope",
     },
   ]
 
@@ -317,25 +321,29 @@ function TemplatesSelectionForm({
       value: MeteredTemplates.ProcessBased,
       label: "Process-based",
       icon: <Cpu className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip:
+        "Licenses that limit the number of concurrent machine processes, e.g. for per-instance licensing",
     },
     {
       value: MeteredTemplates.LeaseBased,
       label: "Lease-based",
       icon: <Activity className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip:
+        "Licenses where machines hold a lease via heartbeat pings, freeing up seats when a machine's heartbeat dies",
     },
     {
       value: MeteredTemplates.FeatureBased,
       label: "Feature-based",
       icon: <Binary className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip:
+        "Licenses entitled to specific product features, managed via entitlements",
     },
     {
       value: MeteredTemplates.UsageBased,
       label: "Usage-based",
       icon: <Hash className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip:
+        "Licenses that record usage against a limit, incremented as the license is used",
     },
   ]
 

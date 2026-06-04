@@ -240,7 +240,7 @@ export const PolicyAttributeDescriptions: Readonly<
 > = {
   name: "Policy name.",
   duration:
-    "Duration in seconds. Licenses that implement this policy do not expire when this is null.",
+    "The duration for which a license implementing the policy is valid before it expires. Licenses that implement this policy never expire when this is not set.",
   strict:
     "When enabled, a license will be invalidated if its machine, core, memory, disk, or process limits are exceeded.",
   floating:
@@ -266,7 +266,7 @@ export const PolicyAttributeDescriptions: Readonly<
   requireCheckIn:
     "When enabled, a license that implements the policy will require check-in at a predefined interval to continue to pass validation i.e. if a license misses a check-in, it will be invalidated.",
   checkInInterval:
-    "One of day, week, month or year. The frequency at which a license should check-in.",
+    "The frequency at which a license should check-in, i.e. daily, weekly, monthly or yearly.",
   checkInIntervalCount:
     "The number of intervals (specified in the check-in interval property) between each required check-in. For example, checkInInterval=week and checkInIntervalCount=2 requires check-in every 2 weeks. Must be a number between 1 and 365 inclusive.",
   usePool:
@@ -280,9 +280,9 @@ export const PolicyAttributeDescriptions: Readonly<
   maxCores:
     "The maximum number of machine CPU cores a license implementing the policy can have activated.",
   maxMemory:
-    "The maximum amount of machine memory, in bytes, a license implementing the policy can have activated.",
+    "The maximum amount of machine memory a license implementing the policy can have activated.",
   maxDisk:
-    "The maximum amount of machine disk, in bytes, a license implementing the policy can have activated.",
+    "The maximum amount of machine disk a license implementing the policy can have activated.",
   maxUses:
     'The maximum number of recorded uses a license implementing the policy can have (what constitutes as "usage" is up to you).',
   encrypted: "--",

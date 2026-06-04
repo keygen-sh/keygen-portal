@@ -101,7 +101,6 @@ export default function EventLogFilterBar({
       <Filters.PolymorphicResourceFilter
         label="Resource"
         icon={MonitorCog}
-        placeholder="Resource ID"
         types={RESOURCE_TYPES}
         value={asPolymorphic(filters.resource)}
         onChange={(resource) => onChange({ ...filters, resource })}

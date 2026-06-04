@@ -47,7 +47,7 @@ function validateRange(
 ): { message: string; isError: boolean; valid: boolean } {
   if (!range?.from || !range.to) {
     return {
-      message: `Pick a start and end date — up to ${maxRangeDays} days.`,
+      message: `Pick a start and end date up to ${maxRangeDays} days.`,
       isError: false,
       valid: false,
     }

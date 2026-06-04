@@ -389,7 +389,7 @@ function IdInputSegment({
             type="button"
             variant="outline"
             size="sm"
-            className="flex-1 rounded-sm bg-popover text-sm"
+            className="flex-1 rounded-sm text-sm"
             onClick={handleCancel}
           >
             Cancel

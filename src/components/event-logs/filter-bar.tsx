@@ -85,7 +85,6 @@ export default function EventLogFilterBar({
         <Filters.SearchSelectFilter
           label="Event"
           icon={GitCommitHorizontal}
-          placeholder="Search..."
           options={EVENT_TYPE_OPTIONS}
           value={filters.events}
           onChange={(events) => onChange({ ...filters, events })}

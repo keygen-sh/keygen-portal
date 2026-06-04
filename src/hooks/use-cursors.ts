@@ -12,10 +12,7 @@ export function cursorFromLink(link?: string | null): string | null {
   }
 }
 
-export function useEventLogCursors(
-  page: number,
-  setPage: (page: number) => void,
-) {
+export function useCursors(page: number, setPage: (page: number) => void) {
   const [cursors, setCursors] = useState<(string | null)[]>([""])
 
   const cursor = cursors[page - 1] ?? ""

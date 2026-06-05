@@ -635,7 +635,7 @@ function HeatmapLicenseList({ date, count }: { date: string; count: number }) {
                 license.attributes.name ||
                 truncateKey(license.attributes.key, { maxLength: 24 })
               }
-              className="[&_button]:truncate [&_button]:text-xs [&_button]:text-content-subdued [&_button]:hover:text-content-loud"
+              className="[&_button]:truncate [&_button]:text-xs"
             />
           </li>
         ))}
@@ -645,8 +645,8 @@ function HeatmapLicenseList({ date, count }: { date: string; count: number }) {
           path="/$accountId/app/licenses"
           params={{ accountId: keygen.config.id }}
           search={{ expires: { on: date } }}
-          label={`See all ${count} licenses`}
-          className="mt-1 [&_button]:text-xs [&_button]:text-primary"
+          label={`View all ${count} licenses`}
+          className="mt-1 [&_button]:text-xs [&_button]:text-content-muted"
         />
       )}
     </>

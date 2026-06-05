@@ -32,7 +32,11 @@ import { useMobile } from "@/hooks/use-mobile"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { copyToClipboard } from "@/lib/clipboard"
-import { metadataDiffEntries, visibleMetadata } from "@/lib/event-logs"
+import {
+  eventLogBadgeVariant,
+  metadataDiffEntries,
+  visibleMetadata,
+} from "@/lib/event-logs"
 
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
@@ -103,7 +107,7 @@ export default function EventLogDetails() {
               <div className="flex flex-col items-start gap-3">
                 <TooltipBadge
                   value={eventLog.attributes.event}
-                  variant="secondary"
+                  variant={eventLogBadgeVariant(eventLog.attributes.event)}
                   tooltip={EventLogAttributeDescriptions.event}
                   className="px-1 font-mono text-xs"
                 />

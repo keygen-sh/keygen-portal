@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useState } from "react"
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -17,10 +17,7 @@ import { type SearchableResource } from "@/types/search"
 
 import { type FilterState, useFilterState } from "@/hooks/use-filter-state"
 
-import {
-  FilterSegment,
-  FilterSegmentGroup,
-} from "./filter-segment"
+import { FilterSegment, FilterSegmentGroup } from "./filter-segment"
 import { EnumFilterSegment } from "./enum-filter"
 import { ResourceSelectSegment } from "./resource-filter"
 
@@ -179,14 +176,22 @@ function IdInputSegment({
   const isDraft = state === "draft"
 
   const [draft, setDraft] = useState(value)
-  const inputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    if (!open) return
-    setDraft(value)
-    const id = requestAnimationFrame(() => inputRef.current?.focus())
-    return () => cancelAnimationFrame(id)
-  }, [open, value])
+  const handleInputRef = useCallback(
+    (node: HTMLInputElement | null) => {
+      if (node && open) node.focus()
+    },
+    [open],
+  )
+
+  function handleOpenChange(nextOpen: boolean) {
+    if (nextOpen) {
+      setDraft(value)
+      onOpenChange(true)
+    } else {
+      handleCancel()
+    }
+  }
 
   function handleApply() {
     const trimmed = draft.trim()
@@ -199,16 +204,7 @@ function IdInputSegment({
   }
 
   return (
-    <Popover
-      open={open}
-      onOpenChange={(next) => {
-        if (next) {
-          onOpenChange(true)
-        } else {
-          handleCancel()
-        }
-      }}
-    >
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <button type="button" className={segmentTriggerClassName(isDraft)}>
           {value ? truncate(value) : "select..."}
@@ -222,7 +218,7 @@ function IdInputSegment({
       >
         <div className="p-2">
           <Input
-            ref={inputRef}
+            ref={handleInputRef}
             fieldSize="sm"
             placeholder={placeholder ?? "ID"}
             value={draft}

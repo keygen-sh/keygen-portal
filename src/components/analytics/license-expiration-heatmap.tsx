@@ -14,18 +14,21 @@ import {
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 
 import * as keygen from "@/keygen"
 
 import { cn } from "@/lib/utils"
-import {
-  buildExpirationHeatmap,
-  truncateKey,
-  type ExpirationHeatmapEntry,
-  type ExpiringLicense,
-} from "@/lib/licenses"
+import { truncateKey } from "@/lib/licenses"
+import { buildExpirationHeatmap } from "@/lib/analytics"
 
-import { useExpiringLicenses } from "@/queries/licenses"
+import { License } from "@/types/licenses"
+import { ExpirationHeatmapEntry } from "@/types/analytics"
+
+import {
+  useExpirationsHeatmap,
+  useLicensesExpiringOn,
+} from "@/queries/analytics"
 
 import { useMobile } from "@/hooks/use-mobile"
 import { useCursorFollowTooltip } from "@/hooks/use-cursor-follow-tooltip"
@@ -44,9 +47,11 @@ const LABEL_WIDTH = 34
 const MOBILE_CELL_GAP = 4
 const MOBILE_COLUMN_COUNT = 6
 
-const HEATMAP_WINDOW_DAYS = 365
+const HEATMAP_WINDOW_DAYS = 364
 
 const POPOVER_WIDTH = 208 // w-52
+
+const PREVIEW_LIMIT = 5
 
 function toDisplayRow(y: number): number {
   return (y + 6) % 7
@@ -68,18 +73,27 @@ function getTemperatureColor(temperature: number): string {
 }
 
 export default function LicenseExpirationHeatmap() {
-  const { data: licenses = [], isLoading: licensesLoading } =
-    useExpiringLicenses({ within: `P${HEATMAP_WINDOW_DAYS}D` })
   const isMobile = useMobile()
 
-  const { start, end } = useMemo((): { start: Date; end: Date } => {
+  const { start, end, startParam, endParam } = useMemo(() => {
     const start = new Date()
-    return { start, end: addDays(start, HEATMAP_WINDOW_DAYS) }
+    const end = addDays(start, HEATMAP_WINDOW_DAYS)
+    return {
+      start,
+      end,
+      startParam: format(start, "yyyy-MM-dd"),
+      endParam: format(end, "yyyy-MM-dd"),
+    }
   }, [])
 
-  const { entries, licensesByDate, numWeeks, monthLabels } = useMemo(
-    () => buildExpirationHeatmap(licenses, { start, end }),
-    [licenses, start, end],
+  const { data: cells = [], isLoading } = useExpirationsHeatmap({
+    start: startParam,
+    end: endParam,
+  })
+
+  const { entries, numWeeks, monthLabels } = useMemo(
+    () => buildExpirationHeatmap(cells, { start, end }),
+    [cells, start, end],
   )
 
   const [expanded, setExpanded] = useState(false)
@@ -181,7 +195,7 @@ export default function LicenseExpirationHeatmap() {
   return (
     <Chart.Card
       title="License expirations"
-      isLoading={licensesLoading}
+      isLoading={isLoading}
       action={
         <GoToButton
           path="/$accountId/app/licenses"
@@ -261,34 +275,23 @@ export default function LicenseExpirationHeatmap() {
                   }),
                 )}
 
-                {entries.map((entry) =>
-                  entry.count > 0 ? (
-                    <div
-                      key={entry.date}
-                      onMouseEnter={(e) => handleCellMouseEnter(entry, e)}
-                      onMouseLeave={handleCellMouseLeave}
-                      onClick={handleCellClick}
-                      className={cn(
-                        "cursor-pointer transition-transform duration-150 ease-out hover:z-10 hover:scale-[1.3]",
-                        hoveredEntry?.date === entry.date && "z-10 scale-[1.3]",
-                      )}
-                      style={{
-                        gridRow: toDisplayRow(entry.y) + 2,
-                        gridColumn: entry.x + 2,
-                        backgroundColor: getTemperatureColor(entry.temperature),
-                      }}
-                    />
-                  ) : (
-                    <div
-                      key={entry.date}
-                      style={{
-                        gridRow: toDisplayRow(entry.y) + 2,
-                        gridColumn: entry.x + 2,
-                        backgroundColor: getTemperatureColor(entry.temperature),
-                      }}
-                    />
-                  ),
-                )}
+                {entries.map((entry) => (
+                  <div
+                    key={entry.date}
+                    onMouseEnter={(e) => handleCellMouseEnter(entry, e)}
+                    onMouseLeave={handleCellMouseLeave}
+                    onClick={handleCellClick}
+                    className={cn(
+                      "cursor-pointer transition-transform duration-150 ease-out hover:z-10 hover:scale-[1.3]",
+                      hoveredEntry?.date === entry.date && "z-10 scale-[1.3]",
+                    )}
+                    style={{
+                      gridRow: toDisplayRow(entry.y) + 2,
+                      gridColumn: entry.x + 2,
+                      backgroundColor: getTemperatureColor(entry.temperature),
+                    }}
+                  />
+                ))}
               </div>
 
               {/* Temperature legend */}
@@ -338,8 +341,9 @@ export default function LicenseExpirationHeatmap() {
             )}
 
             {isMobile ? (
-              <HeatmapCellExpandedContent
-                licenses={licensesByDate.get(hoveredEntry.date) ?? []}
+              <HeatmapLicenseList
+                date={hoveredEntry.date}
+                count={hoveredEntry.count}
               />
             ) : (
               <div
@@ -349,8 +353,9 @@ export default function LicenseExpirationHeatmap() {
                 <div className="overflow-hidden">
                   {expanded && (
                     <div className="duration-200 ease-out animate-in [animation-delay:200ms] [animation-fill-mode:both] fade-in-0">
-                      <HeatmapCellExpandedContent
-                        licenses={licensesByDate.get(hoveredEntry.date) ?? []}
+                      <HeatmapLicenseList
+                        date={hoveredEntry.date}
+                        count={hoveredEntry.count}
                       />
                     </div>
                   )}
@@ -596,33 +601,53 @@ function MobileHeatmapGrid({
   )
 }
 
-function HeatmapCellExpandedContent({
-  licenses,
-}: {
-  licenses: ExpiringLicense[]
-}) {
+function HeatmapLicenseList({ date, count }: { date: string; count: number }) {
+  const { data: licenses = [], isLoading } = useLicensesExpiringOn(date, {
+    limit: PREVIEW_LIMIT,
+  })
+
+  if (isLoading) {
+    return (
+      <ul className="space-y-1.5 py-1">
+        {Array.from(
+          { length: Math.max(1, Math.min(count, PREVIEW_LIMIT)) },
+          (_, index) => (
+            <li key={index}>
+              <Skeleton className="h-3 w-3/4 rounded-xs" />
+            </li>
+          ),
+        )}
+      </ul>
+    )
+  }
+
   if (!licenses.length) return null
 
   return (
     <>
       <ul>
-        {licenses.map((license) => (
+        {licenses.map((license: License) => (
           <li key={license.id}>
             <GoToButton
               path="/$accountId/app/licenses/$id"
               params={{ accountId: keygen.config.id, id: license.id }}
               label={
-                license.name || truncateKey(license.key, { maxLength: 24 })
+                license.attributes.name ||
+                truncateKey(license.attributes.key, { maxLength: 24 })
               }
               className="[&_button]:truncate [&_button]:text-xs [&_button]:text-content-subdued [&_button]:hover:text-content-loud"
             />
           </li>
         ))}
       </ul>
-      {licenses.length > 10 && (
-        <p className="mt-1 text-xs text-content-disabled">
-          +{licenses.length - 10} more
-        </p>
+      {count > PREVIEW_LIMIT && (
+        <GoToButton
+          path="/$accountId/app/licenses"
+          params={{ accountId: keygen.config.id }}
+          search={{ expires: { on: date } }}
+          label={`See all ${count} licenses`}
+          className="mt-1 [&_button]:text-xs [&_button]:text-primary"
+        />
       )}
     </>
   )

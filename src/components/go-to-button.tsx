@@ -10,6 +10,7 @@ import { ChevronRight } from "lucide-react"
 interface GoToProps {
   path: string
   params?: Record<string, string>
+  search?: Record<string, unknown>
   label: string
   disabled?: boolean
   className?: string
@@ -19,6 +20,7 @@ interface GoToProps {
 export default function GoToButton({
   path,
   params,
+  search,
   label,
   disabled = false,
   className,
@@ -27,7 +29,7 @@ export default function GoToButton({
   const navigate = useNavigate()
 
   const handleClick = async () => {
-    await navigate({ to: path, params })
+    await navigate({ to: path, params, search })
   }
 
   return (

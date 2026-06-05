@@ -1,18 +1,23 @@
-import { useCallback, useContext, useState } from "react"
-import { ChevronDown, Check, X, type LucideIcon } from "lucide-react"
+import { useCallback, useContext, useMemo, useRef, useState } from "react"
 
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { ScrollArea } from "@/components/ui/scroll-area"
+
+import { ChevronDown, Check, X, type LucideIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
 import {
-  FilterStateContext,
   type FilterState,
+  FilterStateContext,
 } from "@/contexts/filter-bar-context"
+import { optionMatchesQuery, renderHighlightedText } from "./filter-options"
+
+const MAX_VISIBLE_OPTIONS = 8
 
 export function FilterSegmentGroup({
   state,
@@ -146,19 +151,21 @@ export function FilterSegment({ children }: { children?: React.ReactNode }) {
 export function FilterPopoverSegment({
   popover,
   className,
+  open,
+  onOpenChange,
   children,
 }: {
   popover: React.ReactNode | ((close: () => void) => React.ReactNode)
   className?: string
+  open: boolean
+  onOpenChange: (open: boolean) => void
   children: React.ReactNode
 }) {
   const state = useContext(FilterStateContext)
   const isDraft = state === "draft"
-  const [open, setOpen] = useState(false)
-  const close = useCallback(() => setOpen(false), [setOpen])
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
         <button
           type="button"
@@ -174,11 +181,13 @@ export function FilterPopoverSegment({
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className={cn("!bg-background p-1", className)}
+        className={cn("p-1", className)}
         onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
-        {typeof popover === "function" ? popover(close) : popover}
+        {typeof popover === "function"
+          ? popover(() => onOpenChange(false))
+          : popover}
       </PopoverContent>
     </Popover>
   )
@@ -193,21 +202,120 @@ export function FilterOptionList({
   value?: string
   onSelect: (value: string) => void
 }) {
+  const [query, setQuery] = useState("")
+  const [activeIndex, setActiveIndex] = useState(0)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const visibleOptions = useMemo(() => {
+    const trimmedQuery = query.trim()
+    if (!trimmedQuery) return options
+
+    return options.filter((option) => optionMatchesQuery(option, trimmedQuery))
+  }, [options, query])
+
+  const normalizedActiveIndex =
+    visibleOptions.length > 0
+      ? Math.min(activeIndex, visibleOptions.length - 1)
+      : 0
+
+  const activeOption = visibleOptions[normalizedActiveIndex]
+
+  const handleContainerRef = useCallback((node: HTMLDivElement | null) => {
+    containerRef.current = node
+    node?.focus()
+  }, [])
+
+  function updateQuery(nextQuery: string) {
+    setQuery(nextQuery)
+    setActiveIndex(0)
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (e.key === "ArrowDown" && visibleOptions.length > 0) {
+      e.preventDefault()
+      setActiveIndex((current) => (current + 1) % visibleOptions.length)
+      return
+    }
+
+    if (e.key === "ArrowUp" && visibleOptions.length > 0) {
+      e.preventDefault()
+      setActiveIndex(
+        (current) =>
+          (current - 1 + visibleOptions.length) % visibleOptions.length,
+      )
+      return
+    }
+
+    if (e.key === "Home" && visibleOptions.length > 0) {
+      e.preventDefault()
+      setActiveIndex(0)
+      return
+    }
+
+    if (e.key === "End" && visibleOptions.length > 0) {
+      e.preventDefault()
+      setActiveIndex(visibleOptions.length - 1)
+      return
+    }
+
+    if (e.key === "Enter" && activeOption) {
+      e.preventDefault()
+      onSelect(activeOption.value)
+      return
+    }
+
+    if (e.key === "Backspace" && query) {
+      e.preventDefault()
+      updateQuery(query.slice(0, -1))
+      return
+    }
+
+    if (e.key === "Escape" && query) {
+      e.preventDefault()
+      updateQuery("")
+      return
+    }
+
+    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      e.preventDefault()
+      updateQuery(query + e.key)
+    }
+  }
+
   return (
-    <div className="flex flex-col gap-0.5">
-      {options.map((opt) => (
-        <button
-          key={opt.value}
-          type="button"
-          className={cn(
-            "w-full cursor-pointer rounded-sm px-2 py-1 text-left text-xs transition-colors hover:bg-accent",
-            opt.value === value && "bg-accent",
+    <div
+      ref={handleContainerRef}
+      tabIndex={-1}
+      className="outline-none"
+      onKeyDown={handleKeyDown}
+    >
+      <ScrollArea
+        className={cn(visibleOptions.length > MAX_VISIBLE_OPTIONS && "h-64")}
+      >
+        <div className="flex flex-col gap-0.5">
+          {visibleOptions.length > 0 ? (
+            visibleOptions.map((opt, index) => (
+              <button
+                key={opt.value}
+                type="button"
+                className={cn(
+                  "w-full cursor-pointer rounded-sm px-2 py-1 text-left text-xs transition-colors hover:bg-accent",
+                  opt.value === value && "bg-accent",
+                  index === normalizedActiveIndex && "bg-accent",
+                )}
+                onMouseEnter={() => setActiveIndex(index)}
+                onClick={() => onSelect(opt.value)}
+              >
+                {renderHighlightedText(opt.label, query.trim())}
+              </button>
+            ))
+          ) : (
+            <div className="px-2 py-1 text-xs text-content-subdued">
+              No results found
+            </div>
           )}
-          onClick={() => onSelect(opt.value)}
-        >
-          {opt.label}
-        </button>
-      ))}
+        </div>
+      </ScrollArea>
     </div>
   )
 }

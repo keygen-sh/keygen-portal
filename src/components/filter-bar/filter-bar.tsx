@@ -17,6 +17,8 @@ import { FilterBarContext } from "@/contexts/filter-bar-context"
 const GAP = 8 // gap-2
 
 export interface FilterBarProps {
+  // disable interaction with all filters while preserving the bar layout
+  disabled?: boolean
   // count of currently active filters (drives the "clear all" badge's display)
   filterCount?: number
   // callback when the user clicks the "clear all" badge
@@ -28,6 +30,7 @@ export interface FilterBarProps {
 }
 
 export default function FilterBar({
+  disabled = false,
   filterCount,
   onClearAll,
   pinned,
@@ -140,7 +143,14 @@ export default function FilterBar({
 
   return (
     <FilterBarContext.Provider value={contextValue}>
-      <div className="relative z-50 flex h-6 w-full items-center gap-2 overflow-hidden">
+      <div
+        inert={disabled ? true : undefined}
+        aria-disabled={disabled || undefined}
+        className={cn(
+          "relative z-50 flex h-6 w-full items-center gap-2 overflow-hidden",
+          disabled && "pointer-events-none opacity-50",
+        )}
+      >
         {/* pinned slot */}
         {pinned}
 
@@ -219,6 +229,7 @@ export default function FilterBar({
           <button
             type="button"
             className="group inline-flex h-full shrink-0 cursor-pointer items-center gap-1 rounded-[3px] bg-warning/20 px-1.5 text-xs font-normal whitespace-nowrap text-warning transition-colors hover:bg-destructive/20 hover:text-destructive"
+            disabled={disabled}
             onClick={onClearAll}
           >
             {filterCount} {filterCount === 1 ? "filter" : "filters"} applied

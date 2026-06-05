@@ -3,7 +3,7 @@ import config from "@/keygen/config"
 import { APIResponse, APIError } from "@/types/api"
 
 export class Client {
-  private url = `https://${config.host}/v1`
+  private host = `https://${config.host}`
 
   private rootToken?: string | null
   private environmentToken?: string | null
@@ -50,7 +50,11 @@ export class Client {
 
   async request<T = unknown>(
     endpoint: string,
-    options: RequestInit & { root?: boolean; signal?: AbortSignal } = {},
+    options: RequestInit & {
+      root?: boolean
+      signal?: AbortSignal
+      prefix?: string
+    } = {},
   ): Promise<APIResponse<T>> {
     const authToken = options.root ? this.rootToken : this.activeToken
     const defaultHeaders = {
@@ -70,10 +74,10 @@ export class Client {
       ...options.headers,
     }
 
-    const { root, ...fetchOptions } = options
+    const { root, prefix, ...fetchOptions } = options
     void root
 
-    const response = await fetch(`${this.url}${endpoint}`, {
+    const response = await fetch(`${this.host}/${prefix ?? "v1"}${endpoint}`, {
       ...fetchOptions,
       headers,
       ...(config.isCloud

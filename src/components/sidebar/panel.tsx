@@ -39,14 +39,15 @@ import {
 
 import {
   type LucideIcon,
-  Home,
-  Key,
-  Package,
   Zap,
-  Webhook,
-  KeyRound,
-  Settings,
+  Key,
   User,
+  Home,
+  Shield,
+  Webhook,
+  Package,
+  Settings,
+  KeyRound,
 } from "lucide-react"
 
 import * as keygen from "@/keygen"
@@ -72,6 +73,7 @@ enum ViewId {
   Automate = "automate",
   Webhooks = "webhooks",
   Access = "access",
+  Security = "security",
   Settings = "settings",
 }
 
@@ -214,7 +216,25 @@ const VIEWS: View[] = [
   },
   { id: ViewId.Automate, label: "Automate", icon: Zap, routes: [] },
   { id: ViewId.Webhooks, label: "Webhooks", icon: Webhook, routes: [] },
-  { id: ViewId.Access, label: "Access", icon: KeyRound, routes: [] },
+  {
+    id: ViewId.Access,
+    label: "Access",
+    icon: KeyRound,
+    routes: [],
+  },
+  {
+    id: ViewId.Security,
+    label: "Security",
+    icon: Shield,
+    routes: linkOptions([
+      {
+        to: "/$accountId/app/event-logs",
+        label: "Event Logs",
+        params: { accountId: keygen.config.id },
+        requires: ["event-log.read"],
+      },
+    ]),
+  },
   {
     id: ViewId.Settings,
     label: "Settings",

@@ -10,6 +10,7 @@ export type SearchableResource =
   | "releases"
   | "platforms"
   | "arches"
+  | "request-logs"
 
 export type SearchOperator = "AND" | "OR"
 

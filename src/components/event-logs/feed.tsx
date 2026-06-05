@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo, useRef } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 
-import { ChevronRight, GitCommitHorizontal } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 
 import { useEdition } from "@/hooks/use-edition"
 import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
@@ -53,7 +53,6 @@ function EventLogLinkRow({
 function EventLogRow({
   eventLog,
   isFirst,
-  isLast,
 }: {
   eventLog: EventLog
   isFirst: boolean
@@ -73,20 +72,7 @@ function EventLogRow({
       onClick={toggle}
       className="group/event-log flex cursor-pointer gap-3 bg-background px-4 text-xs transition-colors hover:bg-background-2"
     >
-      <div className="flex shrink-0 flex-col items-center">
-        {!isFirst && <span className="h-3 w-px bg-accent" />}
-        <span
-          className={cn(
-            "flex size-5 shrink-0 items-center justify-center rounded-full bg-background-3 text-content-muted",
-            isFirst && "mt-3",
-          )}
-        >
-          <GitCommitHorizontal className="size-3" />
-        </span>
-        {!isLast && <span className="w-px flex-1 bg-accent" />}
-      </div>
-
-      <div className="min-w-0 flex-1 py-3">
+      <div className={cn("min-w-0 flex-1 pb-1.5", isFirst ? "pt-4" : "pt-3")}>
         <div className="flex min-w-0 items-center">
           <Badge variant="secondary" className="max-w-full truncate font-mono">
             {event}

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
+import { useNavigate } from "@tanstack/react-router"
 import {
   format,
   getDay,
@@ -19,8 +20,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import * as keygen from "@/keygen"
 
 import { cn } from "@/lib/utils"
-import { truncateKey } from "@/lib/licenses"
 import { buildExpirationHeatmap } from "@/lib/analytics"
+import { truncator } from "@/lib/truncate"
 
 import { License } from "@/types/licenses"
 import { ExpirationHeatmapEntry } from "@/types/analytics"
@@ -52,6 +53,7 @@ const HEATMAP_WINDOW_DAYS = 364
 const POPOVER_WIDTH = 208 // w-52
 
 const PREVIEW_LIMIT = 5
+const truncateId = truncator("clip", { maxLength: 8 })
 
 function toDisplayRow(y: number): number {
   return (y + 6) % 7
@@ -324,7 +326,10 @@ export default function LicenseExpirationHeatmap() {
         currentPos={currentPos}
         offset={8}
         interactive={expanded}
-        className="w-52 origin-top"
+        className={cn(
+          "max-w-[calc(100vw-2rem)] min-w-52 origin-top",
+          !expanded && !isMobile ? "w-52" : "w-fit",
+        )}
       >
         {hoveredEntry && (
           <>
@@ -338,9 +343,11 @@ export default function LicenseExpirationHeatmap() {
             <div className="my-2 h-px bg-accent" />
 
             {!isMobile && !expanded && (
-              <p className="text-[10px] text-content-subdued">
-                + Click to show licenses
-              </p>
+              <div className="group flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm">
+                <span className="min-w-0 flex-1 truncate text-content-muted">
+                  + Click to load licenses
+                </span>
+              </div>
             )}
 
             {isMobile ? (
@@ -605,53 +612,78 @@ function MobileHeatmapGrid({
 }
 
 function HeatmapLicenseList({ date, count }: { date: string; count: number }) {
+  const navigate = useNavigate()
   const { data: licenses = [], isLoading } = useLicensesExpiringOn(date, {
     limit: PREVIEW_LIMIT,
   })
 
+  const openLicense = (license: License) => {
+    void navigate({
+      to: "/$accountId/app/licenses/$id",
+      params: { accountId: keygen.config.id, id: license.id },
+    })
+  }
+
+  const openExpiringLicenses = () => {
+    void navigate({
+      to: "/$accountId/app/licenses",
+      params: { accountId: keygen.config.id },
+      search: { expires: { on: date } },
+    })
+  }
+
   if (isLoading) {
     return (
-      <ul className="space-y-1.5 py-1">
+      <div className="space-y-1.5 py-1">
         {Array.from(
           { length: Math.max(1, Math.min(count, PREVIEW_LIMIT)) },
           (_, index) => (
-            <li key={index}>
-              <Skeleton className="h-3 w-3/4 rounded-xs" />
-            </li>
+            <Skeleton key={index} className="h-6 w-full rounded-xs" />
           ),
         )}
-      </ul>
+      </div>
     )
   }
 
   if (!licenses.length) return null
 
+  const additionalLicenseCount = count - licenses.length
+
   return (
-    <>
-      <ul>
-        {licenses.map((license: License) => (
-          <li key={license.id}>
-            <GoToButton
-              path="/$accountId/app/licenses/$id"
-              params={{ accountId: keygen.config.id, id: license.id }}
-              label={
-                license.attributes.name ||
-                truncateKey(license.attributes.key, { maxLength: 24 })
-              }
-              className="[&_button]:truncate [&_button]:text-xs"
-            />
-          </li>
-        ))}
-      </ul>
-      {count > PREVIEW_LIMIT && (
-        <GoToButton
-          path="/$accountId/app/licenses"
-          params={{ accountId: keygen.config.id }}
-          search={{ expires: { on: date } }}
-          label={`View all ${count} licenses`}
-          className="mt-1 [&_button]:text-xs [&_button]:text-content-muted"
-        />
+    <div className="w-64 max-w-[calc(100vw-3.5rem)] space-y-0.5">
+      {licenses.map((license: License) => (
+        <button
+          key={license.id}
+          type="button"
+          onClick={() => openLicense(license)}
+          className="group flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-hidden transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground"
+        >
+          <span className="min-w-0 flex-1 truncate text-content-loud group-hover:text-accent-foreground group-focus-visible:text-accent-foreground">
+            {license.attributes.name || (
+              <span className="text-content-disabled">{"(name not set)"}</span>
+            )}
+          </span>
+          <span className="ml-auto shrink-0 truncate font-mono text-xs text-muted-foreground group-hover:text-accent-foreground/70 group-focus-visible:text-accent-foreground/70">
+            {truncateId(license.id)}
+          </span>
+        </button>
+      ))}
+      {additionalLicenseCount > 0 && (
+        <button
+          type="button"
+          onClick={openExpiringLicenses}
+          className="group flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-hidden transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground"
+        >
+          <span className="min-w-0 flex-1 truncate text-content-muted group-hover:text-accent-foreground group-focus-visible:text-accent-foreground">
+            +{additionalLicenseCount} more{" "}
+            {additionalLicenseCount === 1 ? "license" : "licenses"}
+          </span>
+          <span className="ml-auto shrink-0 text-xs text-primary">
+            View all
+            <ChevronRight className="ml-1 inline size-3 align-[-2px] text-primary transition-all duration-200 group-hover:translate-x-0.5" />
+          </span>
+        </button>
       )}
-    </>
+    </div>
   )
 }

@@ -77,7 +77,7 @@ export function useEventLogTableColumns(handlers: EventLogPreviewHandlers) {
       column.rel("whodunnit", {
         sortingFn: "alphanumeric",
         header: "Actor",
-        cell: (info) => relationshipIdCell(info.getValue()?.data?.id, "System"),
+        cell: (info) => relationshipIdCell(info.getValue()?.data?.id),
       }),
       column.rel("request", {
         sortingFn: "alphanumeric",

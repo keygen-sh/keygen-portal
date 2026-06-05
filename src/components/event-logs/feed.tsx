@@ -118,7 +118,6 @@ function EventLogRow({
             <EventLogLinkRow label="Actor">
               <ResourceLink
                 linkage={whodunnit}
-                emptyLabel="System"
                 buttonClassName="text-xs"
               />
             </EventLogLinkRow>

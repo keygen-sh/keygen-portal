@@ -1,3 +1,5 @@
+import { useState } from "react"
+
 import { useFilterState } from "@/hooks/use-filter-state"
 import {
   FilterSegmentGroup,
@@ -37,6 +39,7 @@ export default function TemporalFilter({
   onChange,
 }: TemporalFilterProps) {
   const filter = useFilterState(value, {}, onChange)
+  const [open, setOpen] = useState(false)
 
   // we only allow one operation at a time so we'll just grab the first pair
   const [currentOp] = Object.keys(filter.value)
@@ -89,6 +92,8 @@ export default function TemporalFilter({
       <FilterSegment>{label}</FilterSegment>
       <FilterPopoverSegment
         className="w-28"
+        open={open}
+        onOpenChange={setOpen}
         popover={(close) => (
           <FilterOptionList
             options={ops}

@@ -207,7 +207,7 @@ export default function LicenseExpirationHeatmap() {
           search={{
             expires: { within: 'P1Y' },
           }}
-          label="See all"
+          label="View all"
           className="[&_.group:hover_svg]:text-primary [&_button]:text-content-normal [&_button]:hover:text-content-loud [&_svg]:text-content-normal"
         />
       }

@@ -1,8 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react"
 
 import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
-
 import { ChevronRight } from "lucide-react"
 
 import { useEdition } from "@/hooks/use-edition"
@@ -24,6 +22,7 @@ import { cn } from "@/lib/utils"
 
 import * as keygen from "@/keygen"
 import * as Motion from "@/components/motion"
+import * as Skeletons from "@/components/skeletons"
 import Pagination from "@/components/pagination"
 import GoToButton from "@/components/go-to-button"
 import ResourceLink from "@/components/resource-link"
@@ -134,62 +133,6 @@ function EventLogRow({
   )
 }
 
-const EVENT_LOG_FEED_SKELETON_ROWS = [
-  ["w-32", "w-20", "w-16"],
-  ["w-24", "w-16", "w-20"],
-  ["w-16", "w-20", "w-24"],
-  ["w-32", "w-16", "w-16"],
-  ["w-24", "w-24", "w-20"],
-  ["w-32", "w-16", "w-24"],
-  ["w-16", "w-20", "w-16"],
-  ["w-16", "w-16", "w-24"],
-  ["w-24", "w-20", "w-20"],
-  ["w-16", "w-16", "w-16"],
-  ["w-8", "w-24", "w-20"],
-  ["w-16", "w-16", "w-16"],
-  ["w-16", "w-20", "w-16"],
-  ["w-16", "w-16", "w-8"],
-  ["w-24", "w-20", "w-20"],
-  ["w-8", "w-24", "w-20"],
-] as const
-
-function EventLogSkeleton({
-  eventWidth,
-  timestampWidth,
-  changesWidth,
-}: {
-  eventWidth: string
-  timestampWidth: string
-  changesWidth: string
-}) {
-  return (
-    <div className="flex gap-3 bg-background px-4 text-xs">
-      <div className="min-w-0 flex-1 py-3">
-        <Skeleton
-          className={cn(
-            "h-[14px] animate-none rounded-[3px] bg-secondary/20",
-            eventWidth,
-          )}
-        />
-        <div className="mt-2 flex min-w-0 items-center gap-2">
-          <Skeleton
-            className={cn(
-              "h-[10px] shrink-0 animate-none rounded-sm bg-accent",
-              timestampWidth,
-            )}
-          />
-          <Skeleton
-            className={cn(
-              "h-[10px] animate-none rounded-sm bg-accent/60",
-              changesWidth,
-            )}
-          />
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export default function EventLogFeed({
   filters,
   pageSize,
@@ -237,24 +180,9 @@ export default function EventLogFeed({
   )
 
   if (!isEE) {
-    const skeletonRows = compact
-      ? EVENT_LOG_FEED_SKELETON_ROWS.slice(0, 12)
-      : EVENT_LOG_FEED_SKELETON_ROWS
-
     return (
       <EventLogsUpgrade className={cn("min-h-0 flex-1", className)}>
-        <div className="pt-2">
-          {skeletonRows.map(
-            ([eventWidth, timestampWidth, changesWidth], index) => (
-              <EventLogSkeleton
-                key={index}
-                eventWidth={eventWidth}
-                timestampWidth={timestampWidth}
-                changesWidth={changesWidth}
-              />
-            ),
-          )}
-        </div>
+        <Skeletons.EventLogs compact={compact} />
       </EventLogsUpgrade>
     )
   }
@@ -276,18 +204,7 @@ export default function EventLogFeed({
         <Motion.Slide direction={directionRef.current}>
           <div key={page}>
             {loading && eventLogs.length === 0 ? (
-              <div className="pt-2">
-                {EVENT_LOG_FEED_SKELETON_ROWS.map(
-                  ([eventWidth, timestampWidth, changesWidth], index) => (
-                    <EventLogSkeleton
-                      key={index}
-                      eventWidth={eventWidth}
-                      timestampWidth={timestampWidth}
-                      changesWidth={changesWidth}
-                    />
-                  ),
-                )}
-              </div>
+              <Skeletons.EventLogs compact={compact} />
             ) : isError ? (
               <div className="p-4 text-xs text-destructive">
                 {error instanceof Error

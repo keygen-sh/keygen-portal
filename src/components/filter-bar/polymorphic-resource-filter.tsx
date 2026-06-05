@@ -71,7 +71,6 @@ export default function PolymorphicResourceFilter({
 
   const current = filter.value
   const selectedType = types.find((t) => t.value === current.type)
-  const selectedLabel = selectedType?.label ?? "type"
   const displayValue = current.id ? truncate(current.id) : null
 
   function handleDraft() {
@@ -124,7 +123,9 @@ export default function PolymorphicResourceFilter({
         onOpenChange={setTypeOpen}
         onSelect={handleTypeChange}
       >
-        {selectedLabel}
+        {selectedType?.label ?? (
+          <span className="text-content-disabled italic">select...</span>
+        )}
       </EnumFilterSegment>
 
       {current.type ? (

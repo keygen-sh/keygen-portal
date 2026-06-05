@@ -50,7 +50,7 @@ export default function ArrayFilter({
       <FilterSegment>{label}</FilterSegment>
       <FilterSegment>in</FilterSegment>
       <FilterPopoverSegment
-        className="w-44"
+        className="w-max min-w-44 max-w-96"
         open={open}
         onOpenChange={setOpen}
         popover={(close) => (
@@ -66,7 +66,7 @@ export default function ArrayFilter({
                     key={opt.value}
                     type="button"
                     className={cn(
-                      "w-full cursor-pointer rounded-sm px-2 py-1 text-left text-xs transition-colors hover:bg-accent",
+                      "w-full cursor-pointer rounded-sm px-2 py-1 text-left text-xs whitespace-nowrap transition-colors hover:bg-accent",
                       isSelected && "bg-accent",
                     )}
                     onClick={(e) => {

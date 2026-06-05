@@ -15,6 +15,7 @@ import { type EventLog, type EventLogFilters } from "@/types/event-logs"
 import { useListEventLogs } from "@/queries/event-logs"
 
 import {
+  eventLogBadgeVariant,
   metadataDiffEntries,
   formatEventLogTimestamp,
   formatEventLogRelativeTime,
@@ -74,7 +75,10 @@ function EventLogRow({
     >
       <div className={cn("min-w-0 flex-1 pb-1.5", isFirst ? "pt-4" : "pt-3")}>
         <div className="flex min-w-0 items-center">
-          <Badge variant="secondary" className="max-w-full truncate font-mono">
+          <Badge
+            variant={eventLogBadgeVariant(event)}
+            className="max-w-full truncate font-mono"
+          >
             {event}
           </Badge>
         </div>

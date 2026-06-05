@@ -2,6 +2,38 @@ import { format, formatDistanceToNowStrict } from "date-fns"
 
 import { type DiffEntry } from "@/components/diff"
 
+const DESTRUCTIVE_EVENT_RE = [
+  /\.banned$/,
+  /\.dead$/,
+  /\.deleted$/,
+  /\.detached$/,
+  /\.expired$/,
+  /\.revoked$/,
+]
+
+const WARNING_EVENT_RE = [
+  /\.check-in-overdue$/,
+  /\.check-in-required-soon$/,
+  /\.expiring-soon$/,
+  /\.failed$/,
+  /\.suspended$/,
+  /\.yanked$/,
+]
+
+export function eventLogBadgeVariant(
+  event: string,
+): "secondary" | "destructive" | "warning" {
+  if (DESTRUCTIVE_EVENT_RE.some((re) => re.test(event))) {
+    return "destructive"
+  }
+
+  if (WARNING_EVENT_RE.some((re) => re.test(event))) {
+    return "warning"
+  }
+
+  return "secondary"
+}
+
 export function formatEventLogRelativeTime(value: string): string {
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return value

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { type EventLog } from "@/types/event-logs"
 
 import {
+  eventLogBadgeVariant,
   formatEventLogRelativeTime,
   formatEventLogUtcTimestamp,
   formatEventLogLocalTimestamp,
@@ -62,7 +63,7 @@ export function useEventLogTableColumns(handlers: EventLogPreviewHandlers) {
           const event = info.getValue()
 
           return (
-            <Badge variant="secondary" className="font-mono">
+            <Badge variant={eventLogBadgeVariant(event)} className="font-mono">
               {event}
             </Badge>
           )

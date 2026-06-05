@@ -165,7 +165,6 @@ export const EVENT_TYPES = [
   "release.downloaded",
   "release.package.updated",
   "release.published",
-  "release.replaced",
   "release.updated",
   "release.upgraded",
   "release.uploaded",

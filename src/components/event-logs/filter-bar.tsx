@@ -82,7 +82,7 @@ export default function EventLogFilterBar({
       filterCount={filterCount}
       onClearAll={() => onChange({})}
       pinned={
-        <Filters.SearchSelectFilter
+        <Filters.ArrayFilter
           label="Event"
           icon={GitCommitHorizontal}
           options={EVENT_TYPE_OPTIONS}

@@ -35,7 +35,11 @@ export default function ArrayFilter({
 
   const selected = options.filter((o) => filter.value.includes(o.value))
   const displayValue =
-    selected.length > 0 ? selected.map((o) => o.label).join(", ") : "select..."
+    selected.length > 0 ? (
+      selected.map((o) => o.label).join(", ")
+    ) : (
+      <span className="text-content-disabled italic">select...</span>
+    )
 
   return (
     <FilterSegmentGroup

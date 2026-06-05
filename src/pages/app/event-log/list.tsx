@@ -49,6 +49,10 @@ const EVENT_LOG_SKELETON_ROWS = [
   ["w-40", "w-64", "w-28", "w-20", "w-28"],
   ["w-44", "w-56", "w-20", "w-28", "w-28"],
   ["w-36", "w-48", "w-20", "w-20", "w-28"],
+  ["w-36", "w-56", "w-28", "w-28", "w-28"],
+  ["w-36", "w-48", "w-20", "w-20", "w-28"],
+  ["w-40", "w-72", "w-28", "w-28", "w-28"],
+  ["w-44", "w-56", "w-28", "w-28", "w-28"],
   ["w-44", "w-60", "w-28", "w-28", "w-28"],
   ["w-40", "w-72", "w-28", "w-28", "w-28"],
   ["w-44", "w-44", "w-28", "w-20", "w-28"],
@@ -112,7 +116,7 @@ function EventLogTableSkeleton() {
                   {columnIndex === 1 ? (
                     <StaticSkeleton
                       className={cn(
-                        "block h-5 rounded-[3px] bg-secondary/20",
+                        "block h-[14px] rounded-[3px] bg-secondary/20 animate-none",
                         width,
                       )}
                     />

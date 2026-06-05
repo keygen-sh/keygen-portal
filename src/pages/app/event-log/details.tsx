@@ -139,7 +139,7 @@ export default function EventLogDetails() {
                       variant="text"
                       label="Requestor"
                       value={
-                        <ResourceLink linkage={requestor} emptyLabel="System" />
+                        <ResourceLink linkage={requestor} />
                       }
                     />
                     <Attribute.Field

@@ -36,7 +36,9 @@ export default function LockedOverlay({
       </div>
 
       <div className="absolute inset-0 flex items-end justify-center bg-background/60 p-6">
-        <Card className="w-full max-w-sm items-start gap-4 rounded border-none p-4 text-left">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-background via-background/20 to-transparent" />
+
+        <Card className="relative z-10 w-full max-w-sm items-start gap-4 rounded border-none p-4 text-left">
           <CardHeader className="w-full px-0">
             <CardTitle className="flex items-start gap-2 text-sm">
               <span className="mt-0.5 text-content-muted">

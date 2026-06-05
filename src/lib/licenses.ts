@@ -1,8 +1,9 @@
-import { AttributeType } from "@/components/attribute/value"
-
-import { License, LicenseAttributeDescriptions } from "@/types/licenses"
 import { Policy } from "@/types/policies"
+import { License, LicenseAttributeDescriptions } from "@/types/licenses"
+
 import { formatByteLimitDisplay, formatRawByteLimitDisplay } from "@/lib/bytes"
+
+import { AttributeType } from "@/components/attribute/value"
 
 export const licenseAttributeTypeSchema: Record<
   keyof Omit<License["attributes"], "metadata" | "created" | "updated">,

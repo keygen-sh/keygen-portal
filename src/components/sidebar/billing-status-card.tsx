@@ -66,7 +66,9 @@ export default function BillingStatusCard() {
   return (
     <Card className="w-full items-start gap-4 rounded border-none p-4">
       <CardHeader className="w-full px-0">
-        <CardTitle className="text-sm">{content.title}</CardTitle>
+        <CardTitle className="flex items-start gap-2 text-sm">
+          {content.title}
+        </CardTitle>
         <CardDescription className="text-xs">
           {content.description(billing?.attributes.subscriptionPeriodEnd)}
         </CardDescription>

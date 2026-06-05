@@ -77,6 +77,7 @@ import {
 } from "@/queries/releases"
 
 import { useMobile } from "@/hooks/use-mobile"
+import { useSidebarTab } from "@/hooks/use-sidebar-tab"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
@@ -85,6 +86,7 @@ import { copyToClipboard } from "@/lib/clipboard"
 import * as Releases from "@/components/releases"
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
+import * as EventLogs from "@/components/event-logs"
 import Can from "@/components/can"
 import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
@@ -188,6 +190,7 @@ export default function ReleaseDetails() {
   const back = useBackNavigate()
 
   const isMobile = useMobile()
+  const [tab, setTab] = useSidebarTab()
   const [open, setOpen] = useState({
     edit: false,
     delete: false,
@@ -617,9 +620,10 @@ export default function ReleaseDetails() {
 
                 {isMobile && (
                   <CollapsibleCard title="Events">
-                    <p className="text-sm text-content-subdued">
-                      Nothing here yet.
-                    </p>
+                    <EventLogs.Feed
+                      compact
+                      filters={{ resource: { type: "release", id } }}
+                    />
                   </CollapsibleCard>
                 )}
 
@@ -655,11 +659,10 @@ export default function ReleaseDetails() {
       </div>
 
       {!isMobile && (
-        <Tabs defaultValue="overview">
+        <Tabs value={tab} onValueChange={setTab}>
           <Sidebar className="w-64 shrink-0" side="right">
-            <SidebarHeader className="border-b border-accent pt-8 pb-0">
+            <SidebarHeader className="min-h-[70px] justify-end p-0">
               <TabsSwitch
-                className="border-b border-accent pt-8 pb-0"
                 options={[
                   { value: "overview", label: "Overview", icon: Menu },
                   { value: "events", label: "Events", icon: GitFork },
@@ -696,7 +699,15 @@ export default function ReleaseDetails() {
                 )}
               </TabsContent>
 
-              <TabsContent value="events" className="p-4"></TabsContent>
+              <TabsContent
+                value="events"
+                className="flex min-h-0 flex-1 flex-col p-0"
+              >
+                <EventLogs.Feed
+                  compact
+                  filters={{ resource: { type: "release", id } }}
+                />
+              </TabsContent>
             </SidebarContent>
             <SidebarFooter className="p-4">
               <Button

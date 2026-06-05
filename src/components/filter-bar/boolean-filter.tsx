@@ -1,3 +1,5 @@
+import { useState } from "react"
+
 import { type LucideIcon } from "lucide-react"
 
 import { useFilterState } from "@/hooks/use-filter-state"
@@ -27,6 +29,7 @@ export default function BooleanFilter({
   onChange,
 }: BooleanFilterProps) {
   const filter = useFilterState(value, true, onChange)
+  const [open, setOpen] = useState(false)
 
   const selected = BOOLEAN_OPTIONS.find((o) =>
     filter.value ? o.value === "true" : o.value === "false",
@@ -47,6 +50,8 @@ export default function BooleanFilter({
     >
       <FilterPopoverSegment
         className="w-24"
+        open={open}
+        onOpenChange={setOpen}
         popover={(close) => (
           <FilterOptionList
             options={BOOLEAN_OPTIONS}

@@ -41,6 +41,7 @@ export default function NumericFilter({
   onChange,
 }: NumericFilterProps) {
   const filter = useFilterState(value, {}, onChange)
+  const [opOpen, setOpOpen] = useState(false)
 
   // we only allow one operation at a time so we'll just grab the first pair
   const [currentOp] = Object.keys(filter.value)
@@ -70,6 +71,8 @@ export default function NumericFilter({
       <FilterSegment>{label}</FilterSegment>
       <FilterPopoverSegment
         className="w-32"
+        open={opOpen}
+        onOpenChange={setOpOpen}
         popover={(close) => (
           <FilterOptionList
             options={ops}

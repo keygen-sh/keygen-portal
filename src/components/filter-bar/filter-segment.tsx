@@ -5,6 +5,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { ChevronDown, Check, X, type LucideIcon } from "lucide-react"
 
@@ -14,6 +15,8 @@ import {
   type FilterState,
   FilterStateContext,
 } from "@/contexts/filter-bar-context"
+
+const MAX_VISIBLE_OPTIONS = 8
 
 export function FilterSegmentGroup({
   state,
@@ -199,20 +202,22 @@ export function FilterOptionList({
   onSelect: (value: string) => void
 }) {
   return (
-    <div className="flex flex-col gap-0.5">
-      {options.map((opt) => (
-        <button
-          key={opt.value}
-          type="button"
-          className={cn(
-            "w-full cursor-pointer rounded-sm px-2 py-1 text-left text-xs transition-colors hover:bg-accent",
-            opt.value === value && "bg-accent",
-          )}
-          onClick={() => onSelect(opt.value)}
-        >
-          {opt.label}
-        </button>
-      ))}
-    </div>
+    <ScrollArea className={cn(options.length > MAX_VISIBLE_OPTIONS && "h-64")}>
+      <div className="flex flex-col gap-0.5">
+        {options.map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            className={cn(
+              "w-full cursor-pointer rounded-sm px-2 py-1 text-left text-xs transition-colors hover:bg-accent",
+              opt.value === value && "bg-accent",
+            )}
+            onClick={() => onSelect(opt.value)}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+    </ScrollArea>
   )
 }

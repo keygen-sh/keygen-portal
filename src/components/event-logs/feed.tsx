@@ -166,26 +166,22 @@ function EventLogSkeleton({
 }) {
   return (
     <div className="flex gap-3 bg-background px-4 text-xs">
-      <div className="flex shrink-0 items-start pt-3">
-        <Skeleton className="size-5 shrink-0 rounded-full bg-background-3 animate-none" />
-      </div>
-
       <div className="min-w-0 flex-1 py-3">
         <Skeleton
           className={cn(
-            "h-5 rounded-[3px] bg-secondary/20 animate-none",
+            "h-[14px] rounded-[3px] bg-secondary/20 animate-none",
             eventWidth,
           )}
         />
-        <div className="mt-1 flex min-w-0 items-center gap-2">
+        <div className="mt-2 flex min-w-0 items-center gap-2">
           <Skeleton
             className={cn(
-              "h-3 shrink-0 rounded-sm bg-accent animate-none",
+              "h-[10px] shrink-0 rounded-sm bg-accent animate-none",
               timestampWidth,
             )}
           />
           <Skeleton
-            className={cn("h-3 rounded-sm bg-accent animate-none", changesWidth)}
+            className={cn("h-[10px] rounded-sm bg-accent/60 animate-none", changesWidth)}
           />
         </div>
       </div>
@@ -279,16 +275,18 @@ export default function EventLogFeed({
         <Motion.Slide direction={directionRef.current}>
           <div key={page}>
             {loading && eventLogs.length === 0 ? (
-              EVENT_LOG_FEED_SKELETON_ROWS.map(
-                ([eventWidth, timestampWidth, changesWidth], index) => (
-                  <EventLogSkeleton
-                    key={index}
-                    eventWidth={eventWidth}
-                    timestampWidth={timestampWidth}
-                    changesWidth={changesWidth}
-                  />
-                ),
-              )
+              <div className="pt-2">
+                {EVENT_LOG_FEED_SKELETON_ROWS.map(
+                  ([eventWidth, timestampWidth, changesWidth], index) => (
+                    <EventLogSkeleton
+                      key={index}
+                      eventWidth={eventWidth}
+                      timestampWidth={timestampWidth}
+                      changesWidth={changesWidth}
+                    />
+                  ),
+                )}
+              </div>
             ) : isError ? (
               <div className="p-4 text-xs text-destructive">
                 {error instanceof Error

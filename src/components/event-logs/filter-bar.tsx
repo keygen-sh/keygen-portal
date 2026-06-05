@@ -82,20 +82,20 @@ export default function EventLogFilterBar({
       filterCount={filterCount}
       onClearAll={() => onChange({})}
       pinned={
-        <Filters.ArrayFilter
-          label="Event"
-          icon={GitCommitHorizontal}
-          options={EVENT_TYPE_OPTIONS}
-          value={filters.events}
-          onChange={(events) => onChange({ ...filters, events })}
+        <Filters.DateRangeFilter
+          label="Date"
+          icon={CalendarRange}
+          value={filters.date}
+          onChange={(date) => onChange({ ...filters, date })}
         />
       }
     >
-      <Filters.DateRangeFilter
-        label="Date"
-        icon={CalendarRange}
-        value={filters.date}
-        onChange={(date) => onChange({ ...filters, date })}
+      <Filters.ArrayFilter
+        label="Event"
+        icon={GitCommitHorizontal}
+        options={EVENT_TYPE_OPTIONS}
+        value={filters.events}
+        onChange={(events) => onChange({ ...filters, events })}
       />
       <Filters.PolymorphicResourceFilter
         label="Resource"

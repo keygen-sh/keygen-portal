@@ -1,3 +1,5 @@
+import { useState } from "react"
+
 import { type LucideIcon } from "lucide-react"
 
 import { useFilterState } from "@/hooks/use-filter-state"
@@ -25,6 +27,7 @@ export default function ArrayFilter({
   onChange,
 }: ArrayFilterProps) {
   const filter = useFilterState(value, [] as string[], onChange)
+  const [open, setOpen] = useState(false)
 
   const selected = options.filter((o) => filter.value.includes(o.value))
   const displayValue =
@@ -44,6 +47,8 @@ export default function ArrayFilter({
       <FilterSegment>in</FilterSegment>
       <FilterPopoverSegment
         className="w-44"
+        open={open}
+        onOpenChange={setOpen}
         popover={(close) => (
           <div className="flex flex-col gap-0.5">
             {options.map((opt) => {

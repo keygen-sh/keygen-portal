@@ -41,6 +41,7 @@ export default function DateFilter({
   onChange,
 }: DateFilterProps) {
   const filter = useFilterState(value, {}, onChange)
+  const [opOpen, setOpOpen] = useState(false)
 
   // we only allow one operation at a time so we'll just grab the first pair
   const [currentOp] = Object.keys(filter.value)
@@ -80,6 +81,8 @@ export default function DateFilter({
       <FilterSegment>{label}</FilterSegment>
       <FilterPopoverSegment
         className="w-28"
+        open={opOpen}
+        onOpenChange={setOpOpen}
         popover={(close) => (
           <FilterOptionList
             options={ops}

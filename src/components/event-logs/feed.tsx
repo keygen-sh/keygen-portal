@@ -87,9 +87,7 @@ function EventLogRow({
             {formatEventLogRelativeTime(created)}
           </span>
           <span className="min-w-0 truncate text-content-normal">
-            {changes === 0
-              ? "No changes"
-              : `${changes} ${changes === 1 ? "change" : "changes"}`}
+            {changes} {changes === 1 ? "change" : "changes"}
           </span>
           <button
             onClick={(e) => {

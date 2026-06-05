@@ -1,9 +1,7 @@
-import { useState, useEffect, useMemo, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Command, CommandList, CommandItem } from "@/components/ui/command"
 import {
   Popover,
   PopoverContent,
@@ -12,29 +10,21 @@ import {
 
 import { type LucideIcon } from "lucide-react"
 
-import {
-  resourceConfigs,
-  getDefaultLabel,
-  MIN_SEARCH_LENGTH,
-} from "@/lib/search"
 import { cn } from "@/lib/utils"
 import { truncator } from "@/lib/truncate"
 
-import { type SearchOperator, type SearchableResource } from "@/types/search"
-
-import { useSearch } from "@/queries/search"
+import { type SearchableResource } from "@/types/search"
 
 import { type FilterState, useFilterState } from "@/hooks/use-filter-state"
 
 import {
   FilterSegment,
-  FilterOptionList,
   FilterSegmentGroup,
-  FilterPopoverSegment,
 } from "./filter-segment"
-import * as Loading from "@/components/loading"
+import { EnumFilterSegment } from "./enum-filter"
+import { ResourceSelectSegment } from "./resource-filter"
 
-const truncate = truncator("end", { maxLength: 8 })
+const truncate = truncator("clip", { maxLength: 8 })
 
 const segmentTriggerClassName = (isDraft: boolean) =>
   cn(
@@ -71,38 +61,49 @@ export default function PolymorphicResourceFilter({
 }: PolymorphicResourceFilterProps) {
   const filter = useFilterState<PolymorphicResourceValue>(
     value,
-    { type: types[0]?.value ?? "", id: "" },
+    { type: "", id: "" },
     onChange,
   )
-  const [open, setOpen] = useState(false)
+  const [typeOpen, setTypeOpen] = useState(false)
+  const [resourceOpen, setResourceOpen] = useState(false)
 
   if (types.length === 0) return null
 
   const current = filter.value
-  const selectedType = types.find((t) => t.value === current.type) ?? types[0]
+  const selectedType = types.find((t) => t.value === current.type)
+  const selectedLabel = selectedType?.label ?? "type"
+  const displayValue = current.id ? truncate(current.id) : null
 
   function handleDraft() {
     filter.handleDraft()
-    setOpen(true)
+    setResourceOpen(false)
+    setTypeOpen(true)
   }
 
   function handleTypeChange(type: string) {
     filter.handleDraftChange({ type, id: "" })
-    setOpen(true)
+    setTypeOpen(false)
+    setResourceOpen(true)
   }
 
-  function commitId(id: string | null) {
-    if (id) {
+  function handleIdChange(id: string | null) {
+    if (id && current.type) {
       filter.handleChange({ type: current.type, id })
-    } else {
-      filter.handleDeactivate()
     }
-    setOpen(false)
+
+    setResourceOpen(false)
   }
 
   function handleActivate() {
     filter.handleActivate()
-    setOpen(false)
+    setTypeOpen(false)
+    setResourceOpen(false)
+  }
+
+  function handleDeactivate() {
+    filter.handleDeactivate()
+    setTypeOpen(false)
+    setResourceOpen(false)
   }
 
   return (
@@ -112,200 +113,50 @@ export default function PolymorphicResourceFilter({
       label={label}
       onDraft={handleDraft}
       onActivate={handleActivate}
-      onDeactivate={filter.handleDeactivate}
-      confirmDisabled={!current.id}
+      onDeactivate={handleDeactivate}
+      confirmDisabled={!current.type || !current.id}
     >
       <FilterSegment>{label}</FilterSegment>
-
-      <FilterPopoverSegment
-        className="w-36"
-        popover={(close) => (
-          <FilterOptionList
-            options={types}
-            value={current.type}
-            onSelect={(type) => {
-              handleTypeChange(type)
-              close()
-            }}
-          />
-        )}
+      <EnumFilterSegment
+        options={types}
+        value={current.type}
+        open={typeOpen}
+        onOpenChange={setTypeOpen}
+        onSelect={handleTypeChange}
       >
-        {selectedType?.value ?? "type"}
-      </FilterPopoverSegment>
+        {selectedLabel}
+      </EnumFilterSegment>
 
-      <FilterSegment>
-        <span className="h-3 w-0 self-center border-l border-dotted border-current opacity-50" />
-      </FilterSegment>
-
-      {selectedType?.resource ? (
-        <ResourceSearchSegment
-          key={selectedType.value}
-          state={filter.state}
-          resource={selectedType.resource}
-          displayValue={current.id ? truncate(current.id) : null}
-          open={open}
-          onOpenChange={setOpen}
-          onSelect={commitId}
-        />
-      ) : (
-        <IdInputSegment
-          key={selectedType?.value ?? "id"}
-          state={filter.state}
-          value={current.id}
-          placeholder={placeholder}
-          open={open}
-          onOpenChange={setOpen}
-          onApply={commitId}
-        />
-      )}
-    </FilterSegmentGroup>
-  )
-}
-
-function ResourceSearchSegment({
-  state,
-  resource,
-  displayValue,
-  open,
-  onOpenChange,
-  onSelect,
-}: {
-  state: FilterState
-  resource: SearchableResource
-  displayValue: string | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onSelect: (id: string | null) => void
-}) {
-  const isDraft = state === "draft"
-  const config = resourceConfigs[resource]
-  const getLabel = config?.getLabel ?? getDefaultLabel
-
-  const [query, setQuery] = useState("")
-  const [appliedQuery, setAppliedQuery] = useState("")
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  const [searchType, searchQuery, searchOp] = useMemo<
-    [
-      SearchableResource | null,
-      Record<string, string>,
-      SearchOperator | undefined,
-    ]
-  >(() => {
-    if (!config || appliedQuery.length < MIN_SEARCH_LENGTH) {
-      return [null, {}, undefined]
-    }
-    const search = config.searchQuery(appliedQuery)
-    return [resource, search.query, search.op]
-  }, [config, resource, appliedQuery])
-
-  const { data: results = [], isFetching } = useSearch(
-    searchType,
-    searchQuery,
-    searchOp,
-  )
-
-  useEffect(() => {
-    if (!open) {
-      setQuery("")
-      setAppliedQuery("")
-      return
-    }
-    const id = requestAnimationFrame(() => inputRef.current?.focus())
-    return () => cancelAnimationFrame(id)
-  }, [open])
-
-  const canApply = query.trim().length >= MIN_SEARCH_LENGTH
-
-  function handleApply() {
-    const trimmed = query.trim()
-    if (trimmed.length < MIN_SEARCH_LENGTH) return
-    setAppliedQuery(trimmed)
-  }
-
-  const showResults =
-    appliedQuery.length >= MIN_SEARCH_LENGTH && query.trim() === appliedQuery
-
-  return (
-    <Popover open={open} onOpenChange={onOpenChange}>
-      <PopoverTrigger asChild>
-        <button type="button" className={segmentTriggerClassName(isDraft)}>
-          {displayValue ?? "select..."}
-        </button>
-      </PopoverTrigger>
-      <PopoverContent
-        align="start"
-        className="w-72 !bg-background p-0"
-        onOpenAutoFocus={(e) => e.preventDefault()}
-        onCloseAutoFocus={(e) => e.preventDefault()}
-      >
-        <Command shouldFilter={false} className="!bg-background">
-          <div className={cn("p-2", showResults && "border-b border-accent")}>
-            <Input
-              ref={inputRef}
-              value={query}
-              placeholder={
-                config?.searchPlaceholder ?? "Search by ID or name..."
-              }
-              fieldSize="sm"
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key !== "Enter") return
-                e.preventDefault()
-                e.stopPropagation()
-                if (canApply) handleApply()
-              }}
+      {current.type ? (
+        <>
+          <FilterSegment>eq</FilterSegment>
+          {selectedType?.resource ? (
+            <ResourceSelectSegment
+              key={selectedType.value}
+              state={filter.state}
+              resource={selectedType.resource}
+              options={[]}
+              currentValue={current.id || null}
+              displayValue={displayValue}
+              open={resourceOpen}
+              onOpenChange={setResourceOpen}
+              onSelect={handleIdChange}
+              onActivate={handleActivate}
             />
-          </div>
-          {showResults && (
-            <CommandList className="p-1">
-              <ScrollArea className={cn(results.length > 5 && "h-48")}>
-                {isFetching ? (
-                  <div className="flex w-full justify-center py-4">
-                    <Loading.Dots className="bg-content-subdued!" />
-                  </div>
-                ) : results.length > 0 ? (
-                  results.map((option) => (
-                    <CommandItem
-                      key={option.id}
-                      value={option.id}
-                      onSelect={() => onSelect(option.id)}
-                      className="cursor-pointer"
-                    >
-                      {getLabel(option)}
-                    </CommandItem>
-                  ))
-                ) : (
-                  <div className="px-2 py-1.5 text-sm text-content-subdued">
-                    No results found
-                  </div>
-                )}
-              </ScrollArea>
-            </CommandList>
+          ) : (
+            <IdInputSegment
+              key={selectedType?.value ?? "id"}
+              state={filter.state}
+              value={current.id}
+              placeholder={placeholder}
+              open={resourceOpen}
+              onOpenChange={setResourceOpen}
+              onApply={handleIdChange}
+            />
           )}
-        </Command>
-        <div className="flex items-center gap-2 border-t p-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="flex-1 rounded-sm text-sm"
-            onClick={() => onOpenChange(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="button"
-            size="sm"
-            className="flex-1 rounded-sm text-sm"
-            onClick={handleApply}
-            disabled={!canApply}
-          >
-            Search
-          </Button>
-        </div>
-      </PopoverContent>
-    </Popover>
+        </>
+      ) : null}
+    </FilterSegmentGroup>
   )
 }
 
@@ -331,9 +182,10 @@ function IdInputSegment({
 
   useEffect(() => {
     if (!open) return
+    setDraft(value)
     const id = requestAnimationFrame(() => inputRef.current?.focus())
     return () => cancelAnimationFrame(id)
-  }, [open])
+  }, [open, value])
 
   function handleApply() {
     const trimmed = draft.trim()
@@ -345,17 +197,12 @@ function IdInputSegment({
     onOpenChange(false)
   }
 
-  function handleOpen() {
-    setDraft(value)
-    onOpenChange(true)
-  }
-
   return (
     <Popover
       open={open}
       onOpenChange={(next) => {
         if (next) {
-          handleOpen()
+          onOpenChange(true)
         } else {
           handleCancel()
         }

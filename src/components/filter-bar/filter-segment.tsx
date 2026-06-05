@@ -147,19 +147,25 @@ export function FilterSegment({ children }: { children?: React.ReactNode }) {
 export function FilterPopoverSegment({
   popover,
   className,
+  open,
+  onOpenChange,
   children,
 }: {
   popover: React.ReactNode | ((close: () => void) => React.ReactNode)
   className?: string
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
   children: React.ReactNode
 }) {
   const state = useContext(FilterStateContext)
   const isDraft = state === "draft"
-  const [open, setOpen] = useState(false)
-  const close = useCallback(() => setOpen(false), [setOpen])
+  const [internalOpen, setInternalOpen] = useState(false)
+  const resolvedOpen = open ?? internalOpen
+  const setResolvedOpen = onOpenChange ?? setInternalOpen
+  const close = useCallback(() => setResolvedOpen(false), [setResolvedOpen])
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={resolvedOpen} onOpenChange={setResolvedOpen}>
       <PopoverTrigger asChild>
         <button
           type="button"

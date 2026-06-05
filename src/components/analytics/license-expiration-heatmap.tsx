@@ -198,11 +198,11 @@ export default function LicenseExpirationHeatmap() {
       isLoading={isLoading}
       action={
         <GoToButton
-          path="/$accountId/app/licenses"
+          path={`/$accountId/app/licenses?expires={"within"%3A"P1Y"}`}
           params={{
             accountId: keygen.config.id,
           }}
-          label="See more"
+          label="See all"
           className="[&_.group:hover_svg]:text-primary [&_button]:text-content-normal [&_button]:hover:text-content-loud [&_svg]:text-content-normal"
         />
       }

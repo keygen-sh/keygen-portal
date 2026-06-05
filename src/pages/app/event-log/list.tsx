@@ -79,11 +79,7 @@ const EVENT_LOG_SKELETON_ROWS = [
   ["w-24", "w-36", "w-20", "w-28", "w-20"],
 ] as const
 
-function StaticSkeleton({
-  className,
-}: {
-  className?: string
-}) {
+function StaticSkeleton({ className }: { className?: string }) {
   return <span className={className} />
 }
 
@@ -116,7 +112,7 @@ function EventLogTableSkeleton() {
                   {columnIndex === 1 ? (
                     <StaticSkeleton
                       className={cn(
-                        "block h-[14px] rounded-[3px] bg-secondary/20 animate-none",
+                        "block h-[14px] animate-none rounded-[3px] bg-secondary/20",
                         width,
                       )}
                     />

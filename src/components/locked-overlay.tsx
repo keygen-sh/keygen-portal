@@ -2,6 +2,14 @@ import { type ReactNode } from "react"
 
 import { Lock } from "lucide-react"
 
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card"
+
 import { cn } from "@/lib/utils"
 
 interface LockedOverlayProps {
@@ -27,21 +35,24 @@ export default function LockedOverlay({
         {children}
       </div>
 
-      <div className="absolute inset-0 flex items-center justify-center bg-background/80 p-6">
-        <div className="flex flex-col items-center gap-3 text-center">
-          <span className="flex size-10 items-center justify-center rounded-full bg-background-3 text-content-muted">
-            {icon ?? <Lock className="size-4" />}
-          </span>
-          <div className="space-y-1">
-            <p className="font-medium text-content-loud">{title}</p>
+      <div className="absolute inset-0 flex items-end justify-center bg-background/80 p-6">
+        <Card className="w-full max-w-sm items-start gap-4 rounded border-none p-4 text-left">
+          <CardHeader className="w-full px-0">
+            <CardTitle className="flex items-start gap-2 text-sm">
+              <span className="mt-0.5 text-content-muted">
+                {icon ?? <Lock className="size-4" />}
+              </span>
+              {title}
+            </CardTitle>
             {description && (
-              <p className="max-w-xs text-xs text-content-muted">
+              <CardDescription className="text-xs">
                 {description}
-              </p>
+              </CardDescription>
             )}
-          </div>
-          {action}
-        </div>
+          </CardHeader>
+
+          {action && <CardFooter className="w-full px-0">{action}</CardFooter>}
+        </Card>
       </div>
     </div>
   )

@@ -13,6 +13,8 @@ import { EVENT_TYPES, type EventLogResourceFilter } from "@/types/event-logs"
 
 import { type EventLogFilters } from "@/queries/event-logs"
 
+import { useEdition } from "@/hooks/use-edition"
+
 import * as Filters from "@/components/filter-bar"
 import { type PolymorphicResourceType } from "@/components/filter-bar/polymorphic-resource-filter"
 
@@ -70,6 +72,8 @@ export default function EventLogFilterBar({
   filters,
   onChange,
 }: EventLogFilterBarProps) {
+  const { isCE } = useEdition()
+
   const filterCount = Object.entries(filters).filter(([key, value]) => {
     if (value == null) return false
     if (key === "date") return !!(filters.date?.start && filters.date?.end)
@@ -79,6 +83,7 @@ export default function EventLogFilterBar({
 
   return (
     <Filters.FilterBar
+      disabled={isCE}
       filterCount={filterCount}
       onClearAll={() => onChange({})}
       pinned={

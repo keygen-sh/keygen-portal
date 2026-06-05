@@ -443,9 +443,8 @@ export default function ArtifactDetails() {
       {!isMobile && (
         <Tabs value={tab} onValueChange={setTab}>
           <Sidebar className="w-64 shrink-0" side="right">
-            <SidebarHeader className="border-b border-accent pt-8 pb-0">
+            <SidebarHeader className="min-h-[70px] justify-end p-0">
               <TabsSwitch
-                className="border-b border-accent pt-8 pb-0"
                 options={[
                   { value: "overview", label: "Overview", icon: Menu },
                   { value: "events", label: "Events", icon: GitFork },

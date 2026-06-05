@@ -655,7 +655,7 @@ export default function PolicyDetails() {
       {!isMobile && (
         <Tabs value={tab} onValueChange={setTab}>
           <Sidebar className="w-64 shrink-0" side="right">
-            <SidebarHeader className="p-0 pt-4">
+            <SidebarHeader className="min-h-[70px] justify-end p-0">
               <TabsSwitch
                 options={[
                   { value: "overview", label: "Overview", icon: Menu },

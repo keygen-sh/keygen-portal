@@ -5,8 +5,6 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 import { ChevronRight, GitCommitHorizontal } from "lucide-react"
 
-import { EventLogMockData } from "@/mock/event-logs"
-
 import { useEdition } from "@/hooks/use-edition"
 import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
 import { useMobile } from "@/hooks/use-mobile"
@@ -152,13 +150,58 @@ function EventLogRow({
   )
 }
 
-function EventLogSkeleton() {
+const EVENT_LOG_FEED_SKELETON_ROWS = [
+  ["w-32", "w-20", "w-16"],
+  ["w-24", "w-16", "w-20"],
+  ["w-16", "w-20", "w-24"],
+  ["w-32", "w-16", "w-16"],
+  ["w-24", "w-24", "w-20"],
+  ["w-32", "w-16", "w-24"],
+  ["w-16", "w-20", "w-16"],
+  ["w-16", "w-16", "w-24"],
+  ["w-24", "w-20", "w-20"],
+  ["w-16", "w-16", "w-16"],
+  ["w-8", "w-24", "w-20"],
+  ["w-16", "w-16", "w-16"],
+  ["w-16", "w-20", "w-16"],
+  ["w-16", "w-16", "w-8"],
+  ["w-24", "w-20", "w-20"],
+  ["w-8", "w-24", "w-20"],
+] as const
+
+function EventLogSkeleton({
+  eventWidth,
+  timestampWidth,
+  changesWidth,
+}: {
+  eventWidth: string
+  timestampWidth: string
+  changesWidth: string
+}) {
   return (
-    <div className="flex gap-3 px-4 py-3">
-      <Skeleton className="size-5 shrink-0 rounded-full" />
-      <div className="min-w-0 flex-1 space-y-2">
-        <Skeleton className="h-5 w-36 rounded-sm" />
-        <Skeleton className="h-3 w-20 rounded-sm" />
+    <div className="flex gap-3 bg-background px-4 text-xs">
+      <div className="flex shrink-0 items-start pt-3">
+        <Skeleton className="size-5 shrink-0 rounded-full bg-background-3 animate-none" />
+      </div>
+
+      <div className="min-w-0 flex-1 py-3">
+        <Skeleton
+          className={cn(
+            "h-5 rounded-[3px] bg-secondary/20 animate-none",
+            eventWidth,
+          )}
+        />
+        <div className="mt-1 flex min-w-0 items-center gap-2">
+          <Skeleton
+            className={cn(
+              "h-3 shrink-0 rounded-sm bg-accent animate-none",
+              timestampWidth,
+            )}
+          />
+          <Skeleton
+            className={cn("h-3 rounded-sm bg-accent animate-none", changesWidth)}
+          />
+        </div>
       </div>
     </div>
   )
@@ -211,18 +254,24 @@ export default function EventLogFeed({
   )
 
   if (!isEE) {
-    const mockRows = EventLogMockData.slice(0, resolvedPageSize)
+    const skeletonRows = compact
+      ? EVENT_LOG_FEED_SKELETON_ROWS.slice(0, 12)
+      : EVENT_LOG_FEED_SKELETON_ROWS
 
     return (
       <EventLogsUpgrade className={cn("min-h-0 flex-1", className)}>
-        {mockRows.map((eventLog, index) => (
-          <EventLogRow
-            key={eventLog.id}
-            eventLog={eventLog}
-            isFirst={index === 0}
-            isLast={index === mockRows.length - 1}
-          />
-        ))}
+        <div className="pt-2">
+          {skeletonRows.map(
+            ([eventWidth, timestampWidth, changesWidth], index) => (
+              <EventLogSkeleton
+                key={index}
+                eventWidth={eventWidth}
+                timestampWidth={timestampWidth}
+                changesWidth={changesWidth}
+              />
+            ),
+          )}
+        </div>
       </EventLogsUpgrade>
     )
   }
@@ -244,9 +293,16 @@ export default function EventLogFeed({
         <Motion.Slide direction={directionRef.current}>
           <div key={page}>
             {loading && eventLogs.length === 0 ? (
-              Array.from({ length: compact ? 4 : 8 }).map((_, index) => (
-                <EventLogSkeleton key={index} />
-              ))
+              EVENT_LOG_FEED_SKELETON_ROWS.map(
+                ([eventWidth, timestampWidth, changesWidth], index) => (
+                  <EventLogSkeleton
+                    key={index}
+                    eventWidth={eventWidth}
+                    timestampWidth={timestampWidth}
+                    changesWidth={changesWidth}
+                  />
+                ),
+              )
             ) : isError ? (
               <div className="p-4 text-xs text-destructive">
                 {error instanceof Error

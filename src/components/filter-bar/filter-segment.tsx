@@ -1,4 +1,4 @@
-import { useState, useCallback, useContext } from "react"
+import { useContext } from "react"
 
 import {
   Popover,
@@ -153,19 +153,15 @@ export function FilterPopoverSegment({
 }: {
   popover: React.ReactNode | ((close: () => void) => React.ReactNode)
   className?: string
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
+  open: boolean
+  onOpenChange: (open: boolean) => void
   children: React.ReactNode
 }) {
   const state = useContext(FilterStateContext)
   const isDraft = state === "draft"
-  const [internalOpen, setInternalOpen] = useState(false)
-  const resolvedOpen = open ?? internalOpen
-  const setResolvedOpen = onOpenChange ?? setInternalOpen
-  const close = useCallback(() => setResolvedOpen(false), [setResolvedOpen])
 
   return (
-    <Popover open={resolvedOpen} onOpenChange={setResolvedOpen}>
+    <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
         <button
           type="button"
@@ -185,7 +181,9 @@ export function FilterPopoverSegment({
         onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
-        {typeof popover === "function" ? popover(close) : popover}
+        {typeof popover === "function"
+          ? popover(() => onOpenChange(false))
+          : popover}
       </PopoverContent>
     </Popover>
   )

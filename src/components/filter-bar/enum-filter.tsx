@@ -69,8 +69,8 @@ export function EnumFilterSegment({
 }: {
   options: ReadonlyArray<{ value: string; label: string }>
   value?: string
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
+  open: boolean
+  onOpenChange: (open: boolean) => void
   onSelect: (value: string) => void
   children: React.ReactNode
 }) {

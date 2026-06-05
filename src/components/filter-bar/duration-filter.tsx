@@ -1,3 +1,5 @@
+import { useState } from "react"
+
 import { type LucideIcon } from "lucide-react"
 
 import { type FilterState, useFilterState } from "@/hooks/use-filter-state"
@@ -35,6 +37,7 @@ export default function DurationFilter({
   onChange,
 }: DurationFilterProps) {
   const filter = useFilterState(value, {}, onChange)
+  const [opOpen, setOpOpen] = useState(false)
 
   // we only allow one operation at a time so we'll just grab the first pair
   const [currentOp] = Object.keys(filter.value)
@@ -65,6 +68,8 @@ export default function DurationFilter({
       <FilterSegment>{label}</FilterSegment>
       <FilterPopoverSegment
         className="w-28"
+        open={opOpen}
+        onOpenChange={setOpOpen}
         popover={(close) => (
           <FilterOptionList
             options={ops}
@@ -101,9 +106,13 @@ export function DurationPickerSegment({
   displayValue: string
   onSelect: (duration: string) => void
 }) {
+  const [open, setOpen] = useState(false)
+
   return (
     <FilterPopoverSegment
       className="w-28"
+      open={open}
+      onOpenChange={setOpen}
       popover={(close) => (
         <FilterOptionList
           options={options}

@@ -28,6 +28,9 @@ export { policies }
 import * as licenses from "./licenses"
 export { licenses }
 
+import * as analytics from "./analytics"
+export { analytics }
+
 import * as tokens from "./tokens"
 export { tokens }
 

@@ -138,9 +138,7 @@ export default function EventLogDetails() {
                     <Attribute.Field
                       variant="text"
                       label="Requestor"
-                      value={
-                        <ResourceLink linkage={requestor} />
-                      }
+                      value={<ResourceLink linkage={requestor} />}
                     />
                     <Attribute.Field
                       variant="text"

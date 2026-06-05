@@ -116,10 +116,7 @@ function EventLogRow({
             className="mt-3 cursor-default space-y-0.5 text-xs"
           >
             <EventLogLinkRow label="Actor">
-              <ResourceLink
-                linkage={whodunnit}
-                buttonClassName="text-xs"
-              />
+              <ResourceLink linkage={whodunnit} buttonClassName="text-xs" />
             </EventLogLinkRow>
             <EventLogLinkRow label="Request">
               <ResourceLink linkage={request} buttonClassName="text-xs" />
@@ -172,19 +169,22 @@ function EventLogSkeleton({
       <div className="min-w-0 flex-1 py-3">
         <Skeleton
           className={cn(
-            "h-[14px] rounded-[3px] bg-secondary/20 animate-none",
+            "h-[14px] animate-none rounded-[3px] bg-secondary/20",
             eventWidth,
           )}
         />
         <div className="mt-2 flex min-w-0 items-center gap-2">
           <Skeleton
             className={cn(
-              "h-[10px] shrink-0 rounded-sm bg-accent animate-none",
+              "h-[10px] shrink-0 animate-none rounded-sm bg-accent",
               timestampWidth,
             )}
           />
           <Skeleton
-            className={cn("h-[10px] rounded-sm bg-accent/60 animate-none", changesWidth)}
+            className={cn(
+              "h-[10px] animate-none rounded-sm bg-accent/60",
+              changesWidth,
+            )}
           />
         </div>
       </div>

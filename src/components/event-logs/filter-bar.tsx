@@ -111,10 +111,10 @@ export default function EventLogFilterBar({
         value={asPolymorphic(filters.whodunnit)}
         onChange={(whodunnit) => onChange({ ...filters, whodunnit })}
       />
-      <Filters.StringFilter
+      <Filters.ResourceFilter
         label="Request"
         icon={Fingerprint}
-        placeholder="Request log ID..."
+        resource="request-logs"
         value={filters.request}
         onChange={(request) => onChange({ ...filters, request })}
       />

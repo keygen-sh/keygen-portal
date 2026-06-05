@@ -205,7 +205,7 @@ export default function LicenseExpirationHeatmap() {
             accountId: keygen.config.id,
           }}
           search={{
-            expires: { within: 'P1Y' },
+            expires: { within: "P1Y" },
           }}
           label="View all"
           className="[&_.group:hover_svg]:text-primary [&_button]:text-content-normal [&_button]:hover:text-content-loud [&_svg]:text-content-normal"
@@ -345,7 +345,7 @@ export default function LicenseExpirationHeatmap() {
             {!isMobile && !expanded && (
               <div className="group flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm">
                 <span className="min-w-0 flex-1 truncate text-content-muted">
-                  + Click to load licenses
+                  Click to load licenses…
                 </span>
               </div>
             )}

@@ -28,6 +28,9 @@ export { policies }
 import * as licenses from "./licenses"
 export { licenses }
 
+import * as analytics from "./analytics"
+export { analytics }
+
 import * as tokens from "./tokens"
 export { tokens }
 
@@ -69,6 +72,9 @@ export { channels }
 
 import * as engines from "./engines"
 export { engines }
+
+import * as eventLogs from "./event-logs"
+export { eventLogs }
 
 import { logout } from "./logout"
 export { logout }

@@ -39,6 +39,7 @@ import {
 
 import { useGetEntitlement, useRemoveEntitlement } from "@/queries/entitlements"
 import { useMobile } from "@/hooks/use-mobile"
+import { useSidebarTab } from "@/hooks/use-sidebar-tab"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
@@ -47,6 +48,7 @@ import { copyToClipboard } from "@/lib/clipboard"
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
 import * as Entitlements from "@/components/entitlements"
+import * as EventLogs from "@/components/event-logs"
 import Can from "@/components/can"
 import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
@@ -71,6 +73,7 @@ export default function EntitlementDetails() {
   const back = useBackNavigate()
 
   const isMobile = useMobile()
+  const [tab, setTab] = useSidebarTab()
   const [open, setOpen] = useState({
     edit: false,
     delete: false,
@@ -242,9 +245,9 @@ export default function EntitlementDetails() {
       </div>
 
       {!isMobile && (
-        <Tabs defaultValue="overview">
+        <Tabs value={tab} onValueChange={setTab}>
           <Sidebar className="w-64 shrink-0" side="right">
-            <SidebarHeader className="p-0 pt-4">
+            <SidebarHeader className="min-h-[70px] justify-end p-0">
               <TabsSwitch
                 options={[
                   { value: "overview", label: "Overview", icon: Menu },
@@ -285,7 +288,15 @@ export default function EntitlementDetails() {
                 )}
               </TabsContent>
 
-              <TabsContent value="events" className="p-4"></TabsContent>
+              <TabsContent
+                value="events"
+                className="flex min-h-0 flex-1 flex-col p-0"
+              >
+                <EventLogs.Feed
+                  compact
+                  filters={{ resource: { type: "entitlement", id } }}
+                />
+              </TabsContent>
             </SidebarContent>
             <SidebarFooter className="p-4"></SidebarFooter>
           </Sidebar>

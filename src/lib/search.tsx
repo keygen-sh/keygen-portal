@@ -287,6 +287,17 @@ export const archesConfig: ResourceConfig<Arch> = {
   }),
 }
 
+export const requestLogsConfig: ResourceConfig<Arch> = {
+  getLabel: getDefaultLabel,
+  placeholder: "Select a request...",
+  searchPlaceholder: "Search by ID...",
+  emptyMessage: <span>No requests found.</span>,
+  searchQuery: (term) => ({
+    query: { id: term },
+    op: "OR",
+  }),
+}
+
 export const resourceConfigs: Record<SearchableResource, ResourceConfig> = {
   licenses: licensesConfig,
   groups: groupsConfig,
@@ -299,4 +310,5 @@ export const resourceConfigs: Record<SearchableResource, ResourceConfig> = {
   releases: releasesConfig,
   platforms: platformsConfig,
   arches: archesConfig,
+  "request-logs": requestLogsConfig,
 }

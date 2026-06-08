@@ -31,7 +31,7 @@ export default function PackageFilterBar({
   }, [])
 
   const { data: products = [] } = useListProducts(
-    { page: 1, pageSize: 10 },
+    { cursor: "", pageSize: 10 },
     { enabled: !!enabled.products },
   )
 

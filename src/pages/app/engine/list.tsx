@@ -1,5 +1,6 @@
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
 import { useEngineTableColumns } from "@/hooks/use-engine-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
 import { Engine } from "@/types/engines"
@@ -13,6 +14,8 @@ import PageFooter from "@/components/page-footer"
 
 export default function EnginesList() {
   const table = useDataTable()
+  const { page, pageSize, setPage } = table
+  const { cursor, goToPage } = useCursors(page, setPage)
   const columns = useEngineTableColumns()
 
   const {
@@ -20,11 +23,11 @@ export default function EnginesList() {
     links,
     isLoading: enginesLoading,
   } = useListEngines({
-    page: table.page,
-    pageSize: table.pageSize,
+    cursor,
+    pageSize,
   })
 
-  const totalPages = links?.meta?.pages ?? 1
+  const nextCursor = cursorFromLink(links?.next)
 
   return (
     <section className="flex h-screen flex-col">
@@ -35,16 +38,16 @@ export default function EnginesList() {
           data={engines}
           table={table}
           columns={columns}
-          pageCount={totalPages}
+          pageCount={-1}
           isLoading={enginesLoading}
         />
       </ScrollArea>
 
       <PageFooter>
         <Pagination
-          page={table.page}
-          pageCount={totalPages}
-          onPageChange={table.setPage}
+          page={page}
+          hasNext={!!nextCursor}
+          onPageChange={(nextPage) => goToPage(nextPage, nextCursor)}
           isLoading={enginesLoading}
         />
       </PageFooter>

@@ -2,6 +2,7 @@ import { useState, useCallback } from "react"
 
 import { Button } from "@/components/ui/button"
 
+import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
 import { useLicenseTableColumns } from "@/hooks/use-license-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
 import { useFilterSearch } from "@/hooks/use-filter-search"
@@ -21,16 +22,18 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 
 export default function LicensesList() {
   const table = useDataTable()
+  const { page, pageSize, setPage } = table
   const columns = useLicenseTableColumns()
 
   const [filters, setFilters] = useFilterSearch<LicenseFilters>()
+  const { cursor, reset, goToPage } = useCursors(page, setPage)
 
   const handleFiltersChange = useCallback(
     (next: LicenseFilters) => {
       setFilters(next)
-      table.setPage(1)
+      reset()
     },
-    [table, setFilters],
+    [setFilters, reset],
   )
 
   const {
@@ -38,12 +41,12 @@ export default function LicensesList() {
     links,
     isLoading: licensesLoading,
   } = useListLicenses({
-    page: table.page,
-    pageSize: table.pageSize,
+    cursor,
+    pageSize,
     filters,
   })
 
-  const totalPages = links?.meta?.pages ?? 1
+  const nextCursor = cursorFromLink(links?.next)
 
   const navigateToResource = useResourceNavigate()
 
@@ -74,7 +77,7 @@ export default function LicensesList() {
           data={licenses}
           table={table}
           columns={columns}
-          pageCount={totalPages}
+          pageCount={-1}
           isLoading={licensesLoading}
           onRowClick={(license) => navigateToResource(license)}
         />
@@ -82,9 +85,9 @@ export default function LicensesList() {
 
       <PageFooter>
         <Pagination
-          page={table.page}
-          pageCount={totalPages}
-          onPageChange={table.setPage}
+          page={page}
+          hasNext={!!nextCursor}
+          onPageChange={(nextPage) => goToPage(nextPage, nextCursor)}
           isLoading={licensesLoading}
         />
       </PageFooter>

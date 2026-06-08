@@ -2,6 +2,7 @@ import { Environment } from "@/types/environments"
 
 import { useListEnvironments } from "@/queries/environments"
 
+import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
 import { useDataTable } from "@/hooks/use-data-table"
 import { useEnvironmentTableColumns } from "@/hooks/use-environment-table-columns"
 
@@ -17,6 +18,8 @@ export default function EnvironmentsList({
   onViewDetails,
 }: EnvironmentsListProps) {
   const table = useDataTable()
+  const { page, setPage } = table
+  const { cursor, goToPage } = useCursors(page, setPage)
   const columns = useEnvironmentTableColumns()
 
   const {
@@ -24,11 +27,11 @@ export default function EnvironmentsList({
     links,
     isLoading,
   } = useListEnvironments({
-    page: table.page,
+    cursor,
     pageSize: 15, // Ignore hook value since we're in a dialog
   })
 
-  const totalPages = links?.meta?.pages ?? 1
+  const nextCursor = cursorFromLink(links?.next)
 
   return (
     <>
@@ -36,16 +39,16 @@ export default function EnvironmentsList({
         data={environments}
         table={table}
         columns={columns}
-        pageCount={totalPages}
+        pageCount={-1}
         isLoading={isLoading}
         onRowClick={onViewDetails}
       />
 
       <PageFooter className="border-none">
         <Pagination
-          page={table.page}
-          pageCount={totalPages}
-          onPageChange={table.setPage}
+          page={page}
+          hasNext={!!nextCursor}
+          onPageChange={(nextPage) => goToPage(nextPage, nextCursor)}
           isLoading={isLoading}
         />
       </PageFooter>

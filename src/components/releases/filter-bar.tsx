@@ -48,15 +48,15 @@ export default function ReleaseFilterBar({
   }, [])
 
   const { data: products = [] } = useListProducts(
-    { page: 1, pageSize: 10 },
+    { cursor: "", pageSize: 10 },
     { enabled: !!enabled.products },
   )
   const { data: packages = [] } = useListPackages(
-    { page: 1, pageSize: 10 },
+    { cursor: "", pageSize: 10 },
     { enabled: !!enabled.packages },
   )
   const { data: entitlements = [] } = useListEntitlements(
-    { page: 1, pageSize: 10 },
+    { cursor: "", pageSize: 10 },
     { enabled: !!enabled.entitlements },
   )
 

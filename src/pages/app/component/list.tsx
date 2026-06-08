@@ -3,6 +3,7 @@ import { useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
 import { useComponentTableColumns } from "@/hooks/use-component-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
 import { useFilterSearch } from "@/hooks/use-filter-search"
@@ -21,16 +22,18 @@ import PageFooter from "@/components/page-footer"
 
 export default function ComponentsList() {
   const table = useDataTable()
+  const { page, pageSize, setPage } = table
   const columns = useComponentTableColumns()
 
   const [filters, setFilters] = useFilterSearch<ComponentFilters>()
+  const { cursor, reset, goToPage } = useCursors(page, setPage)
 
   const handleFiltersChange = useCallback(
     (next: ComponentFilters) => {
       setFilters(next)
-      table.setPage(1)
+      reset()
     },
-    [table, setFilters],
+    [setFilters, reset],
   )
 
   const {
@@ -38,12 +41,12 @@ export default function ComponentsList() {
     links,
     isLoading: componentsLoading,
   } = useListComponents({
-    page: table.page,
-    pageSize: table.pageSize,
+    cursor,
+    pageSize,
     filters,
   })
 
-  const totalPages = links?.meta?.pages ?? 1
+  const nextCursor = cursorFromLink(links?.next)
 
   const navigateToResource = useResourceNavigate()
 
@@ -77,7 +80,7 @@ export default function ComponentsList() {
           data={components}
           table={table}
           columns={columns}
-          pageCount={totalPages}
+          pageCount={-1}
           isLoading={componentsLoading}
           onRowClick={(component) => navigateToResource(component)}
         />
@@ -85,9 +88,9 @@ export default function ComponentsList() {
 
       <PageFooter>
         <Pagination
-          page={table.page}
-          pageCount={totalPages}
-          onPageChange={table.setPage}
+          page={page}
+          hasNext={!!nextCursor}
+          onPageChange={(nextPage) => goToPage(nextPage, nextCursor)}
           isLoading={componentsLoading}
         />
       </PageFooter>

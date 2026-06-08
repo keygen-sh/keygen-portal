@@ -10,6 +10,7 @@ import { useGetAccount, useGetAccountPlan } from "@/queries/accounts"
 
 import { useMobile } from "@/hooks/use-mobile"
 import { useDataTable } from "@/hooks/use-data-table"
+import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
 import { useFilterSearch } from "@/hooks/use-filter-search"
 import { usePermissions } from "@/hooks/use-permissions"
 import { useTeamTableColumns } from "@/hooks/use-team-table-columns"
@@ -28,17 +29,19 @@ export default function TeamPage() {
   const isMobile = useMobile()
 
   const table = useDataTable()
+  const { page, pageSize, setPage } = table
   const columns = useTeamTableColumns()
   const { can } = usePermissions()
 
   const [filters, setFilters] = useFilterSearch<UserFilters>()
+  const { cursor, reset, goToPage } = useCursors(page, setPage)
 
   const handleFiltersChange = useCallback(
     (next: UserFilters) => {
       setFilters(next)
-      table.setPage(1)
+      reset()
     },
-    [table, setFilters],
+    [setFilters, reset],
   )
 
   // NB(cazden) API requires 'admin.read' whenever an admin appears in the response,
@@ -56,8 +59,8 @@ export default function TeamPage() {
     links,
     isLoading: usersLoading,
   } = useListUsers({
-    page: table.page,
-    pageSize: table.pageSize,
+    cursor,
+    pageSize,
     filters: {
       ...filters,
       roles: requestRoles,
@@ -69,8 +72,7 @@ export default function TeamPage() {
     account?.relationships.plan?.data?.id,
   )
 
-  const totalPages = links?.meta?.pages ?? 1
-  const totalUsers = links?.meta?.count
+  const nextCursor = cursorFromLink(links?.next)
 
   const maxAdmins = plan?.attributes?.maxAdmins
   const planName = plan?.attributes?.name
@@ -85,27 +87,17 @@ export default function TeamPage() {
         <div className="flex w-full items-center gap-3">
           <h1 className="font-semibold text-content-muted">Team</h1>
           <Separator orientation="vertical" className="mt-0.5 ml-1 min-h-4" />
-          {totalUsers != null && !isMobile && (
+          {plan != null && !isMobile && (
             <p className="mt-0.25 text-sm text-content-subdued">
-              You currently have
+              Invite up to
               <Badge className="mx-1.5 min-h-4 min-w-4 text-xs text-content-muted">
-                {totalUsers}
+                {maxAdmins ?? "Unlimited"}
               </Badge>
-              {totalUsers === 1 ? "teammate" : "teammates"}.
-              {plan && (
-                <>
-                  {" "}
-                  Invite up to
-                  <Badge className="mx-1.5 min-h-4 min-w-4 text-xs text-content-muted">
-                    {maxAdmins ?? "Unlimited"}
-                  </Badge>
-                  while on the
-                  <Badge className="mx-1.5 min-h-4 min-w-4 text-xs text-content-muted">
-                    {planName}
-                  </Badge>
-                  tier.
-                </>
-              )}
+              while on the
+              <Badge className="mx-1.5 min-h-4 min-w-4 text-xs text-content-muted">
+                {planName}
+              </Badge>
+              tier.
             </p>
           )}
         </div>
@@ -117,29 +109,19 @@ export default function TeamPage() {
       </PageHeader>
 
       {/* Mobile */}
-      {totalUsers != null && isMobile && (
+      {plan != null && isMobile && (
         <div className="flex min-w-0 flex-col border-b border-accent p-2 text-sm text-content-subdued">
           <span>
-            You currently have
+            Invite up to
             <Badge className="mx-1.5 min-h-4 min-w-4 text-xs text-content-muted">
-              {totalUsers}
+              {maxAdmins ?? "Unlimited"}
             </Badge>
-            {totalUsers === 1 ? "teammate" : "teammates"}.
+            while on the
+            <Badge className="mx-1.5 min-h-4 min-w-4 text-xs text-content-muted">
+              {planName}
+            </Badge>
+            tier.
           </span>
-          {plan && (
-            <span>
-              {" "}
-              Invite up to
-              <Badge className="mx-1.5 min-h-4 min-w-4 text-xs text-content-muted">
-                {maxAdmins ?? "Unlimited"}
-              </Badge>
-              while on the
-              <Badge className="mx-1.5 min-h-4 min-w-4 text-xs text-content-muted">
-                {planName}
-              </Badge>
-              tier.
-            </span>
-          )}
         </div>
       )}
 
@@ -152,7 +134,7 @@ export default function TeamPage() {
           data={users}
           table={table}
           columns={columns}
-          pageCount={totalPages}
+          pageCount={-1}
           isLoading={usersLoading}
           onRowClick={(user) => navigateToResource(user)}
         />
@@ -160,9 +142,9 @@ export default function TeamPage() {
 
       <PageFooter>
         <Pagination
-          page={table.page}
-          pageCount={totalPages}
-          onPageChange={table.setPage}
+          page={page}
+          hasNext={!!nextCursor}
+          onPageChange={(nextPage) => goToPage(nextPage, nextCursor)}
           isLoading={usersLoading}
         />
       </PageFooter>

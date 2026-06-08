@@ -3,6 +3,7 @@ import { useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
 import { useUserTableColumns } from "@/hooks/use-user-table-columns"
 import { useFilterSearch } from "@/hooks/use-filter-search"
 import { useDataTable } from "@/hooks/use-data-table"
@@ -21,18 +22,20 @@ import PageFooter from "@/components/page-footer"
 
 export default function UsersList() {
   const table = useDataTable()
+  const { page, pageSize, setPage } = table
   const columns = useUserTableColumns()
 
   const [filters, setFilters] = useFilterSearch<UserFilters>({
     roles: [UserRole.User],
   })
+  const { cursor, reset, goToPage } = useCursors(page, setPage)
 
   const handleFiltersChange = useCallback(
     (next: UserFilters) => {
       setFilters(next)
-      table.setPage(1)
+      reset()
     },
-    [table, setFilters],
+    [setFilters, reset],
   )
 
   const {
@@ -40,12 +43,12 @@ export default function UsersList() {
     links,
     isLoading: usersLoading,
   } = useListUsers({
-    page: table.page,
-    pageSize: table.pageSize,
+    cursor,
+    pageSize,
     filters,
   })
 
-  const totalPages = links?.meta?.pages ?? 1
+  const nextCursor = cursorFromLink(links?.next)
 
   const navigateToResource = useResourceNavigate()
 
@@ -76,7 +79,7 @@ export default function UsersList() {
           data={users}
           table={table}
           columns={columns}
-          pageCount={totalPages}
+          pageCount={-1}
           isLoading={usersLoading}
           onRowClick={(user) => navigateToResource(user)}
         />
@@ -84,9 +87,9 @@ export default function UsersList() {
 
       <PageFooter>
         <Pagination
-          page={table.page}
-          pageCount={totalPages}
-          onPageChange={table.setPage}
+          page={page}
+          hasNext={!!nextCursor}
+          onPageChange={(nextPage) => goToPage(nextPage, nextCursor)}
           isLoading={usersLoading}
         />
       </PageFooter>

@@ -1,5 +1,6 @@
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
 import { useArchTableColumns } from "@/hooks/use-arch-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
 import { Arch } from "@/types/arches"
@@ -13,6 +14,8 @@ import PageFooter from "@/components/page-footer"
 
 export default function ArchesList() {
   const table = useDataTable()
+  const { page, pageSize, setPage } = table
+  const { cursor, goToPage } = useCursors(page, setPage)
   const columns = useArchTableColumns()
 
   const {
@@ -20,11 +23,11 @@ export default function ArchesList() {
     links,
     isLoading: archesLoading,
   } = useListArches({
-    page: table.page,
-    pageSize: table.pageSize,
+    cursor,
+    pageSize,
   })
 
-  const totalPages = links?.meta?.pages ?? 1
+  const nextCursor = cursorFromLink(links?.next)
 
   return (
     <section className="flex h-screen flex-col">
@@ -35,16 +38,16 @@ export default function ArchesList() {
           data={arches}
           table={table}
           columns={columns}
-          pageCount={totalPages}
+          pageCount={-1}
           isLoading={archesLoading}
         />
       </ScrollArea>
 
       <PageFooter>
         <Pagination
-          page={table.page}
-          pageCount={totalPages}
-          onPageChange={table.setPage}
+          page={page}
+          hasNext={!!nextCursor}
+          onPageChange={(nextPage) => goToPage(nextPage, nextCursor)}
           isLoading={archesLoading}
         />
       </PageFooter>

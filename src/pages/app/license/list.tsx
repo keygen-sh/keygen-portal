@@ -77,7 +77,6 @@ export default function LicensesList() {
           data={licenses}
           table={table}
           columns={columns}
-          pageCount={-1}
           isLoading={licensesLoading}
           onRowClick={(license) => navigateToResource(license)}
         />

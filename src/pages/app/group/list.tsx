@@ -60,7 +60,6 @@ export default function GroupsList() {
           data={groups}
           table={table}
           columns={columns}
-          pageCount={-1}
           isLoading={groupsLoading}
           onRowClick={(group) => navigateToResource(group)}
         />

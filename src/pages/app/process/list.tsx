@@ -77,7 +77,6 @@ export default function ProcessesList() {
           data={processes}
           table={table}
           columns={columns}
-          pageCount={-1}
           isLoading={processesLoading}
           onRowClick={(process) => navigateToResource(process)}
         />

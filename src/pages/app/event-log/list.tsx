@@ -207,7 +207,6 @@ export default function EventLogList() {
         data={eventLogs}
         table={table}
         columns={columns}
-        pageCount={-1}
         isLoading={loading}
         onRowClick={(eventLog) =>
           navigate({

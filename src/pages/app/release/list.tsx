@@ -76,7 +76,6 @@ export default function ReleasesList() {
           data={releases}
           table={table}
           columns={columns}
-          pageCount={-1}
           isLoading={releasesLoading}
           onRowClick={(release) => navigateToResource(release)}
         />

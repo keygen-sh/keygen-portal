@@ -80,7 +80,6 @@ export default function ComponentsList() {
           data={components}
           table={table}
           columns={columns}
-          pageCount={-1}
           isLoading={componentsLoading}
           onRowClick={(component) => navigateToResource(component)}
         />

@@ -134,7 +134,6 @@ export default function TeamPage() {
           data={users}
           table={table}
           columns={columns}
-          pageCount={-1}
           isLoading={usersLoading}
           onRowClick={(user) => navigateToResource(user)}
         />

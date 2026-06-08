@@ -38,7 +38,6 @@ export default function ChannelsList() {
           data={channels}
           table={table}
           columns={columns}
-          pageCount={-1}
           isLoading={channelsLoading}
         />
       </ScrollArea>

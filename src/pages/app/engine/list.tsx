@@ -38,7 +38,6 @@ export default function EnginesList() {
           data={engines}
           table={table}
           columns={columns}
-          pageCount={-1}
           isLoading={enginesLoading}
         />
       </ScrollArea>

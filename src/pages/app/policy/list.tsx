@@ -77,7 +77,6 @@ export default function PoliciesList() {
           data={policies}
           table={table}
           columns={columns}
-          pageCount={-1}
           isLoading={policiesLoading}
           onRowClick={(policy) => navigateToResource(policy)}
         />

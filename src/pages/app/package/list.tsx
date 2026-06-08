@@ -76,7 +76,6 @@ export default function PackagesList() {
           data={packages}
           table={table}
           columns={columns}
-          pageCount={-1}
           isLoading={packagesLoading}
           onRowClick={(pkg) => navigateToResource(pkg)}
         />

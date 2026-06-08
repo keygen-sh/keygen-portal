@@ -77,7 +77,6 @@ export default function MachinesList() {
           data={machines}
           table={table}
           columns={columns}
-          pageCount={-1}
           isLoading={machinesLoading}
           onRowClick={(machine) => navigateToResource(machine)}
         />

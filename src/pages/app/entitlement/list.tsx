@@ -60,7 +60,6 @@ export default function EntitlementsList() {
           data={entitlements}
           table={table}
           columns={columns}
-          pageCount={-1}
           isLoading={entitlementsLoading}
           onRowClick={(entitlement) => navigateToResource(entitlement)}
         />

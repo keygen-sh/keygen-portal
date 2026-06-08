@@ -76,7 +76,6 @@ export default function ArtifactsList() {
           data={artifacts}
           table={table}
           columns={columns}
-          pageCount={-1}
           isLoading={artifactsLoading}
           onRowClick={(artifact) => navigateToResource(artifact)}
         />

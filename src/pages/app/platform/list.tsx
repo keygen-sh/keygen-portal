@@ -38,7 +38,6 @@ export default function PlatformsList() {
           data={platforms}
           table={table}
           columns={columns}
-          pageCount={-1}
           isLoading={platformsLoading}
         />
       </ScrollArea>

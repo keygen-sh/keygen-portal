@@ -46,7 +46,6 @@ type DataTableProps<T extends TableResource> = {
   columns: TableColumns<T>
   onRowClick?: (row: T) => void
   staticColumns?: number
-  pageCount: number
   isLoading?: boolean
   className?: string
 }
@@ -57,7 +56,6 @@ export default function DataTable<T extends TableResource>({
   columns,
   onRowClick,
   staticColumns = 1,
-  pageCount,
   isLoading = false,
   className,
 }: DataTableProps<T>): React.ReactElement {
@@ -97,7 +95,7 @@ export default function DataTable<T extends TableResource>({
       pagination: { pageIndex: table.page - 1, pageSize: table.pageSize },
     },
     manualPagination: true,
-    pageCount,
+    pageCount: -1,
     onPaginationChange: (updater) => {
       const current = {
         pageIndex: table.page - 1,

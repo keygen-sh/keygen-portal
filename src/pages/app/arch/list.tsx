@@ -38,7 +38,6 @@ export default function ArchesList() {
           data={arches}
           table={table}
           columns={columns}
-          pageCount={-1}
           isLoading={archesLoading}
         />
       </ScrollArea>

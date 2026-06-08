@@ -39,7 +39,6 @@ export default function EnvironmentsList({
         data={environments}
         table={table}
         columns={columns}
-        pageCount={-1}
         isLoading={isLoading}
         onRowClick={onViewDetails}
       />

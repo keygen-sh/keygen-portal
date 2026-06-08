@@ -60,7 +60,6 @@ export default function ProductsList() {
           data={products}
           table={table}
           columns={columns}
-          pageCount={-1}
           isLoading={productsLoading}
           onRowClick={(product) => navigateToResource(product)}
         />

@@ -76,6 +76,9 @@ export { engines }
 import * as eventLogs from "./event-logs"
 export { eventLogs }
 
+import * as requestLogs from "./request-logs"
+export { requestLogs }
+
 import { logout } from "./logout"
 export { logout }
 

@@ -233,6 +233,12 @@ const VIEWS: View[] = [
         params: { accountId: keygen.config.id },
         requires: ["event-log.read"],
       },
+      {
+        to: "/$accountId/app/request-logs",
+        label: "Request Logs",
+        params: { accountId: keygen.config.id },
+        requires: ["request-log.read"],
+      },
     ]),
   },
   {

@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils"
 import * as keygen from "@/keygen"
 import * as Motion from "@/components/motion"
 import * as Skeletons from "@/components/skeletons"
+import Can from "@/components/can"
 import Pagination from "@/components/pagination"
 import GoToButton from "@/components/go-to-button"
 import ResourceLink from "@/components/resource-link"
@@ -49,10 +50,12 @@ function EventLogLinkRow({
 function EventLogRow({
   eventLog,
   isFirst,
+  requestLogsResource,
 }: {
   eventLog: EventLog
   isFirst: boolean
   isLast: boolean
+  requestLogsResource?: { type: string; id: string }
 }) {
   const [open, setOpen] = useState(false)
   const toggle = () => setOpen((current) => !current)
@@ -111,9 +114,26 @@ function EventLogRow({
             <EventLogLinkRow label="Actor">
               <ResourceLink linkage={whodunnit} buttonClassName="text-xs" />
             </EventLogLinkRow>
-            <EventLogLinkRow label="Request">
-              <ResourceLink linkage={request} buttonClassName="text-xs" />
-            </EventLogLinkRow>
+            <Can
+              permission="request-log.read"
+              fallback={
+                <ResourceLink linkage={request} buttonClassName="text-xs" />
+              }
+            >
+              <EventLogLinkRow label="Request">
+                <GoToButton
+                  path="/$accountId/app/request-logs"
+                  params={{ accountId: keygen.config.id }}
+                  search={
+                    requestLogsResource
+                      ? { resource: requestLogsResource }
+                      : undefined
+                  }
+                  label="View request logs"
+                  buttonClassName="text-xs"
+                />
+              </EventLogLinkRow>
+            </Can>
             <EventLogLinkRow label="Details">
               <GoToButton
                 path="/$accountId/app/event-logs/$id"
@@ -194,6 +214,13 @@ export default function EventLogFeed({
   const nextCursor = cursorFromLink(links?.next)
   const loading = isLoading || isFetching
 
+  // Scope the per-event "View request logs" link to the resource this feed is
+  // filtered by, so it acts as a pseudo request-log detail view for now.
+  const requestLogsResource =
+    filters?.resource && typeof filters.resource === "object"
+      ? filters.resource
+      : undefined
+
   return (
     <div className={cn("flex min-h-0 flex-1 flex-col", className)}>
       <div className="min-h-0 flex-1 overflow-y-auto">
@@ -214,6 +241,7 @@ export default function EventLogFeed({
                   eventLog={eventLog}
                   isFirst={index === 0}
                   isLast={index === eventLogs.length - 1}
+                  requestLogsResource={requestLogsResource}
                 />
               ))
             ) : (

@@ -4,12 +4,12 @@ import { Badge } from "@/components/ui/badge"
 
 import { type EventLog } from "@/types/event-logs"
 
+import { eventLogBadgeVariant } from "@/lib/event-logs"
 import {
-  eventLogBadgeVariant,
-  formatEventLogRelativeTime,
-  formatEventLogUtcTimestamp,
-  formatEventLogLocalTimestamp,
-} from "@/lib/event-logs"
+  formatRelativeTime,
+  formatUtcTimestamp,
+  formatLocalTimestamp,
+} from "@/lib/timestamps"
 import { createTableColumnHelper } from "@/lib/tables"
 
 import {
@@ -22,9 +22,9 @@ const column = createTableColumnHelper<EventLog>()
 
 function timestampPreview(created: string): EventLogPreview {
   return {
-    relative: formatEventLogRelativeTime(created),
-    utc: formatEventLogUtcTimestamp(created),
-    local: formatEventLogLocalTimestamp(created),
+    relative: formatRelativeTime(created),
+    utc: formatUtcTimestamp(created),
+    local: formatLocalTimestamp(created),
   }
 }
 

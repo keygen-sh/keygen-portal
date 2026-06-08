@@ -31,7 +31,7 @@ export function useGetUser(userId: string) {
 export type { UserFilters }
 
 export function useListUsers(
-  params?: { page: number; pageSize: number; filters?: UserFilters },
+  params?: { cursor?: string | null; pageSize?: number; filters?: UserFilters },
   options?: { enabled?: boolean },
 ) {
   const { code } = useEnvironment()
@@ -42,7 +42,7 @@ export function useListUsers(
       const response = await keygen.users.list(
         params
           ? {
-              pageNumber: params.page,
+              pageCursor: params.cursor,
               pageSize: params.pageSize,
               filters: params.filters,
             }

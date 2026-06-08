@@ -25,7 +25,7 @@ export function useGetPlatform(platformId: string) {
 }
 
 export function useListPlatforms(
-  params?: { page: number; pageSize: number },
+  params?: { cursor?: string | null; pageSize?: number },
   options?: { enabled?: boolean },
 ) {
   const { code } = useEnvironment()
@@ -34,7 +34,7 @@ export function useListPlatforms(
     queryKey: ["platforms", { environment: code, ...params }],
     queryFn: async () => {
       const response = await keygen.platforms.list(
-        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+        params ? { pageCursor: params.cursor, pageSize: params.pageSize } : {},
       )
 
       if (response.errors) {

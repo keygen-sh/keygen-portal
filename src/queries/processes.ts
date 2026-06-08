@@ -31,8 +31,8 @@ export function useGetProcess(processId: string) {
 }
 
 export function useListProcesses(params?: {
-  page: number
-  pageSize: number
+  cursor?: string | null
+  pageSize?: number
   filters?: ProcessFilters
 }) {
   const { code } = useEnvironment()
@@ -43,7 +43,7 @@ export function useListProcesses(params?: {
       const response = await keygen.processes.list(
         params
           ? {
-              pageNumber: params.page,
+              pageCursor: params.cursor,
               pageSize: params.pageSize,
               filters: params.filters,
             }

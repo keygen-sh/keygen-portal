@@ -31,7 +31,11 @@ export function useGetPolicy(policyId: string) {
 }
 
 export function useListPolicies(
-  params?: { page: number; pageSize: number; filters?: PolicyFilters },
+  params?: {
+    cursor?: string | null
+    pageSize?: number
+    filters?: PolicyFilters
+  },
   options?: { enabled?: boolean },
 ) {
   const { code } = useEnvironment()
@@ -42,7 +46,7 @@ export function useListPolicies(
       const response = await keygen.policies.list(
         params
           ? {
-              pageNumber: params.page,
+              pageCursor: params.cursor,
               pageSize: params.pageSize,
               filters: params.filters,
             }

@@ -24,14 +24,17 @@ export function useGetEngine(engineId: string) {
   })
 }
 
-export function useListEngines(params?: { page: number; pageSize: number }) {
+export function useListEngines(params?: {
+  cursor?: string | null
+  pageSize?: number
+}) {
   const { code } = useEnvironment()
 
   const query = useQuery({
     queryKey: ["engines", { environment: code, ...params }],
     queryFn: async () => {
       const response = await keygen.engines.list(
-        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+        params ? { pageCursor: params.cursor, pageSize: params.pageSize } : {},
       )
 
       if (response.errors) {

@@ -33,8 +33,8 @@ export function useGetMachine(machineId: string) {
 
 export function useListMachines(
   params?: {
-    page: number
-    pageSize: number
+    cursor?: string | null
+    pageSize?: number
     filters?: MachineFilters
   },
   options?: { enabled?: boolean },
@@ -47,7 +47,7 @@ export function useListMachines(
       const response = await keygen.machines.list(
         params
           ? {
-              pageNumber: params.page,
+              pageCursor: params.cursor,
               pageSize: params.pageSize,
               filters: params.filters,
             }

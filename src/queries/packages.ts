@@ -30,7 +30,11 @@ export function useGetPackage(packageId: string) {
 }
 
 export function useListPackages(
-  params?: { page: number; pageSize: number; filters?: PackageFilters },
+  params?: {
+    cursor?: string | null
+    pageSize?: number
+    filters?: PackageFilters
+  },
   options?: { enabled?: boolean },
 ) {
   const { code } = useEnvironment()
@@ -41,7 +45,7 @@ export function useListPackages(
       const response = await keygen.packages.list(
         params
           ? {
-              pageNumber: params.page,
+              pageCursor: params.cursor,
               pageSize: params.pageSize,
               filters: params.filters,
             }

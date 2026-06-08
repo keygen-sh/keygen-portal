@@ -31,7 +31,7 @@ export function useGetGroup(groupId: string) {
 }
 
 export function useListGroups(
-  params?: { page: number; pageSize: number },
+  params?: { cursor?: string | null; pageSize?: number },
   options?: { enabled?: boolean },
 ) {
   const { code } = useEnvironment()
@@ -40,7 +40,7 @@ export function useListGroups(
     queryKey: ["groups", { environment: code, ...params }],
     queryFn: async () => {
       const response = await keygen.groups.list(
-        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+        params ? { pageCursor: params.cursor, pageSize: params.pageSize } : {},
       )
 
       if (response.errors) {

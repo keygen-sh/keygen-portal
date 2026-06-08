@@ -30,8 +30,8 @@ export function useGetEntitlement(entitlementId: string) {
 
 export function useListEntitlements(
   params?: {
-    page: number
-    pageSize: number
+    cursor?: string | null
+    pageSize?: number
   },
   options?: { enabled?: boolean },
 ) {
@@ -41,7 +41,7 @@ export function useListEntitlements(
     queryKey: ["entitlements", { environment: code, ...params }],
     queryFn: async () => {
       const response = await keygen.entitlements.list(
-        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+        params ? { pageCursor: params.cursor, pageSize: params.pageSize } : {},
       )
 
       if (response.errors) {

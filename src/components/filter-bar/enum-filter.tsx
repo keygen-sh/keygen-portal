@@ -16,6 +16,11 @@ export interface EnumFilterProps {
   options: ReadonlyArray<{ value: string; label: string }>
   value?: string
   onChange: (value: string | undefined) => void
+  popoverClassName?: string
+  renderOption?: (
+    option: { value: string; label: string },
+    query: string,
+  ) => React.ReactNode
 }
 
 export default function EnumFilter({
@@ -24,6 +29,8 @@ export default function EnumFilter({
   options,
   value,
   onChange,
+  popoverClassName,
+  renderOption,
 }: EnumFilterProps) {
   const filter = useFilterState(value, options[0]?.value ?? "", onChange)
   const [open, setOpen] = useState(false)
@@ -52,6 +59,8 @@ export default function EnumFilter({
         open={open}
         onOpenChange={setOpen}
         onSelect={filter.handleChange}
+        popoverClassName={popoverClassName}
+        renderOption={renderOption}
       >
         {selected.label}
       </EnumFilterSegment>
@@ -66,6 +75,8 @@ export function EnumFilterSegment({
   onOpenChange,
   onSelect,
   children,
+  popoverClassName = "w-36",
+  renderOption,
 }: {
   options: ReadonlyArray<{ value: string; label: string }>
   value?: string
@@ -73,16 +84,22 @@ export function EnumFilterSegment({
   onOpenChange: (open: boolean) => void
   onSelect: (value: string) => void
   children: React.ReactNode
+  popoverClassName?: string
+  renderOption?: (
+    option: { value: string; label: string },
+    query: string,
+  ) => React.ReactNode
 }) {
   return (
     <FilterPopoverSegment
-      className="w-36"
+      className={popoverClassName}
       open={open}
       onOpenChange={onOpenChange}
       popover={(close) => (
         <FilterOptionList
           options={options}
           value={value}
+          renderOption={renderOption}
           onSelect={(v) => {
             onSelect(v)
             close()

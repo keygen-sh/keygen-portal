@@ -197,10 +197,15 @@ export function FilterOptionList({
   options,
   value,
   onSelect,
+  renderOption,
 }: {
   options: ReadonlyArray<{ value: string; label: string }>
   value?: string
   onSelect: (value: string) => void
+  renderOption?: (
+    option: { value: string; label: string },
+    query: string,
+  ) => React.ReactNode
 }) {
   const [query, setQuery] = useState("")
   const [activeIndex, setActiveIndex] = useState(0)
@@ -306,7 +311,9 @@ export function FilterOptionList({
                 onMouseEnter={() => setActiveIndex(index)}
                 onClick={() => onSelect(opt.value)}
               >
-                {renderHighlightedText(opt.label, query.trim())}
+                {renderOption
+                  ? renderOption(opt, query.trim())
+                  : renderHighlightedText(opt.label, query.trim())}
               </button>
             ))
           ) : (

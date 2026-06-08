@@ -3,6 +3,7 @@ import { useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
 import { useReleaseTableColumns } from "@/hooks/use-release-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
 import { useFilterSearch } from "@/hooks/use-filter-search"
@@ -21,16 +22,18 @@ import PageFooter from "@/components/page-footer"
 
 export default function ReleasesList() {
   const table = useDataTable()
+  const { page, pageSize, setPage } = table
   const columns = useReleaseTableColumns()
 
   const [filters, setFilters] = useFilterSearch<ReleaseFilters>()
+  const { cursor, reset, goToPage } = useCursors(page, setPage)
 
   const handleFiltersChange = useCallback(
     (next: ReleaseFilters) => {
       setFilters(next)
-      table.setPage(1)
+      reset()
     },
-    [table, setFilters],
+    [setFilters, reset],
   )
 
   const {
@@ -38,12 +41,12 @@ export default function ReleasesList() {
     links,
     isLoading: releasesLoading,
   } = useListReleases({
-    page: table.page,
-    pageSize: table.pageSize,
+    cursor,
+    pageSize,
     filters,
   })
 
-  const totalPages = links?.meta?.pages ?? 1
+  const nextCursor = cursorFromLink(links?.next)
 
   const navigateToResource = useResourceNavigate()
 
@@ -73,7 +76,7 @@ export default function ReleasesList() {
           data={releases}
           table={table}
           columns={columns}
-          pageCount={totalPages}
+          pageCount={-1}
           isLoading={releasesLoading}
           onRowClick={(release) => navigateToResource(release)}
         />
@@ -81,9 +84,9 @@ export default function ReleasesList() {
 
       <PageFooter>
         <Pagination
-          page={table.page}
-          pageCount={totalPages}
-          onPageChange={table.setPage}
+          page={page}
+          hasNext={!!nextCursor}
+          onPageChange={(nextPage) => goToPage(nextPage, nextCursor)}
           isLoading={releasesLoading}
         />
       </PageFooter>

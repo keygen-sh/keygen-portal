@@ -107,19 +107,19 @@ export default function LicenseFilterBar({
   }, [])
 
   const { data: products = [] } = useListProducts(
-    { page: 1, pageSize: 10 },
+    { cursor: "", pageSize: 10 },
     { enabled: !!enabled.products },
   )
   const { data: policies = [] } = useListPolicies(
-    { page: 1, pageSize: 10 },
+    { cursor: "", pageSize: 10 },
     { enabled: !!enabled.policies },
   )
   const { data: users = [] } = useListUsers(
-    { page: 1, pageSize: 10 },
+    { cursor: "", pageSize: 10 },
     { enabled: !!enabled.users },
   )
   const { data: groups = [] } = useListGroups(
-    { page: 1, pageSize: 10 },
+    { cursor: "", pageSize: 10 },
     { enabled: !!enabled.groups },
   )
 

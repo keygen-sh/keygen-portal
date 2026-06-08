@@ -39,19 +39,19 @@ export default function ArtifactFilterBar({
   }, [])
 
   const { data: products = [] } = useListProducts(
-    { page: 1, pageSize: 10 },
+    { cursor: "", pageSize: 10 },
     { enabled: !!enabled.products },
   )
   const { data: releases = [] } = useListReleases(
-    { page: 1, pageSize: 10 },
+    { cursor: "", pageSize: 10 },
     { enabled: !!enabled.releases },
   )
   const { data: platforms = [] } = useListPlatforms(
-    { page: 1, pageSize: 10 },
+    { cursor: "", pageSize: 10 },
     { enabled: !!enabled.platforms },
   )
   const { data: arches = [] } = useListArches(
-    { page: 1, pageSize: 10 },
+    { cursor: "", pageSize: 10 },
     { enabled: !!enabled.arches },
   )
 

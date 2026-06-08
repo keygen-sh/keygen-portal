@@ -3,6 +3,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
 import { useGroupTableColumns } from "@/hooks/use-group-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
 import { Group } from "@/types/groups"
@@ -20,6 +21,8 @@ import PageFooter from "@/components/page-footer"
 
 export default function GroupsList() {
   const table = useDataTable()
+  const { page, pageSize, setPage } = table
+  const { cursor, goToPage } = useCursors(page, setPage)
   const columns = useGroupTableColumns()
 
   const {
@@ -27,11 +30,11 @@ export default function GroupsList() {
     links,
     isLoading: groupsLoading,
   } = useListGroups({
-    page: table.page,
-    pageSize: table.pageSize,
+    cursor,
+    pageSize,
   })
 
-  const totalPages = links?.meta?.pages ?? 1
+  const nextCursor = cursorFromLink(links?.next)
 
   const navigateToResource = useResourceNavigate()
 
@@ -57,7 +60,7 @@ export default function GroupsList() {
           data={groups}
           table={table}
           columns={columns}
-          pageCount={totalPages}
+          pageCount={-1}
           isLoading={groupsLoading}
           onRowClick={(group) => navigateToResource(group)}
         />
@@ -65,9 +68,9 @@ export default function GroupsList() {
 
       <PageFooter>
         <Pagination
-          page={table.page}
-          pageCount={totalPages}
-          onPageChange={table.setPage}
+          page={page}
+          hasNext={!!nextCursor}
+          onPageChange={(nextPage) => goToPage(nextPage, nextCursor)}
           isLoading={groupsLoading}
         />
       </PageFooter>

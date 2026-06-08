@@ -3,6 +3,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
 import { useProductTableColumns } from "@/hooks/use-product-table-columns"
 import { useDataTable } from "@/hooks/use-data-table"
 import { Product } from "@/types/products"
@@ -20,6 +21,8 @@ import PageFooter from "@/components/page-footer"
 
 export default function ProductsList() {
   const table = useDataTable()
+  const { page, pageSize, setPage } = table
+  const { cursor, goToPage } = useCursors(page, setPage)
   const columns = useProductTableColumns()
 
   const {
@@ -27,11 +30,11 @@ export default function ProductsList() {
     links,
     isLoading: productsLoading,
   } = useListProducts({
-    page: table.page,
-    pageSize: table.pageSize,
+    cursor,
+    pageSize,
   })
 
-  const totalPages = links?.meta?.pages ?? 1
+  const nextCursor = cursorFromLink(links?.next)
 
   const navigateToResource = useResourceNavigate()
 
@@ -57,7 +60,7 @@ export default function ProductsList() {
           data={products}
           table={table}
           columns={columns}
-          pageCount={totalPages}
+          pageCount={-1}
           isLoading={productsLoading}
           onRowClick={(product) => navigateToResource(product)}
         />
@@ -65,9 +68,9 @@ export default function ProductsList() {
 
       <PageFooter>
         <Pagination
-          page={table.page}
-          pageCount={totalPages}
-          onPageChange={table.setPage}
+          page={page}
+          hasNext={!!nextCursor}
+          onPageChange={(nextPage) => goToPage(nextPage, nextCursor)}
           isLoading={productsLoading}
         />
       </PageFooter>

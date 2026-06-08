@@ -1,11 +1,11 @@
 import { Badge } from "@/components/ui/badge"
 
-import { type EventLogZonedTimestamp } from "@/lib/event-logs"
+import { type ZonedTimestamp } from "@/lib/timestamps"
 
 export type EventLogPreview = {
   relative: string
-  utc: EventLogZonedTimestamp
-  local: EventLogZonedTimestamp
+  utc: ZonedTimestamp
+  local: ZonedTimestamp
 }
 
 export interface EventLogPreviewHandlers {

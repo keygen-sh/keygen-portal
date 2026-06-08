@@ -12,12 +12,8 @@ import { type EventLog, type EventLogFilters } from "@/types/event-logs"
 
 import { useListEventLogs } from "@/queries/event-logs"
 
-import {
-  eventLogBadgeVariant,
-  metadataDiffEntries,
-  formatEventLogTimestamp,
-  formatEventLogRelativeTime,
-} from "@/lib/event-logs"
+import { eventLogBadgeVariant, metadataDiffEntries } from "@/lib/event-logs"
+import { formatTimestamp, formatRelativeTime } from "@/lib/timestamps"
 import { cn } from "@/lib/utils"
 
 import * as keygen from "@/keygen"
@@ -64,7 +60,7 @@ function EventLogRow({
   const { event, metadata, created } = eventLog.attributes
   const whodunnit = eventLog.relationships.whodunnit?.data
   const request = eventLog.relationships.request?.data
-  const timestamp = formatEventLogTimestamp(created)
+  const timestamp = formatTimestamp(created)
   const changes = metadataDiffEntries(metadata).length
 
   return (
@@ -83,7 +79,7 @@ function EventLogRow({
         </div>
         <div className="mt-1 flex min-w-0 items-center gap-2 text-xs">
           <span className="shrink-0 text-content-muted" title={timestamp}>
-            {formatEventLogRelativeTime(created)}
+            {formatRelativeTime(created)}
           </span>
           <span className="min-w-0 truncate text-content-normal">
             {changes} {changes === 1 ? "change" : "changes"}

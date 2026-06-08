@@ -16,6 +16,7 @@ export { default as Arches } from "./arches"
 export { default as Channels } from "./channels"
 export { default as Engines } from "./engines"
 export { default as EventLogs } from "./event-logs"
+export { default as RequestLogs } from "./request-logs"
 
 import * as Product from "./product"
 export { Product }
@@ -67,6 +68,9 @@ export { Engine }
 
 import * as EventLog from "./event-log"
 export { EventLog }
+
+import * as RequestLog from "./request-log"
+export { RequestLog }
 
 import * as Settings from "./settings"
 export { Settings }

@@ -19,14 +19,14 @@ export function useGetEnvironment(environmentId: string) {
 }
 
 export function useListEnvironments(params?: {
-  page: number
-  pageSize: number
+  cursor?: string | null
+  pageSize?: number
 }) {
   const query = useQuery({
     queryKey: ["environments", { ...params }],
     queryFn: async () => {
       const response = await keygen.environments.list(
-        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+        params ? { pageCursor: params.cursor, pageSize: params.pageSize } : {},
       )
 
       if (response.errors) {

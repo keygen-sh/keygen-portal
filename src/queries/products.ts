@@ -28,7 +28,7 @@ export function useGetProduct(productId: string) {
 }
 
 export function useListProducts(
-  params?: { page: number; pageSize: number },
+  params?: { cursor?: string | null; pageSize?: number },
   options?: { enabled?: boolean },
 ) {
   const { code } = useEnvironment()
@@ -37,7 +37,7 @@ export function useListProducts(
     queryKey: ["products", { environment: code, ...params }],
     queryFn: async () => {
       const response = await keygen.products.list(
-        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+        params ? { pageCursor: params.cursor, pageSize: params.pageSize } : {},
       )
 
       if (response.errors) {

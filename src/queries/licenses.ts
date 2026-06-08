@@ -33,8 +33,8 @@ export function useGetLicense(licenseId: string) {
 
 export function useListLicenses(
   params?: {
-    page: number
-    pageSize: number
+    cursor?: string | null
+    pageSize?: number
     filters?: LicenseFilters
   },
   options?: { enabled?: boolean },
@@ -47,7 +47,7 @@ export function useListLicenses(
       const response = await keygen.licenses.list(
         params
           ? {
-              pageNumber: params.page,
+              pageCursor: params.cursor,
               pageSize: params.pageSize,
               filters: params.filters,
             }

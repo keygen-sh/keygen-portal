@@ -7,25 +7,23 @@ config.validate()
 interface ListConstraintsProps {
   releaseId: string
   limit?: number
-  pageNumber?: number
+  pageCursor?: string | null
   pageSize?: number
 }
 
 export default async function listConstraints({
   releaseId,
   limit,
-  pageNumber,
+  pageCursor,
   pageSize,
 }: ListConstraintsProps): Promise<ReleaseConstraintListResponse> {
   const params = new URLSearchParams()
   if (limit != null) {
     params.set("limit", limit.toString())
   }
-  if (pageNumber != null) {
-    params.set("page[number]", pageNumber.toString())
-  }
   if (pageSize != null) {
     params.set("page[size]", pageSize.toString())
+    params.set("page[cursor]", pageCursor ?? "")
   }
 
   const result = (await client.request(

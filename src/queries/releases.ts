@@ -30,7 +30,11 @@ export function useGetRelease(releaseId: string) {
 }
 
 export function useListReleases(
-  params?: { page: number; pageSize: number; filters?: ReleaseFilters },
+  params?: {
+    cursor?: string | null
+    pageSize?: number
+    filters?: ReleaseFilters
+  },
   options?: { enabled?: boolean },
 ) {
   const { code } = useEnvironment()
@@ -41,7 +45,7 @@ export function useListReleases(
       const response = await keygen.releases.list(
         params
           ? {
-              pageNumber: params.page,
+              pageCursor: params.cursor,
               pageSize: params.pageSize,
               filters: params.filters,
             }

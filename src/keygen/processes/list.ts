@@ -6,14 +6,14 @@ config.validate()
 
 interface ListProps {
   limit?: number
-  pageNumber?: number
+  pageCursor?: string | null
   pageSize?: number
   filters?: ProcessFilters
 }
 
 export default async function list({
   limit,
-  pageNumber,
+  pageCursor,
   pageSize,
   filters,
 }: ListProps): Promise<ProcessListResponse> {
@@ -21,11 +21,9 @@ export default async function list({
   if (limit != null) {
     params.set("limit", limit.toString())
   }
-  if (pageNumber != null) {
-    params.set("page[number]", pageNumber.toString())
-  }
   if (pageSize != null) {
     params.set("page[size]", pageSize.toString())
+    params.set("page[cursor]", pageCursor ?? "")
   }
   if (filters?.machine) {
     params.set("machine", filters.machine)

@@ -24,14 +24,17 @@ export function useGetChannel(channelId: string) {
   })
 }
 
-export function useListChannels(params?: { page: number; pageSize: number }) {
+export function useListChannels(params?: {
+  cursor?: string | null
+  pageSize?: number
+}) {
   const { code } = useEnvironment()
 
   const query = useQuery({
     queryKey: ["channels", { environment: code, ...params }],
     queryFn: async () => {
       const response = await keygen.channels.list(
-        params ? { pageNumber: params.page, pageSize: params.pageSize } : {},
+        params ? { pageCursor: params.cursor, pageSize: params.pageSize } : {},
       )
 
       if (response.errors) {

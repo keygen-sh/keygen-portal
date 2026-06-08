@@ -36,8 +36,8 @@ export function useGetArtifact(artifactId: string) {
 
 export function useListArtifacts(
   params?: {
-    page: number
-    pageSize: number
+    cursor?: string | null
+    pageSize?: number
     filters?: ArtifactFilters
   },
   options?: { enabled?: boolean },
@@ -50,7 +50,7 @@ export function useListArtifacts(
       const response = await keygen.artifacts.list(
         params
           ? {
-              pageNumber: params.page,
+              pageCursor: params.cursor,
               pageSize: params.pageSize,
               filters: params.filters,
             }

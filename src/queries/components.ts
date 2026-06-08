@@ -31,8 +31,8 @@ export function useGetComponent(componentId: string) {
 }
 
 export function useListComponents(params?: {
-  page: number
-  pageSize: number
+  cursor?: string | null
+  pageSize?: number
   filters?: ComponentFilters
 }) {
   const { code } = useEnvironment()
@@ -43,7 +43,7 @@ export function useListComponents(params?: {
       const response = await keygen.components.list(
         params
           ? {
-              pageNumber: params.page,
+              pageCursor: params.cursor,
               pageSize: params.pageSize,
               filters: params.filters,
             }

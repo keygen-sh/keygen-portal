@@ -9,6 +9,24 @@ import * as keygen from "@/keygen"
 
 export type { RequestLogFilters }
 
+export function useGetRequestLog(requestLogId: string) {
+  const { code } = useEnvironment()
+
+  return useQuery({
+    queryKey: ["request-logs", requestLogId, { environment: code }],
+    queryFn: async () => {
+      const response = await keygen.requestLogs.get({ id: requestLogId })
+
+      if (!response.data) {
+        throw new Error("Request log not found")
+      }
+
+      return response.data
+    },
+    enabled: !!requestLogId,
+  })
+}
+
 export function useListRequestLogs(
   params?: {
     cursor?: string | null

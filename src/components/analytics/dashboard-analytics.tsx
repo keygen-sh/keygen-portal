@@ -65,11 +65,14 @@ const CHART_COLORS = [
   "var(--color-primary)",
   "var(--color-warning)",
   "var(--color-destructive)",
-  "var(--color-content-normal)",
-  "var(--color-brand-secondary-light)",
-  "var(--color-brand-neutral-300)",
-  "var(--color-brand-border-4)",
 ] as const
+
+const [BLUE, GREEN, AMBER, RED] = CHART_COLORS
+const GRAY = "var(--color-content-normal)"
+
+function chartMix(color: string, mixColor: string, weight: 40 | 50 | 60) {
+  return `color-mix(in oklch, ${color} ${weight}%, ${mixColor})`
+}
 
 const REQUEST_METRICS = [
   "requests.2xx",
@@ -77,6 +80,58 @@ const REQUEST_METRICS = [
   "requests.4xx",
   "requests.5xx",
 ] as const
+
+const METRIC_COLORS: Record<string, string> = {
+  "requests.2xx": GREEN,
+  "requests.3xx": BLUE,
+  "requests.4xx": AMBER,
+  "requests.5xx": RED,
+  "validations.valid": GREEN,
+  "validations.banned": RED,
+  "validations.expired": chartMix(RED, AMBER, 60),
+  "validations.suspended": chartMix(RED, BLUE, 60),
+  "validations.overdue": chartMix(AMBER, RED, 60),
+  "validations.no-machine": chartMix(BLUE, GREEN, 60),
+  "validations.no-machines": chartMix(BLUE, GREEN, 40),
+  "validations.too-many-machines": chartMix(AMBER, RED, 60),
+  "validations.too-many-users": AMBER,
+  "validations.too-many-cores": chartMix(BLUE, AMBER, 60),
+  "validations.too-many-processes": BLUE,
+  "validations.too-much-memory": chartMix(RED, BLUE, 40),
+  "validations.too-much-disk": chartMix(RED, AMBER, 60),
+  "validations.entitlements-missing": chartMix(AMBER, BLUE, 60),
+  "validations.fingerprint-scope-mismatch": chartMix(BLUE, RED, 60),
+  "validations.machine-scope-mismatch": chartMix(BLUE, GREEN, 60),
+  "validations.policy-scope-mismatch": chartMix(AMBER, BLUE, 60),
+  "validations.product-scope-mismatch": chartMix(AMBER, GREEN, 60),
+  "validations.heartbeat-not-started": chartMix(AMBER, RED, 50),
+  "validations.heartbeat-dead": RED,
+  "validations.not-found": GRAY,
+  "release.downloaded": BLUE,
+  "release.upgraded": GREEN,
+  "user.created": GREEN,
+  "user.deleted": RED,
+  "license.created": GREEN,
+  "license.expired": chartMix(RED, AMBER, 60),
+  "license.checked-out": BLUE,
+  "license.renewed": GREEN,
+  "license.suspended": chartMix(RED, BLUE, 60),
+  "license.revoked": RED,
+  "license.deleted": RED,
+  "machine.created": GREEN,
+  "machine.deleted": RED,
+  "machine.checked-out": BLUE,
+  "machine.heartbeat.ping": chartMix(BLUE, GREEN, 60),
+  "machine.heartbeat.pong": GREEN,
+  "machine.heartbeat.dead": RED,
+  "machine.heartbeat.reset": AMBER,
+  "process.created": GREEN,
+  "process.deleted": RED,
+  "process.heartbeat.ping": chartMix(BLUE, GREEN, 60),
+  "process.heartbeat.pong": GREEN,
+  "process.heartbeat.dead": RED,
+  "process.heartbeat.reset": AMBER,
+}
 
 const VALIDATION_METRICS = [
   "validations.valid",
@@ -200,10 +255,10 @@ function buildChartData(
     }
   }
 
-  const config = metrics.reduce((acc, metric, index) => {
+  const config = metrics.reduce((acc, metric) => {
     acc[metricKey(metric)] = {
       label: metricLabel(metric),
-      color: CHART_COLORS[index % CHART_COLORS.length],
+      color: METRIC_COLORS[metric] ?? GRAY,
     }
 
     return acc

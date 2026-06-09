@@ -298,9 +298,9 @@ export default function LicenseExpirationHeatmap({
                     onMouseLeave={handleCellMouseLeave}
                     onClick={handleCellClick}
                     className={cn(
-                      "cursor-pointer outline-0 transition-shadow duration-75 ease-out hover:z-10 hover:shadow-[0_0_0_2px_var(--color-background),0_0_0_3px_var(--color-content-muted)]",
+                      "cursor-pointer outline-0 transition-shadow duration-75 ease-out hover:z-10 hover:shadow-[0_0_0_2px_var(--color-background),0_0_0_3px_var(--color-destructive)]",
                       hoveredEntry?.date === entry.date &&
-                        "z-10 shadow-[0_0_0_2px_var(--color-background),0_0_0_3px_var(--color-content-muted)]",
+                        "z-10 shadow-[0_0_0_2px_var(--color-background),0_0_0_3px_var(--color-destructive)]",
                     )}
                     style={{
                       gridRow: toDisplayRow(entry.y) + 2,

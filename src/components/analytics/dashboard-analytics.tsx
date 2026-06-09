@@ -42,6 +42,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 
+import { useMobile } from "@/hooks/use-mobile"
 import { useCloud } from "@/hooks/use-cloud"
 import { useEdition } from "@/hooks/use-edition"
 import { usePermissions } from "@/hooks/use-permissions"
@@ -618,6 +619,7 @@ function StackedBarChart({
   range: { start: string; end: string }
   isLoading: boolean
 }) {
+  const isMobile = useMobile()
   const chart = useMemo(
     () => buildChartData(data, expectedMetrics, range),
     [data, expectedMetrics, range],
@@ -631,7 +633,12 @@ function StackedBarChart({
         <EmptyChart />
       ) : (
         <ChartContainer config={chart.config} className="h-64 w-full">
-          <BarChart accessibilityLayer data={chart.data} margin={{ left: 0, right: 8 }}>
+          <BarChart
+            accessibilityLayer
+            data={chart.data}
+            margin={{ left: 0, right: 8 }}
+            barCategoryGap={isMobile ? 1 : 2}
+          >
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis
               dataKey="date"

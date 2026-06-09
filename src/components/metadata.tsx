@@ -25,7 +25,7 @@ export default function Metadata({
     <div className={cn("p-4", className)}>
       {resource.attributes.metadata &&
       Object.keys(resource.attributes.metadata).length > 0 ? (
-        <div className="relative">
+        <div className="relative" style={{ contain: "inline-size" }}>
           <Button
             variant="ghost"
             size="icon"

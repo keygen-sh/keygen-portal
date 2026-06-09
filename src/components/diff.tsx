@@ -91,7 +91,7 @@ export default function Diff({ entries, className }: DiffProps): ReactElement {
   return (
     <div className={cn("p-4", className)}>
       {entries.length > 0 ? (
-        <div className="relative">
+        <div className="relative" style={{ contain: "inline-size" }}>
           <ScrollArea
             className="max-h-64 rounded border border-accent"
             orientation="both"

@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
   Card,
+  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
@@ -59,10 +60,13 @@ import {
 
 import { GaugeEntry, SparkEntry } from "@/types/analytics"
 
+import * as keygen from "@/keygen"
+
 import { cn } from "@/lib/utils"
 import { eventLogBadgeVariant } from "@/lib/event-logs"
 
 import LicenseExpirationHeatmap from "./license-expiration-heatmap"
+import GoToButton from "@/components/go-to-button"
 
 const PRICING_URL = "https://keygen.sh/pricing"
 const CHART_COLORS = [
@@ -322,11 +326,13 @@ function sparkTrendColor(spark: SparkEntry[]) {
 
 function DashboardCard({
   title,
+  action,
   children,
   className,
   contentClassName,
 }: {
   title: React.ReactNode
+  action?: React.ReactNode
   children: React.ReactNode
   className?: string
   contentClassName?: string
@@ -337,6 +343,7 @@ function DashboardCard({
         <CardTitle className="text-sm font-medium text-content-muted">
           {title}
         </CardTitle>
+        {action && <CardAction>{action}</CardAction>}
       </CardHeader>
       <CardContent className={cn("p-4", contentClassName)}>{children}</CardContent>
     </Card>
@@ -578,6 +585,15 @@ function EventSparkCard({
         <Badge variant={eventLogBadgeVariant(event)} className="font-mono">
           {event}
         </Badge>
+      }
+      action={
+        <GoToButton
+          path="/$accountId/app/event-logs"
+          params={{ accountId: keygen.config.id }}
+          search={{ events: [event] }}
+          label="View logs"
+          className="[&_.group:hover_svg]:text-primary [&_button]:text-content-normal [&_button]:hover:text-content-loud [&_svg]:text-content-normal"
+        />
       }
       contentClassName="p-3"
     >

@@ -996,14 +996,10 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
   const [heatmapRangeDays, setHeatmapRangeDays] =
     useState<HeatmapRangeDays>(365)
   const [activityRangeDays, setActivityRangeDays] =
-    useState<AnalyticsRangeDays>(90)
+    useState<AnalyticsRangeDays>(isMobile ? 30 : 90)
   const [eventRangeDays, setEventRangeDays] = useState<AnalyticsRangeDays>(30)
   const [leaderboardRangeDays, setLeaderboardRangeDays] =
     useState<AnalyticsRangeDays>(30)
-
-  useEffect(() => {
-    if (isMobile) setActivityRangeDays(30)
-  }, [isMobile])
 
   const heatmapVisibility = useLazyVisibility<HTMLElement>()
   const activityVisibility = useLazyVisibility<HTMLElement>()

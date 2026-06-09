@@ -112,14 +112,7 @@ function EventLogRow({
             <EventLogLinkRow label="Actor">
               <ResourceLink linkage={whodunnit} buttonClassName="text-xs" />
             </EventLogLinkRow>
-            <Can
-              permission="request-log.read"
-              fallback={
-                <EventLogLinkRow label="Request">
-                  <ResourceLink linkage={request} buttonClassName="text-xs" />
-                </EventLogLinkRow>
-              }
-            >
+            <Can permission="request-log.read">
               <EventLogLinkRow label="Request">
                 {request ? (
                   <GoToButton

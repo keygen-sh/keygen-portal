@@ -48,8 +48,6 @@ const LABEL_WIDTH = 34
 const MOBILE_CELL_GAP = 4
 const MOBILE_COLUMN_COUNT = 6
 
-const HEATMAP_WINDOW_DAYS = 364
-
 const POPOVER_WIDTH = 208 // w-52
 
 const PREVIEW_LIMIT = 5
@@ -74,19 +72,24 @@ function getTemperatureColor(temperature: number): string {
   return "var(--color-destructive)"
 }
 
-export default function LicenseExpirationHeatmap() {
+export default function LicenseExpirationHeatmap({
+  rangeDays = 365,
+}: {
+  rangeDays?: 30 | 60 | 90 | 365
+}) {
   const isMobile = useMobile()
+  const expirationWindow = rangeDays === 365 ? "P1Y" : `P${rangeDays}D`
 
   const { start, end, startParam, endParam } = useMemo(() => {
     const start = new Date()
-    const end = addDays(start, HEATMAP_WINDOW_DAYS)
+    const end = addDays(start, rangeDays - 1)
     return {
       start,
       end,
       startParam: format(start, "yyyy-MM-dd"),
       endParam: format(end, "yyyy-MM-dd"),
     }
-  }, [])
+  }, [rangeDays])
 
   const { data: cells = [], isLoading } = useExpirationsHeatmap({
     start: startParam,
@@ -205,7 +208,7 @@ export default function LicenseExpirationHeatmap() {
             accountId: keygen.config.id,
           }}
           search={{
-            expires: { within: "P1Y" },
+            expires: { within: expirationWindow },
           }}
           label="View all"
           className="[&_.group:hover_svg]:text-primary [&_button]:text-content-normal [&_button]:hover:text-content-loud [&_svg]:text-content-normal"

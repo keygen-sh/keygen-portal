@@ -198,6 +198,7 @@ export default function LicenseExpirationHeatmap() {
     <Chart.Card
       title="License expirations"
       isLoading={isLoading}
+      className="md:w-full"
       action={
         <GoToButton
           path={`/$accountId/app/licenses`}
@@ -226,6 +227,7 @@ export default function LicenseExpirationHeatmap() {
           <div className="relative w-full overflow-x-auto">
             <div
               style={{
+                width: "100%",
                 minWidth: LABEL_WIDTH + numWeeks * (CELL_WIDTH + CELL_GAP),
               }}
             >

@@ -119,6 +119,8 @@ const METRIC_COLORS: Record<string, string> = {
   "license.suspended": chartMix(RED, BLUE, 60),
   "license.revoked": RED,
   "license.deleted": RED,
+  "license.validation.succeeded": GREEN,
+  "license.validation.failed": RED,
   "machine.created": GREEN,
   "machine.deleted": RED,
   "machine.checked-out": BLUE,
@@ -176,6 +178,7 @@ const EVENT_GROUPS = [
       "license.suspended",
       "license.revoked",
       "license.deleted",
+      "license.validation.*",
     ],
   },
   {

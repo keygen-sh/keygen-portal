@@ -59,7 +59,7 @@ import {
 
 import { GaugeEntry, SparkEntry } from "@/types/analytics"
 
-import { cn, humanize } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 import { eventLogBadgeVariant } from "@/lib/event-logs"
 
 import LicenseExpirationHeatmap from "./license-expiration-heatmap"
@@ -209,8 +209,7 @@ function metricKey(metric: string) {
 }
 
 function metricLabel(metric: string) {
-  const parts = displayMetric(metric).split(".")
-  return humanize(parts[parts.length - 1])
+  return displayMetric(metric)
 }
 
 function truncateMiddle(value: string, maxLength: number) {
@@ -224,7 +223,12 @@ function truncateMiddle(value: string, maxLength: number) {
 
 function displayMetric(metric: string) {
   if (metric.startsWith("events.")) {
-    return metric.replace(/^events\./, "").replace(/-/g, ".")
+    const event = metric.replace(/^events\./, "")
+    const match = Object.keys(METRIC_COLORS).find(
+      (key) => key.replace(/\./g, "-") === event,
+    )
+
+    return match ?? metric
   }
 
   return metric
@@ -574,7 +578,12 @@ function EventSparkCard({
                 type="monotone"
                 stroke={`var(--color-${metricKey(metric)})`}
                 strokeWidth={2}
-                dot={false}
+                dot={{
+                  fill: `var(--color-${metricKey(metric)})`,
+                  stroke: `var(--color-${metricKey(metric)})`,
+                  strokeWidth: 0,
+                }}
+                activeDot={false}
                 isAnimationActive={false}
               />
             ))}

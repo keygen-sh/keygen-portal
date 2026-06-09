@@ -235,8 +235,8 @@ export default function LicenseExpirationHeatmap() {
                 onMouseMove={handleGridMouseMove}
                 style={{
                   display: "grid",
-                  gridTemplateColumns: `${LABEL_WIDTH}px repeat(${numWeeks}, ${CELL_WIDTH}px)`,
-                  gridTemplateRows: `auto repeat(7, ${CELL_HEIGHT}px)`,
+                  gridTemplateColumns: `${LABEL_WIDTH}px repeat(${numWeeks}, minmax(${CELL_WIDTH}px, 1fr))`,
+                  gridTemplateRows: "auto repeat(7, auto)",
                   columnGap: CELL_GAP,
                   rowGap: CELL_GAP,
                 }}
@@ -274,8 +274,10 @@ export default function LicenseExpirationHeatmap() {
                         key={`empty-${weekIndex}-${dayIndex}`}
                         className="bg-background-1"
                         style={{
+                          aspectRatio: `${CELL_WIDTH} / ${CELL_HEIGHT}`,
                           gridRow: dayIndex + 2,
                           gridColumn: weekIndex + 2,
+                          width: "100%",
                         }}
                       />
                     )
@@ -293,9 +295,11 @@ export default function LicenseExpirationHeatmap() {
                       hoveredEntry?.date === entry.date && "z-10 scale-[1.3]",
                     )}
                     style={{
+                      aspectRatio: `${CELL_WIDTH} / ${CELL_HEIGHT}`,
                       gridRow: toDisplayRow(entry.y) + 2,
                       gridColumn: entry.x + 2,
                       backgroundColor: getTemperatureColor(entry.temperature),
+                      width: "100%",
                     }}
                   />
                 ))}

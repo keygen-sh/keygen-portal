@@ -223,7 +223,7 @@ function DashboardCard({
 }) {
   return (
     <Card className={cn("gap-0 rounded-md border-accent bg-background p-0", className)}>
-      <CardHeader className="border-b border-accent px-4 py-3">
+      <CardHeader className="border-b border-accent px-4 pt-3 [.border-b]:pb-2">
         <CardTitle className="text-sm font-medium text-content-muted">
           {title}
         </CardTitle>

@@ -996,9 +996,16 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
     useState<HeatmapRangeDays>(365)
   const [activityRangeDays, setActivityRangeDays] =
     useState<AnalyticsRangeDays>(isMobile ? 30 : 90)
+  const [activityRangeChosen, setActivityRangeChosen] = useState(false)
   const [eventRangeDays, setEventRangeDays] = useState<AnalyticsRangeDays>(30)
   const [leaderboardRangeDays, setLeaderboardRangeDays] =
     useState<AnalyticsRangeDays>(30)
+
+  useEffect(() => {
+    if (activityRangeChosen) return
+
+    setActivityRangeDays(isMobile ? 30 : 90)
+  }, [activityRangeChosen, isMobile])
 
   const heatmapVisibility = useLazyVisibility<HTMLElement>()
   const activityVisibility = useLazyVisibility<HTMLElement>()
@@ -1070,7 +1077,10 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
           icon={Activity}
           rangeDays={activityRangeDays}
           options={ANALYTICS_RANGE_OPTIONS}
-          onRangeChange={setActivityRangeDays}
+          onRangeChange={(rangeDays) => {
+            setActivityRangeChosen(true)
+            setActivityRangeDays(rangeDays)
+          }}
         />
         <div className="grid gap-4 xl:grid-cols-2">
           <StackedBarChart

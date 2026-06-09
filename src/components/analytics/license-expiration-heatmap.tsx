@@ -197,7 +197,6 @@ export default function LicenseExpirationHeatmap() {
   return (
     <Chart.Card
       title="License expirations"
-      isLoading={isLoading}
       className="md:w-full"
       action={
         <GoToButton
@@ -213,7 +212,9 @@ export default function LicenseExpirationHeatmap() {
         />
       }
     >
-      {entries.length ? (
+      {isLoading ? (
+        <HeatmapSkeleton />
+      ) : entries.length ? (
         isMobile ? (
           <MobileHeatmapGrid
             entries={entries}
@@ -382,6 +383,37 @@ export default function LicenseExpirationHeatmap() {
         )}
       </CursorTooltip>
     </Chart.Card>
+  )
+}
+
+function HeatmapSkeleton() {
+  return (
+    <div className="w-full overflow-hidden">
+      <Skeleton className="mb-3 h-4 w-28" />
+      <div className="grid grid-cols-[34px_repeat(53,minmax(16px,1fr))] gap-0.5">
+        {Array.from({ length: 8 * 54 }).map((_, index) => {
+          const isLabelColumn = index % 54 === 0
+          const isMonthRow = index < 54
+
+          return (
+            <Skeleton
+              key={index}
+              className={cn(
+                "rounded-none",
+                isLabelColumn || isMonthRow
+                  ? "h-3 bg-transparent"
+                  : "aspect-[16/8] w-full",
+              )}
+            />
+          )
+        })}
+      </div>
+      <div className="mt-3 flex justify-end gap-1.5">
+        {Array.from({ length: 7 }).map((_, index) => (
+          <Skeleton key={index} className="h-2 w-5 rounded-none" />
+        ))}
+      </div>
+    </div>
   )
 }
 

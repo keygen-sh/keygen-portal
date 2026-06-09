@@ -639,7 +639,7 @@ function StackedBarChart({
             accessibilityLayer
             data={chart.data}
             margin={{ left: 0, right: 8 }}
-            barCategoryGap={isMobile ? 0 : 2}
+            barCategoryGap={isMobile ? 1 : 2}
           >
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis

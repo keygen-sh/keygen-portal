@@ -434,48 +434,48 @@ function GaugeCard({
   }, [metric, range, spark])
 
   return (
-    <DashboardCard title={title} contentClassName="relative min-h-28 overflow-hidden p-4">
-      <div className="pointer-events-none relative z-10 flex justify-end">
+    <DashboardCard title={title}>
+      <div className="flex min-h-12 items-center gap-3">
+        <div className="h-12 min-w-0 flex-1">
+          {sparkLoading ? (
+            <Skeleton className="h-full w-full" />
+          ) : chart.data.length > 1 ? (
+            <ChartContainer config={chart.config} className="h-full w-full">
+              <LineChart
+                accessibilityLayer
+                data={chart.data}
+                margin={{ top: 4, right: 0, bottom: 0, left: 0 }}
+              >
+                <XAxis hide dataKey="date" height={0} />
+                <YAxis hide width={0} />
+                <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      indicator="line"
+                      labelFormatter={formatTooltipLabel}
+                    />
+                  }
+                />
+                <Line
+                  dataKey={metricKey(metric)}
+                  type="monotone"
+                  stroke={`var(--color-${metricKey(metric)})`}
+                  strokeWidth={2}
+                  dot={false}
+                  isAnimationActive={false}
+                />
+              </LineChart>
+            </ChartContainer>
+          ) : (
+            <div className="h-full rounded-sm bg-background-1" />
+          )}
+        </div>
         {isLoading ? (
-          <Skeleton className="h-10 w-28" />
+          <Skeleton className="h-10 w-24 shrink-0" />
         ) : (
-          <p className="text-right text-4xl font-semibold tabular-nums text-content-loud">
+          <p className="shrink-0 text-right text-4xl font-semibold tabular-nums text-content-loud">
             {isError ? "--" : formatCount(value)}
           </p>
-        )}
-      </div>
-      <div className="absolute inset-x-4 bottom-3 z-0 h-16">
-        {sparkLoading ? (
-          <Skeleton className="h-full w-full" />
-        ) : chart.data.length > 1 ? (
-          <ChartContainer config={chart.config} className="h-full w-full">
-            <LineChart
-              accessibilityLayer
-              data={chart.data}
-              margin={{ top: 4, right: 0, bottom: 0, left: 0 }}
-            >
-              <XAxis hide dataKey="date" height={0} />
-              <YAxis hide width={0} />
-              <ChartTooltip
-                content={
-                  <ChartTooltipContent
-                    indicator="line"
-                    labelFormatter={formatTooltipLabel}
-                  />
-                }
-              />
-              <Line
-                dataKey={metricKey(metric)}
-                type="monotone"
-                stroke={`var(--color-${metricKey(metric)})`}
-                strokeWidth={2}
-                dot={false}
-                isAnimationActive={false}
-              />
-            </LineChart>
-          </ChartContainer>
-        ) : (
-          <div className="h-full rounded-sm bg-background-1" />
         )}
       </div>
     </DashboardCard>

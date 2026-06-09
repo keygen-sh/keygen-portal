@@ -295,6 +295,14 @@ function firstGaugeValue(data?: GaugeEntry[]) {
   return data?.reduce((sum, entry) => sum + entry.count, 0) ?? 0
 }
 
+function sparkTrendColor(spark: SparkEntry[]) {
+  const sorted = [...spark].sort((a, b) => a.date.localeCompare(b.date))
+  const first = sorted[0]?.count ?? 0
+  const last = sorted[sorted.length - 1]?.count ?? 0
+
+  return last < first ? RED : GREEN
+}
+
 function DashboardCard({
   title,
   children,
@@ -393,7 +401,16 @@ function GaugeCard({
     { enabled },
   )
   const value = firstGaugeValue(data)
-  const chart = useMemo(() => buildChartData(spark, [metric]), [metric, spark])
+  const chart = useMemo(() => {
+    const chart = buildChartData(spark, [metric])
+    const key = metricKey(metric)
+
+    if (chart.config[key]) {
+      chart.config[key].color = sparkTrendColor(spark)
+    }
+
+    return chart
+  }, [metric, spark])
 
   return (
     <Card className="rounded-md border-accent bg-background p-4">

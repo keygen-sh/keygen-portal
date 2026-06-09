@@ -50,12 +50,10 @@ function EventLogLinkRow({
 function EventLogRow({
   eventLog,
   isFirst,
-  requestLogsResource,
 }: {
   eventLog: EventLog
   isFirst: boolean
   isLast: boolean
-  requestLogsResource?: { type: string; id: string }
 }) {
   const [open, setOpen] = useState(false)
   const toggle = () => setOpen((current) => !current)
@@ -117,21 +115,22 @@ function EventLogRow({
             <Can
               permission="request-log.read"
               fallback={
-                <ResourceLink linkage={request} buttonClassName="text-xs" />
+                <EventLogLinkRow label="Request">
+                  <ResourceLink linkage={request} buttonClassName="text-xs" />
+                </EventLogLinkRow>
               }
             >
               <EventLogLinkRow label="Request">
-                <GoToButton
-                  path="/$accountId/app/request-logs"
-                  params={{ accountId: keygen.config.id }}
-                  search={
-                    requestLogsResource
-                      ? { resource: requestLogsResource }
-                      : undefined
-                  }
-                  label="View request logs"
-                  buttonClassName="text-xs"
-                />
+                {request ? (
+                  <GoToButton
+                    path="/$accountId/app/request-logs/$id"
+                    params={{ accountId: keygen.config.id, id: request.id }}
+                    label="View request log"
+                    buttonClassName="text-xs"
+                  />
+                ) : (
+                  <ResourceLink linkage={request} buttonClassName="text-xs" />
+                )}
               </EventLogLinkRow>
             </Can>
             <EventLogLinkRow label="Details">

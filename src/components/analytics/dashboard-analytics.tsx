@@ -383,6 +383,7 @@ function StackedAreaChart({
                 stroke={`var(--color-${metricKey(metric)})`}
                 fill={`var(--color-${metricKey(metric)})`}
                 fillOpacity={0.18 + Math.min(index, 3) * 0.08}
+                isAnimationActive={false}
               />
             ))}
           </AreaChart>
@@ -428,6 +429,7 @@ function EventSparkCard({
                   stroke={`var(--color-${metricKey(metric)})`}
                   fill={`var(--color-${metricKey(metric)})`}
                   fillOpacity={0.28}
+                  isAnimationActive={false}
                 />
               ))}
             </AreaChart>
@@ -445,6 +447,7 @@ function EventSparkCard({
                   stroke={`var(--color-${metricKey(metric)})`}
                   strokeWidth={2}
                   dot={false}
+                  isAnimationActive={false}
                 />
               ))}
             </LineChart>
@@ -557,6 +560,7 @@ function LeaderboardCard({
               dataKey="count"
               fill="var(--color-count)"
               radius={[0, 3, 3, 0]}
+              isAnimationActive={false}
             />
           </BarChart>
         </ChartContainer>

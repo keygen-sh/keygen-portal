@@ -318,7 +318,7 @@ function ChartLegendContent({
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-content-normal",
+        "flex items-center justify-start gap-4 overflow-x-auto overflow-y-hidden whitespace-nowrap text-content-normal",
         verticalAlign === "top" ? "pb-3" : "pt-3",
         className,
       )}
@@ -332,7 +332,7 @@ function ChartLegendContent({
           return (
             <div
               key={item.value}
-              className="flex items-center gap-1.5 [&>svg]:size-3 [&>svg]:text-content-subdued"
+              className="flex shrink-0 items-center gap-1.5 [&>svg]:size-3 [&>svg]:text-content-subdued"
             >
               {itemConfig?.icon && !hideIcon ? (
                 <itemConfig.icon />

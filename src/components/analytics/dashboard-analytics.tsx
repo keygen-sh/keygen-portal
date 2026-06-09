@@ -57,6 +57,8 @@ import { GaugeEntry, SparkEntry } from "@/types/analytics"
 
 import { cn, humanize } from "@/lib/utils"
 
+import LicenseExpirationHeatmap from "./license-expiration-heatmap"
+
 const PRICING_URL = "https://keygen.sh/pricing"
 const CHART_COLORS = [
   "var(--color-secondary)",
@@ -627,6 +629,8 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
           ))}
         </div>
       </section>
+
+      <LicenseExpirationHeatmap />
     </div>
   )
 }

@@ -434,15 +434,17 @@ function GaugeCard({
   }, [metric, range, spark])
 
   return (
-    <DashboardCard title={title}>
-      {isLoading ? (
-        <Skeleton className="h-8 w-20" />
-      ) : (
-        <p className="text-2xl font-semibold tabular-nums text-content-loud">
-          {isError ? "--" : formatCount(value)}
-        </p>
-      )}
-      <div className="mt-4 h-12">
+    <DashboardCard title={title} contentClassName="relative min-h-28 overflow-hidden p-4">
+      <div className="pointer-events-none relative z-10 flex justify-end">
+        {isLoading ? (
+          <Skeleton className="h-10 w-28" />
+        ) : (
+          <p className="text-right text-4xl font-semibold tabular-nums text-content-loud">
+            {isError ? "--" : formatCount(value)}
+          </p>
+        )}
+      </div>
+      <div className="absolute inset-x-4 bottom-3 z-0 h-16">
         {sparkLoading ? (
           <Skeleton className="h-full w-full" />
         ) : chart.data.length > 1 ? (

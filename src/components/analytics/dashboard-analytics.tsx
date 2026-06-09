@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { format, subDays } from "date-fns"
+import { eachDayOfInterval, format, parseISO, subDays } from "date-fns"
 import {
   Activity,
   BarChart3,
@@ -261,6 +261,7 @@ function useAnalyticsRange() {
 function buildChartData(
   sparks: SparkEntry[],
   expectedMetrics?: readonly string[],
+  range?: { start: string; end: string },
 ) {
   const presentMetrics = Array.from(new Set(sparks.map((entry) => entry.metric)))
   const metrics = expectedMetrics?.length
@@ -277,9 +278,15 @@ function buildChartData(
     byDate.set(entry.date, row)
   }
 
-  const data = Array.from(byDate.values()).sort((a, b) =>
-    String(a.date).localeCompare(String(b.date)),
-  )
+  const dates =
+    range && metrics.length
+      ? eachDayOfInterval({
+          start: parseISO(range.start),
+          end: parseISO(range.end),
+        }).map((date) => format(date, "yyyy-MM-dd"))
+      : Array.from(byDate.keys()).sort()
+
+  const data = dates.map((date) => byDate.get(date) ?? { date })
 
   for (const row of data) {
     for (const metric of metrics) {
@@ -412,7 +419,7 @@ function GaugeCard({
   )
   const value = firstGaugeValue(data)
   const chart = useMemo(() => {
-    const chart = buildChartData(spark, [metric])
+    const chart = buildChartData(spark, [metric], range)
     const key = metricKey(metric)
 
     if (chart.config[key]) {
@@ -420,7 +427,7 @@ function GaugeCard({
     }
 
     return chart
-  }, [metric, spark])
+  }, [metric, range, spark])
 
   return (
     <Card className="rounded-md border-accent bg-background p-4">
@@ -500,16 +507,18 @@ function StackedBarChart({
   title,
   data,
   expectedMetrics,
+  range,
   isLoading,
 }: {
   title: string
   data: SparkEntry[]
   expectedMetrics: readonly string[]
+  range: { start: string; end: string }
   isLoading: boolean
 }) {
   const chart = useMemo(
-    () => buildChartData(data, expectedMetrics),
-    [data, expectedMetrics],
+    () => buildChartData(data, expectedMetrics, range),
+    [data, expectedMetrics, range],
   )
 
   return (
@@ -561,7 +570,7 @@ function EventSparkCard({
   enabled: boolean
 }) {
   const { data = [], isLoading } = useEventSparks(event, range, { enabled })
-  const chart = useMemo(() => buildChartData(data), [data])
+  const chart = useMemo(() => buildChartData(data, undefined, range), [data, range])
 
   return (
     <DashboardCard
@@ -871,12 +880,14 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
           title="Requests"
           data={requests}
           expectedMetrics={REQUEST_METRICS}
+          range={range}
           isLoading={requestsLoading}
         />
         <StackedBarChart
           title="Validations"
           data={validations}
           expectedMetrics={VALIDATION_METRICS}
+          range={range}
           isLoading={validationsLoading}
         />
       </div>

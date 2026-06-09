@@ -237,7 +237,7 @@ export default function LicenseExpirationHeatmap() {
                 style={{
                   display: "grid",
                   gridTemplateColumns: `${LABEL_WIDTH}px repeat(${numWeeks}, minmax(${CELL_WIDTH}px, 1fr))`,
-                  gridTemplateRows: "auto repeat(7, auto)",
+                  gridTemplateRows: `auto repeat(7, ${CELL_HEIGHT}px)`,
                   columnGap: CELL_GAP,
                   rowGap: CELL_GAP,
                 }}
@@ -275,9 +275,9 @@ export default function LicenseExpirationHeatmap() {
                         key={`empty-${weekIndex}-${dayIndex}`}
                         className="bg-background-1"
                         style={{
-                          aspectRatio: `${CELL_WIDTH} / ${CELL_HEIGHT}`,
                           gridRow: dayIndex + 2,
                           gridColumn: weekIndex + 2,
+                          height: CELL_HEIGHT,
                           width: "100%",
                         }}
                       />
@@ -296,10 +296,10 @@ export default function LicenseExpirationHeatmap() {
                       hoveredEntry?.date === entry.date && "z-10 scale-[1.3]",
                     )}
                     style={{
-                      aspectRatio: `${CELL_WIDTH} / ${CELL_HEIGHT}`,
                       gridRow: toDisplayRow(entry.y) + 2,
                       gridColumn: entry.x + 2,
                       backgroundColor: getTemperatureColor(entry.temperature),
+                      height: CELL_HEIGHT,
                       width: "100%",
                     }}
                   />
@@ -390,7 +390,7 @@ function HeatmapSkeleton() {
   return (
     <div className="w-full overflow-hidden">
       <Skeleton className="mb-3 h-4 w-28" />
-      <div className="grid grid-cols-[34px_repeat(53,minmax(16px,1fr))] gap-0.5">
+      <div className="grid grid-cols-[34px_repeat(53,minmax(16px,1fr))] grid-rows-[auto_repeat(7,8px)] gap-0.5">
         {Array.from({ length: 8 * 54 }).map((_, index) => {
           const isLabelColumn = index % 54 === 0
           const isMonthRow = index < 54
@@ -402,7 +402,7 @@ function HeatmapSkeleton() {
                 "rounded-none",
                 isLabelColumn || isMonthRow
                   ? "h-3 bg-transparent"
-                  : "aspect-[16/8] w-full",
+                  : "h-2 w-full",
               )}
             />
           )

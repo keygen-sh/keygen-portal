@@ -992,6 +992,7 @@ function Leaderboards({
 }
 
 function AnalyticsContent({ enabled }: { enabled: boolean }) {
+  const isMobile = useMobile()
   const [heatmapRangeDays, setHeatmapRangeDays] =
     useState<HeatmapRangeDays>(365)
   const [activityRangeDays, setActivityRangeDays] =
@@ -999,6 +1000,10 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
   const [eventRangeDays, setEventRangeDays] = useState<AnalyticsRangeDays>(30)
   const [leaderboardRangeDays, setLeaderboardRangeDays] =
     useState<AnalyticsRangeDays>(30)
+
+  useEffect(() => {
+    if (isMobile) setActivityRangeDays(30)
+  }, [isMobile])
 
   const heatmapVisibility = useLazyVisibility<HTMLElement>()
   const activityVisibility = useLazyVisibility<HTMLElement>()

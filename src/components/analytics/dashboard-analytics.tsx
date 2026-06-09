@@ -621,7 +621,6 @@ function StackedBarChart({
   range: { start: string; end: string }
   isLoading: boolean
 }) {
-  const isMobile = useMobile()
   const chart = useMemo(
     () => buildChartData(data, expectedMetrics, range),
     [data, expectedMetrics, range],
@@ -639,7 +638,7 @@ function StackedBarChart({
             accessibilityLayer
             data={chart.data}
             margin={{ left: 0, right: 0 }}
-            barCategoryGap={isMobile ? 1 : 2}
+            barCategoryGap="25%"
           >
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis

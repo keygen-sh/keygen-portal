@@ -197,7 +197,7 @@ export default function LicenseExpirationHeatmap() {
   return (
     <Chart.Card
       title="License expirations"
-      className="md:w-full"
+      className="rounded-md md:w-full"
       action={
         <GoToButton
           path={`/$accountId/app/licenses`}

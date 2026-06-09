@@ -21,6 +21,7 @@ import {
 
 import LockedOverlay from "@/components/locked-overlay"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import {
   Card,
   CardContent,
@@ -55,6 +56,7 @@ import {
 import { GaugeEntry, SparkEntry } from "@/types/analytics"
 
 import { cn, humanize } from "@/lib/utils"
+import { eventLogBadgeVariant } from "@/lib/event-logs"
 
 import LicenseExpirationHeatmap from "./license-expiration-heatmap"
 
@@ -285,7 +287,7 @@ function DashboardCard({
   children,
   className,
 }: {
-  title: string
+  title: React.ReactNode
   children: React.ReactNode
   className?: string
 }) {
@@ -499,7 +501,13 @@ function EventSparkCard({
   const chart = useMemo(() => buildChartData(data), [data])
 
   return (
-    <DashboardCard title={event}>
+    <DashboardCard
+      title={
+        <Badge variant={eventLogBadgeVariant(event)} className="font-mono">
+          {event}
+        </Badge>
+      }
+    >
       {isLoading ? (
         <Skeleton className="h-44 w-full" />
       ) : chart.data.length === 0 ? (

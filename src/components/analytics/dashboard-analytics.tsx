@@ -436,6 +436,13 @@ function GaugeCard({
   return (
     <DashboardCard title={title}>
       <div className="flex min-h-12 items-center gap-3">
+        {isLoading ? (
+          <Skeleton className="h-10 w-24 shrink-0" />
+        ) : (
+          <p className="shrink-0 text-4xl font-semibold tabular-nums text-content-loud">
+            {isError ? "--" : formatCount(value)}
+          </p>
+        )}
         <div className="h-12 min-w-0 flex-1">
           {sparkLoading ? (
             <Skeleton className="h-full w-full" />
@@ -470,13 +477,6 @@ function GaugeCard({
             <div className="h-full rounded-sm bg-background-1" />
           )}
         </div>
-        {isLoading ? (
-          <Skeleton className="h-10 w-24 shrink-0" />
-        ) : (
-          <p className="shrink-0 text-right text-4xl font-semibold tabular-nums text-content-loud">
-            {isError ? "--" : formatCount(value)}
-          </p>
-        )}
       </div>
     </DashboardCard>
   )

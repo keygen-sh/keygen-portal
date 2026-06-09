@@ -286,10 +286,12 @@ function DashboardCard({
   title,
   children,
   className,
+  contentClassName,
 }: {
   title: React.ReactNode
   children: React.ReactNode
   className?: string
+  contentClassName?: string
 }) {
   return (
     <Card className={cn("gap-0 rounded-md border-accent bg-background p-0", className)}>
@@ -298,7 +300,7 @@ function DashboardCard({
           {title}
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4">{children}</CardContent>
+      <CardContent className={cn("p-4", contentClassName)}>{children}</CardContent>
     </Card>
   )
 }
@@ -507,17 +509,22 @@ function EventSparkCard({
           {event}
         </Badge>
       }
+      contentClassName="p-3"
     >
       {isLoading ? (
-        <Skeleton className="h-44 w-full" />
+        <Skeleton className="h-36 w-full" />
       ) : chart.data.length === 0 ? (
         <EmptyChart />
       ) : (
-        <ChartContainer config={chart.config} className="h-44 w-full">
-          <LineChart accessibilityLayer data={chart.data} margin={{ left: 0, right: 8 }}>
+        <ChartContainer config={chart.config} className="h-36 w-full">
+          <LineChart
+            accessibilityLayer
+            data={chart.data}
+            margin={{ top: 4, right: 8, bottom: 0, left: 0 }}
+          >
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
-            <XAxis hide dataKey="date" />
-            <YAxis hide />
+            <XAxis hide dataKey="date" height={0} />
+            <YAxis hide width={0} />
             <ChartTooltip content={<ChartTooltipContent indicator="line" />} />
             {chart.metrics.map((metric) => (
               <Line

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { eachDayOfInterval, format, parseISO, subDays } from "date-fns"
 import { Activity, BarChart3, Grid3X3, Lock } from "lucide-react"
 import {
@@ -279,6 +279,39 @@ function useAnalyticsRange(days: SectionRangeDays) {
   }, [days])
 }
 
+function useLazyVisibility<T extends HTMLElement>() {
+  const ref = useRef<T | null>(null)
+  const [hasEntered, setHasEntered] = useState(false)
+
+  useEffect(() => {
+    if (hasEntered) return
+
+    const element = ref.current
+    if (!element) return
+
+    if (typeof IntersectionObserver === "undefined") {
+      setHasEntered(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setHasEntered(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: "160px 0px" },
+    )
+
+    observer.observe(element)
+
+    return () => observer.disconnect()
+  }, [hasEntered])
+
+  return { ref, hasEntered }
+}
+
 function SectionHeader<T extends SectionRangeDays>({
   title,
   icon: Icon,
@@ -478,11 +511,15 @@ function GaugeCard({
   range: { start: string; end: string }
   enabled: boolean
 }) {
-  const { data, isLoading, isError } = useResourceGauge(metric, { enabled })
+  const { ref, hasEntered } = useLazyVisibility<HTMLDivElement>()
+  const canLoad = enabled && hasEntered
+  const { data, isLoading, isError } = useResourceGauge(metric, {
+    enabled: canLoad,
+  })
   const { data: spark = [], isLoading: sparkLoading } = useResourceSparks(
     metric,
     range,
-    { enabled },
+    { enabled: canLoad },
   )
   const value = firstGaugeValue(data)
   const chart = useMemo(() => {
@@ -497,51 +534,53 @@ function GaugeCard({
   }, [metric, range, spark])
 
   return (
-    <DashboardCard title={title}>
-      <div className="flex min-h-12 items-center gap-3">
-        {isLoading ? (
-          <Skeleton className="h-10 w-24 shrink-0" />
-        ) : (
-          <p className="shrink-0 text-4xl font-semibold tabular-nums text-content-loud">
-            {isError ? "--" : formatCount(value)}
-          </p>
-        )}
-        <div className="h-12 min-w-0 flex-1">
-          {sparkLoading ? (
-            <Skeleton className="h-full w-full" />
-          ) : chart.data.length > 1 ? (
-            <ChartContainer config={chart.config} className="h-full w-full">
-              <LineChart
-                accessibilityLayer
-                data={chart.data}
-                margin={{ top: 4, right: 8, bottom: 0, left: 2 }}
-              >
-                <XAxis hide dataKey="date" height={0} />
-                <YAxis hide width={0} />
-                <ChartTooltip
-                  content={
-                    <ChartTooltipContent
-                      indicator="line"
-                      labelFormatter={formatTooltipLabel}
-                    />
-                  }
-                />
-                <Line
-                  dataKey={metricKey(metric)}
-                  type="monotone"
-                  stroke={`var(--color-${metricKey(metric)})`}
-                  strokeWidth={2}
-                  dot={false}
-                  isAnimationActive={false}
-                />
-              </LineChart>
-            </ChartContainer>
+    <div ref={ref}>
+      <DashboardCard title={title}>
+        <div className="flex min-h-12 items-center gap-3">
+          {!canLoad || isLoading ? (
+            <Skeleton className="h-10 w-24 shrink-0" />
           ) : (
-            <div className="h-full rounded-sm bg-background-1" />
+            <p className="shrink-0 text-4xl font-semibold tabular-nums text-content-loud">
+              {isError ? "--" : formatCount(value)}
+            </p>
           )}
+          <div className="h-12 min-w-0 flex-1">
+            {!canLoad || sparkLoading ? (
+              <Skeleton className="h-full w-full" />
+            ) : chart.data.length > 1 ? (
+              <ChartContainer config={chart.config} className="h-full w-full">
+                <LineChart
+                  accessibilityLayer
+                  data={chart.data}
+                  margin={{ top: 4, right: 8, bottom: 0, left: 2 }}
+                >
+                  <XAxis hide dataKey="date" height={0} />
+                  <YAxis hide width={0} />
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        indicator="line"
+                        labelFormatter={formatTooltipLabel}
+                      />
+                    }
+                  />
+                  <Line
+                    dataKey={metricKey(metric)}
+                    type="monotone"
+                    stroke={`var(--color-${metricKey(metric)})`}
+                    strokeWidth={2}
+                    dot={false}
+                    isAnimationActive={false}
+                  />
+                </LineChart>
+              </ChartContainer>
+            ) : (
+              <div className="h-full rounded-sm bg-background-1" />
+            )}
+          </div>
         </div>
-      </div>
-    </DashboardCard>
+      </DashboardCard>
+    </div>
   )
 }
 
@@ -630,58 +669,64 @@ function EventSparkCard({
   range: { start: string; end: string }
   enabled: boolean
 }) {
-  const { data = [], isLoading } = useEventSparks(event, range, { enabled })
+  const { ref, hasEntered } = useLazyVisibility<HTMLDivElement>()
+  const canLoad = enabled && hasEntered
+  const { data = [], isLoading } = useEventSparks(event, range, {
+    enabled: canLoad,
+  })
   const chart = useMemo(() => buildChartData(data, undefined, range), [data, range])
 
   return (
-    <DashboardCard
-      title={
-        <Badge variant={eventLogBadgeVariant(event)} className="font-mono">
-          {event}
-        </Badge>
-      }
-      action={
-        <GoToButton
-          path="/$accountId/app/event-logs"
-          params={{ accountId: keygen.config.id }}
-          search={{ events: [event] }}
-          label="View logs"
-          className="[&_.group:hover_svg]:text-primary [&_button]:text-content-normal [&_button]:hover:text-content-loud [&_svg]:text-content-normal"
-        />
-      }
-      actionClassName="pointer-events-none opacity-0 transition-opacity group-hover/card:pointer-events-auto group-hover/card:opacity-100 group-focus-within/card:pointer-events-auto group-focus-within/card:opacity-100"
-      contentClassName="p-3"
-    >
-      {isLoading ? (
-        <Skeleton className="h-36 w-full" />
-      ) : chart.data.length === 0 ? (
-        <EmptyChart className="h-36" />
-      ) : (
-        <ChartContainer config={chart.config} className="h-36 w-full">
-          <LineChart
-            accessibilityLayer
-            data={chart.data}
-            margin={{ top: 4, right: 8, bottom: 0, left: 0 }}
-          >
-            <CartesianGrid vertical={false} strokeDasharray="3 3" />
-            <XAxis hide dataKey="date" height={0} />
-            <YAxis hide width={0} />
-            <ChartTooltip content={<ChartTooltipContent indicator="line" />} />
-            {chart.metrics.map((metric) => (
-              <Line
-                key={metric}
-                dataKey={metricKey(metric)}
-                type="monotone"
-                stroke={`var(--color-${metricKey(metric)})`}
-                strokeWidth={2}
-                dot={false}
-                isAnimationActive={false}
-              />
-            ))}
-          </LineChart>
-        </ChartContainer>
-      )}
-    </DashboardCard>
+    <div ref={ref}>
+      <DashboardCard
+        title={
+          <Badge variant={eventLogBadgeVariant(event)} className="font-mono">
+            {event}
+          </Badge>
+        }
+        action={
+          <GoToButton
+            path="/$accountId/app/event-logs"
+            params={{ accountId: keygen.config.id }}
+            search={{ events: [event] }}
+            label="View logs"
+            className="[&_.group:hover_svg]:text-primary [&_button]:text-content-normal [&_button]:hover:text-content-loud [&_svg]:text-content-normal"
+          />
+        }
+        actionClassName="pointer-events-none opacity-0 transition-opacity group-hover/card:pointer-events-auto group-hover/card:opacity-100 group-focus-within/card:pointer-events-auto group-focus-within/card:opacity-100"
+        contentClassName="p-3"
+      >
+        {!canLoad || isLoading ? (
+          <Skeleton className="h-36 w-full" />
+        ) : chart.data.length === 0 ? (
+          <EmptyChart className="h-36" />
+        ) : (
+          <ChartContainer config={chart.config} className="h-36 w-full">
+            <LineChart
+              accessibilityLayer
+              data={chart.data}
+              margin={{ top: 4, right: 8, bottom: 0, left: 0 }}
+            >
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <XAxis hide dataKey="date" height={0} />
+              <YAxis hide width={0} />
+              <ChartTooltip content={<ChartTooltipContent indicator="line" />} />
+              {chart.metrics.map((metric) => (
+                <Line
+                  key={metric}
+                  dataKey={metricKey(metric)}
+                  type="monotone"
+                  stroke={`var(--color-${metricKey(metric)})`}
+                  strokeWidth={2}
+                  dot={false}
+                  isAnimationActive={false}
+                />
+              ))}
+            </LineChart>
+          </ChartContainer>
+        )}
+      </DashboardCard>
+    </div>
   )
 }
 
@@ -702,9 +747,16 @@ function EventCharts({
         })),
     [],
   )
+  const [activeGroup, setActiveGroup] = useState(groups[0].title)
 
   return (
-    <Tabs defaultValue={groups[0].title} className="gap-4">
+    <Tabs
+      value={activeGroup}
+      onValueChange={(value) =>
+        setActiveGroup(value as (typeof EVENT_GROUPS)[number]["title"])
+      }
+      className="gap-4"
+    >
       <TabsList className="h-auto flex-wrap justify-start rounded-md bg-background-1">
         {groups.map((group) => (
           <TabsTrigger key={group.title} value={group.title}>
@@ -720,7 +772,7 @@ function EventCharts({
                 key={event}
                 event={event}
                 range={range}
-                enabled={enabled}
+                enabled={enabled && group.title === activeGroup}
               />
             ))}
           </div>
@@ -739,9 +791,11 @@ function LeaderboardCard({
   range: { start: string; end: string }
   enabled: boolean
 }) {
+  const { ref, hasEntered } = useLazyVisibility<HTMLDivElement>()
+  const canLoad = enabled && hasEntered
   const { data = [], isLoading } = useRequestLeaderboard(metric, {
     ...range,
-    enabled,
+    enabled: canLoad,
     limit: 10,
   })
   const chartConfig = {
@@ -764,73 +818,75 @@ function LeaderboardCard({
   } = useCursorFollowTooltip<string>()
 
   return (
-    <Card className="gap-0 rounded-md border-accent bg-background p-0">
-      <CardContent className="p-4">
-        {isLoading ? (
-          <Skeleton className="h-80 w-full" />
-        ) : chartData.length === 0 ? (
-          <EmptyChart />
-        ) : (
-          <ChartContainer config={chartConfig} className="h-80 w-full">
-            <BarChart
-              accessibilityLayer
-              data={chartData}
-              layout="vertical"
-              margin={{ top: 4, right: 24, bottom: 4, left: 4 }}
-            >
-              <CartesianGrid horizontal={false} strokeDasharray="3 3" />
-              <XAxis hide type="number" />
-              <YAxis
-                dataKey="discriminator"
-                type="category"
-                tickLine={false}
-                axisLine={false}
-                width={180}
-                tick={
-                  <LeaderboardTick
-                    onMouseEnter={open}
-                    onMouseMove={move}
-                    onMouseLeave={close}
-                  />
-                }
-              />
-              <ChartTooltip
-                content={
-                  <ChartTooltipContent
-                    hideLabel
-                    labelKey="count"
-                    nameKey="discriminator"
-                  />
-                }
-              />
-              <Bar
-                dataKey="count"
-                fill="var(--color-count)"
-                radius={[0, 3, 3, 0]}
-                isAnimationActive={false}
+    <div ref={ref}>
+      <Card className="gap-0 rounded-md border-accent bg-background p-0">
+        <CardContent className="p-4">
+          {!canLoad || isLoading ? (
+            <Skeleton className="h-80 w-full" />
+          ) : chartData.length === 0 ? (
+            <EmptyChart />
+          ) : (
+            <ChartContainer config={chartConfig} className="h-80 w-full">
+              <BarChart
+                accessibilityLayer
+                data={chartData}
+                layout="vertical"
+                margin={{ top: 4, right: 24, bottom: 4, left: 4 }}
               >
-                {chartData.map((entry, index) => (
-                  <Cell
-                    key={entry.discriminator}
-                    fill="var(--color-count)"
-                    fillOpacity={Math.max(0.1, 1 - index * 0.1)}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ChartContainer>
-        )}
-      </CardContent>
-      <CursorTooltip
-        open={!!hoveredDiscriminator}
-        tooltipRef={tooltipRef}
-        currentPos={currentPos}
-        offset={8}
-        className="max-w-[min(32rem,calc(100vw-2rem))] break-all"
-      >
-        {hoveredDiscriminator}
-      </CursorTooltip>
-    </Card>
+                <CartesianGrid horizontal={false} strokeDasharray="3 3" />
+                <XAxis hide type="number" />
+                <YAxis
+                  dataKey="discriminator"
+                  type="category"
+                  tickLine={false}
+                  axisLine={false}
+                  width={180}
+                  tick={
+                    <LeaderboardTick
+                      onMouseEnter={open}
+                      onMouseMove={move}
+                      onMouseLeave={close}
+                    />
+                  }
+                />
+                <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      hideLabel
+                      labelKey="count"
+                      nameKey="discriminator"
+                    />
+                  }
+                />
+                <Bar
+                  dataKey="count"
+                  fill="var(--color-count)"
+                  radius={[0, 3, 3, 0]}
+                  isAnimationActive={false}
+                >
+                  {chartData.map((entry, index) => (
+                    <Cell
+                      key={entry.discriminator}
+                      fill="var(--color-count)"
+                      fillOpacity={Math.max(0.1, 1 - index * 0.1)}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ChartContainer>
+          )}
+        </CardContent>
+        <CursorTooltip
+          open={!!hoveredDiscriminator}
+          tooltipRef={tooltipRef}
+          currentPos={currentPos}
+          offset={8}
+          className="max-w-[min(32rem,calc(100vw-2rem))] break-all"
+        >
+          {hoveredDiscriminator}
+        </CursorTooltip>
+      </Card>
+    </div>
   )
 }
 
@@ -886,9 +942,20 @@ function Leaderboards({
     () => [...LEADERBOARDS].sort((a, b) => a.title.localeCompare(b.title)),
     [],
   )
+  const [activeLeaderboard, setActiveLeaderboard] = useState(
+    leaderboards[0].metric,
+  )
 
   return (
-    <Tabs defaultValue={leaderboards[0].metric} className="gap-4">
+    <Tabs
+      value={activeLeaderboard}
+      onValueChange={(value) =>
+        setActiveLeaderboard(
+          value as (typeof LEADERBOARDS)[number]["metric"],
+        )
+      }
+      className="gap-4"
+    >
       <TabsList className="h-auto flex-wrap justify-start rounded-md bg-background-1">
         {leaderboards.map((leaderboard) => (
           <TabsTrigger key={leaderboard.metric} value={leaderboard.metric}>
@@ -905,7 +972,7 @@ function Leaderboards({
           <LeaderboardCard
             metric={leaderboard.metric}
             range={range}
-            enabled={enabled}
+            enabled={enabled && leaderboard.metric === activeLeaderboard}
           />
         </TabsContent>
       ))}
@@ -922,15 +989,25 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
   const [leaderboardRangeDays, setLeaderboardRangeDays] =
     useState<AnalyticsRangeDays>(30)
 
+  const heatmapVisibility = useLazyVisibility<HTMLElement>()
+  const activityVisibility = useLazyVisibility<HTMLElement>()
+  const eventVisibility = useLazyVisibility<HTMLElement>()
+  const leaderboardVisibility = useLazyVisibility<HTMLElement>()
+
+  const heatmapCanLoad = enabled && heatmapVisibility.hasEntered
+  const activityCanLoad = enabled && activityVisibility.hasEntered
+  const eventCanLoad = enabled && eventVisibility.hasEntered
+  const leaderboardCanLoad = enabled && leaderboardVisibility.hasEntered
+
   const activityRange = useAnalyticsRange(activityRangeDays)
   const eventRange = useAnalyticsRange(eventRangeDays)
   const leaderboardRange = useAnalyticsRange(leaderboardRangeDays)
   const { data: requests = [], isLoading: requestsLoading } = useRequestSparks(
     activityRange,
-    { enabled },
+    { enabled: activityCanLoad },
   )
   const { data: validations = [], isLoading: validationsLoading } =
-    useValidationSparks(activityRange, { enabled })
+    useValidationSparks(activityRange, { enabled: activityCanLoad })
 
   return (
     <div className="space-y-6">
@@ -961,7 +1038,7 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
         />
       </div>
 
-      <section className="space-y-3">
+      <section ref={heatmapVisibility.ref} className="space-y-3">
         <SectionHeader
           title="Heatmaps"
           icon={Grid3X3}
@@ -969,10 +1046,13 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
           options={HEATMAP_RANGE_OPTIONS}
           onRangeChange={setHeatmapRangeDays}
         />
-        <LicenseExpirationHeatmap rangeDays={heatmapRangeDays} />
+        <LicenseExpirationHeatmap
+          enabled={heatmapCanLoad}
+          rangeDays={heatmapRangeDays}
+        />
       </section>
 
-      <section className="space-y-3">
+      <section ref={activityVisibility.ref} className="space-y-3">
         <SectionHeader
           title="Activity"
           icon={Activity}
@@ -986,19 +1066,19 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
             data={requests}
             expectedMetrics={REQUEST_METRICS}
             range={activityRange}
-            isLoading={requestsLoading}
+            isLoading={!activityCanLoad || requestsLoading}
           />
           <StackedBarChart
             title="Validations"
             data={validations}
             expectedMetrics={VALIDATION_METRICS}
             range={activityRange}
-            isLoading={validationsLoading}
+            isLoading={!activityCanLoad || validationsLoading}
           />
         </div>
       </section>
 
-      <section className="space-y-3">
+      <section ref={eventVisibility.ref} className="space-y-3">
         <SectionHeader
           title="Events"
           icon={Activity}
@@ -1006,10 +1086,10 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
           options={ANALYTICS_RANGE_OPTIONS}
           onRangeChange={setEventRangeDays}
         />
-        <EventCharts range={eventRange} enabled={enabled} />
+        <EventCharts range={eventRange} enabled={eventCanLoad} />
       </section>
 
-      <section className="space-y-3">
+      <section ref={leaderboardVisibility.ref} className="space-y-3">
         <SectionHeader
           title="Leaderboards"
           icon={BarChart3}
@@ -1017,7 +1097,7 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
           options={ANALYTICS_RANGE_OPTIONS}
           onRangeChange={setLeaderboardRangeDays}
         />
-        <Leaderboards range={leaderboardRange} enabled={enabled} />
+        <Leaderboards range={leaderboardRange} enabled={leaderboardCanLoad} />
       </section>
     </div>
   )

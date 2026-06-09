@@ -18,11 +18,17 @@ const WARNING_EVENT_RE = [
   /\.yanked$/,
 ]
 
+const SUCCESS_EVENT_RE = [/\.created$/, /\.valid$/]
+
 export function eventLogBadgeVariant(
   event: string,
-): "secondary" | "destructive" | "warning" {
+): "secondary" | "destructive" | "success" | "warning" {
   if (DESTRUCTIVE_EVENT_RE.some((re) => re.test(event))) {
     return "destructive"
+  }
+
+  if (SUCCESS_EVENT_RE.some((re) => re.test(event))) {
+    return "success"
   }
 
   if (WARNING_EVENT_RE.some((re) => re.test(event))) {

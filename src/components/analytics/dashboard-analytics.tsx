@@ -603,12 +603,7 @@ function EventSparkCard({
                 type="monotone"
                 stroke={`var(--color-${metricKey(metric)})`}
                 strokeWidth={2}
-                dot={{
-                  fill: `var(--color-${metricKey(metric)})`,
-                  stroke: `var(--color-${metricKey(metric)})`,
-                  strokeWidth: 0,
-                }}
-                activeDot={false}
+                dot={false}
                 isAnimationActive={false}
               />
             ))}

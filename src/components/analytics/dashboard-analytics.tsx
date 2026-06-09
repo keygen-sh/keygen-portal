@@ -10,8 +10,6 @@ import {
   Users,
 } from "lucide-react"
 import {
-  Area,
-  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
@@ -499,7 +497,6 @@ function EventSparkCard({
 }) {
   const { data = [], isLoading } = useEventSparks(event, range, { enabled })
   const chart = useMemo(() => buildChartData(data), [data])
-  const isStacked = event.endsWith(".*")
 
   return (
     <DashboardCard title={event}>
@@ -509,44 +506,23 @@ function EventSparkCard({
         <EmptyChart />
       ) : (
         <ChartContainer config={chart.config} className="h-44 w-full">
-          {isStacked ? (
-            <AreaChart accessibilityLayer data={chart.data} margin={{ left: 0, right: 8 }}>
-              <CartesianGrid vertical={false} strokeDasharray="3 3" />
-              <XAxis hide dataKey="date" />
-              <YAxis hide />
-              <ChartTooltip content={<ChartTooltipContent indicator="line" />} />
-              {chart.metrics.map((metric) => (
-                <Area
-                  key={metric}
-                  dataKey={metricKey(metric)}
-                  type="monotone"
-                  stackId="1"
-                  stroke={`var(--color-${metricKey(metric)})`}
-                  fill={`var(--color-${metricKey(metric)})`}
-                  fillOpacity={0.28}
-                  isAnimationActive={false}
-                />
-              ))}
-            </AreaChart>
-          ) : (
-            <LineChart accessibilityLayer data={chart.data} margin={{ left: 0, right: 8 }}>
-              <CartesianGrid vertical={false} strokeDasharray="3 3" />
-              <XAxis hide dataKey="date" />
-              <YAxis hide />
-              <ChartTooltip content={<ChartTooltipContent indicator="line" />} />
-              {chart.metrics.map((metric) => (
-                <Line
-                  key={metric}
-                  dataKey={metricKey(metric)}
-                  type="monotone"
-                  stroke={`var(--color-${metricKey(metric)})`}
-                  strokeWidth={2}
-                  dot={false}
-                  isAnimationActive={false}
-                />
-              ))}
-            </LineChart>
-          )}
+          <LineChart accessibilityLayer data={chart.data} margin={{ left: 0, right: 8 }}>
+            <CartesianGrid vertical={false} strokeDasharray="3 3" />
+            <XAxis hide dataKey="date" />
+            <YAxis hide />
+            <ChartTooltip content={<ChartTooltipContent indicator="line" />} />
+            {chart.metrics.map((metric) => (
+              <Line
+                key={metric}
+                dataKey={metricKey(metric)}
+                type="monotone"
+                stroke={`var(--color-${metricKey(metric)})`}
+                strokeWidth={2}
+                dot={false}
+                isAnimationActive={false}
+              />
+            ))}
+          </LineChart>
         </ChartContainer>
       )}
     </DashboardCard>

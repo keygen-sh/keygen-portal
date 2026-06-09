@@ -589,6 +589,8 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
         />
       </div>
 
+      <LicenseExpirationHeatmap />
+
       <div className="grid gap-4 xl:grid-cols-2">
         <StackedAreaChart
           title="Requests"
@@ -629,8 +631,6 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
           ))}
         </div>
       </section>
-
-      <LicenseExpirationHeatmap />
     </div>
   )
 }

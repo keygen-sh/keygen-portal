@@ -335,7 +335,7 @@ function EmptyChart({ message = "No analytics data for this range." }) {
   )
 }
 
-function StackedAreaChart({
+function StackedBarChart({
   title,
   data,
   expectedMetrics,
@@ -359,7 +359,7 @@ function StackedAreaChart({
         <EmptyChart />
       ) : (
         <ChartContainer config={chart.config} className="h-64 w-full">
-          <AreaChart accessibilityLayer data={chart.data} margin={{ left: 0, right: 8 }}>
+          <BarChart accessibilityLayer data={chart.data} margin={{ left: 0, right: 8 }}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis
               dataKey="date"
@@ -371,22 +371,19 @@ function StackedAreaChart({
             />
             <YAxis hide />
             <ChartTooltip
-              content={<ChartTooltipContent indicator="line" />}
+              content={<ChartTooltipContent indicator="dot" />}
             />
             <ChartLegend content={<ChartLegendContent />} />
-            {chart.metrics.map((metric, index) => (
-              <Area
+            {chart.metrics.map((metric) => (
+              <Bar
                 key={metric}
                 dataKey={metricKey(metric)}
-                type="monotone"
                 stackId="1"
-                stroke={`var(--color-${metricKey(metric)})`}
                 fill={`var(--color-${metricKey(metric)})`}
-                fillOpacity={0.18 + Math.min(index, 3) * 0.08}
                 isAnimationActive={false}
               />
             ))}
-          </AreaChart>
+          </BarChart>
         </ChartContainer>
       )}
     </DashboardCard>
@@ -600,13 +597,13 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
       <LicenseExpirationHeatmap />
 
       <div className="grid gap-4 xl:grid-cols-2">
-        <StackedAreaChart
+        <StackedBarChart
           title="Requests"
           data={requests}
           expectedMetrics={REQUEST_METRICS}
           isLoading={requestsLoading}
         />
-        <StackedAreaChart
+        <StackedBarChart
           title="Validations"
           data={validations}
           expectedMetrics={VALIDATION_METRICS}

@@ -449,6 +449,8 @@ function GaugeCard({
               data={chart.data}
               margin={{ top: 4, right: 0, bottom: 0, left: 0 }}
             >
+              <XAxis hide dataKey="date" height={0} />
+              <YAxis hide width={0} />
               <ChartTooltip
                 content={
                   <ChartTooltipContent

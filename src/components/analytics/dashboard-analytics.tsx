@@ -240,6 +240,12 @@ function formatCount(value?: number | null) {
   )
 }
 
+function formatTooltipLabel(label: unknown) {
+  return typeof label === "string" || typeof label === "number"
+    ? String(label)
+    : ""
+}
+
 function useAnalyticsRange() {
   return useMemo(() => {
     const end = new Date()
@@ -443,6 +449,14 @@ function GaugeCard({
               data={chart.data}
               margin={{ top: 4, right: 0, bottom: 0, left: 0 }}
             >
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    indicator="line"
+                    labelFormatter={formatTooltipLabel}
+                  />
+                }
+              />
               <Line
                 dataKey={metricKey(metric)}
                 type="monotone"

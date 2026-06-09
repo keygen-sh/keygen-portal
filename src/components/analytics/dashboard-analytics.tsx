@@ -215,14 +215,16 @@ type HeatmapRangeDays = AnalyticsRangeDays | 365
 type SectionRangeDays = AnalyticsRangeDays | HeatmapRangeDays
 
 const ANALYTICS_RANGE_OPTIONS = [
-  { value: 30, label: "30d" },
-  { value: 60, label: "60d" },
-  { value: 90, label: "90d" },
+  { value: 30, label: "Last 30 days" },
+  { value: 60, label: "Last 60 days" },
+  { value: 90, label: "Last 90 days" },
 ] as const
 
 const HEATMAP_RANGE_OPTIONS = [
-  ...ANALYTICS_RANGE_OPTIONS,
-  { value: 365, label: "1y" },
+  { value: 30, label: "Next 30 days" },
+  { value: 60, label: "Next 60 days" },
+  { value: 90, label: "Next 90 days" },
+  { value: 365, label: "Next 1 year" },
 ] as const
 
 function metricKey(metric: string) {
@@ -335,7 +337,7 @@ function SectionHeader<T extends SectionRangeDays>({
         value={String(rangeDays)}
         onValueChange={(value) => onRangeChange(Number(value) as T)}
       >
-        <SelectTrigger size="sm" className="w-24">
+        <SelectTrigger size="sm" className="w-36">
           <SelectValue />
         </SelectTrigger>
         <SelectContent align="end">

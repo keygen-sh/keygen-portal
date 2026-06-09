@@ -1,6 +1,6 @@
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { eachDayOfInterval, format, parseISO, subDays } from "date-fns"
-import { Activity, BarChart3, Lock } from "lucide-react"
+import { Activity, BarChart3, Grid3X3, Lock } from "lucide-react"
 import {
   Bar,
   BarChart,
@@ -26,6 +26,13 @@ import {
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   ChartConfig,
   ChartContainer,
@@ -203,6 +210,21 @@ const LEADERBOARDS = [
   { metric: "user-agents", title: "Top user agents" },
 ] as const
 
+type AnalyticsRangeDays = 30 | 60 | 90
+type HeatmapRangeDays = AnalyticsRangeDays | 365
+type SectionRangeDays = AnalyticsRangeDays | HeatmapRangeDays
+
+const ANALYTICS_RANGE_OPTIONS = [
+  { value: 30, label: "30d" },
+  { value: 60, label: "60d" },
+  { value: 90, label: "90d" },
+] as const
+
+const HEATMAP_RANGE_OPTIONS = [
+  ...ANALYTICS_RANGE_OPTIONS,
+  { value: 365, label: "1y" },
+] as const
+
 function metricKey(metric: string) {
   return metric.replace(/[^a-zA-Z0-9_]/g, "_")
 }
@@ -245,16 +267,54 @@ function formatTooltipLabel(label: unknown) {
     : ""
 }
 
-function useAnalyticsRange() {
+function useAnalyticsRange(days: SectionRangeDays) {
   return useMemo(() => {
     const end = new Date()
-    const start = subDays(end, 29)
+    const start = subDays(end, days - 1)
 
     return {
       end: format(end, "yyyy-MM-dd"),
       start: format(start, "yyyy-MM-dd"),
     }
-  }, [])
+  }, [days])
+}
+
+function SectionHeader<T extends SectionRangeDays>({
+  title,
+  icon: Icon,
+  rangeDays,
+  options,
+  onRangeChange,
+}: {
+  title: string
+  icon: React.ComponentType<{ className?: string }>
+  rangeDays: T
+  options: readonly { value: T; label: string }[]
+  onRangeChange: (rangeDays: T) => void
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex min-w-0 items-center gap-2 text-sm font-medium text-content-muted">
+        <Icon className="size-4 shrink-0 text-content-subdued" />
+        <span className="truncate">{title}</span>
+      </div>
+      <Select
+        value={String(rangeDays)}
+        onValueChange={(value) => onRangeChange(Number(value) as T)}
+      >
+        <SelectTrigger size="sm" className="w-24">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent align="end">
+          {options.map((option) => (
+            <SelectItem key={option.value} value={String(option.value)}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  )
 }
 
 function buildChartData(
@@ -854,13 +914,23 @@ function Leaderboards({
 }
 
 function AnalyticsContent({ enabled }: { enabled: boolean }) {
-  const range = useAnalyticsRange()
+  const [heatmapRangeDays, setHeatmapRangeDays] =
+    useState<HeatmapRangeDays>(365)
+  const [activityRangeDays, setActivityRangeDays] =
+    useState<AnalyticsRangeDays>(90)
+  const [eventRangeDays, setEventRangeDays] = useState<AnalyticsRangeDays>(30)
+  const [leaderboardRangeDays, setLeaderboardRangeDays] =
+    useState<AnalyticsRangeDays>(30)
+
+  const activityRange = useAnalyticsRange(activityRangeDays)
+  const eventRange = useAnalyticsRange(eventRangeDays)
+  const leaderboardRange = useAnalyticsRange(leaderboardRangeDays)
   const { data: requests = [], isLoading: requestsLoading } = useRequestSparks(
-    range,
+    activityRange,
     { enabled },
   )
   const { data: validations = [], isLoading: validationsLoading } =
-    useValidationSparks(range, { enabled })
+    useValidationSparks(activityRange, { enabled })
 
   return (
     <div className="space-y-6">
@@ -868,62 +938,86 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
         <GaugeCard
           title="ALUs"
           metric="alus"
-          range={range}
+          range={activityRange}
           enabled={enabled}
         />
         <GaugeCard
           title="Users"
           metric="users"
-          range={range}
+          range={activityRange}
           enabled={enabled}
         />
         <GaugeCard
           title="Licenses"
           metric="licenses"
-          range={range}
+          range={activityRange}
           enabled={enabled}
         />
         <GaugeCard
           title="Machines"
           metric="machines"
-          range={range}
+          range={activityRange}
           enabled={enabled}
         />
       </div>
 
-      <LicenseExpirationHeatmap />
-
-      <div className="grid gap-4 xl:grid-cols-2">
-        <StackedBarChart
-          title="Requests"
-          data={requests}
-          expectedMetrics={REQUEST_METRICS}
-          range={range}
-          isLoading={requestsLoading}
-        />
-        <StackedBarChart
-          title="Validations"
-          data={validations}
-          expectedMetrics={VALIDATION_METRICS}
-          range={range}
-          isLoading={validationsLoading}
-        />
-      </div>
-
       <section className="space-y-3">
-        <div className="flex items-center gap-2 text-sm font-medium text-content-muted">
-          <Activity className="size-4 text-content-subdued" />
-          Events
-        </div>
-        <EventCharts range={range} enabled={enabled} />
+        <SectionHeader
+          title="Heatmaps"
+          icon={Grid3X3}
+          rangeDays={heatmapRangeDays}
+          options={HEATMAP_RANGE_OPTIONS}
+          onRangeChange={setHeatmapRangeDays}
+        />
+        <LicenseExpirationHeatmap rangeDays={heatmapRangeDays} />
       </section>
 
       <section className="space-y-3">
-        <div className="flex items-center gap-2 text-sm font-medium text-content-muted">
-          <BarChart3 className="size-4 text-content-subdued" />
-          Leaderboards
+        <SectionHeader
+          title="Activity"
+          icon={Activity}
+          rangeDays={activityRangeDays}
+          options={ANALYTICS_RANGE_OPTIONS}
+          onRangeChange={setActivityRangeDays}
+        />
+        <div className="grid gap-4 xl:grid-cols-2">
+          <StackedBarChart
+            title="Requests"
+            data={requests}
+            expectedMetrics={REQUEST_METRICS}
+            range={activityRange}
+            isLoading={requestsLoading}
+          />
+          <StackedBarChart
+            title="Validations"
+            data={validations}
+            expectedMetrics={VALIDATION_METRICS}
+            range={activityRange}
+            isLoading={validationsLoading}
+          />
         </div>
-        <Leaderboards range={range} enabled={enabled} />
+      </section>
+
+      <section className="space-y-3">
+        <SectionHeader
+          title="Events"
+          icon={Activity}
+          rangeDays={eventRangeDays}
+          options={ANALYTICS_RANGE_OPTIONS}
+          onRangeChange={setEventRangeDays}
+        />
+        <EventCharts range={eventRange} enabled={enabled} />
+      </section>
+
+      <section className="space-y-3">
+        <SectionHeader
+          title="Leaderboards"
+          icon={BarChart3}
+          rangeDays={leaderboardRangeDays}
+          options={ANALYTICS_RANGE_OPTIONS}
+          onRangeChange={setLeaderboardRangeDays}
+        />
+        <Leaderboards range={leaderboardRange} enabled={enabled} />
       </section>
     </div>
   )

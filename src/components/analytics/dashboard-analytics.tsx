@@ -1001,6 +1001,7 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
   const eventCanLoad = enabled && eventVisibility.hasEntered
   const leaderboardCanLoad = enabled && leaderboardVisibility.hasEntered
 
+  const gaugeRange = useAnalyticsRange(30)
   const activityRange = useAnalyticsRange(activityRangeDays)
   const eventRange = useAnalyticsRange(eventRangeDays)
   const leaderboardRange = useAnalyticsRange(leaderboardRangeDays)
@@ -1017,25 +1018,25 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
         <GaugeCard
           title="ALUs"
           metric="alus"
-          range={activityRange}
+          range={gaugeRange}
           enabled={enabled}
         />
         <GaugeCard
           title="Users"
           metric="users"
-          range={activityRange}
+          range={gaugeRange}
           enabled={enabled}
         />
         <GaugeCard
           title="Licenses"
           metric="licenses"
-          range={activityRange}
+          range={gaugeRange}
           enabled={enabled}
         />
         <GaugeCard
           title="Machines"
           metric="machines"
-          range={activityRange}
+          range={gaugeRange}
           enabled={enabled}
         />
       </div>

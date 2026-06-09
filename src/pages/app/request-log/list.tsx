@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react"
+import { useNavigate } from "@tanstack/react-router"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 
@@ -16,6 +17,7 @@ import {
   type RequestLogFilters,
 } from "@/queries/request-logs"
 
+import * as keygen from "@/keygen"
 import * as RequestLogs from "@/components/request-logs"
 import * as Skeletons from "@/components/skeletons"
 import {
@@ -32,6 +34,7 @@ import CursorTooltip from "@/components/cursor-tooltip"
 export default function RequestLogList() {
   const table = useDataTable()
   const { page, pageSize, setPage } = table
+  const navigate = useNavigate()
   const { isEE } = useEdition()
 
   const [filters, setFilters] = useFilterSearch<RequestLogFilters>()
@@ -98,6 +101,12 @@ export default function RequestLogList() {
         table={table}
         columns={columns}
         isLoading={loading}
+        onRowClick={(requestLog) =>
+          navigate({
+            to: "/$accountId/app/request-logs/$id",
+            params: { accountId: keygen.config.id, id: requestLog.id },
+          })
+        }
       />
     </ScrollArea>
   )

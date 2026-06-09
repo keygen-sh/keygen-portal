@@ -1,5 +1,10 @@
 import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
 
+export enum RequestLogView {
+  List = "list",
+  Details = "details",
+}
+
 export type RequestLogAttributes = {
   url: string
   method: string
@@ -28,6 +33,7 @@ export type RequestLog = Resource<
   RequestLogRelationships
 >
 
+export type RequestLogResponse = APIResponse<RequestLog>
 export type RequestLogListResponse = APIResponse<RequestLog[]>
 
 export type RequestLogResourceFilter =

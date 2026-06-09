@@ -13,13 +13,16 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   Line,
   LineChart,
+  Text,
   XAxis,
   YAxis,
 } from "recharts"
 
 import LockedOverlay from "@/components/locked-overlay"
+import CursorTooltip from "@/components/cursor-tooltip"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -42,6 +45,7 @@ import {
 import { useCloud } from "@/hooks/use-cloud"
 import { useEdition } from "@/hooks/use-edition"
 import { usePermissions } from "@/hooks/use-permissions"
+import { useCursorFollowTooltip } from "@/hooks/use-cursor-follow-tooltip"
 
 import { useGetAccount, useGetAccountPlan } from "@/queries/accounts"
 import {
@@ -207,6 +211,15 @@ function metricKey(metric: string) {
 function metricLabel(metric: string) {
   const parts = displayMetric(metric).split(".")
   return humanize(parts[parts.length - 1])
+}
+
+function truncateMiddle(value: string, maxLength: number) {
+  if (value.length <= maxLength) return value
+
+  const headLength = Math.ceil((maxLength - 3) / 2)
+  const tailLength = Math.floor((maxLength - 3) / 2)
+
+  return `${value.slice(0, headLength)}...${value.slice(-tailLength)}`
 }
 
 function displayMetric(metric: string) {
@@ -427,9 +440,20 @@ function GaugeCard({
   )
 }
 
-function EmptyChart({ message = "No analytics data for this range." }) {
+function EmptyChart({
+  message = "No analytics data for this range.",
+  className,
+}: {
+  message?: string
+  className?: string
+}) {
   return (
-    <div className="flex h-56 items-center justify-center rounded-md border border-dashed border-accent text-sm text-content-subdued">
+    <div
+      className={cn(
+        "flex h-56 items-center justify-center rounded-md text-sm text-content-subdued",
+        className,
+      )}
+    >
       {message}
     </div>
   )
@@ -514,7 +538,7 @@ function EventSparkCard({
       {isLoading ? (
         <Skeleton className="h-36 w-full" />
       ) : chart.data.length === 0 ? (
-        <EmptyChart />
+        <EmptyChart className="h-36" />
       ) : (
         <ChartContainer config={chart.config} className="h-36 w-full">
           <LineChart
@@ -580,12 +604,10 @@ function EventCharts({
 
 function LeaderboardCard({
   metric,
-  title,
   range,
   enabled,
 }: {
   metric: (typeof LEADERBOARDS)[number]["metric"]
-  title: string
   range: { start: string; end: string }
   enabled: boolean
 }) {
@@ -597,61 +619,164 @@ function LeaderboardCard({
   const chartConfig = {
     count: {
       label: "Requests",
-      color: "var(--color-secondary)",
+      color: GREEN,
     },
   } satisfies ChartConfig
 
   const chartData = data.map((entry) => ({
     ...entry,
-    label:
-      entry.discriminator.length > 28
-        ? `${entry.discriminator.slice(0, 25)}...`
-        : entry.discriminator,
   }))
+  const {
+    active: hoveredDiscriminator,
+    tooltipRef,
+    currentPos,
+    open,
+    move,
+    close,
+  } = useCursorFollowTooltip<string>()
 
   return (
-    <DashboardCard title={title}>
-      {isLoading ? (
-        <Skeleton className="h-64 w-full" />
-      ) : chartData.length === 0 ? (
-        <EmptyChart />
-      ) : (
-        <ChartContainer config={chartConfig} className="h-64 w-full">
-          <BarChart
-            accessibilityLayer
-            data={chartData}
-            layout="vertical"
-            margin={{ left: 4, right: 20 }}
-          >
-            <CartesianGrid horizontal={false} strokeDasharray="3 3" />
-            <XAxis hide type="number" />
-            <YAxis
-              dataKey="label"
-              type="category"
-              tickLine={false}
-              axisLine={false}
-              width={96}
-              tick={{ fontSize: 11 }}
-            />
-            <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  hideLabel
-                  labelKey="count"
-                  nameKey="discriminator"
-                />
-              }
-            />
-            <Bar
-              dataKey="count"
-              fill="var(--color-count)"
-              radius={[0, 3, 3, 0]}
-              isAnimationActive={false}
-            />
-          </BarChart>
-        </ChartContainer>
-      )}
-    </DashboardCard>
+    <Card className="gap-0 rounded-md border-accent bg-background p-0">
+      <CardContent className="p-4">
+        {isLoading ? (
+          <Skeleton className="h-80 w-full" />
+        ) : chartData.length === 0 ? (
+          <EmptyChart />
+        ) : (
+          <ChartContainer config={chartConfig} className="h-80 w-full">
+            <BarChart
+              accessibilityLayer
+              data={chartData}
+              layout="vertical"
+              margin={{ top: 4, right: 24, bottom: 4, left: 4 }}
+            >
+              <CartesianGrid horizontal={false} strokeDasharray="3 3" />
+              <XAxis hide type="number" />
+              <YAxis
+                dataKey="discriminator"
+                type="category"
+                tickLine={false}
+                axisLine={false}
+                width={180}
+                tick={
+                  <LeaderboardTick
+                    onMouseEnter={open}
+                    onMouseMove={move}
+                    onMouseLeave={close}
+                  />
+                }
+              />
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    hideLabel
+                    labelKey="count"
+                    nameKey="discriminator"
+                  />
+                }
+              />
+              <Bar
+                dataKey="count"
+                fill="var(--color-count)"
+                radius={[0, 3, 3, 0]}
+                isAnimationActive={false}
+              >
+                {chartData.map((entry, index) => (
+                  <Cell
+                    key={entry.discriminator}
+                    fill="var(--color-count)"
+                    fillOpacity={Math.max(0.1, 1 - index * 0.1)}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ChartContainer>
+        )}
+      </CardContent>
+      <CursorTooltip
+        open={!!hoveredDiscriminator}
+        tooltipRef={tooltipRef}
+        currentPos={currentPos}
+        offset={8}
+        className="max-w-[min(32rem,calc(100vw-2rem))] break-all"
+      >
+        {hoveredDiscriminator}
+      </CursorTooltip>
+    </Card>
+  )
+}
+
+function LeaderboardTick({
+  x,
+  y,
+  payload,
+  onMouseEnter,
+  onMouseMove,
+  onMouseLeave,
+}: {
+  x?: number
+  y?: number
+  payload?: { value?: string }
+  onMouseEnter?: (item: string, event: React.MouseEvent) => void
+  onMouseMove?: (event: React.MouseEvent) => void
+  onMouseLeave?: () => void
+}) {
+  const discriminator = String(payload?.value ?? "")
+  const label = truncateMiddle(discriminator, 34)
+
+  return (
+    <g
+      className="cursor-help"
+      transform={`translate(${x ?? 0},${y ?? 0})`}
+      onMouseEnter={(event) => onMouseEnter?.(discriminator, event)}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+    >
+      <Text
+        x={0}
+        y={0}
+        width={168}
+        maxLines={1}
+        textAnchor="end"
+        verticalAnchor="middle"
+        className="fill-content-subdued text-[11px]"
+      >
+        {label}
+      </Text>
+    </g>
+  )
+}
+
+function Leaderboards({
+  range,
+  enabled,
+}: {
+  range: { start: string; end: string }
+  enabled: boolean
+}) {
+  return (
+    <Tabs defaultValue={LEADERBOARDS[0].metric} className="gap-4">
+      <TabsList className="h-auto flex-wrap justify-start rounded-md bg-background-1">
+        {LEADERBOARDS.map((leaderboard) => (
+          <TabsTrigger key={leaderboard.metric} value={leaderboard.metric}>
+            {leaderboard.title}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+      {LEADERBOARDS.map((leaderboard) => (
+        <TabsContent
+          key={leaderboard.metric}
+          value={leaderboard.metric}
+          className="mt-0"
+        >
+          <LeaderboardCard
+            metric={leaderboard.metric}
+            range={range}
+            enabled={enabled}
+          />
+        </TabsContent>
+      ))}
+    </Tabs>
   )
 }
 
@@ -727,17 +852,7 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
           <BarChart3 className="size-4 text-content-subdued" />
           Leaderboards
         </div>
-        <div className="grid gap-4 xl:grid-cols-2">
-          {LEADERBOARDS.map((leaderboard) => (
-            <LeaderboardCard
-              key={leaderboard.metric}
-              metric={leaderboard.metric}
-              title={leaderboard.title}
-              range={range}
-              enabled={enabled}
-            />
-          ))}
-        </div>
+        <Leaderboards range={range} enabled={enabled} />
       </section>
     </div>
   )

@@ -1,14 +1,6 @@
 import { useMemo } from "react"
 import { eachDayOfInterval, format, parseISO, subDays } from "date-fns"
-import {
-  Activity,
-  BarChart3,
-  Crown,
-  KeyRound,
-  Lock,
-  MonitorSmartphone,
-  Users,
-} from "lucide-react"
+import { Activity, BarChart3, Lock } from "lucide-react"
 import {
   Bar,
   BarChart,
@@ -414,13 +406,11 @@ function AnalyticsSkeleton() {
 
 function GaugeCard({
   title,
-  icon: Icon,
   metric,
   range,
   enabled,
 }: {
   title: string
-  icon: React.ComponentType<{ className?: string }>
   metric: "alus" | "users" | "licenses" | "machines"
   range: { start: string; end: string }
   enabled: boolean
@@ -444,22 +434,14 @@ function GaugeCard({
   }, [metric, range, spark])
 
   return (
-    <Card className="rounded-md border-accent bg-background p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-medium text-content-subdued">{title}</p>
-          {isLoading ? (
-            <Skeleton className="mt-3 h-8 w-20" />
-          ) : (
-            <p className="mt-2 text-2xl font-semibold tabular-nums text-content-loud">
-              {isError ? "--" : formatCount(value)}
-            </p>
-          )}
-        </div>
-        <span className="rounded-md border border-accent bg-background-1 p-2 text-content-normal">
-          <Icon className="size-4" />
-        </span>
-      </div>
+    <DashboardCard title={title}>
+      {isLoading ? (
+        <Skeleton className="h-8 w-20" />
+      ) : (
+        <p className="text-2xl font-semibold tabular-nums text-content-loud">
+          {isError ? "--" : formatCount(value)}
+        </p>
+      )}
       <div className="mt-4 h-12">
         {sparkLoading ? (
           <Skeleton className="h-full w-full" />
@@ -494,7 +476,7 @@ function GaugeCard({
           <div className="h-full rounded-sm bg-background-1" />
         )}
       </div>
-    </Card>
+    </DashboardCard>
   )
 }
 
@@ -880,28 +862,24 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <GaugeCard
           title="ALUs"
-          icon={Crown}
           metric="alus"
           range={range}
           enabled={enabled}
         />
         <GaugeCard
           title="Users"
-          icon={Users}
           metric="users"
           range={range}
           enabled={enabled}
         />
         <GaugeCard
           title="Licenses"
-          icon={KeyRound}
           metric="licenses"
           range={range}
           enabled={enabled}
         />
         <GaugeCard
           title="Machines"
-          icon={MonitorSmartphone}
           metric="machines"
           range={range}
           enabled={enabled}

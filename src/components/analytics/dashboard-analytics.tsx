@@ -175,9 +175,13 @@ function buildChartData(
   sparks: SparkEntry[],
   expectedMetrics?: readonly string[],
 ) {
+  const presentMetrics = Array.from(new Set(sparks.map((entry) => entry.metric)))
   const metrics = expectedMetrics?.length
-    ? [...expectedMetrics]
-    : Array.from(new Set(sparks.map((entry) => entry.metric)))
+    ? [
+        ...expectedMetrics.filter((metric) => presentMetrics.includes(metric)),
+        ...presentMetrics.filter((metric) => !expectedMetrics.includes(metric)),
+      ]
+    : presentMetrics
   const byDate = new Map<string, Record<string, string | number>>()
 
   for (const entry of sparks) {

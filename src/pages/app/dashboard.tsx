@@ -7,6 +7,7 @@ export default function Dashboard() {
       <PageHeader title="Metrics" />
 
       <div className="space-y-6 p-4 md:p-6">
+        <Analytics.DashboardAnalytics />
         <Analytics.LicenseExpirationHeatmap />
       </div>
     </section>

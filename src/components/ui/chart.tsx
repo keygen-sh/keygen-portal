@@ -176,7 +176,7 @@ function ChartTooltipContent({
     const itemConfig = getPayloadConfigFromPayload(config, item, key)
     const value =
       !labelKey && typeof label === "string"
-        ? config[label as keyof typeof config]?.label || label
+        ? config[label]?.label || label
         : itemConfig?.label
 
     if (labelFormatter) {
@@ -263,18 +263,18 @@ function ChartTooltipContent({
                     )}
                     <div
                       className={cn(
-                        "flex flex-1 justify-between leading-none",
+                        "flex flex-1 justify-between gap-4 leading-none",
                         nestLabel ? "items-end" : "items-center",
                       )}
                     >
-                      <div className="grid gap-1.5">
+                      <div className="grid min-w-0 gap-1.5">
                         {nestLabel ? tooltipLabel : null}
                         <span className="text-content-subdued">
                           {itemConfig?.label || item.name}
                         </span>
                       </div>
                       {item.value != null && (
-                        <span className="font-mono font-medium tabular-nums text-content-loud">
+                        <span className="shrink-0 font-mono font-medium tabular-nums text-content-loud">
                           {item.value.toLocaleString()}
                         </span>
                       )}
@@ -387,7 +387,7 @@ function getPayloadConfigFromPayload(
 
   return configLabelKey in config
     ? config[configLabelKey]
-    : config[key as keyof typeof config]
+    : config[key]
 }
 
 export {

@@ -329,21 +329,28 @@ function DashboardCard({
   action,
   children,
   className,
+  actionClassName,
   contentClassName,
 }: {
   title: React.ReactNode
   action?: React.ReactNode
   children: React.ReactNode
   className?: string
+  actionClassName?: string
   contentClassName?: string
 }) {
   return (
-    <Card className={cn("gap-0 rounded-md border-accent bg-background p-0", className)}>
+    <Card
+      className={cn(
+        "group/card gap-0 rounded-md border-accent bg-background p-0",
+        className,
+      )}
+    >
       <CardHeader className="border-b border-accent px-4 pt-3 [.border-b]:pb-2">
         <CardTitle className="text-sm font-medium text-content-muted">
           {title}
         </CardTitle>
-        {action && <CardAction>{action}</CardAction>}
+        {action && <CardAction className={actionClassName}>{action}</CardAction>}
       </CardHeader>
       <CardContent className={cn("p-4", contentClassName)}>{children}</CardContent>
     </Card>
@@ -595,6 +602,7 @@ function EventSparkCard({
           className="[&_.group:hover_svg]:text-primary [&_button]:text-content-normal [&_button]:hover:text-content-loud [&_svg]:text-content-normal"
         />
       }
+      actionClassName="pointer-events-none opacity-0 transition-opacity group-hover/card:pointer-events-auto group-hover/card:opacity-100 group-focus-within/card:pointer-events-auto group-focus-within/card:opacity-100"
       contentClassName="p-3"
     >
       {isLoading ? (

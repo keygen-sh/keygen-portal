@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import { useNavigate } from "@tanstack/react-router"
 import {
   format,
@@ -199,6 +199,43 @@ export default function LicenseExpirationHeatmap({
     }
     return occupied
   }, [entries])
+  const [containerWidth, setContainerWidth] = useState(0)
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const cellWidths = useMemo(() => {
+    if (isMobile || numWeeks === 0) return []
+
+    const availableWidth = containerWidth - LABEL_WIDTH - numWeeks * CELL_GAP
+    const baseWidth = Math.max(
+      CELL_WIDTH,
+      Math.floor(availableWidth / numWeeks),
+    )
+    const remainder = Math.max(0, availableWidth - baseWidth * numWeeks)
+
+    return Array.from(
+      { length: numWeeks },
+      (_, index) => baseWidth + (index < remainder ? 1 : 0),
+    )
+  }, [containerWidth, isMobile, numWeeks])
+  const gridWidth =
+    LABEL_WIDTH +
+    cellWidths.reduce((sum, width) => sum + width, 0) +
+    numWeeks * CELL_GAP
+  const isDesktopHeatmapReady = enabled && !isLoading && !isMobile && entries.length > 0
+
+  useEffect(() => {
+    if (!isDesktopHeatmapReady) return
+
+    const element = containerRef.current
+    if (!element) return
+
+    const measure = () => setContainerWidth(element.clientWidth)
+    measure()
+
+    const observer = new ResizeObserver(measure)
+    observer.observe(element)
+
+    return () => observer.disconnect()
+  }, [isDesktopHeatmapReady])
 
   return (
     <Chart.Card
@@ -231,10 +268,10 @@ export default function LicenseExpirationHeatmap({
             close={close}
           />
         ) : (
-          <div className="relative w-full overflow-x-auto">
+          <div ref={containerRef} className="relative w-full overflow-x-auto">
             <div
               style={{
-                width: "100%",
+                width: gridWidth,
                 minWidth: LABEL_WIDTH + numWeeks * (CELL_WIDTH + CELL_GAP),
               }}
             >
@@ -242,7 +279,7 @@ export default function LicenseExpirationHeatmap({
                 onMouseMove={handleGridMouseMove}
                 style={{
                   display: "grid",
-                  gridTemplateColumns: `${LABEL_WIDTH}px repeat(${numWeeks}, minmax(${CELL_WIDTH}px, 1fr))`,
+                  gridTemplateColumns: `${LABEL_WIDTH}px ${cellWidths.map((width) => `${width}px`).join(" ")}`,
                   gridTemplateRows: `auto repeat(7, ${CELL_HEIGHT}px)`,
                   columnGap: CELL_GAP,
                   rowGap: CELL_GAP,
@@ -298,9 +335,9 @@ export default function LicenseExpirationHeatmap({
                     onMouseLeave={handleCellMouseLeave}
                     onClick={handleCellClick}
                     className={cn(
-                      "cursor-pointer outline-0 transition-shadow duration-75 ease-out hover:z-10 hover:shadow-[0_0_0_2px_var(--color-background),0_0_0_3px_var(--color-destructive)]",
+                      "relative cursor-pointer outline-0 after:pointer-events-none after:absolute after:inset-0 after:bg-inherit after:content-[''] after:transition-[inset] after:duration-75 after:ease-out hover:z-10 hover:after:-inset-0.5",
                       hoveredEntry?.date === entry.date &&
-                        "z-10 shadow-[0_0_0_2px_var(--color-background),0_0_0_3px_var(--color-destructive)]",
+                        "z-10 after:-inset-0.5",
                     )}
                     style={{
                       gridRow: toDisplayRow(entry.y) + 2,
@@ -612,8 +649,8 @@ function MobileHeatmapGrid({
                   key={dateStr}
                   onClick={(e) => onCellTap(entry, e)}
                   className={cn(
-                    "cursor-pointer rounded-xs transition-transform duration-150 ease-out",
-                    hoveredEntry?.date === dateStr && "z-10 scale-[1.3]",
+                    "relative cursor-pointer rounded-xs after:pointer-events-none after:absolute after:inset-0 after:rounded-xs after:bg-inherit after:content-[''] after:transition-[inset] after:duration-75 after:ease-out",
+                    hoveredEntry?.date === dateStr && "z-10 after:-inset-0.5",
                   )}
                   style={{
                     gridRow: row + 1,

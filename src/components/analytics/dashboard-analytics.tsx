@@ -433,7 +433,7 @@ function DashboardCard({
   return (
     <Card
       className={cn(
-        "group/card gap-0 rounded-md border-accent bg-background p-0",
+        "group/card min-w-0 gap-0 rounded-md border-accent bg-background p-0",
         className,
       )}
     >
@@ -443,7 +443,9 @@ function DashboardCard({
         </CardTitle>
         {action && <CardAction className={actionClassName}>{action}</CardAction>}
       </CardHeader>
-      <CardContent className={cn("p-4", contentClassName)}>{children}</CardContent>
+      <CardContent className={cn("min-w-0 p-4", contentClassName)}>
+        {children}
+      </CardContent>
     </Card>
   )
 }
@@ -632,12 +634,12 @@ function StackedBarChart({
       ) : chart.data.length === 0 ? (
         <EmptyChart />
       ) : (
-        <ChartContainer config={chart.config} className="h-64 w-full">
+        <ChartContainer config={chart.config} className="h-64 min-w-0 w-full">
           <BarChart
             accessibilityLayer
             data={chart.data}
             margin={{ left: 0, right: 8 }}
-            barCategoryGap={isMobile ? 1 : 2}
+            barCategoryGap={isMobile ? 0 : 2}
           >
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis

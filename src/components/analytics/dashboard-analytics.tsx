@@ -50,6 +50,7 @@ import {
   useRequestLeaderboard,
   useRequestSparks,
   useResourceGauge,
+  useResourceSparks,
   useValidationSparks,
 } from "@/queries/analytics"
 
@@ -361,15 +362,23 @@ function GaugeCard({
   title,
   icon: Icon,
   metric,
+  range,
   enabled,
 }: {
   title: string
   icon: React.ComponentType<{ className?: string }>
   metric: "alus" | "users" | "licenses" | "machines"
+  range: { start: string; end: string }
   enabled: boolean
 }) {
   const { data, isLoading, isError } = useResourceGauge(metric, { enabled })
+  const { data: spark = [], isLoading: sparkLoading } = useResourceSparks(
+    metric,
+    range,
+    { enabled },
+  )
   const value = firstGaugeValue(data)
+  const chart = useMemo(() => buildChartData(spark, [metric]), [metric, spark])
 
   return (
     <Card className="rounded-md border-accent bg-background p-4">
@@ -387,6 +396,30 @@ function GaugeCard({
         <span className="rounded-md border border-accent bg-background-1 p-2 text-content-normal">
           <Icon className="size-4" />
         </span>
+      </div>
+      <div className="mt-4 h-12">
+        {sparkLoading ? (
+          <Skeleton className="h-full w-full" />
+        ) : chart.data.length > 1 ? (
+          <ChartContainer config={chart.config} className="h-full w-full">
+            <LineChart
+              accessibilityLayer
+              data={chart.data}
+              margin={{ top: 4, right: 0, bottom: 0, left: 0 }}
+            >
+              <Line
+                dataKey={metricKey(metric)}
+                type="monotone"
+                stroke={`var(--color-${metricKey(metric)})`}
+                strokeWidth={2}
+                dot={false}
+                isAnimationActive={false}
+              />
+            </LineChart>
+          </ChartContainer>
+        ) : (
+          <div className="h-full rounded-sm bg-background-1" />
+        )}
       </div>
     </Card>
   )
@@ -643,18 +676,32 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
   return (
     <div className="space-y-6">
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <GaugeCard title="ALUs" icon={Crown} metric="alus" enabled={enabled} />
-        <GaugeCard title="Users" icon={Users} metric="users" enabled={enabled} />
+        <GaugeCard
+          title="ALUs"
+          icon={Crown}
+          metric="alus"
+          range={range}
+          enabled={enabled}
+        />
+        <GaugeCard
+          title="Users"
+          icon={Users}
+          metric="users"
+          range={range}
+          enabled={enabled}
+        />
         <GaugeCard
           title="Licenses"
           icon={KeyRound}
           metric="licenses"
+          range={range}
           enabled={enabled}
         />
         <GaugeCard
           title="Machines"
           icon={MonitorSmartphone}
           metric="machines"
+          range={range}
           enabled={enabled}
         />
       </div>

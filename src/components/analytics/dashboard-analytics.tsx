@@ -204,8 +204,16 @@ function metricKey(metric: string) {
 }
 
 function metricLabel(metric: string) {
-  const parts = metric.split(".")
+  const parts = displayMetric(metric).split(".")
   return humanize(parts[parts.length - 1])
+}
+
+function displayMetric(metric: string) {
+  if (metric.startsWith("events.")) {
+    return metric.replace(/^events\./, "").replace(/-/g, ".")
+  }
+
+  return metric
 }
 
 function formatCount(value?: number | null) {
@@ -256,9 +264,11 @@ function buildChartData(
   }
 
   const config = metrics.reduce((acc, metric) => {
+    const colorMetric = displayMetric(metric)
+
     acc[metricKey(metric)] = {
       label: metricLabel(metric),
-      color: METRIC_COLORS[metric] ?? GRAY,
+      color: METRIC_COLORS[colorMetric] ?? GRAY,
     }
 
     return acc

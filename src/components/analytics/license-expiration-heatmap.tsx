@@ -73,8 +73,10 @@ function getTemperatureColor(temperature: number): string {
 }
 
 export default function LicenseExpirationHeatmap({
+  enabled = true,
   rangeDays = 365,
 }: {
+  enabled?: boolean
   rangeDays?: 30 | 60 | 90 | 365
 }) {
   const isMobile = useMobile()
@@ -92,6 +94,7 @@ export default function LicenseExpirationHeatmap({
   }, [rangeDays])
 
   const { data: cells = [], isLoading } = useExpirationsHeatmap({
+    enabled,
     start: startParam,
     end: endParam,
   })
@@ -215,7 +218,7 @@ export default function LicenseExpirationHeatmap({
         />
       }
     >
-      {isLoading ? (
+      {!enabled || isLoading ? (
         <HeatmapSkeleton />
       ) : entries.length ? (
         isMobile ? (

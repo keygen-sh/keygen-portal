@@ -11,9 +11,13 @@ import { ResourceGaugeMetric } from "@/keygen/analytics/gauges/metric"
 import { RequestLeaderboardMetric } from "@/keygen/analytics/leaderboards/metric"
 import { ResourceSparkMetric } from "@/keygen/analytics/sparks/metric"
 
-export function useExpirationsHeatmap(options: { start: string; end: string }) {
+export function useExpirationsHeatmap(options: {
+  start: string
+  end: string
+  enabled?: boolean
+}) {
   const { code } = useEnvironment()
-  const { start, end } = options
+  const { enabled, start, end } = options
 
   return useQuery({
     queryKey: [
@@ -34,6 +38,7 @@ export function useExpirationsHeatmap(options: { start: string; end: string }) {
 
       return response.data ?? []
     },
+    enabled: enabled ?? true,
     retry: false,
   })
 }

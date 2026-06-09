@@ -214,13 +214,6 @@ export default function EventLogFeed({
   const nextCursor = cursorFromLink(links?.next)
   const loading = isLoading || isFetching
 
-  // Scope the per-event "View request logs" link to the resource this feed is
-  // filtered by, so it acts as a pseudo request-log detail view for now.
-  const requestLogsResource =
-    filters?.resource && typeof filters.resource === "object"
-      ? filters.resource
-      : undefined
-
   return (
     <div className={cn("flex min-h-0 flex-1 flex-col", className)}>
       <div className="min-h-0 flex-1 overflow-y-auto">
@@ -241,7 +234,6 @@ export default function EventLogFeed({
                   eventLog={eventLog}
                   isFirst={index === 0}
                   isLast={index === eventLogs.length - 1}
-                  requestLogsResource={requestLogsResource}
                 />
               ))
             ) : (

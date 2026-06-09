@@ -621,16 +621,27 @@ function EventCharts({
   range: { start: string; end: string }
   enabled: boolean
 }) {
+  const groups = useMemo(
+    () =>
+      [...EVENT_GROUPS]
+        .sort((a, b) => a.title.localeCompare(b.title))
+        .map((group) => ({
+          ...group,
+          events: [...group.events].sort((a, b) => a.localeCompare(b)),
+        })),
+    [],
+  )
+
   return (
-    <Tabs defaultValue={EVENT_GROUPS[0].title} className="gap-4">
+    <Tabs defaultValue={groups[0].title} className="gap-4">
       <TabsList className="h-auto flex-wrap justify-start rounded-md bg-background-1">
-        {EVENT_GROUPS.map((group) => (
+        {groups.map((group) => (
           <TabsTrigger key={group.title} value={group.title}>
             {group.title}
           </TabsTrigger>
         ))}
       </TabsList>
-      {EVENT_GROUPS.map((group) => (
+      {groups.map((group) => (
         <TabsContent key={group.title} value={group.title} className="mt-0">
           <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
             {group.events.map((event) => (
@@ -800,16 +811,21 @@ function Leaderboards({
   range: { start: string; end: string }
   enabled: boolean
 }) {
+  const leaderboards = useMemo(
+    () => [...LEADERBOARDS].sort((a, b) => a.title.localeCompare(b.title)),
+    [],
+  )
+
   return (
-    <Tabs defaultValue={LEADERBOARDS[0].metric} className="gap-4">
+    <Tabs defaultValue={leaderboards[0].metric} className="gap-4">
       <TabsList className="h-auto flex-wrap justify-start rounded-md bg-background-1">
-        {LEADERBOARDS.map((leaderboard) => (
+        {leaderboards.map((leaderboard) => (
           <TabsTrigger key={leaderboard.metric} value={leaderboard.metric}>
             {leaderboard.title}
           </TabsTrigger>
         ))}
       </TabsList>
-      {LEADERBOARDS.map((leaderboard) => (
+      {leaderboards.map((leaderboard) => (
         <TabsContent
           key={leaderboard.metric}
           value={leaderboard.metric}

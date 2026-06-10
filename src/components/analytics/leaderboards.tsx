@@ -129,6 +129,7 @@ function LeaderboardCard({
           offset={8}
           className="max-w-[min(32rem,calc(100vw-2rem))] break-all"
         >
+          {/* TODO(ezekg) link to request logs matching the discriminator, e.g. method/url, IP address, etc. */}
           {hoveredDiscriminator}
         </CursorTooltip>
       </Card>

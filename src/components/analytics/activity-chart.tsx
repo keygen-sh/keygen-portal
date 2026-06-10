@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { SparkEntry } from "@/types/analytics"
 
 import { buildChartData, metricKey } from "@/lib/analytics"
-import DashboardCard from "./dashboard-card"
+import Card from "./card"
 import EmptyChart from "./empty-chart"
 
 export default function ActivityChart({
@@ -35,7 +35,7 @@ export default function ActivityChart({
   )
 
   return (
-    <DashboardCard title={title}>
+    <Card title={title}>
       {isLoading ? (
         <Skeleton className="h-64 w-full" />
       ) : chart.data.length === 0 ? (
@@ -72,6 +72,6 @@ export default function ActivityChart({
           </BarChart>
         </ChartContainer>
       )}
-    </DashboardCard>
+    </Card>
   )
 }

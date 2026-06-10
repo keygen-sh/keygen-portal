@@ -8,7 +8,7 @@ import {
 
 import { cn } from "@/lib/utils"
 
-export default function DashboardCard({
+export default function AnalyticsCard({
   title,
   action,
   children,

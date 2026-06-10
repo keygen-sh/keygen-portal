@@ -26,7 +26,7 @@ import {
   sparkTrendColor,
   useLazyVisibility,
 } from "@/lib/analytics"
-import DashboardCard from "./dashboard-card"
+import Card from "./card"
 
 export default function GaugeCard({
   title,
@@ -65,7 +65,7 @@ export default function GaugeCard({
 
   return (
     <div ref={ref}>
-      <DashboardCard
+      <Card
         title={title}
         action={
           tooltip ? (
@@ -135,7 +135,7 @@ export default function GaugeCard({
             )}
           </div>
         </div>
-      </DashboardCard>
+      </Card>
     </div>
   )
 }

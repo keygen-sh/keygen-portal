@@ -134,6 +134,7 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
           metric="alus"
           range={gaugeRange}
           enabled={enabled}
+          tooltip="An Active Licensed User (ALU) is a user licensed to use your product, identified through a license or user object, with activity in the last 90 days."
         />
         <GaugeCard
           title="Users"

@@ -19,7 +19,11 @@ import { useEdition } from "@/hooks/use-edition"
 import { usePermissions } from "@/hooks/use-permissions"
 
 import { useGetAccount, useGetAccountPlan } from "@/queries/accounts"
-import { useRequestSparks, useValidationSparks } from "@/queries/analytics"
+import {
+  useRequestSparks,
+  useResourceGauge,
+  useValidationSparks,
+} from "@/queries/analytics"
 
 import ActivityChart from "./activity-chart"
 import {
@@ -38,6 +42,14 @@ import GaugeCard from "./gauge-card"
 import Leaderboards from "./leaderboards"
 import LicenseExpirationHeatmap from "./license-expiration-heatmap"
 import SectionHeader from "./section-header"
+
+const REQUEST_DAILY_LIMIT = 10_000
+const requestUsageFormatter = new Intl.NumberFormat()
+const requestUsagePercentFormatter = new Intl.NumberFormat(undefined, {
+  maximumFractionDigits: 2,
+  minimumFractionDigits: 2,
+  style: "percent",
+})
 
 function UpgradeButton() {
   return (
@@ -99,6 +111,25 @@ function AnalyticsLockedCallout({
   )
 }
 
+function RequestUsageSummary({ count }: { count: number }) {
+  const formattedCount = requestUsageFormatter.format(count)
+  const formattedLimit = requestUsageFormatter.format(REQUEST_DAILY_LIMIT)
+  const formattedPercent = requestUsagePercentFormatter.format(
+    count / REQUEST_DAILY_LIMIT,
+  )
+
+  return (
+    <span className="block text-right text-xs leading-snug font-normal text-content-subdued">
+      You've made{" "}
+      <span className="text-content font-semibold">{formattedCount}</span> API
+      requests today,{" "}
+      <span className="text-content font-semibold">{formattedPercent}</span> of
+      your daily limit of{" "}
+      <span className="text-content font-semibold">{formattedLimit}</span>.
+    </span>
+  )
+}
+
 function AnalyticsContent({
   canUseGaugeSparks,
   canUseActivity,
@@ -142,8 +173,15 @@ function AnalyticsContent({
     activityRange,
     { enabled: activityCanLoad },
   )
+  const { data: requestGauge = [], isLoading: requestGaugeLoading } =
+    useResourceGauge("requests", { enabled: activityCanLoad })
   const { data: validations = [], isLoading: validationsLoading } =
     useValidationSparks(activityRange, { enabled: activityCanLoad })
+  const requestCountToday = requestGauge.reduce(
+    (total, entry) => total + entry.count,
+    0,
+  )
+  const showRequestUsage = activityCanLoad && !requestGaugeLoading
   const hasLockedAnalytics =
     !canUseActivity || !canUseEvents || !canUseLeaderboards
   const shouldShowLockedCallout =
@@ -219,6 +257,12 @@ function AnalyticsContent({
                   expectedMetrics={REQUEST_METRICS}
                   range={activityRange}
                   isLoading={!activityCanLoad || requestsLoading}
+                  action={
+                    showRequestUsage ? (
+                      <RequestUsageSummary count={requestCountToday} />
+                    ) : null
+                  }
+                  actionClassName="row-span-1 max-w-[min(30rem,58vw)] self-center"
                 />
                 <ActivityChart
                   title="Validations"

@@ -11,7 +11,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-import { useEventSparks } from "@/queries/analytics"
+import { useEventSpark } from "@/queries/analytics"
 
 import * as keygen from "@/keygen"
 
@@ -41,7 +41,7 @@ function EventSparkCard({
 }) {
   const { ref, hasEntered } = useLazyVisibility<HTMLDivElement>()
   const canLoad = enabled && hasEntered
-  const { data = [], isLoading } = useEventSparks(event, range, {
+  const { data = [], isLoading } = useEventSpark(event, range, {
     enabled: canLoad,
   })
   const chart = useMemo(

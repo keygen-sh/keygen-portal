@@ -43,10 +43,7 @@ export function useExpirationsHeatmap(options: {
   })
 }
 
-export function useResourceGauge(
-  metric: GaugeMetric,
-  options?: { enabled?: boolean },
-) {
+export function useGauge(metric: GaugeMetric, options?: { enabled?: boolean }) {
   const { code } = useEnvironment()
 
   return useQuery({
@@ -65,7 +62,7 @@ export function useResourceGauge(
   })
 }
 
-export function useRequestSparks(
+export function useRequestSpark(
   range: DateRangeOptions,
   options?: { enabled?: boolean },
 ) {
@@ -93,7 +90,7 @@ export function useRequestSparks(
   })
 }
 
-export function useValidationSparks(
+export function useValidationSpark(
   range: DateRangeOptions & { license?: string },
   options?: { enabled?: boolean },
 ) {
@@ -125,7 +122,7 @@ export function useValidationSparks(
   })
 }
 
-export function useEventSparks(
+export function useEventSpark(
   event: string,
   range: DateRangeOptions,
   options?: { enabled?: boolean },
@@ -159,7 +156,7 @@ export function useEventSparks(
   })
 }
 
-export function useResourceSparks(
+export function useSpark(
   metric: SparkMetric,
   range: DateRangeOptions,
   options?: { enabled?: boolean },
@@ -192,7 +189,7 @@ export function useResourceSparks(
   })
 }
 
-export function useRequestLeaderboard(
+export function useLeaderboard(
   leaderboard: LeaderboardMetric,
   options: DateRangeOptions & { limit?: number; enabled?: boolean },
 ) {

@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-import { SectionRangeDays } from "./chart-constants"
+import { SectionRangeDays } from "@/lib/analytics"
 
 export default function SectionHeader<T extends SectionRangeDays>({
   title,

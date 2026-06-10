@@ -19,9 +19,13 @@ import {
   eventLogBadgeVariant,
   expandEventLogEventFilters,
 } from "@/lib/event-logs"
+import {
+  EVENT_GROUPS,
+  buildChartData,
+  metricKey,
+  useLazyVisibility,
+} from "@/lib/analytics"
 
-import { EVENT_GROUPS } from "./chart-constants"
-import { buildChartData, metricKey, useLazyVisibility } from "./chart-utils"
 import DashboardCard from "./dashboard-card"
 import EmptyChart from "./empty-chart"
 

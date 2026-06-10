@@ -24,8 +24,12 @@ import { useCursorFollowTooltip } from "@/hooks/use-cursor-follow-tooltip"
 
 import { useRequestLeaderboard } from "@/queries/analytics"
 
-import { GREEN, LEADERBOARDS } from "./chart-constants"
-import { truncateMiddle, useLazyVisibility } from "./chart-utils"
+import {
+  GREEN,
+  LEADERBOARDS,
+  truncateMiddle,
+  useLazyVisibility,
+} from "@/lib/analytics"
 import EmptyChart from "./empty-chart"
 
 function LeaderboardCard({

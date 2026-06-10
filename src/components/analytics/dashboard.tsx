@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { motion } from "motion/react"
 import { Activity, BarChart3, Grid3X3, Lock } from "lucide-react"
 
 import LockedOverlay from "@/components/locked-overlay"
@@ -74,7 +75,12 @@ function AnalyticsLockedCallout({
     : "View historical analytics across your account. Upgrade to Keygen EE to unlock analytics."
 
   return (
-    <div className="pointer-events-none sticky top-[calc(100dvh-9.5rem)] z-20 -mb-32 flex justify-center bg-gradient-to-t from-background via-background/90 to-transparent px-4 pt-20 pb-4">
+    <motion.div
+      className="pointer-events-none sticky top-[calc(100dvh-min(75dvh,42rem))] z-20 -mb-[min(75dvh,42rem)] flex h-[min(75dvh,42rem)] w-full items-end justify-center bg-gradient-to-t from-background via-background/75 to-transparent px-4 pb-6"
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.16, ease: [0.4, 0, 0.2, 1] }}
+    >
       <Card className="pointer-events-auto w-full max-w-sm items-start gap-4 rounded border-none p-4 text-left shadow-sm">
         <CardHeader className="w-full px-0">
           <CardTitle className="flex items-start gap-2 text-sm">
@@ -89,7 +95,7 @@ function AnalyticsLockedCallout({
           <UpgradeButton />
         </CardFooter>
       </Card>
-    </div>
+    </motion.div>
   )
 }
 
@@ -140,6 +146,8 @@ function AnalyticsContent({
     useValidationSparks(activityRange, { enabled: activityCanLoad })
   const hasLockedAnalytics =
     !canUseActivity || !canUseEvents || !canUseLeaderboards
+  const shouldShowLockedCallout =
+    hasLockedAnalytics && activityVisibility.hasEntered
 
   return (
     <div className="space-y-6">
@@ -190,7 +198,7 @@ function AnalyticsContent({
       </section>
 
       <div className="relative">
-        {hasLockedAnalytics && (
+        {shouldShowLockedCallout && (
           <AnalyticsLockedCallout upgradeRequired={upgradeRequired} />
         )}
 
@@ -276,10 +284,10 @@ export default function Dashboard() {
   const hasPermission = can("account.analytics.read")
   const isFreePlan =
     isCloud && (plan?.attributes.price == null || plan?.attributes.price === 0)
-  const isChecking =
+  const isLoading =
     permissionsLoading || accountLoading || (isCloud && planLoading)
 
-  if (isChecking) {
+  if (isLoading) {
     return <Skeletons.AnalyticsCharts.Dashboard />
   }
 

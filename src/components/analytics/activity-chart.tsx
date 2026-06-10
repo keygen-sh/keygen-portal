@@ -12,7 +12,12 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 import { SparkEntry } from "@/types/analytics"
 
-import { buildChartData, metricDataKey } from "@/lib/analytics"
+import {
+  buildChartData,
+  formatChartAxisDate,
+  formatTooltipLabel,
+  metricDataKey,
+} from "@/lib/analytics"
 import Card from "./card"
 import EmptyChart from "./empty-chart"
 
@@ -70,10 +75,17 @@ export default function ActivityChart({
               axisLine={false}
               tickMargin={8}
               minTickGap={24}
-              tickFormatter={(value: string) => value.slice(5)}
+              tickFormatter={formatChartAxisDate}
             />
             <YAxis hide />
-            <ChartTooltip content={<ChartTooltipContent indicator="dot" />} />
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                  indicator="dot"
+                  labelFormatter={formatTooltipLabel}
+                />
+              }
+            />
             <ChartLegend content={<ChartLegendContent nameKey="value" />} />
             {chart.metrics.map((metric) => (
               <Bar

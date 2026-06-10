@@ -22,6 +22,7 @@ import {
 import {
   EVENT_GROUPS,
   buildChartData,
+  formatTooltipLabel,
   metricDataKey,
   useLazyVisibility,
 } from "@/lib/analytics"
@@ -95,7 +96,12 @@ function EventSparkCard({
               <XAxis hide dataKey="date" height={0} />
               <YAxis hide width={0} />
               <ChartTooltip
-                content={<ChartTooltipContent indicator="line" />}
+                content={
+                  <ChartTooltipContent
+                    indicator="line"
+                    labelFormatter={formatTooltipLabel}
+                  />
+                }
               />
               {chart.metrics.map((metric) => (
                 <Line

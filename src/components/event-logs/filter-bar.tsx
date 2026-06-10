@@ -8,8 +8,9 @@ import {
 
 import { capitalize } from "@/lib/utils"
 
+import { EventTypes } from "@/types/events"
 import { type SearchableResource } from "@/types/search"
-import { EVENT_TYPES, type EventLogResourceFilter } from "@/types/event-logs"
+import { type EventLogResourceFilter } from "@/types/event-logs"
 
 import { type EventLogFilters } from "@/queries/event-logs"
 
@@ -18,7 +19,7 @@ import { useEdition } from "@/hooks/use-edition"
 import * as Filters from "@/components/filter-bar"
 import { type PolymorphicResourceType } from "@/components/filter-bar/polymorphic-resource-filter"
 
-const EVENT_TYPE_OPTIONS = EVENT_TYPES.map((event) => ({
+const EVENT_TYPE_OPTIONS = EventTypes.map((event) => ({
   value: event,
   label: event,
 }))

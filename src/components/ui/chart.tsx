@@ -88,12 +88,9 @@ function ChartStyle({ id, config }: { id: string; config: ChartConfig }) {
     return null
   }
 
-  return (
-    <style
-      dangerouslySetInnerHTML={{
-        __html: Object.entries(THEMES)
-          .map(
-            ([theme, prefix]) => `
+  const css = Object.entries(THEMES)
+    .map(
+      ([theme, prefix]) => `
 ${prefix} [data-chart=${id}] {
 ${colorConfig
   .map(([key, itemConfig]) => {
@@ -105,11 +102,10 @@ ${colorConfig
   .join("\n")}
 }
 `,
-          )
-          .join("\n"),
-      }}
-    />
-  )
+    )
+    .join("\n")
+
+  return <style>{css}</style>
 }
 
 const ChartTooltip = RechartsPrimitive.Tooltip
@@ -318,8 +314,8 @@ function ChartLegendContent({
   return (
     <div
       className={cn(
-        "flex items-center justify-start gap-4 overflow-x-auto overflow-y-hidden whitespace-nowrap text-content-normal",
-        verticalAlign === "top" ? "pb-3" : "pt-3",
+        "flex items-center justify-start gap-4 overflow-x-auto overflow-y-hidden whitespace-nowrap text-content-normal [scrollbar-gutter:stable]",
+        verticalAlign === "top" ? "pb-3" : "pt-3 pb-2",
         className,
       )}
     >

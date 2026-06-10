@@ -20,7 +20,10 @@ const WARNING_EVENT_RE = [
 
 const SUCCESS_EVENT_RE = [/\.created$/, /\.valid$/]
 
-export const EVENT_LOG_EVENT_FILTERS: Record<string, readonly string[]> = {
+export const EVENT_LOG_EVENT_FILTER_EXPANSIONS: Record<
+  string,
+  readonly string[]
+> = {
   "license.validation.*": [
     "license.validation.succeeded",
     "license.validation.failed",
@@ -41,7 +44,11 @@ export const EVENT_LOG_EVENT_FILTERS: Record<string, readonly string[]> = {
 
 export function expandEventLogEventFilters(events: readonly string[]) {
   return Array.from(
-    new Set(events.flatMap((event) => EVENT_LOG_EVENT_FILTERS[event] ?? event)),
+    new Set(
+      events.flatMap(
+        (event) => EVENT_LOG_EVENT_FILTER_EXPANSIONS[event] ?? event,
+      ),
+    ),
   )
 }
 

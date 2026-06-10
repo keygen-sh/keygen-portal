@@ -339,10 +339,6 @@ export const HEATMAP_RANGE_OPTIONS = [
   { value: 365, label: "Next 1 year" },
 ] as const
 
-export function metricKey(metric: string) {
-  return metric.replace(/[^a-zA-Z0-9_]/g, "_")
-}
-
 export function formatCount(value?: number | null) {
   return new Intl.NumberFormat(undefined, { notation: "compact" }).format(
     value ?? 0,
@@ -418,7 +414,7 @@ export function buildChartData(
 
   for (const entry of sparks) {
     const row = byDate.get(entry.date) ?? { date: entry.date }
-    row[metricKey(entry.metric)] = entry.count
+    row[entry.metric] = entry.count
     byDate.set(entry.date, row)
   }
 
@@ -434,20 +430,28 @@ export function buildChartData(
 
   for (const row of data) {
     for (const metric of metrics) {
-      row[metricKey(metric)] ??= 0
+      row[metric] ??= 0
     }
   }
 
   const config = metrics.reduce((acc, metric) => {
-    acc[metricKey(metric)] = {
+    acc[metric] = {
       label: metric,
-      color: METRIC_COLORS[metric] ?? GRAY,
     }
 
     return acc
   }, {} as ChartConfig)
 
-  return { config, data, metrics }
+  const colors = metrics.reduce(
+    (acc, metric) => {
+      acc[metric] = METRIC_COLORS[metric] ?? GRAY
+
+      return acc
+    },
+    {} as Record<string, string>,
+  )
+
+  return { colors, config, data, metrics }
 }
 
 export function firstGaugeValue(data?: GaugeEntry[]) {

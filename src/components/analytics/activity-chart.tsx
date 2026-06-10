@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 import { SparkEntry } from "@/types/analytics"
 
-import { buildChartData, metricKey } from "@/lib/analytics"
+import { buildChartData } from "@/lib/analytics"
 import Card from "./card"
 import EmptyChart from "./empty-chart"
 
@@ -63,13 +63,14 @@ export default function ActivityChart({
             />
             <YAxis hide />
             <ChartTooltip content={<ChartTooltipContent indicator="dot" />} />
-            <ChartLegend content={<ChartLegendContent />} />
+            <ChartLegend content={<ChartLegendContent nameKey="value" />} />
             {chart.metrics.map((metric) => (
               <Bar
                 key={metric}
-                dataKey={metricKey(metric)}
+                dataKey={(row: Record<string, number>) => row[metric]}
+                name={metric}
                 stackId="1"
-                fill={`var(--color-${metricKey(metric)})`}
+                fill={chart.colors[metric]}
                 isAnimationActive={false}
               />
             ))}

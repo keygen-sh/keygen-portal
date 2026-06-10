@@ -22,7 +22,6 @@ import {
   firstGaugeValue,
   formatCount,
   formatTooltipLabel,
-  metricKey,
   sparkTrendColor,
   useLazyVisibility,
 } from "@/lib/analytics"
@@ -55,16 +54,11 @@ export default function GaugeCard({
     { enabled: canLoadSpark },
   )
   const value = firstGaugeValue(data)
-  const chart = useMemo(() => {
-    const chart = buildChartData(spark, [metric], range)
-    const key = metricKey(metric)
-
-    if (chart.config[key]) {
-      chart.config[key].color = sparkTrendColor(spark)
-    }
-
-    return chart
-  }, [metric, range, spark])
+  const chart = useMemo(
+    () => buildChartData(spark, [metric], range),
+    [metric, range, spark],
+  )
+  const sparkColor = sparkTrendColor(spark)
 
   return (
     <div ref={ref}>
@@ -126,9 +120,10 @@ export default function GaugeCard({
                     }
                   />
                   <Line
-                    dataKey={metricKey(metric)}
+                    dataKey={(row: Record<string, number>) => row[metric]}
+                    name={metric}
                     type="monotone"
-                    stroke={`var(--color-${metricKey(metric)})`}
+                    stroke={sparkColor}
                     strokeWidth={2}
                     dot={false}
                     isAnimationActive={false}

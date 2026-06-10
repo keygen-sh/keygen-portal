@@ -22,7 +22,6 @@ import {
 import {
   EVENT_GROUPS,
   buildChartData,
-  metricKey,
   useLazyVisibility,
 } from "@/lib/analytics"
 
@@ -89,9 +88,10 @@ function EventSparkCard({
               {chart.metrics.map((metric) => (
                 <Line
                   key={metric}
-                  dataKey={metricKey(metric)}
+                  dataKey={(row: Record<string, number>) => row[metric]}
+                  name={metric}
                   type="monotone"
-                  stroke={`var(--color-${metricKey(metric)})`}
+                  stroke={chart.colors[metric]}
                   strokeWidth={2}
                   dot={false}
                   isAnimationActive={false}

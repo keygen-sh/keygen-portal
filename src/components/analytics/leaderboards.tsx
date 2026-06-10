@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react"
+import { useNavigate } from "@tanstack/react-router"
 import {
   Bar,
   BarChart,
@@ -26,9 +27,56 @@ import { useRequestLeaderboard } from "@/queries/analytics"
 
 import { GREEN, LEADERBOARDS, useLazyVisibility } from "@/lib/analytics"
 import { truncator } from "@/lib/truncate"
+import { HTTP_METHODS } from "@/types/request-logs"
+import * as keygen from "@/keygen"
 import EmptyChart from "./empty-chart"
 
 const truncateMiddle = truncator("middle", { maxLength: 34 })
+
+function requestLogSearchForLeaderboard({
+  metric,
+  discriminator,
+  range,
+}: {
+  metric: (typeof LEADERBOARDS)[number]["metric"]
+  discriminator: string
+  range: { start: string; end: string }
+}): Record<string, unknown> | null {
+  const date = { ...range }
+
+  switch (metric) {
+    case "ips":
+      return { ip: discriminator, date }
+    case "urls": {
+      const [possibleMethod, ...urlParts] = discriminator.split(" ")
+
+      if (
+        HTTP_METHODS.includes(
+          possibleMethod as (typeof HTTP_METHODS)[number],
+        ) &&
+        urlParts.length > 0
+      ) {
+        return {
+          method: possibleMethod,
+          url: urlParts.join(" "),
+          date,
+        }
+      }
+
+      return { url: discriminator, date }
+    }
+    case "licenses":
+      return {
+        requestor: {
+          type: "license",
+          id: discriminator,
+        },
+        date,
+      }
+    case "user-agents":
+      return null
+  }
+}
 
 function LeaderboardCard({
   metric,
@@ -39,6 +87,7 @@ function LeaderboardCard({
   range: { start: string; end: string }
   enabled: boolean
 }) {
+  const navigate = useNavigate()
   const { ref, hasEntered } = useLazyVisibility<HTMLDivElement>()
   const canLoad = enabled && hasEntered
   const { data = [], isLoading } = useRequestLeaderboard(metric, {
@@ -64,6 +113,29 @@ function LeaderboardCard({
     move,
     close,
   } = useCursorFollowTooltip<string>()
+  const requestLogSearch =
+    hoveredDiscriminator == null
+      ? null
+      : requestLogSearchForLeaderboard({
+          metric,
+          discriminator: hoveredDiscriminator,
+          range,
+        })
+  const handleDiscriminatorClick = async (discriminator: string) => {
+    const search = requestLogSearchForLeaderboard({
+      metric,
+      discriminator,
+      range,
+    })
+
+    if (!search) return
+
+    await navigate({
+      to: "/$accountId/app/request-logs",
+      params: { accountId: keygen.config.id },
+      search,
+    })
+  }
 
   return (
     <div ref={ref}>
@@ -91,9 +163,11 @@ function LeaderboardCard({
                   width={180}
                   tick={
                     <LeaderboardTick
+                      canOpenRequestLogs={metric !== "user-agents"}
                       onMouseEnter={open}
                       onMouseMove={move}
                       onMouseLeave={close}
+                      onClick={handleDiscriminatorClick}
                     />
                   }
                 />
@@ -129,10 +203,20 @@ function LeaderboardCard({
           tooltipRef={tooltipRef}
           currentPos={currentPos}
           offset={8}
-          className="max-w-[min(32rem,calc(100vw-2rem))] break-all"
+          className="max-w-[min(32rem,calc(100vw-2rem))]"
         >
-          {/* TODO(ezekg) link to request logs matching the discriminator, e.g. method/url, IP address, etc. */}
-          {hoveredDiscriminator}
+          {hoveredDiscriminator && (
+            <>
+              <span className="font-mono break-all text-content-normal">
+                {hoveredDiscriminator}
+              </span>
+              {requestLogSearch && (
+                <p className="mt-1.5 text-content-subdued">
+                  Click to view request logs
+                </p>
+              )}
+            </>
+          )}
         </CursorTooltip>
       </Card>
     </div>
@@ -146,6 +230,8 @@ function LeaderboardTick({
   onMouseEnter,
   onMouseMove,
   onMouseLeave,
+  onClick,
+  canOpenRequestLogs,
 }: {
   x?: number
   y?: number
@@ -153,17 +239,20 @@ function LeaderboardTick({
   onMouseEnter?: (item: string, event: React.MouseEvent) => void
   onMouseMove?: (event: React.MouseEvent) => void
   onMouseLeave?: () => void
+  onClick?: (item: string) => void
+  canOpenRequestLogs?: boolean
 }) {
   const discriminator = String(payload?.value ?? "")
   const label = truncateMiddle(discriminator)
 
   return (
     <g
-      className="cursor-help"
+      className={canOpenRequestLogs ? "cursor-pointer" : "cursor-help"}
       transform={`translate(${x ?? 0},${y ?? 0})`}
       onMouseEnter={(event) => onMouseEnter?.(discriminator, event)}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
+      onClick={() => onClick?.(discriminator)}
     >
       <Text
         x={0}

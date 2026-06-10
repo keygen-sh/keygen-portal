@@ -1,12 +1,19 @@
 import { useMemo } from "react"
+import { Info } from "lucide-react"
 import { Line, LineChart, XAxis, YAxis } from "recharts"
 
+import { Button } from "@/components/ui/button"
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { Skeleton } from "@/components/ui/skeleton"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 import { useResourceGauge, useResourceSparks } from "@/queries/analytics"
 
@@ -26,11 +33,13 @@ export default function GaugeCard({
   metric,
   range,
   enabled,
+  tooltip,
 }: {
   title: string
   metric: "alus" | "users" | "licenses" | "machines"
   range: { start: string; end: string }
   enabled: boolean
+  tooltip?: string
 }) {
   const { ref, hasEntered } = useLazyVisibility<HTMLDivElement>()
   const canLoad = enabled && hasEntered
@@ -56,7 +65,33 @@ export default function GaugeCard({
 
   return (
     <div ref={ref}>
-      <DashboardCard title={title}>
+      <DashboardCard
+        title={title}
+        action={
+          tooltip ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="-m-1 size-6 text-content-subdued hover:text-content-normal"
+                >
+                  <Info className="size-3.5" />
+                  <span className="sr-only">What is {title}?</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="top"
+                align="end"
+                className="max-w-64 bg-background-4 text-pretty text-content-muted"
+              >
+                {tooltip}
+              </TooltipContent>
+            </Tooltip>
+          ) : null
+        }
+      >
         <div className="flex min-h-12 items-center gap-3">
           {!canLoad || isLoading ? (
             <Skeleton className="h-10 w-24 shrink-0" />

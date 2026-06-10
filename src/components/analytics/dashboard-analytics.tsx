@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Activity, BarChart3, Grid3X3, Lock } from "lucide-react"
 
 import LockedOverlay from "@/components/locked-overlay"
@@ -97,18 +97,13 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
   const isMobile = useMobile()
   const [heatmapRangeDays, setHeatmapRangeDays] =
     useState<HeatmapRangeDays>(365)
-  const [activityRangeDays, setActivityRangeDays] =
-    useState<AnalyticsRangeDays>(isMobile ? 30 : 90)
-  const [activityRangeChosen, setActivityRangeChosen] = useState(false)
+  const [activityRangeSelection, setActivityRangeSelection] =
+    useState<AnalyticsRangeDays | null>(null)
   const [eventRangeDays, setEventRangeDays] = useState<AnalyticsRangeDays>(30)
   const [leaderboardRangeDays, setLeaderboardRangeDays] =
     useState<AnalyticsRangeDays>(30)
-
-  useEffect(() => {
-    if (activityRangeChosen) return
-
-    setActivityRangeDays(isMobile ? 30 : 90)
-  }, [activityRangeChosen, isMobile])
+  const defaultActivityRangeDays: AnalyticsRangeDays = isMobile ? 30 : 90
+  const activityRangeDays = activityRangeSelection ?? defaultActivityRangeDays
 
   const heatmapVisibility = useLazyVisibility<HTMLElement>()
   const activityVisibility = useLazyVisibility<HTMLElement>()
@@ -180,10 +175,7 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
           icon={Activity}
           rangeDays={activityRangeDays}
           options={ANALYTICS_RANGE_OPTIONS}
-          onRangeChange={(rangeDays) => {
-            setActivityRangeChosen(true)
-            setActivityRangeDays(rangeDays)
-          }}
+          onRangeChange={setActivityRangeSelection}
         />
         <div className="grid gap-4 xl:grid-cols-2">
           <ActivityChart

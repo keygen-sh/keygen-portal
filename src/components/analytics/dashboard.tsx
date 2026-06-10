@@ -14,6 +14,7 @@ import { usePermissions } from "@/hooks/use-permissions"
 import { useGetAccount, useGetAccountPlan } from "@/queries/accounts"
 import { useRequestSparks, useValidationSparks } from "@/queries/analytics"
 
+import { cn } from "@/lib/utils"
 import ActivityChart from "./activity-chart"
 import {
   ANALYTICS_RANGE_OPTIONS,
@@ -50,7 +51,7 @@ function AnalyticsPermissionPreview() {
       title="Analytics permission required"
       description="Ask an account admin for analytics read access to view this dashboard."
     >
-      <AnalyticsSkeleton />
+      <AnalyticsSkeleton staticSkeletons />
     </LockedOverlay>
   )
 }
@@ -84,22 +85,25 @@ function AnalyticsLockedSection({
 function ActivityPreview() {
   return (
     <div className="grid gap-4 xl:grid-cols-2">
-      <ActivityChart
-        title="Requests"
-        data={[]}
-        expectedMetrics={REQUEST_METRICS}
-        range={{ start: "", end: "" }}
-        isLoading
-      />
-      <ActivityChart
-        title="Validations"
-        data={[]}
-        expectedMetrics={VALIDATION_METRICS}
-        range={{ start: "", end: "" }}
-        isLoading
-      />
+      {["Requests", "Validations"].map((title) => (
+        <Card
+          key={title}
+          className="gap-0 rounded-md border-accent bg-background p-0"
+        >
+          <div className="border-b border-accent px-4 pt-3 pb-2">
+            <StaticSkeleton className="h-4 w-24" />
+          </div>
+          <div className="p-4">
+            <StaticSkeleton className="h-64 w-full" />
+          </div>
+        </Card>
+      ))}
     </div>
   )
+}
+
+function StaticSkeleton({ className }: { className?: string }) {
+  return <Skeleton className={cn("animate-none", className)} />
 }
 
 function EventChartsPreview() {
@@ -111,10 +115,10 @@ function EventChartsPreview() {
           className="gap-0 rounded-md border-accent bg-background p-0"
         >
           <div className="border-b border-accent px-4 pt-3 pb-2">
-            <Skeleton className="h-5 w-36" />
+            <StaticSkeleton className="h-5 w-36" />
           </div>
           <div className="p-3">
-            <Skeleton className="h-36 w-full" />
+            <StaticSkeleton className="h-36 w-full" />
           </div>
         </Card>
       ))}
@@ -126,13 +130,19 @@ function LeaderboardsPreview() {
   return (
     <Card className="gap-0 rounded-md border-accent bg-background p-0">
       <div className="p-4">
-        <Skeleton className="h-80 w-full" />
+        <StaticSkeleton className="h-80 w-full" />
       </div>
     </Card>
   )
 }
 
-function AnalyticsSkeleton() {
+function AnalyticsSkeleton({
+  staticSkeletons = false,
+}: {
+  staticSkeletons?: boolean
+}) {
+  const Placeholder = staticSkeletons ? StaticSkeleton : Skeleton
+
   return (
     <div className="space-y-6">
       <div className="grid gap-3 md:grid-cols-4">
@@ -141,16 +151,16 @@ function AnalyticsSkeleton() {
             key={index}
             className="rounded-md border-accent bg-background p-4"
           >
-            <Skeleton className="mb-5 h-4 w-20" />
-            <Skeleton className="h-8 w-24" />
+            <Placeholder className="mb-5 h-4 w-20" />
+            <Placeholder className="h-8 w-24" />
           </Card>
         ))}
       </div>
       <div className="grid gap-4 xl:grid-cols-2">
-        <Skeleton className="h-72 rounded-md" />
-        <Skeleton className="h-72 rounded-md" />
+        <Placeholder className="h-72 rounded-md" />
+        <Placeholder className="h-72 rounded-md" />
       </div>
-      <Skeleton className="h-96 rounded-md" />
+      <Placeholder className="h-96 rounded-md" />
     </div>
   )
 }

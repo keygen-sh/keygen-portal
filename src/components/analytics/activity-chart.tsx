@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 import { SparkEntry } from "@/types/analytics"
 
-import { buildChartData } from "@/lib/analytics"
+import { buildChartData, metricDataKey } from "@/lib/analytics"
 import Card from "./card"
 import EmptyChart from "./empty-chart"
 
@@ -36,6 +36,17 @@ export default function ActivityChart({
   const chart = useMemo(
     () => buildChartData(data, expectedMetrics, range),
     [data, expectedMetrics, range],
+  )
+  const dataKeys = useMemo(
+    () =>
+      chart.metrics.reduce(
+        (acc, metric) => {
+          acc[metric] = metricDataKey(metric)
+          return acc
+        },
+        {} as Record<string, ReturnType<typeof metricDataKey>>,
+      ),
+    [chart.metrics],
   )
 
   return (
@@ -67,7 +78,7 @@ export default function ActivityChart({
             {chart.metrics.map((metric) => (
               <Bar
                 key={metric}
-                dataKey={(row: Record<string, number>) => row[metric]}
+                dataKey={dataKeys[metric]}
                 name={metric}
                 stackId="1"
                 fill={chart.colors[metric]}

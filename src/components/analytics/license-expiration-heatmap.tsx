@@ -220,7 +220,8 @@ export default function LicenseExpirationHeatmap({
     LABEL_WIDTH +
     cellWidths.reduce((sum, width) => sum + width, 0) +
     numWeeks * CELL_GAP
-  const isDesktopHeatmapReady = enabled && !isLoading && !isMobile && entries.length > 0
+  const isDesktopHeatmapReady =
+    enabled && !isLoading && !isMobile && entries.length > 0
 
   useEffect(() => {
     if (!isDesktopHeatmapReady) return
@@ -335,7 +336,7 @@ export default function LicenseExpirationHeatmap({
                     onMouseLeave={handleCellMouseLeave}
                     onClick={handleCellClick}
                     className={cn(
-                      "relative cursor-pointer outline-0 after:pointer-events-none after:absolute after:inset-0 after:bg-inherit after:content-[''] after:transition-[inset] after:duration-75 after:ease-out hover:z-10 hover:after:-inset-0.5",
+                      "relative cursor-pointer outline-0 after:pointer-events-none after:absolute after:inset-0 after:bg-inherit after:transition-[inset] after:duration-75 after:ease-out after:content-[''] hover:z-10 hover:after:-inset-0.5",
                       hoveredEntry?.date === entry.date &&
                         "z-10 after:-inset-0.5",
                     )}
@@ -649,7 +650,7 @@ function MobileHeatmapGrid({
                   key={dateStr}
                   onClick={(e) => onCellTap(entry, e)}
                   className={cn(
-                    "relative cursor-pointer rounded-xs after:pointer-events-none after:absolute after:inset-0 after:rounded-xs after:bg-inherit after:content-[''] after:transition-[inset] after:duration-75 after:ease-out",
+                    "relative cursor-pointer rounded-xs after:pointer-events-none after:absolute after:inset-0 after:rounded-xs after:bg-inherit after:transition-[inset] after:duration-75 after:ease-out after:content-['']",
                     hoveredEntry?.date === dateStr && "z-10 after:-inset-0.5",
                   )}
                   style={{

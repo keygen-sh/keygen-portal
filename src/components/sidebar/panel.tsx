@@ -215,7 +215,19 @@ const VIEWS: View[] = [
     ]),
   },
   { id: ViewId.Automate, label: "Automate", icon: Zap, routes: [] },
-  { id: ViewId.Webhooks, label: "Webhooks", icon: Webhook, routes: [] },
+  {
+    id: ViewId.Webhooks,
+    label: "Webhooks",
+    icon: Webhook,
+    routes: linkOptions([
+      {
+        to: "/$accountId/app/webhook-endpoints",
+        label: "Endpoints",
+        params: { accountId: keygen.config.id },
+        requires: ["webhook-endpoint.read"],
+      },
+    ]),
+  },
   {
     id: ViewId.Access,
     label: "Access",

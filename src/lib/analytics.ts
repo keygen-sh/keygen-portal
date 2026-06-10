@@ -64,13 +64,13 @@ export const METRIC_COLORS: Record<string, string> = {
   }),
   "validations.no-machine": mix({
     baseColor: BLUE,
-    mixedColor: AMBER,
-    mixedColorAmount: 40,
+    mixedColor: RED,
+    mixedColorAmount: 30,
   }),
   "validations.no-machines": mix({
     baseColor: BLUE,
-    mixedColor: AMBER,
-    mixedColorAmount: 60,
+    mixedColor: RED,
+    mixedColorAmount: 45,
   }),
   "validations.too-many-machines": mix({
     baseColor: AMBER,
@@ -80,8 +80,8 @@ export const METRIC_COLORS: Record<string, string> = {
   "validations.too-many-users": AMBER,
   "validations.too-many-cores": mix({
     baseColor: BLUE,
-    mixedColor: AMBER,
-    mixedColorAmount: 40,
+    mixedColor: RED,
+    mixedColorAmount: 60,
   }),
   "validations.too-many-processes": BLUE,
   "validations.too-much-memory": mix({
@@ -96,8 +96,8 @@ export const METRIC_COLORS: Record<string, string> = {
   }),
   "validations.entitlements-missing": mix({
     baseColor: AMBER,
-    mixedColor: BLUE,
-    mixedColorAmount: 80,
+    mixedColor: RED,
+    mixedColorAmount: 25,
   }),
   "validations.fingerprint-scope-mismatch": mix({
     baseColor: BLUE,
@@ -110,14 +110,14 @@ export const METRIC_COLORS: Record<string, string> = {
     mixedColorAmount: 25,
   }),
   "validations.policy-scope-mismatch": mix({
-    baseColor: AMBER,
-    mixedColor: BLUE,
-    mixedColorAmount: 90,
+    baseColor: BLUE,
+    mixedColor: RED,
+    mixedColorAmount: 75,
   }),
   "validations.product-scope-mismatch": mix({
     baseColor: AMBER,
-    mixedColor: BLUE,
-    mixedColorAmount: 25,
+    mixedColor: RED,
+    mixedColorAmount: 65,
   }),
   "validations.heartbeat-not-started": mix({
     baseColor: AMBER,
@@ -152,8 +152,8 @@ export const METRIC_COLORS: Record<string, string> = {
   "machine.checked-out": BLUE,
   "machine.heartbeat.ping": mix({
     baseColor: BLUE,
-    mixedColor: AMBER,
-    mixedColorAmount: 35,
+    mixedColor: RED,
+    mixedColorAmount: 20,
   }),
   "machine.heartbeat.pong": GREEN,
   "machine.heartbeat.dead": RED,
@@ -162,8 +162,8 @@ export const METRIC_COLORS: Record<string, string> = {
   "process.deleted": RED,
   "process.heartbeat.ping": mix({
     baseColor: BLUE,
-    mixedColor: AMBER,
-    mixedColorAmount: 35,
+    mixedColor: RED,
+    mixedColorAmount: 20,
   }),
   "process.heartbeat.pong": GREEN,
   "process.heartbeat.dead": RED,

@@ -8,6 +8,7 @@ import { APIError } from "@/types/api"
 import { User, type UserFilters } from "@/types/users"
 
 import * as keygen from "@/keygen"
+import { restoreSession } from "@/keygen/session"
 import { diff } from "@/lib/utils"
 
 export function useGetUser(userId: string) {
@@ -290,6 +291,8 @@ export function useResetPassword() {
 export const currentUserQueryOptions = () => ({
   queryKey: ["users", "me"] as const,
   queryFn: async () => {
+    await restoreSession()
+
     const response = await keygen.profiles.me()
 
     if (!response.data) {

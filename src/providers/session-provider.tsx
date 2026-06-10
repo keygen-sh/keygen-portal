@@ -4,8 +4,7 @@ import { useQueryClient } from "@tanstack/react-query"
 
 import * as keygen from "@/keygen"
 import { SessionContext } from "@/contexts/session-context"
-
-const STORAGE_KEYS = ["token", "tokenId"] as const
+import { restoreSession } from "@/keygen/session"
 
 interface SessionProviderProps {
   children: React.ReactNode
@@ -39,34 +38,10 @@ export function SessionProvider({
   // Establish session state
   useEffect(() => {
     ;(async () => {
-      const [token, tokenId] = STORAGE_KEYS.map(
-        (key) => localStorage.getItem(key) ?? sessionStorage.getItem(key),
-      )
-
       try {
-        if (token && tokenId) {
-          const { data } = await keygen.verify({ token, tokenId })
-          if (data) {
-            const userId = data.relationships.bearer?.data?.id ?? null
-            keygen.client.setRootToken(token)
-            keygen.client.setTokenId(tokenId)
-            setUser(userId)
-            return
-          }
-        }
+        const { userId } = await restoreSession()
 
-        const meResponse = (await keygen.profiles.me()) as {
-          data?: { id: string }
-          included?: { type: string; id: string }[]
-        }
-        if (meResponse.data) {
-          const tokenResource = meResponse.included?.find(
-            (r) => r.type === "tokens",
-          )
-          keygen.client.setTokenId(tokenResource?.id ?? null)
-          setUser(meResponse.data.id)
-          return
-        }
+        setUser(userId)
       } catch (error) {
         console.error(error)
       } finally {

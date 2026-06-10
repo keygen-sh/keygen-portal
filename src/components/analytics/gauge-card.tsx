@@ -25,7 +25,7 @@ import {
   metricKey,
   sparkTrendColor,
   useLazyVisibility,
-} from "./chart-utils"
+} from "@/lib/analytics"
 import DashboardCard from "./dashboard-card"
 
 export default function GaugeCard({

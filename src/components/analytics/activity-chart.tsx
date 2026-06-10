@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 import { SparkEntry } from "@/types/analytics"
 
-import { buildChartData, metricKey } from "./chart-utils"
+import { buildChartData, metricKey } from "@/lib/analytics"
 import DashboardCard from "./dashboard-card"
 import EmptyChart from "./empty-chart"
 

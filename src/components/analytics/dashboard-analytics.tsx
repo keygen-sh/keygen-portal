@@ -23,8 +23,9 @@ import {
   PRICING_URL,
   REQUEST_METRICS,
   VALIDATION_METRICS,
-} from "./chart-constants"
-import { useAnalyticsRange, useLazyVisibility } from "./chart-utils"
+  useAnalyticsRange,
+  useLazyVisibility,
+} from "@/lib/analytics"
 import EventCharts from "./event-charts"
 import GaugeCard from "./gauge-card"
 import Leaderboards from "./leaderboards"

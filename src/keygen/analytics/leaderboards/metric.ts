@@ -6,11 +6,7 @@ import { DateRangeOptions, LeaderboardResponse } from "@/types/analytics"
 
 config.validate()
 
-export type RequestLeaderboardMetric =
-  | "ips"
-  | "urls"
-  | "licenses"
-  | "user-agents"
+export type LeaderboardMetric = "ips" | "urls" | "licenses" | "user-agents"
 
 export default async function metric({
   leaderboard,
@@ -18,7 +14,7 @@ export default async function metric({
   start,
   end,
 }: DateRangeOptions & {
-  leaderboard: RequestLeaderboardMetric
+  leaderboard: LeaderboardMetric
   limit?: number
 }): Promise<LeaderboardResponse> {
   const params = dateRangeParams({ start, end })

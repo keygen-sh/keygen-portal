@@ -5,7 +5,7 @@ import { GaugeResponse } from "@/types/analytics"
 
 config.validate()
 
-export type ResourceGaugeMetric =
+export type GaugeMetric =
   | "machines"
   | "users"
   | "licenses"
@@ -15,7 +15,7 @@ export type ResourceGaugeMetric =
 export default async function metric({
   metric,
 }: {
-  metric: ResourceGaugeMetric
+  metric: GaugeMetric
 }): Promise<GaugeResponse> {
   const result = (await client.request(
     `/accounts/${config.id}/analytics/gauges/${metric}`,

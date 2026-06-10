@@ -88,7 +88,7 @@ function Heatmap() {
   )
 }
 
-function Dashboard({ staticSkeletons = false }: { staticSkeletons?: boolean }) {
+function Dashboard({ static: staticSkeletons = false }: { static?: boolean }) {
   const Placeholder = staticSkeletons ? StaticSkeleton : Skeleton
 
   return (

@@ -27,10 +27,12 @@ import {
 
 import ActivityChart from "./activity-chart"
 import {
-  ANALYTICS_RANGE_OPTIONS,
-  AnalyticsRangeDays,
+  SPARK_RANGE_OPTIONS,
+  SparkRangeDays,
   HEATMAP_RANGE_OPTIONS,
   HeatmapRangeDays,
+  LEADERBOARD_RANGE_OPTIONS,
+  LeaderboardRangeDays,
   PRICING_URL,
   REQUEST_METRICS,
   VALIDATION_METRICS,
@@ -69,7 +71,7 @@ function AnalyticsPermissionPreview() {
       title="Analytics permission required"
       description="Ask an account admin for analytics read access to view this dashboard."
     >
-      <Skeletons.AnalyticsCharts.Dashboard staticSkeletons />
+      <Skeletons.AnalyticsCharts.Dashboard static />
     </LockedOverlay>
   )
 }
@@ -150,11 +152,11 @@ function AnalyticsContent({
   const [heatmapRangeDays, setHeatmapRangeDays] =
     useState<HeatmapRangeDays>(365)
   const [activityRangeSelection, setActivityRangeSelection] =
-    useState<AnalyticsRangeDays | null>(null)
-  const [eventRangeDays, setEventRangeDays] = useState<AnalyticsRangeDays>(30)
+    useState<SparkRangeDays | null>(null)
+  const [eventRangeDays, setEventRangeDays] = useState<SparkRangeDays>(30)
   const [leaderboardRangeDays, setLeaderboardRangeDays] =
-    useState<AnalyticsRangeDays>(30)
-  const defaultActivityRangeDays: AnalyticsRangeDays = isMobile ? 30 : 90
+    useState<LeaderboardRangeDays>(30)
+  const defaultActivityRangeDays: SparkRangeDays = isMobile ? 30 : 90
   const activityRangeDays = activityRangeSelection ?? defaultActivityRangeDays
 
   const heatmapVisibility = useLazyVisibility<HTMLElement>()
@@ -249,7 +251,7 @@ function AnalyticsContent({
               title="Activity"
               icon={Activity}
               rangeDays={activityRangeDays}
-              options={ANALYTICS_RANGE_OPTIONS}
+              options={SPARK_RANGE_OPTIONS}
               onRangeChange={setActivityRangeSelection}
             />
             {canUseActivity ? (
@@ -285,7 +287,7 @@ function AnalyticsContent({
               title="Events"
               icon={Activity}
               rangeDays={eventRangeDays}
-              options={ANALYTICS_RANGE_OPTIONS}
+              options={SPARK_RANGE_OPTIONS}
               onRangeChange={setEventRangeDays}
             />
             {canUseEvents ? (
@@ -300,7 +302,7 @@ function AnalyticsContent({
               title="Leaderboards"
               icon={BarChart3}
               rangeDays={leaderboardRangeDays}
-              options={ANALYTICS_RANGE_OPTIONS}
+              options={LEADERBOARD_RANGE_OPTIONS}
               onRangeChange={setLeaderboardRangeDays}
             />
             {canUseLeaderboards ? (

@@ -71,8 +71,8 @@ function AnalyticsLockedCallout({
     ? "Analytics is a paid offering"
     : "Analytics is an EE offering"
   const description = upgradeRequired
-    ? "View historical analytics across your account. Upgrade to a paid tier to unlock analytics."
-    : "View historical analytics across your account. Upgrade to Keygen EE to unlock analytics."
+    ? "View historical analytics across your account. Upgrade to a paid tier to unlock deeper insights."
+    : "View historical analytics across your account. Upgrade to Keygen EE to unlock deeper insights."
 
   return (
     <motion.div

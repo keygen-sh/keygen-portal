@@ -7,9 +7,9 @@ import { DateRangeOptions } from "@/types/analytics"
 
 import * as keygen from "@/keygen"
 
-import { ResourceGaugeMetric } from "@/keygen/analytics/gauges/metric"
-import { RequestLeaderboardMetric } from "@/keygen/analytics/leaderboards/metric"
-import { ResourceSparkMetric } from "@/keygen/analytics/sparks/metric"
+import { GaugeMetric } from "@/keygen/analytics/gauges/metric"
+import { LeaderboardMetric } from "@/keygen/analytics/leaderboards/metric"
+import { SparkMetric } from "@/keygen/analytics/sparks/metric"
 
 export function useExpirationsHeatmap(options: {
   start: string
@@ -44,7 +44,7 @@ export function useExpirationsHeatmap(options: {
 }
 
 export function useResourceGauge(
-  metric: ResourceGaugeMetric,
+  metric: GaugeMetric,
   options?: { enabled?: boolean },
 ) {
   const { code } = useEnvironment()
@@ -160,7 +160,7 @@ export function useEventSparks(
 }
 
 export function useResourceSparks(
-  metric: ResourceSparkMetric,
+  metric: SparkMetric,
   range: DateRangeOptions,
   options?: { enabled?: boolean },
 ) {
@@ -193,7 +193,7 @@ export function useResourceSparks(
 }
 
 export function useRequestLeaderboard(
-  leaderboard: RequestLeaderboardMetric,
+  leaderboard: LeaderboardMetric,
   options: DateRangeOptions & { limit?: number; enabled?: boolean },
 ) {
   const { code } = useEnvironment()

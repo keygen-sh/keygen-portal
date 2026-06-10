@@ -322,21 +322,40 @@ export const LEADERBOARDS = [
   { metric: "user-agents", title: "Top user agents" },
 ] as const
 
-export type AnalyticsRangeDays = 30 | 60 | 90
-export type HeatmapRangeDays = AnalyticsRangeDays | 365
-export type SectionRangeDays = AnalyticsRangeDays | HeatmapRangeDays
+export type HeatmapRangeDays = 30 | 60 | 90 | 365
+export type SparkRangeDays = 30 | 60 | 90
+export type LeaderboardRangeDays = 30 | 60 | 90
+export type SectionRangeDays =
+  | HeatmapRangeDays
+  | SparkRangeDays
+  | LeaderboardRangeDays
 
-export const ANALYTICS_RANGE_OPTIONS = [
+export const HEATMAP_RANGE_OPTIONS: Array<{
+  value: HeatmapRangeDays
+  label: string
+}> = [
+  { value: 30, label: "Next 30 days" },
+  { value: 60, label: "Next 60 days" },
+  { value: 90, label: "Next 90 days" },
+  { value: 365, label: "Next 1 year" },
+] as const
+
+export const SPARK_RANGE_OPTIONS: Array<{
+  value: SparkRangeDays
+  label: string
+}> = [
   { value: 30, label: "Last 30 days" },
   { value: 60, label: "Last 60 days" },
   { value: 90, label: "Last 90 days" },
 ] as const
 
-export const HEATMAP_RANGE_OPTIONS = [
-  { value: 30, label: "Next 30 days" },
-  { value: 60, label: "Next 60 days" },
-  { value: 90, label: "Next 90 days" },
-  { value: 365, label: "Next 1 year" },
+export const LEADERBOARD_RANGE_OPTIONS: Array<{
+  value: LeaderboardRangeDays
+  label: string
+}> = [
+  { value: 30, label: "Last 30 days" },
+  { value: 60, label: "Last 60 days" },
+  { value: 90, label: "Last 90 days" },
 ] as const
 
 export function formatCount(value?: number | null) {

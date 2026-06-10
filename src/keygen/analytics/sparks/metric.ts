@@ -6,14 +6,14 @@ import { DateRangeOptions, SparkResponse } from "@/types/analytics"
 
 config.validate()
 
-export type ResourceSparkMetric = "licenses" | "machines" | "users" | "alus"
+export type SparkMetric = "licenses" | "machines" | "users" | "alus"
 
 export default async function metric({
   metric,
   start,
   end,
 }: DateRangeOptions & {
-  metric: ResourceSparkMetric
+  metric: SparkMetric
 }): Promise<SparkResponse> {
   const params = dateRangeParams({ start, end })
 

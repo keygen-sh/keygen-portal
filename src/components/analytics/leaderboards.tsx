@@ -24,13 +24,11 @@ import { useCursorFollowTooltip } from "@/hooks/use-cursor-follow-tooltip"
 
 import { useRequestLeaderboard } from "@/queries/analytics"
 
-import {
-  GREEN,
-  LEADERBOARDS,
-  truncateMiddle,
-  useLazyVisibility,
-} from "@/lib/analytics"
+import { GREEN, LEADERBOARDS, useLazyVisibility } from "@/lib/analytics"
+import { truncator } from "@/lib/truncate"
 import EmptyChart from "./empty-chart"
+
+const truncateMiddle = truncator("middle", { maxLength: 34 })
 
 function LeaderboardCard({
   metric,
@@ -157,7 +155,7 @@ function LeaderboardTick({
   onMouseLeave?: () => void
 }) {
   const discriminator = String(payload?.value ?? "")
-  const label = truncateMiddle(discriminator, 34)
+  const label = truncateMiddle(discriminator)
 
   return (
     <g

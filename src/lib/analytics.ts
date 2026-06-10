@@ -343,15 +343,6 @@ export function metricKey(metric: string) {
   return metric.replace(/[^a-zA-Z0-9_]/g, "_")
 }
 
-export function truncateMiddle(value: string, maxLength: number) {
-  if (value.length <= maxLength) return value
-
-  const headLength = Math.ceil((maxLength - 3) / 2)
-  const tailLength = Math.floor((maxLength - 3) / 2)
-
-  return `${value.slice(0, headLength)}...${value.slice(-tailLength)}`
-}
-
 export function formatCount(value?: number | null) {
   return new Intl.NumberFormat(undefined, { notation: "compact" }).format(
     value ?? 0,

@@ -17,6 +17,7 @@ export { default as Channels } from "./channels"
 export { default as Engines } from "./engines"
 export { default as EventLogs } from "./event-logs"
 export { default as RequestLogs } from "./request-logs"
+export { default as Endpoints } from "./endpoints"
 
 import * as Product from "./product"
 export { Product }
@@ -71,6 +72,9 @@ export { EventLog }
 
 import * as RequestLog from "./request-log"
 export { RequestLog }
+
+import * as Endpoint from "./endpoint"
+export { Endpoint }
 
 import * as Settings from "./settings"
 export { Settings }

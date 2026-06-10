@@ -1,7 +1,6 @@
 import { type ReactNode } from "react"
 
 import { Lock } from "lucide-react"
-import { motion } from "motion/react"
 
 import {
   Card,
@@ -10,6 +9,8 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card"
+
+import * as Motion from "@/components/motion"
 
 import { cn } from "@/lib/utils"
 
@@ -34,14 +35,11 @@ export default function LockedOverlay({
 }: LockedOverlayProps) {
   if (sticky) {
     return (
-      <motion.div
+      <Motion.Rise
         className={cn(
           "pointer-events-none sticky top-[calc(100dvh-min(75dvh,42rem))] z-20 -mb-[min(75dvh,42rem)] flex h-[min(75dvh,42rem)] w-full items-end justify-center bg-gradient-to-t from-background via-background/75 to-transparent px-4 pb-6",
           className,
         )}
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.16, ease: [0.4, 0, 0.2, 1] }}
       >
         <LockedOverlayCard
           title={title}
@@ -50,7 +48,7 @@ export default function LockedOverlay({
           action={action}
           className="pointer-events-auto shadow-sm"
         />
-      </motion.div>
+      </Motion.Rise>
     )
   }
 

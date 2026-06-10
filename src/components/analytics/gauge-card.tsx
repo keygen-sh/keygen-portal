@@ -33,23 +33,26 @@ export default function GaugeCard({
   metric,
   range,
   enabled,
+  sparkEnabled = true,
   tooltip,
 }: {
   title: string
   metric: "alus" | "users" | "licenses" | "machines"
   range: { start: string; end: string }
   enabled: boolean
+  sparkEnabled?: boolean
   tooltip?: string
 }) {
   const { ref, hasEntered } = useLazyVisibility<HTMLDivElement>()
   const canLoad = enabled && hasEntered
+  const canLoadSpark = sparkEnabled && canLoad
   const { data, isLoading, isError } = useResourceGauge(metric, {
     enabled: canLoad,
   })
   const { data: spark = [], isLoading: sparkLoading } = useResourceSparks(
     metric,
     range,
-    { enabled: canLoad },
+    { enabled: canLoadSpark },
   )
   const value = firstGaugeValue(data)
   const chart = useMemo(() => {
@@ -101,7 +104,9 @@ export default function GaugeCard({
             </p>
           )}
           <div className="h-12 min-w-0 flex-1">
-            {!canLoad || sparkLoading ? (
+            {!sparkEnabled ? (
+              <div className="h-full rounded-sm bg-background-1" />
+            ) : !canLoadSpark || sparkLoading ? (
               <Skeleton className="h-full w-full" />
             ) : chart.data.length > 1 ? (
               <ChartContainer config={chart.config} className="h-full w-full">

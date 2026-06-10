@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { type ReactNode, useState } from "react"
 import { Activity, BarChart3, Grid3X3, Lock } from "lucide-react"
 
 import LockedOverlay from "@/components/locked-overlay"
@@ -32,42 +32,103 @@ import Leaderboards from "./leaderboards"
 import LicenseExpirationHeatmap from "./license-expiration-heatmap"
 import SectionHeader from "./section-header"
 
-function AnalyticsLockedPreview({
-  reason,
-}: {
-  reason: "ce" | "free" | "permission"
-}) {
-  const title =
-    reason === "ce"
-      ? "Analytics is an EE offering"
-      : reason === "free"
-        ? "Analytics requires a paid plan"
-        : "Analytics permission required"
-  const description =
-    reason === "ce"
-      ? "Request, event, and validation analytics depend on EE request and event logs."
-      : reason === "free"
-        ? "Upgrade your Cloud plan to unlock account analytics, charts, and leaderboards."
-        : "Ask an account admin for analytics read access to view this dashboard."
+function UpgradeButton() {
+  return (
+    <Button size="sm" asChild>
+      <a href={PRICING_URL} target="_blank" rel="noreferrer">
+        View pricing
+      </a>
+    </Button>
+  )
+}
 
+function AnalyticsPermissionPreview() {
   return (
     <LockedOverlay
       className="min-h-[720px]"
       icon={<Lock className="size-4" />}
-      title={title}
-      description={description}
-      action={
-        reason === "permission" ? null : (
-          <Button size="sm" asChild>
-            <a href={PRICING_URL} target="_blank" rel="noreferrer">
-              View pricing
-            </a>
-          </Button>
-        )
-      }
+      title="Analytics permission required"
+      description="Ask an account admin for analytics read access to view this dashboard."
     >
       <AnalyticsSkeleton />
     </LockedOverlay>
+  )
+}
+
+function AnalyticsLockedSection({
+  title,
+  description,
+  children,
+  action,
+  className,
+}: {
+  title: string
+  description: string
+  children: ReactNode
+  action?: ReactNode
+  className?: string
+}) {
+  return (
+    <LockedOverlay
+      className={className}
+      icon={<Lock className="size-4" />}
+      title={title}
+      description={description}
+      action={action}
+    >
+      {children}
+    </LockedOverlay>
+  )
+}
+
+function ActivityPreview() {
+  return (
+    <div className="grid gap-4 xl:grid-cols-2">
+      <ActivityChart
+        title="Requests"
+        data={[]}
+        expectedMetrics={REQUEST_METRICS}
+        range={{ start: "", end: "" }}
+        isLoading
+      />
+      <ActivityChart
+        title="Validations"
+        data={[]}
+        expectedMetrics={VALIDATION_METRICS}
+        range={{ start: "", end: "" }}
+        isLoading
+      />
+    </div>
+  )
+}
+
+function EventChartsPreview() {
+  return (
+    <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+      {Array.from({ length: 6 }).map((_, index) => (
+        <Card
+          key={index}
+          className="gap-0 rounded-md border-accent bg-background p-0"
+        >
+          <div className="border-b border-accent px-4 pt-3 pb-2">
+            <Skeleton className="h-5 w-36" />
+          </div>
+          <div className="p-3">
+            <Skeleton className="h-36 w-full" />
+          </div>
+        </Card>
+      ))}
+    </div>
+  )
+}
+
+function LeaderboardsPreview() {
+  return (
+    <Card className="gap-0 rounded-md border-accent bg-background p-0">
+      <div className="p-4">
+        <Skeleton className="h-80 w-full" />
+      </div>
+    </Card>
   )
 }
 
@@ -94,7 +155,19 @@ function AnalyticsSkeleton() {
   )
 }
 
-function AnalyticsContent({ enabled }: { enabled: boolean }) {
+function AnalyticsContent({
+  canUseGaugeSparks,
+  canUseActivity,
+  canUseEvents,
+  canUseLeaderboards,
+  upgradeRequired,
+}: {
+  canUseGaugeSparks: boolean
+  canUseActivity: boolean
+  canUseEvents: boolean
+  canUseLeaderboards: boolean
+  upgradeRequired: boolean
+}) {
   const isMobile = useMobile()
   const [heatmapRangeDays, setHeatmapRangeDays] =
     useState<HeatmapRangeDays>(365)
@@ -111,10 +184,11 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
   const eventVisibility = useLazyVisibility<HTMLElement>()
   const leaderboardVisibility = useLazyVisibility<HTMLElement>()
 
-  const heatmapCanLoad = enabled && heatmapVisibility.hasEntered
-  const activityCanLoad = enabled && activityVisibility.hasEntered
-  const eventCanLoad = enabled && eventVisibility.hasEntered
-  const leaderboardCanLoad = enabled && leaderboardVisibility.hasEntered
+  const heatmapCanLoad = heatmapVisibility.hasEntered
+  const activityCanLoad = canUseActivity && activityVisibility.hasEntered
+  const eventCanLoad = canUseEvents && eventVisibility.hasEntered
+  const leaderboardCanLoad =
+    canUseLeaderboards && leaderboardVisibility.hasEntered
 
   const gaugeRange = useAnalyticsRange(30)
   const activityRange = useAnalyticsRange(activityRangeDays)
@@ -134,26 +208,30 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
           title="ALUs"
           metric="alus"
           range={gaugeRange}
-          enabled={enabled}
+          enabled
+          sparkEnabled={canUseGaugeSparks}
           tooltip="An Active Licensed User (ALU) is a user licensed to use your product, identified through a license or user object, with activity in the last 90 days."
         />
         <GaugeCard
           title="Users"
           metric="users"
           range={gaugeRange}
-          enabled={enabled}
+          enabled
+          sparkEnabled={canUseGaugeSparks}
         />
         <GaugeCard
           title="Licenses"
           metric="licenses"
           range={gaugeRange}
-          enabled={enabled}
+          enabled
+          sparkEnabled={canUseGaugeSparks}
         />
         <GaugeCard
           title="Machines"
           metric="machines"
           range={gaugeRange}
-          enabled={enabled}
+          enabled
+          sparkEnabled={canUseGaugeSparks}
         />
       </div>
 
@@ -179,22 +257,31 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
           options={ANALYTICS_RANGE_OPTIONS}
           onRangeChange={setActivityRangeSelection}
         />
-        <div className="grid gap-4 xl:grid-cols-2">
-          <ActivityChart
-            title="Requests"
-            data={requests}
-            expectedMetrics={REQUEST_METRICS}
-            range={activityRange}
-            isLoading={!activityCanLoad || requestsLoading}
-          />
-          <ActivityChart
-            title="Validations"
-            data={validations}
-            expectedMetrics={VALIDATION_METRICS}
-            range={activityRange}
-            isLoading={!activityCanLoad || validationsLoading}
-          />
-        </div>
+        {canUseActivity ? (
+          <div className="grid gap-4 xl:grid-cols-2">
+            <ActivityChart
+              title="Requests"
+              data={requests}
+              expectedMetrics={REQUEST_METRICS}
+              range={activityRange}
+              isLoading={!activityCanLoad || requestsLoading}
+            />
+            <ActivityChart
+              title="Validations"
+              data={validations}
+              expectedMetrics={VALIDATION_METRICS}
+              range={activityRange}
+              isLoading={!activityCanLoad || validationsLoading}
+            />
+          </div>
+        ) : (
+          <AnalyticsLockedSection
+            title="Activity analytics require ClickHouse"
+            description="Request and validation activity charts depend on ClickHouse-backed analytics, which are not available in CE."
+          >
+            <ActivityPreview />
+          </AnalyticsLockedSection>
+        )}
       </section>
 
       <section ref={eventVisibility.ref} className="space-y-3">
@@ -205,7 +292,25 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
           options={ANALYTICS_RANGE_OPTIONS}
           onRangeChange={setEventRangeDays}
         />
-        <EventCharts range={eventRange} enabled={eventCanLoad} />
+        {canUseEvents ? (
+          <EventCharts range={eventRange} enabled={eventCanLoad} />
+        ) : (
+          <AnalyticsLockedSection
+            title={
+              upgradeRequired
+                ? "Event analytics require a paid plan"
+                : "Event analytics require ClickHouse"
+            }
+            description={
+              upgradeRequired
+                ? "Upgrade your Cloud plan to unlock event analytics."
+                : "Event analytics depend on ClickHouse, which is not available in CE."
+            }
+            action={upgradeRequired ? <UpgradeButton /> : null}
+          >
+            <EventChartsPreview />
+          </AnalyticsLockedSection>
+        )}
       </section>
 
       <section ref={leaderboardVisibility.ref} className="space-y-3">
@@ -216,7 +321,25 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
           options={ANALYTICS_RANGE_OPTIONS}
           onRangeChange={setLeaderboardRangeDays}
         />
-        <Leaderboards range={leaderboardRange} enabled={leaderboardCanLoad} />
+        {canUseLeaderboards ? (
+          <Leaderboards range={leaderboardRange} enabled={leaderboardCanLoad} />
+        ) : (
+          <AnalyticsLockedSection
+            title={
+              upgradeRequired
+                ? "Request leaderboards require a paid plan"
+                : "Request leaderboards require ClickHouse"
+            }
+            description={
+              upgradeRequired
+                ? "Upgrade your Cloud plan to unlock request leaderboard aggregations."
+                : "Request leaderboards depend on ClickHouse, which is not available in CE."
+            }
+            action={upgradeRequired ? <UpgradeButton /> : null}
+          >
+            <LeaderboardsPreview />
+          </AnalyticsLockedSection>
+        )}
       </section>
     </div>
   )
@@ -233,7 +356,8 @@ export default function Dashboard() {
   )
 
   const hasPermission = can("account.analytics.read")
-  const isFreePlan = isCloud && (plan?.attributes.price == null || plan?.attributes.price === 0)
+  const isFreePlan =
+    isCloud && (plan?.attributes.price == null || plan?.attributes.price === 0)
   const isChecking =
     permissionsLoading || accountLoading || (isCloud && planLoading)
 
@@ -242,16 +366,16 @@ export default function Dashboard() {
   }
 
   if (!hasPermission) {
-    return <AnalyticsLockedPreview reason="permission" />
+    return <AnalyticsPermissionPreview />
   }
 
-  if (isCE) {
-    return <AnalyticsLockedPreview reason="ce" />
-  }
-
-  if (isFreePlan) {
-    return <AnalyticsLockedPreview reason="free" />
-  }
-
-  return <AnalyticsContent enabled />
+  return (
+    <AnalyticsContent
+      canUseGaugeSparks={!isCE && !isFreePlan}
+      canUseActivity={!isCE}
+      canUseEvents={!isCE && !isFreePlan}
+      canUseLeaderboards={!isCE && !isFreePlan}
+      upgradeRequired={isFreePlan}
+    />
+  )
 }

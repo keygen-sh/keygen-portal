@@ -8,10 +8,12 @@ import {
 
 import { cn } from "@/lib/utils"
 
-interface AnalyticsCardProps extends React.HTMLAttributes<HTMLDivElement> {
+interface AnalyticsCardProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   action?: React.ReactNode
   actionClassName?: string
   contentClassName?: string
+  title: React.ReactNode
 }
 
 export default function AnalyticsCard({

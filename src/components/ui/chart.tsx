@@ -53,7 +53,7 @@ function ChartContainer({
       <div
         data-chart={chartId}
         className={cn(
-          "flex aspect-video justify-center text-xs",
+          "flex aspect-video min-h-0 min-w-0 justify-center overflow-hidden text-xs",
           "[&_.recharts-cartesian-axis-tick_text]:fill-content-subdued",
           "[&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-accent",
           "[&_.recharts-curve.recharts-tooltip-cursor]:stroke-accent",
@@ -71,7 +71,12 @@ function ChartContainer({
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        <RechartsPrimitive.ResponsiveContainer>
+        <RechartsPrimitive.ResponsiveContainer
+          debounce={500}
+          initialDimension={{ width: 1, height: 1 }}
+          minWidth={0}
+          minHeight={0}
+        >
           {children}
         </RechartsPrimitive.ResponsiveContainer>
       </div>

@@ -22,6 +22,7 @@ import {
 import {
   EVENT_GROUPS,
   buildChartData,
+  metricDataKey,
   useLazyVisibility,
 } from "@/lib/analytics"
 
@@ -45,6 +46,17 @@ function EventSparkCard({
   const chart = useMemo(
     () => buildChartData(data, undefined, range),
     [data, range],
+  )
+  const dataKeys = useMemo(
+    () =>
+      chart.metrics.reduce(
+        (acc, metric) => {
+          acc[metric] = metricDataKey(metric)
+          return acc
+        },
+        {} as Record<string, ReturnType<typeof metricDataKey>>,
+      ),
+    [chart.metrics],
   )
   const eventLogFilters = expandEventLogEventFilters([event])
 
@@ -88,7 +100,7 @@ function EventSparkCard({
               {chart.metrics.map((metric) => (
                 <Line
                   key={metric}
-                  dataKey={(row: Record<string, number>) => row[metric]}
+                  dataKey={dataKeys[metric]}
                   name={metric}
                   type="monotone"
                   stroke={chart.colors[metric]}

@@ -473,6 +473,16 @@ export function buildChartData(
   return { colors, config, data, metrics }
 }
 
+export function metricDataKey(metric: string) {
+  const dataKey = (row: Record<string, number>) => row[metric]
+
+  Object.defineProperty(dataKey, "toString", {
+    value: () => metric,
+  })
+
+  return dataKey
+}
+
 export function firstGaugeValue(data?: GaugeEntry[]) {
   return data?.reduce((sum, entry) => sum + entry.count, 0) ?? 0
 }

@@ -1,9 +1,16 @@
-import { type ReactNode, useState } from "react"
+import { useState } from "react"
 import { Activity, BarChart3, Grid3X3, Lock } from "lucide-react"
 
 import LockedOverlay from "@/components/locked-overlay"
 import * as Skeletons from "@/components/skeletons"
 import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
 import { useMobile } from "@/hooks/use-mobile"
 import { useCloud } from "@/hooks/use-cloud"
@@ -54,29 +61,35 @@ function AnalyticsPermissionPreview() {
   )
 }
 
-function AnalyticsLockedSection({
-  title,
-  description,
-  children,
-  action,
-  className,
+function AnalyticsLockedCallout({
+  upgradeRequired,
 }: {
-  title: string
-  description: string
-  children: ReactNode
-  action?: ReactNode
-  className?: string
+  upgradeRequired: boolean
 }) {
+  const title = upgradeRequired
+    ? "Analytics is a paid offering"
+    : "Analytics is an EE offering"
+  const description = upgradeRequired
+    ? "View historical analytics across your account. Upgrade to a paid tier to unlock analytics."
+    : "View historical analytics across your account. Upgrade to Keygen EE to unlock analytics."
+
   return (
-    <LockedOverlay
-      className={className}
-      icon={<Lock className="size-4" />}
-      title={title}
-      description={description}
-      action={action}
-    >
-      {children}
-    </LockedOverlay>
+    <div className="pointer-events-none sticky top-[calc(100dvh-9.5rem)] z-20 -mb-32 flex justify-center bg-gradient-to-t from-background via-background/90 to-transparent px-4 pt-20 pb-4">
+      <Card className="pointer-events-auto w-full max-w-sm items-start gap-4 rounded border-none p-4 text-left shadow-sm">
+        <CardHeader className="w-full px-0">
+          <CardTitle className="flex items-start gap-2 text-sm">
+            <span className="mt-0.5 text-content-muted">
+              <Lock className="size-4" />
+            </span>
+            {title}
+          </CardTitle>
+          <CardDescription className="text-xs">{description}</CardDescription>
+        </CardHeader>
+        <CardFooter className="w-full px-0">
+          <UpgradeButton />
+        </CardFooter>
+      </Card>
+    </div>
   )
 }
 
@@ -125,6 +138,8 @@ function AnalyticsContent({
   )
   const { data: validations = [], isLoading: validationsLoading } =
     useValidationSparks(activityRange, { enabled: activityCanLoad })
+  const hasLockedAnalytics =
+    !canUseActivity || !canUseEvents || !canUseLeaderboards
 
   return (
     <div className="space-y-6">
@@ -174,98 +189,76 @@ function AnalyticsContent({
         />
       </section>
 
-      <section ref={activityVisibility.ref} className="space-y-3">
-        <SectionHeader
-          title="Activity"
-          icon={Activity}
-          rangeDays={activityRangeDays}
-          options={ANALYTICS_RANGE_OPTIONS}
-          onRangeChange={setActivityRangeSelection}
-        />
-        {canUseActivity ? (
-          <div className="grid gap-4 xl:grid-cols-2">
-            <ActivityChart
-              title="Requests"
-              data={requests}
-              expectedMetrics={REQUEST_METRICS}
-              range={activityRange}
-              isLoading={!activityCanLoad || requestsLoading}
-            />
-            <ActivityChart
-              title="Validations"
-              data={validations}
-              expectedMetrics={VALIDATION_METRICS}
-              range={activityRange}
-              isLoading={!activityCanLoad || validationsLoading}
-            />
-          </div>
-        ) : (
-          <AnalyticsLockedSection
-            title="Activity analytics require ClickHouse"
-            description="Request and validation activity charts depend on ClickHouse-backed analytics, which are not available in CE."
-          >
-            <Skeletons.AnalyticsCharts.Activity />
-          </AnalyticsLockedSection>
+      <div className="relative">
+        {hasLockedAnalytics && (
+          <AnalyticsLockedCallout upgradeRequired={upgradeRequired} />
         )}
-      </section>
 
-      <section ref={eventVisibility.ref} className="space-y-3">
-        <SectionHeader
-          title="Events"
-          icon={Activity}
-          rangeDays={eventRangeDays}
-          options={ANALYTICS_RANGE_OPTIONS}
-          onRangeChange={setEventRangeDays}
-        />
-        {canUseEvents ? (
-          <EventCharts range={eventRange} enabled={eventCanLoad} />
-        ) : (
-          <AnalyticsLockedSection
-            title={
-              upgradeRequired
-                ? "Event analytics require a paid plan"
-                : "Event analytics require ClickHouse"
-            }
-            description={
-              upgradeRequired
-                ? "Upgrade your Cloud plan to unlock event analytics."
-                : "Event analytics depend on ClickHouse, which is not available in CE."
-            }
-            action={upgradeRequired ? <UpgradeButton /> : null}
-          >
-            <Skeletons.AnalyticsCharts.Events />
-          </AnalyticsLockedSection>
-        )}
-      </section>
+        <div className="space-y-6">
+          <section ref={activityVisibility.ref} className="space-y-3">
+            <SectionHeader
+              title="Activity"
+              icon={Activity}
+              rangeDays={activityRangeDays}
+              options={ANALYTICS_RANGE_OPTIONS}
+              onRangeChange={setActivityRangeSelection}
+            />
+            {canUseActivity ? (
+              <div className="grid gap-4 xl:grid-cols-2">
+                <ActivityChart
+                  title="Requests"
+                  data={requests}
+                  expectedMetrics={REQUEST_METRICS}
+                  range={activityRange}
+                  isLoading={!activityCanLoad || requestsLoading}
+                />
+                <ActivityChart
+                  title="Validations"
+                  data={validations}
+                  expectedMetrics={VALIDATION_METRICS}
+                  range={activityRange}
+                  isLoading={!activityCanLoad || validationsLoading}
+                />
+              </div>
+            ) : (
+              <Skeletons.AnalyticsCharts.Activity />
+            )}
+          </section>
 
-      <section ref={leaderboardVisibility.ref} className="space-y-3">
-        <SectionHeader
-          title="Leaderboards"
-          icon={BarChart3}
-          rangeDays={leaderboardRangeDays}
-          options={ANALYTICS_RANGE_OPTIONS}
-          onRangeChange={setLeaderboardRangeDays}
-        />
-        {canUseLeaderboards ? (
-          <Leaderboards range={leaderboardRange} enabled={leaderboardCanLoad} />
-        ) : (
-          <AnalyticsLockedSection
-            title={
-              upgradeRequired
-                ? "Request leaderboards require a paid plan"
-                : "Request leaderboards require ClickHouse"
-            }
-            description={
-              upgradeRequired
-                ? "Upgrade your Cloud plan to unlock request leaderboard aggregations."
-                : "Request leaderboards depend on ClickHouse, which is not available in CE."
-            }
-            action={upgradeRequired ? <UpgradeButton /> : null}
-          >
-            <Skeletons.AnalyticsCharts.Leaderboards />
-          </AnalyticsLockedSection>
-        )}
-      </section>
+          <section ref={eventVisibility.ref} className="space-y-3">
+            <SectionHeader
+              title="Events"
+              icon={Activity}
+              rangeDays={eventRangeDays}
+              options={ANALYTICS_RANGE_OPTIONS}
+              onRangeChange={setEventRangeDays}
+            />
+            {canUseEvents ? (
+              <EventCharts range={eventRange} enabled={eventCanLoad} />
+            ) : (
+              <Skeletons.AnalyticsCharts.Events />
+            )}
+          </section>
+
+          <section ref={leaderboardVisibility.ref} className="space-y-3">
+            <SectionHeader
+              title="Leaderboards"
+              icon={BarChart3}
+              rangeDays={leaderboardRangeDays}
+              options={ANALYTICS_RANGE_OPTIONS}
+              onRangeChange={setLeaderboardRangeDays}
+            />
+            {canUseLeaderboards ? (
+              <Leaderboards
+                range={leaderboardRange}
+                enabled={leaderboardCanLoad}
+              />
+            ) : (
+              <Skeletons.AnalyticsCharts.Leaderboards />
+            )}
+          </section>
+        </div>
+      </div>
     </div>
   )
 }

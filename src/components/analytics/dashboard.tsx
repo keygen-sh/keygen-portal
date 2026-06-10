@@ -222,7 +222,7 @@ function AnalyticsContent({ enabled }: { enabled: boolean }) {
   )
 }
 
-export default function DashboardAnalytics() {
+export default function Dashboard() {
   const { isCloud } = useCloud()
   const { isCE } = useEdition()
   const { can, isLoading: permissionsLoading } = usePermissions()

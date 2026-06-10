@@ -213,7 +213,7 @@ function ChartTooltipContent({
   return (
     <div
       className={cn(
-        "grid min-w-52 max-w-[calc(100vw-2rem)] items-start gap-2 rounded-md border border-accent bg-background-2 p-3 text-xs shadow-lg duration-150 animate-in fade-in-0 zoom-in-95",
+        "grid max-w-[calc(100vw-2rem)] min-w-52 items-start gap-2 rounded-md border border-accent bg-background-2 p-3 text-xs shadow-lg duration-150 animate-in fade-in-0 zoom-in-95",
         className,
       )}
     >
@@ -275,7 +275,7 @@ function ChartTooltipContent({
                         </span>
                       </div>
                       {item.value != null && (
-                        <span className="shrink-0 font-mono font-medium tabular-nums text-content-loud">
+                        <span className="shrink-0 font-mono font-medium text-content-loud tabular-nums">
                           {item.value.toLocaleString()}
                         </span>
                       )}
@@ -303,13 +303,12 @@ function ChartLegendContent({
   payload,
   verticalAlign = "bottom",
   nameKey,
-}: React.ComponentProps<"div"> &
-  {
-    hideIcon?: boolean
-    nameKey?: string
-    payload?: readonly ChartLegendPayloadItem[]
-    verticalAlign?: "top" | "middle" | "bottom"
-  }) {
+}: React.ComponentProps<"div"> & {
+  hideIcon?: boolean
+  nameKey?: string
+  payload?: readonly ChartLegendPayloadItem[]
+  verticalAlign?: "top" | "middle" | "bottom"
+}) {
   const { config } = useChart()
 
   if (!payload?.length) {
@@ -386,9 +385,7 @@ function getPayloadConfigFromPayload(
     ] as string
   }
 
-  return configLabelKey in config
-    ? config[configLabelKey]
-    : config[key]
+  return configLabelKey in config ? config[configLabelKey] : config[key]
 }
 
 export {

@@ -39,6 +39,7 @@ import * as Motion from "@/components/motion"
 import GoToButton from "@/components/go-to-button"
 import CursorTooltip from "@/components/cursor-tooltip"
 import Card from "./card"
+import EmptyChart from "./empty-chart"
 
 const DAY_LABELS = ["Mon", "", "Wed", "", "Fri", "", "Sun"]
 const CELL_WIDTH = 16
@@ -332,7 +333,9 @@ export default function LicenseExpirationHeatmap({
             </div>
           </div>
         )
-      ) : null}
+      ) : (
+        <EmptyHeatmap isMobile={isMobile} />
+      )}
 
       {/* Popover/tooltip */}
       <CursorTooltip
@@ -391,6 +394,15 @@ export default function LicenseExpirationHeatmap({
         )}
       </CursorTooltip>
     </Card>
+  )
+}
+
+function EmptyHeatmap({ isMobile }: { isMobile: boolean }) {
+  return (
+    <EmptyChart
+      message="No heatmap data for this range."
+      className={isMobile ? "h-[218px]" : "h-28"}
+    />
   )
 }
 

@@ -20,6 +20,31 @@ const WARNING_EVENT_RE = [
 
 const SUCCESS_EVENT_RE = [/\.created$/, /\.valid$/]
 
+export const EVENT_LOG_EVENT_FILTERS: Record<string, readonly string[]> = {
+  "license.validation.*": [
+    "license.validation.succeeded",
+    "license.validation.failed",
+  ],
+  "machine.heartbeat.*": [
+    "machine.heartbeat.ping",
+    "machine.heartbeat.pong",
+    "machine.heartbeat.dead",
+    "machine.heartbeat.reset",
+    "machine.heartbeat.resurrected",
+  ],
+  "process.heartbeat.*": [
+    "process.heartbeat.ping",
+    "process.heartbeat.pong",
+    "process.heartbeat.dead",
+  ],
+}
+
+export function expandEventLogEventFilters(events: readonly string[]) {
+  return Array.from(
+    new Set(events.flatMap((event) => EVENT_LOG_EVENT_FILTERS[event] ?? event)),
+  )
+}
+
 export function eventLogBadgeVariant(
   event: string,
 ): "secondary" | "destructive" | "success" | "warning" {

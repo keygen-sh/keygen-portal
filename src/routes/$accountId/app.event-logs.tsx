@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { type EventLogFilters } from "@/queries/event-logs"
 import { type EventLogResourceFilter } from "@/types/event-logs"
 
+import { expandEventLogEventFilters } from "@/lib/event-logs"
 import { requirePermission } from "@/lib/permissions"
 
 import * as Page from "@/pages/index"
@@ -32,7 +33,7 @@ function validateSearch(search: Record<string, unknown>): EventLogFilters {
     const events = search.events.filter(
       (event): event is string => typeof event === "string",
     )
-    if (events.length > 0) filters.events = events
+    if (events.length > 0) filters.events = expandEventLogEventFilters(events)
   }
   if (typeof search.request === "string") filters.request = search.request
 

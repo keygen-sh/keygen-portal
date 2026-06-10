@@ -15,7 +15,10 @@ import { useEventSparks } from "@/queries/analytics"
 
 import * as keygen from "@/keygen"
 
-import { eventLogBadgeVariant } from "@/lib/event-logs"
+import {
+  eventLogBadgeVariant,
+  expandEventLogEventFilters,
+} from "@/lib/event-logs"
 
 import { EVENT_GROUPS } from "./chart-constants"
 import { buildChartData, metricKey, useLazyVisibility } from "./chart-utils"
@@ -40,6 +43,7 @@ function EventSparkCard({
     () => buildChartData(data, undefined, range),
     [data, range],
   )
+  const eventLogFilters = expandEventLogEventFilters([event])
 
   return (
     <div ref={ref}>
@@ -53,7 +57,7 @@ function EventSparkCard({
           <GoToButton
             path="/$accountId/app/event-logs"
             params={{ accountId: keygen.config.id }}
-            search={{ events: [event] }}
+            search={{ events: eventLogFilters }}
             label="View logs"
             className="[&_.group:hover_svg]:text-primary [&_button]:text-content-normal [&_button]:hover:text-content-loud [&_svg]:text-content-normal"
           />

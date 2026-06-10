@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { useNavigate } from "@tanstack/react-router"
 import {
   format,
@@ -200,44 +200,6 @@ export default function LicenseExpirationHeatmap({
     }
     return occupied
   }, [entries])
-  const [containerWidth, setContainerWidth] = useState(0)
-  const containerRef = useRef<HTMLDivElement | null>(null)
-  const cellWidths = useMemo(() => {
-    if (isMobile || numWeeks === 0) return []
-
-    const availableWidth = containerWidth - LABEL_WIDTH - numWeeks * CELL_GAP
-    const baseWidth = Math.max(
-      CELL_WIDTH,
-      Math.floor(availableWidth / numWeeks),
-    )
-    const remainder = Math.max(0, availableWidth - baseWidth * numWeeks)
-
-    return Array.from(
-      { length: numWeeks },
-      (_, index) => baseWidth + (index < remainder ? 1 : 0),
-    )
-  }, [containerWidth, isMobile, numWeeks])
-  const gridWidth =
-    LABEL_WIDTH +
-    cellWidths.reduce((sum, width) => sum + width, 0) +
-    numWeeks * CELL_GAP
-  const isDesktopHeatmapReady =
-    enabled && !isLoading && !isMobile && entries.length > 0
-
-  useEffect(() => {
-    if (!isDesktopHeatmapReady) return
-
-    const element = containerRef.current
-    if (!element) return
-
-    const measure = () => setContainerWidth(element.clientWidth)
-    measure()
-
-    const observer = new ResizeObserver(measure)
-    observer.observe(element)
-
-    return () => observer.disconnect()
-  }, [isDesktopHeatmapReady])
 
   return (
     <Card
@@ -270,10 +232,10 @@ export default function LicenseExpirationHeatmap({
             close={close}
           />
         ) : (
-          <div ref={containerRef} className="relative w-full overflow-x-auto">
+          <div className="relative w-full overflow-x-auto">
             <div
               style={{
-                width: gridWidth,
+                width: "100%",
                 minWidth: LABEL_WIDTH + numWeeks * (CELL_WIDTH + CELL_GAP),
               }}
             >
@@ -281,7 +243,7 @@ export default function LicenseExpirationHeatmap({
                 onMouseMove={handleGridMouseMove}
                 style={{
                   display: "grid",
-                  gridTemplateColumns: `${LABEL_WIDTH}px ${cellWidths.map((width) => `${width}px`).join(" ")}`,
+                  gridTemplateColumns: `${LABEL_WIDTH}px repeat(${numWeeks}, minmax(${CELL_WIDTH}px, 1fr))`,
                   gridTemplateRows: `auto repeat(7, ${CELL_HEIGHT}px)`,
                   columnGap: CELL_GAP,
                   rowGap: CELL_GAP,

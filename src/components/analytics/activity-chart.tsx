@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useMemo, type ReactNode } from "react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import {
@@ -18,12 +18,16 @@ import EmptyChart from "./empty-chart"
 
 export default function ActivityChart({
   title,
+  action,
+  actionClassName,
   data,
   expectedMetrics,
   range,
   isLoading,
 }: {
   title: string
+  action?: ReactNode
+  actionClassName?: string
   data: SparkEntry[]
   expectedMetrics: readonly string[]
   range: { start: string; end: string }
@@ -35,7 +39,7 @@ export default function ActivityChart({
   )
 
   return (
-    <Card title={title}>
+    <Card title={title} action={action} actionClassName={actionClassName}>
       {isLoading ? (
         <Skeleton className="h-64 w-full" />
       ) : chart.data.length === 0 ? (

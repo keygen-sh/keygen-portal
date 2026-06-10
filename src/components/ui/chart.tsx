@@ -108,8 +108,19 @@ ${colorConfig
   return <style>{css}</style>
 }
 
-const ChartTooltip = RechartsPrimitive.Tooltip
 const ChartLegend = RechartsPrimitive.Legend
+
+function ChartTooltip({
+  wrapperStyle,
+  ...props
+}: React.ComponentProps<typeof RechartsPrimitive.Tooltip>) {
+  return (
+    <RechartsPrimitive.Tooltip
+      wrapperStyle={{ zIndex: 10, ...wrapperStyle }}
+      {...props}
+    />
+  )
+}
 
 type ChartTooltipPayloadItem = {
   color?: string

@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useMobile } from "@/hooks/use-mobile"
 
 import { cn } from "@/lib/utils"
 
@@ -58,6 +59,41 @@ function Leaderboards() {
 }
 
 function Heatmap() {
+  const isMobile = useMobile()
+
+  if (isMobile) {
+    return (
+      <div className="w-full overflow-hidden">
+        <div className="mb-3 flex items-center justify-between">
+          <Skeleton className="size-8 rounded-md" />
+          <Skeleton className="h-4 w-28" />
+          <Skeleton className="size-8 rounded-md" />
+        </div>
+        <div className="grid grid-cols-[34px_repeat(6,1fr)] grid-rows-[repeat(7,18px)] gap-1">
+          {Array.from({ length: 7 * 7 }).map((_, index) => {
+            const isLabelColumn = index % 7 === 0
+
+            return (
+              <Skeleton
+                key={index}
+                className={cn(
+                  isLabelColumn
+                    ? "h-3 self-center bg-transparent"
+                    : "h-full w-full rounded-xs",
+                )}
+              />
+            )
+          })}
+        </div>
+        <div className="mt-3 flex justify-end gap-1.5 pb-1">
+          {Array.from({ length: 7 }).map((_, index) => (
+            <Skeleton key={index} className="h-2 w-5 rounded-none" />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="w-full overflow-hidden">
       <div className="grid grid-cols-[34px_repeat(53,minmax(16px,1fr))] grid-rows-[auto_repeat(7,8px)] gap-0.5 pt-3">

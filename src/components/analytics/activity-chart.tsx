@@ -1,4 +1,4 @@
-import { useMemo, type ReactNode } from "react"
+import { useMemo, useState, type MouseEvent, type ReactNode } from "react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import {
@@ -53,6 +53,44 @@ export default function ActivityChart({
       ),
     [chart.metrics],
   )
+  const [filteredMetrics, setFilteredMetrics] =
+    useState<ReadonlySet<string> | null>(null)
+  const visibleMetrics = useMemo(
+    () => filteredMetrics ?? new Set(chart.metrics),
+    [chart.metrics, filteredMetrics],
+  )
+  const inactiveMetrics = useMemo(
+    () => chart.metrics.filter((metric) => !visibleMetrics.has(metric)),
+    [chart.metrics, visibleMetrics],
+  )
+  const legendItems = useMemo(
+    () =>
+      chart.metrics.map((metric) => ({
+        color: chart.colors[metric],
+        value: metric,
+      })),
+    [chart.colors, chart.metrics],
+  )
+
+  function filterMetric(metric: string, event: MouseEvent<HTMLButtonElement>) {
+    setFilteredMetrics((current) => {
+      if (!event.ctrlKey && !event.metaKey) {
+        return current?.size === 1 && current.has(metric)
+          ? null
+          : new Set([metric])
+      }
+
+      const next = new Set(current ?? [])
+
+      if (next.has(metric)) {
+        next.delete(metric)
+      } else {
+        next.add(metric)
+      }
+
+      return next.size ? next : null
+    })
+  }
 
   return (
     <Card title={title} action={action} actionClassName={actionClassName}>
@@ -86,7 +124,16 @@ export default function ActivityChart({
                 />
               }
             />
-            <ChartLegend content={<ChartLegendContent nameKey="value" />} />
+            <ChartLegend
+              content={
+                <ChartLegendContent
+                  nameKey="value"
+                  items={legendItems}
+                  inactiveKeys={inactiveMetrics}
+                  onItemToggle={filterMetric}
+                />
+              }
+            />
             {chart.metrics.map((metric) => (
               <Bar
                 key={metric}
@@ -94,6 +141,7 @@ export default function ActivityChart({
                 name={metric}
                 stackId="1"
                 fill={chart.colors[metric]}
+                hide={!visibleMetrics.has(metric)}
                 isAnimationActive={false}
               />
             ))}

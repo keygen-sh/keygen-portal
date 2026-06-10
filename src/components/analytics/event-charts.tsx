@@ -26,7 +26,7 @@ import {
   useLazyVisibility,
 } from "@/lib/analytics"
 
-import DashboardCard from "./dashboard-card"
+import Card from "./card"
 import EmptyChart from "./empty-chart"
 
 function EventSparkCard({
@@ -51,7 +51,7 @@ function EventSparkCard({
 
   return (
     <div ref={ref}>
-      <DashboardCard
+      <Card
         title={
           <Badge variant={eventLogBadgeVariant(event)} className="font-mono">
             {event}
@@ -100,7 +100,7 @@ function EventSparkCard({
             </LineChart>
           </ChartContainer>
         )}
-      </DashboardCard>
+      </Card>
     </div>
   )
 }

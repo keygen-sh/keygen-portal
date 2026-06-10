@@ -34,10 +34,10 @@ import {
 import { useMobile } from "@/hooks/use-mobile"
 import { useCursorFollowTooltip } from "@/hooks/use-cursor-follow-tooltip"
 
-import * as Chart from "@/components/chart"
 import * as Motion from "@/components/motion"
 import GoToButton from "@/components/go-to-button"
 import CursorTooltip from "@/components/cursor-tooltip"
+import Card from "./card"
 
 const DAY_LABELS = ["Mon", "", "Wed", "", "Fri", "", "Sun"]
 const CELL_WIDTH = 16
@@ -239,7 +239,7 @@ export default function LicenseExpirationHeatmap({
   }, [isDesktopHeatmapReady])
 
   return (
-    <Chart.Card
+    <Card
       title="License expirations"
       className="rounded-md md:w-full"
       action={
@@ -427,7 +427,7 @@ export default function LicenseExpirationHeatmap({
           </>
         )}
       </CursorTooltip>
-    </Chart.Card>
+    </Card>
   )
 }
 

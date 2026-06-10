@@ -1,6 +1,6 @@
 export { default as ActivityChart } from "./activity-chart"
+export { default as Card } from "./card"
 export { default as Dashboard } from "./dashboard"
-export { default as DashboardCard } from "./dashboard-card"
 export { default as EmptyChart } from "./empty-chart"
 export { default as EventCharts } from "./event-charts"
 export { default as GaugeCard } from "./gauge-card"

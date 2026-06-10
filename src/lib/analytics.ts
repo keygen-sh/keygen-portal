@@ -4,6 +4,7 @@ import {
   format,
   getDay,
   addWeeks,
+  isValid,
   parseISO,
   subDays,
   startOfWeek,
@@ -365,9 +366,25 @@ export function formatCount(value?: number | null) {
 }
 
 export function formatTooltipLabel(label: unknown) {
-  return typeof label === "string" || typeof label === "number"
-    ? String(label)
-    : ""
+  if (typeof label !== "string" && typeof label !== "number") {
+    return ""
+  }
+
+  const value = String(label)
+  const date = parseISO(value)
+
+  return isValid(date) ? format(date, "MMM do, yyyy") : value
+}
+
+export function formatChartAxisDate(label: unknown) {
+  if (typeof label !== "string" && typeof label !== "number") {
+    return ""
+  }
+
+  const value = String(label)
+  const date = parseISO(value)
+
+  return isValid(date) ? format(date, "M/d") : value
 }
 
 export function useAnalyticsRange(days: number) {

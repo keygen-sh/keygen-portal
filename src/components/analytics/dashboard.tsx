@@ -54,7 +54,7 @@ function UpgradeButton() {
   )
 }
 
-function AnalyticsPermissionPreview() {
+function AnalyticsPermissionLockedOverlay() {
   return (
     <LockedOverlay
       className="min-h-[720px]"
@@ -67,7 +67,7 @@ function AnalyticsPermissionPreview() {
   )
 }
 
-function AnalyticsLockedCallout({
+function AnalyticsUpgradeLockedOverlay({
   upgradeRequired,
 }: {
   upgradeRequired: boolean
@@ -182,7 +182,7 @@ function AnalyticsContent({
   const showRequestUsage = activityCanLoad && !requestGaugeLoading
   const hasLockedAnalytics =
     !canUseActivity || !canUseEvents || !canUseLeaderboards
-  const shouldShowLockedCallout =
+  const shouldShowAnalyticsUpgradeLockedOverlay =
     hasLockedAnalytics && activityVisibility.hasEntered
 
   return (
@@ -234,8 +234,8 @@ function AnalyticsContent({
       </section>
 
       <div className="relative">
-        {shouldShowLockedCallout && (
-          <AnalyticsLockedCallout upgradeRequired={upgradeRequired} />
+        {shouldShowAnalyticsUpgradeLockedOverlay && (
+          <AnalyticsUpgradeLockedOverlay upgradeRequired={upgradeRequired} />
         )}
 
         <div className="space-y-6">
@@ -337,7 +337,7 @@ export default function Dashboard() {
   }
 
   if (!hasPermission) {
-    return <AnalyticsPermissionPreview />
+    return <AnalyticsPermissionLockedOverlay />
   }
 
   return (

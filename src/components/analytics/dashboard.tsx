@@ -45,7 +45,6 @@ import Leaderboards from "./leaderboards"
 import LicenseExpirationHeatmap from "./license-expiration-heatmap"
 import SectionHeader from "./section-header"
 
-const REQUEST_DAILY_LIMIT = 10_000
 const requestUsageFormatter = new Intl.NumberFormat()
 const requestUsagePercentFormatter = new Intl.NumberFormat(undefined, {
   maximumFractionDigits: 2,
@@ -113,24 +112,38 @@ function AnalyticsLockedCallout({
   )
 }
 
-function RequestUsageSummary({ count }: { count: number }) {
+function RequestUsageSummary({
+  count,
+  limit,
+}: {
+  count: number
+  limit?: number | null
+}) {
   const formattedCount = requestUsageFormatter.format(count)
-  const formattedLimit = requestUsageFormatter.format(REQUEST_DAILY_LIMIT)
-  const formattedPercent = requestUsagePercentFormatter.format(
-    count / REQUEST_DAILY_LIMIT,
-  )
+  const hasLimit = limit != null && limit > 0
+  const formattedLimit = hasLimit ? requestUsageFormatter.format(limit) : null
+  const formattedPercent = hasLimit
+    ? requestUsagePercentFormatter.format(count / limit)
+    : null
 
   return (
     <span className="block text-right text-xs leading-snug font-normal text-content-subdued">
       You've made{" "}
       <span className="font-semibold text-content-muted">{formattedCount}</span>{" "}
-      API requests today,{" "}
-      <span className="font-semibold text-content-muted">
-        {formattedPercent}
-      </span>{" "}
-      of your daily limit of{" "}
-      <span className="font-semibold text-content-muted">{formattedLimit}</span>
-      {"."}
+      API requests today
+      {hasLimit && (
+        <>
+          ,{" "}
+          <span className="font-semibold text-content-muted">
+            {formattedPercent}
+          </span>{" "}
+          of your daily limit of{" "}
+          <span className="font-semibold text-content-muted">
+            {formattedLimit}
+          </span>
+        </>
+      )}
+      .
     </span>
   )
 }
@@ -141,12 +154,14 @@ function AnalyticsContent({
   canUseEvents,
   canUseLeaderboards,
   upgradeRequired,
+  requestDailyLimit,
 }: {
   canUseGaugeSparks: boolean
   canUseActivity: boolean
   canUseEvents: boolean
   canUseLeaderboards: boolean
   upgradeRequired: boolean
+  requestDailyLimit?: number | null
 }) {
   const isMobile = useMobile()
   const [heatmapRangeDays, setHeatmapRangeDays] =
@@ -264,7 +279,10 @@ function AnalyticsContent({
                   isLoading={!activityCanLoad || requestsLoading}
                   action={
                     showRequestUsage ? (
-                      <RequestUsageSummary count={requestCountToday} />
+                      <RequestUsageSummary
+                        count={requestCountToday}
+                        limit={requestDailyLimit}
+                      />
                     ) : null
                   }
                   actionClassName="row-span-1 max-w-[min(30rem,58vw)] self-center"
@@ -351,6 +369,7 @@ export default function Dashboard() {
       canUseEvents={!isCE && !isFreePlan}
       canUseLeaderboards={!isCE && !isFreePlan}
       upgradeRequired={isFreePlan}
+      requestDailyLimit={isCloud ? plan?.attributes.maxReqs : null}
     />
   )
 }

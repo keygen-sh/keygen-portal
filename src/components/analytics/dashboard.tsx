@@ -12,9 +12,9 @@ import { usePermissions } from "@/hooks/use-permissions"
 
 import { useGetAccount, useGetAccountPlan } from "@/queries/accounts"
 import {
-  useRequestSparks,
-  useResourceGauge,
-  useValidationSparks,
+  useRequestSpark,
+  useGauge,
+  useValidationSpark,
 } from "@/queries/analytics"
 
 import ActivityChart from "./activity-chart"
@@ -67,11 +67,7 @@ function AnalyticsPermissionLockedOverlay() {
   )
 }
 
-function AnalyticsUpgradeLockedOverlay({
-  upgradeRequired,
-}: {
-  upgradeRequired: boolean
-}) {
+function AnalyticsUpgrade({ upgradeRequired }: { upgradeRequired: boolean }) {
   const title = upgradeRequired
     ? "Analytics is a paid offering"
     : "Analytics is an EE offering"
@@ -167,14 +163,16 @@ function AnalyticsContent({
   const activityRange = useAnalyticsRange(activityRangeDays)
   const eventRange = useAnalyticsRange(eventRangeDays)
   const leaderboardRange = useAnalyticsRange(leaderboardRangeDays)
-  const { data: requests = [], isLoading: requestsLoading } = useRequestSparks(
+  const { data: requests = [], isLoading: requestsLoading } = useRequestSpark(
     activityRange,
     { enabled: activityCanLoad },
   )
-  const { data: requestGauge = [], isLoading: requestGaugeLoading } =
-    useResourceGauge("requests", { enabled: activityCanLoad })
+  const { data: requestGauge = [], isLoading: requestGaugeLoading } = useGauge(
+    "requests",
+    { enabled: activityCanLoad },
+  )
   const { data: validations = [], isLoading: validationsLoading } =
-    useValidationSparks(activityRange, { enabled: activityCanLoad })
+    useValidationSpark(activityRange, { enabled: activityCanLoad })
   const requestCountToday = requestGauge.reduce(
     (total, entry) => total + entry.count,
     0,
@@ -182,7 +180,7 @@ function AnalyticsContent({
   const showRequestUsage = activityCanLoad && !requestGaugeLoading
   const hasLockedAnalytics =
     !canUseActivity || !canUseEvents || !canUseLeaderboards
-  const shouldShowAnalyticsUpgradeLockedOverlay =
+  const shouldShowAnalyticsUpgrade =
     hasLockedAnalytics && activityVisibility.hasEntered
 
   return (
@@ -234,8 +232,8 @@ function AnalyticsContent({
       </section>
 
       <div className="relative">
-        {shouldShowAnalyticsUpgradeLockedOverlay && (
-          <AnalyticsUpgradeLockedOverlay upgradeRequired={upgradeRequired} />
+        {shouldShowAnalyticsUpgrade && (
+          <AnalyticsUpgrade upgradeRequired={upgradeRequired} />
         )}
 
         <div className="space-y-6">

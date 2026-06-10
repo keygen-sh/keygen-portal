@@ -15,7 +15,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-import { useResourceGauge, useResourceSparks } from "@/queries/analytics"
+import { useGauge, useSpark } from "@/queries/analytics"
 
 import {
   buildChartData,
@@ -46,10 +46,10 @@ export default function GaugeCard({
   const { ref, hasEntered } = useLazyVisibility<HTMLDivElement>()
   const canLoad = enabled && hasEntered
   const canLoadSpark = sparkEnabled && canLoad
-  const { data, isLoading, isError } = useResourceGauge(metric, {
+  const { data, isLoading, isError } = useGauge(metric, {
     enabled: canLoad,
   })
-  const { data: spark = [], isLoading: sparkLoading } = useResourceSparks(
+  const { data: spark = [], isLoading: sparkLoading } = useSpark(
     metric,
     range,
     { enabled: canLoadSpark },

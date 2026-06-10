@@ -23,7 +23,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 import { useCursorFollowTooltip } from "@/hooks/use-cursor-follow-tooltip"
 
-import { useRequestLeaderboard } from "@/queries/analytics"
+import { useLeaderboard } from "@/queries/analytics"
 
 import { GREEN, LEADERBOARDS, useLazyVisibility } from "@/lib/analytics"
 import { truncator } from "@/lib/truncate"
@@ -90,7 +90,7 @@ function LeaderboardCard({
   const navigate = useNavigate()
   const { ref, hasEntered } = useLazyVisibility<HTMLDivElement>()
   const canLoad = enabled && hasEntered
-  const { data = [], isLoading } = useRequestLeaderboard(metric, {
+  const { data = [], isLoading } = useLeaderboard(metric, {
     ...range,
     enabled: canLoad,
     limit: 10,

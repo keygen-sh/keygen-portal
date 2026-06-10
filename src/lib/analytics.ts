@@ -196,48 +196,48 @@ export const METRIC_COLORS: Record<string, string> = {
   }),
   "validations.heartbeat-dead": RED,
   "validations.not-found": GRAY,
-  "release.downloaded": BLUE,
-  "release.upgraded": GREEN,
-  "user.created": GREEN,
-  "user.deleted": RED,
-  "license.created": GREEN,
-  "license.expired": mix({
+  "events.release-downloaded": BLUE,
+  "events.release-upgraded": GREEN,
+  "events.user-created": GREEN,
+  "events.user-deleted": RED,
+  "events.license-created": GREEN,
+  "events.license-expired": mix({
     color: RED,
     with: AMBER,
     amount: 40,
   }),
-  "license.checked-out": BLUE,
-  "license.renewed": GREEN,
-  "license.suspended": mix({
+  "events.license-checked-out": BLUE,
+  "events.license-renewed": GREEN,
+  "events.license-suspended": mix({
     color: RED,
     with: BLUE,
     amount: 40,
   }),
-  "license.revoked": RED,
-  "license.deleted": RED,
-  "license.validation.succeeded": GREEN,
-  "license.validation.failed": RED,
-  "machine.created": GREEN,
-  "machine.deleted": RED,
-  "machine.checked-out": BLUE,
-  "machine.heartbeat.ping": mix({
+  "events.license-revoked": RED,
+  "events.license-deleted": RED,
+  "events.license-validation-succeeded": GREEN,
+  "events.license-validation-failed": RED,
+  "events.machine-created": GREEN,
+  "events.machine-deleted": RED,
+  "events.machine-checked-out": BLUE,
+  "events.machine-heartbeat-ping": mix({
     color: BLUE,
     with: RED,
     amount: 20,
   }),
-  "machine.heartbeat.pong": GREEN,
-  "machine.heartbeat.dead": RED,
-  "machine.heartbeat.reset": AMBER,
-  "process.created": GREEN,
-  "process.deleted": RED,
-  "process.heartbeat.ping": mix({
+  "events.machine-heartbeat-pong": GREEN,
+  "events.machine-heartbeat-dead": RED,
+  "events.machine-heartbeat-reset": AMBER,
+  "events.process-created": GREEN,
+  "events.process-deleted": RED,
+  "events.process-heartbeat-ping": mix({
     color: BLUE,
     with: RED,
     amount: 20,
   }),
-  "process.heartbeat.pong": GREEN,
-  "process.heartbeat.dead": RED,
-  "process.heartbeat.reset": AMBER,
+  "events.process-heartbeat-pong": GREEN,
+  "events.process-heartbeat-dead": RED,
+  "events.process-heartbeat-reset": AMBER,
 }
 
 export const VALIDATION_METRICS = [
@@ -343,10 +343,6 @@ export function metricKey(metric: string) {
   return metric.replace(/[^a-zA-Z0-9_]/g, "_")
 }
 
-export function metricLabel(metric: string) {
-  return displayMetric(metric)
-}
-
 export function truncateMiddle(value: string, maxLength: number) {
   if (value.length <= maxLength) return value
 
@@ -354,19 +350,6 @@ export function truncateMiddle(value: string, maxLength: number) {
   const tailLength = Math.floor((maxLength - 3) / 2)
 
   return `${value.slice(0, headLength)}...${value.slice(-tailLength)}`
-}
-
-export function displayMetric(metric: string) {
-  if (metric.startsWith("events.")) {
-    const event = metric.replace(/^events\./, "")
-    const match = Object.keys(METRIC_COLORS).find(
-      (key) => key.replace(/\./g, "-") === event,
-    )
-
-    return match ?? metric
-  }
-
-  return metric
 }
 
 export function formatCount(value?: number | null) {
@@ -465,11 +448,9 @@ export function buildChartData(
   }
 
   const config = metrics.reduce((acc, metric) => {
-    const colorMetric = displayMetric(metric)
-
     acc[metricKey(metric)] = {
-      label: metricLabel(metric),
-      color: METRIC_COLORS[colorMetric] ?? GRAY,
+      label: metric,
+      color: METRIC_COLORS[metric] ?? GRAY,
     }
 
     return acc

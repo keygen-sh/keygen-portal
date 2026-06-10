@@ -121,11 +121,14 @@ function RequestUsageSummary({ count }: { count: number }) {
   return (
     <span className="block text-right text-xs leading-snug font-normal text-content-subdued">
       You've made{" "}
-      <span className="text-content-muted font-semibold">{formattedCount}</span> API
-      requests today,{" "}
-      <span className="text-content-muted font-semibold">{formattedPercent}</span> of
-      your daily limit of{" "}
-      <span className="text-content-muted font-semibold">{formattedLimit}</span>.
+      <span className="font-semibold text-content-muted">{formattedCount}</span>{" "}
+      API requests today,{" "}
+      <span className="font-semibold text-content-muted">
+        {formattedPercent}
+      </span>{" "}
+      of your daily limit of{" "}
+      <span className="font-semibold text-content-muted">{formattedLimit}</span>
+      {"."}
     </span>
   )
 }

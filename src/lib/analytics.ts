@@ -19,6 +19,8 @@ import {
   SparkEntry,
 } from "@/types/analytics"
 
+import { mix } from "@/lib/colors"
+
 export const PRICING_URL = "https://keygen.sh/pricing"
 
 export const CHART_COLORS = [
@@ -30,14 +32,6 @@ export const CHART_COLORS = [
 
 export const [BLUE, GREEN, AMBER, RED] = CHART_COLORS
 export const GRAY = "var(--color-content-normal)"
-
-export function chartMix(
-  color: string,
-  mixColor: string,
-  weight: 40 | 50 | 60,
-) {
-  return `color-mix(in oklch, ${color} ${weight}%, ${mixColor})`
-}
 
 export const REQUEST_METRICS = [
   "requests.2xx",
@@ -53,23 +47,83 @@ export const METRIC_COLORS: Record<string, string> = {
   "requests.5xx": RED,
   "validations.valid": GREEN,
   "validations.banned": RED,
-  "validations.expired": chartMix(RED, AMBER, 60),
-  "validations.suspended": chartMix(RED, BLUE, 60),
-  "validations.overdue": chartMix(AMBER, RED, 60),
-  "validations.no-machine": chartMix(BLUE, GREEN, 60),
-  "validations.no-machines": chartMix(BLUE, GREEN, 40),
-  "validations.too-many-machines": chartMix(AMBER, RED, 60),
+  "validations.expired": mix({
+    baseColor: RED,
+    mixedColor: AMBER,
+    mixedColorAmount: 40,
+  }),
+  "validations.suspended": mix({
+    baseColor: RED,
+    mixedColor: BLUE,
+    mixedColorAmount: 10,
+  }),
+  "validations.overdue": mix({
+    baseColor: AMBER,
+    mixedColor: RED,
+    mixedColorAmount: 40,
+  }),
+  "validations.no-machine": mix({
+    baseColor: BLUE,
+    mixedColor: AMBER,
+    mixedColorAmount: 40,
+  }),
+  "validations.no-machines": mix({
+    baseColor: BLUE,
+    mixedColor: AMBER,
+    mixedColorAmount: 60,
+  }),
+  "validations.too-many-machines": mix({
+    baseColor: AMBER,
+    mixedColor: RED,
+    mixedColorAmount: 40,
+  }),
   "validations.too-many-users": AMBER,
-  "validations.too-many-cores": chartMix(BLUE, AMBER, 60),
+  "validations.too-many-cores": mix({
+    baseColor: BLUE,
+    mixedColor: AMBER,
+    mixedColorAmount: 40,
+  }),
   "validations.too-many-processes": BLUE,
-  "validations.too-much-memory": chartMix(RED, BLUE, 40),
-  "validations.too-much-disk": chartMix(RED, AMBER, 60),
-  "validations.entitlements-missing": chartMix(AMBER, BLUE, 60),
-  "validations.fingerprint-scope-mismatch": chartMix(BLUE, RED, 60),
-  "validations.machine-scope-mismatch": chartMix(BLUE, GREEN, 60),
-  "validations.policy-scope-mismatch": chartMix(AMBER, BLUE, 60),
-  "validations.product-scope-mismatch": chartMix(AMBER, GREEN, 60),
-  "validations.heartbeat-not-started": chartMix(AMBER, RED, 50),
+  "validations.too-much-memory": mix({
+    baseColor: RED,
+    mixedColor: BLUE,
+    mixedColorAmount: 60,
+  }),
+  "validations.too-much-disk": mix({
+    baseColor: RED,
+    mixedColor: AMBER,
+    mixedColorAmount: 40,
+  }),
+  "validations.entitlements-missing": mix({
+    baseColor: AMBER,
+    mixedColor: BLUE,
+    mixedColorAmount: 80,
+  }),
+  "validations.fingerprint-scope-mismatch": mix({
+    baseColor: BLUE,
+    mixedColor: RED,
+    mixedColorAmount: 40,
+  }),
+  "validations.machine-scope-mismatch": mix({
+    baseColor: BLUE,
+    mixedColor: RED,
+    mixedColorAmount: 25,
+  }),
+  "validations.policy-scope-mismatch": mix({
+    baseColor: AMBER,
+    mixedColor: BLUE,
+    mixedColorAmount: 90,
+  }),
+  "validations.product-scope-mismatch": mix({
+    baseColor: AMBER,
+    mixedColor: BLUE,
+    mixedColorAmount: 25,
+  }),
+  "validations.heartbeat-not-started": mix({
+    baseColor: AMBER,
+    mixedColor: RED,
+    mixedColorAmount: 50,
+  }),
   "validations.heartbeat-dead": RED,
   "validations.not-found": GRAY,
   "release.downloaded": BLUE,
@@ -77,10 +131,18 @@ export const METRIC_COLORS: Record<string, string> = {
   "user.created": GREEN,
   "user.deleted": RED,
   "license.created": GREEN,
-  "license.expired": chartMix(RED, AMBER, 60),
+  "license.expired": mix({
+    baseColor: RED,
+    mixedColor: AMBER,
+    mixedColorAmount: 40,
+  }),
   "license.checked-out": BLUE,
   "license.renewed": GREEN,
-  "license.suspended": chartMix(RED, BLUE, 60),
+  "license.suspended": mix({
+    baseColor: RED,
+    mixedColor: BLUE,
+    mixedColorAmount: 40,
+  }),
   "license.revoked": RED,
   "license.deleted": RED,
   "license.validation.succeeded": GREEN,
@@ -88,13 +150,21 @@ export const METRIC_COLORS: Record<string, string> = {
   "machine.created": GREEN,
   "machine.deleted": RED,
   "machine.checked-out": BLUE,
-  "machine.heartbeat.ping": chartMix(BLUE, GREEN, 60),
+  "machine.heartbeat.ping": mix({
+    baseColor: BLUE,
+    mixedColor: AMBER,
+    mixedColorAmount: 35,
+  }),
   "machine.heartbeat.pong": GREEN,
   "machine.heartbeat.dead": RED,
   "machine.heartbeat.reset": AMBER,
   "process.created": GREEN,
   "process.deleted": RED,
-  "process.heartbeat.ping": chartMix(BLUE, GREEN, 60),
+  "process.heartbeat.ping": mix({
+    baseColor: BLUE,
+    mixedColor: AMBER,
+    mixedColorAmount: 35,
+  }),
   "process.heartbeat.pong": GREEN,
   "process.heartbeat.dead": RED,
   "process.heartbeat.reset": AMBER,

@@ -233,7 +233,7 @@ export default function Dashboard() {
   )
 
   const hasPermission = can("account.analytics.read")
-  const isFreePlan = isCloud && /free/i.test(plan?.attributes.name ?? "")
+  const isFreePlan = isCloud && (plan?.attributes.price == null || plan?.attributes.price === 0)
   const isChecking =
     permissionsLoading || accountLoading || (isCloud && planLoading)
 

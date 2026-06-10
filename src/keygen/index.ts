@@ -79,6 +79,9 @@ export { eventLogs }
 import * as requestLogs from "./request-logs"
 export { requestLogs }
 
+import * as endpoints from "./endpoints"
+export { endpoints }
+
 import { logout } from "./logout"
 export { logout }
 

@@ -2,9 +2,8 @@ import { type ReactNode, useState } from "react"
 import { Activity, BarChart3, Grid3X3, Lock } from "lucide-react"
 
 import LockedOverlay from "@/components/locked-overlay"
+import * as Skeletons from "@/components/skeletons"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
 
 import { useMobile } from "@/hooks/use-mobile"
 import { useCloud } from "@/hooks/use-cloud"
@@ -14,7 +13,6 @@ import { usePermissions } from "@/hooks/use-permissions"
 import { useGetAccount, useGetAccountPlan } from "@/queries/accounts"
 import { useRequestSparks, useValidationSparks } from "@/queries/analytics"
 
-import { cn } from "@/lib/utils"
 import ActivityChart from "./activity-chart"
 import {
   ANALYTICS_RANGE_OPTIONS,
@@ -51,7 +49,7 @@ function AnalyticsPermissionPreview() {
       title="Analytics permission required"
       description="Ask an account admin for analytics read access to view this dashboard."
     >
-      <AnalyticsSkeleton staticSkeletons />
+      <Skeletons.AnalyticsCharts.Dashboard staticSkeletons />
     </LockedOverlay>
   )
 }
@@ -79,89 +77,6 @@ function AnalyticsLockedSection({
     >
       {children}
     </LockedOverlay>
-  )
-}
-
-function ActivityPreview() {
-  return (
-    <div className="grid gap-4 xl:grid-cols-2">
-      {["Requests", "Validations"].map((title) => (
-        <Card
-          key={title}
-          className="gap-0 rounded-md border-accent bg-background p-0"
-        >
-          <div className="border-b border-accent px-4 pt-3 pb-2">
-            <StaticSkeleton className="h-4 w-24" />
-          </div>
-          <div className="p-4">
-            <StaticSkeleton className="h-64 w-full" />
-          </div>
-        </Card>
-      ))}
-    </div>
-  )
-}
-
-function StaticSkeleton({ className }: { className?: string }) {
-  return <Skeleton className={cn("animate-none", className)} />
-}
-
-function EventChartsPreview() {
-  return (
-    <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
-      {Array.from({ length: 6 }).map((_, index) => (
-        <Card
-          key={index}
-          className="gap-0 rounded-md border-accent bg-background p-0"
-        >
-          <div className="border-b border-accent px-4 pt-3 pb-2">
-            <StaticSkeleton className="h-5 w-36" />
-          </div>
-          <div className="p-3">
-            <StaticSkeleton className="h-36 w-full" />
-          </div>
-        </Card>
-      ))}
-    </div>
-  )
-}
-
-function LeaderboardsPreview() {
-  return (
-    <Card className="gap-0 rounded-md border-accent bg-background p-0">
-      <div className="p-4">
-        <StaticSkeleton className="h-80 w-full" />
-      </div>
-    </Card>
-  )
-}
-
-function AnalyticsSkeleton({
-  staticSkeletons = false,
-}: {
-  staticSkeletons?: boolean
-}) {
-  const Placeholder = staticSkeletons ? StaticSkeleton : Skeleton
-
-  return (
-    <div className="space-y-6">
-      <div className="grid gap-3 md:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, index) => (
-          <Card
-            key={index}
-            className="rounded-md border-accent bg-background p-4"
-          >
-            <Placeholder className="mb-5 h-4 w-20" />
-            <Placeholder className="h-8 w-24" />
-          </Card>
-        ))}
-      </div>
-      <div className="grid gap-4 xl:grid-cols-2">
-        <Placeholder className="h-72 rounded-md" />
-        <Placeholder className="h-72 rounded-md" />
-      </div>
-      <Placeholder className="h-96 rounded-md" />
-    </div>
   )
 }
 
@@ -289,7 +204,7 @@ function AnalyticsContent({
             title="Activity analytics require ClickHouse"
             description="Request and validation activity charts depend on ClickHouse-backed analytics, which are not available in CE."
           >
-            <ActivityPreview />
+            <Skeletons.AnalyticsCharts.Activity />
           </AnalyticsLockedSection>
         )}
       </section>
@@ -318,7 +233,7 @@ function AnalyticsContent({
             }
             action={upgradeRequired ? <UpgradeButton /> : null}
           >
-            <EventChartsPreview />
+            <Skeletons.AnalyticsCharts.Events />
           </AnalyticsLockedSection>
         )}
       </section>
@@ -347,7 +262,7 @@ function AnalyticsContent({
             }
             action={upgradeRequired ? <UpgradeButton /> : null}
           >
-            <LeaderboardsPreview />
+            <Skeletons.AnalyticsCharts.Leaderboards />
           </AnalyticsLockedSection>
         )}
       </section>
@@ -372,7 +287,7 @@ export default function Dashboard() {
     permissionsLoading || accountLoading || (isCloud && planLoading)
 
   if (isChecking) {
-    return <AnalyticsSkeleton />
+    return <Skeletons.AnalyticsCharts.Dashboard />
   }
 
   if (!hasPermission) {

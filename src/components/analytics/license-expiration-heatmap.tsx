@@ -14,6 +14,7 @@ import {
 } from "date-fns"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
+import * as Skeletons from "@/components/skeletons"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -257,7 +258,7 @@ export default function LicenseExpirationHeatmap({
       }
     >
       {!enabled || isLoading ? (
-        <HeatmapSkeleton />
+        <Skeletons.AnalyticsCharts.Heatmap />
       ) : entries.length ? (
         isMobile ? (
           <MobileHeatmapGrid
@@ -428,37 +429,6 @@ export default function LicenseExpirationHeatmap({
         )}
       </CursorTooltip>
     </Card>
-  )
-}
-
-function HeatmapSkeleton() {
-  return (
-    <div className="w-full overflow-hidden">
-      <Skeleton className="mb-3 h-4 w-28" />
-      <div className="grid grid-cols-[34px_repeat(53,minmax(16px,1fr))] grid-rows-[auto_repeat(7,8px)] gap-0.5">
-        {Array.from({ length: 8 * 54 }).map((_, index) => {
-          const isLabelColumn = index % 54 === 0
-          const isMonthRow = index < 54
-
-          return (
-            <Skeleton
-              key={index}
-              className={cn(
-                "rounded-none",
-                isLabelColumn || isMonthRow
-                  ? "h-3 bg-transparent"
-                  : "h-2 w-full",
-              )}
-            />
-          )
-        })}
-      </div>
-      <div className="mt-3 flex justify-end gap-1.5">
-        {Array.from({ length: 7 }).map((_, index) => (
-          <Skeleton key={index} className="h-2 w-5 rounded-none" />
-        ))}
-      </div>
-    </div>
   )
 }
 

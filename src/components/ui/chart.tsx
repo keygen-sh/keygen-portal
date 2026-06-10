@@ -312,18 +312,28 @@ type ChartLegendPayloadItem = {
 function ChartLegendContent({
   className,
   hideIcon = false,
+  inactiveKeys,
+  items,
+  onItemToggle,
   payload,
   verticalAlign = "bottom",
   nameKey,
 }: React.ComponentProps<"div"> & {
   hideIcon?: boolean
+  inactiveKeys?: readonly string[]
+  items?: readonly ChartLegendPayloadItem[]
   nameKey?: string
+  onItemToggle?: (
+    key: string,
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => void
   payload?: readonly ChartLegendPayloadItem[]
   verticalAlign?: "top" | "middle" | "bottom"
 }) {
   const { config } = useChart()
+  const legendItems = items ?? payload
 
-  if (!payload?.length) {
+  if (!legendItems?.length) {
     return null
   }
 
@@ -335,17 +345,15 @@ function ChartLegendContent({
         className,
       )}
     >
-      {payload
+      {legendItems
         .filter((item) => item.type !== "none")
         .map((item) => {
           const key = `${nameKey || item.dataKey || "value"}`
+          const value = item.value != null ? String(item.value) : ""
+          const isInactive = inactiveKeys?.includes(value) ?? false
           const itemConfig = getPayloadConfigFromPayload(config, item, key)
-
-          return (
-            <div
-              key={item.value}
-              className="flex shrink-0 items-center gap-1.5 [&>svg]:size-3 [&>svg]:text-content-subdued"
-            >
+          const content = (
+            <>
               {itemConfig?.icon && !hideIcon ? (
                 <itemConfig.icon />
               ) : (
@@ -357,6 +365,35 @@ function ChartLegendContent({
                 />
               )}
               {itemConfig?.label}
+            </>
+          )
+
+          if (onItemToggle) {
+            return (
+              <button
+                key={value || item.dataKey}
+                type="button"
+                className={cn(
+                  "flex shrink-0 items-center gap-1.5 [&>svg]:size-3 [&>svg]:text-content-subdued",
+                  isInactive && "opacity-40",
+                )}
+                aria-pressed={!isInactive}
+                onClick={(event) => value && onItemToggle(value, event)}
+              >
+                {content}
+              </button>
+            )
+          }
+
+          return (
+            <div
+              key={value || item.dataKey}
+              className={cn(
+                "flex shrink-0 items-center gap-1.5 [&>svg]:size-3 [&>svg]:text-content-subdued",
+                isInactive && "opacity-40",
+              )}
+            >
+              {content}
             </div>
           )
         })}

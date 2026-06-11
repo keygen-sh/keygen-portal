@@ -20,17 +20,25 @@ const BaseShape = z.object({
     .nativeEnum(SigningAlgorithm)
     .default(SigningAlgorithm.Ed25519),
   apiVersion: z.nativeEnum(APIVersion).default(APIVersion.V1_8),
-})
-
-export const ProductShape = z.object({
   product: z.object({
     id: z.string().optional().default(""),
   }),
 })
 
-export const BaseSchema = BaseShape
-export const CreateSchema = BaseShape.merge(ProductShape)
-export const UpdateSchema = BaseShape.merge(ProductShape)
+const CreateShape = BaseShape
+const UpdateShape = BaseShape
+
+type AnyShape = typeof BaseShape | typeof CreateShape | typeof UpdateShape
+
+const BaseRules = <S extends AnyShape>(schema: S): S => {
+  // Custom rules can be added here in the future, e.g.
+  // schema.refine(...)
+  return schema
+}
+
+export const BaseSchema = BaseRules(BaseShape)
+export const CreateSchema = BaseRules(CreateShape)
+export const UpdateSchema = BaseRules(UpdateShape)
 
 export type BaseFormValues = z.input<typeof BaseSchema>
 export type CreateFormValues = z.input<typeof CreateSchema>
@@ -40,7 +48,7 @@ export type BaseValues = z.output<typeof BaseSchema>
 export type CreateValues = z.output<typeof CreateSchema>
 export type UpdateValues = z.output<typeof UpdateSchema>
 export type AllValues = CombineFormValues<
-  CreateValues,
+  BaseValues,
   CreateValues,
   UpdateValues
 >

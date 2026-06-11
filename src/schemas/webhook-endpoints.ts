@@ -28,7 +28,7 @@ const BaseShape = z.object({
 const CreateShape = BaseShape
 const UpdateShape = BaseShape
 
-type AnyShape = typeof BaseShape | typeof CreateShape | typeof UpdateShape
+type AnyShape = typeof BaseShape // rest omitted here due to lint issues since they're currently no different from base
 
 const BaseRules = <S extends AnyShape>(schema: S): S => {
   // Custom rules can be added here in the future, e.g.

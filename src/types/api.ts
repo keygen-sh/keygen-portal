@@ -11,6 +11,7 @@ import { Channel } from "@/types/channels"
 import { Product } from "@/types/products"
 import { License } from "@/types/licenses"
 import { Endpoint } from "@/types/endpoints"
+import { Event } from "@/types/events"
 import { Artifact } from "@/types/artifacts"
 import { Platform } from "@/types/platforms"
 import { Component } from "@/types/components"
@@ -123,6 +124,7 @@ export type AnyResource =
   | Channel
   | Engine
   | Endpoint
+  | Event
 
 export type ResourceType =
   | "products"
@@ -143,6 +145,7 @@ export type ResourceType =
   | "channels"
   | "engines"
   | "webhook-endpoints"
+  | "webhook-events"
 
 export enum APIVersion {
   V1_0 = "1.0",

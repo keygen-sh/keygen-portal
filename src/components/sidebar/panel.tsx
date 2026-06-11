@@ -226,6 +226,12 @@ const VIEWS: View[] = [
         params: { accountId: keygen.config.id },
         requires: ["webhook-endpoint.read"],
       },
+      {
+        to: "/$accountId/app/webhook-events",
+        label: "Events",
+        params: { accountId: keygen.config.id },
+        requires: ["webhook-event.read"],
+      },
     ]),
   },
   {

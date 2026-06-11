@@ -40,5 +40,5 @@ export { Artifacts }
 import * as Account from "./account"
 export { Account }
 
-import * as Endpoints from "./endpoints"
-export { Endpoints }
+import * as WebhookEndpoints from "./webhook-endpoints"
+export { WebhookEndpoints }

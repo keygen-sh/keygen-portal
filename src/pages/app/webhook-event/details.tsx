@@ -102,7 +102,7 @@ export default function WebhookEventDetails() {
     setOpen((prev) => ({ ...prev, [key]: value }))
   }
 
-  const handleDelete = () => {
+  const handleDeleteWebhookEvent = () => {
     removeWebhookEvent.mutate(undefined, {
       onSuccess: async () => {
         toast({ message: "Webhook event deleted", variant: "success" })
@@ -111,7 +111,7 @@ export default function WebhookEventDetails() {
     })
   }
 
-  const handleRetry = () => {
+  const handleRetryWebhookEvent = () => {
     retryWebhookEvent.mutate(undefined, {
       onSuccess: async (retriedWebhookEvent) => {
         toast({
@@ -169,7 +169,7 @@ export default function WebhookEventDetails() {
                   <DropdownMenuItem
                     disabled={retryWebhookEvent.isPending}
                     onClick={(e) => {
-                      handleRetry()
+                      handleRetryWebhookEvent()
                       e.currentTarget.blur()
                     }}
                     className="pb-2 text-base"
@@ -197,7 +197,7 @@ export default function WebhookEventDetails() {
                 <Button
                   variant="outline"
                   disabled={isLoading || retryWebhookEvent.isPending}
-                  onClick={handleRetry}
+                  onClick={handleRetryWebhookEvent}
                 >
                   Retry
                 </Button>
@@ -239,7 +239,7 @@ export default function WebhookEventDetails() {
                       webhookEvent.attributes.status
                     ]
                   }
-                  className="gap-0 px-1 font-mono text-xs hover:gap-1"
+                  className="gap-0 px-1 text-xs hover:gap-1"
                 />
               </div>
 
@@ -285,7 +285,7 @@ export default function WebhookEventDetails() {
                             tooltip={
                               WebhookEventAttributeDescriptions.lastResponseCode
                             }
-                            emptyLabel="N/A"
+                            emptyLabel="--"
                           />
                         }
                       />
@@ -436,22 +436,26 @@ export default function WebhookEventDetails() {
         </Tabs>
       )}
 
-      <ConfirmationModal
-        title="Delete webhook event"
-        description="Are you sure you want to delete this webhook event? This action cannot be undone."
-        open={open.delete}
-        disabled={isLoading || removeWebhookEvent.isPending}
-        onClose={() => toggleOpen("delete", false)}
-        onConfirm={handleDelete}
-        label="Delete"
-        variant="destructive"
-      />
+      {webhookEvent && (
+        <ConfirmationModal
+          title={`Delete ${webhookEvent.attributes.event}`}
+          description="Are you sure you want to delete this webhook event? This action cannot be undone."
+          open={open.delete}
+          disabled={isLoading || removeWebhookEvent.isPending}
+          onClose={() => toggleOpen("delete", false)}
+          onConfirm={handleDeleteWebhookEvent}
+          label="Delete"
+          variant="destructive"
+        />
+      )}
 
-      <WebhookEvents.AdvancedDialog
-        id={id}
-        open={open.attributes}
-        onOpenChange={(value) => toggleOpen("attributes", value)}
-      />
+      {webhookEvent && (
+        <WebhookEvents.AdvancedDialog
+          id={webhookEvent.id}
+          open={open.attributes}
+          onOpenChange={() => toggleOpen("attributes", false)}
+        />
+      )}
     </section>
   )
 }

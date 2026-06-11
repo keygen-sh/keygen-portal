@@ -74,14 +74,14 @@ export default function CreateEndpointForm({
                 <Forms.Section.Column>
                   <Endpoints.Form.Fields
                     schema="create"
-                    include={["signatureAlgorithm", "apiVersion"]}
+                    include={["signatureAlgorithm", "product"]}
                     fieldVariant="stacking"
                   />
                 </Forms.Section.Column>
                 <Forms.Section.Column>
                   <Endpoints.Form.Fields
                     schema="create"
-                    include={["product"]}
+                    include={["apiVersion"]}
                     fieldVariant="stacking"
                   />
                 </Forms.Section.Column>

@@ -30,13 +30,14 @@ import { useMobile } from "@/hooks/use-mobile"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import {
-  requestLogStatusText,
   formatRequestLogRequest,
   formatRequestLogResponse,
   requestLogStatusBadgeVariant,
   requestLogMethodBadgeVariant,
 } from "@/lib/request-logs"
 import { copyToClipboard } from "@/lib/clipboard"
+
+import { HTTPStatusCodeDescriptions, type HTTPStatusCode } from "@/types/http"
 
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
@@ -118,8 +119,9 @@ export default function RequestLogDetails() {
                       requestLog.attributes.status,
                     )}
                     tooltip={
-                      requestLogStatusText(requestLog.attributes.status) ??
-                      "The HTTP response status code."
+                      HTTPStatusCodeDescriptions[
+                        requestLog.attributes.status as HTTPStatusCode
+                      ] ?? "The HTTP response status code."
                     }
                     className="gap-0 px-1 font-mono text-xs hover:gap-1"
                   />

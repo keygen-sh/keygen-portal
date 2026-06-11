@@ -8,6 +8,7 @@ import { APIError } from "@/types/api"
 import { WebhookEndpoint } from "@/types/webhook-endpoints"
 
 import * as keygen from "@/keygen"
+import { diff } from "@/lib/utils"
 
 export function useGetWebhookEndpoint(webhookEndpointId: string) {
   const { code } = useEnvironment()
@@ -106,18 +107,36 @@ export function useUpdateWebhookEndpoint(webhookEndpointId: string) {
     APIError,
     Schemas.WebhookEndpoints.UpdateValues
   >({
-    mutationFn: async (values) => {
-      const response = await keygen.webhookEndpoints.update({
-        id: webhookEndpointId,
-        values,
-      })
+    mutationFn: (values) =>
+      keygen.webhookEndpoints
+        .get({ id: webhookEndpointId })
+        .then(async (response) => {
+          if (response.errors) {
+            throw new APIError(response.errors[0])
+          }
 
-      if (response.errors) {
-        throw new APIError(response.errors[0])
-      }
+          const current = response.data
 
-      return response.data
-    },
+          const changes = diff(
+            {
+              ...current.attributes,
+              product: { id: current.relationships.product?.data?.id ?? "" },
+            },
+            values,
+          ) as Schemas.WebhookEndpoints.UpdateValues
+          if (Object.keys(changes).length === 0) return current
+
+          const updateResponse = await keygen.webhookEndpoints.update({
+            id: webhookEndpointId,
+            values: changes,
+          })
+
+          if (updateResponse.errors) {
+            throw new APIError(updateResponse.errors[0])
+          }
+
+          return updateResponse.data
+        }),
 
     onSuccess: async (updated) => {
       queryClient.setQueryData(

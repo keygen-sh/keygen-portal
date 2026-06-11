@@ -61,14 +61,14 @@ export default function EditEndpointForm({
             <Forms.Section.Column>
               <Endpoints.Form.Fields
                 schema="edit"
-                include={["url", "signatureAlgorithm", "apiVersion"]}
+                include={["url", "apiVersion"]}
                 fieldVariant="stacking"
               />
             </Forms.Section.Column>
             <Forms.Section.Column>
               <Endpoints.Form.Fields
                 schema="edit"
-                include={["product"]}
+                include={["signatureAlgorithm", "product"]}
                 fieldVariant="stacking"
               />
             </Forms.Section.Column>

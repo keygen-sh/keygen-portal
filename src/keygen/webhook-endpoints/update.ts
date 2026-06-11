@@ -1,7 +1,7 @@
 import config from "@/keygen/config"
 import client from "@/keygen/client"
+
 import { WebhookEndpointResponse } from "@/types/webhook-endpoints"
-import { compact } from "@/lib/compact"
 
 import * as Schemas from "@/schemas"
 
@@ -18,15 +18,18 @@ export default async function update({
 }: UpdateProps): Promise<WebhookEndpointResponse> {
   const { product, ...attributes } = values
 
+  const relationships: Record<string, unknown> = {}
+  if (product) {
+    relationships.product = {
+      data: product.id ? { type: "products", id: product.id } : null,
+    }
+  }
+
   const body = {
     data: {
       type: "webhook-endpoints",
-      attributes: compact(attributes),
-      relationships: {
-        product: {
-          data: product?.id ? { type: "products", id: product.id } : null,
-        },
-      },
+      attributes,
+      ...(Object.keys(relationships).length > 0 ? { relationships } : {}),
     },
   }
 

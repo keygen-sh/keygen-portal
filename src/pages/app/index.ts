@@ -18,6 +18,7 @@ export { default as Engines } from "./engines"
 export { default as EventLogs } from "./event-logs"
 export { default as RequestLogs } from "./request-logs"
 export { default as Endpoints } from "./endpoints"
+export { default as Events } from "./events"
 
 import * as Product from "./product"
 export { Product }
@@ -75,6 +76,9 @@ export { RequestLog }
 
 import * as Endpoint from "./endpoint"
 export { Endpoint }
+
+import * as Event from "./event"
+export { Event }
 
 import * as Settings from "./settings"
 export { Settings }

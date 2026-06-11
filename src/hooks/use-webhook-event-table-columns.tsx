@@ -1,5 +1,4 @@
 import { useMemo } from "react"
-import { formatDate } from "date-fns"
 
 import { Badge } from "@/components/ui/badge"
 
@@ -9,6 +8,7 @@ import {
   WebhookEventStatusVariants,
 } from "@/types/webhook-events"
 
+import { eventLogBadgeVariant } from "@/lib/event-logs"
 import { createTableColumnHelper } from "@/lib/tables"
 
 import ClipboardButton from "@/components/clipboard-button"
@@ -20,9 +20,7 @@ export function useWebhookEventTableColumns() {
     () => [
       column.id({
         header: "ID",
-        cell: (info) => (
-          <ClipboardButton value={info.getValue()} maxLength={8} />
-        ),
+        cell: (info) => <ClipboardButton value={info.getValue()} />,
       }),
       column.attr("endpoint", {
         header: "Endpoint",
@@ -34,11 +32,15 @@ export function useWebhookEventTableColumns() {
       }),
       column.attr("event", {
         header: "Event",
-        cell: (info) => (
-          <span className="font-mono text-xs text-content-normal">
-            {info.getValue()}
-          </span>
-        ),
+        cell: (info) => {
+          const event = info.getValue()
+
+          return (
+            <Badge variant={eventLogBadgeVariant(event)} className="font-mono">
+              {event}
+            </Badge>
+          )
+        },
       }),
       column.attr("status", {
         header: "Status",
@@ -73,20 +75,12 @@ export function useWebhookEventTableColumns() {
       column.attr("created", {
         sortingFn: "datetime",
         header: "Created",
-        cell: (info) => (
-          <span className="font-mono text-xs text-content-normal">
-            {formatDate(new Date(String(info.getValue())), "PP")}
-          </span>
-        ),
+        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
       }),
       column.attr("updated", {
         sortingFn: "datetime",
         header: "Updated",
-        cell: (info) => (
-          <span className="font-mono text-xs text-content-normal">
-            {formatDate(new Date(String(info.getValue())), "PP")}
-          </span>
-        ),
+        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
       }),
     ],
     [],

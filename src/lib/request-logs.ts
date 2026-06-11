@@ -1,7 +1,4 @@
-import {
-  HTTP_STATUS_CODES,
-  type RequestLogAttributes,
-} from "@/types/request-logs"
+import { type RequestLogAttributes } from "@/types/request-logs"
 
 export function requestLogMethodBadgeVariant(
   method: string,
@@ -28,10 +25,6 @@ export function requestLogStatusBadgeVariant(
   if (code >= 400) return "warning"
   if (code >= 200 && code < 300) return "success"
   return "secondary"
-}
-
-export function requestLogStatusText(status: string): string | undefined {
-  return HTTP_STATUS_CODES.find((entry) => entry.code === status)?.text
 }
 
 // attempts to parse string as JSON, but falls back to original

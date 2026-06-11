@@ -31,6 +31,7 @@ import {
 
 import {
   Copy,
+  Logs,
   Menu,
   SquarePen,
   SquarePlus,
@@ -84,7 +85,11 @@ export default function EndpointDetails() {
 
   const back = useBackNavigate()
   const isMobile = useMobile()
-  const [open, setOpen] = useState({ edit: false, delete: false })
+  const [open, setOpen] = useState({
+    edit: false,
+    delete: false,
+    attributes: false,
+  })
 
   useEffect(() => {
     ;(async () => {
@@ -353,6 +358,17 @@ export default function EndpointDetails() {
                     </CollapsibleMenu>
                   </CollapsibleCard>
                 )}
+
+                {isMobile && (
+                  <Button
+                    variant="outline"
+                    onClick={() => toggleOpen("attributes", true)}
+                    className="w-full text-content-muted"
+                  >
+                    <Logs className="mt-0.5 size-4 text-content-normal" />
+                    View All Attributes
+                  </Button>
+                )}
               </div>
             </div>
           </ScrollArea>
@@ -408,7 +424,16 @@ export default function EndpointDetails() {
                 )}
               </TabsContent>
             </SidebarContent>
-            <SidebarFooter className="p-4"></SidebarFooter>
+            <SidebarFooter className="p-4">
+              <Button
+                variant="outline"
+                onClick={() => toggleOpen("attributes", true)}
+                className="w-full text-content-muted"
+              >
+                <Logs className="mt-0.5 size-4 text-content-normal" />
+                View All Attributes
+              </Button>
+            </SidebarFooter>
           </Sidebar>
         </Tabs>
       )}
@@ -427,6 +452,12 @@ export default function EndpointDetails() {
         onConfirm={handleDelete}
         label="Delete"
         variant="destructive"
+      />
+
+      <Endpoints.AdvancedDialog
+        id={id}
+        open={open.attributes}
+        onOpenChange={(value) => toggleOpen("attributes", value)}
       />
     </section>
   )

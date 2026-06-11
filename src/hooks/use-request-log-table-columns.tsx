@@ -4,10 +4,7 @@ import { Badge } from "@/components/ui/badge"
 
 import { type RequestLog } from "@/types/request-logs"
 
-import {
-  requestLogMethodBadgeVariant,
-  requestLogStatusBadgeVariant,
-} from "@/lib/request-logs"
+import { httpMethodBadgeVariant, httpStatusBadgeVariant } from "@/lib/http"
 import {
   formatRelativeTime,
   formatUtcTimestamp,
@@ -76,7 +73,7 @@ export function useRequestLogTableColumns(handlers: RequestLogPreviewHandlers) {
 
           return (
             <Badge
-              variant={requestLogStatusBadgeVariant(status)}
+              variant={httpStatusBadgeVariant(status)}
               className="font-mono"
             >
               {status}
@@ -94,7 +91,7 @@ export function useRequestLogTableColumns(handlers: RequestLogPreviewHandlers) {
 
           return (
             <Badge
-              variant={requestLogMethodBadgeVariant(method)}
+              variant={httpMethodBadgeVariant(method)}
               className="font-mono"
             >
               {method}

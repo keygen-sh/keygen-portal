@@ -13,16 +13,20 @@ import { ChevronDown, ChevronUp } from "lucide-react"
 
 interface CollapsibleMenuProps {
   title: string
+  subtitle?: React.ReactNode
   defaultOpen?: boolean
   children?: React.ReactNode
   className?: string
+  titleClassName?: string
 }
 
 export default function CollapsibleMenu({
   title,
+  subtitle,
   defaultOpen = true,
   children,
   className,
+  titleClassName,
 }: CollapsibleMenuProps) {
   const [open, setOpen] = useState(defaultOpen)
 
@@ -36,7 +40,9 @@ export default function CollapsibleMenu({
             <ChevronDown className="size-4" />
           )}
         </div>
-        <span className="text-content-loud">{title}</span>
+        <span className={cn("text-content-loud", titleClassName)}>
+          {title} {subtitle && subtitle}
+        </span>
       </CollapsibleTrigger>
 
       <AnimatePresence initial={false}>

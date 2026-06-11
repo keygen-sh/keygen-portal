@@ -27,7 +27,7 @@ import { useLeaderboard } from "@/queries/analytics"
 
 import { GREEN, LEADERBOARDS, useLazyVisibility } from "@/lib/analytics"
 import { truncator } from "@/lib/truncate"
-import { HTTP_METHODS } from "@/types/request-logs"
+import { HTTPMethods, type HTTPMethod } from "@/types/http"
 import * as keygen from "@/keygen"
 import EmptyChart from "./empty-chart"
 
@@ -51,9 +51,7 @@ function requestLogSearchForLeaderboard({
       const [possibleMethod, ...urlParts] = discriminator.split(" ")
 
       if (
-        HTTP_METHODS.includes(
-          possibleMethod as (typeof HTTP_METHODS)[number],
-        ) &&
+        HTTPMethods.includes(possibleMethod as HTTPMethod) &&
         urlParts.length > 0
       ) {
         return {

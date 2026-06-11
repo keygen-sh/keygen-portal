@@ -12,10 +12,11 @@ import { capitalize } from "@/lib/utils"
 
 import { type SearchableResource } from "@/types/search"
 import {
-  HTTP_METHODS,
-  HTTP_STATUS_CODES,
-  type RequestLogResourceFilter,
-} from "@/types/request-logs"
+  HTTPMethods,
+  HTTPStatusCodes,
+  HTTPStatusCodeDescriptions,
+} from "@/types/http"
+import { type RequestLogResourceFilter } from "@/types/request-logs"
 
 import { type RequestLogFilters } from "@/queries/request-logs"
 
@@ -24,14 +25,14 @@ import { useEdition } from "@/hooks/use-edition"
 import * as Filters from "@/components/filter-bar"
 import { type PolymorphicResourceType } from "@/components/filter-bar/polymorphic-resource-filter"
 
-const METHOD_OPTIONS = HTTP_METHODS.map((method) => ({
+const METHOD_OPTIONS = HTTPMethods.map((method) => ({
   value: method,
   label: method,
 }))
 
-const STATUS_OPTIONS = HTTP_STATUS_CODES.map(({ code, text }) => ({
+const STATUS_OPTIONS = HTTPStatusCodes.map((code) => ({
   value: code,
-  label: `${code} ${text}`,
+  label: `${code} ${HTTPStatusCodeDescriptions[code]}`,
 }))
 
 function resourceType(

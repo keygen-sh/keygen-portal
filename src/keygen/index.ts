@@ -79,6 +79,12 @@ export { eventLogs }
 import * as requestLogs from "./request-logs"
 export { requestLogs }
 
+import * as webhookEndpoints from "./webhook-endpoints"
+export { webhookEndpoints }
+
+import * as webhookEvents from "./webhook-events"
+export { webhookEvents }
+
 import { logout } from "./logout"
 export { logout }
 

@@ -10,6 +10,8 @@ import { Release } from "@/types/releases"
 import { Channel } from "@/types/channels"
 import { Product } from "@/types/products"
 import { License } from "@/types/licenses"
+import { WebhookEndpoint } from "@/types/webhook-endpoints"
+import { WebhookEvent } from "@/types/webhook-events"
 import { Artifact } from "@/types/artifacts"
 import { Platform } from "@/types/platforms"
 import { Component } from "@/types/components"
@@ -121,6 +123,8 @@ export type AnyResource =
   | Arch
   | Channel
   | Engine
+  | WebhookEndpoint
+  | WebhookEvent
 
 export type ResourceType =
   | "products"
@@ -140,3 +144,17 @@ export type ResourceType =
   | "arches"
   | "channels"
   | "engines"
+  | "webhook-endpoints"
+  | "webhook-events"
+
+export enum APIVersion {
+  V1_0 = "1.0",
+  V1_1 = "1.1",
+  V1_2 = "1.2",
+  V1_3 = "1.3",
+  V1_4 = "1.4",
+  V1_5 = "1.5",
+  V1_6 = "1.6",
+  V1_7 = "1.7",
+  V1_8 = "1.8",
+}

@@ -30,13 +30,13 @@ import { useMobile } from "@/hooks/use-mobile"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import {
-  requestLogStatusText,
   formatRequestLogRequest,
   formatRequestLogResponse,
-  requestLogStatusBadgeVariant,
-  requestLogMethodBadgeVariant,
 } from "@/lib/request-logs"
+import { httpMethodBadgeVariant, httpStatusBadgeVariant } from "@/lib/http"
 import { copyToClipboard } from "@/lib/clipboard"
+
+import { HTTPStatusCodeDescriptions, type HTTPStatusCode } from "@/types/http"
 
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
@@ -106,7 +106,7 @@ export default function RequestLogDetails() {
                 <div className="flex flex-wrap items-center gap-2">
                   <TooltipBadge
                     value={requestLog.attributes.method}
-                    variant={requestLogMethodBadgeVariant(
+                    variant={httpMethodBadgeVariant(
                       requestLog.attributes.method,
                     )}
                     tooltip="The HTTP method of the request."
@@ -114,12 +114,13 @@ export default function RequestLogDetails() {
                   />
                   <TooltipBadge
                     value={requestLog.attributes.status}
-                    variant={requestLogStatusBadgeVariant(
+                    variant={httpStatusBadgeVariant(
                       requestLog.attributes.status,
                     )}
                     tooltip={
-                      requestLogStatusText(requestLog.attributes.status) ??
-                      "The HTTP response status code."
+                      HTTPStatusCodeDescriptions[
+                        requestLog.attributes.status as HTTPStatusCode
+                      ] ?? "The HTTP response status code."
                     }
                     className="gap-0 px-1 font-mono text-xs hover:gap-1"
                   />

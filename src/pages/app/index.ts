@@ -17,6 +17,8 @@ export { default as Channels } from "./channels"
 export { default as Engines } from "./engines"
 export { default as EventLogs } from "./event-logs"
 export { default as RequestLogs } from "./request-logs"
+export { default as WebhookEndpoints } from "./webhook-endpoints"
+export { default as WebhookEvents } from "./webhook-events"
 
 import * as Product from "./product"
 export { Product }
@@ -71,6 +73,12 @@ export { EventLog }
 
 import * as RequestLog from "./request-log"
 export { RequestLog }
+
+import * as WebhookEndpoint from "./webhook-endpoint"
+export { WebhookEndpoint }
+
+import * as WebhookEvent from "./webhook-event"
+export { WebhookEvent }
 
 import * as Settings from "./settings"
 export { Settings }

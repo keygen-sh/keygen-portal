@@ -30,6 +30,7 @@ import {
 
 import {
   Copy,
+  Logs,
   Menu,
   SquarePen,
   SquarePlus,
@@ -53,6 +54,7 @@ import {
   EventAttributeDescriptions,
 } from "@/types/events"
 
+import * as Events from "@/components/events"
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
 import Can from "@/components/can"
@@ -77,7 +79,7 @@ export default function EventDetails() {
   const back = useBackNavigate()
   const navigateToResource = useResourceNavigate()
   const isMobile = useMobile()
-  const [open, setOpen] = useState({ delete: false })
+  const [open, setOpen] = useState({ delete: false, attributes: false })
 
   useEffect(() => {
     ;(async () => {
@@ -264,7 +266,7 @@ export default function EventDetails() {
                             tooltip={
                               EventAttributeDescriptions.lastResponseCode
                             }
-                            emptyLabel="--"
+                            emptyLabel="N/A"
                           />
                         }
                       />
@@ -331,6 +333,17 @@ export default function EventDetails() {
                     </CollapsibleMenu>
                   </CollapsibleCard>
                 )}
+
+                {isMobile && (
+                  <Button
+                    variant="outline"
+                    onClick={() => toggleOpen("attributes", true)}
+                    className="w-full text-content-muted"
+                  >
+                    <Logs className="mt-0.5 size-4 text-content-normal" />
+                    View All Attributes
+                  </Button>
+                )}
               </div>
             </div>
           </ScrollArea>
@@ -386,7 +399,16 @@ export default function EventDetails() {
                 )}
               </TabsContent>
             </SidebarContent>
-            <SidebarFooter className="p-4"></SidebarFooter>
+            <SidebarFooter className="p-4">
+              <Button
+                variant="outline"
+                onClick={() => toggleOpen("attributes", true)}
+                className="w-full text-content-muted"
+              >
+                <Logs className="mt-0.5 size-4 text-content-normal" />
+                View All Attributes
+              </Button>
+            </SidebarFooter>
           </Sidebar>
         </Tabs>
       )}
@@ -400,6 +422,12 @@ export default function EventDetails() {
         onConfirm={handleDelete}
         label="Delete"
         variant="destructive"
+      />
+
+      <Events.AdvancedDialog
+        id={id}
+        open={open.attributes}
+        onOpenChange={(value) => toggleOpen("attributes", value)}
       />
     </section>
   )

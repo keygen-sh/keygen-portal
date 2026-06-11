@@ -13,9 +13,7 @@ export function useGetWebhookEvent(webhookEventId: string) {
   return useQuery({
     queryKey: ["webhook-events", webhookEventId, { environment: code }],
     queryFn: async () => {
-      const response = await keygen.webhookEvents.get({
-        id: webhookEventId,
-      })
+      const response = await keygen.webhookEvents.get({ id: webhookEventId })
 
       if (!response.data) {
         throw new Error("Webhook event not found")
@@ -86,7 +84,7 @@ export function useRetryWebhookEvent(webhookEventId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
 
-  return useMutation<WebhookEvent, APIError, void>({
+  return useMutation<WebhookEvent, APIError>({
     mutationFn: async () => {
       const response = await keygen.webhookEvents.retry({ id: webhookEventId })
 

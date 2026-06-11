@@ -49,7 +49,7 @@ export default function EditWebhookEndpointForm({
   const handleSubmit = useCallback(
     async (values: Schemas.WebhookEndpoints.UpdateValues) => {
       await updateWebhookEndpoint.mutateAsync(values)
-      toast({ message: "Endpoint updated", variant: "success" })
+      toast({ message: "Webhook endpoint updated", variant: "success" })
     },
     [updateWebhookEndpoint],
   )

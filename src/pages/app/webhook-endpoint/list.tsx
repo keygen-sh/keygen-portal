@@ -42,7 +42,7 @@ export default function WebhookEndpointsList() {
       <PageHeader title="Webhook Endpoints">
         <Can permission="webhook-endpoint.create">
           <Button size="sm" disabled={isLoading} onClick={() => setOpen(true)}>
-            New Webhook Endpoint
+            New Endpoint
           </Button>
         </Can>
         <WebhookEndpoints.Form.Create open={open} onOpenChange={setOpen} />

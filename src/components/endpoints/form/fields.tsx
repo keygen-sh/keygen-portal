@@ -335,7 +335,7 @@ function ProductField({
       render={({ field }) => (
         <FormItem>
           <Forms.Field.Header
-            label="Product"
+            label="Product relationship"
             variant={fieldVariant}
             optional
             tooltip={descriptions.product}

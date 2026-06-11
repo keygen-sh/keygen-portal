@@ -10,6 +10,7 @@ import { toast } from "@/lib/toast"
 
 import * as Forms from "@/components/forms"
 import * as WebhookEndpoints from "@/components/webhook-endpoints"
+import DocumentationLink from "@/components/documentation-link"
 
 interface CreateWebhookEndpointFormProps {
   open: boolean
@@ -35,7 +36,7 @@ export default function CreateWebhookEndpointForm({
   const handleSubmit = useCallback(
     async (values: Schemas.WebhookEndpoints.CreateValues) => {
       const webhookEndpoint = await createWebhookEndpoint.mutateAsync(values)
-      toast({ message: "Endpoint created", variant: "success" })
+      toast({ message: "Webhook endpoint created", variant: "success" })
       await navigateToResource(webhookEndpoint)
     },
     [createWebhookEndpoint, navigateToResource],
@@ -93,6 +94,8 @@ export default function CreateWebhookEndpointForm({
                 fieldVariant="stacking"
               />
             </Forms.Section.Card>
+
+            <DocumentationLink page="webhook-endpoints" />
           </Forms.Section.Step>
         </Forms.Layout.Wizard>
       </Forms.Container.Dialog>

@@ -1,6 +1,7 @@
 import { useFormContext } from "react-hook-form"
 
 import { Input } from "@/components/ui/input"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Select,
   SelectTrigger,
@@ -19,7 +20,11 @@ import * as Schemas from "@/schemas"
 import { APIVersion } from "@/types/api"
 import { EventTypes } from "@/types/events"
 import { type FieldVariant } from "@/components/forms/field"
-import { WebhookEndpointFormFieldDescriptions } from "@/types/webhook-endpoints"
+import {
+  WebhookEndpointFormFieldDescriptions,
+  WebhookEndpointEditFormFieldDescriptions,
+  WebhookEndpointCreateFormFieldDescriptions,
+} from "@/types/webhook-endpoints"
 import { SigningAlgorithm, SigningAlgorithmLabels } from "@/types/files"
 
 import { useListProducts } from "@/queries/products"
@@ -53,8 +58,14 @@ export default function WebhookEndpointsFormFields({
   autoFocus,
   titleVariant,
   fieldVariant = "row",
+  schema,
 }: WebhookEndpointsFormFieldsProps) {
-  const descriptions = WebhookEndpointFormFieldDescriptions
+  const descriptions =
+    schema === "create"
+      ? WebhookEndpointCreateFormFieldDescriptions
+      : schema === "edit"
+        ? WebhookEndpointEditFormFieldDescriptions
+        : WebhookEndpointFormFieldDescriptions
 
   const fields = include
     ? include
@@ -145,7 +156,7 @@ function UrlField({
                 variant="title"
                 placeholder="https://example.com/webhooks"
                 className="border-none text-xl placeholder:text-content-subdued! md:text-2xl"
-                autoFocus={autoFocus}
+                autoFocus={autoFocus ?? !field.value}
                 autoComplete="off"
               />
             </FormControl>
@@ -166,7 +177,7 @@ function UrlField({
               </FormControl>
             </Forms.Field.Header>
           )}
-          <FormMessage />
+          <FormMessage className={titleVariant ? "ml-2" : undefined} />
         </FormItem>
       )}
     />
@@ -175,7 +186,7 @@ function UrlField({
 
 function SubscriptionsField({
   autoFocus,
-  fieldVariant = "stacking",
+  fieldVariant = "row",
   descriptions,
 }: {
   autoFocus?: boolean
@@ -195,17 +206,19 @@ function SubscriptionsField({
             variant={fieldVariant}
             tooltip={descriptions.subscriptions}
           >
-            <MultiSelect
-              value={field.value ?? []}
-              onChange={(value) => field.onChange(value ?? [])}
-              options={EventTypes.map((event) => ({
-                label: event,
-                value: event,
-              }))}
-              includeWildcard
-              placeholder="Select events..."
-              autoFocus={autoFocus}
-            />
+            <FormControl>
+              <MultiSelect
+                value={field.value ?? []}
+                onChange={(value) => field.onChange(value ?? [])}
+                options={EventTypes.map((event) => ({
+                  label: event,
+                  value: event,
+                }))}
+                includeWildcard
+                placeholder="Select events..."
+                autoFocus={autoFocus}
+              />
+            </FormControl>
           </Forms.Field.Header>
           <FormMessage />
         </FormItem>
@@ -326,7 +339,16 @@ function ProductField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.WebhookEndpoints.AllValues>()
-  const { data: products = [] } = useListProducts()
+  const { data: products = [], isLoading: productsLoading } = useListProducts()
+
+  if (productsLoading) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-48 rounded-sm" />
+        <Skeleton className="h-8 w-3/4" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -335,7 +357,7 @@ function ProductField({
       render={({ field }) => (
         <FormItem>
           <Forms.Field.Header
-            label="Product relationship"
+            label="Product"
             variant={fieldVariant}
             optional
             tooltip={descriptions.product}

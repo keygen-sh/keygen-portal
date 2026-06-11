@@ -2,12 +2,12 @@ import { useEffect, useState } from "react"
 import { useParams } from "@tanstack/react-router"
 import { formatDate } from "date-fns"
 
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Tabs, TabsContent } from "@/components/ui/tabs"
+import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Tabs, TabsContent } from "@/components/ui/tabs"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -48,10 +48,11 @@ import { useMobile } from "@/hooks/use-mobile"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
+import { truncator } from "@/lib/truncate"
 import { copyToClipboard } from "@/lib/clipboard"
 
+import { SigningAlgorithmLabels } from "@/types/files"
 import { WebhookEndpointAttributeDescriptions } from "@/types/webhook-endpoints"
-import { SigningAlgorithm, SigningAlgorithmLabels } from "@/types/files"
 
 import * as keygen from "@/keygen"
 import * as Property from "@/components/property"
@@ -67,10 +68,6 @@ import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
 
-function signatureAlgorithmLabel(value: string): string {
-  return SigningAlgorithmLabels[value as SigningAlgorithm] ?? value
-}
-
 export default function WebhookEndpointDetails() {
   const { id } = useParams({ from: "/$accountId/app/webhook-endpoints/$id" })
   const {
@@ -79,7 +76,7 @@ export default function WebhookEndpointDetails() {
     isFetching,
     isError,
   } = useGetWebhookEndpoint(id)
-  const deleteWebhookEndpoint = useRemoveWebhookEndpoint(id)
+  const removeWebhookEndpoint = useRemoveWebhookEndpoint(id)
 
   const productId = webhookEndpoint?.relationships.product?.data?.id || ""
   const {
@@ -93,6 +90,7 @@ export default function WebhookEndpointDetails() {
 
   const back = useBackNavigate()
   const isMobile = useMobile()
+  const truncateUrl = truncator("middle", { maxLength: isMobile ? 16 : 32 })
   const [open, setOpen] = useState({
     edit: false,
     delete: false,
@@ -111,8 +109,8 @@ export default function WebhookEndpointDetails() {
     setOpen((prev) => ({ ...prev, [key]: value }))
   }
 
-  const handleDelete = () => {
-    deleteWebhookEndpoint.mutate(undefined, {
+  const handleDeleteWebhookEndpoint = () => {
+    removeWebhookEndpoint.mutate(undefined, {
       onSuccess: async () => {
         toast({ message: "Webhook endpoint deleted", variant: "success" })
         await back()
@@ -250,9 +248,11 @@ export default function WebhookEndpointDetails() {
                         value={
                           <Attribute.Value
                             type="raw"
-                            value={signatureAlgorithmLabel(
-                              webhookEndpoint.attributes.signatureAlgorithm,
-                            )}
+                            value={
+                              SigningAlgorithmLabels[
+                                webhookEndpoint.attributes.signatureAlgorithm
+                              ]
+                            }
                             tooltip={
                               WebhookEndpointAttributeDescriptions.signatureAlgorithm
                             }
@@ -299,9 +299,7 @@ export default function WebhookEndpointDetails() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm text-content-normal">
-                        No subscriptions defined.
-                      </p>
+                      <Attribute.Field variant="text" label="None" value="--" />
                     )}
                   </CollapsibleMenu>
                 </CollapsibleCard>
@@ -453,22 +451,27 @@ export default function WebhookEndpointDetails() {
         onOpenChange={(value) => toggleOpen("edit", value)}
       />
 
-      <ConfirmationModal
-        title="Delete webhook endpoint"
-        description="Are you sure you want to delete this webhook endpoint? This action cannot be undone."
-        open={open.delete}
-        disabled={isLoading || deleteWebhookEndpoint.isPending}
-        onClose={() => toggleOpen("delete", false)}
-        onConfirm={handleDelete}
-        label="Delete"
-        variant="destructive"
-      />
+      {webhookEndpoint && (
+        <ConfirmationModal
+          title={`Delete ${truncateUrl(webhookEndpoint.attributes.url)}`}
+          description="Are you sure you want to delete this webhook endpoint? This action cannot be undone."
+          open={open.delete}
+          disabled={isLoading || removeWebhookEndpoint.isPending}
+          onClose={() => toggleOpen("delete", false)}
+          onConfirm={handleDeleteWebhookEndpoint}
+          label="Delete"
+          variant="destructive"
+          confirmText="delete webhook endpoint"
+        />
+      )}
 
-      <WebhookEndpoints.AdvancedDialog
-        id={id}
-        open={open.attributes}
-        onOpenChange={(value) => toggleOpen("attributes", value)}
-      />
+      {webhookEndpoint && (
+        <WebhookEndpoints.AdvancedDialog
+          id={webhookEndpoint.id}
+          open={open.attributes}
+          onOpenChange={() => toggleOpen("attributes", false)}
+        />
+      )}
     </section>
   )
 }

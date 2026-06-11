@@ -1,11 +1,11 @@
 import {
-  APIResponse,
-  Resource,
-  Relationship,
   Linkage,
+  Resource,
   APIVersion,
+  APIResponse,
+  Relationship,
 } from "@/types/api"
-
+import { Writable } from "@/types/utility"
 import { SigningAlgorithm } from "@/types/files"
 
 export enum EndpointView {
@@ -37,20 +37,21 @@ export type Endpoint = Resource<
 export type EndpointResponse = APIResponse<Endpoint>
 export type EndpointListResponse = APIResponse<Endpoint[]>
 
-export const EndpointAttributeDescriptions = {
-  url: "The URL that webhook events are delivered to. Must use the https protocol.",
-  subscriptions: "The events this endpoint is subscribed to.",
-  signatureAlgorithm:
-    "The algorithm used to sign webhook event payloads, so you can verify their authenticity.",
+export const EndpointAttributeDescriptions: Readonly<
+  Record<keyof Writable<EndpointAttributes>, string>
+> = {
+  url: "The URL that webhook events are delivered to.",
+  signatureAlgorithm: "The signature algorithm for the webhook endpoint.",
+  subscriptions: "The event types the webhook endpoint subscribes to.",
   apiVersion: "The API version that webhook event payloads are formatted for.",
 } as const
 
-export const EndpointFormFieldDescriptions = {
-  url: "The URL that webhook events are delivered to. Must use the https protocol.",
-  subscriptions:
-    "Select which events this endpoint should receive. Choose “All” to subscribe to every event.",
-  signatureAlgorithm:
-    "The cryptographic algorithm used to sign webhook event payloads.",
-  apiVersion: "The API version that webhook event payloads are formatted for.",
+export const EndpointFormFieldDescriptions: Readonly<
+  typeof EndpointAttributeDescriptions & {
+    product: string
+  }
+> = {
+  ...EndpointAttributeDescriptions,
+  url: "The url that events are dispatched to. Must use the https protocol. Must have a valid SSL certificate. You may include a username and password in the URL, e.g. https://user:pass@example.com/webhooks.",
   product: "Optionally scope this endpoint to a single product.",
 } as const

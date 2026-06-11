@@ -1,10 +1,11 @@
 import {
-  APIResponse,
-  Resource,
-  Relationship,
   Linkage,
+  Resource,
   APIVersion,
+  APIResponse,
+  Relationship,
 } from "@/types/api"
+import { Writable } from "@/types/utility"
 
 export enum EventStatus {
   Delivering = "DELIVERING",
@@ -67,8 +68,11 @@ export type Event = Resource<
 export type EventResponse = APIResponse<Event>
 export type EventListResponse = APIResponse<Event[]>
 
-export const EventAttributeDescriptions = {
+export const EventAttributeDescriptions: Readonly<
+  Record<keyof Writable<EventAttributes>, string>
+> = {
   endpoint: "The endpoint that the event will be sent to.",
+  payload: "The event payload in serialized JSON format.",
   event: "The event type.",
   status: "The current status of the event.",
   apiVersion:

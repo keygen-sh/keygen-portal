@@ -1,9 +1,9 @@
 import {
-  Linkage,
-  Resource,
-  APIVersion,
   APIResponse,
+  Resource,
   Relationship,
+  Linkage,
+  APIVersion,
 } from "@/types/api"
 import { Writable } from "@/types/utility"
 import { SigningAlgorithm } from "@/types/files"
@@ -54,4 +54,14 @@ export const WebhookEndpointFormFieldDescriptions: Readonly<
   ...WebhookEndpointAttributeDescriptions,
   url: "The url that events are dispatched to. Must use the https protocol. Must have a valid SSL certificate. You may include a username and password in the URL, e.g. https://user:pass@example.com/webhooks.",
   product: "Optionally scope this endpoint to a single product.",
-} as const
+}
+
+export const WebhookEndpointCreateFormFieldDescriptions: typeof WebhookEndpointFormFieldDescriptions =
+  {
+    ...WebhookEndpointFormFieldDescriptions,
+  }
+
+export const WebhookEndpointEditFormFieldDescriptions: typeof WebhookEndpointFormFieldDescriptions =
+  {
+    ...WebhookEndpointFormFieldDescriptions,
+  }

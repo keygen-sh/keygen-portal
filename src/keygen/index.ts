@@ -82,6 +82,9 @@ export { requestLogs }
 import * as endpoints from "./endpoints"
 export { endpoints }
 
+import * as events from "./events"
+export { events }
+
 import { logout } from "./logout"
 export { logout }
 

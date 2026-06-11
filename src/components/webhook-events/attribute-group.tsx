@@ -40,6 +40,7 @@ export default function AttributeGroup({
         <Attribute.Value
           type={webhookEventAttributeTypeSchema[k]}
           value={webhookEvent.attributes[k]}
+          className={k === "lastResponseBody" ? "break-all" : undefined}
           tooltip={
             (
               WebhookEventAttributeDescriptions as Record<

@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogContent,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog"
 
 import { Text, CurlyBraces } from "lucide-react"
@@ -17,7 +18,6 @@ import { useGetWebhookEvent } from "@/queries/webhook-events"
 import * as WebhookEvents from "@/components/webhook-events"
 import TabsSwitch from "@/components/tabs-switch"
 import InspectResource from "@/components/inspect-resource"
-import { DialogDescription } from "@radix-ui/react-dialog"
 
 interface AdvancedDialogProps {
   id: string

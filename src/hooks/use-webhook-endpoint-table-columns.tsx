@@ -1,5 +1,4 @@
 import { useMemo } from "react"
-import { formatDate } from "date-fns"
 
 import { type WebhookEndpoint } from "@/types/webhook-endpoints"
 
@@ -14,9 +13,7 @@ export function useWebhookEndpointTableColumns() {
     () => [
       column.id({
         header: "ID",
-        cell: (info) => (
-          <ClipboardButton value={info.getValue()} maxLength={8} />
-        ),
+        cell: (info) => <ClipboardButton value={info.getValue()} />,
       }),
       column.attr("url", {
         header: "URL",
@@ -29,20 +26,12 @@ export function useWebhookEndpointTableColumns() {
       column.attr("created", {
         sortingFn: "datetime",
         header: "Created",
-        cell: (info) => (
-          <span className="font-mono text-xs text-content-normal">
-            {formatDate(new Date(String(info.getValue())), "PP")}
-          </span>
-        ),
+        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
       }),
       column.attr("updated", {
         sortingFn: "datetime",
         header: "Updated",
-        cell: (info) => (
-          <span className="font-mono text-xs text-content-normal">
-            {formatDate(new Date(String(info.getValue())), "PP")}
-          </span>
-        ),
+        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
       }),
     ],
     [],

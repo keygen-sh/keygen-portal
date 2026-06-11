@@ -13,9 +13,7 @@ export default async function retry({
 }: RetryProps): Promise<WebhookEventResponse> {
   const result = (await client.request(
     `/accounts/${config.id}/webhook-events/${id}/actions/retry`,
-    {
-      method: "POST",
-    },
+    { method: "POST" },
   )) as WebhookEventResponse
 
   return result

@@ -20,11 +20,7 @@ export default function EventsList() {
   const { cursor, goToPage } = useCursors(page, setPage)
   const columns = useEventTableColumns()
 
-  const {
-    data: events,
-    links,
-    isLoading,
-  } = useListEvents({ cursor, pageSize })
+  const { data: events, links, isLoading } = useListEvents({ cursor, pageSize })
 
   const nextCursor = cursorFromLink(links?.next)
 

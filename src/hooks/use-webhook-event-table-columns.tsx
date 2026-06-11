@@ -8,8 +8,9 @@ import {
   WebhookEventStatusVariants,
 } from "@/types/webhook-events"
 
-import { eventLogBadgeVariant } from "@/lib/event-logs"
+import { httpStatusBadgeVariant } from "@/lib/http"
 import { createTableColumnHelper } from "@/lib/tables"
+import { eventLogBadgeVariant } from "@/lib/event-logs"
 
 import ClipboardButton from "@/components/clipboard-button"
 
@@ -66,9 +67,9 @@ export function useWebhookEventTableColumns() {
             return <span className="text-content-muted">--</span>
 
           return (
-            <span className="font-mono text-xs text-content-normal">
+            <Badge variant={httpStatusBadgeVariant(code)} className="font-mono">
               {code}
-            </span>
+            </Badge>
           )
         },
       }),

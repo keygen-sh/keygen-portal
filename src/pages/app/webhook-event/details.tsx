@@ -49,7 +49,10 @@ import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
+import { httpStatusBadgeVariant } from "@/lib/http"
 import { formatWebhookEventPayload } from "@/lib/webhook-events"
+
+import { HTTPStatusCodeDescriptions, type HTTPStatusCode } from "@/types/http"
 
 import {
   WebhookEventStatusLabels,
@@ -241,6 +244,22 @@ export default function WebhookEventDetails() {
                   }
                   className="gap-0 px-1 text-xs hover:gap-1"
                 />
+                {webhookEvent.attributes.lastResponseCode != null && (
+                  <TooltipBadge
+                    value={webhookEvent.attributes.lastResponseCode}
+                    variant={httpStatusBadgeVariant(
+                      webhookEvent.attributes.lastResponseCode,
+                    )}
+                    tooltip={
+                      HTTPStatusCodeDescriptions[
+                        String(
+                          webhookEvent.attributes.lastResponseCode,
+                        ) as HTTPStatusCode
+                      ] ?? WebhookEventAttributeDescriptions.lastResponseCode
+                    }
+                    className="gap-0 px-1 font-mono text-xs hover:gap-1"
+                  />
+                )}
               </div>
 
               <div className="flex flex-col gap-3 md:flex-row md:items-center">
@@ -285,7 +304,7 @@ export default function WebhookEventDetails() {
                             tooltip={
                               WebhookEventAttributeDescriptions.lastResponseCode
                             }
-                            emptyLabel="--"
+                            emptyLabel="None"
                           />
                         }
                       />
@@ -301,7 +320,7 @@ export default function WebhookEventDetails() {
                             tooltip={
                               WebhookEventAttributeDescriptions.lastResponseBody
                             }
-                            emptyLabel="--"
+                            emptyLabel="None"
                             className="break-all"
                           />
                         }

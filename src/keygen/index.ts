@@ -79,11 +79,11 @@ export { eventLogs }
 import * as requestLogs from "./request-logs"
 export { requestLogs }
 
-import * as endpoints from "./endpoints"
-export { endpoints }
+import * as webhookEndpoints from "./webhook-endpoints"
+export { webhookEndpoints }
 
-import * as events from "./events"
-export { events }
+import * as webhookEvents from "./webhook-events"
+export { webhookEvents }
 
 import { logout } from "./logout"
 export { logout }

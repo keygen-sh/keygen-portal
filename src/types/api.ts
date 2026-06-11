@@ -10,8 +10,8 @@ import { Release } from "@/types/releases"
 import { Channel } from "@/types/channels"
 import { Product } from "@/types/products"
 import { License } from "@/types/licenses"
-import { Endpoint } from "@/types/endpoints"
-import { Event } from "@/types/events"
+import { WebhookEndpoint } from "@/types/webhook-endpoints"
+import { WebhookEvent } from "@/types/webhook-events"
 import { Artifact } from "@/types/artifacts"
 import { Platform } from "@/types/platforms"
 import { Component } from "@/types/components"
@@ -123,8 +123,8 @@ export type AnyResource =
   | Arch
   | Channel
   | Engine
-  | Endpoint
-  | Event
+  | WebhookEndpoint
+  | WebhookEvent
 
 export type ResourceType =
   | "products"

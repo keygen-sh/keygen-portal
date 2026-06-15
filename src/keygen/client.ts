@@ -57,13 +57,16 @@ export class Client {
     } = {},
   ): Promise<APIResponse<T>> {
     const authToken = options.root ? this.rootToken : this.activeToken
+
+    const isEnvironmentScoped = !options.root && this.environmentToken != null
+    const useBearer =
+      authToken != null && (!config.isCloud || isEnvironmentScoped)
+
     const defaultHeaders = {
       Accept: "application/vnd.api+json",
       "Content-Type": "application/vnd.api+json",
       "Keygen-Version": config.version,
-      ...(authToken && !config.isCloud
-        ? { Authorization: `Bearer ${authToken}` }
-        : {}),
+      ...(useBearer ? { Authorization: `Bearer ${authToken}` } : {}),
       ...(options.root || !this.environment
         ? {}
         : { "Keygen-Environment": this.environment }),

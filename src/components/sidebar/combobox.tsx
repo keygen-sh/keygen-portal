@@ -19,6 +19,7 @@ import { Droplet, Check, ChevronsUpDown, Circle } from "lucide-react"
 import { Environment } from "@/types/environments"
 
 import { useListEnvironments } from "@/queries/environments"
+import { useGetAccount } from "@/queries/accounts"
 import { useEnvironment } from "@/hooks/use-environment"
 import { useEdition } from "@/hooks/use-edition"
 
@@ -31,13 +32,18 @@ const GLOBAL_ENVIRONMENT = {
 }
 
 function CeCombobox(): React.ReactElement {
+  const { data: account } = useGetAccount()
+
   return (
     <div className="flex h-9 items-center px-1">
       {/* TODO(cazden) Use company logo */}
       <Droplet className="mr-2 size-6 rounded-sm bg-content-loud p-1 text-background" />
       <div className="flex max-w-32 flex-col text-left text-content-loud">
-        {/* TODO(cazden) Get company name */}
-        <span className="truncate">Umbral</span>
+        {account ? (
+          <span className="truncate">{account.attributes.name}</span>
+        ) : (
+          <Skeleton className="h-4 w-20" />
+        )}
       </div>
     </div>
   )
@@ -49,6 +55,7 @@ function EeCombobox(): React.ReactElement {
   const [openModal, setOpenModal] = useState(false)
   const [openPopover, setOpenPopover] = useState(false)
   const { data: environments = [], isLoading } = useListEnvironments()
+  const { data: account } = useGetAccount()
 
   const environmentOptions = useMemo(() => {
     return [
@@ -112,8 +119,11 @@ function EeCombobox(): React.ReactElement {
 
             <div className="flex max-w-32 flex-col text-left text-content-loud">
               <div className="flex items-center gap-2">
-                {/* TODO(cazden) Get company name */}
-                <span className="truncate">Umbral</span>
+                {account ? (
+                  <span className="truncate">{account.attributes.name}</span>
+                ) : (
+                  <Skeleton className="h-4 w-20" />
+                )}
                 <ChevronsUpDown className="size-3 opacity-60" />
               </div>
               <span className="text-xs font-normal text-content-normal">

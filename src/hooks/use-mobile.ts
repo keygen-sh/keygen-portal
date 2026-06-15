@@ -1,12 +1,21 @@
 import * as React from "react"
 
 const MOBILE_BREAKPOINT = 960
+const MOBILE_MEDIA_QUERY = `(max-width: ${MOBILE_BREAKPOINT - 1}px)`
+
+// mobile check that can be used outside of React components
+export function isMobileViewport(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia(MOBILE_MEDIA_QUERY).matches
+  )
+}
 
 export function useMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
+  const [isMobile, setIsMobile] = React.useState<boolean>(isMobileViewport)
 
   React.useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
+    const mql = window.matchMedia(MOBILE_MEDIA_QUERY)
     const onChange = () => {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
     }
@@ -15,5 +24,5 @@ export function useMobile() {
     return () => mql.removeEventListener("change", onChange)
   }, [])
 
-  return !!isMobile
+  return isMobile
 }

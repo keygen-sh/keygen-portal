@@ -12,7 +12,7 @@ const BaseShape = z.object({
     .trim()
     .min(1, "URL is required")
     .url("Must be a valid URL")
-    .startsWith("https://", "URL must use the https protocol"),
+    .startsWith("https://", "URL must use the HTTPS protocol"),
   subscriptions: z
     .array(z.string())
     .min(1, "Select at least one event subscription"),

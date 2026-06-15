@@ -1,6 +1,7 @@
 export { default as create } from "./create"
 export { default as get } from "./get"
 export { default as list } from "./list"
+export { default as listProducts } from "./list-products"
 export { default as update } from "./update"
 export { default as remove } from "./remove"
 export { default as ban } from "./ban"

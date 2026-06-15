@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { useParams } from "@tanstack/react-router"
 import { formatDate } from "date-fns"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Separator } from "@/components/ui/separator"
@@ -54,6 +55,7 @@ import {
 
 import {
   useGetUser,
+  useListUserProducts,
   useRemoveUser,
   useBanUser,
   useUnbanUser,
@@ -78,6 +80,7 @@ import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
+import ResourceLink from "@/components/resource-link"
 import ConfirmationModal from "@/components/confirmation-modal"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleMenu from "@/components/collapsible-menu"
@@ -97,6 +100,13 @@ export default function UserDetails() {
     isFetching: userFetching,
     isError: userError,
   } = useGetUser(id)
+
+  const {
+    data: userProducts = [],
+    isLoading: userProductsLoading,
+    isFetching: userProductsFetching,
+    isError: userProductsError,
+  } = useListUserProducts(id)
   const deleteUser = useRemoveUser(id)
   const banUser = useBanUser(id)
   const unbanUser = useUnbanUser(id)
@@ -442,47 +452,88 @@ export default function UserDetails() {
                   </div>
                 </CollapsibleCard>
 
-                <CollapsibleCard title="Relationships">
-                  <Attribute.Field
-                    variant="text"
-                    label="Group"
-                    value={
-                      user.relationships.group?.data ? (
+                <CollapsibleCard
+                  title="Products"
+                  subtitle={
+                    <Badge className="ml-2 min-h-5 min-w-5 text-sm text-content-muted">
+                      {userProducts.length}
+                    </Badge>
+                  }
+                >
+                  {userProductsError ? (
+                    <Badge variant="destructive">ERROR</Badge>
+                  ) : userProductsLoading || userProductsFetching ? (
+                    <div className="flex w-full justify-between">
+                      <Skeleton className="h-5 w-48 rounded-sm" />
+                      <Skeleton className="h-5 w-24 rounded-sm" />
+                    </div>
+                  ) : userProducts.length > 0 ? (
+                    <div className="grid gap-2">
+                      {userProducts.map((product) => (
                         <GoToButton
-                          path="/$accountId/app/groups/$id"
+                          key={product.id}
+                          path="/$accountId/app/products/$id"
                           params={{
                             accountId: keygen.config.id,
-                            id: user.relationships.group.data.id,
+                            id: product.id,
                           }}
-                          label="View"
+                          label={product.attributes.name}
                         />
-                      ) : (
-                        <span className="text-content-muted">--</span>
-                      )
-                    }
-                  />
-                  <Attribute.Field
-                    variant="text"
-                    label="Licenses"
-                    value={
-                      <GoToButton
-                        path="/$accountId/app/licenses"
-                        params={{ accountId: keygen.config.id }}
-                        label="View all"
-                      />
-                    }
-                  />
-                  <Attribute.Field
-                    variant="text"
-                    label="Machines"
-                    value={
-                      <GoToButton
-                        path="/$accountId/app/machines"
-                        params={{ accountId: keygen.config.id }}
-                        label="View all"
-                      />
-                    }
-                  />
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="px-2 text-sm text-content-subdued">
+                      None
+                    </span>
+                  )}
+                </CollapsibleCard>
+
+                <CollapsibleCard title="Relationships">
+                  <div className="grid gap-4">
+                    <Attribute.Field
+                      variant="text"
+                      label="Environment"
+                      value={
+                        <ResourceLink
+                          linkage={user.relationships.environment?.data}
+                          emptyLabel="Global"
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Group"
+                      value={
+                        <ResourceLink
+                          linkage={user.relationships.group?.data}
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Licenses"
+                      value={
+                        <GoToButton
+                          path="/$accountId/app/licenses"
+                          params={{ accountId: keygen.config.id }}
+                          search={{ user: id }}
+                          label="View all"
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Machines"
+                      value={
+                        <GoToButton
+                          path="/$accountId/app/machines"
+                          params={{ accountId: keygen.config.id }}
+                          search={{ user: id }}
+                          label="View all"
+                        />
+                      }
+                    />
+                  </div>
                 </CollapsibleCard>
 
                 <CollapsibleCard title="Metadata" contentClass="p-0">

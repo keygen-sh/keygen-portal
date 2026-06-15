@@ -26,6 +26,7 @@ export type EntitlementAttributes = {
 
 export type EntitlementRelationships = {
   account: Relationship<Linkage<"accounts">>
+  environment: Relationship<Linkage<"environments"> | null>
 }
 
 export type Entitlement = Resource<

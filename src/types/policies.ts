@@ -221,6 +221,7 @@ export interface PolicyInput {
 
 export type PolicyRelationships = {
   account: Relationship<Linkage<"accounts">>
+  environment: Relationship<Linkage<"environments"> | null>
   product: Relationship<Linkage<"products">>
   pool: Relationship<Linkage<"pools"> | null>
   licenses: Relationship<Linkage<"licenses">[]>

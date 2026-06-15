@@ -51,6 +51,7 @@ export type ReleaseAttributes = {
 
 export type ReleaseRelationships = {
   account: Relationship<Linkage<"accounts">>
+  environment: Relationship<Linkage<"environments"> | null>
   product: Relationship<Linkage<"products">>
   package: Relationship<Linkage<"packages">>
   constraints: Relationship<Linkage<"constraints">[]>

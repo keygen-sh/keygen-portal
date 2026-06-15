@@ -71,6 +71,7 @@ export interface LicenseInput {
 
 export type LicenseRelationships = {
   account: Relationship<Linkage<"accounts">>
+  environment: Relationship<Linkage<"environments"> | null>
   product: Relationship<Linkage<"products">>
   policy: Relationship<Linkage<"policies">>
   group: Relationship<Linkage<"groups"> | null>

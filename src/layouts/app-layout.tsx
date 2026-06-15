@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { Outlet, useNavigate } from "@tanstack/react-router"
+import { Outlet, useNavigate, useRouter } from "@tanstack/react-router"
 
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { useSidebar, SidebarProvider } from "@/components/ui/sidebar"
@@ -53,11 +53,18 @@ export default function AppLayout() {
 }
 
 function AppLayoutContent() {
-  const { open } = useSidebar()
+  const { open, setOpen } = useSidebar()
   const isMobile = useMobile()
+  const router = useRouter()
+
+  // close sidebar on mobile whenever navigation resolves
+  useEffect(() => {
+    if (!isMobile) return
+    return router.subscribe("onResolved", () => setOpen(false))
+  }, [isMobile, router, setOpen])
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden">
+    <div className="relative flex h-screen w-screen overflow-hidden">
       <Sidebar.Panel />
       <main
         className={cn(
@@ -67,6 +74,14 @@ function AppLayoutContent() {
       >
         <Outlet />
       </main>
+      {isMobile && open && (
+        <button
+          type="button"
+          aria-label="Close sidebar"
+          onClick={() => setOpen(false)}
+          className="absolute inset-0 z-40 cursor-default"
+        />
+      )}
     </div>
   )
 }

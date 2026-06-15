@@ -160,11 +160,11 @@ export interface ResourceLinkProps {
 
 export default function ResourceLink({
   linkage,
-  emptyLabel = "--",
+  emptyLabel = "None",
   buttonClassName,
 }: ResourceLinkProps): ReactElement {
   if (!linkage) {
-    return <span className="text-content-muted">{emptyLabel}</span>
+    return <span className="text-content-subdued">{emptyLabel}</span>
   }
 
   const ResolvedLink = RESOURCE_LINKS[linkage.type]

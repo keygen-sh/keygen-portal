@@ -32,6 +32,7 @@ export type PackageAttributes = {
 
 export type PackageRelationships = {
   account: Relationship<Linkage<"accounts">>
+  environment: Relationship<Linkage<"environments"> | null>
   product: Relationship<Linkage<"products">>
 }
 

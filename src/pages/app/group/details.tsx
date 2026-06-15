@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { useParams } from "@tanstack/react-router"
 import { formatDate } from "date-fns"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Separator } from "@/components/ui/separator"
@@ -40,7 +41,11 @@ import {
 
 import { GroupAttributeDescriptions } from "@/types/groups"
 
-import { useGetGroup, useRemoveGroup } from "@/queries/groups"
+import {
+  useGetGroup,
+  useListGroupOwners,
+  useRemoveGroup,
+} from "@/queries/groups"
 
 import { useMobile } from "@/hooks/use-mobile"
 import { useSidebarTab } from "@/hooks/use-sidebar-tab"
@@ -60,6 +65,7 @@ import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
+import ResourceLink from "@/components/resource-link"
 import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
@@ -74,6 +80,13 @@ export default function GroupDetails() {
     isError: groupError,
   } = useGetGroup(id)
   const removeGroup = useRemoveGroup(id)
+
+  const {
+    data: owners = [],
+    isLoading: ownersLoading,
+    isFetching: ownersFetching,
+    isError: ownersError,
+  } = useListGroupOwners(id)
 
   const back = useBackNavigate()
 
@@ -278,40 +291,86 @@ export default function GroupDetails() {
                   </div>
                 </CollapsibleCard>
 
+                <CollapsibleCard
+                  title="Owners"
+                  subtitle={
+                    <Badge className="ml-2 min-h-5 min-w-5 text-sm text-content-muted">
+                      {owners.length}
+                    </Badge>
+                  }
+                >
+                  {ownersError ? (
+                    <Badge variant="destructive">ERROR</Badge>
+                  ) : ownersLoading || ownersFetching ? (
+                    <div className="flex w-full justify-between">
+                      <Skeleton className="h-5 w-48 rounded-sm" />
+                      <Skeleton className="h-5 w-24 rounded-sm" />
+                    </div>
+                  ) : owners.length > 0 ? (
+                    <div className="grid gap-2">
+                      {owners.map((owner) => (
+                        <ResourceLink
+                          key={owner.id}
+                          linkage={owner.relationships.user?.data}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="px-2 text-sm text-content-subdued">
+                      None
+                    </span>
+                  )}
+                </CollapsibleCard>
+
                 <CollapsibleCard title="Relationships">
-                  <Attribute.Field
-                    variant="text"
-                    label="Licenses"
-                    value={
-                      <GoToButton
-                        path="/$accountId/app/licenses"
-                        params={{ accountId: keygen.config.id }}
-                        label="View all"
-                      />
-                    }
-                  />
-                  <Attribute.Field
-                    variant="text"
-                    label="Users"
-                    value={
-                      <GoToButton
-                        path="/$accountId/app/users"
-                        params={{ accountId: keygen.config.id }}
-                        label="View all"
-                      />
-                    }
-                  />
-                  <Attribute.Field
-                    variant="text"
-                    label="Machines"
-                    value={
-                      <GoToButton
-                        path="/$accountId/app/machines"
-                        params={{ accountId: keygen.config.id }}
-                        label="View all"
-                      />
-                    }
-                  />
+                  <div className="grid gap-4">
+                    <Attribute.Field
+                      variant="text"
+                      label="Environment"
+                      value={
+                        <ResourceLink
+                          linkage={group.relationships.environment?.data}
+                          emptyLabel="Global"
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Users"
+                      value={
+                        <GoToButton
+                          path="/$accountId/app/users"
+                          params={{ accountId: keygen.config.id }}
+                          search={{ group: id }}
+                          label="View all"
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Licenses"
+                      value={
+                        <GoToButton
+                          path="/$accountId/app/licenses"
+                          params={{ accountId: keygen.config.id }}
+                          search={{ group: id }}
+                          label="View all"
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Machines"
+                      value={
+                        <GoToButton
+                          path="/$accountId/app/machines"
+                          params={{ accountId: keygen.config.id }}
+                          search={{ group: id }}
+                          label="View all"
+                        />
+                      }
+                    />
+                  </div>
                 </CollapsibleCard>
 
                 <CollapsibleCard title="Metadata" contentClass="p-0">

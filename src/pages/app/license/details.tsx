@@ -64,9 +64,7 @@ import {
   LicenseAttributeDescriptions,
 } from "@/types/licenses"
 
-import { useGetUser } from "@/queries/users"
 import { useGetPolicy } from "@/queries/policies"
-import { useGetProduct } from "@/queries/products"
 import {
   useGetLicense,
   useRemoveLicense,
@@ -109,6 +107,7 @@ import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
+import ResourceLink from "@/components/resource-link"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
@@ -141,28 +140,7 @@ export default function LicenseDetails() {
   const resetUsageLicense = useResetUsageLicense(id)
 
   const policyId = license?.relationships.policy?.data?.id || ""
-  const {
-    data: policy,
-    isLoading: policyLoading,
-    isFetching: policyFetching,
-    isError: policyError,
-  } = useGetPolicy(policyId)
-
-  const productId = policy?.relationships.product?.data?.id || ""
-  const {
-    data: product,
-    isLoading: productLoading,
-    isFetching: productFetching,
-    isError: productError,
-  } = useGetProduct(productId)
-
-  const ownerId = license?.relationships.owner?.data?.id || ""
-  const {
-    data: owner,
-    isLoading: ownerLoading,
-    isFetching: ownerFetching,
-    isError: ownerError,
-  } = useGetUser(ownerId)
+  const { data: policy } = useGetPolicy(policyId)
 
   const {
     data: entitlements = [],
@@ -171,7 +149,12 @@ export default function LicenseDetails() {
     isError: entitlementsError,
   } = useListLicenseEntitlements(id)
 
-  const { data: licenseUsers = [] } = useListLicenseUsers(id)
+  const {
+    data: licenseUsers = [],
+    isLoading: licenseUsersLoading,
+    isFetching: licenseUsersFetching,
+    isError: licenseUsersError,
+  } = useListLicenseUsers(id)
 
   const back = useBackNavigate()
 
@@ -735,7 +718,42 @@ export default function LicenseDetails() {
                       </div>
                     ))
                   ) : (
-                    <Attribute.Field variant="text" label="None" value="--" />
+                    <span className="px-2 text-sm text-content-subdued">
+                      None
+                    </span>
+                  )}
+                </CollapsibleCard>
+
+                <CollapsibleCard
+                  title="Users"
+                  subtitle={
+                    <Badge className="ml-2 min-h-5 min-w-5 text-sm text-content-muted">
+                      {licenseUsers.length}
+                    </Badge>
+                  }
+                >
+                  {licenseUsersError ? (
+                    <Badge variant="destructive">ERROR</Badge>
+                  ) : licenseUsersLoading || licenseUsersFetching ? (
+                    <div className="flex w-full justify-between">
+                      <Skeleton className="h-5 w-48 rounded-sm" />
+                      <Skeleton className="h-5 w-24 rounded-sm" />
+                    </div>
+                  ) : licenseUsers.length > 0 ? (
+                    <div className="grid gap-2">
+                      {licenseUsers.map((user) => (
+                        <GoToButton
+                          key={user.id}
+                          path="/$accountId/app/users/$id"
+                          params={{ accountId: keygen.config.id, id: user.id }}
+                          label={getUserLabel(user)}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="px-2 text-sm text-content-subdued">
+                      None
+                    </span>
                   )}
                 </CollapsibleCard>
 
@@ -743,72 +761,60 @@ export default function LicenseDetails() {
                   <div className="grid gap-4">
                     <Attribute.Field
                       variant="text"
+                      label="Environment"
+                      value={
+                        <ResourceLink
+                          linkage={license.relationships.environment?.data}
+                          emptyLabel="Global"
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
                       label="Product"
                       value={
-                        productError ? (
-                          <Badge variant="destructive">ERROR</Badge>
-                        ) : productLoading || productFetching ? (
-                          <Skeleton className="h-5 w-32 rounded-sm" />
-                        ) : product ? (
-                          <GoToButton
-                            path="/$accountId/app/products/$id"
-                            params={{
-                              accountId: keygen.config.id,
-                              id: product.id,
-                            }}
-                            label={product.attributes.name}
-                          />
-                        ) : productId ? (
-                          productId
-                        ) : (
-                          "--"
-                        )
+                        <ResourceLink
+                          linkage={license.relationships.product?.data}
+                        />
                       }
                     />
                     <Attribute.Field
                       variant="text"
                       label="Policy"
                       value={
-                        policyError ? (
-                          <Badge variant="destructive">ERROR</Badge>
-                        ) : policyLoading || policyFetching ? (
-                          <Skeleton className="h-5 w-32 rounded-sm" />
-                        ) : policy ? (
-                          <GoToButton
-                            path="/$accountId/app/policies/$id"
-                            params={{
-                              accountId: keygen.config.id,
-                              id: policy.id,
-                            }}
-                            label={policy.attributes.name}
-                          />
-                        ) : policyId ? (
-                          policyId
-                        ) : (
-                          "--"
-                        )
+                        <ResourceLink
+                          linkage={license.relationships.policy?.data}
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Group"
+                      value={
+                        <ResourceLink
+                          linkage={license.relationships.group?.data}
+                        />
                       }
                     />
                     <Attribute.Field
                       variant="text"
                       label="Owner"
                       value={
-                        ownerError ? (
-                          <Badge variant="destructive">ERROR</Badge>
-                        ) : ownerLoading || ownerFetching ? (
-                          <Skeleton className="h-5 w-32 rounded-sm" />
-                        ) : owner ? (
-                          <GoToButton
-                            path="/$accountId/app/users/$id"
-                            params={{
-                              accountId: keygen.config.id,
-                              id: owner.id,
-                            }}
-                            label={getUserLabel(owner)}
-                          />
-                        ) : (
-                          "--"
-                        )
+                        <ResourceLink
+                          linkage={license.relationships.owner?.data}
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Machines"
+                      value={
+                        <GoToButton
+                          path="/$accountId/app/machines"
+                          params={{ accountId: keygen.config.id }}
+                          search={{ license: id }}
+                          label="View all"
+                        />
                       }
                     />
                   </div>

@@ -93,6 +93,7 @@ import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
+import ResourceLink from "@/components/resource-link"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleCard from "@/components/collapsible-card"
 import ConfirmationModal from "@/components/confirmation-modal"
@@ -526,6 +527,39 @@ export default function ReleaseDetails() {
                   </div>
                 </CollapsibleCard>
 
+                <CollapsibleCard title="Relationships">
+                  <div className="grid gap-4">
+                    <Attribute.Field
+                      variant="text"
+                      label="Environment"
+                      value={
+                        <ResourceLink
+                          linkage={release.relationships.environment?.data}
+                          emptyLabel="Global"
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Product"
+                      value={
+                        <ResourceLink
+                          linkage={release.relationships.product?.data}
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Package"
+                      value={
+                        <ResourceLink
+                          linkage={release.relationships.package?.data}
+                        />
+                      }
+                    />
+                  </div>
+                </CollapsibleCard>
+
                 <CollapsibleCard
                   title="Constraints"
                   subtitle={
@@ -549,7 +583,9 @@ export default function ReleaseDetails() {
                       />
                     ))
                   ) : (
-                    <Attribute.Field variant="text" label="None" value="--" />
+                    <span className="px-2 text-sm text-content-subdued">
+                      None
+                    </span>
                   )}
                 </CollapsibleCard>
 
@@ -573,7 +609,9 @@ export default function ReleaseDetails() {
                       <ArtifactRow key={artifact.id} artifact={artifact} />
                     ))
                   ) : (
-                    <Attribute.Field variant="text" label="None" value="--" />
+                    <span className="px-2 text-sm text-content-subdued">
+                      None
+                    </span>
                   )}
                 </CollapsibleCard>
 

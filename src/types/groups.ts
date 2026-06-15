@@ -44,6 +44,26 @@ export type Group = Resource<"groups", GroupAttributes, GroupRelationships>
 export type GroupResponse = APIResponse<Group>
 export type GroupListResponse = APIResponse<Group[]>
 
+export type GroupOwnerAttributes = {
+  created: string
+  updated: string
+}
+
+export type GroupOwnerRelationships = {
+  account: Relationship<Linkage<"accounts">>
+  environment: Relationship<Linkage<"environments"> | null>
+  group: Relationship<Linkage<"groups">>
+  user: Relationship<Linkage<"users">>
+}
+
+export type GroupOwner = Resource<
+  "group-owners",
+  GroupOwnerAttributes,
+  GroupOwnerRelationships
+>
+
+export type GroupOwnerListResponse = APIResponse<GroupOwner[]>
+
 export const GroupAttributeDescriptions: Readonly<
   Record<keyof Writable<GroupAttributes>, string>
 > = {

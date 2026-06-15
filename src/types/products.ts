@@ -36,6 +36,7 @@ export type ProductAttributes = {
 
 export type ProductRelationships = {
   account: Relationship<Linkage<"accounts">>
+  environment: Relationship<Linkage<"environments"> | null>
   policies: Relationship<Linkage<"policies">[]>
   licenses: Relationship<Linkage<"licenses">[]>
   machines: Relationship<Linkage<"machines">[]>

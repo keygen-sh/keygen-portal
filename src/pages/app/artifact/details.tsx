@@ -71,6 +71,7 @@ import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
+import ResourceLink from "@/components/resource-link"
 import ConfirmationModal from "@/components/confirmation-modal"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleCard from "@/components/collapsible-card"
@@ -364,6 +365,30 @@ export default function ArtifactDetails() {
                         }
                       />
                     </div>
+                  </div>
+                </CollapsibleCard>
+
+                <CollapsibleCard title="Relationships">
+                  <div className="grid gap-4">
+                    <Attribute.Field
+                      variant="text"
+                      label="Environment"
+                      value={
+                        <ResourceLink
+                          linkage={artifact.relationships.environment?.data}
+                          emptyLabel="Global"
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Release"
+                      value={
+                        <ResourceLink
+                          linkage={artifact.relationships.release?.data}
+                        />
+                      }
+                    />
                   </div>
                 </CollapsibleCard>
 

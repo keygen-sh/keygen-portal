@@ -2,7 +2,6 @@ import { useState, useEffect } from "react"
 import { useParams } from "@tanstack/react-router"
 import { formatDate } from "date-fns"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Separator } from "@/components/ui/separator"
@@ -46,20 +45,15 @@ import {
   useRemoveMachine,
   useResetMachineHeartbeat,
 } from "@/queries/machines"
-import { useGetUser } from "@/queries/users"
-import { useGetGroup } from "@/queries/groups"
-import { useGetProduct } from "@/queries/products"
-import { useGetLicense } from "@/queries/licenses"
 
 import { useMobile } from "@/hooks/use-mobile"
 import { useSidebarTab } from "@/hooks/use-sidebar-tab"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
-import { getUserLabel } from "@/lib/users"
 import { copyToClipboard } from "@/lib/clipboard"
 import { getHeartbeatStatusVariant } from "@/lib/machines"
-import { truncateKey, formatTtlLabel } from "@/lib/licenses"
+import { formatTtlLabel } from "@/lib/licenses"
 
 import * as keygen from "@/keygen"
 import * as Machines from "@/components/machines"
@@ -72,6 +66,7 @@ import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
+import ResourceLink from "@/components/resource-link"
 import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
@@ -86,34 +81,6 @@ export default function MachineDetails() {
   } = useGetMachine(id)
   const removeMachine = useRemoveMachine(id)
   const resetHeartbeat = useResetMachineHeartbeat(id)
-
-  const licenseId = machine?.relationships.license?.data?.id || ""
-  const {
-    data: license,
-    isLoading: licenseLoading,
-    isError: licenseError,
-  } = useGetLicense(licenseId)
-
-  const groupId = machine?.relationships.group?.data?.id || ""
-  const {
-    data: group,
-    isLoading: groupLoading,
-    isError: groupError,
-  } = useGetGroup(groupId)
-
-  const ownerId = machine?.relationships.owner?.data?.id || ""
-  const {
-    data: owner,
-    isLoading: ownerLoading,
-    isError: ownerError,
-  } = useGetUser(ownerId)
-
-  const productId = machine?.relationships.product?.data?.id || ""
-  const {
-    data: product,
-    isLoading: productLoading,
-    isError: productError,
-  } = useGetProduct(productId)
 
   const back = useBackNavigate()
 
@@ -487,135 +454,78 @@ export default function MachineDetails() {
                 </CollapsibleCard>
 
                 <CollapsibleCard title="Relationships">
-                  <Attribute.Field
-                    variant="text"
-                    label="License"
-                    value={
-                      licenseError ? (
-                        <Badge variant="destructive">ERROR</Badge>
-                      ) : licenseLoading ? (
-                        <Skeleton className="h-5 w-32 rounded-sm" />
-                      ) : license ? (
-                        <GoToButton
-                          path="/$accountId/app/licenses/$id"
-                          params={{
-                            accountId: keygen.config.id,
-                            id: license.id,
-                          }}
-                          label={
-                            license.attributes.name ||
-                            truncateKey(license.attributes.key, {
-                              maxLength: isMobile ? 24 : 64,
-                            })
-                          }
+                  <div className="grid gap-4">
+                    <Attribute.Field
+                      variant="text"
+                      label="Environment"
+                      value={
+                        <ResourceLink
+                          linkage={machine.relationships.environment?.data}
+                          emptyLabel="Global"
                         />
-                      ) : (
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="License"
+                      value={
+                        <ResourceLink
+                          linkage={machine.relationships.license?.data}
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Product"
+                      value={
+                        <ResourceLink
+                          linkage={machine.relationships.product?.data}
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Owner"
+                      value={
+                        <ResourceLink
+                          linkage={machine.relationships.owner?.data}
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Group"
+                      value={
+                        <ResourceLink
+                          linkage={machine.relationships.group?.data}
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Components"
+                      value={
                         <GoToButton
-                          path="/$accountId/app/licenses"
+                          path="/$accountId/app/components"
                           params={{ accountId: keygen.config.id }}
+                          search={{ machine: id }}
                           label="View all"
                         />
-                      )
-                    }
-                  />
-
-                  <Attribute.Field
-                    variant="text"
-                    label="Product"
-                    value={
-                      productError ? (
-                        <Badge variant="destructive">ERROR</Badge>
-                      ) : productLoading ? (
-                        <Skeleton className="h-5 w-32 rounded-sm" />
-                      ) : product ? (
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Processes"
+                      value={
                         <GoToButton
-                          path="/$accountId/app/products/$id"
-                          params={{
-                            accountId: keygen.config.id,
-                            id: product.id,
-                          }}
-                          label={product.attributes.name}
-                        />
-                      ) : (
-                        <GoToButton
-                          path="/$accountId/app/products"
+                          path="/$accountId/app/processes"
                           params={{ accountId: keygen.config.id }}
+                          search={{ machine: id }}
                           label="View all"
                         />
-                      )
-                    }
-                  />
-
-                  <Attribute.Field
-                    variant="text"
-                    label="Owner"
-                    value={
-                      ownerError ? (
-                        <Badge variant="destructive">ERROR</Badge>
-                      ) : ownerLoading ? (
-                        <Skeleton className="h-5 w-32 rounded-sm" />
-                      ) : owner ? (
-                        <GoToButton
-                          path="/$accountId/app/users/$id"
-                          params={{
-                            accountId: keygen.config.id,
-                            id: owner.id,
-                          }}
-                          label={getUserLabel(owner)}
-                        />
-                      ) : (
-                        "--"
-                      )
-                    }
-                  />
-
-                  <Attribute.Field
-                    variant="text"
-                    label="Group"
-                    value={
-                      groupError ? (
-                        <Badge variant="destructive">ERROR</Badge>
-                      ) : groupLoading ? (
-                        <Skeleton className="h-5 w-32 rounded-sm" />
-                      ) : group ? (
-                        <GoToButton
-                          path="/$accountId/app/groups/$id"
-                          params={{
-                            accountId: keygen.config.id,
-                            id: group.id,
-                          }}
-                          label={group.attributes.name}
-                        />
-                      ) : (
-                        "--"
-                      )
-                    }
-                  />
-
-                  <Attribute.Field
-                    variant="text"
-                    label="Components"
-                    value={
-                      <GoToButton
-                        path="/$accountId/app/components"
-                        params={{ accountId: keygen.config.id }}
-                        label="View all"
-                        disabled // TODO(cazden) Enable when components are implemented
-                      />
-                    }
-                  />
-                  <Attribute.Field
-                    variant="text"
-                    label="Processes"
-                    value={
-                      <GoToButton
-                        path="/$accountId/app/processes"
-                        params={{ accountId: keygen.config.id }}
-                        label="View all"
-                        disabled // TODO(cazden) Enable when processes are implemented
-                      />
-                    }
-                  />
+                      }
+                    />
+                  </div>
                 </CollapsibleCard>
 
                 <CollapsibleCard title="Metadata" contentClass="p-0">

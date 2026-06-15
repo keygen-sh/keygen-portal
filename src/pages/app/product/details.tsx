@@ -50,6 +50,7 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
 
+import * as keygen from "@/keygen"
 import * as Products from "@/components/products"
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
@@ -59,6 +60,8 @@ import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
+import GoToButton from "@/components/go-to-button"
+import ResourceLink from "@/components/resource-link"
 import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
@@ -284,8 +287,67 @@ export default function ProductDetails() {
                   </CollapsibleMenu>
                 </CollapsibleCard>
 
-                <CollapsibleCard title="Relationships" defaultOpen={false}>
-                  <Attribute.Field variant="text" label="TODO" value={"--"} />
+                <CollapsibleCard title="Relationships">
+                  <div className="grid gap-4">
+                    <Attribute.Field
+                      variant="text"
+                      label="Environment"
+                      value={
+                        <ResourceLink
+                          linkage={product.relationships.environment?.data}
+                          emptyLabel="Global"
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Policies"
+                      value={
+                        <GoToButton
+                          path="/$accountId/app/policies"
+                          params={{ accountId: keygen.config.id }}
+                          search={{ product: id }}
+                          label="View all"
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Licenses"
+                      value={
+                        <GoToButton
+                          path="/$accountId/app/licenses"
+                          params={{ accountId: keygen.config.id }}
+                          search={{ product: id }}
+                          label="View all"
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Machines"
+                      value={
+                        <GoToButton
+                          path="/$accountId/app/machines"
+                          params={{ accountId: keygen.config.id }}
+                          search={{ product: id }}
+                          label="View all"
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Users"
+                      value={
+                        <GoToButton
+                          path="/$accountId/app/users"
+                          params={{ accountId: keygen.config.id }}
+                          search={{ product: id }}
+                          label="View all"
+                        />
+                      }
+                    />
+                  </div>
                 </CollapsibleCard>
 
                 <CollapsibleCard title="Metadata" contentClass="p-0">

@@ -55,6 +55,7 @@ import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import ConfirmationModal from "@/components/confirmation-modal"
+import ResourceLink from "@/components/resource-link"
 import CollapsibleCard from "@/components/collapsible-card"
 
 export default function EntitlementDetails() {
@@ -218,6 +219,21 @@ export default function EntitlementDetails() {
                     label="Code"
                     value={entitlement.attributes.code}
                   />
+                </CollapsibleCard>
+
+                <CollapsibleCard title="Relationships">
+                  <div className="grid gap-4">
+                    <Attribute.Field
+                      variant="text"
+                      label="Environment"
+                      value={
+                        <ResourceLink
+                          linkage={entitlement.relationships.environment?.data}
+                          emptyLabel="Global"
+                        />
+                      }
+                    />
+                  </div>
                 </CollapsibleCard>
 
                 <CollapsibleCard title="Metadata" contentClass="p-0">

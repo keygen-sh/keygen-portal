@@ -87,6 +87,7 @@ import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
+import ResourceLink from "@/components/resource-link"
 import ConfirmationModal from "@/components/confirmation-modal"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleCard from "@/components/collapsible-card"
@@ -103,12 +104,7 @@ export default function PolicyDetails() {
   const deletePolicy = useRemovePolicy(id)
 
   const productId = policy?.relationships.product?.data?.id || ""
-  const {
-    data: product,
-    isLoading: productLoading,
-    isFetching: productFetching,
-    isError: productError,
-  } = useGetProduct(productId)
+  const { data: product, isLoading: productLoading } = useGetProduct(productId)
 
   const {
     data: entitlements = [],
@@ -435,38 +431,43 @@ export default function PolicyDetails() {
                       </div>
                     ))
                   ) : (
-                    <Attribute.Field variant="text" label="None" value="--" />
+                    <span className="px-2 text-sm text-content-subdued">
+                      None
+                    </span>
                   )}
-                </CollapsibleCard>
-
-                <CollapsibleCard title="Licenses">
-                  <Attribute.Field variant="text" label="TODO" value={"--"} />
                 </CollapsibleCard>
 
                 <CollapsibleCard title="Relationships">
                   <div className="grid gap-4">
                     <Attribute.Field
                       variant="text"
+                      label="Environment"
+                      value={
+                        <ResourceLink
+                          linkage={policy?.relationships.environment?.data}
+                          emptyLabel="Global"
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
                       label="Product"
                       value={
-                        productError ? (
-                          <Badge variant="destructive">ERROR</Badge>
-                        ) : productLoading || productFetching ? (
-                          <Skeleton className="h-5 w-32 rounded-sm" />
-                        ) : product ? (
-                          <GoToButton
-                            path="/$accountId/app/products/$id"
-                            params={{
-                              accountId: keygen.config.id,
-                              id: product.id,
-                            }}
-                            label={product.attributes.name}
-                          />
-                        ) : productId ? (
-                          productId
-                        ) : (
-                          "--"
-                        )
+                        <ResourceLink
+                          linkage={policy?.relationships.product?.data}
+                        />
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Licenses"
+                      value={
+                        <GoToButton
+                          path="/$accountId/app/licenses"
+                          params={{ accountId: keygen.config.id }}
+                          search={{ policy: id }}
+                          label="View all"
+                        />
                       }
                     />
                   </div>

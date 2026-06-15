@@ -2,7 +2,6 @@ import { useState, useEffect } from "react"
 import { useParams } from "@tanstack/react-router"
 import { formatDate } from "date-fns"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Separator } from "@/components/ui/separator"
@@ -50,9 +49,6 @@ import {
   ProcessStatusDescriptions,
 } from "@/types/processes"
 
-import { useGetMachine } from "@/queries/machines"
-import { useGetProduct } from "@/queries/products"
-import { useGetLicense } from "@/queries/licenses"
 import { useGetProcess, useRemoveProcess } from "@/queries/processes"
 
 import { useMobile } from "@/hooks/use-mobile"
@@ -60,10 +56,8 @@ import { useSidebarTab } from "@/hooks/use-sidebar-tab"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
-import { truncateKey } from "@/lib/licenses"
 import { copyToClipboard } from "@/lib/clipboard"
 
-import * as keygen from "@/keygen"
 import * as Processes from "@/components/processes"
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
@@ -73,7 +67,7 @@ import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
-import GoToButton from "@/components/go-to-button"
+import ResourceLink from "@/components/resource-link"
 import ConfirmationModal from "@/components/confirmation-modal"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleMenu from "@/components/collapsible-menu"
@@ -96,27 +90,6 @@ export default function ProcessDetails() {
     isError: processError,
   } = useGetProcess(id)
   const removeProcess = useRemoveProcess(id)
-
-  const machineId = process?.relationships.machine?.data?.id || ""
-  const {
-    data: machine,
-    isLoading: machineLoading,
-    isError: machineError,
-  } = useGetMachine(machineId)
-
-  const licenseId = process?.relationships.license?.data?.id || ""
-  const {
-    data: license,
-    isLoading: licenseLoading,
-    isError: licenseError,
-  } = useGetLicense(licenseId)
-
-  const productId = process?.relationships.product?.data?.id || ""
-  const {
-    data: product,
-    isLoading: productLoading,
-    isError: productError,
-  } = useGetProduct(productId)
 
   const back = useBackNavigate()
 
@@ -353,94 +326,45 @@ export default function ProcessDetails() {
                 </CollapsibleCard>
 
                 <CollapsibleCard title="Relationships">
-                  <Attribute.Field
-                    variant="text"
-                    label="Machine"
-                    value={
-                      machineError ? (
-                        <Badge variant="destructive">ERROR</Badge>
-                      ) : machineLoading ? (
-                        <Skeleton className="h-5 w-32 rounded-sm" />
-                      ) : machine ? (
-                        <GoToButton
-                          path="/$accountId/app/machines/$id"
-                          params={{
-                            accountId: keygen.config.id,
-                            id: machine.id,
-                          }}
-                          label={
-                            machine.attributes.name ||
-                            machine.attributes.fingerprint
-                          }
+                  <div className="grid gap-4">
+                    <Attribute.Field
+                      variant="text"
+                      label="Environment"
+                      value={
+                        <ResourceLink
+                          linkage={process.relationships.environment?.data}
+                          emptyLabel="Global"
                         />
-                      ) : (
-                        <GoToButton
-                          path="/$accountId/app/machines"
-                          params={{ accountId: keygen.config.id }}
-                          label="View all"
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Machine"
+                      value={
+                        <ResourceLink
+                          linkage={process.relationships.machine?.data}
                         />
-                      )
-                    }
-                  />
-
-                  <Attribute.Field
-                    variant="text"
-                    label="License"
-                    value={
-                      licenseError ? (
-                        <Badge variant="destructive">ERROR</Badge>
-                      ) : licenseLoading ? (
-                        <Skeleton className="h-5 w-32 rounded-sm" />
-                      ) : license ? (
-                        <GoToButton
-                          path="/$accountId/app/licenses/$id"
-                          params={{
-                            accountId: keygen.config.id,
-                            id: license.id,
-                          }}
-                          label={
-                            license.attributes.name ||
-                            truncateKey(license.attributes.key, {
-                              maxLength: isMobile ? 24 : 64,
-                            })
-                          }
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="License"
+                      value={
+                        <ResourceLink
+                          linkage={process.relationships.license?.data}
                         />
-                      ) : (
-                        <GoToButton
-                          path="/$accountId/app/licenses"
-                          params={{ accountId: keygen.config.id }}
-                          label="View all"
+                      }
+                    />
+                    <Attribute.Field
+                      variant="text"
+                      label="Product"
+                      value={
+                        <ResourceLink
+                          linkage={process.relationships.product?.data}
                         />
-                      )
-                    }
-                  />
-
-                  <Attribute.Field
-                    variant="text"
-                    label="Product"
-                    value={
-                      productError ? (
-                        <Badge variant="destructive">ERROR</Badge>
-                      ) : productLoading ? (
-                        <Skeleton className="h-5 w-32 rounded-sm" />
-                      ) : product ? (
-                        <GoToButton
-                          path="/$accountId/app/products/$id"
-                          params={{
-                            accountId: keygen.config.id,
-                            id: product.id,
-                          }}
-                          label={product.attributes.name}
-                        />
-                      ) : (
-                        <GoToButton
-                          path="/$accountId/app/products"
-                          params={{ accountId: keygen.config.id }}
-                          label="View all"
-                        />
-                      )
-                    }
-                  />
+                      }
+                    />
+                  </div>
                 </CollapsibleCard>
 
                 <CollapsibleCard title="Metadata" contentClass="p-0">

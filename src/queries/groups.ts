@@ -30,6 +30,19 @@ export function useGetGroup(groupId: string) {
   })
 }
 
+export function useListGroupOwners(groupId: string) {
+  const { code } = useEnvironment()
+
+  return useQuery({
+    queryKey: ["groups", groupId, "owners", { environment: code }],
+    queryFn: () =>
+      keygen.groups
+        .listOwners({ groupId })
+        .then((response) => response.data ?? []),
+    enabled: !!groupId,
+  })
+}
+
 export function useListGroups(
   params?: { cursor?: string | null; pageSize?: number },
   options?: { enabled?: boolean },

@@ -31,6 +31,19 @@ export function useGetUser(userId: string) {
 
 export type { UserFilters }
 
+export function useListUserProducts(userId: string) {
+  const { code } = useEnvironment()
+
+  return useQuery({
+    queryKey: ["users", userId, "products", { environment: code }],
+    queryFn: () =>
+      keygen.users
+        .listProducts({ userId })
+        .then((response) => response.data ?? []),
+    enabled: !!userId,
+  })
+}
+
 export function useListUsers(
   params?: { cursor?: string | null; pageSize?: number; filters?: UserFilters },
   options?: { enabled?: boolean },

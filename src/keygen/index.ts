@@ -4,6 +4,9 @@ export { config }
 import client from "./client"
 export { client }
 
+import sentry from "./sentry"
+export { sentry }
+
 import { authenticate } from "./authenticate"
 export { authenticate }
 

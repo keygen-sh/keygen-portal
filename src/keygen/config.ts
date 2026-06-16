@@ -11,6 +11,13 @@ const config = {
   version: import.meta.env.VITE_KEYGEN_VERSION,
   id: import.meta.env.VITE_KEYGEN_ACCOUNT_ID,
 
+  sentry: {
+    dsn: import.meta.env.VITE_SENTRY_DSN,
+    environment:
+      import.meta.env.VITE_SENTRY_ENVIRONMENT ||
+      import.meta.env.VITE_KEYGEN_EDITION,
+  },
+
   validate(): void {
     const missing: string[] = []
 

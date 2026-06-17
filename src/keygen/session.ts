@@ -21,6 +21,8 @@ export async function restoreSession(): Promise<RestoredSession> {
 }
 
 async function attemptRestoreSession(): Promise<RestoredSession> {
+  if (!config.id) return { userId: null }
+
   const token = localStorage.getItem("token") ?? sessionStorage.getItem("token")
   const tokenId =
     localStorage.getItem("tokenId") ?? sessionStorage.getItem("tokenId")

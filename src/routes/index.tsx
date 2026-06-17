@@ -3,6 +3,10 @@ import * as keygen from "@/keygen"
 
 export const Route = createFileRoute("/")({
   loader: () => {
+    if (!keygen.config.id) {
+      return redirect({ to: "/auth", replace: true })
+    }
+
     const token =
       localStorage.getItem("token") ?? sessionStorage.getItem("token")
 

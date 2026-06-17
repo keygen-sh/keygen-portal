@@ -1,8 +1,9 @@
-export { default as Login } from "./login"
-export { default as Password } from "./password"
-export { default as Sso } from "./sso"
-export { default as Verify } from "./verify"
-export { default as Register } from "./register"
-export { default as Recovery } from "./recovery"
+export {
+  Account,
+  Login,
+  Register,
+  Recovery,
+  Reset,
+} from "@/components/auth/form"
+
 export { default as Sent } from "./sent"
-export { default as Reset } from "./reset"

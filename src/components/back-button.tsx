@@ -12,11 +12,13 @@ interface BackProps {
   path?: string
   label?: string
   className?: string
+  onClick?: () => void
 }
 
 export default function BackButton({
   label,
   className,
+  onClick,
 }: BackProps): React.ReactElement {
   const back = useBackNavigate()
 
@@ -29,7 +31,7 @@ export default function BackButton({
         type="button"
         variant="link"
         size="link"
-        onClick={() => back()}
+        onClick={() => (onClick ? onClick() : back())}
         className="text-content-subdued group-hover:text-content-muted"
         aria-label={label || "Go Back"}
       >

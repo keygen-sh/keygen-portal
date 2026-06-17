@@ -42,3 +42,6 @@ export { Account }
 
 import * as WebhookEndpoints from "./webhook-endpoints"
 export { WebhookEndpoints }
+
+import * as Auth from "./auth"
+export { Auth }

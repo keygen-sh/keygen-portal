@@ -1,4 +1,4 @@
-const STORAGE_KEY = "recentAccounts"
+const STORAGE_KEY = "keygen.account.recent.v1"
 const MAX_RECENT = 5
 
 export interface RecentAccount {
@@ -6,32 +6,23 @@ export interface RecentAccount {
   name: string
 }
 
-function isRecentAccount(value: unknown): value is RecentAccount {
-  return (
-    typeof value === "object" &&
-    value != null &&
-    typeof (value as RecentAccount).id === "string" &&
-    typeof (value as RecentAccount).name === "string"
-  )
-}
-
 export function getRecentAccounts(): RecentAccount[] {
+  if (typeof window === "undefined") return []
+
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = window.localStorage.getItem(STORAGE_KEY)
     if (!raw) return []
 
     const parsed = JSON.parse(raw) as unknown
-    return Array.isArray(parsed) ? parsed.filter(isRecentAccount) : []
+    return Array.isArray(parsed) ? (parsed as RecentAccount[]) : []
   } catch {
     return []
   }
 }
 
-export function addRecentAccount(account: RecentAccount): RecentAccount[] {
+export function addRecentAccount(account: RecentAccount): void {
   const others = getRecentAccounts().filter((a) => a.id !== account.id)
   const next = [account, ...others].slice(0, MAX_RECENT)
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
-
-  return next
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
 }

@@ -212,7 +212,7 @@ function EmailStep({
           </form>
 
           {!keygen.config.hasFixedAccount && (
-            <div className="mb-4 text-center text-sm select-none">
+            <div className="mb-4 space-x-1 text-center text-sm select-none">
               <span className="text-content-subdued">
                 Signing in to {accountLabel}.{" "}
               </span>

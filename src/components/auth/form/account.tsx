@@ -7,8 +7,6 @@ import { Button } from "@/components/ui/button"
 import * as Schemas from "@/schemas"
 import * as Forms from "@/components/forms"
 
-import { addRecentAccount } from "@/lib/accounts"
-
 import Fields from "./fields"
 import * as Loading from "@/components/loading"
 
@@ -22,13 +20,9 @@ export default function AccountForm() {
   })
 
   function onSubmit({ account }: Schemas.Auth.AccountValues) {
-    const id = account.trim()
-
-    addRecentAccount({ id })
-
     void navigate({
       to: "/$accountId/auth/login",
-      params: { accountId: id },
+      params: { accountId: account.trim() },
     })
   }
 

@@ -3,7 +3,7 @@ const MAX_RECENT = 5
 
 export interface RecentAccount {
   id: string
-  name?: string
+  name: string
 }
 
 function isRecentAccount(value: unknown): value is RecentAccount {
@@ -11,8 +11,7 @@ function isRecentAccount(value: unknown): value is RecentAccount {
     typeof value === "object" &&
     value != null &&
     typeof (value as RecentAccount).id === "string" &&
-    (typeof (value as RecentAccount).name === "string" ||
-      (value as RecentAccount).name === undefined)
+    typeof (value as RecentAccount).name === "string"
   )
 }
 

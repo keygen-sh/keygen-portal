@@ -1,5 +1,6 @@
 import { useRef, useState } from "react"
 
+import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover"
@@ -10,6 +11,7 @@ export interface SuggestOption {
   value: string
   label?: string
   description?: string
+  badge?: string
 }
 
 interface SuggestInputProps {
@@ -92,13 +94,18 @@ export function SuggestInput({
                   type="button"
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => select(option.value)}
-                  className="flex w-full cursor-pointer flex-col items-start rounded-sm px-2 py-1.5 text-left hover:bg-accent"
+                  className="group flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent"
                 >
-                  <span className="text-sm text-content-loud">
+                  <span className="min-w-0 truncate text-content-loud">
                     {option.label ?? option.value}
                   </span>
+                  {option.badge && (
+                    <Badge variant="secondary" className="shrink-0">
+                      {option.badge}
+                    </Badge>
+                  )}
                   {option.description && (
-                    <span className="text-xs text-content-subdued">
+                    <span className="ml-auto shrink-0 truncate font-mono text-xs text-content-subdued">
                       {option.description}
                     </span>
                   )}

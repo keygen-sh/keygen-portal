@@ -20,6 +20,10 @@ import { OtpInput } from "@/components/otp-input"
 import { getRecentAccounts } from "@/lib/accounts"
 import { SuggestInput } from "@/components/suggest-input"
 
+import { truncator } from "@/lib/truncate"
+
+const truncateId = truncator("clip", { maxLength: 8 })
+
 interface AuthFormFieldsProps {
   include?: Schemas.Auth.FieldNames[]
   exclude?: Schemas.Auth.FieldNames[]
@@ -193,9 +197,11 @@ function AccountField({ autoFocus, fieldVariant }: FieldProps) {
 
   const options = useMemo(
     () =>
-      getRecentAccounts().map((account) => ({
+      getRecentAccounts().map((account, index) => ({
         value: account.id,
-        label: account.name ?? account.id,
+        label: account.name,
+        description: truncateId(account.id),
+        badge: index === 0 ? "Last used" : undefined,
       })),
     [],
   )

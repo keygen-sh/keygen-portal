@@ -12,6 +12,7 @@ interface FormsProviderProps<
   TTransformedValues = TFieldValues,
 > {
   form: UseFormReturn<TFieldValues, TContext, TTransformedValues>
+  guard?: boolean
   children: React.ReactNode
 }
 
@@ -21,11 +22,12 @@ export default function FormsProvider<
   TTransformedValues = TFieldValues,
 >({
   form,
+  guard = true,
   children,
 }: FormsProviderProps<TFieldValues, TContext, TTransformedValues>) {
   return (
     <FormProvider {...form}>
-      <FormRouteGuard>{children}</FormRouteGuard>
+      {guard ? <FormRouteGuard>{children}</FormRouteGuard> : children}
     </FormProvider>
   )
 }

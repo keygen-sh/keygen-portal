@@ -29,7 +29,7 @@ export default function AccountForm() {
   const { isSubmitting } = form.formState
 
   return (
-    <Forms.Provider form={form}>
+    <Forms.Provider form={form} guard={false}>
       <Forms.Container.Page>
         <section className="flex w-80 flex-col justify-center">
           <form

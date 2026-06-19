@@ -44,6 +44,7 @@ export default function LoginForm() {
     const { id: tokenId, attributes, relationships } = data
     const { token } = attributes
     const userId = relationships.bearer.data.id
+    const accountId = relationships.account.data.id
 
     const storage = remember ? localStorage : sessionStorage
     const other = remember ? sessionStorage : localStorage
@@ -60,7 +61,10 @@ export default function LoginForm() {
 
     session.setUser(userId)
 
-    void navigate({ to: "/" })
+    void navigate({
+      to: "/$accountId/app/dashboard",
+      params: { accountId },
+    })
   }
 
   return (

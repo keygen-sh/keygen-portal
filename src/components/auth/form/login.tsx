@@ -211,9 +211,30 @@ function EmailStep({
             noValidate
             className="my-3 w-full space-y-7"
           >
-            <Forms.Section.Header variant="auth">
+            <Forms.Section.Header variant="auth" className="mb-0">
               Sign in to your account
             </Forms.Section.Header>
+
+            {!keygen.config.hasFixedAccount && (
+              <div className="space-x-1 text-sm select-none">
+                <span className="text-content-subdued">
+                  Signing in to {accountLabel}.{" "}
+                </span>
+                <Button
+                  asChild
+                  variant="link"
+                  size="link"
+                  className="text-content-loud"
+                >
+                  <Link
+                    to="/auth"
+                    className="text-content-main underline-slide font-bold"
+                  >
+                    Use a different account
+                  </Link>
+                </Button>
+              </div>
+            )}
 
             <Fields include={["email"]} autoFocus="email" />
 
@@ -230,45 +251,6 @@ function EmailStep({
               )}
             </Button>
           </form>
-
-          {!keygen.config.hasFixedAccount && (
-            <div className="mb-4 space-x-1 text-center text-sm select-none">
-              <span className="text-content-subdued">
-                Signing in to {accountLabel}.{" "}
-              </span>
-              <Button
-                asChild
-                variant="link"
-                size="link"
-                className="text-content-loud"
-              >
-                <Link
-                  to="/auth"
-                  className="text-content-main underline-slide font-bold"
-                >
-                  Use a different account
-                </Link>
-              </Button>
-            </div>
-          )}
-
-          <div className="space-x-2 rounded border border-content-subdued p-2 text-center text-sm select-none">
-            <span className="text-content-subdued">No account yet?</span>
-            <Button
-              asChild
-              variant="link"
-              size="link"
-              className="text-content-loud"
-            >
-              <Link
-                to="/$accountId/auth/register"
-                className="text-content-main underline-slide py-0.5 font-bold"
-                params={{ accountId: keygen.config.id }}
-              >
-                Create one
-              </Link>
-            </Button>
-          </div>
         </section>
       </Forms.Container.Page>
     </Forms.Provider>

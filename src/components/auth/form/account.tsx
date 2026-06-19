@@ -16,17 +16,17 @@ export default function AccountForm() {
   const form = useForm<Schemas.Auth.AccountValues>({
     resolver: zodResolver(Schemas.Auth.AccountSchema),
     mode: "onChange",
-    defaultValues: { account: "" },
+    defaultValues: { slug: "" },
   })
 
-  function onSubmit({ account }: Schemas.Auth.AccountValues) {
+  function onSubmit({ slug }: Schemas.Auth.AccountValues) {
     void navigate({
       to: "/$accountId/auth/login",
-      params: { accountId: account.trim() },
+      params: { accountId: slug.trim() },
     })
   }
 
-  const isSubmitting = form.formState.isSubmitting
+  const { isSubmitting } = form.formState
 
   return (
     <Forms.Provider form={form}>
@@ -40,11 +40,11 @@ export default function AccountForm() {
             noValidate
             className="my-3 w-full space-y-7"
           >
-            <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
+            <Forms.Section.Header variant="auth">
               Sign in to your account
-            </h1>
+            </Forms.Section.Header>
 
-            <Fields include={["account"]} autoFocus="account" />
+            <Fields include={["slug"]} autoFocus="slug" />
 
             <Button
               type="submit"

@@ -41,8 +41,6 @@ export default function AuthLayout() {
   const label = (() => {
     if (currentRoute.routeId === "/$accountId/auth/recovery")
       return "Return to Login"
-    if (currentRoute.routeId === "/$accountId/auth/sent")
-      return "Return to Login"
     return ""
   })()
 

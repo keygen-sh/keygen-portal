@@ -20,7 +20,7 @@ export default function AuthLayout() {
     if (!user) return
     void navigate({
       to: "/$accountId/app/dashboard",
-      params: { accountId: keygen.config.id },
+      params: { accountId: keygen.client.currentAccount ?? keygen.config.id },
       replace: true,
     })
   }, [user, navigate])

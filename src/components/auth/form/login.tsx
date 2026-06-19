@@ -59,6 +59,7 @@ export default function LoginForm() {
       keygen.client.setRootToken(token)
     }
 
+    keygen.client.setAccount(accountId)
     session.setUser(userId)
 
     void navigate({

@@ -134,7 +134,7 @@ function PasswordField({
                 toggle={true}
                 autoComplete={isNew ? "new-password" : "current-password"}
                 autoFocus={autoFocus}
-                placeholder="Enter your password..."
+                placeholder="Enter password..."
               />
             </FormControl>
           </Forms.Field.Header>

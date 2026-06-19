@@ -62,10 +62,12 @@ export default function MotionTerminal({
           aria-hidden
           className="text-brand-primary"
           animate={
-            phase === "typing" ? { opacity: 1 } : { opacity: [1, 1, 0, 0] }
+            !active || phase === "typing"
+              ? { opacity: 1 }
+              : { opacity: [1, 1, 0, 0] }
           }
           transition={
-            phase === "typing"
+            !active || phase === "typing"
               ? { duration: 0 }
               : phase === "waiting"
                 ? {

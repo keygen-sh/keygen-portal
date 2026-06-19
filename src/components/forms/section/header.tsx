@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils"
 
 import { DialogHeader } from "@/components/ui/dialog"
 
-type FormsSectionHeaderVariant = "modal" | "page"
+type FormsSectionHeaderVariant = "modal" | "page" | "auth"
 
 interface FormsSectionHeaderProps {
   variant?: FormsSectionHeaderVariant
@@ -25,6 +25,19 @@ export default function FormsSectionHeader({
       >
         {children}
       </div>
+    )
+  }
+
+  if (variant === "auth") {
+    return (
+      <h1
+        className={cn(
+          "bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none",
+          className,
+        )}
+      >
+        {children}
+      </h1>
     )
   }
 

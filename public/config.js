@@ -1,0 +1,1 @@
+window.__KEYGEN_CONFIG__ = {}

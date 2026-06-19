@@ -9,7 +9,6 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 import { ChevronLeft } from "lucide-react"
 
 interface BackProps {
-  path?: string
   label?: string
   className?: string
   onClick?: () => void

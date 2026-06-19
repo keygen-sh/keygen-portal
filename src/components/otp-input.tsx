@@ -43,7 +43,7 @@ type OtpInputProps = {
   className?: string
 } & VariantProps<typeof otpVariants>
 
-export function OtpInput({
+export default function OtpInput({
   value,
   onChange,
   onComplete,

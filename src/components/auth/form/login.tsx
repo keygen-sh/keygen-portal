@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
-import { useNavigate, Link } from "@tanstack/react-router"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useNavigate, Link } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 
@@ -46,6 +46,10 @@ export default function LoginForm() {
     const userId = relationships.bearer.data.id
 
     const storage = remember ? localStorage : sessionStorage
+    const other = remember ? sessionStorage : localStorage
+    other.removeItem("tokenId")
+    other.removeItem("token")
+
     storage.setItem("tokenId", tokenId)
     keygen.client.setTokenId(tokenId)
 
@@ -119,7 +123,9 @@ function EmailStep({
 }) {
   const accountLabel = useMemo(() => {
     const id = keygen.config.id
-    const recent = getRecentAccounts().find((account) => account.id === id)
+    const recent = getRecentAccounts().find(
+      (account) => account.id === id || account.slug === id,
+    )
     if (recent?.name) return recent.name
 
     return truncator("middle", { maxLength: 16 })(id)
@@ -128,10 +134,10 @@ function EmailStep({
   const form = useForm<Schemas.Auth.LoginValues>({
     resolver: zodResolver(Schemas.Auth.LoginSchema),
     mode: "onChange",
-    defaultValues: { username: "" },
+    defaultValues: { email: "" },
   })
 
-  async function onSubmit({ username: email }: Schemas.Auth.LoginValues) {
+  async function onSubmit({ email }: Schemas.Auth.LoginValues) {
     try {
       const { errors } = await keygen.authenticate({ email })
 
@@ -159,10 +165,24 @@ function EmailStep({
             })
           }
           break
-        case AuthErrorCode.OtpRequired:
-          form.setError("username", {
+        case AuthErrorCode.EmailInvalid:
+          form.setError("email", {
             type: "manual",
             message: "Invalid email. Please try again.",
+          })
+          break
+        case AuthErrorCode.SsoNotSupported:
+        case AuthErrorCode.SsoAccountNotFound:
+        case AuthErrorCode.SsoUserNotAllowed:
+        case AuthErrorCode.SsoUserNotFound:
+        case AuthErrorCode.SsoUserInvalid:
+        case AuthErrorCode.SsoEnvironmentNotFound:
+        case AuthErrorCode.SsoStateMissing:
+        case AuthErrorCode.SsoStateInvalid:
+        case AuthErrorCode.SsoSessionInvalid:
+          toast({
+            message: "Single sign-on is unavailable.",
+            variant: "error",
           })
           break
         default:
@@ -177,7 +197,7 @@ function EmailStep({
     }
   }
 
-  const isSubmitting = form.formState.isSubmitting
+  const { isSubmitting } = form.formState
 
   return (
     <Forms.Provider form={form}>
@@ -191,11 +211,11 @@ function EmailStep({
             noValidate
             className="my-3 w-full space-y-7"
           >
-            <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
+            <Forms.Section.Header variant="auth">
               Sign in to your account
-            </h1>
+            </Forms.Section.Header>
 
-            <Fields include={["username"]} autoFocus="username" />
+            <Fields include={["email"]} autoFocus="email" />
 
             <Button
               type="submit"
@@ -307,7 +327,7 @@ function PasswordStep({
     }
   }
 
-  const isSubmitting = form.formState.isSubmitting
+  const { isSubmitting } = form.formState
 
   return (
     <Forms.Provider form={form}>
@@ -322,9 +342,9 @@ function PasswordStep({
             className="my-3 space-y-7"
           >
             <BackButton onClick={onBack} />
-            <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
+            <Forms.Section.Header variant="auth">
               Enter your password
-            </h1>
+            </Forms.Section.Header>
 
             <div className="space-y-2">
               <Fields include={["password"]} autoFocus="password" />
@@ -448,9 +468,9 @@ function VerifyStep({
             className="my-3 space-y-7"
           >
             <BackButton label="Return to Login" onClick={onBack} />
-            <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
+            <Forms.Section.Header variant="auth">
               Enter your authentication code
-            </h1>
+            </Forms.Section.Header>
             <p className="text-sm text-content-muted">
               Check your 2FA app and enter the code to log in.
             </p>
@@ -462,7 +482,10 @@ function VerifyStep({
             ) : (
               <Fields
                 include={["otp"]}
-                onOtpComplete={() => void form.handleSubmit(onSubmit)()}
+                onOtpComplete={(value) => {
+                  form.setValue("otp", value, { shouldValidate: true })
+                  void form.handleSubmit(onSubmit)()
+                }}
               />
             )}
           </form>
@@ -492,9 +515,9 @@ function SsoStep({
     <section className="flex w-80 flex-col justify-center">
       <div className="space-y-4">
         <BackButton onClick={onCancel} />
-        <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
+        <Forms.Section.Header variant="auth">
           Single sign-on required
-        </h1>
+        </Forms.Section.Header>
         <p className="text-sm text-content-muted">
           <b>Your organization requires single sign-on.</b> You will be
           redirected to your organization's identity provider for

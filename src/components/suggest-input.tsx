@@ -119,7 +119,7 @@ export default function SuggestInput({
       <PopoverContent
         align="start"
         sideOffset={4}
-        className="w-(--radix-popover-trigger-width) p-1"
+        className="w-(--radix-popover-trigger-width) p-1 pb-1.5"
         onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => e.preventDefault()}
         onInteractOutside={(e) => {
@@ -146,7 +146,7 @@ export default function SuggestInput({
                     index === activeIndex && "bg-accent",
                   )}
                 >
-                  <span className="min-w-0 truncate text-content-loud">
+                  <span className="mb-0.5 min-w-0 truncate text-content-loud">
                     {option.label ?? option.value}
                   </span>
                   {option.badge && (

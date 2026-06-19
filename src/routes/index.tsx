@@ -7,11 +7,11 @@ export const Route = createFileRoute("/")({
       return redirect({ to: "/auth", replace: true })
     }
 
-    const token =
-      localStorage.getItem("token") ?? sessionStorage.getItem("token")
+    const tokenId =
+      localStorage.getItem("tokenId") ?? sessionStorage.getItem("tokenId")
 
     return redirect({
-      to: token ? "/$accountId/app/dashboard" : "/$accountId/auth/login",
+      to: tokenId ? "/$accountId/app/dashboard" : "/$accountId/auth/login",
       params: { accountId: keygen.config.id },
       replace: true,
     })

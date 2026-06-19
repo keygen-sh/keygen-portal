@@ -73,7 +73,7 @@ export default function RegisterForm() {
                   void form.handleSubmit(onSubmit)(e)
                 }}
                 noValidate
-                className="my-3 w-full space-y-7"
+                className="my-3 w-full space-y-8"
               >
                 <div className="flex flex-col space-y-4">
                   <Forms.Section.Header variant="auth">
@@ -84,10 +84,12 @@ export default function RegisterForm() {
                   </h2>
                 </div>
 
-                <Auth.Form.Fields
-                  include={["email", "password"]}
-                  autoFocus="email"
-                />
+                <div className="space-y-4">
+                  <Auth.Form.Fields
+                    include={["email", "password"]}
+                    autoFocus="email"
+                  />
+                </div>
 
                 <div className="flex flex-col space-y-4">
                   <Button

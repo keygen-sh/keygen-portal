@@ -9,6 +9,7 @@ export class Client {
   private environmentToken?: string | null
   private environment?: string | null
   private user?: string | null
+  private account?: string | null
   private tokenId?: string | null
 
   constructor(token?: string | null, environment?: string | null) {
@@ -32,12 +33,20 @@ export class Client {
     this.user = id
   }
 
+  public setAccount(id: string | null) {
+    this.account = id
+  }
+
   public setTokenId(id: string | null) {
     this.tokenId = id
   }
 
   public get currentUser(): string | null | undefined {
     return this.user
+  }
+
+  public get currentAccount(): string | null | undefined {
+    return this.account
   }
 
   public get currentTokenId(): string | null | undefined {

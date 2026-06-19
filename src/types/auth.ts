@@ -1,4 +1,5 @@
 import { APIResponse } from "@/types/api"
+import type { FieldNames } from "@/schemas/auth"
 
 export enum AuthErrorCode {
   PasswordRequired = "PASSWORD_REQUIRED",
@@ -69,3 +70,12 @@ export interface Auth {
 }
 
 export type AuthResponse = APIResponse<Auth>
+
+export const AuthFormFieldDescriptions: Readonly<Record<FieldNames, string>> = {
+  email: "The email address associated with your account.",
+  password: "The password for your account.",
+  newPassword: "Choose a new password. Must be at least 8 characters.",
+  slug: 'This can either be your Keygen account\'s "slug" or its unique ID.',
+  remember: "Keep your session active on this device.",
+  otp: "The 6-digit code from your two-factor authentication app.",
+} as const

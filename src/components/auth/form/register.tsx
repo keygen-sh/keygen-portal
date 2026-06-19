@@ -74,7 +74,7 @@ export default function RegisterForm() {
           isRegistered && "pointer-events-none opacity-0",
         )}
       >
-        <Forms.Provider form={form}>
+        <Forms.Provider form={form} guard={false}>
           <Forms.Container.Page>
             <section className="flex w-80 flex-col justify-center">
               <form

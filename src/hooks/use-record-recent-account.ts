@@ -11,9 +11,9 @@ export function useRecordRecentAccount(): void {
   useEffect(() => {
     if (keygen.config.hasFixedAccount || !account) return
 
-    addRecentAccount({
-      id: account.attributes.slug,
-      name: account.attributes.name,
-    })
+    const { slug, name } = account.attributes
+    if (!name) return
+
+    addRecentAccount({ id: account.id, slug, name })
   }, [account])
 }

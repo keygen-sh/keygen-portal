@@ -1,8 +1,9 @@
-const STORAGE_KEY = "keygen.account.recent.v1"
+const STORAGE_KEY = "keygen.account.recent"
 const MAX_RECENT = 5
 
 export interface RecentAccount {
   id: string
+  slug: string
   name: string
 }
 
@@ -14,7 +15,9 @@ export function getRecentAccounts(): RecentAccount[] {
     if (!raw) return []
 
     const parsed = JSON.parse(raw) as unknown
-    return Array.isArray(parsed) ? (parsed as RecentAccount[]) : []
+    return Array.isArray(parsed)
+      ? (parsed as RecentAccount[]).slice(0, MAX_RECENT)
+      : []
   } catch {
     return []
   }

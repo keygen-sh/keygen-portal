@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 
-import { OtpInput } from "@/components/otp-input"
 import {
   FormField,
   FormItem,
@@ -18,6 +17,7 @@ import { toast } from "@/lib/toast"
 import { type SecondFactor } from "@/types/second-factors"
 
 import * as Forms from "@/components/forms"
+import OtpInput from "@/components/otp-input"
 
 const otpSchema = z.object({
   otp: z.string().regex(/^\d{6}$/, "Enter a 6-digit code"),

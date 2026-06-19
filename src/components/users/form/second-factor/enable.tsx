@@ -6,7 +6,6 @@ import { QRCodeSVG } from "qrcode.react"
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { OtpInput } from "@/components/otp-input"
 import {
   FormItem,
   FormField,
@@ -31,6 +30,7 @@ import { type SecondFactor } from "@/types/second-factors"
 
 import * as Forms from "@/components/forms"
 import * as Loading from "@/components/loading"
+import OtpInput from "@/components/otp-input"
 
 type Step = "password" | "setup"
 

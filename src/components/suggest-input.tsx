@@ -26,7 +26,7 @@ interface SuggestInputProps {
   className?: string
 }
 
-export function SuggestInput({
+export default function SuggestInput({
   value,
   onChange,
   options,
@@ -38,16 +38,59 @@ export function SuggestInput({
   className,
 }: SuggestInputProps) {
   const [open, setOpen] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(-1)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const close = () => {
+    setOpen(false)
+    setActiveIndex(-1)
+  }
 
   const select = (next: string) => {
     onChange(next)
-    setOpen(false)
+    close()
     inputRef.current?.focus()
   }
 
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Escape") {
+      if (open) {
+        e.preventDefault()
+        close()
+      }
+      return
+    }
+
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault()
+      if (!open) {
+        setOpen(true)
+        return
+      }
+      if (!options.length) return
+      setActiveIndex((index) => {
+        if (e.key === "ArrowDown") return (index + 1) % options.length
+        return index <= 0 ? options.length - 1 : index - 1
+      })
+      return
+    }
+
+    // intercept enter for highlighted option, otherwise keypress falls
+    // through and the surrounding form submits the typed value as-is.
+    if (e.key === "Enter" && open && options[activeIndex]) {
+      e.preventDefault()
+      select(options[activeIndex].value)
+    }
+  }
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next)
+        if (!next) setActiveIndex(-1)
+      }}
+    >
       <PopoverAnchor asChild>
         <div className="w-full">
           <Input
@@ -58,16 +101,17 @@ export function SuggestInput({
             placeholder={placeholder}
             autoComplete="off"
             aria-invalid={invalid}
+            role="combobox"
+            aria-expanded={open}
             className={className}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={(e) => {
+              onChange(e.target.value)
+              setActiveIndex(-1)
+              if (!open) setOpen(true)
+            }}
             onFocus={() => setOpen(true)}
             onClick={() => setOpen(true)}
-            onKeyDown={(e) => {
-              if (e.key === "Escape" && open) {
-                e.preventDefault()
-                setOpen(false)
-              }
-            }}
+            onKeyDown={onKeyDown}
           />
         </div>
       </PopoverAnchor>
@@ -87,14 +131,20 @@ export function SuggestInput({
       >
         {options.length > 0 ? (
           <ScrollArea className={cn(options.length > 5 && "h-48")}>
-            <div className="space-y-px">
-              {options.map((option) => (
+            <div className="space-y-px" role="listbox">
+              {options.map((option, index) => (
                 <button
                   key={option.value}
                   type="button"
+                  role="option"
+                  aria-selected={index === activeIndex}
+                  onMouseEnter={() => setActiveIndex(index)}
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => select(option.value)}
-                  className="group flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent"
+                  className={cn(
+                    "flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm",
+                    index === activeIndex && "bg-accent",
+                  )}
                 >
                   <span className="min-w-0 truncate text-content-loud">
                     {option.label ?? option.value}

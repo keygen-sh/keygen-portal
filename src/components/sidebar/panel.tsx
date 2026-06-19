@@ -39,7 +39,6 @@ import {
 
 import {
   type LucideIcon,
-  Zap,
   Key,
   User,
   Home,
@@ -70,7 +69,6 @@ enum ViewId {
   Home = "home",
   Licensing = "licensing",
   Distribution = "distribution",
-  Automate = "automate",
   Webhooks = "webhooks",
   Access = "access",
   Security = "security",
@@ -214,7 +212,6 @@ const VIEWS: View[] = [
       },
     ]),
   },
-  { id: ViewId.Automate, label: "Automate", icon: Zap, routes: [] },
   {
     id: ViewId.Webhooks,
     label: "Webhooks",

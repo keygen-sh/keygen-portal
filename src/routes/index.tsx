@@ -3,6 +3,8 @@ import * as keygen from "@/keygen"
 
 export const Route = createFileRoute("/")({
   loader: () => {
+    keygen.config.setAccountId(null)
+
     if (!keygen.config.id) {
       return redirect({ to: "/auth", replace: true })
     }

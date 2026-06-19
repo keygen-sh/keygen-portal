@@ -1,11 +1,6 @@
 const CLOUD_HOSTS = ["api.keygen.sh", "api.keygen.dev"]
 
-const RESERVED_SEGMENTS = new Set(["auth", "sso"])
-
-function accountFromUrl(): string {
-  const segment = window.location.pathname.split("/").filter(Boolean)[0]
-  return segment && !RESERVED_SEGMENTS.has(segment) ? segment : ""
-}
+let activeAccountId = ""
 
 const config = {
   host: import.meta.env.VITE_KEYGEN_HOST,
@@ -18,7 +13,11 @@ const config = {
   version: import.meta.env.VITE_KEYGEN_VERSION,
 
   get id(): string {
-    return import.meta.env.VITE_KEYGEN_ACCOUNT_ID || accountFromUrl()
+    return import.meta.env.VITE_KEYGEN_ACCOUNT_ID || activeAccountId
+  },
+
+  setAccountId(id: string | null): void {
+    activeAccountId = id ?? ""
   },
 
   get hasFixedAccount(): boolean {

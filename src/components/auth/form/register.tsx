@@ -1,137 +1,160 @@
 import { useState } from "react"
-import { useNavigate, Link } from "@tanstack/react-router"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useNavigate, Link } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
-import { Form } from "@/components/ui/form"
+
+import { cn } from "@/lib/utils"
 
 import * as keygen from "@/keygen"
+
 import * as Schemas from "@/schemas"
 
-import Fields from "./fields"
-import * as Loading from "@/components/loading"
+import * as Auth from "@/components/auth"
+import * as Forms from "@/components/forms"
+import * as Motion from "@/components/motion"
+
+const TERMS_URL = "https://keygen.sh/terms"
+const PRIVACY_URL = "https://keygen.sh/privacy"
 
 export default function RegisterForm() {
   const navigate = useNavigate()
-  const [showIdField, setShowIdField] = useState(false)
 
   const form = useForm<Schemas.Auth.RegisterValues>({
     resolver: zodResolver(Schemas.Auth.RegisterSchema),
     mode: "onChange",
-    defaultValues: { username: "", password: "", companyId: "" },
+    defaultValues: { email: "", password: "" },
   })
 
-  // TODO(cazden) API call to check if email is available
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async function checkEmailAvailability(_email: string) {
-    await new Promise((resolve) => setTimeout(resolve, 1000)) // Dummy API call
+  const [isRegistered, setIsRegistered] = useState(false)
 
-    return false
+  // TODO(cazden) Handle registration & auth
+  function onSubmit() {
+    setIsRegistered(true)
+    setTimeout(() => {
+      void navigate({
+        to: "/$accountId/app/dashboard",
+        params: { accountId: keygen.config.id },
+      })
+    }, 5000)
   }
 
-  async function onSubmit(values: Schemas.Auth.RegisterValues) {
-    const isAvailable = await checkEmailAvailability(values.username)
-
-    if (!isAvailable) {
-      form.setError("username", {
-        type: "manual",
-        message: "This email is already registered.",
-      })
-      return
-    }
-
-    // Extract domain and slug from email
-    const parts = values.username.split("@")
-    const segments = parts[1].split(".")
-    const domain = segments.slice(0, 2).join("-").toLowerCase()
-    const slug = segments[0].toLowerCase()
-
-    // Dummy domain check
-    if (domain === "umbral-tech" && !values.companyId) {
-      setShowIdField(true)
-      form.setError("companyId", {
-        type: "manual",
-        message: "Company ID already exists for this domain",
-      })
-      return
-    }
-
-    // TODO(cazden) Handle account creation
-    console.log(
-      `Creating account for ${values.username} with slug: ${slug}${
-        values.companyId ? ` and companyId: ${values.companyId}` : ""
-      }`,
-    )
-
-    void navigate({
-      to: "/$accountId/app/dashboard",
-      params: { accountId: keygen.config.id },
-    })
-  }
-
-  const isSubmitting = form.formState.isSubmitting
+  const { isSubmitting } = form.formState
 
   return (
-    <section className="flex w-80 flex-col justify-center">
-      <Form {...form}>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            void form.handleSubmit(onSubmit)(e)
-          }}
-          noValidate
-          className="my-3 w-full space-y-7"
-        >
-          <div className="flex flex-col space-y-4">
-            <h1 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none">
-              Create an account
-            </h1>
-            <h2 className="text-sm text-content-muted">
-              You're one step away from joining Keygen.
-            </h2>
-          </div>
+    <div className="relative">
+      <div
+        className={cn(
+          "pointer-events-none absolute inset-0 flex flex-col items-center justify-center opacity-0 transition-opacity duration-300 ease-in-out",
+          isRegistered && "pointer-events-auto opacity-100",
+        )}
+      >
+        <Motion.Terminal
+          text="*keygen music intensifies*"
+          active={isRegistered}
+        />
 
-          <Fields include={["username"]} autoFocus="username" />
-          {showIdField && <Fields include={["companyId"]} />}
-          <Fields include={["password"]} />
-
+        {/* TODO(cazden) remove this div after registration is implemented */}
+        <div className="mt-8 flex flex-col items-center justify-center">
+          <p className="text-xs text-content-disabled">// pardon our dust</p>
           <Button
-            type="submit"
-            size="lg"
-            className="w-full"
-            disabled={isSubmitting}
+            size="link"
+            variant="link"
+            onClick={() => setIsRegistered(false)}
+            className="w-fit text-content-disabled"
           >
-            {isSubmitting ? (
-              <Loading.Dots className="bg-background" />
-            ) : (
-              "Continue"
-            )}
+            back
           </Button>
-        </form>
-      </Form>
-
-      <div className="space-x-2 rounded border border-content-subdued p-2 text-center text-sm select-none">
-        <span className="text-content-subdued">Already got an account?</span>
-        <Button
-          asChild
-          variant="link"
-          size="link"
-          className={
-            isSubmitting
-              ? "pointer-events-none text-content-disabled"
-              : "pointer-events-auto text-content-loud"
-          }
-        >
-          <Link
-            to="/$accountId/auth/login"
-            params={{ accountId: keygen.config.id }}
-            className="py-0.5 font-bold"
-          >
-            Log in
-          </Link>
-        </Button>
+        </div>
       </div>
-    </section>
+      <div
+        className={cn(
+          "opacity-100 transition-opacity duration-300 ease-in-out",
+          isRegistered && "pointer-events-none opacity-0",
+        )}
+      >
+        <Forms.Provider form={form}>
+          <Forms.Container.Page>
+            <section className="flex w-80 flex-col justify-center">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  void form.handleSubmit(onSubmit)(e)
+                }}
+                noValidate
+                className="my-3 w-full space-y-7"
+              >
+                <div className="flex flex-col space-y-4">
+                  <Forms.Section.Header variant="auth">
+                    Create an account
+                  </Forms.Section.Header>
+                  <h2 className="text-sm text-content-subdued">
+                    You're one step away from joining Keygen.
+                  </h2>
+                </div>
+
+                <Auth.Form.Fields
+                  include={["email", "password"]}
+                  autoFocus="email"
+                />
+
+                <div className="flex flex-col space-y-4">
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full"
+                    disabled={isSubmitting}
+                  >
+                    Sign up
+                  </Button>
+                  <p className="w-52 text-xs text-content-subdued select-none">
+                    By clicking <b>Sign Up</b>, you agree to our{" "}
+                    <a
+                      href={TERMS_URL}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="underline transition-colors duration-150 hover:text-content-loud"
+                    >
+                      Terms of Service
+                    </a>{" "}
+                    and{" "}
+                    <a
+                      href={PRIVACY_URL}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="underline transition-colors duration-150 hover:text-content-loud"
+                    >
+                      Privacy Policy
+                    </a>
+                    .
+                  </p>
+                </div>
+
+                <div className="space-x-2 rounded border border-accent p-2 text-center text-sm select-none">
+                  <span className="text-content-subdued">
+                    Already have an account?
+                  </span>
+                  <Button
+                    asChild
+                    variant="link"
+                    size="link"
+                    className="text-content-loud"
+                  >
+                    <Link
+                      to="/$accountId/auth/login"
+                      params={{ accountId: keygen.config.id }}
+                      className="py-0.5 font-bold"
+                    >
+                      Log in
+                    </Link>
+                  </Button>
+                </div>
+              </form>
+            </section>
+          </Forms.Container.Page>
+        </Forms.Provider>
+      </div>
+    </div>
   )
 }

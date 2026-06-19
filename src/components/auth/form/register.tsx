@@ -1,13 +1,11 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useNavigate, Link } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 
 import { cn } from "@/lib/utils"
-
-import * as keygen from "@/keygen"
 
 import * as Schemas from "@/schemas"
 
@@ -19,8 +17,6 @@ const TERMS_URL = "https://keygen.sh/terms"
 const PRIVACY_URL = "https://keygen.sh/privacy"
 
 export default function RegisterForm() {
-  const navigate = useNavigate()
-
   const form = useForm<Schemas.Auth.RegisterValues>({
     resolver: zodResolver(Schemas.Auth.RegisterSchema),
     mode: "onChange",
@@ -32,12 +28,6 @@ export default function RegisterForm() {
   // TODO(cazden) Handle registration & auth
   function onSubmit() {
     setIsRegistered(true)
-    setTimeout(() => {
-      void navigate({
-        to: "/$accountId/app/dashboard",
-        params: { accountId: keygen.config.id },
-      })
-    }, 5000)
   }
 
   const { isSubmitting } = form.formState
@@ -141,11 +131,7 @@ export default function RegisterForm() {
                     size="link"
                     className="text-content-loud"
                   >
-                    <Link
-                      to="/$accountId/auth/login"
-                      params={{ accountId: keygen.config.id }}
-                      className="py-0.5 font-bold"
-                    >
+                    <Link to="/auth" className="py-0.5 font-bold">
                       Log in
                     </Link>
                   </Button>

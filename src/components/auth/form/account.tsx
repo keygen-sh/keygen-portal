@@ -1,8 +1,10 @@
 import { useForm } from "react-hook-form"
-import { useNavigate } from "@tanstack/react-router"
+import { useNavigate, Link } from "@tanstack/react-router"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
+
+import * as keygen from "@/keygen"
 
 import * as Schemas from "@/schemas"
 import * as Forms from "@/components/forms"
@@ -59,6 +61,27 @@ export default function AccountForm() {
               )}
             </Button>
           </form>
+
+          {!keygen.config.hasFixedAccount && (
+            <div className="space-x-2 rounded border border-content-subdued p-2 text-center text-sm select-none">
+              <span className="text-content-subdued">
+                Don't have an account?
+              </span>
+              <Button
+                asChild
+                variant="link"
+                size="link"
+                className="text-content-loud"
+              >
+                <Link
+                  to="/auth/register"
+                  className="text-content-main underline-slide py-0.5 font-bold"
+                >
+                  Create one
+                </Link>
+              </Button>
+            </div>
+          )}
         </section>
       </Forms.Container.Page>
     </Forms.Provider>

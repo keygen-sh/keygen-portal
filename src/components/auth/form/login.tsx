@@ -2,6 +2,7 @@ import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate, Link } from "@tanstack/react-router"
+import { Undo2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 
@@ -13,6 +14,7 @@ import { AuthErrorCode, type Auth } from "@/types/auth"
 
 import { useSlide } from "@/hooks/use-slide"
 import { useSession } from "@/hooks/use-session"
+import { useMobile } from "@/hooks/use-mobile"
 
 import { cn } from "@/lib/utils"
 import { toast } from "@/lib/toast"
@@ -24,6 +26,16 @@ import * as Forms from "@/components/forms"
 import * as Motion from "@/components/motion"
 import * as Loading from "@/components/loading"
 import BackButton from "@/components/back-button"
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip"
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover"
 
 type Step = "email" | "password" | "verify" | "sso"
 
@@ -129,6 +141,7 @@ function EmailStep({
   onSsoRequired: (email: string, redirectUrl: string) => void
   onBack: () => void
 }) {
+  const isMobile = useMobile()
   const accountLabel = useMemo(() => {
     const id = keygen.config.id
     const recent = getRecentAccounts().find(
@@ -225,23 +238,49 @@ function EmailStep({
             </Forms.Section.Header>
 
             {!keygen.config.hasFixedAccount && (
-              <div className="space-x-1 text-sm select-none">
-                <span className="text-content-subdued">
-                  Signing in to {accountLabel}.{" "}
-                </span>
-                <Button
-                  asChild
-                  variant="link"
-                  size="link"
-                  className="text-content-loud"
-                >
-                  <Link
-                    to="/auth"
-                    className="text-content-main underline-slide font-bold"
-                  >
-                    Use a different account
-                  </Link>
-                </Button>
+              <div className="space-x-1 text-sm text-content-subdued select-none">
+                Signing in to{" "}
+                {isMobile ? (
+                  <Popover>
+                    <PopoverTrigger onClick={(e) => e.stopPropagation()}>
+                      <span className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted">
+                        {accountLabel}
+                        <Undo2 className="text-content ml-1 inline size-3" />
+                      </span>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      sideOffset={4}
+                      className="max-w-56 bg-background-4 text-content-muted"
+                    >
+                      <strong>Not the right account?</strong>
+                      <br />
+                      <Link to="/auth" className="text-primary">
+                        Switch to a different one.
+                      </Link>
+                    </PopoverContent>
+                  </Popover>
+                ) : (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Link
+                        to="/auth"
+                        className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted"
+                      >
+                        {accountLabel}
+                        <Undo2 className="text-content ml-1 inline size-3" />
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="right"
+                      align="start"
+                      sideOffset={4}
+                      className="max-w-56 bg-background-4 text-wrap text-content-muted"
+                    >
+                      <strong>Not the right account?</strong> Switch to a
+                      different one.
+                    </TooltipContent>
+                  </Tooltip>
+                )}
               </div>
             )}
 

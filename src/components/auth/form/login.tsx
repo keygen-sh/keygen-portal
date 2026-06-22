@@ -41,6 +41,8 @@ type Step = "email" | "password" | "verify" | "sso"
 
 const STEP_ORDER: readonly Step[] = ["email", "password", "verify", "sso"]
 
+const truncate = truncator("middle", { maxLength: 24 })
+
 export default function LoginForm() {
   const navigate = useNavigate()
   const session = useSession()
@@ -149,7 +151,7 @@ function EmailStep({
     )
     if (recent?.name) return recent.name
 
-    return truncator("middle", { maxLength: 16 })(id)
+    return truncate(id)
   }, [])
 
   const form = useForm<Schemas.Auth.LoginValues>({
@@ -316,6 +318,9 @@ function PasswordStep({
   onAuthenticated: (data: Auth, remember: boolean) => void
   onBack: () => void
 }) {
+  const isMobile = useMobile()
+  const emailLabel = truncate(email)
+
   const form = useForm<Schemas.Auth.PasswordValues>({
     resolver: zodResolver(Schemas.Auth.PasswordSchema),
     mode: "onChange",
@@ -372,9 +377,59 @@ function PasswordStep({
             className="my-3 space-y-7"
           >
             <BackButton onClick={onBack} />
-            <Forms.Section.Header variant="auth">
+            <Forms.Section.Header variant="auth" className="mb-1">
               Enter your password
             </Forms.Section.Header>
+
+            <div className="space-x-1 text-sm text-content-subdued select-none">
+              Signing in as{" "}
+              {isMobile ? (
+                <Popover>
+                  <PopoverTrigger onClick={(e) => e.stopPropagation()}>
+                    <span className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted">
+                      {emailLabel}
+                      <Undo2 className="text-content ml-1 inline size-3" />
+                    </span>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    sideOffset={4}
+                    className="max-w-56 bg-background-4 text-content-muted"
+                  >
+                    <strong>Not the right email?</strong>
+                    <br />
+                    <button
+                      className="cursor-pointer text-primary"
+                      type="button"
+                      onClick={onBack}
+                    >
+                      Switch to a different one.
+                    </button>
+                  </PopoverContent>
+                </Popover>
+              ) : (
+                <Tooltip>
+                  <TooltipTrigger>
+                    <button
+                      className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted"
+                      type="button"
+                      onClick={onBack}
+                    >
+                      {emailLabel}
+                      <Undo2 className="text-content ml-1 inline size-3" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="right"
+                    align="start"
+                    sideOffset={4}
+                    className="max-w-56 bg-background-4 text-wrap text-content-muted"
+                  >
+                    <strong>Not the right email?</strong> Switch to a different
+                    one.
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </div>
 
             <div className="space-y-2">
               <Fields include={["password"]} autoFocus="password" />

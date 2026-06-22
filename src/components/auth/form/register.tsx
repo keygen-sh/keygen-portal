@@ -76,7 +76,7 @@ export default function RegisterForm() {
                 className="my-3 w-full space-y-8"
               >
                 <div className="flex flex-col space-y-4">
-                  <Forms.Section.Header variant="auth">
+                  <Forms.Section.Header variant="auth" className="mb-1">
                     Create an account
                   </Forms.Section.Header>
                   <h2 className="text-sm text-content-subdued">
@@ -100,8 +100,9 @@ export default function RegisterForm() {
                   >
                     Sign up
                   </Button>
-                  <p className="w-52 text-xs text-content-subdued select-none">
-                    By clicking <b>Sign Up</b>, you agree to our{" "}
+                  <p className="text-xs text-content-subdued select-none">
+                    By clicking the above <strong>Sign Up</strong> button, you
+                    agree to our{" "}
                     <a
                       href={TERMS_URL}
                       target="_blank"

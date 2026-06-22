@@ -113,6 +113,7 @@ export default function LoginForm() {
             setSsoRedirectUrl(url)
             setStep("sso")
           }}
+          onBack={() => navigate({ to: "/auth" })}
         />
       )}
     </Motion.Slide>
@@ -122,9 +123,11 @@ export default function LoginForm() {
 function EmailStep({
   onPasswordRequired,
   onSsoRequired,
+  onBack,
 }: {
   onPasswordRequired: (email: string) => void
   onSsoRequired: (email: string, redirectUrl: string) => void
+  onBack: () => void
 }) {
   const accountLabel = useMemo(() => {
     const id = keygen.config.id
@@ -216,7 +219,8 @@ function EmailStep({
             noValidate
             className="my-3 w-full space-y-7"
           >
-            <Forms.Section.Header variant="auth" className="mb-0">
+            <BackButton onClick={onBack} />
+            <Forms.Section.Header variant="auth" className="mb-1">
               Sign in to your account
             </Forms.Section.Header>
 

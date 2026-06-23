@@ -234,7 +234,7 @@ function EmailStep({
             noValidate
             className="my-3 w-full space-y-7"
           >
-            <BackButton onClick={onBack} />
+            {!keygen.config.hasFixedAccount && <BackButton onClick={onBack} />}
             <Forms.Section.Header variant="auth" className="mb-1">
               Sign in to your account
             </Forms.Section.Header>

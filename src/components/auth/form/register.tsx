@@ -1,17 +1,26 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { Link } from "@tanstack/react-router"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
 
 import { cn } from "@/lib/utils"
+import { handleFormError } from "@/lib/form-errors"
 
 import * as Schemas from "@/schemas"
+
+import { APIError } from "@/types/api"
+import { useCreateAccount } from "@/queries/accounts"
+
+import * as keygen from "@/keygen"
 
 import * as Auth from "@/components/auth"
 import * as Forms from "@/components/forms"
 import * as Motion from "@/components/motion"
+import * as Loading from "@/components/loading"
+
+const REDIRECT_DELAY_MS = 5_000
 
 const TERMS_URL = "https://keygen.sh/terms"
 const PRIVACY_URL = "https://keygen.sh/privacy"
@@ -23,11 +32,47 @@ export default function RegisterForm() {
     defaultValues: { email: "", password: "" },
   })
 
+  const createAccount = useCreateAccount()
   const [isRegistered, setIsRegistered] = useState(false)
 
-  // TODO(cazden) Handle registration & auth
-  function onSubmit() {
-    setIsRegistered(true)
+  async function onSubmit(values: Schemas.Auth.RegisterValues) {
+    try {
+      const account = await createAccount.mutateAsync(values)
+
+      const { data, errors } = await keygen.authenticate({
+        email: values.email,
+        password: values.password,
+        account: account.id,
+      })
+
+      if (errors?.length || !data) {
+        throw new APIError(
+          errors?.[0] ?? {
+            title: "We couldn't sign you in. Please try logging in.",
+          },
+        )
+      }
+
+      sessionStorage.removeItem("tokenId")
+      sessionStorage.removeItem("token")
+      localStorage.setItem("tokenId", data.id)
+      if (!keygen.config.isCloud) {
+        localStorage.setItem("token", data.attributes.token)
+      }
+
+      // *keygen music intensifies*
+      setIsRegistered(true)
+      await new Promise((resolve) => setTimeout(resolve, REDIRECT_DELAY_MS))
+
+      window.location.href = `/${account.attributes.slug}/app/dashboard`
+    } catch (error) {
+      setIsRegistered(false)
+      await handleFormError({
+        form,
+        toastMessage: "We couldn't create your account",
+        apiError: error instanceof APIError ? error : undefined,
+      })
+    }
   }
 
   const { isSubmitting } = form.formState
@@ -44,19 +89,6 @@ export default function RegisterForm() {
           text="*keygen music intensifies*"
           active={isRegistered}
         />
-
-        {/* TODO(cazden) remove this div after registration is implemented */}
-        <div className="mt-8 flex flex-col items-center justify-center">
-          <p className="text-xs text-content-disabled">// pardon our dust</p>
-          <Button
-            size="link"
-            variant="link"
-            onClick={() => setIsRegistered(false)}
-            className="w-fit text-content-disabled"
-          >
-            back
-          </Button>
-        </div>
       </div>
       <div
         className={cn(
@@ -98,7 +130,11 @@ export default function RegisterForm() {
                     className="w-full"
                     disabled={isSubmitting}
                   >
-                    Sign up
+                    {isSubmitting ? (
+                      <Loading.Dots className="bg-background" />
+                    ) : (
+                      "Sign up"
+                    )}
                   </Button>
                   <p className="text-xs text-content-subdued select-none">
                     By clicking the above <strong>Sign Up</strong> button, you

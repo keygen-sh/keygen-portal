@@ -1,6 +1,8 @@
 import { useEffect } from "react"
 import { Outlet, useMatches, useNavigate } from "@tanstack/react-router"
 
+import { Toaster } from "@/components/ui/sonner"
+
 import logo from "/logo.svg"
 
 import * as keygen from "@/keygen"
@@ -46,6 +48,7 @@ export default function AuthLayout() {
 
   return (
     <div className="flex min-h-screen">
+      <Toaster />
       <section className="flex w-full flex-col bg-background md:w-1/2">
         <nav className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-4 pt-4 md:pt-8">
           <div className="justify-self-center">

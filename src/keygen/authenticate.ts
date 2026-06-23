@@ -8,12 +8,14 @@ interface AuthProps {
   email: string
   password?: string
   otp?: string
+  account?: string
 }
 
 export async function authenticate({
   email,
   password,
   otp,
+  account,
 }: AuthProps): Promise<AuthResponse> {
   const credentials = btoa(
     unescape(encodeURIComponent(`${email || ""}:${password || ""}`)),
@@ -21,11 +23,14 @@ export async function authenticate({
 
   const body = otp != null ? JSON.stringify({ meta: { otp } }) : undefined
 
-  const result = (await client.request(`/accounts/${config.id}/tokens`, {
-    method: "POST",
-    headers: { Authorization: `Basic ${credentials}` },
-    body,
-  })) as AuthResponse
+  const result = (await client.request(
+    `/accounts/${account ?? config.id}/tokens`,
+    {
+      method: "POST",
+      headers: { Authorization: `Basic ${credentials}` },
+      body,
+    },
+  )) as AuthResponse
 
   return result
 }

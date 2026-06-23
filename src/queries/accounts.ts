@@ -23,6 +23,20 @@ export function useGetAccount() {
   })
 }
 
+export function useCreateAccount() {
+  return useMutation<Account, APIError, Schemas.Auth.RegisterValues>({
+    mutationFn: async (values) => {
+      const response = await keygen.accounts.create(values)
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response.data
+    },
+  })
+}
+
 export function useUpdateAccount() {
   const queryClient = useQueryClient()
 

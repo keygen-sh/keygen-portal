@@ -24,6 +24,10 @@ const config = {
     return Boolean(import.meta.env.VITE_KEYGEN_ACCOUNT_ID)
   },
 
+  get defaultPlanId(): string {
+    return import.meta.env.VITE_KEYGEN_DEFAULT_PLAN_ID || ""
+  },
+
   sentry: {
     dsn: import.meta.env.VITE_SENTRY_DSN,
     environment: import.meta.env.VITE_SENTRY_ENVIRONMENT || "production",

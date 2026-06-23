@@ -1,5 +1,6 @@
 export { default as get } from "./get"
 export { default as plan } from "./plan"
+export { default as create } from "./create"
 export { default as billing } from "./billing"
 export { default as update } from "./update"
 export { default as settings } from "./settings"

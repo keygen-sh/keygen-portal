@@ -301,11 +301,12 @@ const VIEWS: View[] = [
 
 function useActiveView(): View {
   const matchRoute = useMatchRoute()
+  const accountId = keygen.config.id
 
   for (const view of VIEWS) {
     if (
       view.routes.some((o) =>
-        matchRoute({ to: o.to, params: o.params, fuzzy: true }),
+        matchRoute({ to: o.to, params: { accountId }, fuzzy: true }),
       )
     ) {
       return view
@@ -338,6 +339,7 @@ export default function SidebarPanel(): React.ReactElement {
   const activeView = useActiveView()
   const visibleViews = useVisibleViews()
   const { can } = usePermissions()
+  const accountId = keygen.config.id
   const [selectedView, setSelectedView] = useState(activeView)
   const { open, setOpen } = useSidebar()
   const [paletteOpen, setPaletteOpen] = useState(false)
@@ -535,6 +537,7 @@ export default function SidebarPanel(): React.ReactElement {
                       <SidebarMenuButton asChild>
                         <Link
                           {...route}
+                          params={{ accountId }}
                           activeProps={{
                             className: "bg-background-2 text-content-loud",
                           }}

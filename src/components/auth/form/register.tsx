@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { Link } from "@tanstack/react-router"
+import { useNavigate, Link } from "@tanstack/react-router"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
@@ -12,6 +12,8 @@ import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
 import { useCreateAccount } from "@/queries/accounts"
+
+import { useSession } from "@/hooks/use-session"
 
 import * as keygen from "@/keygen"
 
@@ -26,6 +28,9 @@ const TERMS_URL = "https://keygen.sh/terms"
 const PRIVACY_URL = "https://keygen.sh/privacy"
 
 export default function RegisterForm() {
+  const navigate = useNavigate()
+  const session = useSession()
+
   const form = useForm<Schemas.Auth.RegisterValues>({
     resolver: zodResolver(Schemas.Auth.RegisterSchema),
     mode: "onChange",
@@ -53,18 +58,34 @@ export default function RegisterForm() {
         )
       }
 
+      const { id: tokenId, attributes, relationships } = data
+      const { token } = attributes
+      const userId = relationships.bearer.data.id
+      const accountId = relationships.account.data.id
+
       sessionStorage.removeItem("tokenId")
       sessionStorage.removeItem("token")
-      localStorage.setItem("tokenId", data.id)
+
+      localStorage.setItem("tokenId", tokenId)
+      keygen.client.setTokenId(tokenId)
+
       if (!keygen.config.isCloud) {
-        localStorage.setItem("token", data.attributes.token)
+        localStorage.setItem("token", token)
+        keygen.client.setRootToken(token)
       }
+
+      keygen.client.setAccount(accountId)
 
       // *keygen music intensifies*
       setIsRegistered(true)
       await new Promise((resolve) => setTimeout(resolve, REDIRECT_DELAY_MS))
 
-      window.location.href = `/${account.attributes.slug}/app/dashboard`
+      session.setUser(userId)
+
+      void navigate({
+        to: "/$accountId/app/dashboard",
+        params: { accountId },
+      })
     } catch (error) {
       setIsRegistered(false)
       await handleFormError({

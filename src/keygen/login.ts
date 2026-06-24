@@ -30,6 +30,7 @@ export function login(
   }
 
   client.setAccount(accountId)
+  client.setUser(userId)
 
   return { userId, accountId }
 }

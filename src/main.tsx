@@ -4,9 +4,9 @@ import * as Sentry from "@sentry/react"
 import { RouterProvider, createRouter } from "@tanstack/react-router"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { routeTree } from "./routeTree.gen"
-import * as keygen from "@/keygen"
+import * as sentry from "@/sentry"
 
-keygen.sentry.init()
+sentry.init()
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -72,6 +72,9 @@ export default function RegisterForm() {
       })
     } catch (error) {
       setIsRegistered(false)
+
+      console.error(error)
+
       await handleFormError({
         form,
         toastMessage: "We couldn't create your account",

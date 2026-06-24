@@ -54,26 +54,9 @@ export default function LoginForm() {
   const [remember, setRemember] = useState(false)
   const [ssoRedirectUrl, setSsoRedirectUrl] = useState<string | null>(null)
 
-  function login(data: Auth, remember: boolean) {
-    const { id: tokenId, attributes, relationships } = data
-    const { token } = attributes
-    const userId = relationships.bearer.data.id
-    const accountId = relationships.account.data.id
+  function onSubmit(data: Auth, remember: boolean) {
+    const { userId, accountId } = keygen.login(data, { remember })
 
-    const storage = remember ? localStorage : sessionStorage
-    const other = remember ? sessionStorage : localStorage
-    other.removeItem("tokenId")
-    other.removeItem("token")
-
-    storage.setItem("tokenId", tokenId)
-    keygen.client.setTokenId(tokenId)
-
-    if (!keygen.config.isCloud) {
-      storage.setItem("token", token)
-      keygen.client.setRootToken(token)
-    }
-
-    keygen.client.setAccount(accountId)
     session.setUser(userId)
 
     void navigate({
@@ -93,7 +76,7 @@ export default function LoginForm() {
             setRemember(rememberValue)
             setStep("verify")
           }}
-          onAuthenticated={login}
+          onAuthenticated={onSubmit}
           onBack={() => setStep("email")}
         />
       ) : step === "verify" ? (
@@ -102,7 +85,7 @@ export default function LoginForm() {
           email={email}
           password={password}
           remember={remember}
-          onAuthenticated={login}
+          onAuthenticated={onSubmit}
           onPasswordInvalid={() => setStep("password")}
           onBack={() => setStep("email")}
         />

@@ -58,23 +58,7 @@ export default function RegisterForm() {
         )
       }
 
-      const { id: tokenId, attributes, relationships } = data
-      const { token } = attributes
-      const userId = relationships.bearer.data.id
-      const accountId = relationships.account.data.id
-
-      sessionStorage.removeItem("tokenId")
-      sessionStorage.removeItem("token")
-
-      localStorage.setItem("tokenId", tokenId)
-      keygen.client.setTokenId(tokenId)
-
-      if (!keygen.config.isCloud) {
-        localStorage.setItem("token", token)
-        keygen.client.setRootToken(token)
-      }
-
-      keygen.client.setAccount(accountId)
+      const { userId, accountId } = keygen.login(data, { remember: true })
 
       // *keygen music intensifies*
       setIsRegistered(true)

@@ -70,7 +70,7 @@ export class Client {
       Accept: "application/vnd.api+json",
       "Content-Type": "application/vnd.api+json",
       "Keygen-Version": config.version,
-      ...(authToken && !config.isCloud
+      ...(config.isTokenAuthenticated && authToken
         ? { Authorization: `Bearer ${authToken}` }
         : {}),
       ...(options.root || !this.environment
@@ -89,7 +89,7 @@ export class Client {
     const response = await fetch(`${this.host}/${prefix ?? "v1"}${endpoint}`, {
       ...fetchOptions,
       headers,
-      ...(config.isCloud
+      ...(config.isSessionAuthenticated
         ? { credentials: "include" } // cookies are only supported on cloud
         : {}),
     })

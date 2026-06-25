@@ -4,6 +4,7 @@ interface ImportMetaEnv {
   readonly VITE_KEYGEN_HOST: string
   readonly VITE_KEYGEN_MODE: string
   readonly VITE_KEYGEN_VERSION: string
+  readonly VITE_KEYGEN_AUTHENTICATION_SCHEME?: "token" | "session"
   readonly VITE_KEYGEN_ACCOUNT_ID?: string
   readonly VITE_KEYGEN_EDITION?: string
   readonly VITE_KEYGEN_DEFAULT_PLAN_ID?: string

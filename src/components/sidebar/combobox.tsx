@@ -37,9 +37,9 @@ function CeCombobox(): React.ReactElement {
   const { data: account } = useGetAccount()
 
   return (
-    <div className="flex h-9 items-center px-1">
+    <div className="flex h-9 items-start px-1 pt-1">
       <AccountLogo name={account?.attributes.name} className="mr-2" />
-      <div className="flex max-w-32 flex-col text-left text-content-loud">
+      <div className="flex max-w-32 flex-col text-left text-sm text-content-loud">
         {account ? (
           <span className="truncate">{account.attributes.name}</span>
         ) : (

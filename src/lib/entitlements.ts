@@ -6,6 +6,16 @@ import { settleMutations } from "@/queries/utils"
 
 import { toast } from "@/lib/toast"
 
+import { AttributeType } from "@/components/attribute/value"
+
+export const entitlementAttributeTypeSchema: Record<
+  keyof Omit<Entitlement["attributes"], "metadata" | "created" | "updated">,
+  AttributeType
+> = {
+  name: "string",
+  code: "raw",
+}
+
 type EntitlementValues = {
   attach?: string[]
   create?: { name: string; code: string; metadata?: Record<string, unknown> }[]

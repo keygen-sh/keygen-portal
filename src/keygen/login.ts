@@ -23,8 +23,7 @@ export function login(
   storage.setItem("tokenId", tokenId)
   client.setTokenId(tokenId)
 
-  // self-hosted has no cookie, so raw token is persisted and sent as a bearer.
-  if (!config.isCloud) {
+  if (config.isTokenAuthenticated) {
     storage.setItem("token", token)
     client.setRootToken(token)
   }

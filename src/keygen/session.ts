@@ -33,7 +33,7 @@ async function attemptRestoreSession(): Promise<RestoredSession> {
   const tokenId =
     localStorage.getItem("tokenId") ?? sessionStorage.getItem("tokenId")
 
-  if (!config.isCloud && token && tokenId) {
+  if (config.isTokenAuthenticated && token && tokenId) {
     const { data } = await verify({ token, tokenId })
 
     if (data) {

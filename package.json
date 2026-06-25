@@ -9,15 +9,16 @@
   },
   "scripts": {
     "dev": "vite",
+    "generate": "pnpm generate:routes",
     "generate:routes": "tsr generate",
-    "build": "tsc -b && vite build",
+    "build": "pnpm generate && tsc -b && vite build",
     "lint": "eslint ./src --fix",
     "lint:check": "eslint ./src",
     "format": "prettier --write ./src",
     "format:check": "prettier --check ./src",
-    "preview": "pnpm --filter keygen-portal... run build && wrangler dev",
+    "preview": "pnpm build && wrangler dev",
     "test": "vitest run --passWithNoTests",
-    "deploy": "pnpm --filter keygen-portal... run build && wrangler deploy"
+    "deploy": "pnpm build && wrangler deploy"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

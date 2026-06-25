@@ -31,6 +31,7 @@ import {
 import {
   Menu,
   GitFork,
+  Logs,
   Copy,
   SquarePlus,
   SquarePen,
@@ -80,6 +81,7 @@ export default function EntitlementDetails() {
   const [open, setOpen] = useState({
     edit: false,
     delete: false,
+    attributes: false,
   })
 
   useEffect(() => {
@@ -247,6 +249,17 @@ export default function EntitlementDetails() {
                 <CollapsibleCard title="Metadata" contentClass="p-0">
                   <Metadata resource={entitlement} />
                 </CollapsibleCard>
+
+                {isMobile && (
+                  <Button
+                    variant="outline"
+                    onClick={() => toggleOpen("attributes", true)}
+                    className="w-full text-content-muted"
+                  >
+                    <Logs className="mt-0.5 size-4 text-content-normal" />
+                    View All Attributes
+                  </Button>
+                )}
               </div>
             </div>
           </ScrollArea>
@@ -322,7 +335,16 @@ export default function EntitlementDetails() {
                 />
               </TabsContent>
             </SidebarContent>
-            <SidebarFooter className="p-4"></SidebarFooter>
+            <SidebarFooter className="p-4">
+              <Button
+                variant="outline"
+                onClick={() => toggleOpen("attributes", true)}
+                className="w-full text-content-muted"
+              >
+                <Logs className="mt-0.5 size-4 text-content-normal" />
+                View All Attributes
+              </Button>
+            </SidebarFooter>
           </Sidebar>
         </Tabs>
       )}
@@ -343,6 +365,14 @@ export default function EntitlementDetails() {
         variant="destructive"
         confirmText={entitlement?.attributes.name || "delete entitlement"}
       />
+
+      {entitlement && (
+        <Entitlements.AdvancedDialog
+          id={entitlement.id}
+          open={open.attributes}
+          onOpenChange={() => toggleOpen("attributes", false)}
+        />
+      )}
     </section>
   )
 }

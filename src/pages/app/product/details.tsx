@@ -31,6 +31,7 @@ import {
 
 import {
   Menu,
+  Logs,
   Copy,
   Lock,
   Award,
@@ -91,6 +92,7 @@ export default function ProductDetails() {
   const [open, setOpen] = useState({
     edit: false,
     delete: false,
+    attributes: false,
   })
 
   useEffect(() => {
@@ -423,6 +425,17 @@ export default function ProductDetails() {
                     />
                   </CollapsibleCard>
                 )}
+
+                {isMobile && (
+                  <Button
+                    variant="outline"
+                    onClick={() => toggleOpen("attributes", true)}
+                    className="w-full text-content-muted"
+                  >
+                    <Logs className="mt-0.5 size-4 text-content-normal" />
+                    View All Attributes
+                  </Button>
+                )}
               </div>
             </div>
           </ScrollArea>
@@ -497,7 +510,16 @@ export default function ProductDetails() {
                 />
               </TabsContent>
             </SidebarContent>
-            <SidebarFooter></SidebarFooter>
+            <SidebarFooter className="p-4">
+              <Button
+                variant="outline"
+                onClick={() => toggleOpen("attributes", true)}
+                className="w-full text-content-muted"
+              >
+                <Logs className="mt-0.5 size-4 text-content-normal" />
+                View All Attributes
+              </Button>
+            </SidebarFooter>
           </Sidebar>
         </Tabs>
       )}
@@ -518,6 +540,14 @@ export default function ProductDetails() {
         variant="destructive"
         confirmText={product?.attributes.name || "delete product"}
       />
+
+      {product && (
+        <Products.AdvancedDialog
+          id={product.id}
+          open={open.attributes}
+          onOpenChange={() => toggleOpen("attributes", false)}
+        />
+      )}
     </section>
   )
 }

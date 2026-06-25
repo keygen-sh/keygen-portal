@@ -14,7 +14,7 @@ import {
   CommandItem,
 } from "@/components/ui/command"
 
-import { Droplet, Check, ChevronsUpDown, Circle } from "lucide-react"
+import { Check, ChevronsUpDown, Circle } from "lucide-react"
 
 import { Environment } from "@/types/environments"
 
@@ -24,6 +24,8 @@ import { useEnvironment } from "@/hooks/use-environment"
 import { useEdition } from "@/hooks/use-edition"
 
 import * as Environments from "@/components/environments"
+
+import { AccountLogo } from "@/components/sidebar/account-logo"
 
 const GLOBAL_ENVIRONMENT = {
   id: "__global",
@@ -36,8 +38,7 @@ function CeCombobox(): React.ReactElement {
 
   return (
     <div className="flex h-9 items-center px-1">
-      {/* TODO(cazden) Use company logo */}
-      <Droplet className="mr-2 size-6 rounded-sm bg-content-loud p-1 text-background" />
+      <AccountLogo name={account?.attributes.name} className="mr-2" />
       <div className="flex max-w-32 flex-col text-left text-content-loud">
         {account ? (
           <span className="truncate">{account.attributes.name}</span>
@@ -108,14 +109,8 @@ function EeCombobox(): React.ReactElement {
     <>
       <Popover open={openPopover} onOpenChange={setOpenPopover}>
         <PopoverTrigger asChild>
-          <Button
-            variant="ghost"
-            aria-expanded={openPopover}
-            size="default"
-            className="px-1! py-0!"
-          >
-            {/* TODO(cazden) Use company logo */}
-            <Droplet className="mr-2 size-6 rounded-sm bg-content-loud p-1 text-background" />
+          <Button variant="ghost" className="h-auto px-1.5 py-1">
+            <AccountLogo name={account?.attributes.name} className="mr-2" />
 
             <div className="flex max-w-32 flex-col text-left text-content-loud">
               <div className="flex items-center gap-2">

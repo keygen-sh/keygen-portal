@@ -8,6 +8,7 @@ interface ImportMetaEnv {
   readonly VITE_KEYGEN_ACCOUNT_ID?: string
   readonly VITE_KEYGEN_EDITION?: string
   readonly VITE_KEYGEN_DEFAULT_PLAN_ID?: string
+  readonly VITE_LOGODEV_TOKEN?: string
   readonly VITE_SENTRY_DSN?: string
   readonly VITE_SENTRY_ENVIRONMENT?: string
 }

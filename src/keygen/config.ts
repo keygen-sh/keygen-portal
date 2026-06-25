@@ -14,6 +14,7 @@ const config = {
     import.meta.env.VITE_KEYGEN_MODE === "multiplayer" &&
     CLOUD_HOSTS.includes(import.meta.env.VITE_KEYGEN_HOST),
   version: import.meta.env.VITE_KEYGEN_VERSION,
+  logoDevToken: import.meta.env.VITE_LOGODEV_TOKEN,
 
   get id(): string {
     return import.meta.env.VITE_KEYGEN_ACCOUNT_ID || activeAccountId

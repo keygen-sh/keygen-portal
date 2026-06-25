@@ -92,6 +92,14 @@ export const DistributionStrategyDescriptions: Readonly<
     "Only admins can access releases. Download links must be generated server-side. API authentication is required.",
 } as const
 
+export const DistributionStrategyLabels: Readonly<
+  Record<DistributionStrategy, string>
+> = {
+  [DistributionStrategy.Licensed]: "Licensed",
+  [DistributionStrategy.Open]: "Open",
+  [DistributionStrategy.Closed]: "Closed",
+} as const
+
 export const ProductPermissions = [
   "account.read",
   "arch.read",

@@ -3,10 +3,10 @@ import { useParams } from "@tanstack/react-router"
 import { formatDate } from "date-fns"
 
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Tabs, TabsContent } from "@/components/ui/tabs"
+import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Tabs, TabsContent } from "@/components/ui/tabs"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -37,26 +37,28 @@ import {
   EllipsisVertical,
 } from "lucide-react"
 
-import { useGetEntitlement, useRemoveEntitlement } from "@/queries/entitlements"
+import { EntitlementAttributeDescriptions } from "@/types/entitlements"
+
 import { useMobile } from "@/hooks/use-mobile"
 import { useSidebarTab } from "@/hooks/use-sidebar-tab"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
+import { useGetEntitlement, useRemoveEntitlement } from "@/queries/entitlements"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
 
 import * as Property from "@/components/property"
+import * as EventLogs from "@/components/event-logs"
 import * as Attribute from "@/components/attribute"
 import * as Entitlements from "@/components/entitlements"
-import * as EventLogs from "@/components/event-logs"
 import Can from "@/components/can"
 import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
-import ConfirmationModal from "@/components/confirmation-modal"
 import ResourceLink from "@/components/resource-link"
 import CollapsibleCard from "@/components/collapsible-card"
+import ConfirmationModal from "@/components/confirmation-modal"
 
 export default function EntitlementDetails() {
   const { id } = useParams({
@@ -215,9 +217,15 @@ export default function EntitlementDetails() {
               <div className="mt-6 space-y-6 md:mt-8">
                 <CollapsibleCard title="Attributes">
                   <Attribute.Field
-                    variant="outline"
+                    variant="none"
                     label="Code"
-                    value={entitlement.attributes.code}
+                    value={
+                      <Attribute.Value
+                        type="raw"
+                        value={entitlement.attributes.code}
+                        tooltip={EntitlementAttributeDescriptions.code}
+                      />
+                    }
                   />
                 </CollapsibleCard>
 

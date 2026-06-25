@@ -74,3 +74,10 @@ export const IsolationStrategyDescriptions: Readonly<
   [IsolationStrategy.Shared]:
     "The environment will be shared with the global environment. Resources in the global environment will be available as read-only resources.",
 } as const
+
+export const IsolationStrategyLabels: Readonly<
+  Record<IsolationStrategy, string>
+> = {
+  [IsolationStrategy.Isolated]: "Isolated",
+  [IsolationStrategy.Shared]: "Shared",
+} as const

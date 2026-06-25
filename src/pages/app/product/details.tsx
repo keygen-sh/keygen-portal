@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, type ReactNode } from "react"
 import { useParams } from "@tanstack/react-router"
+import { formatDate } from "date-fns"
 
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Tabs, TabsContent } from "@/components/ui/tabs"
+import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Tabs, TabsContent } from "@/components/ui/tabs"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -30,22 +31,27 @@ import {
 
 import {
   Menu,
-  GitFork,
   Copy,
   Lock,
-  Unlock,
   Award,
-  SquarePlus,
+  Unlock,
+  GitFork,
   SquarePen,
+  SquarePlus,
   EllipsisVertical,
 } from "lucide-react"
 
-import { DistributionStrategy } from "@/types/products"
+import {
+  DistributionStrategy,
+  DistributionStrategyLabels,
+  ProductAttributeDescriptions,
+  DistributionStrategyDescriptions,
+} from "@/types/products"
 
-import { useGetProduct, useRemoveProduct } from "@/queries/products"
 import { useMobile } from "@/hooks/use-mobile"
 import { useSidebarTab } from "@/hooks/use-sidebar-tab"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
+import { useGetProduct, useRemoveProduct } from "@/queries/products"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
@@ -62,9 +68,16 @@ import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
 import ResourceLink from "@/components/resource-link"
-import ConfirmationModal from "@/components/confirmation-modal"
+import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
+import ConfirmationModal from "@/components/confirmation-modal"
+
+const DistributionStrategyIcons: Record<DistributionStrategy, ReactNode> = {
+  [DistributionStrategy.Licensed]: <Award className="size-3" />,
+  [DistributionStrategy.Open]: <Unlock className="size-3" />,
+  [DistributionStrategy.Closed]: <Lock className="size-3" />,
+}
 
 export default function ProductDetails() {
   const { id } = useParams({ from: "/$accountId/app/products/$id" })
@@ -195,24 +208,25 @@ export default function ProductDetails() {
             <div className="px-4 py-6 md:px-10 md:py-8">
               <BackButton className="mb-8" />
               <div className="mb-2">
-                {product.attributes.distributionStrategy ===
-                DistributionStrategy.Licensed ? (
-                  <Badge variant="secondary">
-                    <Award className="inline size-4" />
-                    Licensed
-                  </Badge>
-                ) : product.attributes.distributionStrategy ===
-                  DistributionStrategy.Closed ? (
-                  <Badge variant="secondary">
-                    <Lock className="inline size-4" />
-                    Closed
-                  </Badge>
-                ) : (
-                  <Badge variant="secondary">
-                    <Unlock className="inline size-4" />
-                    Open
-                  </Badge>
-                )}
+                <TooltipBadge
+                  variant="secondary"
+                  icon={
+                    DistributionStrategyIcons[
+                      product.attributes.distributionStrategy
+                    ]
+                  }
+                  value={
+                    DistributionStrategyLabels[
+                      product.attributes.distributionStrategy
+                    ]
+                  }
+                  tooltip={
+                    DistributionStrategyDescriptions[
+                      product.attributes.distributionStrategy
+                    ]
+                  }
+                  className="px-1 text-xs"
+                />
               </div>
               <div className="flex flex-col gap-3 md:flex-row md:items-center">
                 <h1 className="font-owners-wide text-2xl font-medium">
@@ -234,30 +248,46 @@ export default function ProductDetails() {
                   <div className="flex flex-col space-y-4 md:flex-row md:space-y-0">
                     <div className="flex-1 space-y-4">
                       <Attribute.Field
-                        variant="outline"
+                        variant="none"
                         label="Code"
-                        value={product.attributes.code}
+                        value={
+                          <Attribute.Value
+                            type="raw"
+                            value={product.attributes.code}
+                            tooltip={ProductAttributeDescriptions.code}
+                          />
+                        }
                       />
                       <Attribute.Field
-                        variant="text"
+                        variant="none"
                         label="URL"
-                        value={product.attributes.url || "--"}
+                        value={
+                          <Attribute.Value
+                            type="raw"
+                            value={product.attributes.url}
+                            emptyLabel="Not set"
+                            tooltip="The product's website or homepage URL."
+                          />
+                        }
                       />
                     </div>
                     <div className="mx-4 hidden md:block">
                       <Separator orientation="vertical" dashed={true} />
                     </div>
                     <div className="flex-1 space-y-4">
-                      <div className="flex items-center gap-2">
-                        <Attribute.Field
-                          label="Distribution Strategy"
-                          value={product.attributes.distributionStrategy}
-                          tooltip={`The distribution strategy for releases.
-                                    Licensed = only licensed users.
-                                    Open = anybody, no license required.
-                                    Closed = only admins.`}
-                        />
-                      </div>
+                      <Attribute.Field
+                        variant="none"
+                        label="Distribution Strategy"
+                        value={
+                          <Attribute.Value
+                            type="enum"
+                            value={product.attributes.distributionStrategy}
+                            tooltip={
+                              ProductAttributeDescriptions.distributionStrategy
+                            }
+                          />
+                        }
+                      />
                       <Attribute.Array
                         label="Platforms"
                         array={product.attributes.platforms || []}
@@ -361,16 +391,18 @@ export default function ProductDetails() {
                         <Property.Field
                           icon={SquarePlus}
                           label="Created at"
-                          value={new Date(
-                            product.attributes.created,
-                          ).toLocaleDateString()}
+                          value={formatDate(
+                            new Date(String(product.attributes.created)),
+                            "PP",
+                          )}
                         />
                         <Property.Field
                           icon={SquarePen}
                           label="Updated at"
-                          value={new Date(
-                            product.attributes.updated,
-                          ).toLocaleDateString()}
+                          value={formatDate(
+                            new Date(String(product.attributes.updated)),
+                            "PP",
+                          )}
                         />
                       </>
                     ) : (
@@ -431,16 +463,18 @@ export default function ProductDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={new Date(
-                          product.attributes.created,
-                        ).toLocaleDateString()}
+                        value={formatDate(
+                          new Date(String(product.attributes.created)),
+                          "PP",
+                        )}
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={new Date(
-                          product.attributes.updated,
-                        ).toLocaleDateString()}
+                        value={formatDate(
+                          new Date(String(product.attributes.updated)),
+                          "PP",
+                        )}
                       />
                     </Property.Section>
                   </>

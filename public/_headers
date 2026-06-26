@@ -1,0 +1,5 @@
+/*
+  Content-Security-Policy: default-src 'self'; connect-src 'self' https://*.keygen.sh https://keygen-dist.c3c9112df8df715f42d1162cdce5dba1.r2.cloudflarestorage.com https://keygen-dist.s3.us-east-2.amazonaws.com https://*.betterstackdata.com https://*.usefathom.com; script-src 'self' https://assets.keygen.sh https://*.betterstack.net https://*.usefathom.com; style-src 'self' https://assets.keygen.sh 'unsafe-inline'; font-src 'self' https://assets.keygen.sh; img-src 'self' https://*.keygen.sh https://*.usefathom.com https://img.logo.dev data:; object-src 'none'; base-uri 'none'; form-action 'self' https://*.keygen.sh; frame-src https://status.keygen.sh; frame-ancestors 'none';
+  Referrer-Policy: no-referrer
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff

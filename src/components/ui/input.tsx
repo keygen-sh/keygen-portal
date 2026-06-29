@@ -81,7 +81,10 @@ function Input({
       return (
         <Tooltip>
           <TooltipTrigger asChild>
-            <span tabIndex={0} className="block">
+            <span
+              tabIndex={0}
+              className="block rounded-md transition-colors hover:bg-background-1"
+            >
               {element}
             </span>
           </TooltipTrigger>

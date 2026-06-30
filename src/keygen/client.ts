@@ -63,9 +63,21 @@ export class Client {
       root?: boolean
       signal?: AbortSignal
       prefix?: string
+      environment?: string | null
+      environmentToken?: string | null
     } = {},
   ): Promise<APIResponse<T>> {
-    const authToken = options.root ? this.rootToken : this.activeToken
+    // override to target an environment other than the active one
+    // e.g. creating an environment token from the global context
+    const envHeader =
+      options.environment !== undefined ? options.environment : this.environment
+
+    const authToken = options.root
+      ? this.rootToken
+      : options.environmentToken !== undefined
+        ? options.environmentToken
+        : this.activeToken
+
     const defaultHeaders = {
       Accept: "application/vnd.api+json",
       "Content-Type": "application/vnd.api+json",
@@ -73,9 +85,9 @@ export class Client {
       ...(config.isTokenAuthenticated && authToken
         ? { Authorization: `Bearer ${authToken}` }
         : {}),
-      ...(options.root || !this.environment
+      ...(options.root || !envHeader
         ? {}
-        : { "Keygen-Environment": this.environment }),
+        : { "Keygen-Environment": envHeader }),
     }
 
     const headers = {
@@ -83,8 +95,11 @@ export class Client {
       ...options.headers,
     }
 
-    const { root, prefix, ...fetchOptions } = options
+    const { root, prefix, environment, environmentToken, ...fetchOptions } =
+      options
     void root
+    void environment
+    void environmentToken
 
     const response = await fetch(`${this.host}/${prefix ?? "v1"}${endpoint}`, {
       ...fetchOptions,

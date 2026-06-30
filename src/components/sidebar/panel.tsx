@@ -235,7 +235,14 @@ const VIEWS: View[] = [
     id: ViewId.Access,
     label: "Access",
     icon: KeyRound,
-    routes: [],
+    routes: linkOptions([
+      {
+        to: "/$accountId/app/tokens",
+        label: "Tokens",
+        params: { accountId: keygen.config.id },
+        requires: ["token.read"],
+      },
+    ]),
   },
   {
     id: ViewId.Security,

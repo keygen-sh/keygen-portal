@@ -1,10 +1,16 @@
-import { KeyRound } from "lucide-react"
+import { KeyRound, Shield } from "lucide-react"
 
 import * as Filters from "@/components/filter-bar"
 
 import config from "@/keygen/config"
 
-import { TokenBearerType, type TokenFilters } from "@/types/tokens"
+import {
+  TokenBearerType,
+  TokenRole,
+  TokenRoleLabels,
+  AllTokenRoles,
+  type TokenFilters,
+} from "@/types/tokens"
 
 const BEARER_TYPES: ReadonlyArray<{
   value: TokenBearerType
@@ -19,6 +25,11 @@ const BEARER_TYPES: ReadonlyArray<{
     : [{ value: TokenBearerType.Environment, label: "Environment" }]),
 ]
 
+const ROLE_OPTIONS = AllTokenRoles.map((role) => ({
+  value: role,
+  label: TokenRoleLabels[role],
+}))
+
 interface TokenFilterBarProps {
   filters: TokenFilters
   onChange: (filters: TokenFilters) => void
@@ -28,9 +39,12 @@ export default function TokenFilterBar({
   filters,
   onChange,
 }: TokenFilterBarProps) {
-  const filterCount = filters.bearerId ? 1 : 0
+  const roles = filters.bearerRoles ?? [...AllTokenRoles]
+  const allRolesSelected = roles.length === AllTokenRoles.length
 
-  const value =
+  const filterCount = (filters.bearerId ? 1 : 0) + (allRolesSelected ? 0 : 1)
+
+  const bearerValue =
     filters.bearerType && filters.bearerId
       ? { type: filters.bearerType, id: filters.bearerId }
       : undefined
@@ -38,20 +52,34 @@ export default function TokenFilterBar({
   return (
     <Filters.FilterBar
       filterCount={filterCount}
-      onClearAll={() => onChange({})}
+      onClearAll={() => onChange({ bearerRoles: [...AllTokenRoles] })}
     >
       <Filters.PolymorphicResourceFilter
         label="Bearer"
         icon={KeyRound}
         placeholder="Bearer ID"
         types={BEARER_TYPES}
-        value={value}
+        value={bearerValue}
         onChange={(next) =>
-          onChange(
-            next
-              ? { bearerType: next.type as TokenBearerType, bearerId: next.id }
-              : {},
-          )
+          onChange({
+            ...filters,
+            bearerType: next?.type as TokenBearerType | undefined,
+            bearerId: next?.id,
+          })
+        }
+      />
+      <Filters.ArrayFilter
+        label="Role"
+        icon={Shield}
+        options={ROLE_OPTIONS}
+        value={allRolesSelected ? undefined : roles}
+        onChange={(next) =>
+          onChange({
+            ...filters,
+            bearerRoles: (next as TokenRole[] | undefined) ?? [
+              ...AllTokenRoles,
+            ],
+          })
         }
       />
     </Filters.FilterBar>

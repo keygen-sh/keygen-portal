@@ -25,12 +25,16 @@ export default async function list({
     params.set("page[size]", pageSize.toString())
     params.set("page[cursor]", pageCursor ?? "")
   }
-  // TODO(cazden) add filter by type when API supports it
   if (filters?.bearerType) {
     params.set("bearer[type]", filters.bearerType)
   }
   if (filters?.bearerId) {
     params.set("bearer[id]", filters.bearerId)
+  }
+  if (filters?.bearerRoles?.length) {
+    for (const role of filters.bearerRoles) {
+      params.append("bearer[role][]", role)
+    }
   }
   if (filters?.environment) {
     params.set("environment", filters.environment)

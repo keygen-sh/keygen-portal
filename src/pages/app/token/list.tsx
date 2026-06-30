@@ -4,12 +4,11 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { useDataTable } from "@/hooks/use-data-table"
-import { useFilterSearch } from "@/hooks/use-filter-search"
 import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 import { useTokenTableColumns } from "@/hooks/use-token-table-columns"
 
-import { Token, type TokenFilters } from "@/types/tokens"
+import { Token, type TokenFilters, SubjectTokenRoles } from "@/types/tokens"
 
 import { useListTokens } from "@/queries/tokens"
 
@@ -26,7 +25,10 @@ export default function TokensList() {
   const columns = useTokenTableColumns()
   const navigateToResource = useResourceNavigate()
 
-  const [filters, setFilters] = useFilterSearch<TokenFilters>()
+  // pre-filter to customer-related tokens, e.g. user, license
+  const [filters, setFilters] = useState<TokenFilters>({
+    bearerRoles: [...SubjectTokenRoles],
+  })
   const { cursor, reset, goToPage } = useCursors(page, setPage)
 
   const [createOpen, setCreateOpen] = useState(false)
@@ -42,8 +44,9 @@ export default function TokensList() {
       setFilters(next)
       reset()
     },
-    [setFilters, reset],
+    [reset],
   )
+
   const nextCursor = cursorFromLink(links?.next)
 
   return (

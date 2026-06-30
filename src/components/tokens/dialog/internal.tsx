@@ -1,3 +1,5 @@
+import { useState, useCallback } from "react"
+
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Dialog,
@@ -7,18 +9,19 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 
-import { useListTokens } from "@/queries/tokens"
-
 import { useDataTable } from "@/hooks/use-data-table"
 import { useCursors, cursorFromLink } from "@/hooks/use-cursors"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 import { useTokenTableColumns } from "@/hooks/use-token-table-columns"
 
-import { Token } from "@/types/tokens"
+import { useListTokens } from "@/queries/tokens"
+
+import { Token, type TokenFilters, InternalTokenRoles } from "@/types/tokens"
 
 import DataTable from "@/components/data-table"
 import Pagination from "@/components/pagination"
 import PageFooter from "@/components/page-footer"
+import TokenFilterBar from "../filter-bar"
 
 interface InternalTokensDialogProps {
   open: boolean
@@ -31,21 +34,30 @@ export default function InternalTokensDialog({
 }: InternalTokensDialogProps) {
   const table = useDataTable()
   const { page, setPage } = table
-  const { cursor, goToPage } = useCursors(page, setPage)
+  const { cursor, reset, goToPage } = useCursors(page, setPage)
+  const columns = useTokenTableColumns()
+  const navigateToResource = useResourceNavigate()
+
+  const [filters, setFilters] = useState<TokenFilters>({
+    bearerRoles: [...InternalTokenRoles],
+  })
 
   const {
     data: tokens,
     links,
     isLoading,
-  } = useListTokens({
-    cursor,
-    pageSize: 15, // Ignore hook value since we're in a dialog
-  })
+  } = useListTokens({ cursor, pageSize: 15, filters }, { enabled: open })
 
-  const columns = useTokenTableColumns()
-  const navigateToResource = useResourceNavigate()
+  const handleFiltersChange = useCallback(
+    (next: TokenFilters) => {
+      setFilters(next)
+      reset()
+    },
+    [reset],
+  )
 
   const handleNavigate = async (token: Token) => {
+    onOpenChange(false)
     await navigateToResource(token)
   }
 
@@ -62,6 +74,10 @@ export default function InternalTokensDialog({
             Internal access tokens
           </DialogTitle>
         </DialogHeader>
+
+        <div className="border-b border-accent p-2">
+          <TokenFilterBar filters={filters} onChange={handleFiltersChange} />
+        </div>
 
         <ScrollArea className="min-h-0 flex-1">
           <DataTable<Token>

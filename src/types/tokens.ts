@@ -146,9 +146,61 @@ export const TokenFormFieldDescriptions: Readonly<
   bearerKind: "The type of bearer this token authenticates as.",
 }
 
+export enum TokenRole {
+  Admin = "admin",
+  User = "user",
+  Developer = "developer",
+  SalesAgent = "sales_agent",
+  SupportAgent = "support_agent",
+  ReadOnly = "read_only",
+  License = "license",
+  Product = "product",
+  Environment = "environment",
+}
+
+export const TokenRoleLabels: Readonly<Record<TokenRole, string>> = {
+  [TokenRole.Admin]: "Admin",
+  [TokenRole.User]: "User",
+  [TokenRole.Developer]: "Developer",
+  [TokenRole.SalesAgent]: "Sales",
+  [TokenRole.SupportAgent]: "Support",
+  [TokenRole.ReadOnly]: "Read-only",
+  [TokenRole.License]: "License",
+  [TokenRole.Product]: "Product",
+  [TokenRole.Environment]: "Environment",
+}
+
+export const SubjectTokenRoles: readonly TokenRole[] = [
+  TokenRole.User,
+  TokenRole.License,
+]
+
+export const InternalTokenRoles: readonly TokenRole[] = [
+  TokenRole.Admin,
+  TokenRole.Developer,
+  TokenRole.SalesAgent,
+  TokenRole.SupportAgent,
+  TokenRole.ReadOnly,
+  TokenRole.Product,
+  TokenRole.Environment,
+]
+
+export const AllTokenRoles: readonly TokenRole[] = [
+  TokenRole.Admin,
+  TokenRole.User,
+  TokenRole.Developer,
+  TokenRole.SalesAgent,
+  TokenRole.SupportAgent,
+  TokenRole.ReadOnly,
+  TokenRole.License,
+  TokenRole.Product,
+  TokenRole.Environment,
+]
+
 export type TokenFilters = {
   bearerType?: TokenBearerType
   bearerId?: string
+  bearerRoles?: TokenRole[]
   environment?: string
 }
 

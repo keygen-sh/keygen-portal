@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query"
 
 import { toast } from "@/lib/toast"
 
-import { useEnsureEnvironmentToken } from "@/queries/tokens"
+import { useGetOrCreateEnvironmentToken } from "@/queries/tokens"
 import { EnvironmentContext } from "@/contexts/environment-context"
 
 import * as keygen from "@/keygen"
@@ -28,7 +28,7 @@ function EeEnvironmentProvider({
 }): React.ReactElement {
   const [code, setCode] = useState<string | null>(null)
   const queryClient = useQueryClient()
-  const ensureEnvironmentToken = useEnsureEnvironmentToken()
+  const getOrCreateEnvironmentToken = useGetOrCreateEnvironmentToken()
 
   const select = useCallback(
     async (environmentId: string | null, environmentCode: string | null) => {
@@ -40,7 +40,7 @@ function EeEnvironmentProvider({
           keygen.client.setEnvironmentToken(null)
           keygen.client.setEnvironment(null)
         } else {
-          const token = await ensureEnvironmentToken(environmentId!)
+          const token = await getOrCreateEnvironmentToken(environmentId!)
 
           keygen.client.setEnvironmentToken(token)
           keygen.client.setEnvironment(environmentCode)
@@ -57,7 +57,7 @@ function EeEnvironmentProvider({
         throw error
       }
     },
-    [ensureEnvironmentToken, queryClient],
+    [getOrCreateEnvironmentToken, queryClient],
   )
 
   const value = useMemo(() => ({ code, select }), [code, select])

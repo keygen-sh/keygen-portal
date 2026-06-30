@@ -124,9 +124,9 @@ export default function TokensFormFields({
       {fields.map((field) => {
         switch (field) {
           case "bearerKind":
-            return <BearerKindField key="bearerKind" />
+            return <BearerTypeField key="bearerKind" />
           case "bearerId":
-            return <BearerField key="bearerId" fieldVariant={fieldVariant} />
+            return <BearerIdField key="bearerId" fieldVariant={fieldVariant} />
           case "name":
             return (
               <NameField
@@ -164,7 +164,7 @@ export default function TokensFormFields({
   )
 }
 
-function BearerKindField() {
+function BearerTypeField() {
   const form = useFormContext<Schemas.Tokens.BaseValues>()
 
   return (
@@ -191,7 +191,7 @@ function BearerKindField() {
   )
 }
 
-function BearerField({ fieldVariant }: { fieldVariant?: FieldVariant }) {
+function BearerIdField({ fieldVariant }: { fieldVariant?: FieldVariant }) {
   const form = useFormContext<Schemas.Tokens.BaseValues>()
   const kind = useWatch({ control: form.control, name: "bearerKind" })
 

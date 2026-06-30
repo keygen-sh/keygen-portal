@@ -76,7 +76,7 @@ export function useListTokens(
   }
 }
 
-export function useEnsureEnvironmentToken() {
+export function useGetOrCreateEnvironmentToken() {
   const queryClient = useQueryClient()
 
   return useCallback(
@@ -111,7 +111,7 @@ export function useEnsureEnvironmentToken() {
 export function useCreateToken() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
-  const ensureEnvironmentToken = useEnsureEnvironmentToken()
+  const ensureEnvironmentToken = useGetOrCreateEnvironmentToken()
 
   return useMutation<Token, APIError, Schemas.Tokens.CreateValues>({
     mutationFn: async (values) => {

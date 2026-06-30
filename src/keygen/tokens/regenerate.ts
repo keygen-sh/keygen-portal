@@ -13,7 +13,6 @@ export default async function regenerate({
 }: RegenerateProps): Promise<TokenResponse> {
   const result = (await client.request(`/accounts/${config.id}/tokens/${id}`, {
     method: "PUT",
-    root: true,
   })) as TokenResponse
 
   return result

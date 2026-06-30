@@ -37,7 +37,7 @@ export default function DevelopersPage() {
           <div className="grid w-full max-w-5xl grid-cols-1 gap-x-16 gap-y-8 md:grid-cols-[1fr_2fr]">
             <div className="flex flex-col space-y-2">
               <h2 className="font-owners-wide text-lg text-content-loud">
-                Internal access tokens
+                Internal Access Tokens
               </h2>
               <p className="font-owners-text text-sm text-content-muted">
                 Tokens for authenticating your own integrations with the Keygen

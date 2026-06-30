@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useState } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -9,7 +9,7 @@ import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { useListTokens } from "@/queries/tokens"
 
-import { Token, TokenKindLabels, InternalTokenKinds } from "@/types/tokens"
+import { Token, TokenKindLabels, InternalTokenRoles } from "@/types/tokens"
 
 import * as Tokens from "@/components/tokens"
 import Can from "@/components/can"
@@ -20,17 +20,10 @@ const PREVIEW_COUNT = 10
 export default function InternalTokensPage() {
   const navigateToResource = useResourceNavigate()
 
-  // FIXME(cazden) query by type when API supports it
-  const { data: tokens, isLoading } = useListTokens({ pageSize: 100 })
-
-  // manually filter for now
-  const internalTokens = useMemo(
-    () =>
-      tokens.filter((token) =>
-        InternalTokenKinds.includes(token.attributes.kind),
-      ),
-    [tokens],
-  )
+  const { data: internalTokens, isLoading } = useListTokens({
+    pageSize: 100,
+    filters: { bearerRoles: [...InternalTokenRoles] },
+  })
 
   const [createOpen, setCreateOpen] = useState(false)
   const [viewAllOpen, setViewAllOpen] = useState(false)

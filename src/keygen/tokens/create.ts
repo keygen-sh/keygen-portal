@@ -27,7 +27,7 @@ export default async function create({
         ? {
             attributes: compact({
               name: values.name || undefined,
-              expiry: isLicense ? values.expiry : undefined,
+              expiry: values.expiry,
               maxActivations: isLicense ? values.maxActivations : undefined,
               maxDeactivations: isLicense ? values.maxDeactivations : undefined,
               permissions:

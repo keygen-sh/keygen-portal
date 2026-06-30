@@ -16,6 +16,7 @@ import {
 import * as Motion from "@/components/motion"
 import * as Account from "@/components/account"
 import * as Attribute from "@/components/attribute"
+import * as Tokens from "@/components/tokens"
 import Can from "@/components/can"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
@@ -34,6 +35,17 @@ export default function DevelopersPage() {
       <ScrollArea className="min-h-0 flex-1 overflow-y-auto">
         <div className="flex flex-col px-4 py-4 md:px-10 md:py-8">
           <div className="grid w-full max-w-5xl grid-cols-1 gap-x-16 gap-y-8 md:grid-cols-[1fr_2fr]">
+            <div className="flex flex-col space-y-2">
+              <h2 className="font-owners-wide text-lg text-content-loud">
+                Internal access tokens
+              </h2>
+              <p className="font-owners-text text-sm text-content-muted">
+                Tokens for authenticating your own integrations with the Keygen
+                API.
+              </p>
+            </div>
+            <Tokens.View.Internal />
+
             <div className="flex flex-col space-y-2">
               <h2 className="font-owners-wide text-lg text-content-loud">
                 Developer Settings

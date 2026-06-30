@@ -19,6 +19,7 @@ export { default as EventLogs } from "./event-logs"
 export { default as RequestLogs } from "./request-logs"
 export { default as WebhookEndpoints } from "./webhook-endpoints"
 export { default as WebhookEvents } from "./webhook-events"
+export { default as Tokens } from "./tokens"
 
 import * as Product from "./product"
 export { Product }
@@ -79,6 +80,9 @@ export { WebhookEndpoint }
 
 import * as WebhookEvent from "./webhook-event"
 export { WebhookEvent }
+
+import * as Token from "./token"
+export { Token }
 
 import * as Settings from "./settings"
 export { Settings }

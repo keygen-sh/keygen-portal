@@ -1,21 +1,22 @@
-import { Arch } from "@/types/arches"
 import { User } from "@/types/users"
+import { Arch } from "@/types/arches"
+import { Token } from "@/types/tokens"
 import { Group } from "@/types/groups"
 import { Engine } from "@/types/engines"
 import { Policy } from "@/types/policies"
-import { Package } from "@/types/packages"
-import { Machine } from "@/types/machines"
-import { Process } from "@/types/processes"
-import { Release } from "@/types/releases"
 import { Channel } from "@/types/channels"
+import { Release } from "@/types/releases"
 import { Product } from "@/types/products"
+import { Machine } from "@/types/machines"
+import { Package } from "@/types/packages"
 import { License } from "@/types/licenses"
-import { WebhookEndpoint } from "@/types/webhook-endpoints"
-import { WebhookEvent } from "@/types/webhook-events"
+import { Process } from "@/types/processes"
 import { Artifact } from "@/types/artifacts"
 import { Platform } from "@/types/platforms"
 import { Component } from "@/types/components"
 import { Entitlement } from "@/types/entitlements"
+import { WebhookEvent } from "@/types/webhook-events"
+import { WebhookEndpoint } from "@/types/webhook-endpoints"
 
 export type APIResponse<
   TData,
@@ -125,6 +126,7 @@ export type AnyResource =
   | Engine
   | WebhookEndpoint
   | WebhookEvent
+  | Token
 
 export type ResourceType =
   | "products"
@@ -146,6 +148,7 @@ export type ResourceType =
   | "engines"
   | "webhook-endpoints"
   | "webhook-events"
+  | "token"
 
 export enum APIVersion {
   V1_0 = "1.0",

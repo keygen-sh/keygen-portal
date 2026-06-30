@@ -1,12 +1,12 @@
 import { useState, useMemo, useCallback } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 
+import { toast } from "@/lib/toast"
+
+import { useEnsureEnvironmentToken } from "@/queries/tokens"
 import { EnvironmentContext } from "@/contexts/environment-context"
-import { useCreateEnvironmentToken } from "@/queries/tokens"
 
 import * as keygen from "@/keygen"
-import config from "@/keygen/config"
-import { toast } from "@/lib/toast"
 
 function CeEnvironmentProvider({
   children,
@@ -28,22 +28,7 @@ function EeEnvironmentProvider({
 }): React.ReactElement {
   const [code, setCode] = useState<string | null>(null)
   const queryClient = useQueryClient()
-  const { mutateAsync: createEnvironmentToken } = useCreateEnvironmentToken()
-
-  const getEnvironmentToken = useCallback(
-    async (environmentId: string): Promise<string> => {
-      const cacheKey = ["token", "environment", environmentId]
-
-      const cached = queryClient.getQueryData<string>(cacheKey)
-      if (cached) return cached
-
-      const tokenResource = await createEnvironmentToken({
-        environmentId: environmentId,
-      })
-      return tokenResource.attributes.token!
-    },
-    [createEnvironmentToken, queryClient],
-  )
+  const ensureEnvironmentToken = useEnsureEnvironmentToken()
 
   const select = useCallback(
     async (environmentId: string | null, environmentCode: string | null) => {
@@ -55,7 +40,7 @@ function EeEnvironmentProvider({
           keygen.client.setEnvironmentToken(null)
           keygen.client.setEnvironment(null)
         } else {
-          const token = await getEnvironmentToken(environmentId!)
+          const token = await ensureEnvironmentToken(environmentId!)
 
           keygen.client.setEnvironmentToken(token)
           keygen.client.setEnvironment(environmentCode)
@@ -72,7 +57,7 @@ function EeEnvironmentProvider({
         throw error
       }
     },
-    [getEnvironmentToken, queryClient],
+    [ensureEnvironmentToken, queryClient],
   )
 
   const value = useMemo(() => ({ code, select }), [code, select])
@@ -89,7 +74,7 @@ export function EnvironmentProvider({
 }: {
   children: React.ReactNode
 }): React.ReactElement {
-  if (config.isCE) {
+  if (keygen.config.isCE) {
     return <CeEnvironmentProvider>{children}</CeEnvironmentProvider>
   }
   return <EeEnvironmentProvider>{children}</EeEnvironmentProvider>

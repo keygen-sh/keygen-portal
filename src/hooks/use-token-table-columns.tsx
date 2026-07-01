@@ -35,7 +35,9 @@ export function useTokenTableColumns() {
       column.rel("bearer", {
         header: "Bearer",
         enableSorting: false,
-        cell: (info) => <ResourceLink linkage={info.getValue()?.data} />,
+        cell: (info) => (
+          <ResourceLink linkage={info.getValue()?.data} truncate />
+        ),
       }),
       column.attr("expiry", {
         sortingFn: "datetime",

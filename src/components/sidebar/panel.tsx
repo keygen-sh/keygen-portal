@@ -46,7 +46,6 @@ import {
   Webhook,
   Package,
   Settings,
-  KeyRound,
 } from "lucide-react"
 
 import * as keygen from "@/keygen"
@@ -232,9 +231,9 @@ const VIEWS: View[] = [
     ]),
   },
   {
-    id: ViewId.Access,
-    label: "Access",
-    icon: KeyRound,
+    id: ViewId.Security,
+    label: "Security",
+    icon: Shield,
     routes: linkOptions([
       {
         to: "/$accountId/app/tokens",
@@ -242,13 +241,6 @@ const VIEWS: View[] = [
         params: { accountId: keygen.config.id },
         requires: ["token.read"],
       },
-    ]),
-  },
-  {
-    id: ViewId.Security,
-    label: "Security",
-    icon: Shield,
-    routes: linkOptions([
       {
         to: "/$accountId/app/event-logs",
         label: "Event Logs",

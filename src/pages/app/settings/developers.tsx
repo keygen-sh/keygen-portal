@@ -54,7 +54,7 @@ export default function DevelopersPage() {
                 Configure API version and account protection.
               </p>
             </div>
-            <div className="overflow-hidden rounded bg-background-1 p-4">
+            <div className="overflow-hidden rounded bg-background-1">
               {accountLoading ? (
                 <div className="space-y-4">
                   <Skeleton className="h-12 w-full" />

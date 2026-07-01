@@ -30,6 +30,7 @@ import { getLicenseLabel } from "@/lib/licenses"
 import { getMachineLabel } from "@/lib/machines"
 import { getPackageLabel } from "@/lib/packages"
 import { getReleaseLabel } from "@/lib/releases"
+import { truncator } from "@/lib/truncate"
 
 import * as keygen from "@/keygen"
 import GoToButton from "@/components/go-to-button"
@@ -49,12 +50,15 @@ const NAVIGABLE_TYPES = new Set([
   "artifacts",
 ])
 
+const truncateLabel = truncator("end", { maxLength: 24 })
+
 interface ResourceLinkViewProps {
   linkage: Linkage
   label?: string | null
   isLoading?: boolean
   isError?: boolean
   buttonClassName?: string
+  truncate?: boolean
 }
 
 function ResourceLinkView({
@@ -63,11 +67,13 @@ function ResourceLinkView({
   isLoading,
   isError,
   buttonClassName,
+  truncate = false,
 }: ResourceLinkViewProps): ReactElement {
   if (isError) return <Badge variant="destructive">ERROR</Badge>
   if (isLoading) return <Skeleton className="h-5 w-32 rounded-sm" />
 
-  const text = label || linkage.id
+  const resolved = label || linkage.id
+  const text = truncate ? truncateLabel(resolved) : resolved
 
   if (!NAVIGABLE_TYPES.has(linkage.type)) {
     return <span className="text-content-normal">{text}</span>
@@ -86,6 +92,7 @@ function ResourceLinkView({
 interface ResolvedLinkProps {
   linkage: Linkage
   buttonClassName?: string
+  truncate?: boolean
 }
 
 function makeResourceLink<T>(
@@ -99,6 +106,7 @@ function makeResourceLink<T>(
   return function ResolvedLink({
     linkage,
     buttonClassName,
+    truncate,
   }: ResolvedLinkProps): ReactElement {
     const { data, isLoading, isError } = useGet(linkage.id)
 
@@ -109,6 +117,7 @@ function makeResourceLink<T>(
         isLoading={isLoading}
         isError={isError}
         buttonClassName={buttonClassName}
+        truncate={truncate}
       />
     )
   }
@@ -156,12 +165,14 @@ export interface ResourceLinkProps {
   linkage?: Linkage | null
   emptyLabel?: string
   buttonClassName?: string
+  truncate?: boolean
 }
 
 export default function ResourceLink({
   linkage,
   emptyLabel = "None",
   buttonClassName,
+  truncate,
 }: ResourceLinkProps): ReactElement {
   if (!linkage) {
     return <span className="text-content-subdued">{emptyLabel}</span>
@@ -170,10 +181,20 @@ export default function ResourceLink({
   const ResolvedLink = RESOURCE_LINKS[linkage.type]
 
   if (ResolvedLink) {
-    return <ResolvedLink linkage={linkage} buttonClassName={buttonClassName} />
+    return (
+      <ResolvedLink
+        linkage={linkage}
+        buttonClassName={buttonClassName}
+        truncate={truncate}
+      />
+    )
   }
 
   return (
-    <ResourceLinkView linkage={linkage} buttonClassName={buttonClassName} />
+    <ResourceLinkView
+      linkage={linkage}
+      buttonClassName={buttonClassName}
+      truncate={truncate}
+    />
   )
 }

@@ -11,6 +11,7 @@ interface GetProps {
 export default async function get({ id }: GetProps): Promise<UserResponse> {
   const result = (await client.request(`/accounts/${config.id}/users/${id}`, {
     method: "GET",
+    root: client.currentUser === id,
   })) as UserResponse
 
   return result

@@ -187,7 +187,7 @@ export default function ArrayFilter({
           >
             <ScrollArea
               className={cn(
-                visibleOptions.length > MAX_VISIBLE_OPTIONS && "h-64",
+                visibleOptions.length > MAX_VISIBLE_OPTIONS && "max-h-64",
               )}
             >
               <div className="flex flex-col gap-0.5">

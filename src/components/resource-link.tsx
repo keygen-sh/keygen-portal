@@ -1,7 +1,11 @@
 import { type ReactElement } from "react"
 
-import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip"
 
 import { type Linkage } from "@/types/api"
 
@@ -69,11 +73,31 @@ function ResourceLinkView({
   buttonClassName,
   truncate = false,
 }: ResourceLinkViewProps): ReactElement {
-  if (isError) return <Badge variant="destructive">ERROR</Badge>
   if (isLoading) return <Skeleton className="h-5 w-32 rounded-sm" />
 
   const resolved = label || linkage.id
   const text = truncate ? truncateLabel(resolved) : resolved
+
+  // a resource we can't resolve, e.g. a user/bearer that
+  // lives outside the active environment's scope
+  if (isError) {
+    return (
+      <Tooltip>
+        <TooltipTrigger className="cursor-pointer">
+          <GoToButton
+            path={`/$accountId/app/${linkage.type}/$id`}
+            params={{ accountId: keygen.config.id, id: linkage.id }}
+            label={text}
+            disabled
+          />
+        </TooltipTrigger>
+        <TooltipContent className="max-w-64 bg-background-4 text-pretty text-content-muted">
+          This resource could not be loaded. It may not be accessible from this
+          environment, or you may not have permission.
+        </TooltipContent>
+      </Tooltip>
+    )
+  }
 
   if (!NAVIGABLE_TYPES.has(linkage.type)) {
     return <span className="text-content-normal">{text}</span>

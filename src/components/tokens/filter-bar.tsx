@@ -2,8 +2,6 @@ import { KeyRound, Shield } from "lucide-react"
 
 import * as Filters from "@/components/filter-bar"
 
-import config from "@/keygen/config"
-
 import {
   TokenBearerType,
   TokenRole,
@@ -15,14 +13,11 @@ import {
 const BEARER_TYPES: ReadonlyArray<{
   value: TokenBearerType
   label: string
-  resource?: "users" | "licenses" | "products"
+  resource: "users" | "licenses" | "products"
 }> = [
   { value: TokenBearerType.User, label: "User", resource: "users" },
   { value: TokenBearerType.License, label: "License", resource: "licenses" },
   { value: TokenBearerType.Product, label: "Product", resource: "products" },
-  ...(config.isCE
-    ? []
-    : [{ value: TokenBearerType.Environment, label: "Environment" }]),
 ]
 
 const ROLE_OPTIONS = AllTokenRoles.map((role) => ({
@@ -57,7 +52,6 @@ export default function TokenFilterBar({
       <Filters.PolymorphicResourceFilter
         label="Bearer"
         icon={KeyRound}
-        placeholder="Bearer ID"
         types={BEARER_TYPES}
         value={bearerValue}
         onChange={(next) =>

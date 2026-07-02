@@ -10,5 +10,8 @@ export { default as TemporalFilter } from "./temporal-filter"
 export { default as ResourceFilter } from "./resource-filter"
 export { default as ResourcesFilter } from "./resources-filter"
 export { default as MetadataFilter } from "./metadata-filter"
-export { default as PolymorphicResourceFilter } from "./polymorphic-resource-filter"
+export {
+  default as PolymorphicResourceFilter,
+  type PolymorphicResourceType,
+} from "./polymorphic-resource-filter"
 export { default as StringFilter } from "./string-filter"

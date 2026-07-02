@@ -13,7 +13,10 @@ function CeEnvironmentProvider({
 }: {
   children: React.ReactNode
 }): React.ReactElement {
-  const value = useMemo(() => ({ code: null, select: async () => {} }), [])
+  const value = useMemo(
+    () => ({ id: null, code: null, select: async () => {} }),
+    [],
+  )
   return (
     <EnvironmentContext.Provider value={value}>
       {children}
@@ -26,6 +29,7 @@ function EeEnvironmentProvider({
 }: {
   children: React.ReactNode
 }): React.ReactElement {
+  const [id, setId] = useState<string | null>(null)
   const [code, setCode] = useState<string | null>(null)
   const queryClient = useQueryClient()
   const getOrCreateEnvironmentToken = useGetOrCreateEnvironmentToken()
@@ -46,6 +50,7 @@ function EeEnvironmentProvider({
           keygen.client.setEnvironment(environmentCode)
         }
 
+        setId(environmentId)
         setCode(environmentCode)
         await queryClient.invalidateQueries({
           predicate: (q) => q.queryKey[0] !== "environments",
@@ -60,7 +65,7 @@ function EeEnvironmentProvider({
     [getOrCreateEnvironmentToken, queryClient],
   )
 
-  const value = useMemo(() => ({ code, select }), [code, select])
+  const value = useMemo(() => ({ id, code, select }), [id, code, select])
 
   return (
     <EnvironmentContext.Provider value={value}>

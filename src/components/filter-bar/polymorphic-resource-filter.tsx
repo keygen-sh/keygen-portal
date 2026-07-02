@@ -35,6 +35,10 @@ export type PolymorphicResourceType = {
   value: string
   label: string
   resource?: SearchableResource
+  // a predefined id for types whose value is known ahead of time —
+  // selecting the type applies the filter immediately and the id is
+  // displayed as a read-only segment
+  fixed?: string
 }
 
 export type PolymorphicResourceValue = { type: string; id: string }
@@ -77,6 +81,15 @@ export default function PolymorphicResourceFilter({
   }
 
   function handleTypeChange(type: string) {
+    const fixed = types.find((t) => t.value === type)?.fixed
+
+    if (fixed) {
+      filter.handleChange({ type, id: fixed })
+      setTypeOpen(false)
+      setResourceOpen(false)
+      return
+    }
+
     filter.handleDraftChange({ type, id: "" })
     setTypeOpen(false)
     setResourceOpen(true)
@@ -128,7 +141,11 @@ export default function PolymorphicResourceFilter({
       {current.type ? (
         <>
           <FilterSegment>eq</FilterSegment>
-          {selectedType?.resource ? (
+          {selectedType?.fixed ? (
+            <FilterSegment>
+              {displayValue ?? truncate(selectedType.fixed)}
+            </FilterSegment>
+          ) : selectedType?.resource ? (
             <ResourceSelectSegment
               key={selectedType.value}
               state={filter.state}

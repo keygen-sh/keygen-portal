@@ -1,6 +1,10 @@
+import { useMemo } from "react"
 import { KeyRound, Shield } from "lucide-react"
 
 import * as Filters from "@/components/filter-bar"
+
+import { useEdition } from "@/hooks/use-edition"
+import { useEnvironment } from "@/hooks/use-environment"
 
 import {
   TokenBearerType,
@@ -9,24 +13,6 @@ import {
   AllTokenRoles,
   type TokenFilters,
 } from "@/types/tokens"
-
-const BEARER_TYPES: ReadonlyArray<{
-  value: TokenBearerType
-  label: string
-  resource?: "users" | "licenses" | "products"
-}> = [
-  { value: TokenBearerType.User, label: "User", resource: "users" },
-  { value: TokenBearerType.License, label: "License", resource: "licenses" },
-  { value: TokenBearerType.Product, label: "Product", resource: "products" },
-  // environments aren't a searchable resource, so this falls
-  // back to the polymorphic filter's raw id input
-  { value: TokenBearerType.Environment, label: "Environment" },
-]
-
-const ROLE_OPTIONS = AllTokenRoles.map((role) => ({
-  value: role,
-  label: TokenRoleLabels[role],
-}))
 
 interface TokenFilterBarProps {
   filters: TokenFilters
@@ -37,8 +23,61 @@ export default function TokenFilterBar({
   filters,
   onChange,
 }: TokenFilterBarProps) {
-  const roles = filters.bearerRoles ?? [...AllTokenRoles]
-  const allRolesSelected = roles.length === AllTokenRoles.length
+  const { isCE } = useEdition()
+  const { id: environmentId } = useEnvironment()
+
+  const bearerTypes = useMemo(
+    () =>
+      [
+        { value: TokenBearerType.User, label: "User", resource: "users" },
+        {
+          value: TokenBearerType.License,
+          label: "License",
+          resource: "licenses",
+        },
+        {
+          value: TokenBearerType.Product,
+          label: "Product",
+          resource: "products",
+        },
+        // environment tokens are only visible inside their own environment, so
+        // the bearer can only ever be the current environment. in addition, we
+        // want to hide the option in the global env and in CE.
+        ...(environmentId != null
+          ? [
+              {
+                value: TokenBearerType.Environment,
+                label: "Environment",
+                fixed: environmentId,
+              },
+            ]
+          : []),
+      ] satisfies ReadonlyArray<Filters.PolymorphicResourceType>,
+    [environmentId],
+  )
+
+  // environments are EE-only, so hide the environment role in CE
+  const availableRoles = useMemo(
+    () =>
+      isCE
+        ? AllTokenRoles.filter((role) => role !== TokenRole.Environment)
+        : AllTokenRoles,
+    [isCE],
+  )
+
+  const roleOptions = useMemo(
+    () =>
+      availableRoles.map((role) => ({
+        value: role,
+        label: TokenRoleLabels[role],
+      })),
+    [availableRoles],
+  )
+
+  const roles = (filters.bearerRoles ?? [...availableRoles]).filter((role) =>
+    availableRoles.includes(role),
+  )
+  const allRolesSelected = roles.length === availableRoles.length
 
   const filterCount = (filters.bearerId ? 1 : 0) + (allRolesSelected ? 0 : 1)
 
@@ -50,13 +89,12 @@ export default function TokenFilterBar({
   return (
     <Filters.FilterBar
       filterCount={filterCount}
-      onClearAll={() => onChange({ bearerRoles: [...AllTokenRoles] })}
+      onClearAll={() => onChange({ bearerRoles: [...availableRoles] })}
     >
       <Filters.PolymorphicResourceFilter
         label="Bearer"
         icon={KeyRound}
-        placeholder="Environment ID"
-        types={BEARER_TYPES}
+        types={bearerTypes}
         value={bearerValue}
         onChange={(next) =>
           onChange({
@@ -69,13 +107,13 @@ export default function TokenFilterBar({
       <Filters.ArrayFilter
         label="Role"
         icon={Shield}
-        options={ROLE_OPTIONS}
+        options={roleOptions}
         value={allRolesSelected ? undefined : roles}
         onChange={(next) =>
           onChange({
             ...filters,
             bearerRoles: (next as TokenRole[] | undefined) ?? [
-              ...AllTokenRoles,
+              ...availableRoles,
             ],
           })
         }

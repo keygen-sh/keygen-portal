@@ -9,6 +9,7 @@ import * as keygen from "@/keygen"
 
 import { useSession } from "@/hooks/use-session"
 
+import * as Auth from "@/components/auth"
 import * as Loading from "@/components/loading"
 import BackButton from "@/components/back-button"
 
@@ -63,7 +64,7 @@ export default function AuthLayout() {
         </main>
       </section>
       <section className="hidden w-1/2 bg-brand-background-2 md:block">
-        {/* TODO: Hero */}
+        <Auth.Hero />
       </section>
     </div>
   )

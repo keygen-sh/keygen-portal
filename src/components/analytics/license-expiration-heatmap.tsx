@@ -21,7 +21,11 @@ import { Skeleton } from "@/components/ui/skeleton"
 import * as keygen from "@/keygen"
 
 import { cn } from "@/lib/utils"
-import { buildExpirationHeatmap } from "@/lib/analytics"
+import {
+  toDisplayRow,
+  getTemperatureColor,
+  buildExpirationHeatmap,
+} from "@/lib/analytics"
 import { truncator } from "@/lib/truncate"
 
 import { License } from "@/types/licenses"
@@ -55,23 +59,8 @@ const POPOVER_WIDTH = 208 // w-52
 const PREVIEW_LIMIT = 5
 const truncateId = truncator("clip", { maxLength: 8 })
 
-function toDisplayRow(y: number): number {
-  return (y + 6) % 7
-}
-
 function toMondayRow(isoDay: number): number {
   return isoDay === 0 ? 6 : isoDay - 1
-}
-
-function getTemperatureColor(temperature: number): string {
-  if (temperature === 0) return "var(--color-background-1)"
-  if (temperature <= 0.25)
-    return "color-mix(in srgb, var(--color-destructive) 30%, var(--color-background-1))"
-  if (temperature <= 0.5)
-    return "color-mix(in srgb, var(--color-destructive) 55%, var(--color-background-1))"
-  if (temperature <= 0.75)
-    return "color-mix(in srgb, var(--color-destructive) 80%, var(--color-background-1))"
-  return "var(--color-destructive)"
 }
 
 export default function LicenseExpirationHeatmap({

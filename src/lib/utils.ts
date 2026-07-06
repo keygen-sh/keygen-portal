@@ -83,6 +83,15 @@ export function titleCase(s: string): string {
     .replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
+export function dasherize(value: string): string {
+  return value
+    .normalize("NFKD")
+    .replace(/[^ -~]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+}
+
 export function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }

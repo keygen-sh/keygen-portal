@@ -4,6 +4,8 @@ import { AuthResponse } from "@/types/auth"
 
 config.validate()
 
+const LOGIN_TOKEN_NAME = "Portal Token"
+
 interface AuthProps {
   email: string
   password?: string
@@ -21,7 +23,13 @@ export async function authenticate({
     unescape(encodeURIComponent(`${email || ""}:${password || ""}`)),
   )
 
-  const body = otp != null ? JSON.stringify({ meta: { otp } }) : undefined
+  const body = JSON.stringify({
+    data: {
+      type: "tokens",
+      attributes: { name: LOGIN_TOKEN_NAME },
+    },
+    ...(otp != null ? { meta: { otp } } : {}),
+  })
 
   const result = (await client.request(
     `/accounts/${account ?? config.id}/tokens`,

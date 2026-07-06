@@ -307,7 +307,7 @@ function PasswordStep({
   const form = useForm<Schemas.Auth.PasswordValues>({
     resolver: zodResolver(Schemas.Auth.PasswordSchema),
     mode: "onChange",
-    defaultValues: { password: "", remember: false },
+    defaultValues: { password: "", remember: true },
   })
 
   async function onSubmit({ password, remember }: Schemas.Auth.PasswordValues) {

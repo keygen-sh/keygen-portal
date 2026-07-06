@@ -103,7 +103,7 @@ export default function AuthHero() {
               transition={{ duration: reduced ? 0 : 0.45, ease: "easeOut" }}
             >
               <div className="pointer-events-auto absolute top-10 right-8 left-16 max-w-2xl">
-                <Testimonial />
+                <Testimonial className="[text-shadow:none]" />
               </div>
             </motion.div>
           )}

@@ -50,7 +50,7 @@ export default function AuthLayout() {
   return (
     <div className="flex min-h-screen">
       <Toaster />
-      <section className="z-20 flex w-full flex-col bg-background md:w-1/2 md:shadow-2xl/50">
+      <section className="z-20 flex w-full flex-col bg-background md:w-1/2 md:shadow-2xl/30">
         <nav className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-4 pt-8 md:pt-10">
           <div className="justify-self-center">
             {label && <BackButton label={label} className="hidden md:flex" />}
@@ -63,7 +63,7 @@ export default function AuthLayout() {
           <Outlet />
         </main>
       </section>
-      <section className="z-10 hidden w-1/2 border-l bg-brand-background-2 md:block">
+      <section className="z-10 hidden w-1/2 border-l bg-[rgb(0,60,91)] md:block">
         <Auth.Hero />
       </section>
     </div>

@@ -11,7 +11,7 @@ import { useListTokens } from "@/queries/tokens"
 
 import { Token, TokenKindLabels, InternalTokenRoles } from "@/types/tokens"
 
-import * as keygen from "@/keygen"
+import { isCurrentToken } from "@/lib/auth"
 
 import * as Tokens from "@/components/tokens"
 import Can from "@/components/can"
@@ -122,7 +122,7 @@ function TokenRow({ token, onNavigate }: TokenRowProps) {
           <Badge variant="secondary" className="px-1 text-xs">
             {TokenKindLabels[token.attributes.kind] ?? token.attributes.kind}
           </Badge>
-          {token.id === keygen.client.currentTokenId && (
+          {isCurrentToken(token.id) && (
             <Badge variant="success" className="px-1 text-xs">
               Current
             </Badge>

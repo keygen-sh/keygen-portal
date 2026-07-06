@@ -1,4 +1,4 @@
-import * as keygen from "@/keygen"
+import { isCurrentToken } from "@/lib/auth"
 
 import { Token, TokenAttributes } from "@/types/tokens"
 
@@ -25,7 +25,7 @@ export function revokeTokenDescription(
 ): string {
   if (!token) return BASE_REVOCATION_DESCRIPTION
 
-  if (token.id === keygen.client.currentTokenId) {
+  if (isCurrentToken(token.id)) {
     return `${BASE_REVOCATION_DESCRIPTION} You're currently authenticated with this token, so revoking it will sign you out and require you to re-authenticate.`
   }
 

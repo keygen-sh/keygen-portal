@@ -86,7 +86,7 @@ export default function RegisterForm() {
   const { isSubmitting } = form.formState
 
   return (
-    <div className="relative">
+    <div className="relative flex flex-col self-stretch">
       <div
         className={cn(
           "pointer-events-none absolute inset-0 flex flex-col items-center justify-center opacity-0 transition-opacity duration-300 ease-in-out",
@@ -100,20 +100,20 @@ export default function RegisterForm() {
       </div>
       <div
         className={cn(
-          "opacity-100 transition-opacity duration-300 ease-in-out",
+          "flex flex-1 flex-col opacity-100 transition-opacity duration-300 ease-in-out",
           isRegistered && "pointer-events-none opacity-0",
         )}
       >
         <Forms.Provider form={form} guard={false}>
           <Forms.Container.Page>
-            <section className="flex w-80 flex-col justify-center">
+            <section className="flex w-80 flex-1 flex-col">
               <form
                 onSubmit={(e) => {
                   e.preventDefault()
                   void form.handleSubmit(onSubmit)(e)
                 }}
                 noValidate
-                className="my-3 w-full space-y-8"
+                className="my-auto w-full space-y-8 py-3"
               >
                 <div className="flex flex-col space-y-4">
                   <Forms.Section.Header
@@ -147,28 +147,6 @@ export default function RegisterForm() {
                       "Sign up"
                     )}
                   </Button>
-                  <p className="text-xs text-content-subdued select-none">
-                    By clicking the above <strong>Sign Up</strong> button, you
-                    agree to our{" "}
-                    <a
-                      href={TERMS_URL}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="underline transition-colors duration-150 hover:text-content-loud"
-                    >
-                      Terms of Service
-                    </a>{" "}
-                    and{" "}
-                    <a
-                      href={PRIVACY_URL}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="underline transition-colors duration-150 hover:text-content-loud"
-                    >
-                      Privacy Policy
-                    </a>
-                    .
-                  </p>
                 </div>
 
                 <div className="space-x-2 rounded border border-accent p-2 text-center text-sm select-none">
@@ -187,6 +165,30 @@ export default function RegisterForm() {
                   </Button>
                 </div>
               </form>
+              <footer className="pb-8 md:pb-10">
+                <p className="text-center text-xs text-content-subdued select-none">
+                  By clicking the above <strong>Sign Up</strong> button, you
+                  agree to our{" "}
+                  <a
+                    href={TERMS_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline transition-colors duration-150 hover:text-content-loud"
+                  >
+                    Terms of Service
+                  </a>{" "}
+                  and{" "}
+                  <a
+                    href={PRIVACY_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline transition-colors duration-150 hover:text-content-loud"
+                  >
+                    Privacy Policy
+                  </a>
+                  .
+                </p>
+              </footer>
             </section>
           </Forms.Container.Page>
         </Forms.Provider>

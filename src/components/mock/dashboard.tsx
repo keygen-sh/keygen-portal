@@ -191,7 +191,11 @@ export default function Dashboard({ className }: { className?: string }) {
                 <span className="font-owners-wide text-2xl font-medium text-content-loud tabular-nums">
                   <AnimatedNumber value={m.value} />
                 </span>
-                <Sparkline data={m.spark} color={m.color} />
+                <Sparkline
+                  data={m.spark}
+                  color={m.color}
+                  className="min-w-0 flex-1"
+                />
               </div>
             </div>
           ))}
@@ -327,7 +331,7 @@ function Sparkline({
     <svg
       viewBox="0 0 120 34"
       preserveAspectRatio="none"
-      className={cn("h-9 w-28", className)}
+      className={cn("h-9 w-full", className)}
     >
       <motion.path
         initial={false}

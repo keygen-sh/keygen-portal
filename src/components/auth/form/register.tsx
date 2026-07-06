@@ -116,7 +116,10 @@ export default function RegisterForm() {
                 className="my-3 w-full space-y-8"
               >
                 <div className="flex flex-col space-y-4">
-                  <Forms.Section.Header variant="auth" className="mb-1">
+                  <Forms.Section.Header
+                    variant="auth"
+                    className="mb-1 text-3xl"
+                  >
                     Create an account
                   </Forms.Section.Header>
                   <h2 className="text-sm text-content-subdued">

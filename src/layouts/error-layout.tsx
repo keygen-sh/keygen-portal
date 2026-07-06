@@ -6,12 +6,12 @@ import BackButton from "@/components/back-button"
 export default function ErrorLayout() {
   return (
     <section className="flex min-h-screen w-full flex-col bg-background">
-      <nav className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-4 pt-4 md:pt-8">
+      <nav className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-4 pt-8 md:pt-10">
         <div className="justify-self-center">
           <BackButton className="hidden md:flex" />
         </div>
         <div className="justify-self-center">
-          <img src={logo} alt="Keygen Logo" className="h-6 md:h-5" />
+          <img src={logo} alt="Keygen Logo" className="h-6 md:h-8" />
         </div>
       </nav>
       <main className="flex flex-1 items-center justify-center px-4">

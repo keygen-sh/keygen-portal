@@ -7,6 +7,7 @@ import { useSidebar, SidebarProvider } from "@/components/ui/sidebar"
 import { useMobile } from "@/hooks/use-mobile"
 import { useSession } from "@/hooks/use-session"
 import { useRecordRecentAccount } from "@/hooks/use-record-recent-account"
+import { useRecordRecentUser } from "@/hooks/use-record-recent-user"
 
 import { EnvironmentProvider } from "@/providers/environment-provider"
 import { PermissionsProvider } from "@/providers/permissions-provider"
@@ -61,6 +62,9 @@ function AppLayoutContent() {
 
   // remember account for login picker on next visit for multiplayer cases
   useRecordRecentAccount()
+
+  // remember user for a personalized login greeting on next visit
+  useRecordRecentUser()
 
   // close sidebar on mobile whenever navigation resolves
   useEffect(() => {

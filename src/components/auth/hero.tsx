@@ -3,19 +3,26 @@ import { useMatches } from "@tanstack/react-router"
 import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 
 import { HeroVariant, heroVariantFromRouteId } from "@/lib/hero"
+import { getRecentUser } from "@/lib/users"
 
 import * as Mock from "@/components/mock"
 import Testimonial from "@/components/testimonial"
 
 interface HeroContent {
-  headline: string
+  headline: string | (() => string)
   subtitle?: string
   testimonials?: boolean
 }
 
 const CONTENT: Record<HeroVariant, HeroContent> = {
   login: {
-    headline: new Date().getHours() < 9 ? "Good morning" : "Welcome back",
+    headline: () => {
+      const greeting =
+        new Date().getHours() < 9 ? "Good morning" : "Welcome back"
+      const user = getRecentUser()
+
+      return user ? `${greeting}, ${user.firstName}` : greeting
+    },
     subtitle: "Let's get back to licensing with Keygen.",
   },
   register: {
@@ -38,6 +45,11 @@ export default function AuthHero() {
   const content = CONTENT[variant]
   const reduced = useReducedMotion()
 
+  const headline =
+    typeof content.headline === "function"
+      ? content.headline()
+      : content.headline
+
   // prevent replaying entrance animation on auth navigations
   const [entering] = useState(() => !hasEntered)
   useEffect(() => {
@@ -51,7 +63,7 @@ export default function AuthHero() {
         <div className="pointer-events-none absolute inset-0 z-30 flex items-center pr-8 pl-16">
           <AnimatePresence mode="wait" initial={animateIn}>
             <motion.div
-              key={content.headline}
+              key={headline}
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
@@ -61,7 +73,7 @@ export default function AuthHero() {
               }}
             >
               <h2 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-3xl leading-tight font-medium text-transparent drop-shadow-[0_2px_12px_var(--color-background)] select-none lg:text-4xl">
-                {content.headline}
+                {headline}
               </h2>
               {content.subtitle && (
                 <p className="mt-2 max-w-md font-owners-text text-sm leading-relaxed text-content-normal [text-shadow:0_1px_3px_var(--color-background),0_2px_14px_var(--color-background)]">

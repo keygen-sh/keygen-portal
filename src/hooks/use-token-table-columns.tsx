@@ -6,6 +6,8 @@ import { Token, TokenKindLabels } from "@/types/tokens"
 
 import { createTableColumnHelper } from "@/lib/tables"
 
+import * as keygen from "@/keygen"
+
 import ResourceLink from "@/components/resource-link"
 import ClipboardButton from "@/components/clipboard-button"
 
@@ -23,7 +25,12 @@ export function useTokenTableColumns() {
         cell: (info) => {
           const kind = info.getValue()
           return (
-            <Badge variant="secondary">{TokenKindLabels[kind] ?? kind}</Badge>
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary">{TokenKindLabels[kind] ?? kind}</Badge>
+              {info.row.original.id === keygen.client.currentTokenId && (
+                <Badge variant="success">Current</Badge>
+              )}
+            </div>
           )
         },
       }),

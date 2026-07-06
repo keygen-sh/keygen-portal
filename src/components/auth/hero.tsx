@@ -1,25 +1,24 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { useMatches } from "@tanstack/react-router"
 import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 
 import { HeroVariant, heroVariantFromRouteId } from "@/lib/hero"
-import { getRecentUser } from "@/lib/users"
+import { RecentUser, getRecentUser } from "@/lib/users"
 
 import * as Mock from "@/components/mock"
 import Testimonial from "@/components/testimonial"
 
 interface HeroContent {
-  headline: string | (() => string)
+  headline: string | ((user: RecentUser | null) => string)
   subtitle?: string
   testimonials?: boolean
 }
 
 const CONTENT: Record<HeroVariant, HeroContent> = {
   login: {
-    headline: () => {
+    headline: (user) => {
       const greeting =
         new Date().getHours() < 9 ? "Good morning" : "Welcome back"
-      const user = getRecentUser()
 
       return user ? `${greeting}, ${user.firstName}` : greeting
     },
@@ -44,10 +43,11 @@ export default function AuthHero() {
   const variant = heroVariantFromRouteId(currentRoute?.routeId ?? "")
   const content = CONTENT[variant]
   const reduced = useReducedMotion()
+  const user = useMemo(getRecentUser, [])
 
   const headline =
     typeof content.headline === "function"
-      ? content.headline()
+      ? content.headline(user)
       : content.headline
 
   // prevent replaying entrance animation on auth navigations

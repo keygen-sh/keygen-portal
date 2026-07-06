@@ -136,18 +136,19 @@ export default function EventLogDetails() {
                         <ResourceLink
                           linkage={environment}
                           emptyLabel="Global"
+                          truncate
                         />
                       }
                     />
                     <Attribute.Field
                       variant="text"
                       label="Requestor"
-                      value={<ResourceLink linkage={requestor} />}
+                      value={<ResourceLink linkage={requestor} truncate />}
                     />
                     <Attribute.Field
                       variant="text"
                       label="Resource"
-                      value={<ResourceLink linkage={resource} />}
+                      value={<ResourceLink linkage={resource} truncate />}
                     />
                   </div>
                 </CollapsibleCard>

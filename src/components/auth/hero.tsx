@@ -5,7 +5,6 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { HeroVariant, heroVariantFromRouteId } from "@/lib/hero"
 
 import * as Mock from "@/components/mock"
-import DotGrid from "@/components/dot-grid"
 import Testimonial from "@/components/testimonial"
 
 interface HeroContent {
@@ -48,10 +47,6 @@ export default function AuthHero() {
 
   return (
     <div className="relative h-full w-full overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <DotGrid />
-      </div>
-
       <div className="absolute inset-0 z-10">
         <div className="pointer-events-none absolute inset-0 z-30 flex items-center pr-8 pl-16">
           <AnimatePresence mode="wait" initial={animateIn}>

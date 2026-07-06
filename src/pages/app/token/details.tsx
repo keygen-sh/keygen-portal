@@ -42,6 +42,8 @@ import {
   useRegenerateToken,
 } from "@/queries/tokens"
 
+import * as keygen from "@/keygen"
+
 import {
   TokenKindLabels,
   TokenKindDescriptions,
@@ -218,13 +220,21 @@ export default function TokenDetails() {
                 </div>
               )}
 
-              <div className="mb-2">
+              <div className="mb-2 flex items-center gap-2">
                 <TooltipBadge
                   variant="secondary"
                   value={TokenKindLabels[token.attributes.kind]}
                   tooltip={TokenKindDescriptions[token.attributes.kind]}
                   className="px-1 text-xs"
                 />
+                {token.id === keygen.client.currentTokenId && (
+                  <TooltipBadge
+                    variant="success"
+                    value="Current"
+                    tooltip="This token authenticates your current Portal session."
+                    className="px-1 text-xs"
+                  />
+                )}
               </div>
               <div className="flex flex-col gap-3 md:flex-row md:items-center">
                 <h1 className="font-owners-wide text-2xl font-medium">

@@ -42,7 +42,7 @@ import {
   useRegenerateToken,
 } from "@/queries/tokens"
 
-import * as keygen from "@/keygen"
+import { isCurrentToken } from "@/lib/auth"
 
 import {
   TokenKindLabels,
@@ -227,7 +227,7 @@ export default function TokenDetails() {
                   tooltip={TokenKindDescriptions[token.attributes.kind]}
                   className="px-1 text-xs"
                 />
-                {token.id === keygen.client.currentTokenId && (
+                {isCurrentToken(token.id) && (
                   <TooltipBadge
                     variant="success"
                     value="Current"

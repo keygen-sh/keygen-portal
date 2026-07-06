@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/collapsible"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { ChevronDown, ChevronUp } from "lucide-react"
 
@@ -82,16 +83,23 @@ export default function CollapsibleCard({
                 transition={{ duration: 0.2, ease: [0.42, 0, 0.58, 1] }}
                 className="overflow-hidden"
               >
-                <CardContent className={cn("p-4", contentClass)}>
-                  {Children.map(children, (child, index) => (
-                    <Fragment key={index}>
-                      {child}
-                      {index < Children.count(children) - 1 && (
-                        <Separator className="my-4" />
-                      )}
-                    </Fragment>
-                  ))}
-                </CardContent>
+                <div
+                  className="w-full min-w-0"
+                  style={{ contain: "inline-size" }}
+                >
+                  <ScrollArea orientation="horizontal">
+                    <CardContent className={cn("p-4", contentClass)}>
+                      {Children.map(children, (child, index) => (
+                        <Fragment key={index}>
+                          {child}
+                          {index < Children.count(children) - 1 && (
+                            <Separator className="my-4" />
+                          )}
+                        </Fragment>
+                      ))}
+                    </CardContent>
+                  </ScrollArea>
+                </div>
               </motion.div>
             </CollapsibleContent>
           )}

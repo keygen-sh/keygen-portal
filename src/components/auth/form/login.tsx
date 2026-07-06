@@ -246,7 +246,7 @@ function EmailStep({
                   </Popover>
                 ) : (
                   <Tooltip>
-                    <TooltipTrigger>
+                    <TooltipTrigger asChild>
                       <Link
                         to="/auth"
                         className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted"
@@ -391,7 +391,7 @@ function PasswordStep({
                 </Popover>
               ) : (
                 <Tooltip>
-                  <TooltipTrigger>
+                  <TooltipTrigger asChild>
                     <button
                       className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted"
                       type="button"

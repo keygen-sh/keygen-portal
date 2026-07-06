@@ -5,6 +5,7 @@ import { RouterProvider, createRouter } from "@tanstack/react-router"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { routeTree } from "./routeTree.gen"
 import * as sentry from "@/sentry"
+import * as fathom from "@/fathom"
 
 sentry.init()
 
@@ -22,6 +23,8 @@ const router = createRouter({
   routeTree,
   context: { queryClient },
 })
+
+fathom.init(router)
 
 declare module "@tanstack/react-router" {
   interface Register {

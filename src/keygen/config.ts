@@ -45,6 +45,10 @@ const config = {
     environment: import.meta.env.VITE_SENTRY_ENVIRONMENT || "production",
   },
 
+  fathom: {
+    siteId: import.meta.env.VITE_FATHOM_SITE_ID,
+  },
+
   validate(): void {
     const missing: string[] = []
     const invalid: string[] = []

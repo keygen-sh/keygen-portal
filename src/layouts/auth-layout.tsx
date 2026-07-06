@@ -50,20 +50,20 @@ export default function AuthLayout() {
   return (
     <div className="flex min-h-screen">
       <Toaster />
-      <section className="flex w-full flex-col bg-background md:w-1/2">
-        <nav className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-4 pt-4 md:pt-8">
+      <section className="z-20 flex w-full flex-col bg-background md:w-1/2 md:shadow-2xl/50">
+        <nav className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-4 pt-8 md:pt-10">
           <div className="justify-self-center">
             {label && <BackButton label={label} className="hidden md:flex" />}
           </div>
           <div className="justify-self-center">
-            <img src={logo} alt="Keygen Logo" className="h-6 md:h-5" />
+            <img src={logo} alt="Keygen Logo" className="h-6 md:h-8" />
           </div>
         </nav>
         <main className="flex flex-1 items-center justify-center px-4">
           <Outlet />
         </main>
       </section>
-      <section className="hidden w-1/2 bg-brand-background-2 md:block">
+      <section className="z-10 hidden w-1/2 border-l bg-brand-background-2 md:block">
         <Auth.Hero />
       </section>
     </div>

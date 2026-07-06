@@ -10,30 +10,25 @@ import Testimonial from "@/components/testimonial"
 
 interface HeroContent {
   headline: string
-  subtitle: string
+  subtitle?: string
   testimonials?: boolean
 }
 
 const CONTENT: Record<HeroVariant, HeroContent> = {
   login: {
-    headline: "Licensing made simple",
-    subtitle:
-      "Distribute, license and monetize your software with a platform built for developers, by developers.",
+    headline: new Date().getHours() < 9 ? "Good morning" : "Welcome back",
+    subtitle: "Let's get back to licensing with Keygen.",
   },
   register: {
     headline: "Ship licensing today",
-    subtitle:
-      "Join the teams building fast, flexible licensing on top of Keygen.",
+    subtitle: "Join the teams building fast, flexible licensing with Keygen.",
     testimonials: true,
   },
   recovery: {
-    headline: "Licensing made simple",
-    subtitle:
-      "Distribute, license and monetize your software with a platform built for developers, by developers.",
+    headline: "Let's get you back in",
+    subtitle: "Still having issues? Reach out to support.",
   },
 }
-
-const FADE_MASK = "linear-gradient(to bottom, #000 54%, transparent 90%)"
 
 let hasEntered = false
 
@@ -42,7 +37,6 @@ export default function AuthHero() {
   const currentRoute = matches[matches.length - 1]
   const variant = heroVariantFromRouteId(currentRoute?.routeId ?? "")
   const content = CONTENT[variant]
-  const isRegister = variant === "register"
   const reduced = useReducedMotion()
 
   // prevent replaying entrance animation on auth navigations
@@ -55,13 +49,11 @@ export default function AuthHero() {
   return (
     <div className="relative h-full w-full overflow-hidden">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(120%_120%_at_70%_0%,#1b2127_0%,#12171c_45%,#070c11_100%)]" />
         <DotGrid />
-        <div className="absolute inset-0 bg-[radial-gradient(100%_100%_at_50%_45%,transparent_58%,#050a0f_100%)]" />
       </div>
 
       <div className="absolute inset-0 z-10">
-        <div className="z-30 flex justify-center pt-8">
+        <div className="pointer-events-none absolute inset-0 z-30 flex items-center pr-8 pl-16">
           <AnimatePresence mode="wait" initial={animateIn}>
             <motion.div
               key={content.headline}
@@ -73,23 +65,19 @@ export default function AuthHero() {
                 ease: [0.4, 0, 0.2, 1],
               }}
             >
-              <h2 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl leading-tight font-medium text-transparent select-none lg:text-3xl">
+              <h2 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-3xl leading-tight font-medium text-transparent drop-shadow-[0_2px_12px_var(--color-background)] select-none lg:text-4xl">
                 {content.headline}
               </h2>
-              <p className="mt-2 max-w-md font-owners-text text-sm leading-relaxed text-content-normal [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]">
-                {content.subtitle}
-              </p>
+              {content.subtitle && (
+                <p className="mt-2 max-w-md font-owners-text text-sm leading-relaxed text-content-normal [text-shadow:0_1px_3px_var(--color-background),0_2px_14px_var(--color-background)]">
+                  {content.subtitle}
+                </p>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <div
-          className="absolute inset-0 z-20"
-          style={{
-            maskImage: isRegister ? FADE_MASK : undefined,
-            WebkitMaskImage: isRegister ? FADE_MASK : undefined,
-          }}
-        >
+        <div className="absolute inset-0 z-20">
           <motion.div
             className="h-full"
             initial={animateIn ? { opacity: 0, y: 26 } : false}
@@ -100,26 +88,26 @@ export default function AuthHero() {
                 : { duration: 0 }
             }
           >
-            <div className="[ h-full perspective-distant">
-              <div className="relative h-full scale-[1.05] rotate-x-8 -rotate-y-20 rotate-z-4">
-                <Mock.Dashboard className="absolute top-36 left-0 w-full" />
-              </div>
+            <div className="relative h-full">
+              <Mock.Dashboard className="absolute top-[25%] left-[25%] w-screen origin-top-left scale-[1.5] rotate-x-55 rotate-z-45 shadow-2xl/50 2xl:top-[20%] 2xl:w-[125%] 2xl:max-w-7xl 2xl:min-w-6xl" />
             </div>
           </motion.div>
         </div>
+
+        {/* scrim over the mock dashboard so the heading stays readable */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-full bg-linear-to-t from-background/80 from-25% to-transparent" />
 
         <AnimatePresence>
           {content.testimonials && (
             <motion.div
               key="testimonials"
-              className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-2/5"
+              className="pointer-events-none absolute inset-x-0 top-0 z-30 h-2/5"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: reduced ? 0 : 0.45, ease: "easeOut" }}
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/85 to-transparent" />
-              <div className="pointer-events-auto absolute right-8 bottom-10 left-[16%]">
+              <div className="pointer-events-auto absolute top-10 right-8 left-16 max-w-2xl">
                 <Testimonial />
               </div>
             </motion.div>

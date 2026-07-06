@@ -97,10 +97,7 @@ export default function Testimonial({
 
   return (
     <figure
-      className={cn(
-        "relative [text-shadow:0_1px_10px_rgba(0,0,0,0.55)]",
-        className,
-      )}
+      className={cn("relative", className)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setFocused(true)}

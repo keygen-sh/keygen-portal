@@ -73,6 +73,12 @@ const EVENT_DEFINITIONS = [
     badge: "text-brand-destructive bg-brand-destructive/15",
     data: false,
   },
+  {
+    name: "license.validations.*",
+    color: GREEN,
+    badge: "text-brand-primary bg-brand-primary/15",
+    data: true,
+  },
 ]
 
 function SectionHeader({ title, range }: { title: string; range: string }) {

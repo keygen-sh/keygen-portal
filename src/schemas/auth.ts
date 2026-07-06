@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { dasherize } from "@/lib/utils"
+
 export const LoginSchema = z.object({
   email: z.string().email("Please enter a valid email."),
 })
@@ -12,7 +14,12 @@ export const PasswordSchema = z.object({
 export type PasswordValues = z.output<typeof PasswordSchema>
 
 export const AccountSchema = z.object({
-  slug: z.string().min(1, "Please enter your account."),
+  slug: z
+    .string()
+    .trim()
+    .min(1, "Please enter your account.")
+    .transform(dasherize)
+    .pipe(z.string().regex(/^[-A-Za-z0-9]+$/, "Please enter a valid account.")),
 })
 export type AccountValues = z.output<typeof AccountSchema>
 

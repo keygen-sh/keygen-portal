@@ -24,7 +24,7 @@ export default function AccountForm() {
   function onSubmit({ slug }: Schemas.Auth.AccountValues) {
     void navigate({
       to: "/$accountId/auth/login",
-      params: { accountId: slug.trim() },
+      params: { accountId: slug },
     })
   }
 

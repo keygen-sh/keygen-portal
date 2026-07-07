@@ -56,6 +56,13 @@ export default function AuthFormFields({
                 autoFocus={autoFocus === "newPassword"}
               />
             )
+          case "confirmPassword":
+            return (
+              <ConfirmPasswordField
+                key="confirmPassword"
+                autoFocus={autoFocus === "confirmPassword"}
+              />
+            )
           case "slug":
             return <SlugField key="slug" autoFocus={autoFocus === "slug"} />
           case "remember":
@@ -135,6 +142,38 @@ function PasswordField({
                 autoComplete={isNew ? "new-password" : "current-password"}
                 autoFocus={autoFocus}
                 placeholder="Enter password..."
+              />
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function ConfirmPasswordField({ autoFocus }: FieldProps) {
+  const form = useFormContext<{ confirmPassword: string }>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="confirmPassword"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Confirm password"
+            tooltip={AuthFormFieldDescriptions.confirmPassword}
+            variant="stacking"
+          >
+            <FormControl>
+              <Input
+                {...field}
+                type="password"
+                toggle={true}
+                autoComplete="new-password"
+                autoFocus={autoFocus}
+                placeholder="Confirm password..."
               />
             </FormControl>
           </Forms.Field.Header>

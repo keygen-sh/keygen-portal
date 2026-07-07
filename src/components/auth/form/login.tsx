@@ -10,7 +10,7 @@ import * as keygen from "@/keygen"
 
 import * as Schemas from "@/schemas"
 
-import { AuthErrorCode, type Auth } from "@/types/auth"
+import { AuthErrorCode, type AuthData } from "@/types/auth"
 
 import { useSlide } from "@/hooks/use-slide"
 import { useSession } from "@/hooks/use-session"
@@ -21,7 +21,7 @@ import { toast } from "@/lib/toast"
 import { truncator } from "@/lib/truncate"
 import { getRecentAccounts } from "@/lib/accounts"
 
-import Fields from "./fields"
+import * as Auth from "@/components/auth"
 import * as Forms from "@/components/forms"
 import * as Motion from "@/components/motion"
 import * as Loading from "@/components/loading"
@@ -54,7 +54,7 @@ export default function LoginForm() {
   const [remember, setRemember] = useState(false)
   const [ssoRedirectUrl, setSsoRedirectUrl] = useState<string | null>(null)
 
-  function onSubmit(data: Auth, remember: boolean) {
+  function onSubmit(data: AuthData, remember: boolean) {
     const { userId, accountId } = keygen.login(data, { remember })
 
     session.setUser(userId)
@@ -269,7 +269,7 @@ function EmailStep({
               </div>
             )}
 
-            <Fields include={["email"]} autoFocus="email" />
+            <Auth.Form.Fields include={["email"]} autoFocus="email" />
 
             <Button
               type="submit"
@@ -298,7 +298,7 @@ function PasswordStep({
 }: {
   email: string
   onOtpRequired: (password: string, remember: boolean) => void
-  onAuthenticated: (data: Auth, remember: boolean) => void
+  onAuthenticated: (data: AuthData, remember: boolean) => void
   onBack: () => void
 }) {
   const isMobile = useMobile()
@@ -415,7 +415,7 @@ function PasswordStep({
             </div>
 
             <div className="space-y-2">
-              <Fields include={["password"]} autoFocus="password" />
+              <Auth.Form.Fields include={["password"]} autoFocus="password" />
               <Button
                 variant="link"
                 size="link"
@@ -428,15 +428,16 @@ function PasswordStep({
                 )}
               >
                 <Link
-                  to="/$accountId/auth/recovery"
+                  to="/$accountId/auth/forgot"
                   params={{ accountId: keygen.config.id }}
+                  search={{ email }}
                 >
                   Forgot password?
                 </Link>
               </Button>
             </div>
 
-            <Fields include={["remember"]} />
+            <Auth.Form.Fields include={["remember"]} />
 
             <Button
               type="submit"
@@ -468,7 +469,7 @@ function VerifyStep({
   email: string
   password: string
   remember: boolean
-  onAuthenticated: (data: Auth, remember: boolean) => void
+  onAuthenticated: (data: AuthData, remember: boolean) => void
   onPasswordInvalid: () => void
   onBack: () => void
 }) {
@@ -548,7 +549,7 @@ function VerifyStep({
                 <Loading.Dots />
               </div>
             ) : (
-              <Fields
+              <Auth.Form.Fields
                 include={["otp"]}
                 onOtpComplete={(value) => {
                   form.setValue("otp", value, { shouldValidate: true })

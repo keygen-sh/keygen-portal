@@ -42,7 +42,7 @@ export default function AuthLayout() {
   const currentRoute = matches[matches.length - 1] as { routeId: string }
 
   const label = (() => {
-    if (currentRoute.routeId === "/$accountId/auth/recovery")
+    if (currentRoute.routeId === "/$accountId/auth/forgot")
       return "Return to Login"
     return ""
   })()

@@ -7,10 +7,11 @@ import { RecentUser, getRecentUser } from "@/lib/users"
 
 import * as Mock from "@/components/mock"
 import Testimonial from "@/components/testimonial"
+import { Button } from "../ui/button"
 
 interface HeroContent {
   headline: string | ((user: RecentUser | null) => string)
-  subtitle?: string
+  subtitle?: string | React.ReactNode
   testimonials?: boolean
 }
 
@@ -29,9 +30,24 @@ const CONTENT: Record<HeroVariant, HeroContent> = {
     subtitle: "Join the teams building fast, flexible licensing with Keygen.",
     testimonials: true,
   },
-  recovery: {
+  reset: {
     headline: "Let's get you back in",
-    subtitle: "Still having issues? Reach out to support.",
+    subtitle: (
+      <span>
+        Still having issues? Reach out to{" "}
+        <Button
+          size="link"
+          variant="link"
+          onClick={() => {
+            window.location.href = "mailto:support@keygen.sh"
+          }}
+          className="pointer-events-auto font-normal"
+        >
+          support@keygen.sh
+        </Button>
+        .
+      </span>
+    ),
   },
 }
 

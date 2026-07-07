@@ -2,12 +2,11 @@ import { addDays, format } from "date-fns"
 
 import { ExpirationHeatmapEntry } from "@/types/analytics"
 
-export type HeroVariant = "login" | "register" | "recovery"
+export type HeroVariant = "login" | "register" | "reset"
 
 export function heroVariantFromRouteId(routeId: string): HeroVariant {
   if (routeId.includes("/register")) return "register"
-  if (routeId.includes("/recovery") || routeId.includes("/reset"))
-    return "recovery"
+  if (routeId.includes("/forgot") || routeId.includes("/reset")) return "reset"
   return "login"
 }
 

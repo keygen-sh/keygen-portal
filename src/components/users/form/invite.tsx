@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator"
 
 import { UserRole, PortalRequiredPermissions } from "@/types/users"
 
-import { useCreateUser, useResetPassword } from "@/queries/users"
+import { useCreateUser, useForgotPassword } from "@/queries/users"
 
 import { toast } from "@/lib/toast"
 
@@ -24,7 +24,7 @@ export default function InviteUserForm({
   onOpenChange,
 }: InviteUserFormProps) {
   const createUser = useCreateUser()
-  const resetPassword = useResetPassword()
+  const resetPassword = useForgotPassword()
 
   const form = useForm<Schemas.Users.InviteValues>({
     resolver: zodResolver(Schemas.Users.InviteSchema),

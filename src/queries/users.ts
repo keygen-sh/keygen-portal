@@ -289,10 +289,30 @@ export function useChangePassword() {
   })
 }
 
-export function useResetPassword() {
+export function useForgotPassword() {
   return useMutation<void, APIError, { email: string }>({
     mutationFn: async ({ email }) => {
       const response = await keygen.users.forgotPassword({ email })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+    },
+  })
+}
+
+export function useResetPassword() {
+  return useMutation<
+    void,
+    APIError,
+    { email: string; token: string; newPassword: string }
+  >({
+    mutationFn: async ({ email, token, newPassword }) => {
+      const response = await keygen.users.resetPassword({
+        id: email,
+        token,
+        newPassword,
+      })
 
       if (response.errors) {
         throw new APIError(response.errors[0])

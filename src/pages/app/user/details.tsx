@@ -59,7 +59,7 @@ import {
   useRemoveUser,
   useBanUser,
   useUnbanUser,
-  useResetPassword,
+  useForgotPassword,
 } from "@/queries/users"
 
 import { useMobile } from "@/hooks/use-mobile"
@@ -110,7 +110,7 @@ export default function UserDetails() {
   const deleteUser = useRemoveUser(id)
   const banUser = useBanUser(id)
   const unbanUser = useUnbanUser(id)
-  const resetPassword = useResetPassword()
+  const resetPassword = useForgotPassword()
   const back = useBackNavigate()
 
   const isMobile = useMobile()

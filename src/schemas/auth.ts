@@ -34,20 +34,28 @@ export const RegisterSchema = z.object({
 })
 export type RegisterValues = z.output<typeof RegisterSchema>
 
-export const RecoverySchema = z.object({
+export const ForgotPasswordSchema = z.object({
   email: z.string().email("Please enter a valid email."),
 })
-export type RecoveryValues = z.output<typeof RecoverySchema>
+export type ForgotPasswordValues = z.output<typeof ForgotPasswordSchema>
 
-export const ResetSchema = z.object({
-  password: z.string().min(8, "Password must be at least 8 characters."),
-})
+export const ResetSchema = z
+  .object({
+    email: z.string().email("Please enter a valid email."),
+    password: z.string().min(8, "Password must be at least 8 characters."),
+    confirmPassword: z.string().min(1, "Please confirm your password."),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match.",
+    path: ["confirmPassword"],
+  })
 export type ResetValues = z.output<typeof ResetSchema>
 
 export type FieldNames =
   | "email"
   | "password"
   | "newPassword"
+  | "confirmPassword"
   | "remember"
   | "slug"
   | "otp"

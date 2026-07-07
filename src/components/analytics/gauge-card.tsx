@@ -109,7 +109,7 @@ export default function GaugeCard({
                 <LineChart
                   accessibilityLayer
                   data={chart.data}
-                  margin={{ top: 4, right: 8, bottom: 0, left: 2 }}
+                  margin={{ top: 4, right: 8, bottom: 2, left: 2 }}
                 >
                   <XAxis hide dataKey="date" height={0} />
                   <YAxis hide width={0} />

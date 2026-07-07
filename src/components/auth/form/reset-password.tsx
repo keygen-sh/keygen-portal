@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate, useSearch } from "@tanstack/react-router"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -10,6 +11,7 @@ import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
 
+import { parseResetToken } from "@/lib/auth"
 import { useResetPassword } from "@/queries/users"
 
 import { toast } from "@/lib/toast"
@@ -26,20 +28,26 @@ export default function ResetPasswordForm() {
   const { token } = useSearch({ from: "/$accountId/auth/reset" })
   const resetPassword = useResetPassword()
 
+  const reset = useMemo(() => parseResetToken(token), [token])
+
   const form = useForm<Schemas.Auth.ResetValues>({
     resolver: zodResolver(Schemas.Auth.ResetSchema),
     mode: "onChange",
-    defaultValues: { email: "", password: "", confirmPassword: "" },
+    defaultValues: { password: "", confirmPassword: "" },
   })
 
-  async function onSubmit({ email, password }: Schemas.Auth.ResetValues) {
-    if (!token) {
+  async function onSubmit({ password }: Schemas.Auth.ResetValues) {
+    if (!reset) {
       toast({ message: INVALID_LINK_MESSAGE, variant: "error" })
       return
     }
 
     try {
-      await resetPassword.mutateAsync({ email, token, newPassword: password })
+      await resetPassword.mutateAsync({
+        userId: reset.userId,
+        token: reset.token,
+        newPassword: password,
+      })
 
       toast({
         message: "Your password has been reset. Please sign in.",
@@ -54,14 +62,11 @@ export default function ResetPasswordForm() {
       const apiError = error instanceof APIError ? error : null
       const pointer = apiError?.source?.pointer ?? ""
 
-      if (pointer === "/meta/passwordResetToken") {
+      if (
+        pointer === "/meta/passwordResetToken" ||
+        apiError?.code === "NOT_FOUND"
+      ) {
         toast({ message: INVALID_LINK_MESSAGE, variant: "error" })
-      } else if (apiError?.code === "NOT_FOUND") {
-        form.setError("email", {
-          type: "manual",
-          message:
-            "We couldn't find an account for this email, or your reset link is invalid.",
-        })
       } else if (pointer.toLowerCase().includes("password")) {
         form.setError("password", {
           type: "manual",
@@ -96,8 +101,8 @@ export default function ResetPasswordForm() {
             </Forms.Section.Header>
 
             <Auth.Form.Fields
-              include={["email", "newPassword", "confirmPassword"]}
-              autoFocus="email"
+              include={["newPassword", "confirmPassword"]}
+              autoFocus="newPassword"
             />
 
             <Button

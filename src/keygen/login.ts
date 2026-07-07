@@ -1,13 +1,13 @@
 import client from "@/keygen/client"
 import config from "@/keygen/config"
-import type { Auth } from "@/types/auth"
+import type { AuthData } from "@/types/auth"
 
 interface LoginOptions {
   remember?: boolean
 }
 
 export function login(
-  data: Auth,
+  data: AuthData,
   { remember = false }: LoginOptions = {},
 ): { userId: string; accountId: string } {
   const { id: tokenId, attributes, relationships } = data

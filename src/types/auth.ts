@@ -59,7 +59,7 @@ export interface AuthRelationships {
   }
 }
 
-export interface Auth {
+export interface AuthData {
   id: string
   type: "tokens"
   attributes: AuthAttributes
@@ -69,12 +69,13 @@ export interface Auth {
   }
 }
 
-export type AuthResponse = APIResponse<Auth>
+export type AuthResponse = APIResponse<AuthData>
 
 export const AuthFormFieldDescriptions: Readonly<Record<FieldNames, string>> = {
   email: "The email address associated with your account.",
   password: "The password for your account.",
   newPassword: "Choose a new password. Must be at least 8 characters.",
+  confirmPassword: "Re-enter your new password to confirm it.",
   slug: 'This can either be your Keygen account\'s "slug" or its unique ID.',
   remember: "Keep your session active on this device.",
   otp: "The 6-digit code from your two-factor authentication app.",

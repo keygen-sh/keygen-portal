@@ -90,7 +90,7 @@ function EventSparkCard({
             <LineChart
               accessibilityLayer
               data={chart.data}
-              margin={{ top: 4, right: 8, bottom: 0, left: 0 }}
+              margin={{ top: 4, right: 8, bottom: 2, left: 0 }}
             >
               <CartesianGrid vertical={false} strokeDasharray="3 3" />
               <XAxis hide dataKey="date" height={0} />

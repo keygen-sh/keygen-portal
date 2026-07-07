@@ -305,11 +305,11 @@ export function useResetPassword() {
   return useMutation<
     void,
     APIError,
-    { email: string; token: string; newPassword: string }
+    { userId: string; token: string; newPassword: string }
   >({
-    mutationFn: async ({ email, token, newPassword }) => {
+    mutationFn: async ({ userId, token, newPassword }) => {
       const response = await keygen.users.resetPassword({
-        id: email,
+        id: userId,
         token,
         newPassword,
       })

@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
 
-import { cn, dasherize } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 import { handleFormError } from "@/lib/form-errors"
 
 import * as Schemas from "@/schemas"
@@ -82,10 +82,7 @@ export default function RegisterForm() {
         (apiError.code?.startsWith("SLUG_") === true ||
           apiError.source?.pointer === "/data/attributes/slug")
 
-      // show and prefill slug field
       if (isSlugError && !showSlug) {
-        const domain = values.email.split("@")[1] ?? ""
-        form.setValue("slug", dasherize(domain))
         setShowSlug(true)
       }
 

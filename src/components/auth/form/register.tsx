@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
 
-import { cn } from "@/lib/utils"
+import { cn, dasherize } from "@/lib/utils"
 import { handleFormError } from "@/lib/form-errors"
 
 import * as Schemas from "@/schemas"
@@ -34,11 +34,12 @@ export default function RegisterForm() {
   const form = useForm<Schemas.Auth.RegisterValues>({
     resolver: zodResolver(Schemas.Auth.RegisterSchema),
     mode: "onChange",
-    defaultValues: { email: "", password: "" },
+    defaultValues: { email: "", password: "", slug: "" },
   })
 
   const createAccount = useCreateAccount()
   const [isRegistered, setIsRegistered] = useState(false)
+  const [showSlug, setShowSlug] = useState(false)
 
   async function onSubmit(values: Schemas.Auth.RegisterValues) {
     try {
@@ -75,10 +76,23 @@ export default function RegisterForm() {
 
       console.error(error)
 
+      const apiError = error instanceof APIError ? error : undefined
+      const isSlugError =
+        apiError != null &&
+        (apiError.code?.startsWith("SLUG_") === true ||
+          apiError.source?.pointer === "/data/attributes/slug")
+
+      // show and prefill slug field
+      if (isSlugError && !showSlug) {
+        const domain = values.email.split("@")[1] ?? ""
+        form.setValue("slug", dasherize(domain))
+        setShowSlug(true)
+      }
+
       await handleFormError({
         form,
         toastMessage: "We couldn't create your account",
-        apiError: error instanceof APIError ? error : undefined,
+        apiError,
       })
     }
   }
@@ -132,6 +146,13 @@ export default function RegisterForm() {
                     include={["email", "password"]}
                     autoFocus="email"
                   />
+
+                  {showSlug && (
+                    <Auth.Form.Fields
+                      include={["newSlug"]}
+                      autoFocus="newSlug"
+                    />
+                  )}
                 </div>
 
                 <div className="flex flex-col space-y-4">

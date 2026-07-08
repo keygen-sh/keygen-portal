@@ -77,6 +77,8 @@ export const AuthFormFieldDescriptions: Readonly<Record<FieldNames, string>> = {
   newPassword: "Choose a new password. Must be at least 8 characters.",
   confirmPassword: "Re-enter your new password to confirm it.",
   slug: 'This can either be your Keygen account\'s "slug" or its unique ID.',
+  newSlug:
+    "A unique identifier for your account, used in URLs and API requests.",
   remember: "Keep your session active on this device.",
   otp: "The 6-digit code from your two-factor authentication app.",
 } as const

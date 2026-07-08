@@ -31,6 +31,16 @@ export type VerifyValues = z.output<typeof VerifySchema>
 export const RegisterSchema = z.object({
   email: z.string().email("Please enter a valid email."),
   password: z.string().min(8, "Password must be at least 8 characters."),
+  slug: z
+    .string()
+    .trim()
+    .transform(dasherize)
+    .pipe(
+      z
+        .string()
+        .regex(/^[a-z0-9][-a-z0-9]+$/, "Please enter a valid account slug.")
+        .or(z.literal("")),
+    ),
 })
 export type RegisterValues = z.output<typeof RegisterSchema>
 
@@ -57,4 +67,5 @@ export type FieldNames =
   | "confirmPassword"
   | "remember"
   | "slug"
+  | "newSlug"
   | "otp"

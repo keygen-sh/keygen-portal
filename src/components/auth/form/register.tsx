@@ -77,10 +77,7 @@ export default function RegisterForm() {
       console.error(error)
 
       const apiError = error instanceof APIError ? error : undefined
-      const isSlugError =
-        apiError != null &&
-        (apiError.code?.startsWith("SLUG_") === true ||
-          apiError.source?.pointer === "/data/attributes/slug")
+      const isSlugError = apiError?.source?.pointer === "/data/attributes/slug"
 
       if (isSlugError && !showSlug) {
         setShowSlug(true)

@@ -1,8 +1,17 @@
 import * as keygen from "@/keygen"
 
+import { dasherize } from "@/lib/utils"
+
 // whether the given token is the one authenticating the current Portal session
 export function isCurrentToken(tokenId: string): boolean {
   return tokenId === keygen.client.currentTokenId
+}
+
+// get account slug from an email address, e.g. "example-com" from "example.com"
+export function accountSlugFromEmail(email: string | undefined | null): string {
+  const domain = email?.split("@")[1] ?? ""
+
+  return dasherize(domain)
 }
 
 interface ResetToken {

@@ -13,6 +13,7 @@ import {
 
 import * as Schemas from "@/schemas"
 
+import { accountSlugFromEmail } from "@/lib/auth"
 import { truncator } from "@/lib/truncate"
 import { getRecentAccounts } from "@/lib/accounts"
 
@@ -196,8 +197,12 @@ function SlugField({
   autoFocus,
   mode = "select",
 }: FieldProps & { mode?: "select" | "create" }) {
-  const form = useFormContext<{ slug: string }>()
+  const form = useFormContext<{ slug: string; email?: string }>()
   const isCreate = mode === "create"
+
+  const slugPlaceholder = isCreate
+    ? accountSlugFromEmail(form.getValues("email"))
+    : ""
 
   const options = useMemo(
     () =>
@@ -232,7 +237,7 @@ function SlugField({
                   autoComplete="off"
                   spellCheck={false}
                   autoFocus={autoFocus}
-                  placeholder="example-com"
+                  placeholder={slugPlaceholder || "example-com"}
                 />
               </FormControl>
             ) : (

@@ -10,7 +10,7 @@ config.validate()
 export default async function create(
   values: Schemas.Auth.RegisterValues,
 ): Promise<AccountResponse> {
-  const { email, password } = values
+  const { email, password, slug } = values
 
   if (!config.defaultPlanId) {
     throw new Error("VITE_KEYGEN_DEFAULT_PLAN_ID is not configured.")
@@ -19,6 +19,7 @@ export default async function create(
   const body = {
     data: {
       type: "accounts",
+      ...(slug ? { attributes: { slug } } : {}),
       relationships: {
         plan: {
           data: { type: "plans", id: config.defaultPlanId },

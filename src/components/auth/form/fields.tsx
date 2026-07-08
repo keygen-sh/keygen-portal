@@ -65,6 +65,14 @@ export default function AuthFormFields({
             )
           case "slug":
             return <SlugField key="slug" autoFocus={autoFocus === "slug"} />
+          case "newSlug":
+            return (
+              <SlugField
+                key="newSlug"
+                mode="create"
+                autoFocus={autoFocus === "newSlug"}
+              />
+            )
           case "remember":
             return <RememberField key="remember" />
           case "otp":
@@ -184,8 +192,12 @@ function ConfirmPasswordField({ autoFocus }: FieldProps) {
   )
 }
 
-function SlugField({ autoFocus }: FieldProps) {
+function SlugField({
+  autoFocus,
+  mode = "select",
+}: FieldProps & { mode?: "select" | "create" }) {
   const form = useFormContext<{ slug: string }>()
+  const isCreate = mode === "create"
 
   const options = useMemo(
     () =>
@@ -205,19 +217,35 @@ function SlugField({ autoFocus }: FieldProps) {
       render={({ field, fieldState }) => (
         <FormItem>
           <Forms.Field.Header
-            label="Account"
-            tooltip={AuthFormFieldDescriptions.slug}
+            label={isCreate ? "Account slug" : "Account"}
+            tooltip={
+              isCreate
+                ? AuthFormFieldDescriptions.newSlug
+                : AuthFormFieldDescriptions.slug
+            }
             variant="stacking"
           >
-            <SuggestInput
-              value={field.value}
-              onChange={field.onChange}
-              options={options}
-              emptyMessage="No recent accounts"
-              placeholder="Enter account ID or slug..."
-              invalid={Boolean(fieldState.error)}
-              autoFocus={autoFocus}
-            />
+            {isCreate ? (
+              <FormControl>
+                <Input
+                  {...field}
+                  autoComplete="off"
+                  spellCheck={false}
+                  autoFocus={autoFocus}
+                  placeholder="example-com"
+                />
+              </FormControl>
+            ) : (
+              <SuggestInput
+                value={field.value}
+                onChange={field.onChange}
+                options={options}
+                emptyMessage="No recent accounts"
+                placeholder="Enter account ID or slug..."
+                invalid={Boolean(fieldState.error)}
+                autoFocus={autoFocus}
+              />
+            )}
           </Forms.Field.Header>
           <FormMessage />
         </FormItem>

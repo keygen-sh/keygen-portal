@@ -204,9 +204,7 @@ export function metadataValueToType(v: unknown): MetadataType {
   return "string"
 }
 
-// parse a raw metadata JSON object string (as edited in "raw" mode) into a
-// record. an empty string is treated as an empty object. arrays, primitives and
-// null are rejected since top-level metadata must be a JSON object.
+// parse a raw metadata JSON object string into a record.
 export function parseMetadataObjectText(
   text: string,
 ):

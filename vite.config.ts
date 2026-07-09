@@ -5,6 +5,7 @@ import { execSync } from "node:child_process"
 import tailwindcss from "@tailwindcss/vite"
 import react from "@vitejs/plugin-react"
 import svgr from "vite-plugin-svgr"
+import { sentryVitePlugin } from "@sentry/vite-plugin"
 
 function resolveAppVersion(): string {
   try {
@@ -18,8 +19,7 @@ function resolveAppVersion(): string {
   }
 }
 
-function appVersion(): PluginOption {
-  const version = resolveAppVersion()
+function appVersion(version: string): PluginOption {
   return {
     name: "app-version",
     config: () => ({
@@ -37,6 +37,10 @@ function appVersion(): PluginOption {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "")
+  const version = resolveAppVersion()
+
+  // for source map upload to BetterStack
+  const sentryAuthToken = env.SENTRY_AUTH_TOKEN
 
   return {
     server: {
@@ -45,13 +49,29 @@ export default defineConfig(({ mode }) => {
         ? env.VITE_ALLOWED_HOSTS.split(",").map((host) => host.trim())
         : [],
     },
+    build: {
+      sourcemap: sentryAuthToken ? "hidden" : false,
+    },
     plugins: [
-      appVersion(),
+      appVersion(version),
       TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
       tsconfigPaths(),
       tailwindcss(),
       react(),
       svgr(),
+      ...(sentryAuthToken
+        ? [
+            sentryVitePlugin({
+              org: env.SENTRY_ORG,
+              project: env.SENTRY_PROJECT,
+              url: env.SENTRY_URL,
+              authToken: sentryAuthToken,
+              telemetry: false,
+              release: { name: version },
+              sourcemaps: { filesToDeleteAfterUpload: ["./dist/**/*.map"] },
+            }),
+          ]
+        : []),
     ],
   }
 })

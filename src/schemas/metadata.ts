@@ -204,6 +204,32 @@ export function metadataValueToType(v: unknown): MetadataType {
   return "string"
 }
 
+// parse a raw metadata JSON object string (as edited in "raw" mode) into a
+// record. an empty string is treated as an empty object. arrays, primitives and
+// null are rejected since top-level metadata must be a JSON object.
+export function parseMetadataObjectText(
+  text: string,
+):
+  | { ok: true; value: Record<string, MetadataValue> }
+  | { ok: false; error: string } {
+  const trimmed = text.trim()
+  if (!trimmed) {
+    return { ok: true, value: {} }
+  }
+
+  const parsed = tryParseJson(trimmed)
+  if (!parsed) {
+    return { ok: false, error: "Metadata must be valid JSON" }
+  }
+
+  const value = parsed.value
+  if (value === null || typeof value !== "object" || Array.isArray(value)) {
+    return { ok: false, error: "Metadata must be a JSON object" }
+  }
+
+  return { ok: true, value: value as Record<string, MetadataValue> }
+}
+
 // convert a raw metadata value into its input-string representation
 export function metadataValueToString(v: unknown): string {
   if (v === null || v === undefined) return ""
@@ -230,7 +256,7 @@ export function recordToMetadataPairs(
 }
 
 // convert a MetadataPair[] into a Record<string, MetadataValue> for serialization
-function metadataPairsToRecord(
+export function metadataPairsToRecord(
   pairs: MetadataPair[],
 ): Record<string, MetadataValue> {
   const out: Record<string, MetadataValue> = {}

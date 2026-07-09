@@ -47,7 +47,7 @@ import { type FieldVariant } from "@/components/forms/field"
 import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
 import * as Calendars from "@/components/calendars"
-import KeyValueInput from "@/components/key-value-input"
+import MetadataInput from "@/components/metadata-input"
 import { CardSelector, CardOption } from "@/components/card-selector"
 import VersionInput from "@/components/version-input"
 import { recomposeVersion } from "@/lib/releases"
@@ -152,7 +152,6 @@ export default function ReleasesFormFields({
               <MetadataField
                 key="metadata"
                 autoFocus={autoFocus === "metadata"}
-                fieldVariant={fieldVariant}
                 descriptions={descriptions}
               />
             )
@@ -688,11 +687,9 @@ function PackageIdField({
 
 function MetadataField({
   autoFocus,
-  fieldVariant = "stacking",
   descriptions,
 }: {
   autoFocus?: boolean
-  fieldVariant?: FieldVariant
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Releases.AllValues>()
@@ -703,19 +700,12 @@ function MetadataField({
       name="metadata"
       render={() => (
         <FormItem>
-          <Forms.Field.Header
-            label="Metadata"
-            variant={fieldVariant}
+          <MetadataInput<Schemas.Releases.AllValues>
+            name="metadata"
             tooltip={descriptions.metadata}
             optional
-          >
-            <FormControl>
-              <KeyValueInput<Schemas.Releases.AllValues>
-                name="metadata"
-                autoFocus={autoFocus}
-              />
-            </FormControl>
-          </Forms.Field.Header>
+            autoFocus={autoFocus}
+          />
         </FormItem>
       )}
     />

@@ -17,7 +17,7 @@ import {
 import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
-import KeyValueInput from "@/components/key-value-input"
+import MetadataInput from "@/components/metadata-input"
 type Descriptions = typeof EntitlementFormFieldDescriptions
 
 interface EntitlementsFormFieldsProps {
@@ -82,7 +82,6 @@ export default function EntitlementsFormFields({
               <MetadataField
                 key="metadata"
                 autoFocus={autoFocus === "metadata"}
-                fieldVariant={fieldVariant}
                 descriptions={descriptions}
               />
             )
@@ -193,11 +192,9 @@ function CodeField({
 
 function MetadataField<T extends FieldValues>({
   autoFocus,
-  fieldVariant = "stacking",
   descriptions,
 }: {
   autoFocus?: boolean
-  fieldVariant?: FieldVariant
   descriptions: Descriptions
 }) {
   const form = useFormContext<T>()
@@ -208,19 +205,12 @@ function MetadataField<T extends FieldValues>({
       name={"metadata" as never}
       render={() => (
         <FormItem>
-          <Forms.Field.Header
-            label="Metadata"
-            variant={fieldVariant}
-            optional
+          <MetadataInput<T>
+            name={"metadata" as never}
             tooltip={descriptions.metadata}
-          >
-            <FormControl>
-              <KeyValueInput<T>
-                name={"metadata" as never}
-                autoFocus={autoFocus}
-              />
-            </FormControl>
-          </Forms.Field.Header>
+            optional
+            autoFocus={autoFocus}
+          />
         </FormItem>
       )}
     />

@@ -27,7 +27,7 @@ import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
-import KeyValueInput from "@/components/key-value-input"
+import MetadataInput from "@/components/metadata-input"
 import { CardSelector, CardOption } from "@/components/card-selector"
 
 type Descriptions = typeof PackageFormFieldDescriptions
@@ -98,7 +98,6 @@ export default function PackagesFormFields({
               <MetadataField
                 key="metadata"
                 autoFocus={autoFocus === "metadata"}
-                fieldVariant={fieldVariant}
                 descriptions={descriptions}
               />
             )
@@ -342,11 +341,9 @@ function ProductIdField({
 
 function MetadataField({
   autoFocus,
-  fieldVariant = "stacking",
   descriptions,
 }: {
   autoFocus?: boolean
-  fieldVariant?: FieldVariant
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Packages.AllValues>()
@@ -357,19 +354,12 @@ function MetadataField({
       name="metadata"
       render={() => (
         <FormItem>
-          <Forms.Field.Header
-            label="Metadata"
-            variant={fieldVariant}
+          <MetadataInput<Schemas.Packages.AllValues>
+            name="metadata"
             tooltip={descriptions.metadata}
             optional
-          >
-            <FormControl>
-              <KeyValueInput<Schemas.Packages.AllValues>
-                name="metadata"
-                autoFocus={autoFocus}
-              />
-            </FormControl>
-          </Forms.Field.Header>
+            autoFocus={autoFocus}
+          />
         </FormItem>
       )}
     />

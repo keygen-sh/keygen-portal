@@ -89,9 +89,7 @@ export default function KeyValueInput<
           return row
         }
 
-        // reset the value when changing to a more restricted type, but
-        // keep it when switching between string and json so in-progress
-        // work is not lost.
+        // reset the value when changing to a more restricted type
         let { value } = row
 
         if (type === "boolean") {

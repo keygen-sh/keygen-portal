@@ -7,6 +7,7 @@ configDependencies:
 minimumReleaseAge: 4320
 
 onlyBuiltDependencies:
+  - '@sentry/cli'
   - '@tailwindcss/oxide'
   - 'vite'
 

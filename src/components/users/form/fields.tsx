@@ -39,7 +39,7 @@ import { type FieldVariant } from "@/components/forms/field"
 import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
 import MultiSelect from "@/components/multi-select"
-import KeyValueInput from "@/components/key-value-input"
+import MetadataInput from "@/components/metadata-input"
 import TooltipSelectItem from "@/components/tooltip-select-item"
 
 type Descriptions = typeof UserFormFieldDescriptions
@@ -193,7 +193,6 @@ export default function UsersFormFields({
               <MetadataField
                 key="metadata"
                 autoFocus={autoFocus === "metadata"}
-                fieldVariant={fieldVariant}
                 descriptions={descriptions}
               />
             )
@@ -638,11 +637,9 @@ function InternalPermissionsField({
 
 function MetadataField({
   autoFocus,
-  fieldVariant = "stacking",
   descriptions,
 }: {
   autoFocus?: boolean
-  fieldVariant?: FieldVariant
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Users.BaseValues>()
@@ -653,18 +650,12 @@ function MetadataField({
       name="metadata"
       render={() => (
         <FormItem>
-          <Forms.Field.Header
-            label="Metadata"
-            variant={fieldVariant}
+          <MetadataInput<Schemas.Users.BaseValues>
+            name="metadata"
             tooltip={descriptions.metadata}
-          >
-            <FormControl>
-              <KeyValueInput<Schemas.Users.BaseValues>
-                name="metadata"
-                autoFocus={autoFocus}
-              />
-            </FormControl>
-          </Forms.Field.Header>
+            optional
+            autoFocus={autoFocus}
+          />
         </FormItem>
       )}
     />

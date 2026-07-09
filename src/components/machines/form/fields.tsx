@@ -23,7 +23,7 @@ import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
-import KeyValueInput from "@/components/key-value-input"
+import MetadataInput from "@/components/metadata-input"
 import ByteSizeInput from "@/components/byte-size-input"
 
 type Descriptions = typeof MachineFormFieldDescriptions
@@ -162,7 +162,6 @@ export default function MachinesFormFields({
               <MetadataField
                 key="metadata"
                 autoFocus={autoFocus === "metadata"}
-                fieldVariant={fieldVariant}
                 descriptions={descriptions}
               />
             )
@@ -570,11 +569,9 @@ function DiskField({
 
 function MetadataField({
   autoFocus,
-  fieldVariant = "stacking",
   descriptions,
 }: {
   autoFocus?: boolean
-  fieldVariant?: FieldVariant
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Machines.BaseValues>()
@@ -585,18 +582,12 @@ function MetadataField({
       name="metadata"
       render={() => (
         <FormItem>
-          <Forms.Field.Header
-            label="Metadata"
-            variant={fieldVariant}
+          <MetadataInput<Schemas.Machines.BaseValues>
+            name="metadata"
             tooltip={descriptions.metadata}
-          >
-            <FormControl>
-              <KeyValueInput<Schemas.Machines.BaseValues>
-                name="metadata"
-                autoFocus={autoFocus}
-              />
-            </FormControl>
-          </Forms.Field.Header>
+            optional
+            autoFocus={autoFocus}
+          />
         </FormItem>
       )}
     />

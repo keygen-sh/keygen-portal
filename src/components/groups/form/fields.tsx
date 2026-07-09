@@ -18,7 +18,7 @@ import {
 import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
-import KeyValueInput from "@/components/key-value-input"
+import MetadataInput from "@/components/metadata-input"
 
 type Descriptions = typeof GroupFormFieldDescriptions
 
@@ -104,7 +104,6 @@ export default function GroupsFormFields({
               <MetadataField
                 key="metadata"
                 autoFocus={autoFocus === "metadata"}
-                fieldVariant={fieldVariant}
                 descriptions={descriptions}
               />
             )
@@ -308,11 +307,9 @@ function MaxMachinesField({
 
 function MetadataField({
   autoFocus,
-  fieldVariant = "stacking",
   descriptions,
 }: {
   autoFocus?: boolean
-  fieldVariant?: FieldVariant
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Groups.BaseValues>()
@@ -323,18 +320,12 @@ function MetadataField({
       name="metadata"
       render={() => (
         <FormItem>
-          <Forms.Field.Header
-            label="Metadata"
-            variant={fieldVariant}
+          <MetadataInput<Schemas.Groups.BaseValues>
+            name="metadata"
             tooltip={descriptions.metadata}
-          >
-            <FormControl>
-              <KeyValueInput<Schemas.Groups.BaseValues>
-                name="metadata"
-                autoFocus={autoFocus}
-              />
-            </FormControl>
-          </Forms.Field.Header>
+            optional
+            autoFocus={autoFocus}
+          />
         </FormItem>
       )}
     />

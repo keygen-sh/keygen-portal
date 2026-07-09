@@ -57,7 +57,7 @@ import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
-import KeyValueInput from "@/components/key-value-input"
+import MetadataInput from "@/components/metadata-input"
 import NullableSelect from "@/components/nullable-select"
 import DurationInput from "@/components/duration-input"
 import ByteSizeInput from "@/components/byte-size-input"
@@ -817,18 +817,11 @@ function MetadataField({
       name="metadata"
       render={() => (
         <FormItem>
-          <Forms.Field.Header
-            label="Metadata"
-            variant="stacking"
+          <MetadataInput<Schemas.Policies.AllFormValues>
+            name="metadata"
             tooltip={descriptions.metadata}
-          >
-            <FormControl>
-              <KeyValueInput<Schemas.Policies.AllFormValues>
-                name="metadata"
-                autoFocus={autoFocus}
-              />
-            </FormControl>
-          </Forms.Field.Header>
+            autoFocus={autoFocus}
+          />
         </FormItem>
       )}
     />

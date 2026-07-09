@@ -26,6 +26,7 @@ interface FieldHeaderProps {
   variant?: FieldVariant
   optional?: boolean
   hint?: string
+  action?: React.ReactNode
   children: React.ReactNode
   className?: string
 }
@@ -38,6 +39,7 @@ export default function FieldHeader({
   variant = "row",
   optional = false,
   hint,
+  action,
   children,
   className,
 }: FieldHeaderProps) {
@@ -54,7 +56,7 @@ export default function FieldHeader({
         className,
       )}
     >
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <div className="group flex items-center gap-2">
           <label className="inline text-sm text-content-muted">
             {head && <>{head} </>}
@@ -112,10 +114,16 @@ export default function FieldHeader({
             </span>
           </label>
         </div>
-        {(hint || optional) && (isMobile || variant === "stacking") && (
-          <span className="text-xs text-content-subdued">
-            {hint ?? "Optional"}
-          </span>
+        {(action ||
+          ((hint || optional) && (isMobile || variant === "stacking"))) && (
+          <div className="flex items-center gap-2">
+            {(hint || optional) && (isMobile || variant === "stacking") && (
+              <span className="text-xs text-content-subdued">
+                {hint ?? "Optional"}
+              </span>
+            )}
+            {action}
+          </div>
         )}
       </div>
 

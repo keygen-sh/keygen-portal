@@ -27,7 +27,7 @@ import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
-import KeyValueInput from "@/components/key-value-input"
+import MetadataInput from "@/components/metadata-input"
 
 type Descriptions = typeof ProcessFormFieldDescriptions
 
@@ -93,7 +93,6 @@ export default function ProcessesFormFields({
               <MetadataField
                 key="metadata"
                 autoFocus={autoFocus === "metadata"}
-                fieldVariant={fieldVariant}
                 descriptions={descriptions}
               />
             )
@@ -226,11 +225,9 @@ function MachineIdField({
 
 function MetadataField({
   autoFocus,
-  fieldVariant = "stacking",
   descriptions,
 }: {
   autoFocus?: boolean
-  fieldVariant?: FieldVariant
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Processes.BaseValues>()
@@ -241,19 +238,12 @@ function MetadataField({
       name="metadata"
       render={() => (
         <FormItem>
-          <Forms.Field.Header
-            label="Metadata"
-            variant={fieldVariant}
+          <MetadataInput<Schemas.Processes.BaseValues>
+            name="metadata"
             tooltip={descriptions.metadata}
             optional
-          >
-            <FormControl>
-              <KeyValueInput<Schemas.Processes.BaseValues>
-                name="metadata"
-                autoFocus={autoFocus}
-              />
-            </FormControl>
-          </Forms.Field.Header>
+            autoFocus={autoFocus}
+          />
         </FormItem>
       )}
     />

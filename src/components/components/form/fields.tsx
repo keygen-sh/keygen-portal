@@ -21,7 +21,7 @@ import { useListMachines } from "@/queries/machines"
 
 import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
-import KeyValueInput from "@/components/key-value-input"
+import MetadataInput from "@/components/metadata-input"
 
 type Descriptions = typeof ComponentFormFieldDescriptions
 
@@ -97,7 +97,6 @@ export default function ComponentsFormFields({
               <MetadataField
                 key="metadata"
                 autoFocus={autoFocus === "metadata"}
-                fieldVariant={fieldVariant}
                 descriptions={descriptions}
               />
             )
@@ -246,11 +245,9 @@ function MachineIdField({
 
 function MetadataField({
   autoFocus,
-  fieldVariant = "stacking",
   descriptions,
 }: {
   autoFocus?: boolean
-  fieldVariant?: FieldVariant
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Components.BaseValues>()
@@ -261,18 +258,11 @@ function MetadataField({
       name="metadata"
       render={() => (
         <FormItem>
-          <Forms.Field.Header
-            label="Metadata"
-            variant={fieldVariant}
+          <MetadataInput<Schemas.Components.BaseValues>
+            name="metadata"
             tooltip={descriptions.metadata}
-          >
-            <FormControl>
-              <KeyValueInput<Schemas.Components.BaseValues>
-                name="metadata"
-                autoFocus={autoFocus}
-              />
-            </FormControl>
-          </Forms.Field.Header>
+            autoFocus={autoFocus}
+          />
         </FormItem>
       )}
     />

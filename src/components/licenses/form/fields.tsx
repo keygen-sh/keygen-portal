@@ -41,7 +41,7 @@ import { type FieldVariant } from "@/components/forms/field"
 import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
 import * as Calendars from "@/components/calendars"
-import KeyValueInput from "@/components/key-value-input"
+import MetadataInput from "@/components/metadata-input"
 import ByteSizeInput from "@/components/byte-size-input"
 
 type Descriptions = typeof LicenseFormFieldDescriptions
@@ -966,19 +966,12 @@ function MetadataField({
       name="metadata"
       render={() => (
         <FormItem>
-          <Forms.Field.Header
-            label="Metadata"
-            variant="stacking"
-            optional
+          <MetadataInput<Schemas.Licenses.BaseValues>
+            name="metadata"
             tooltip={descriptions.metadata}
-          >
-            <FormControl>
-              <KeyValueInput<Schemas.Licenses.BaseValues>
-                name="metadata"
-                autoFocus={autoFocus}
-              />
-            </FormControl>
-          </Forms.Field.Header>
+            optional
+            autoFocus={autoFocus}
+          />
         </FormItem>
       )}
     />

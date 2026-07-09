@@ -1,3 +1,5 @@
+import { addWeeks } from "date-fns"
+
 import config from "@/keygen/config"
 import client from "@/keygen/client"
 import { AuthResponse } from "@/types/auth"
@@ -5,6 +7,7 @@ import { AuthResponse } from "@/types/auth"
 config.validate()
 
 const LOGIN_TOKEN_NAME = "Portal Token"
+const SESSION_EXPIRY_WEEKS = 2
 
 interface AuthProps {
   email: string
@@ -23,10 +26,15 @@ export async function authenticate({
     unescape(encodeURIComponent(`${email || ""}:${password || ""}`)),
   )
 
+  const expiry = addWeeks(new Date(), SESSION_EXPIRY_WEEKS).toISOString()
+
   const body = JSON.stringify({
     data: {
       type: "tokens",
-      attributes: { name: LOGIN_TOKEN_NAME },
+      attributes: {
+        name: LOGIN_TOKEN_NAME,
+        expiry,
+      },
     },
     ...(otp != null ? { meta: { otp } } : {}),
   })

@@ -4,6 +4,7 @@ import { Package, PackageEngineLabels } from "@/types/packages"
 import { createTableColumnHelper } from "@/lib/tables"
 
 import * as Tables from "@/components/tables"
+import { TimestampCell } from "@/components/timestamp"
 import ClipboardButton from "@/components/clipboard-button"
 
 const column = createTableColumnHelper<Package>()
@@ -36,12 +37,12 @@ export function usePackageTableColumns() {
       }),
       column.attr("created", {
         header: "Created",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+        cell: (info) => <TimestampCell value={info.getValue()} />,
         sortingFn: "datetime",
       }),
       column.attr("updated", {
         header: "Updated",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+        cell: (info) => <TimestampCell value={info.getValue()} />,
         sortingFn: "datetime",
       }),
     ],

@@ -5,28 +5,12 @@ import { Badge } from "@/components/ui/badge"
 import { type EventLog } from "@/types/event-logs"
 
 import { eventLogBadgeVariant } from "@/lib/event-logs"
-import {
-  formatRelativeTime,
-  formatUtcTimestamp,
-  formatLocalTimestamp,
-} from "@/lib/timestamps"
 import { createTableColumnHelper } from "@/lib/tables"
 
-import {
-  type EventLogPreview,
-  type EventLogPreviewHandlers,
-} from "@/components/event-logs/preview"
+import { TimestampCell } from "@/components/timestamp"
 import ClipboardButton from "@/components/clipboard-button"
 
 const column = createTableColumnHelper<EventLog>()
-
-function timestampPreview(created: string): EventLogPreview {
-  return {
-    relative: formatRelativeTime(created),
-    utc: formatUtcTimestamp(created),
-    local: formatLocalTimestamp(created),
-  }
-}
 
 function relationshipIdCell(id?: string, emptyLabel = "--") {
   if (!id) return <span className="text-content-muted">{emptyLabel}</span>
@@ -34,28 +18,13 @@ function relationshipIdCell(id?: string, emptyLabel = "--") {
   return <ClipboardButton value={id} maxLength={8} />
 }
 
-export function useEventLogTableColumns(handlers: EventLogPreviewHandlers) {
+export function useEventLogTableColumns() {
   const columns = useMemo(
     () => [
       column.attr("created", {
         sortingFn: "datetime",
         header: "Timestamp",
-        cell: (info) => {
-          const created = info.getValue()
-
-          return (
-            <span
-              className="block font-mono text-xs text-content-normal"
-              onMouseEnter={(event) =>
-                handlers.onOpenPreview(timestampPreview(created), event)
-              }
-              onMouseMove={handlers.onMovePreview}
-              onMouseLeave={handlers.onClosePreview}
-            >
-              {created}
-            </span>
-          )
-        },
+        cell: (info) => <TimestampCell value={info.getValue()} display="raw" />,
       }),
       column.attr("event", {
         header: "Event",
@@ -85,7 +54,7 @@ export function useEventLogTableColumns(handlers: EventLogPreviewHandlers) {
         cell: (info) => relationshipIdCell(info.getValue()?.data?.id),
       }),
     ],
-    [handlers],
+    [],
   )
 
   return columns

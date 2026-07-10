@@ -3,6 +3,7 @@ import { useMemo } from "react"
 import { Arch } from "@/types/arches"
 import { createTableColumnHelper } from "@/lib/tables"
 
+import { TimestampCell } from "@/components/timestamp"
 import ClipboardButton from "@/components/clipboard-button"
 
 const column = createTableColumnHelper<Arch>()
@@ -19,7 +20,7 @@ export function useArchTableColumns() {
       }),
       column.attr("created", {
         header: "Created",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+        cell: (info) => <TimestampCell value={info.getValue()} />,
         sortingFn: "datetime",
       }),
     ],

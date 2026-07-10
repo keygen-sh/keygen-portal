@@ -4,6 +4,7 @@ import { type WebhookEndpoint } from "@/types/webhook-endpoints"
 
 import { createTableColumnHelper } from "@/lib/tables"
 
+import { TimestampCell } from "@/components/timestamp"
 import ClipboardButton from "@/components/clipboard-button"
 
 const column = createTableColumnHelper<WebhookEndpoint>()
@@ -26,12 +27,12 @@ export function useWebhookEndpointTableColumns() {
       column.attr("created", {
         sortingFn: "datetime",
         header: "Created",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+        cell: (info) => <TimestampCell value={info.getValue()} />,
       }),
       column.attr("updated", {
         sortingFn: "datetime",
         header: "Updated",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+        cell: (info) => <TimestampCell value={info.getValue()} />,
       }),
     ],
     [],

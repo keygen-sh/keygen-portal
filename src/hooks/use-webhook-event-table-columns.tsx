@@ -12,6 +12,7 @@ import { httpStatusBadgeVariant } from "@/lib/http"
 import { createTableColumnHelper } from "@/lib/tables"
 import { eventLogBadgeVariant } from "@/lib/event-logs"
 
+import { TimestampCell } from "@/components/timestamp"
 import ClipboardButton from "@/components/clipboard-button"
 
 const column = createTableColumnHelper<WebhookEvent>()
@@ -76,12 +77,12 @@ export function useWebhookEventTableColumns() {
       column.attr("created", {
         sortingFn: "datetime",
         header: "Created",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+        cell: (info) => <TimestampCell value={info.getValue()} />,
       }),
       column.attr("updated", {
         sortingFn: "datetime",
         header: "Updated",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+        cell: (info) => <TimestampCell value={info.getValue()} />,
       }),
     ],
     [],

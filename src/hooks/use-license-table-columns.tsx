@@ -11,6 +11,7 @@ import {
 import { createTableColumnHelper } from "@/lib/tables"
 
 import * as Tables from "@/components/tables"
+import { TimestampCell } from "@/components/timestamp"
 import ClipboardButton from "@/components/clipboard-button"
 
 const column = createTableColumnHelper<License>()
@@ -64,13 +65,13 @@ export function useLicenseTableColumns() {
         cell: (info) => {
           const value = info.getValue()
           if (!value) return <span className="text-content-muted">Never</span>
-          return new Date(value).toLocaleDateString()
+          return <TimestampCell value={value} />
         },
       }),
       column.attr("created", {
         sortingFn: "datetime",
         header: "Created",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+        cell: (info) => <TimestampCell value={info.getValue()} />,
       }),
     ],
     [],

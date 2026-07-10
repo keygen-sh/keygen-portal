@@ -4,51 +4,20 @@ import { Badge } from "@/components/ui/badge"
 
 import { type RequestLog } from "@/types/request-logs"
 
-import { httpMethodBadgeVariant, httpStatusBadgeVariant } from "@/lib/http"
-import {
-  formatRelativeTime,
-  formatUtcTimestamp,
-  formatLocalTimestamp,
-} from "@/lib/timestamps"
 import { createTableColumnHelper } from "@/lib/tables"
+import { httpMethodBadgeVariant, httpStatusBadgeVariant } from "@/lib/http"
 
-import {
-  type RequestLogPreview,
-  type RequestLogPreviewHandlers,
-} from "@/components/request-logs/preview"
+import { TimestampCell } from "@/components/timestamp"
 
 const column = createTableColumnHelper<RequestLog>()
 
-function timestampPreview(created: string): RequestLogPreview {
-  return {
-    relative: formatRelativeTime(created),
-    utc: formatUtcTimestamp(created),
-    local: formatLocalTimestamp(created),
-  }
-}
-
-export function useRequestLogTableColumns(handlers: RequestLogPreviewHandlers) {
+export function useRequestLogTableColumns() {
   const columns = useMemo(
     () => [
       column.attr("created", {
         sortingFn: "datetime",
         header: "Timestamp",
-        cell: (info) => {
-          const created = info.getValue()
-
-          return (
-            <span
-              className="block font-mono text-xs text-content-normal"
-              onMouseEnter={(event) =>
-                handlers.onOpenPreview(timestampPreview(created), event)
-              }
-              onMouseMove={handlers.onMovePreview}
-              onMouseLeave={handlers.onClosePreview}
-            >
-              {created}
-            </span>
-          )
-        },
+        cell: (info) => <TimestampCell value={info.getValue()} display="raw" />,
       }),
       column.attr("ip", {
         sortingFn: "alphanumeric",
@@ -113,7 +82,7 @@ export function useRequestLogTableColumns(handlers: RequestLogPreviewHandlers) {
         },
       }),
     ],
-    [handlers],
+    [],
   )
 
   return columns

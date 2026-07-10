@@ -8,6 +8,7 @@ import { createTableColumnHelper } from "@/lib/tables"
 import { isCurrentToken } from "@/lib/auth"
 
 import ResourceLink from "@/components/resource-link"
+import { TimestampCell } from "@/components/timestamp"
 import ClipboardButton from "@/components/clipboard-button"
 
 const column = createTableColumnHelper<Token>()
@@ -51,7 +52,7 @@ export function useTokenTableColumns() {
         cell: (info) => {
           const value = info.getValue()
           return value ? (
-            new Date(value).toLocaleDateString()
+            <TimestampCell value={value} />
           ) : (
             <span className="text-content-subdued">Never</span>
           )
@@ -60,12 +61,12 @@ export function useTokenTableColumns() {
       column.attr("created", {
         sortingFn: "datetime",
         header: "Created",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+        cell: (info) => <TimestampCell value={info.getValue()} />,
       }),
       column.attr("updated", {
         sortingFn: "datetime",
         header: "Updated",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+        cell: (info) => <TimestampCell value={info.getValue()} />,
       }),
     ],
     [],

@@ -11,6 +11,7 @@ import {
 import { formatByteSize } from "@/lib/bytes"
 import { createTableColumnHelper } from "@/lib/tables"
 
+import { TimestampCell } from "@/components/timestamp"
 import ClipboardButton from "@/components/clipboard-button"
 
 const column = createTableColumnHelper<Artifact>()
@@ -54,12 +55,12 @@ export function useArtifactTableColumns() {
       }),
       column.attr("created", {
         header: "Created",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+        cell: (info) => <TimestampCell value={info.getValue()} />,
         sortingFn: "datetime",
       }),
       column.attr("updated", {
         header: "Updated",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+        cell: (info) => <TimestampCell value={info.getValue()} />,
         sortingFn: "datetime",
       }),
     ],

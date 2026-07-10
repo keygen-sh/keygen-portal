@@ -1,0 +1,167 @@
+import { useEffect, useRef, useState } from "react"
+
+import { Copy } from "lucide-react"
+
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover"
+
+import {
+  formatRelativeTime,
+  formatPreciseRelative,
+  formatUtcTimestamp,
+  formatLocalTimestamp,
+  type ZonedTimestamp,
+} from "@/lib/timestamps"
+import { cn } from "@/lib/utils"
+import { copyToClipboard } from "@/lib/clipboard"
+
+const CLOSE_DELAY_MS = 50
+const OPEN_DELAY_MS = 30
+
+interface TimestampProps {
+  value: string | null | undefined
+  display?: "relative" | "raw"
+  precise?: boolean
+  emptyLabel?: string
+  className?: string
+}
+
+function ZonedRow({ zoned }: { zoned: ZonedTimestamp }) {
+  return (
+    <div className="flex items-center gap-2">
+      <Badge
+        variant="outline"
+        className="shrink-0 rounded-sm bg-background-3 font-mono"
+      >
+        {zoned.label}
+      </Badge>
+      <span className="min-w-0 flex-1 truncate text-content-muted">
+        {zoned.date}
+      </span>
+      <span className="shrink-0 font-mono text-content-normal">
+        {zoned.time}
+      </span>
+    </div>
+  )
+}
+
+function TimestampPopover({ value }: { value: string }) {
+  return (
+    <div className="flex flex-col text-xs">
+      <div className="flex items-center justify-between">
+        <span className="min-w-0 flex-1 truncate font-mono text-content-muted">
+          {value}
+        </span>
+        <Button
+          variant="ghost"
+          size="icon"
+          title="Copy UTC timestamp"
+          onClick={(e) => {
+            e.stopPropagation() // prevent click from propagating, e.g. selecting a table row
+            copyToClipboard(value)
+          }}
+          className="-my-1 -mr-1 size-6 shrink-0"
+        >
+          <Copy className="size-3.5" />
+        </Button>
+      </div>
+      <span className="min-w-0 truncate text-content-normal">
+        {formatPreciseRelative(value)}
+      </span>
+      <div className="mt-2 space-y-2">
+        <ZonedRow zoned={formatUtcTimestamp(value)} />
+        <ZonedRow zoned={formatLocalTimestamp(value)} />
+      </div>
+    </div>
+  )
+}
+
+export default function Timestamp({
+  value,
+  display = "relative",
+  precise = false,
+  emptyLabel = "Not set",
+  className,
+}: TimestampProps) {
+  const [open, setOpen] = useState(false)
+  const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearTimers = () => {
+    if (openTimer.current) {
+      clearTimeout(openTimer.current)
+      openTimer.current = null
+    }
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current)
+      closeTimer.current = null
+    }
+  }
+
+  const scheduleOpen = () => {
+    clearTimers()
+    openTimer.current = setTimeout(() => setOpen(true), OPEN_DELAY_MS)
+  }
+  const scheduleClose = () => {
+    clearTimers()
+    closeTimer.current = setTimeout(() => setOpen(false), CLOSE_DELAY_MS)
+  }
+
+  useEffect(() => clearTimers, [])
+
+  if (value == null || value === "") {
+    return (
+      <span className={cn("text-content-muted", className)}>{emptyLabel}</span>
+    )
+  }
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverAnchor asChild>
+        <span
+          onMouseEnter={scheduleOpen}
+          onMouseLeave={scheduleClose}
+          className={cn(
+            display === "raw"
+              ? "font-mono text-xs text-content-normal"
+              : "text-content-muted",
+            className,
+          )}
+        >
+          {display === "raw"
+            ? value
+            : precise
+              ? formatPreciseRelative(value)
+              : formatRelativeTime(value)}
+        </span>
+      </PopoverAnchor>
+      <PopoverContent
+        align="start"
+        side="left"
+        onMouseEnter={clearTimers}
+        onMouseLeave={scheduleClose}
+        onClick={(event) => event.stopPropagation()}
+        onOpenAutoFocus={(event) => event.preventDefault()}
+        className="w-80 p-3"
+      >
+        <TimestampPopover value={value} />
+      </PopoverContent>
+    </Popover>
+  )
+}
+
+// convenience wrapper for table cells to make the popover easier to hover
+export function TimestampCell({
+  className,
+  precise = false,
+  ...props
+}: TimestampProps) {
+  return (
+    <Timestamp
+      {...props}
+      precise={precise}
+      className={cn("-m-2 block p-2", className)}
+    />
+  )
+}

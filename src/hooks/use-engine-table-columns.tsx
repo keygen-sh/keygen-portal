@@ -3,6 +3,7 @@ import { useMemo } from "react"
 import { Engine } from "@/types/engines"
 import { createTableColumnHelper } from "@/lib/tables"
 
+import { TimestampCell } from "@/components/timestamp"
 import ClipboardButton from "@/components/clipboard-button"
 
 const column = createTableColumnHelper<Engine>()
@@ -19,12 +20,12 @@ export function useEngineTableColumns() {
       }),
       column.attr("created", {
         header: "Created",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+        cell: (info) => <TimestampCell value={info.getValue()} />,
         sortingFn: "datetime",
       }),
       column.attr("updated", {
         header: "Updated",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+        cell: (info) => <TimestampCell value={info.getValue()} />,
         sortingFn: "datetime",
       }),
     ],

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useRef, useEffect } from "react"
 
 import { Badge, type BadgeVariant } from "@/components/ui/badge"
 import {
@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/tooltip"
 import {
   Popover,
+  PopoverAnchor,
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover"
@@ -18,11 +19,17 @@ import { cn, splitLastWord } from "@/lib/utils"
 
 import { useMobile } from "@/hooks/use-mobile"
 
+const OPEN_DELAY_MS = 50
+const CLOSE_DELAY_MS = 30
+
 type TooltipBadgeProps<T> = {
   value: T
   hoverValue?: T
   icon?: React.ReactNode
-  tooltip: string
+  tooltip?: string
+  content?: React.ReactNode
+  contentClassName?: string
+  interactive?: boolean
   suffix?: React.ReactNode
   wrap?: boolean
   variant?: BadgeVariant
@@ -34,6 +41,9 @@ export default function TooltipBadge<T>({
   hoverValue,
   icon,
   tooltip,
+  content,
+  contentClassName,
+  interactive = false,
   suffix,
   wrap = false,
   variant,
@@ -42,6 +52,31 @@ export default function TooltipBadge<T>({
   const isMobile = useMobile()
   const [hovered, setHovered] = useState(false)
   const displayValue = hovered && hoverValue != null ? hoverValue : value
+  const hoverInteractive = interactive && !isMobile
+  const [open, setOpen] = useState(false)
+  const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearTimers = () => {
+    if (openTimer.current) {
+      clearTimeout(openTimer.current)
+      openTimer.current = null
+    }
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current)
+      closeTimer.current = null
+    }
+  }
+  const scheduleOpen = () => {
+    clearTimers()
+    openTimer.current = setTimeout(() => setOpen(true), OPEN_DELAY_MS)
+  }
+  const scheduleClose = () => {
+    clearTimers()
+    closeTimer.current = setTimeout(() => setOpen(false), CLOSE_DELAY_MS)
+  }
+
+  useEffect(() => clearTimers, [])
 
   const tooltipSpace = (
     <span className="hidden [word-spacing:0.25em] group-hover/tooltip-badge:inline group-data-[hovered=true]/tooltip-badge:inline">
@@ -92,9 +127,15 @@ export default function TooltipBadge<T>({
     >
       <span
         className={cn("inline-flex items-center", wrap && "flex-wrap")}
-        data-hovered={hovered || undefined}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        data-hovered={hovered || open || undefined}
+        onMouseEnter={() => {
+          setHovered(true)
+          if (hoverInteractive) scheduleOpen()
+        }}
+        onMouseLeave={() => {
+          setHovered(false)
+          if (hoverInteractive) scheduleClose()
+        }}
       >
         {icon ? <span className="size-3">{icon}</span> : null}
         <span
@@ -121,12 +162,39 @@ export default function TooltipBadge<T>({
     </Badge>
   )
 
+  const body = content ?? tooltip
+
   if (isMobile) {
     return (
       <Popover>
         <PopoverTrigger asChild>{badge}</PopoverTrigger>
-        <PopoverContent className="mr-2 max-w-72 bg-accent text-pretty text-content-loud">
-          {tooltip}
+        <PopoverContent
+          className={cn(
+            "mr-2 max-w-72 bg-accent text-pretty text-content-loud",
+            contentClassName,
+          )}
+        >
+          {body}
+        </PopoverContent>
+      </Popover>
+    )
+  }
+
+  if (interactive) {
+    return (
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverAnchor asChild>{badge}</PopoverAnchor>
+        <PopoverContent
+          side="top"
+          align="center"
+          sideOffset={8}
+          onMouseEnter={clearTimers}
+          onMouseLeave={scheduleClose}
+          onClick={(event) => event.stopPropagation()}
+          onOpenAutoFocus={(event) => event.preventDefault()}
+          className={cn(contentClassName)}
+        >
+          {body}
         </PopoverContent>
       </Popover>
     )
@@ -138,9 +206,12 @@ export default function TooltipBadge<T>({
       <TooltipContent
         side="top"
         sideOffset={8}
-        className="pointer-events-none max-w-72 bg-accent text-pretty text-content-loud"
+        className={cn(
+          "pointer-events-none max-w-72 bg-accent text-pretty text-content-loud",
+          contentClassName,
+        )}
       >
-        {tooltip}
+        {body}
       </TooltipContent>
     </Tooltip>
   )

@@ -385,6 +385,7 @@ export default function GroupDetails() {
                       <CollapsibleMenu title="Properties" className="space-y-2">
                         <Attribute.Field
                           label="Created at"
+                          variant="none"
                           value={
                             <Attribute.Value
                               type="date"
@@ -395,6 +396,7 @@ export default function GroupDetails() {
                         />
                         <Attribute.Field
                           label="Updated at"
+                          variant="none"
                           value={
                             <Attribute.Value
                               type="date"

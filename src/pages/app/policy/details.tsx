@@ -488,6 +488,7 @@ export default function PolicyDetails() {
                         >
                           <Attribute.Field
                             label="Created at"
+                            variant="none"
                             value={
                               <Attribute.Value
                                 type="date"
@@ -498,6 +499,7 @@ export default function PolicyDetails() {
                           />
                           <Attribute.Field
                             label="Updated at"
+                            variant="none"
                             value={
                               <Attribute.Value
                                 type="date"

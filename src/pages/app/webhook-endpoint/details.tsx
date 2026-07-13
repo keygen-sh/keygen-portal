@@ -350,6 +350,7 @@ export default function WebhookEndpointDetails() {
                     <CollapsibleMenu title="Properties" className="space-y-2">
                       <Attribute.Field
                         label="Created at"
+                        variant="none"
                         value={
                           <Attribute.Value
                             type="date"
@@ -360,6 +361,7 @@ export default function WebhookEndpointDetails() {
                       />
                       <Attribute.Field
                         label="Updated at"
+                        variant="none"
                         value={
                           <Attribute.Value
                             type="date"

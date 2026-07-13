@@ -4,14 +4,15 @@ import { Copy } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
 import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover"
 
 import {
-  formatRelativeTime,
-  formatPreciseRelative,
   formatUtcTimestamp,
-  formatLocalTimestamp,
+  formatRelativeTime,
   type ZonedTimestamp,
+  formatLocalTimestamp,
+  formatPreciseRelative,
 } from "@/lib/timestamps"
 import { cn } from "@/lib/utils"
 import { copyToClipboard } from "@/lib/clipboard"
@@ -25,56 +26,6 @@ interface TimestampProps {
   precise?: boolean
   emptyLabel?: string
   className?: string
-}
-
-function ZonedRow({ zoned }: { zoned: ZonedTimestamp }) {
-  return (
-    <div className="flex items-center gap-2">
-      <Badge
-        variant="outline"
-        className="shrink-0 rounded-sm bg-background-3 font-mono"
-      >
-        {zoned.label}
-      </Badge>
-      <span className="min-w-0 flex-1 truncate text-content-muted">
-        {zoned.date}
-      </span>
-      <span className="shrink-0 font-mono text-content-normal">
-        {zoned.time}
-      </span>
-    </div>
-  )
-}
-
-function TimestampPopover({ value }: { value: string }) {
-  return (
-    <div className="flex flex-col text-xs">
-      <div className="flex items-center justify-between">
-        <span className="min-w-0 flex-1 truncate font-mono text-content-muted">
-          {value}
-        </span>
-        <Button
-          variant="ghost"
-          size="icon"
-          title="Copy UTC timestamp"
-          onClick={(e) => {
-            e.stopPropagation() // prevent click from propagating, e.g. selecting a table row
-            copyToClipboard(value)
-          }}
-          className="-my-1 -mr-1 size-6 shrink-0"
-        >
-          <Copy className="size-3.5" />
-        </Button>
-      </div>
-      <span className="min-w-0 truncate text-content-normal">
-        {formatPreciseRelative(value)}
-      </span>
-      <div className="mt-2 space-y-2">
-        <ZonedRow zoned={formatUtcTimestamp(value)} />
-        <ZonedRow zoned={formatLocalTimestamp(value)} />
-      </div>
-    </div>
-  )
 }
 
 export default function Timestamp({
@@ -116,6 +67,13 @@ export default function Timestamp({
     )
   }
 
+  const label =
+    display === "raw"
+      ? value
+      : precise
+        ? formatPreciseRelative(value)
+        : formatRelativeTime(value)
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverAnchor asChild>
@@ -129,11 +87,7 @@ export default function Timestamp({
             className,
           )}
         >
-          {display === "raw"
-            ? value
-            : precise
-              ? formatPreciseRelative(value)
-              : formatRelativeTime(value)}
+          {label}
         </span>
       </PopoverAnchor>
       <PopoverContent
@@ -148,6 +102,68 @@ export default function Timestamp({
         <TimestampPopover value={value} />
       </PopoverContent>
     </Popover>
+  )
+}
+
+function ZonedRow({ zoned }: { zoned: ZonedTimestamp }) {
+  return (
+    <div className="flex items-center gap-2">
+      <Badge
+        variant="outline"
+        className="shrink-0 rounded-sm bg-background-3 font-mono"
+      >
+        {zoned.label}
+      </Badge>
+      <span className="min-w-0 flex-1 truncate text-content-muted">
+        {zoned.date}
+      </span>
+      <span className="shrink-0 font-mono text-content-normal">
+        {zoned.time}
+      </span>
+    </div>
+  )
+}
+
+export function TimestampPopover({
+  value,
+  tooltip,
+}: {
+  value: string
+  tooltip?: React.ReactNode
+}) {
+  return (
+    <div className="flex flex-col text-xs">
+      {tooltip && (
+        <>
+          <p className="text-pretty text-content-loud">{tooltip}</p>
+          <Separator className="my-2" />
+        </>
+      )}
+      <div className="flex items-center justify-between">
+        <span className="min-w-0 flex-1 truncate font-mono text-content-muted">
+          {value}
+        </span>
+        <Button
+          variant="ghost"
+          size="icon"
+          title="Copy UTC timestamp"
+          onClick={async (e) => {
+            e.stopPropagation() // prevent click from propagating, e.g. selecting a table row
+            await copyToClipboard(value)
+          }}
+          className="-my-1 -mr-1 size-6 shrink-0"
+        >
+          <Copy className="size-3.5" />
+        </Button>
+      </div>
+      <span className="min-w-0 truncate text-content-normal">
+        {formatPreciseRelative(value)}
+      </span>
+      <div className="mt-2 space-y-2">
+        <ZonedRow zoned={formatUtcTimestamp(value)} />
+        <ZonedRow zoned={formatLocalTimestamp(value)} />
+      </div>
+    </div>
   )
 }
 

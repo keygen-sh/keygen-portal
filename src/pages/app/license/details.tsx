@@ -83,7 +83,6 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 import { toast } from "@/lib/toast"
 import { getUserLabel } from "@/lib/users"
 import { copyToClipboard } from "@/lib/clipboard"
-import { formatUtcDate } from "@/lib/timestamps"
 import {
   getMachinesLimitDisplay,
   getUsersLimitDisplay,
@@ -102,7 +101,6 @@ import * as Licenses from "@/components/licenses"
 import * as Attribute from "@/components/attribute"
 import * as EventLogs from "@/components/event-logs"
 import Can from "@/components/can"
-import { TimestampPopover } from "@/components/timestamp"
 import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
@@ -1061,22 +1059,14 @@ export default function LicenseDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatUtcDate(license.attributes.created)}
-                        content={
-                          <TimestampPopover
-                            value={license.attributes.created}
-                          />
-                        }
+                        type="date"
+                        value={license.attributes.created}
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatUtcDate(license.attributes.updated)}
-                        content={
-                          <TimestampPopover
-                            value={license.attributes.updated}
-                          />
-                        }
+                        type="date"
+                        value={license.attributes.updated}
                       />
                     </Property.Section>
 

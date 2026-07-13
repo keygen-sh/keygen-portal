@@ -47,7 +47,6 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { toast } from "@/lib/toast"
-import { formatUtcDate } from "@/lib/timestamps"
 import { copyToClipboard } from "@/lib/clipboard"
 import { httpStatusBadgeVariant } from "@/lib/http"
 import { formatWebhookEventPayload } from "@/lib/webhook-events"
@@ -70,7 +69,6 @@ import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import TooltipBadge from "@/components/tooltip-badge"
-import { TimestampPopover } from "@/components/timestamp"
 import ResourceLink from "@/components/resource-link"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
@@ -422,22 +420,14 @@ export default function WebhookEventDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatUtcDate(webhookEvent.attributes.created)}
-                        content={
-                          <TimestampPopover
-                            value={webhookEvent.attributes.created}
-                          />
-                        }
+                        type="date"
+                        value={webhookEvent.attributes.created}
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatUtcDate(webhookEvent.attributes.updated)}
-                        content={
-                          <TimestampPopover
-                            value={webhookEvent.attributes.updated}
-                          />
-                        }
+                        type="date"
+                        value={webhookEvent.attributes.updated}
                       />
                     </Property.Section>
 

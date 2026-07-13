@@ -81,7 +81,6 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
-import { formatUtcDate } from "@/lib/timestamps"
 
 import * as Releases from "@/components/releases"
 import * as Property from "@/components/property"
@@ -97,7 +96,6 @@ import ResourceLink from "@/components/resource-link"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleCard from "@/components/collapsible-card"
 import ConfirmationModal from "@/components/confirmation-modal"
-import { TimestampPopover } from "@/components/timestamp"
 
 const ReleaseChannelIcons: Record<ReleaseChannel, React.ReactNode> = {
   [ReleaseChannel.Stable]: <Package className="size-3" />,
@@ -620,22 +618,14 @@ export default function ReleaseDetails() {
                         <Property.Field
                           icon={SquarePlus}
                           label="Created at"
-                          value={formatUtcDate(release.attributes.created)}
-                          content={
-                            <TimestampPopover
-                              value={release.attributes.created}
-                            />
-                          }
+                          type="date"
+                          value={release.attributes.created}
                         />
                         <Property.Field
                           icon={SquarePen}
                           label="Updated at"
-                          value={formatUtcDate(release.attributes.updated)}
-                          content={
-                            <TimestampPopover
-                              value={release.attributes.updated}
-                            />
-                          }
+                          type="date"
+                          value={release.attributes.updated}
                         />
                       </>
                     ) : (
@@ -707,22 +697,14 @@ export default function ReleaseDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatUtcDate(release.attributes.created)}
-                        content={
-                          <TimestampPopover
-                            value={release.attributes.created}
-                          />
-                        }
+                        type="date"
+                        value={release.attributes.created}
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatUtcDate(release.attributes.updated)}
-                        content={
-                          <TimestampPopover
-                            value={release.attributes.updated}
-                          />
-                        }
+                        type="date"
+                        value={release.attributes.updated}
                       />
                     </Property.Section>
                   </>

@@ -49,7 +49,6 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 import { toast } from "@/lib/toast"
 import { truncator } from "@/lib/truncate"
 import { copyToClipboard } from "@/lib/clipboard"
-import { formatUtcDate } from "@/lib/timestamps"
 
 import { SigningAlgorithmLabels } from "@/types/files"
 import { WebhookEndpointAttributeDescriptions } from "@/types/webhook-endpoints"
@@ -64,7 +63,6 @@ import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
 import ResourceLink from "@/components/resource-link"
-import { TimestampPopover } from "@/components/timestamp"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import ConfirmationModal from "@/components/confirmation-modal"
@@ -413,26 +411,14 @@ export default function WebhookEndpointDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatUtcDate(
-                          webhookEndpoint.attributes.created,
-                        )}
-                        content={
-                          <TimestampPopover
-                            value={webhookEndpoint.attributes.created}
-                          />
-                        }
+                        type="date"
+                        value={webhookEndpoint.attributes.created}
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatUtcDate(
-                          webhookEndpoint.attributes.updated,
-                        )}
-                        content={
-                          <TimestampPopover
-                            value={webhookEndpoint.attributes.updated}
-                          />
-                        }
+                        type="date"
+                        value={webhookEndpoint.attributes.updated}
                       />
                     </Property.Section>
 

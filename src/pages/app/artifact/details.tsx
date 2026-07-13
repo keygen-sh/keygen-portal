@@ -60,7 +60,6 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
-import { formatUtcDate } from "@/lib/timestamps"
 
 import * as Artifacts from "@/components/artifacts"
 import * as Property from "@/components/property"
@@ -74,7 +73,6 @@ import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
 import ResourceLink from "@/components/resource-link"
 import ConfirmationModal from "@/components/confirmation-modal"
-import { TimestampPopover } from "@/components/timestamp"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleCard from "@/components/collapsible-card"
 
@@ -405,22 +403,14 @@ export default function ArtifactDetails() {
                         <Property.Field
                           icon={SquarePlus}
                           label="Created at"
-                          value={formatUtcDate(artifact.attributes.created)}
-                          content={
-                            <TimestampPopover
-                              value={artifact.attributes.created}
-                            />
-                          }
+                          type="date"
+                          value={artifact.attributes.created}
                         />
                         <Property.Field
                           icon={SquarePen}
                           label="Updated at"
-                          value={formatUtcDate(artifact.attributes.updated)}
-                          content={
-                            <TimestampPopover
-                              value={artifact.attributes.updated}
-                            />
-                          }
+                          type="date"
+                          value={artifact.attributes.updated}
                         />
                       </>
                     ) : (
@@ -492,22 +482,14 @@ export default function ArtifactDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatUtcDate(artifact.attributes.created)}
-                        content={
-                          <TimestampPopover
-                            value={artifact.attributes.created}
-                          />
-                        }
+                        type="date"
+                        value={artifact.attributes.created}
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatUtcDate(artifact.attributes.updated)}
-                        content={
-                          <TimestampPopover
-                            value={artifact.attributes.updated}
-                          />
-                        }
+                        type="date"
+                        value={artifact.attributes.updated}
                       />
                     </Property.Section>
                   </>

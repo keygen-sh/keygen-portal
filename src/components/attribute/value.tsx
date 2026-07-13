@@ -1,10 +1,12 @@
-import { formatDuration, formatDate } from "date-fns"
+import { formatDuration } from "date-fns"
 
 import TooltipBadge from "@/components/tooltip-badge"
+import { TimestampPopover } from "@/components/timestamp"
 
 import { truncateKey } from "@/lib/licenses"
-import { cn, secondsToParts, labelize } from "@/lib/utils"
+import { cn, capitalize, secondsToParts, labelize } from "@/lib/utils"
 import { formatByteSize, formatRawByteSize } from "@/lib/bytes"
+import { formatRelativeTime, formatUtcDate } from "@/lib/timestamps"
 
 import { useMobile } from "@/hooks/use-mobile"
 
@@ -25,6 +27,7 @@ type AttributeValueProps = {
   type: AttributeType
   value: string | number | boolean | null
   tooltip?: string
+  dateStyle?: "relative" | "absolute"
   emptyLabel?: string
   forceDisabled?: boolean
   className?: string
@@ -34,6 +37,7 @@ export default function AttributeValue({
   type,
   value: raw,
   tooltip,
+  dateStyle = "relative",
   emptyLabel = "Not set",
   forceDisabled,
   className,
@@ -48,7 +52,7 @@ export default function AttributeValue({
         <TooltipBadge
           value={emptyLabel}
           variant="disabled"
-          tooltip={tooltip!}
+          tooltip={tooltip}
         />
       )
     }
@@ -64,6 +68,35 @@ export default function AttributeValue({
       >
         {formatted}
       </pre>
+    )
+  }
+
+  if (type === "date") {
+    if (isUnset) {
+      return (
+        <TooltipBadge
+          value={emptyLabel}
+          variant="disabled"
+          tooltip={tooltip}
+          className={className}
+        />
+      )
+    }
+
+    const iso = String(raw)
+    const label =
+      dateStyle === "absolute"
+        ? formatUtcDate(iso)
+        : capitalize(formatRelativeTime(iso))
+
+    return (
+      <TooltipBadge
+        value={label}
+        interactive
+        content={<TimestampPopover value={iso} tooltip={tooltip} />}
+        contentClassName="w-80 max-w-none bg-popover p-3"
+        className={className}
+      />
     )
   }
 
@@ -92,9 +125,6 @@ export default function AttributeValue({
       value = isUnset
         ? emptyLabel
         : truncateKey(String(raw), { maxLength: isMobile ? 16 : 24 })
-      break
-    case "date":
-      value = isUnset ? emptyLabel : formatDate(new Date(String(raw)), "PPp")
       break
     case "bytes":
       value = isUnset ? emptyLabel : formatByteSize(Number(raw), { emptyLabel })
@@ -125,7 +155,7 @@ export default function AttributeValue({
       value={value}
       hoverValue={hoverValue}
       variant={variant}
-      tooltip={tooltip!}
+      tooltip={tooltip}
       className={className}
     />
   )

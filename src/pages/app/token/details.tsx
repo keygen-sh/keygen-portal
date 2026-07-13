@@ -52,7 +52,6 @@ import {
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
 import { revokeTokenDescription } from "@/lib/tokens"
-import { formatUtcDate } from "@/lib/timestamps"
 
 import * as Tokens from "@/components/tokens"
 import * as Property from "@/components/property"
@@ -64,7 +63,6 @@ import BackButton from "@/components/back-button"
 import TabsSwitch from "@/components/tabs-switch"
 import TooltipBadge from "@/components/tooltip-badge"
 import ResourceLink from "@/components/resource-link"
-import { TimestampPopover } from "@/components/timestamp"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import ConfirmationModal from "@/components/confirmation-modal"
@@ -130,14 +128,14 @@ export default function TokenDetails() {
       <Property.Field
         icon={SquarePlus}
         label="Created at"
-        value={formatUtcDate(token.attributes.created)}
-        content={<TimestampPopover value={token.attributes.created} />}
+        type="date"
+        value={token.attributes.created}
       />
       <Property.Field
         icon={SquarePen}
         label="Updated at"
-        value={formatUtcDate(token.attributes.updated)}
-        content={<TimestampPopover value={token.attributes.updated} />}
+        type="date"
+        value={token.attributes.updated}
       />
     </>
   ) : (

@@ -67,7 +67,6 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
-import { formatUtcDate } from "@/lib/timestamps"
 
 import * as keygen from "@/keygen"
 import * as Users from "@/components/users"
@@ -82,7 +81,6 @@ import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
 import TooltipBadge from "@/components/tooltip-badge"
 import ResourceLink from "@/components/resource-link"
-import { TimestampPopover } from "@/components/timestamp"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
 import ConfirmationModal from "@/components/confirmation-modal"
@@ -638,18 +636,14 @@ export default function UserDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatUtcDate(user.attributes.created)}
-                        content={
-                          <TimestampPopover value={user.attributes.created} />
-                        }
+                        type="date"
+                        value={user.attributes.created}
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatUtcDate(user.attributes.updated)}
-                        content={
-                          <TimestampPopover value={user.attributes.updated} />
-                        }
+                        type="date"
+                        value={user.attributes.updated}
                       />
                     </Property.Section>
 

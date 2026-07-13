@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react"
 
 import { cn, splitLastWord } from "@/lib/utils"
+import { formatUtcDate } from "@/lib/timestamps"
 
 import {
   Tooltip,
@@ -19,6 +20,7 @@ import { Info } from "lucide-react"
 import { useMobile } from "@/hooks/use-mobile"
 
 import * as Motion from "@/components/motion"
+import { TimestampPopover } from "@/components/timestamp"
 
 const OPEN_DELAY_MS = 50
 const CLOSE_DELAY_MS = 30
@@ -30,6 +32,7 @@ interface PropertyFieldProps {
   icon?: React.ComponentType<{ className?: string }>
   label: string
   variant?: PropertyFieldVariant
+  type?: "date"
   value: React.ReactNode
   hoverValue?: React.ReactNode
   tooltip?: React.ReactNode
@@ -50,6 +53,7 @@ export default function PropertyField({
   icon: Icon,
   label,
   variant = "default",
+  type,
   value,
   hoverValue,
   tooltip,
@@ -60,6 +64,17 @@ export default function PropertyField({
   emptyLabel = "--",
   className,
 }: PropertyFieldProps): React.ReactElement {
+  switch (type) {
+    case "date": {
+      if (typeof value === "string") {
+        content = <TimestampPopover value={value} />
+        value = formatUtcDate(value)
+      }
+      break
+    }
+    // NB(cazden) setup for more types later
+  }
+
   const isMobile = useMobile()
   const [hovered, setHovered] = useState(false)
   const hoverInteractive = content != null && !isMobile

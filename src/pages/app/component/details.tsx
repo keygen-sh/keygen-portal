@@ -47,7 +47,6 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
-import { formatUtcDate } from "@/lib/timestamps"
 
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
@@ -62,7 +61,6 @@ import ResourceLink from "@/components/resource-link"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
 import ConfirmationModal from "@/components/confirmation-modal"
-import { TimestampPopover } from "@/components/timestamp"
 
 export default function ComponentDetails() {
   const { id } = useParams({
@@ -398,22 +396,14 @@ export default function ComponentDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatUtcDate(component.attributes.created)}
-                        content={
-                          <TimestampPopover
-                            value={component.attributes.created}
-                          />
-                        }
+                        type="date"
+                        value={component.attributes.created}
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatUtcDate(component.attributes.updated)}
-                        content={
-                          <TimestampPopover
-                            value={component.attributes.updated}
-                          />
-                        }
+                        type="date"
+                        value={component.attributes.updated}
                       />
                     </Property.Section>
 

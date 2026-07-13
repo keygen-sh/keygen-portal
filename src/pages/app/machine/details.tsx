@@ -50,7 +50,6 @@ import { useSidebarTab } from "@/hooks/use-sidebar-tab"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
-import { formatUtcDate } from "@/lib/timestamps"
 import { copyToClipboard } from "@/lib/clipboard"
 import { getHeartbeatStatusVariant } from "@/lib/machines"
 import { formatTtlLabel } from "@/lib/licenses"
@@ -69,7 +68,6 @@ import GoToButton from "@/components/go-to-button"
 import ResourceLink from "@/components/resource-link"
 import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleMenu from "@/components/collapsible-menu"
-import { TimestampPopover } from "@/components/timestamp"
 import CollapsibleCard from "@/components/collapsible-card"
 
 export default function MachineDetails() {
@@ -630,22 +628,14 @@ export default function MachineDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatUtcDate(machine.attributes.created)}
-                        content={
-                          <TimestampPopover
-                            value={machine.attributes.created}
-                          />
-                        }
+                        type="date"
+                        value={machine.attributes.created}
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatUtcDate(machine.attributes.updated)}
-                        content={
-                          <TimestampPopover
-                            value={machine.attributes.updated}
-                          />
-                        }
+                        type="date"
+                        value={machine.attributes.updated}
                       />
                     </Property.Section>
 

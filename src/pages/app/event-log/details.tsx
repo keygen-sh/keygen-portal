@@ -31,7 +31,6 @@ import { useMobile } from "@/hooks/use-mobile"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { copyToClipboard } from "@/lib/clipboard"
-import { formatUtcDate } from "@/lib/timestamps"
 import {
   eventLogBadgeVariant,
   metadataDiffEntries,
@@ -47,7 +46,6 @@ import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import TooltipBadge from "@/components/tooltip-badge"
 import ResourceLink from "@/components/resource-link"
-import { TimestampPopover } from "@/components/timestamp"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
 
@@ -226,22 +224,14 @@ export default function EventLogDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatUtcDate(eventLog.attributes.created)}
-                        content={
-                          <TimestampPopover
-                            value={eventLog.attributes.created}
-                          />
-                        }
+                        type="date"
+                        value={eventLog.attributes.created}
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatUtcDate(eventLog.attributes.updated)}
-                        content={
-                          <TimestampPopover
-                            value={eventLog.attributes.updated}
-                          />
-                        }
+                        type="date"
+                        value={eventLog.attributes.updated}
                       />
                     </Property.Section>
 

@@ -33,7 +33,6 @@ import {
   formatRequestLogResponse,
 } from "@/lib/request-logs"
 import { httpMethodBadgeVariant, httpStatusBadgeVariant } from "@/lib/http"
-import { formatUtcDate } from "@/lib/timestamps"
 import { copyToClipboard } from "@/lib/clipboard"
 
 import { HTTPStatusCodeDescriptions, type HTTPStatusCode } from "@/types/http"
@@ -46,7 +45,6 @@ import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import TooltipBadge from "@/components/tooltip-badge"
 import ResourceLink from "@/components/resource-link"
-import { TimestampPopover } from "@/components/timestamp"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
 
@@ -235,22 +233,14 @@ export default function RequestLogDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatUtcDate(requestLog.attributes.created)}
-                        content={
-                          <TimestampPopover
-                            value={requestLog.attributes.created}
-                          />
-                        }
+                        type="date"
+                        value={requestLog.attributes.created}
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatUtcDate(requestLog.attributes.updated)}
-                        content={
-                          <TimestampPopover
-                            value={requestLog.attributes.updated}
-                          />
-                        }
+                        type="date"
+                        value={requestLog.attributes.updated}
                       />
                     </Property.Section>
 

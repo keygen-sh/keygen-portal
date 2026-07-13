@@ -55,7 +55,6 @@ import { useGetProduct, useRemoveProduct } from "@/queries/products"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
-import { formatUtcDate } from "@/lib/timestamps"
 
 import * as keygen from "@/keygen"
 import * as Products from "@/components/products"
@@ -73,7 +72,6 @@ import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import ConfirmationModal from "@/components/confirmation-modal"
-import { TimestampPopover } from "@/components/timestamp"
 
 const DistributionStrategyIcons: Record<DistributionStrategy, ReactNode> = {
   [DistributionStrategy.Licensed]: <Award className="size-3" />,
@@ -394,22 +392,14 @@ export default function ProductDetails() {
                         <Property.Field
                           icon={SquarePlus}
                           label="Created at"
-                          value={formatUtcDate(product.attributes.created)}
-                          content={
-                            <TimestampPopover
-                              value={product.attributes.created}
-                            />
-                          }
+                          type="date"
+                          value={product.attributes.created}
                         />
                         <Property.Field
                           icon={SquarePen}
                           label="Updated at"
-                          value={formatUtcDate(product.attributes.updated)}
-                          content={
-                            <TimestampPopover
-                              value={product.attributes.updated}
-                            />
-                          }
+                          type="date"
+                          value={product.attributes.updated}
                         />
                       </>
                     ) : (
@@ -481,22 +471,14 @@ export default function ProductDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatUtcDate(product.attributes.created)}
-                        content={
-                          <TimestampPopover
-                            value={product.attributes.created}
-                          />
-                        }
+                        type="date"
+                        value={product.attributes.created}
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatUtcDate(product.attributes.updated)}
-                        content={
-                          <TimestampPopover
-                            value={product.attributes.updated}
-                          />
-                        }
+                        type="date"
+                        value={product.attributes.updated}
                       />
                     </Property.Section>
                   </>

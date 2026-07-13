@@ -52,7 +52,6 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
-import { formatUtcDate } from "@/lib/timestamps"
 
 import * as keygen from "@/keygen"
 import * as Groups from "@/components/groups"
@@ -66,7 +65,6 @@ import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
 import ResourceLink from "@/components/resource-link"
-import { TimestampPopover } from "@/components/timestamp"
 import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
@@ -475,18 +473,14 @@ export default function GroupDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatUtcDate(group.attributes.created)}
-                        content={
-                          <TimestampPopover value={group.attributes.created} />
-                        }
+                        type="date"
+                        value={group.attributes.created}
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatUtcDate(group.attributes.updated)}
-                        content={
-                          <TimestampPopover value={group.attributes.updated} />
-                        }
+                        type="date"
+                        value={group.attributes.updated}
                       />
                     </Property.Section>
 

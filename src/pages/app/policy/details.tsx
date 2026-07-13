@@ -61,7 +61,6 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
 import { formatByteSize, formatRawByteSize } from "@/lib/bytes"
-import { formatUtcDate } from "@/lib/timestamps"
 
 import {
   isPerpetual,
@@ -90,7 +89,6 @@ import GoToButton from "@/components/go-to-button"
 import ResourceLink from "@/components/resource-link"
 import ConfirmationModal from "@/components/confirmation-modal"
 import TooltipBadge from "@/components/tooltip-badge"
-import { TimestampPopover } from "@/components/timestamp"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
 
@@ -679,18 +677,14 @@ export default function PolicyDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatUtcDate(policy.attributes.created)}
-                        content={
-                          <TimestampPopover value={policy.attributes.created} />
-                        }
+                        type="date"
+                        value={policy.attributes.created}
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatUtcDate(policy.attributes.updated)}
-                        content={
-                          <TimestampPopover value={policy.attributes.updated} />
-                        }
+                        type="date"
+                        value={policy.attributes.updated}
                       />
                     </Property.Section>
 

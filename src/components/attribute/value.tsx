@@ -49,11 +49,7 @@ export default function AttributeValue({
   if (type === "json") {
     if (isUnset) {
       return (
-        <TooltipBadge
-          value={emptyLabel}
-          variant="disabled"
-          tooltip={tooltip}
-        />
+        <TooltipBadge value={emptyLabel} variant="disabled" tooltip={tooltip} />
       )
     }
 

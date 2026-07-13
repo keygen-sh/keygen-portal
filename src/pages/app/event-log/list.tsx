@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react"
+import { useCallback } from "react"
 import { useNavigate } from "@tanstack/react-router"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -14,7 +14,6 @@ import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
 import { useEdition } from "@/hooks/use-edition"
 import { useDataTable } from "@/hooks/use-data-table"
 import { useFilterSearch } from "@/hooks/use-filter-search"
-import { useCursorFollowTooltip } from "@/hooks/use-cursor-follow-tooltip"
 import { useEventLogTableColumns } from "@/hooks/use-event-log-table-columns"
 
 import { type EventLog } from "@/types/event-logs"
@@ -25,16 +24,10 @@ import { cn } from "@/lib/utils"
 
 import * as keygen from "@/keygen"
 import * as EventLogs from "@/components/event-logs"
-import {
-  type EventLogPreview,
-  EventLogPreviewContent,
-  type EventLogPreviewHandlers,
-} from "@/components/event-logs/preview"
 import DataTable from "@/components/data-table"
 import PageFooter from "@/components/page-footer"
 import PageHeader from "@/components/page-header"
 import Pagination from "@/components/pagination"
-import CursorTooltip from "@/components/cursor-tooltip"
 
 const EVENT_LOG_SKELETON_COLUMNS = [
   "Timestamp",
@@ -146,35 +139,16 @@ export default function EventLogList() {
 
   const [filters, setFilters] = useFilterSearch<EventLogFilters>()
   const { cursor, reset, goToPage } = useCursors(page, setPage)
-  const {
-    active: preview,
-    tooltipRef,
-    currentPos,
-    open: openPreview,
-    move: movePreview,
-    close: closePreview,
-    closeNow: closePreviewNow,
-  } = useCursorFollowTooltip<EventLogPreview>()
-
-  const previewHandlers = useMemo<EventLogPreviewHandlers>(
-    () => ({
-      onOpenPreview: openPreview,
-      onMovePreview: movePreview,
-      onClosePreview: closePreview,
-    }),
-    [openPreview, movePreview, closePreview],
-  )
 
   const handleFiltersChange = useCallback(
     (next: EventLogFilters) => {
-      closePreviewNow()
       setFilters(next)
       reset()
     },
-    [closePreviewNow, setFilters, reset],
+    [setFilters, reset],
   )
 
-  const columns = useEventLogTableColumns(previewHandlers)
+  const columns = useEventLogTableColumns()
 
   const {
     data: eventLogs,
@@ -195,10 +169,9 @@ export default function EventLogList() {
 
   const handlePageChange = useCallback(
     (nextPage: number) => {
-      closePreviewNow()
       goToPage(nextPage, nextCursor)
     },
-    [closePreviewNow, goToPage, nextCursor],
+    [goToPage, nextCursor],
   )
 
   const eventLogList = (
@@ -252,15 +225,6 @@ export default function EventLogList() {
       <PageHeader title="Event Logs" />
 
       {content}
-
-      <CursorTooltip
-        open={!!preview}
-        tooltipRef={tooltipRef}
-        currentPos={currentPos}
-        className="w-80"
-      >
-        {preview && <EventLogPreviewContent preview={preview} />}
-      </CursorTooltip>
     </section>
   )
 }

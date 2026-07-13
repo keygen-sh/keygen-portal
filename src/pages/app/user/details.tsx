@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
 import { useParams } from "@tanstack/react-router"
-import { formatDate } from "date-fns"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -68,6 +67,7 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
+import { formatUtcDate } from "@/lib/timestamps"
 
 import * as keygen from "@/keygen"
 import * as Users from "@/components/users"
@@ -80,11 +80,12 @@ import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
-import ResourceLink from "@/components/resource-link"
-import ConfirmationModal from "@/components/confirmation-modal"
 import TooltipBadge from "@/components/tooltip-badge"
+import ResourceLink from "@/components/resource-link"
+import { TimestampPopover } from "@/components/timestamp"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
+import ConfirmationModal from "@/components/confirmation-modal"
 
 const UserStatusIcons: Record<UserStatus, React.ReactNode> = {
   [UserStatus.Active]: <CircleCheck className="size-3" />,
@@ -549,17 +550,23 @@ export default function UserDetails() {
                       <CollapsibleMenu title="Properties" className="space-y-2">
                         <Attribute.Field
                           label="Created at"
-                          value={formatDate(
-                            new Date(String(user.attributes.created)),
-                            "PP",
-                          )}
+                          value={
+                            <Attribute.Value
+                              type="date"
+                              dateStyle="absolute"
+                              value={user.attributes.created}
+                            />
+                          }
                         />
                         <Attribute.Field
                           label="Updated at"
-                          value={formatDate(
-                            new Date(String(user.attributes.updated)),
-                            "PP",
-                          )}
+                          value={
+                            <Attribute.Value
+                              type="date"
+                              dateStyle="absolute"
+                              value={user.attributes.updated}
+                            />
+                          }
                         />
                       </CollapsibleMenu>
                     ) : (
@@ -631,18 +638,18 @@ export default function UserDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatDate(
-                          new Date(String(user.attributes.created)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(user.attributes.created)}
+                        content={
+                          <TimestampPopover value={user.attributes.created} />
+                        }
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatDate(
-                          new Date(String(user.attributes.updated)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(user.attributes.updated)}
+                        content={
+                          <TimestampPopover value={user.attributes.updated} />
+                        }
                       />
                     </Property.Section>
 

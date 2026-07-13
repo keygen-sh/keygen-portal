@@ -15,6 +15,7 @@ import { isCurrentToken } from "@/lib/auth"
 
 import * as Tokens from "@/components/tokens"
 import Can from "@/components/can"
+import Timestamp from "@/components/timestamp"
 import ClipboardButton from "@/components/clipboard-button"
 
 const PREVIEW_COUNT = 10
@@ -129,9 +130,13 @@ function TokenRow({ token, onNavigate }: TokenRowProps) {
           )}
         </div>
         <span className="text-xs text-content-subdued">
-          {token.attributes.expiry
-            ? `Expires ${new Date(token.attributes.expiry).toLocaleDateString()}`
-            : "Never expires"}
+          {token.attributes.expiry ? (
+            <>
+              Expires <Timestamp value={token.attributes.expiry} />
+            </>
+          ) : (
+            "Never expires"
+          )}
         </span>
       </div>
 

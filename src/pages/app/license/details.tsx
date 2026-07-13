@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
 import { useParams } from "@tanstack/react-router"
-import { formatDate } from "date-fns"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -84,6 +83,7 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 import { toast } from "@/lib/toast"
 import { getUserLabel } from "@/lib/users"
 import { copyToClipboard } from "@/lib/clipboard"
+import { formatUtcDate } from "@/lib/timestamps"
 import {
   getMachinesLimitDisplay,
   getUsersLimitDisplay,
@@ -102,6 +102,7 @@ import * as Licenses from "@/components/licenses"
 import * as Attribute from "@/components/attribute"
 import * as EventLogs from "@/components/event-logs"
 import Can from "@/components/can"
+import { TimestampPopover } from "@/components/timestamp"
 import Metadata from "@/components/metadata"
 import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
@@ -594,15 +595,8 @@ export default function LicenseDetails() {
                         variant="none"
                         value={
                           <Attribute.Value
-                            type="string"
-                            value={
-                              license.attributes.expiry
-                                ? formatDate(
-                                    new Date(license.attributes.expiry),
-                                    "PPP",
-                                  )
-                                : null
-                            }
+                            type="date"
+                            value={license.attributes.expiry}
                             tooltip={LicenseAttributeDescriptions.expiry}
                             emptyLabel="Never"
                           />
@@ -613,15 +607,8 @@ export default function LicenseDetails() {
                         variant="none"
                         value={
                           <Attribute.Value
-                            type="string"
-                            value={
-                              license.attributes.lastCheckIn
-                                ? formatDate(
-                                    new Date(license.attributes.lastCheckIn),
-                                    "PPP p",
-                                  )
-                                : null
-                            }
+                            type="date"
+                            value={license.attributes.lastCheckIn}
                             tooltip={LicenseAttributeDescriptions.lastCheckIn}
                             emptyLabel="Never"
                           />
@@ -632,15 +619,8 @@ export default function LicenseDetails() {
                         variant="none"
                         value={
                           <Attribute.Value
-                            type="string"
-                            value={
-                              license.attributes.lastValidated
-                                ? formatDate(
-                                    new Date(license.attributes.lastValidated),
-                                    "PPP p",
-                                  )
-                                : null
-                            }
+                            type="date"
+                            value={license.attributes.lastValidated}
                             tooltip={LicenseAttributeDescriptions.lastValidated}
                             emptyLabel="Never"
                           />
@@ -653,16 +633,9 @@ export default function LicenseDetails() {
                         variant="none"
                         value={
                           <Attribute.Value
-                            type="string"
-                            value={
-                              license.attributes.nextCheckIn
-                                ? formatDate(
-                                    new Date(license.attributes.nextCheckIn),
-                                    "PPP p",
-                                  )
-                                : null
-                            }
+                            type="date"
                             tooltip={LicenseAttributeDescriptions.nextCheckIn}
+                            value={license.attributes.nextCheckIn}
                             emptyLabel="Not required"
                           />
                         }
@@ -837,17 +810,23 @@ export default function LicenseDetails() {
                         >
                           <Attribute.Field
                             label="Created at"
-                            value={formatDate(
-                              new Date(String(license.attributes.created)),
-                              "PP",
-                            )}
+                            value={
+                              <Attribute.Value
+                                type="date"
+                                dateStyle="absolute"
+                                value={license.attributes.created}
+                              />
+                            }
                           />
                           <Attribute.Field
                             label="Updated at"
-                            value={formatDate(
-                              new Date(String(license.attributes.updated)),
-                              "PP",
-                            )}
+                            value={
+                              <Attribute.Value
+                                type="date"
+                                dateStyle="absolute"
+                                value={license.attributes.updated}
+                              />
+                            }
                           />
                         </CollapsibleMenu>
 
@@ -1082,18 +1061,22 @@ export default function LicenseDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatDate(
-                          new Date(String(license.attributes.created)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(license.attributes.created)}
+                        content={
+                          <TimestampPopover
+                            value={license.attributes.created}
+                          />
+                        }
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatDate(
-                          new Date(String(license.attributes.updated)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(license.attributes.updated)}
+                        content={
+                          <TimestampPopover
+                            value={license.attributes.updated}
+                          />
+                        }
                       />
                     </Property.Section>
 

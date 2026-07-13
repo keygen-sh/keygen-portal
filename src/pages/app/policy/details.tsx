@@ -1,7 +1,6 @@
 import { useEffect } from "react"
 import { useState } from "react"
 import { useParams } from "@tanstack/react-router"
-import { formatDate } from "date-fns"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -62,6 +61,7 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
 import { formatByteSize, formatRawByteSize } from "@/lib/bytes"
+import { formatUtcDate } from "@/lib/timestamps"
 
 import {
   isPerpetual,
@@ -90,6 +90,7 @@ import GoToButton from "@/components/go-to-button"
 import ResourceLink from "@/components/resource-link"
 import ConfirmationModal from "@/components/confirmation-modal"
 import TooltipBadge from "@/components/tooltip-badge"
+import { TimestampPopover } from "@/components/timestamp"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
 
@@ -489,17 +490,23 @@ export default function PolicyDetails() {
                         >
                           <Attribute.Field
                             label="Created at"
-                            value={formatDate(
-                              new Date(String(policy.attributes.created)),
-                              "PP",
-                            )}
+                            value={
+                              <Attribute.Value
+                                type="date"
+                                dateStyle="absolute"
+                                value={policy.attributes.created}
+                              />
+                            }
                           />
                           <Attribute.Field
                             label="Updated at"
-                            value={formatDate(
-                              new Date(String(policy.attributes.updated)),
-                              "PP",
-                            )}
+                            value={
+                              <Attribute.Value
+                                type="date"
+                                dateStyle="absolute"
+                                value={policy.attributes.updated}
+                              />
+                            }
                           />
                         </CollapsibleMenu>
 
@@ -672,18 +679,18 @@ export default function PolicyDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatDate(
-                          new Date(String(policy.attributes.created)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(policy.attributes.created)}
+                        content={
+                          <TimestampPopover value={policy.attributes.created} />
+                        }
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatDate(
-                          new Date(String(policy.attributes.updated)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(policy.attributes.updated)}
+                        content={
+                          <TimestampPopover value={policy.attributes.updated} />
+                        }
                       />
                     </Property.Section>
 

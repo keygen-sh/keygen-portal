@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { useParams } from "@tanstack/react-router"
-import { formatDate } from "date-fns"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -50,6 +49,7 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 import { toast } from "@/lib/toast"
 import { truncator } from "@/lib/truncate"
 import { copyToClipboard } from "@/lib/clipboard"
+import { formatUtcDate } from "@/lib/timestamps"
 
 import { SigningAlgorithmLabels } from "@/types/files"
 import { WebhookEndpointAttributeDescriptions } from "@/types/webhook-endpoints"
@@ -64,9 +64,10 @@ import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
 import ResourceLink from "@/components/resource-link"
-import ConfirmationModal from "@/components/confirmation-modal"
+import { TimestampPopover } from "@/components/timestamp"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
+import ConfirmationModal from "@/components/confirmation-modal"
 
 export default function WebhookEndpointDetails() {
   const { id } = useParams({ from: "/$accountId/app/webhook-endpoints/$id" })
@@ -351,17 +352,23 @@ export default function WebhookEndpointDetails() {
                     <CollapsibleMenu title="Properties" className="space-y-2">
                       <Attribute.Field
                         label="Created at"
-                        value={formatDate(
-                          new Date(String(webhookEndpoint.attributes.created)),
-                          "PP",
-                        )}
+                        value={
+                          <Attribute.Value
+                            type="date"
+                            dateStyle="absolute"
+                            value={webhookEndpoint.attributes.created}
+                          />
+                        }
                       />
                       <Attribute.Field
                         label="Updated at"
-                        value={formatDate(
-                          new Date(String(webhookEndpoint.attributes.updated)),
-                          "PP",
-                        )}
+                        value={
+                          <Attribute.Value
+                            type="date"
+                            dateStyle="absolute"
+                            value={webhookEndpoint.attributes.updated}
+                          />
+                        }
                       />
                     </CollapsibleMenu>
                   </CollapsibleCard>
@@ -406,18 +413,26 @@ export default function WebhookEndpointDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatDate(
-                          new Date(String(webhookEndpoint.attributes.created)),
-                          "PP",
+                        value={formatUtcDate(
+                          webhookEndpoint.attributes.created,
                         )}
+                        content={
+                          <TimestampPopover
+                            value={webhookEndpoint.attributes.created}
+                          />
+                        }
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatDate(
-                          new Date(String(webhookEndpoint.attributes.updated)),
-                          "PP",
+                        value={formatUtcDate(
+                          webhookEndpoint.attributes.updated,
                         )}
+                        content={
+                          <TimestampPopover
+                            value={webhookEndpoint.attributes.updated}
+                          />
+                        }
                       />
                     </Property.Section>
 

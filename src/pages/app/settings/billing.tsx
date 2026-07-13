@@ -1,7 +1,4 @@
 import { useState } from "react"
-import { formatDate } from "date-fns"
-
-import { ExternalLink } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -12,6 +9,8 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip"
 
+import { ExternalLink } from "lucide-react"
+
 import {
   useGetAccount,
   useGetAccountPlan,
@@ -21,7 +20,8 @@ import {
 } from "@/queries/accounts"
 
 import { toast } from "@/lib/toast"
-import { DATE_FORMAT, formatPrice, formatRange } from "@/lib/billing"
+import { formatPrice } from "@/lib/billing"
+import { formatUtcDate, formatRange } from "@/lib/timestamps"
 
 import { PlanAttributeDescriptions } from "@/types/plans"
 import {
@@ -58,7 +58,7 @@ export default function BillingPage() {
     billing?.attributes.subscriptionPeriodEnd,
   )
   const periodEndLabel = periodEnd
-    ? formatDate(new Date(periodEnd), DATE_FORMAT)
+    ? formatUtcDate(periodEnd)
     : "the end of your current period"
 
   const isCanceling =

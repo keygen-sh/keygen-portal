@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 
 import { cn, splitLastWord } from "@/lib/utils"
 
@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/tooltip"
 import {
   Popover,
+  PopoverAnchor,
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover"
@@ -18,6 +19,9 @@ import { Info } from "lucide-react"
 import { useMobile } from "@/hooks/use-mobile"
 
 import * as Motion from "@/components/motion"
+
+const OPEN_DELAY_MS = 50
+const CLOSE_DELAY_MS = 30
 
 type PropertyFieldVariant = "default" | "reverse"
 type EmptyCase = (value: React.ReactNode) => boolean
@@ -29,6 +33,8 @@ interface PropertyFieldProps {
   value: React.ReactNode
   hoverValue?: React.ReactNode
   tooltip?: React.ReactNode
+  content?: React.ReactNode
+  contentClassName?: string
   suffix?: React.ReactNode
   isEmpty?: EmptyCase
   emptyLabel?: string
@@ -47,6 +53,8 @@ export default function PropertyField({
   value,
   hoverValue,
   tooltip,
+  content,
+  contentClassName,
   suffix,
   isEmpty = defaultIsEmpty,
   emptyLabel = "--",
@@ -54,28 +62,64 @@ export default function PropertyField({
 }: PropertyFieldProps): React.ReactElement {
   const isMobile = useMobile()
   const [hovered, setHovered] = useState(false)
+  const hoverInteractive = content != null && !isMobile
+  const [open, setOpen] = useState(false)
+  const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearTimers = () => {
+    if (openTimer.current) {
+      clearTimeout(openTimer.current)
+      openTimer.current = null
+    }
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current)
+      closeTimer.current = null
+    }
+  }
+  const scheduleOpen = () => {
+    clearTimers()
+    openTimer.current = setTimeout(() => setOpen(true), OPEN_DELAY_MS)
+  }
+  const scheduleClose = () => {
+    clearTimers()
+    closeTimer.current = setTimeout(() => setOpen(false), CLOSE_DELAY_MS)
+  }
+
+  useEffect(() => clearTimers, [])
+
+  const hint = tooltip != null || content != null
 
   const fieldClassName = cn(
     "group/property-field flex items-center",
     hoverValue != null && "group-hover/property-field:flex-wrap",
-    (hoverValue != null || tooltip) &&
-      "-mx-1.5 -my-1 cursor-default px-1.5 py-1",
+    (hoverValue != null || hint) && "-mx-1.5 -my-1 cursor-default px-1.5 py-1",
   )
 
-  const tooltipSpace = tooltip ? (
+  const tooltipSpace = hint ? (
     <span className="hidden [word-spacing:0.25em] group-hover/property-field:inline group-data-[state=delayed-open]/property-field:inline group-data-[state=open]/property-field:inline">
       {" "}
     </span>
   ) : null
 
-  const tooltipIcon = tooltip ? (
-    <span className="inline-flex w-0 shrink-0 align-middle transition-[width] duration-200 group-hover/property-field:w-3 group-data-[state=delayed-open]/property-field:w-3 group-data-[state=open]/property-field:w-3">
-      <Info
-        aria-hidden
-        className="inline size-3 translate-x-2 self-center text-content-subdued opacity-0 transition-all duration-200 group-hover/property-field:translate-x-0 group-hover/property-field:opacity-100 group-data-[state=delayed-open]/property-field:translate-x-0 group-data-[state=delayed-open]/property-field:opacity-100 group-data-[state=open]/property-field:translate-x-0 group-data-[state=open]/property-field:opacity-100"
-      />
-    </span>
-  ) : null
+  const renderTooltipIcon = (gap: boolean) =>
+    hint ? (
+      <span
+        className={cn(
+          "inline-flex w-0 shrink-0 align-middle transition-[width] duration-200 group-hover/property-field:w-3 group-data-[state=delayed-open]/property-field:w-3 group-data-[state=open]/property-field:w-3",
+          gap &&
+            "transition-[width,margin] group-hover/property-field:ml-1.5 group-data-[state=delayed-open]/property-field:ml-1.5 group-data-[state=open]/property-field:ml-1.5",
+        )}
+      >
+        <Info
+          aria-hidden
+          className="inline size-3 translate-x-2 self-center text-content-subdued opacity-0 transition-all duration-200 group-hover/property-field:translate-x-0 group-hover/property-field:opacity-100 group-data-[state=delayed-open]/property-field:translate-x-0 group-data-[state=delayed-open]/property-field:opacity-100 group-data-[state=open]/property-field:translate-x-0 group-data-[state=open]/property-field:opacity-100"
+        />
+      </span>
+    ) : null
+
+  const tooltipIcon = renderTooltipIcon(false)
+  const flexTooltipIcon = renderTooltipIcon(true)
 
   const suffixSlot = suffix ? (
     <span className="inline-flex align-middle [&_[data-slot=badge]]:ml-0">
@@ -158,8 +202,17 @@ export default function PropertyField({
         return (
           <div
             className={fieldClassName}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
+            data-state={
+              hoverInteractive ? (open ? "open" : "closed") : undefined
+            }
+            onMouseEnter={() => {
+              setHovered(true)
+              if (hoverInteractive) scheduleOpen()
+            }}
+            onMouseLeave={() => {
+              setHovered(false)
+              if (hoverInteractive) scheduleClose()
+            }}
           >
             {Icon && (
               <Icon className="mt-1 mr-2 size-3.5 shrink-0 text-content-normal" />
@@ -167,7 +220,7 @@ export default function PropertyField({
             {isEmpty(value) ? (
               <>
                 <p className="text-xs text-content-normal">{emptyLabel}</p>
-                {tooltipIcon}
+                {flexTooltipIcon}
               </>
             ) : (
               <>
@@ -175,7 +228,7 @@ export default function PropertyField({
                 {hoverValue == null && (
                   <p className="text-xs text-content-muted">{label}</p>
                 )}
-                {hoverValue == null && tooltipIcon}
+                {hoverValue == null && flexTooltipIcon}
                 {hoverValue == null && suffixSlot}
               </>
             )}
@@ -185,8 +238,17 @@ export default function PropertyField({
         return (
           <div
             className={fieldClassName}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
+            data-state={
+              hoverInteractive ? (open ? "open" : "closed") : undefined
+            }
+            onMouseEnter={() => {
+              setHovered(true)
+              if (hoverInteractive) scheduleOpen()
+            }}
+            onMouseLeave={() => {
+              setHovered(false)
+              if (hoverInteractive) scheduleClose()
+            }}
           >
             {Icon && (
               <Icon className="mt-1 mr-2 size-3.5 shrink-0 text-content-normal" />
@@ -199,7 +261,7 @@ export default function PropertyField({
                 >
                   {value}
                 </span>
-                {tooltipIcon}
+                {flexTooltipIcon}
               </>
             ) : (
               <>
@@ -207,7 +269,7 @@ export default function PropertyField({
                   <p className="text-xs text-content-muted">{label}</p>
                 )}
                 {renderValue("ml-1 text-xs text-content-loud")}
-                {hoverValue == null && tooltipIcon}
+                {hoverValue == null && flexTooltipIcon}
                 {hoverValue == null && suffixSlot}
               </>
             )}
@@ -217,6 +279,36 @@ export default function PropertyField({
   }
 
   const field = renderVariant()
+
+  if (content) {
+    if (isMobile) {
+      return (
+        <Popover>
+          <PopoverTrigger asChild>{field}</PopoverTrigger>
+          <PopoverContent className={cn("mr-2 w-80 p-3", contentClassName)}>
+            {content}
+          </PopoverContent>
+        </Popover>
+      )
+    }
+
+    return (
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverAnchor asChild>{field}</PopoverAnchor>
+        <PopoverContent
+          side="left"
+          sideOffset={8}
+          onMouseEnter={clearTimers}
+          onMouseLeave={scheduleClose}
+          onClick={(event) => event.stopPropagation()}
+          onOpenAutoFocus={(event) => event.preventDefault()}
+          className={cn("w-80 p-3", contentClassName)}
+        >
+          {content}
+        </PopoverContent>
+      </Popover>
+    )
+  }
 
   if (!tooltip) return field
 

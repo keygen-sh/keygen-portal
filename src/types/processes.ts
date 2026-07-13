@@ -56,10 +56,9 @@ export const ProcessAttributeDescriptions: Readonly<
 > = {
   pid: "The unique pid of the process within the scope of the machine it belongs to.",
   status: "The status of the process.",
-  lastHeartbeat:
-    "The time at which the process last sent a heartbeat ping (UTC timezone).",
+  lastHeartbeat: "The time at which the process last sent a heartbeat ping.",
   nextHeartbeat:
-    "The time at which the process must send a heartbeat ping by to remain active (UTC timezone).",
+    "The time at which the process must send a heartbeat ping by to remain active.",
   interval:
     "The process must send heartbeat pings within this timeframe to remain alive.",
   metadata:

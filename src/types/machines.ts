@@ -92,12 +92,10 @@ export const MachineAttributeDescriptions: Readonly<
   heartbeatStatus: "The status of the machine's heartbeat.",
   heartbeatDuration:
     "The duration in seconds for the machine's heartbeat window. Inherited from the license's policy.",
-  lastHeartbeat:
-    "The time at which the machine last sent a heartbeat ping (UTC timezone).",
+  lastHeartbeat: "The time at which the machine last sent a heartbeat ping.",
   nextHeartbeat:
-    "The time at which the machine must send a heartbeat ping by to remain active (UTC timezone).",
-  lastCheckOut:
-    "The time at which the machine was last checked-out (UTC timezone).",
+    "The time at which the machine must send a heartbeat ping by to remain active.",
+  lastCheckOut: "The time at which the machine was last checked-out.",
   maxProcesses:
     "The maximum number of processes the machine can have associated with it. Inherited from its license.",
   metadata:

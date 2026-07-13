@@ -53,6 +53,7 @@ import { useSidebarTab } from "@/hooks/use-sidebar-tab"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
+import { formatUtcDate } from "@/lib/timestamps"
 import { copyToClipboard } from "@/lib/clipboard"
 
 import * as Packages from "@/components/packages"
@@ -68,6 +69,7 @@ import GoToButton from "@/components/go-to-button"
 import ResourceLink from "@/components/resource-link"
 import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleCard from "@/components/collapsible-card"
+import { TimestampPopover } from "@/components/timestamp"
 
 export default function PackageDetails() {
   const { id } = useParams({ from: "/$accountId/app/packages/$id" })
@@ -308,16 +310,18 @@ export default function PackageDetails() {
                         <Property.Field
                           icon={SquarePlus}
                           label="Created at"
-                          value={new Date(
-                            pkg.attributes.created,
-                          ).toLocaleDateString()}
+                          value={formatUtcDate(pkg.attributes.created)}
+                          content={
+                            <TimestampPopover value={pkg.attributes.created} />
+                          }
                         />
                         <Property.Field
                           icon={SquarePen}
                           label="Updated at"
-                          value={new Date(
-                            pkg.attributes.updated,
-                          ).toLocaleDateString()}
+                          value={formatUtcDate(pkg.attributes.updated)}
+                          content={
+                            <TimestampPopover value={pkg.attributes.updated} />
+                          }
                         />
                       </>
                     ) : (
@@ -389,16 +393,18 @@ export default function PackageDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={new Date(
-                          pkg.attributes.created,
-                        ).toLocaleDateString()}
+                        value={formatUtcDate(pkg.attributes.created)}
+                        content={
+                          <TimestampPopover value={pkg.attributes.created} />
+                        }
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={new Date(
-                          pkg.attributes.updated,
-                        ).toLocaleDateString()}
+                        value={formatUtcDate(pkg.attributes.updated)}
+                        content={
+                          <TimestampPopover value={pkg.attributes.updated} />
+                        }
                       />
                     </Property.Section>
                   </>

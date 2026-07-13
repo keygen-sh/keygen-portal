@@ -1,6 +1,5 @@
 import { useEffect } from "react"
 import { useParams } from "@tanstack/react-router"
-import { formatDate } from "date-fns"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -34,6 +33,7 @@ import {
   formatRequestLogResponse,
 } from "@/lib/request-logs"
 import { httpMethodBadgeVariant, httpStatusBadgeVariant } from "@/lib/http"
+import { formatUtcDate } from "@/lib/timestamps"
 import { copyToClipboard } from "@/lib/clipboard"
 
 import { HTTPStatusCodeDescriptions, type HTTPStatusCode } from "@/types/http"
@@ -46,6 +46,7 @@ import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import TooltipBadge from "@/components/tooltip-badge"
 import ResourceLink from "@/components/resource-link"
+import { TimestampPopover } from "@/components/timestamp"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
 
@@ -184,17 +185,23 @@ export default function RequestLogDetails() {
                     <CollapsibleMenu title="Properties" className="space-y-2">
                       <Attribute.Field
                         label="Created at"
-                        value={formatDate(
-                          new Date(String(requestLog.attributes.created)),
-                          "PP",
-                        )}
+                        value={
+                          <Attribute.Value
+                            type="date"
+                            dateStyle="absolute"
+                            value={requestLog.attributes.created}
+                          />
+                        }
                       />
                       <Attribute.Field
                         label="Updated at"
-                        value={formatDate(
-                          new Date(String(requestLog.attributes.updated)),
-                          "PP",
-                        )}
+                        value={
+                          <Attribute.Value
+                            type="date"
+                            dateStyle="absolute"
+                            value={requestLog.attributes.updated}
+                          />
+                        }
                       />
                     </CollapsibleMenu>
                   </CollapsibleCard>
@@ -228,18 +235,22 @@ export default function RequestLogDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatDate(
-                          new Date(String(requestLog.attributes.created)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(requestLog.attributes.created)}
+                        content={
+                          <TimestampPopover
+                            value={requestLog.attributes.created}
+                          />
+                        }
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatDate(
-                          new Date(String(requestLog.attributes.updated)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(requestLog.attributes.updated)}
+                        content={
+                          <TimestampPopover
+                            value={requestLog.attributes.updated}
+                          />
+                        }
                       />
                     </Property.Section>
 

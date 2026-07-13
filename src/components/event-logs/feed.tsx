@@ -12,14 +12,14 @@ import { type EventLog, type EventLogFilters } from "@/types/event-logs"
 
 import { useListEventLogs } from "@/queries/event-logs"
 
-import { eventLogBadgeVariant, metadataDiffEntries } from "@/lib/event-logs"
-import { formatTimestamp, formatRelativeTime } from "@/lib/timestamps"
 import { cn } from "@/lib/utils"
+import { eventLogBadgeVariant, metadataDiffEntries } from "@/lib/event-logs"
 
 import * as keygen from "@/keygen"
 import * as Motion from "@/components/motion"
 import * as Skeletons from "@/components/skeletons"
 import Can from "@/components/can"
+import Timestamp from "@/components/timestamp"
 import Pagination from "@/components/pagination"
 import GoToButton from "@/components/go-to-button"
 import ResourceLink from "@/components/resource-link"
@@ -61,7 +61,6 @@ function EventLogRow({
   const { event, metadata, created } = eventLog.attributes
   const whodunnit = eventLog.relationships.whodunnit?.data
   const request = eventLog.relationships.request?.data
-  const timestamp = formatTimestamp(created)
   const changes = metadataDiffEntries(metadata).length
 
   return (
@@ -79,9 +78,7 @@ function EventLogRow({
           </Badge>
         </div>
         <div className="mt-1 flex min-w-0 items-center gap-2 text-xs">
-          <span className="shrink-0 text-content-muted" title={timestamp}>
-            {formatRelativeTime(created)}
-          </span>
+          <Timestamp value={created} display="relative" className="shrink-0" />
           <span className="min-w-0 truncate text-content-normal">
             {changes} {changes === 1 ? "change" : "changes"}
           </span>

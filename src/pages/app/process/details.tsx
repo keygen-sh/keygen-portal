@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
 import { useParams } from "@tanstack/react-router"
-import { formatDate } from "date-fns"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -57,6 +56,7 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
+import { formatUtcDate } from "@/lib/timestamps"
 
 import * as Processes from "@/components/processes"
 import * as Property from "@/components/property"
@@ -69,6 +69,7 @@ import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import ResourceLink from "@/components/resource-link"
 import ConfirmationModal from "@/components/confirmation-modal"
+import { TimestampPopover } from "@/components/timestamp"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
@@ -380,17 +381,23 @@ export default function ProcessDetails() {
                       <CollapsibleMenu title="Properties" className="space-y-2">
                         <Attribute.Field
                           label="Created at"
-                          value={formatDate(
-                            new Date(String(process.attributes.created)),
-                            "PP",
-                          )}
+                          value={
+                            <Attribute.Value
+                              type="date"
+                              dateStyle="absolute"
+                              value={process.attributes.created}
+                            />
+                          }
                         />
                         <Attribute.Field
                           label="Updated at"
-                          value={formatDate(
-                            new Date(String(process.attributes.updated)),
-                            "PP",
-                          )}
+                          value={
+                            <Attribute.Value
+                              type="date"
+                              dateStyle="absolute"
+                              value={process.attributes.updated}
+                            />
+                          }
                         />
                       </CollapsibleMenu>
                     ) : (
@@ -462,18 +469,22 @@ export default function ProcessDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatDate(
-                          new Date(String(process.attributes.created)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(process.attributes.created)}
+                        content={
+                          <TimestampPopover
+                            value={process.attributes.created}
+                          />
+                        }
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatDate(
-                          new Date(String(process.attributes.updated)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(process.attributes.updated)}
+                        content={
+                          <TimestampPopover
+                            value={process.attributes.updated}
+                          />
+                        }
                       />
                     </Property.Section>
 

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
 import { useParams } from "@tanstack/react-router"
-import { formatDate } from "date-fns"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -53,17 +52,19 @@ import {
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
 import { revokeTokenDescription } from "@/lib/tokens"
+import { formatUtcDate } from "@/lib/timestamps"
 
+import * as Tokens from "@/components/tokens"
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
 import * as EventLogs from "@/components/event-logs"
-import * as Tokens from "@/components/tokens"
 import Can from "@/components/can"
 import PageHeader from "@/components/page-header"
 import BackButton from "@/components/back-button"
 import TabsSwitch from "@/components/tabs-switch"
 import TooltipBadge from "@/components/tooltip-badge"
 import ResourceLink from "@/components/resource-link"
+import { TimestampPopover } from "@/components/timestamp"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import ConfirmationModal from "@/components/confirmation-modal"
@@ -129,12 +130,14 @@ export default function TokenDetails() {
       <Property.Field
         icon={SquarePlus}
         label="Created at"
-        value={formatDate(new Date(String(token.attributes.created)), "PP")}
+        value={formatUtcDate(token.attributes.created)}
+        content={<TimestampPopover value={token.attributes.created} />}
       />
       <Property.Field
         icon={SquarePen}
         label="Updated at"
-        value={formatDate(new Date(String(token.attributes.updated)), "PP")}
+        value={formatUtcDate(token.attributes.updated)}
+        content={<TimestampPopover value={token.attributes.updated} />}
       />
     </>
   ) : (
@@ -310,15 +313,8 @@ export default function TokenDetails() {
                         label="Expiry"
                         value={
                           <Attribute.Value
-                            type="raw"
-                            value={
-                              token.attributes.expiry
-                                ? formatDate(
-                                    new Date(token.attributes.expiry),
-                                    "PP",
-                                  )
-                                : null
-                            }
+                            type="date"
+                            value={token.attributes.expiry ?? null}
                             emptyLabel="Never"
                             tooltip={TokenAttributeDescriptions.expiry}
                           />

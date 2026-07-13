@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { useParams } from "@tanstack/react-router"
-import { formatDate } from "date-fns"
 
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -48,6 +47,7 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { toast } from "@/lib/toast"
+import { formatUtcDate } from "@/lib/timestamps"
 import { copyToClipboard } from "@/lib/clipboard"
 import { httpStatusBadgeVariant } from "@/lib/http"
 import { formatWebhookEventPayload } from "@/lib/webhook-events"
@@ -70,6 +70,7 @@ import PageHeader from "@/components/page-header"
 import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import TooltipBadge from "@/components/tooltip-badge"
+import { TimestampPopover } from "@/components/timestamp"
 import ResourceLink from "@/components/resource-link"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
@@ -360,17 +361,23 @@ export default function WebhookEventDetails() {
                     <CollapsibleMenu title="Properties" className="space-y-2">
                       <Attribute.Field
                         label="Created at"
-                        value={formatDate(
-                          new Date(String(webhookEvent.attributes.created)),
-                          "PP",
-                        )}
+                        value={
+                          <Attribute.Value
+                            type="date"
+                            dateStyle="absolute"
+                            value={webhookEvent.attributes.created}
+                          />
+                        }
                       />
                       <Attribute.Field
                         label="Updated at"
-                        value={formatDate(
-                          new Date(String(webhookEvent.attributes.updated)),
-                          "PP",
-                        )}
+                        value={
+                          <Attribute.Value
+                            type="date"
+                            dateStyle="absolute"
+                            value={webhookEvent.attributes.updated}
+                          />
+                        }
                       />
                     </CollapsibleMenu>
                   </CollapsibleCard>
@@ -415,18 +422,22 @@ export default function WebhookEventDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatDate(
-                          new Date(String(webhookEvent.attributes.created)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(webhookEvent.attributes.created)}
+                        content={
+                          <TimestampPopover
+                            value={webhookEvent.attributes.created}
+                          />
+                        }
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatDate(
-                          new Date(String(webhookEvent.attributes.updated)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(webhookEvent.attributes.updated)}
+                        content={
+                          <TimestampPopover
+                            value={webhookEvent.attributes.updated}
+                          />
+                        }
                       />
                     </Property.Section>
 

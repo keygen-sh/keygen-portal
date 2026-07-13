@@ -128,8 +128,8 @@ export default function EnvironmentDetails({
                 value={
                   <Attribute.Value
                     type="date"
+                    dateStyle="absolute"
                     value={environment.attributes.created}
-                    tooltip="When the environment was created."
                   />
                 }
               />
@@ -139,8 +139,8 @@ export default function EnvironmentDetails({
                 value={
                   <Attribute.Value
                     type="date"
+                    dateStyle="absolute"
                     value={environment.attributes.updated}
-                    tooltip="When the environment was last updated."
                   />
                 }
               />

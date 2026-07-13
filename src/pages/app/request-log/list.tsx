@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react"
+import { useCallback } from "react"
 import { useNavigate } from "@tanstack/react-router"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -7,7 +7,6 @@ import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
 import { useEdition } from "@/hooks/use-edition"
 import { useDataTable } from "@/hooks/use-data-table"
 import { useFilterSearch } from "@/hooks/use-filter-search"
-import { useCursorFollowTooltip } from "@/hooks/use-cursor-follow-tooltip"
 import { useRequestLogTableColumns } from "@/hooks/use-request-log-table-columns"
 
 import { type RequestLog } from "@/types/request-logs"
@@ -18,18 +17,12 @@ import {
 } from "@/queries/request-logs"
 
 import * as keygen from "@/keygen"
-import * as RequestLogs from "@/components/request-logs"
 import * as Skeletons from "@/components/skeletons"
-import {
-  type RequestLogPreview,
-  RequestLogPreviewContent,
-  type RequestLogPreviewHandlers,
-} from "@/components/request-logs/preview"
+import * as RequestLogs from "@/components/request-logs"
 import DataTable from "@/components/data-table"
 import PageFooter from "@/components/page-footer"
 import PageHeader from "@/components/page-header"
 import Pagination from "@/components/pagination"
-import CursorTooltip from "@/components/cursor-tooltip"
 
 export default function RequestLogList() {
   const table = useDataTable()
@@ -39,35 +32,16 @@ export default function RequestLogList() {
 
   const [filters, setFilters] = useFilterSearch<RequestLogFilters>()
   const { cursor, reset, goToPage } = useCursors(page, setPage)
-  const {
-    active: preview,
-    tooltipRef,
-    currentPos,
-    open: openPreview,
-    move: movePreview,
-    close: closePreview,
-    closeNow: closePreviewNow,
-  } = useCursorFollowTooltip<RequestLogPreview>()
-
-  const previewHandlers = useMemo<RequestLogPreviewHandlers>(
-    () => ({
-      onOpenPreview: openPreview,
-      onMovePreview: movePreview,
-      onClosePreview: closePreview,
-    }),
-    [openPreview, movePreview, closePreview],
-  )
 
   const handleFiltersChange = useCallback(
     (next: RequestLogFilters) => {
-      closePreviewNow()
       setFilters(next)
       reset()
     },
-    [closePreviewNow, setFilters, reset],
+    [setFilters, reset],
   )
 
-  const columns = useRequestLogTableColumns(previewHandlers)
+  const columns = useRequestLogTableColumns()
 
   const {
     data: requestLogs,
@@ -88,10 +62,9 @@ export default function RequestLogList() {
 
   const handlePageChange = useCallback(
     (nextPage: number) => {
-      closePreviewNow()
       goToPage(nextPage, nextCursor)
     },
-    [closePreviewNow, goToPage, nextCursor],
+    [goToPage, nextCursor],
   )
 
   const requestLogList = (
@@ -148,15 +121,6 @@ export default function RequestLogList() {
       <PageHeader title="Request Logs" />
 
       {content}
-
-      <CursorTooltip
-        open={!!preview}
-        tooltipRef={tooltipRef}
-        currentPos={currentPos}
-        className="w-80"
-      >
-        {preview && <RequestLogPreviewContent preview={preview} />}
-      </CursorTooltip>
     </section>
   )
 }

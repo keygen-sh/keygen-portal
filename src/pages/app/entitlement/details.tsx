@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
 import { useParams } from "@tanstack/react-router"
-import { formatDate } from "date-fns"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -47,6 +46,7 @@ import { useGetEntitlement, useRemoveEntitlement } from "@/queries/entitlements"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
+import { formatUtcDate } from "@/lib/timestamps"
 
 import * as Property from "@/components/property"
 import * as EventLogs from "@/components/event-logs"
@@ -59,6 +59,7 @@ import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import ResourceLink from "@/components/resource-link"
 import CollapsibleCard from "@/components/collapsible-card"
+import { TimestampPopover } from "@/components/timestamp"
 import ConfirmationModal from "@/components/confirmation-modal"
 
 export default function EntitlementDetails() {
@@ -300,18 +301,22 @@ export default function EntitlementDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatDate(
-                          new Date(String(entitlement.attributes.created)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(entitlement.attributes.created)}
+                        content={
+                          <TimestampPopover
+                            value={entitlement.attributes.created}
+                          />
+                        }
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatDate(
-                          new Date(String(entitlement.attributes.updated)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(entitlement.attributes.updated)}
+                        content={
+                          <TimestampPopover
+                            value={entitlement.attributes.updated}
+                          />
+                        }
                       />
                     </Property.Section>
                     <Separator />

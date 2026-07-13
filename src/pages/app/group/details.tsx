@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
 import { useParams } from "@tanstack/react-router"
-import { formatDate } from "date-fns"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -53,6 +52,7 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
+import { formatUtcDate } from "@/lib/timestamps"
 
 import * as keygen from "@/keygen"
 import * as Groups from "@/components/groups"
@@ -66,6 +66,7 @@ import TabsSwitch from "@/components/tabs-switch"
 import BackButton from "@/components/back-button"
 import GoToButton from "@/components/go-to-button"
 import ResourceLink from "@/components/resource-link"
+import { TimestampPopover } from "@/components/timestamp"
 import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
@@ -386,17 +387,23 @@ export default function GroupDetails() {
                       <CollapsibleMenu title="Properties" className="space-y-2">
                         <Attribute.Field
                           label="Created at"
-                          value={formatDate(
-                            new Date(String(group.attributes.created)),
-                            "PP",
-                          )}
+                          value={
+                            <Attribute.Value
+                              type="date"
+                              dateStyle="absolute"
+                              value={group.attributes.created}
+                            />
+                          }
                         />
                         <Attribute.Field
                           label="Updated at"
-                          value={formatDate(
-                            new Date(String(group.attributes.updated)),
-                            "PP",
-                          )}
+                          value={
+                            <Attribute.Value
+                              type="date"
+                              dateStyle="absolute"
+                              value={group.attributes.updated}
+                            />
+                          }
                         />
                       </CollapsibleMenu>
                     ) : (
@@ -468,18 +475,18 @@ export default function GroupDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatDate(
-                          new Date(String(group.attributes.created)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(group.attributes.created)}
+                        content={
+                          <TimestampPopover value={group.attributes.created} />
+                        }
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatDate(
-                          new Date(String(group.attributes.updated)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(group.attributes.updated)}
+                        content={
+                          <TimestampPopover value={group.attributes.updated} />
+                        }
                       />
                     </Property.Section>
 

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
 import { useParams } from "@tanstack/react-router"
-import { formatDate } from "date-fns"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -51,6 +50,7 @@ import { useSidebarTab } from "@/hooks/use-sidebar-tab"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
+import { formatUtcDate } from "@/lib/timestamps"
 import { copyToClipboard } from "@/lib/clipboard"
 import { getHeartbeatStatusVariant } from "@/lib/machines"
 import { formatTtlLabel } from "@/lib/licenses"
@@ -69,6 +69,7 @@ import GoToButton from "@/components/go-to-button"
 import ResourceLink from "@/components/resource-link"
 import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleMenu from "@/components/collapsible-menu"
+import { TimestampPopover } from "@/components/timestamp"
 import CollapsibleCard from "@/components/collapsible-card"
 
 export default function MachineDetails() {
@@ -541,17 +542,23 @@ export default function MachineDetails() {
                       <CollapsibleMenu title="Properties" className="space-y-2">
                         <Attribute.Field
                           label="Created at"
-                          value={formatDate(
-                            new Date(String(machine.attributes.created)),
-                            "PP",
-                          )}
+                          value={
+                            <Attribute.Value
+                              type="date"
+                              dateStyle="absolute"
+                              value={machine.attributes.created}
+                            />
+                          }
                         />
                         <Attribute.Field
                           label="Updated at"
-                          value={formatDate(
-                            new Date(String(machine.attributes.updated)),
-                            "PP",
-                          )}
+                          value={
+                            <Attribute.Value
+                              type="date"
+                              dateStyle="absolute"
+                              value={machine.attributes.updated}
+                            />
+                          }
                         />
                       </CollapsibleMenu>
                     ) : (
@@ -623,18 +630,22 @@ export default function MachineDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatDate(
-                          new Date(String(machine.attributes.created)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(machine.attributes.created)}
+                        content={
+                          <TimestampPopover
+                            value={machine.attributes.created}
+                          />
+                        }
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatDate(
-                          new Date(String(machine.attributes.updated)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(machine.attributes.updated)}
+                        content={
+                          <TimestampPopover
+                            value={machine.attributes.updated}
+                          />
+                        }
                       />
                     </Property.Section>
 

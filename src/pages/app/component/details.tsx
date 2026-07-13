@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
 import { useParams } from "@tanstack/react-router"
-import { formatDate } from "date-fns"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -48,6 +47,7 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
+import { formatUtcDate } from "@/lib/timestamps"
 
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
@@ -62,6 +62,7 @@ import ResourceLink from "@/components/resource-link"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
 import ConfirmationModal from "@/components/confirmation-modal"
+import { TimestampPopover } from "@/components/timestamp"
 
 export default function ComponentDetails() {
   const { id } = useParams({
@@ -309,17 +310,23 @@ export default function ComponentDetails() {
                       <CollapsibleMenu title="Properties" className="space-y-2">
                         <Attribute.Field
                           label="Created at"
-                          value={formatDate(
-                            new Date(String(component.attributes.created)),
-                            "PP",
-                          )}
+                          value={
+                            <Attribute.Value
+                              type="date"
+                              dateStyle="absolute"
+                              value={component.attributes.created}
+                            />
+                          }
                         />
                         <Attribute.Field
                           label="Updated at"
-                          value={formatDate(
-                            new Date(String(component.attributes.updated)),
-                            "PP",
-                          )}
+                          value={
+                            <Attribute.Value
+                              type="date"
+                              dateStyle="absolute"
+                              value={component.attributes.updated}
+                            />
+                          }
                         />
                       </CollapsibleMenu>
                     ) : (
@@ -391,18 +398,22 @@ export default function ComponentDetails() {
                       <Property.Field
                         icon={SquarePlus}
                         label="Created at"
-                        value={formatDate(
-                          new Date(String(component.attributes.created)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(component.attributes.created)}
+                        content={
+                          <TimestampPopover
+                            value={component.attributes.created}
+                          />
+                        }
                       />
                       <Property.Field
                         icon={SquarePen}
                         label="Updated at"
-                        value={formatDate(
-                          new Date(String(component.attributes.updated)),
-                          "PP",
-                        )}
+                        value={formatUtcDate(component.attributes.updated)}
+                        content={
+                          <TimestampPopover
+                            value={component.attributes.updated}
+                          />
+                        }
                       />
                     </Property.Section>
 

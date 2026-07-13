@@ -5,7 +5,12 @@ import { Copy, Info } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover"
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover"
 
 import {
   formatUtcTimestamp,
@@ -16,6 +21,8 @@ import {
 } from "@/lib/timestamps"
 import { cn } from "@/lib/utils"
 import { copyToClipboard } from "@/lib/clipboard"
+
+import { useMobile } from "@/hooks/use-mobile"
 
 const CLOSE_DELAY_MS = 50
 const OPEN_DELAY_MS = 30
@@ -37,6 +44,7 @@ export default function Timestamp({
   emptyLabel = "Not set",
   className,
 }: TimestampProps) {
+  const isMobile = useMobile()
   const [open, setOpen] = useState(false)
   const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -76,13 +84,16 @@ export default function Timestamp({
         ? formatPreciseRelative(value)
         : formatRelativeTime(value)
 
+  const Anchor = isMobile ? PopoverTrigger : PopoverAnchor
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverAnchor asChild>
+      <Anchor asChild>
         <span
           data-hovered={(hint && open) || undefined}
           onMouseEnter={scheduleOpen}
           onMouseLeave={scheduleClose}
+          onClick={isMobile ? (event) => event.stopPropagation() : undefined}
           className={cn(
             "group/timestamp",
             display === "raw"
@@ -98,15 +109,15 @@ export default function Timestamp({
             </span>
           )}
         </span>
-      </PopoverAnchor>
+      </Anchor>
       <PopoverContent
-        align="start"
-        side="left"
+        align={isMobile ? "center" : "start"}
+        side={isMobile ? "bottom" : "left"}
         onMouseEnter={clearTimers}
         onMouseLeave={scheduleClose}
         onClick={(event) => event.stopPropagation()}
         onOpenAutoFocus={(event) => event.preventDefault()}
-        className="w-80 p-3"
+        className={cn("w-80 p-3", isMobile && "mr-2")}
       >
         <TimestampPopover value={value} />
       </PopoverContent>

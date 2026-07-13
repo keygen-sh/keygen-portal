@@ -95,7 +95,7 @@ export const LicenseAttributeDescriptions: Readonly<
 > = {
   name: "A distinguishing label for the license.",
   key: "The unique license key.",
-  expiry: "The time at which the license will expire (UTC timezone).",
+  expiry: "The time at which the license will expire.",
   status:
     "The license's overall status. This does not equal a license's validity.",
   uses: "The number of times the license has been used.",
@@ -121,14 +121,11 @@ export const LicenseAttributeDescriptions: Readonly<
   requireHeartbeat: "Whether or not machines require heartbeat pings.",
   requireCheckIn:
     "Whether or not the license requires check-in at a predefined interval to continue to pass validation.",
-  lastValidated:
-    "The time at which the license was last validated (UTC timezone).",
-  lastCheckOut:
-    "The time at which the license was last checked out (UTC timezone).",
-  lastCheckIn:
-    "The time at which the license was last checked-in (UTC timezone).",
+  lastValidated: "The time at which the license was last validated.",
+  lastCheckOut: "The time at which the license was last checked out.",
+  lastCheckIn: "The time at which the license was last checked-in.",
   nextCheckIn:
-    "The time at which the license must be checked-in by to remain valid (UTC timezone).",
+    "The time at which the license must be checked-in by to remain valid.",
   metadata:
     "Store arbitrary key/value data on the license for book keeping purposes, entitlements, etc.",
 } as const
@@ -143,7 +140,7 @@ export const LicenseFormFieldDescriptions: Readonly<
   ...LicenseAttributeDescriptions,
   key: "The unique license key. Key will be auto-generated if left blank.",
   expiry:
-    "The time at which the license will expire (UTC timezone). When left blank, the expiration is calculated using the policy's duration.",
+    "The time at which the license will expire. When left blank, the expiration is calculated using the policy's duration.",
   maxMachines: "Override the policy's max machines limit for this license.",
   maxProcesses: "Override the policy's max processes limit for this license.",
   maxUsers: "Override the policy's max users limit for this license.",

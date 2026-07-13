@@ -308,6 +308,7 @@ export default function ComponentDetails() {
                       <CollapsibleMenu title="Properties" className="space-y-2">
                         <Attribute.Field
                           label="Created at"
+                          variant="none"
                           value={
                             <Attribute.Value
                               type="date"
@@ -318,6 +319,7 @@ export default function ComponentDetails() {
                         />
                         <Attribute.Field
                           label="Updated at"
+                          variant="none"
                           value={
                             <Attribute.Value
                               type="date"

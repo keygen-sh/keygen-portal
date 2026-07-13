@@ -808,6 +808,7 @@ export default function LicenseDetails() {
                         >
                           <Attribute.Field
                             label="Created at"
+                            variant="none"
                             value={
                               <Attribute.Value
                                 type="date"
@@ -818,6 +819,7 @@ export default function LicenseDetails() {
                           />
                           <Attribute.Field
                             label="Updated at"
+                            variant="none"
                             value={
                               <Attribute.Value
                                 type="date"

@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { formatDate } from "date-fns"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -21,7 +22,7 @@ import {
 
 import { toast } from "@/lib/toast"
 import { formatPrice } from "@/lib/billing"
-import { formatUtcDate, formatRange } from "@/lib/timestamps"
+import { formatRange, DATE_FORMAT } from "@/lib/timestamps"
 
 import { PlanAttributeDescriptions } from "@/types/plans"
 import {
@@ -58,7 +59,7 @@ export default function BillingPage() {
     billing?.attributes.subscriptionPeriodEnd,
   )
   const periodEndLabel = periodEnd
-    ? formatUtcDate(periodEnd)
+    ? formatDate(new Date(periodEnd), DATE_FORMAT)
     : "the end of your current period"
 
   const isCanceling =

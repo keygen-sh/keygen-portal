@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 
-import { Copy } from "lucide-react"
+import { Copy, Info } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -24,6 +24,7 @@ interface TimestampProps {
   value: string | null | undefined
   display?: "relative" | "raw"
   precise?: boolean
+  hint?: boolean
   emptyLabel?: string
   className?: string
 }
@@ -32,6 +33,7 @@ export default function Timestamp({
   value,
   display = "relative",
   precise = false,
+  hint = false,
   emptyLabel = "Not set",
   className,
 }: TimestampProps) {
@@ -78,9 +80,11 @@ export default function Timestamp({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverAnchor asChild>
         <span
+          data-hovered={(hint && open) || undefined}
           onMouseEnter={scheduleOpen}
           onMouseLeave={scheduleClose}
           className={cn(
+            "group/timestamp",
             display === "raw"
               ? "font-mono text-xs text-content-normal"
               : "text-content-muted",
@@ -88,6 +92,11 @@ export default function Timestamp({
           )}
         >
           {label}
+          {hint && (
+            <span className="mb-0.25 inline-flex w-0 shrink-0 align-middle transition-[width,margin] duration-200 group-hover/timestamp:ml-1.5 group-hover/timestamp:w-3 group-data-[hovered=true]/timestamp:ml-1.5 group-data-[hovered=true]/timestamp:w-3">
+              <Info className="inline size-3 translate-x-2 self-center text-content-subdued opacity-0 transition-all duration-200 group-hover/timestamp:translate-x-0 group-hover/timestamp:opacity-100 group-data-[hovered=true]/timestamp:translate-x-0 group-data-[hovered=true]/timestamp:opacity-100" />
+            </span>
+          )}
         </span>
       </PopoverAnchor>
       <PopoverContent

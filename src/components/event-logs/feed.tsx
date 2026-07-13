@@ -78,7 +78,7 @@ function EventLogRow({
           </Badge>
         </div>
         <div className="mt-1 flex min-w-0 items-center gap-2 text-xs">
-          <Timestamp value={created} display="relative" className="shrink-0" />
+          <Timestamp value={created} display="relative" hint />
           <span className="min-w-0 truncate text-content-normal">
             {changes} {changes === 1 ? "change" : "changes"}
           </span>

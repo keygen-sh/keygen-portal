@@ -132,7 +132,10 @@ function TokenRow({ token, onNavigate }: TokenRowProps) {
         <span className="text-xs text-content-subdued">
           {token.attributes.expiry ? (
             <>
-              Expires <Timestamp value={token.attributes.expiry} />
+              {new Date(token.attributes.expiry) < new Date()
+                ? "Expired"
+                : "Expires"}{" "}
+              <Timestamp value={token.attributes.expiry} />
             </>
           ) : (
             "Never expires"

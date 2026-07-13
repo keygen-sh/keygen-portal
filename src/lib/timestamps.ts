@@ -1,4 +1,5 @@
 import {
+  formatDate,
   type Duration,
   formatDuration,
   intervalToDuration,
@@ -134,6 +135,8 @@ export function formatUtcDate(value: string): string {
   return utcDateFormatter.format(date)
 }
 
+export const DATE_FORMAT = "MM/dd/yyyy"
+
 // formats a start/end ISO range as UTC dates, e.g. "01/01/2023 - 01/31/2023"
 export function formatRange(
   start?: string | null,
@@ -141,5 +144,8 @@ export function formatRange(
 ): string | null {
   if (!start || !end) return null
 
-  return `${formatUtcDate(start)} - ${formatUtcDate(end)}`
+  return `${formatDate(new Date(start), DATE_FORMAT)} - ${formatDate(
+    new Date(end),
+    DATE_FORMAT,
+  )}`
 }

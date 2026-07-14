@@ -58,7 +58,9 @@ function DialogContent({
 }) {
   return (
     <DialogPortal data-slot="dialog-portal">
-      {disableOverlay ? null : <DialogOverlay />}
+      <DialogOverlay
+        className={disableOverlay ? "bg-transparent" : undefined}
+      />
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(

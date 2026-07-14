@@ -69,4 +69,4 @@ function NoticeDescription({
 Notice.Title = NoticeTitle
 Notice.Description = NoticeDescription
 
-export { Notice, noticeVariants }
+export { Notice }

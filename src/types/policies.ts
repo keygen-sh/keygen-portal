@@ -106,6 +106,31 @@ export enum TransferStrategy {
   ResetExpiry = "RESET_EXPIRY",
 }
 
+export enum Scheme {
+  Ed25519Sign = "ED25519_SIGN",
+  EcdsaP256Sign = "ECDSA_P256_SIGN",
+  Rsa2048Pkcs1PssSignV2 = "RSA_2048_PKCS1_PSS_SIGN_V2",
+  Rsa2048Pkcs1SignV2 = "RSA_2048_PKCS1_SIGN_V2",
+  Rsa2048JwtRs256 = "RSA_2048_JWT_RS256",
+  Rsa2048Pkcs1Encrypt = "RSA_2048_PKCS1_ENCRYPT",
+  Rsa2048Pkcs1PssSign = "RSA_2048_PKCS1_PSS_SIGN",
+  Rsa2048Pkcs1Sign = "RSA_2048_PKCS1_SIGN",
+}
+
+export const isScheme = (value: string | null | undefined): value is Scheme =>
+  value != null && (Object.values(Scheme) as string[]).includes(value)
+
+export const SchemeDeprecated: Readonly<Record<Scheme, boolean>> = {
+  [Scheme.Ed25519Sign]: false,
+  [Scheme.EcdsaP256Sign]: false,
+  [Scheme.Rsa2048Pkcs1PssSignV2]: false,
+  [Scheme.Rsa2048Pkcs1SignV2]: false,
+  [Scheme.Rsa2048JwtRs256]: false,
+  [Scheme.Rsa2048Pkcs1Encrypt]: false,
+  [Scheme.Rsa2048Pkcs1PssSign]: true,
+  [Scheme.Rsa2048Pkcs1Sign]: true,
+}
+
 export type PolicyAttributes = {
   name: string
   duration: number | null
@@ -436,5 +461,15 @@ export const PolicyOptionLabels = {
   transferStrategy: {
     [TransferStrategy.KeepExpiry]: "Keep Expiry",
     [TransferStrategy.ResetExpiry]: "Reset Expiry",
+  },
+  scheme: {
+    [Scheme.Ed25519Sign]: "Ed25519",
+    [Scheme.EcdsaP256Sign]: "ECDSA P-256",
+    [Scheme.Rsa2048Pkcs1PssSignV2]: "RSA 2048 PKCS1 PSS v2",
+    [Scheme.Rsa2048Pkcs1SignV2]: "RSA 2048 PKCS1 v2",
+    [Scheme.Rsa2048JwtRs256]: "RSA 2048 JWT RS256",
+    [Scheme.Rsa2048Pkcs1Encrypt]: "RSA 2048 PKCS1 Encrypt",
+    [Scheme.Rsa2048Pkcs1PssSign]: "RSA 2048 PKCS1 PSS",
+    [Scheme.Rsa2048Pkcs1Sign]: "RSA 2048 PKCS1",
   },
 } as const

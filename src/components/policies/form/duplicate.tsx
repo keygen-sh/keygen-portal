@@ -24,6 +24,7 @@ import * as Loading from "@/components/loading"
 import * as Policies from "@/components/policies"
 import { Notice } from "@/components/notice"
 import { Separator } from "@/components/ui/separator"
+import CollapsibleCard from "@/components/collapsible-card"
 
 interface DuplicatePolicyFormProps {
   open: boolean
@@ -232,8 +233,12 @@ export default function DuplicatePolicyForm({
 
             <Separator className="my-8" />
 
-            <Forms.Section.Columns title="Offline configuration">
-              <Forms.Section.Column>
+            <CollapsibleCard
+              title="Offline configuration"
+              defaultOpen={false}
+              containerClass="w-full"
+            >
+              <div className="flex flex-col gap-4">
                 <Policies.Form.Fields
                   schema="create"
                   mode={mode}
@@ -251,8 +256,8 @@ export default function DuplicatePolicyForm({
                     scheme. Avoid combining signed keys with license files.
                   </Notice.Description>
                 </Notice>
-              </Forms.Section.Column>
-            </Forms.Section.Columns>
+              </div>
+            </CollapsibleCard>
           </Forms.Layout.Sheet>
         )}
       </Forms.Container.Dialog>

@@ -4,6 +4,8 @@ import { z } from "zod"
 import { CombineFormValues } from "@/types/forms"
 import {
   Policy,
+  isScheme,
+  Scheme,
   CheckInInterval,
   AuthenticationStrategy,
   ExpirationStrategy,
@@ -316,8 +318,35 @@ export const ProductShape = z.object({
   }),
 })
 
+export const SchemeShape = z.object({
+  scheme: z.nativeEnum(Scheme).nullish().default(null),
+})
+
+export type SchemeValues = BaseValues & { scheme?: Scheme | null }
+
+export const SchemeRules = <TInput, TOutput extends SchemeValues>(
+  schema: AnySchema<TInput, TOutput>,
+): AnySchema<TInput, TOutput> =>
+  schema
+    .refine(
+      (values: SchemeValues) => values.scheme == null || !values.usePool,
+      {
+        path: ["scheme"],
+        message: "Cannot be used with a pooled policy",
+      },
+    )
+    .refine(
+      (values: SchemeValues) => values.scheme == null || !values.usePool,
+      {
+        path: ["usePool"],
+        message: "Cannot be used with a scheme",
+      },
+    ) as AnySchema<TInput, TOutput>
+
 export const BaseSchema = BaseRules(BaseShape)
-export const CreateSchema = BaseRules(BaseShape.merge(ProductShape))
+export const CreateSchema = SchemeRules(
+  BaseRules(BaseShape.merge(ProductShape).merge(SchemeShape)),
+)
 export const UpdateSchema = BaseSchema
 
 export type BaseFormValues = z.input<typeof BaseSchema>
@@ -339,7 +368,7 @@ export type AllValues = CombineFormValues<
 
 export type FieldNames = Exclude<
   FieldPath<AllValues>,
-  "scheme" | "encrypted" | "entitlements" | "product.id"
+  "encrypted" | "entitlements" | "product.id"
 >
 
 export enum TimingTemplates {
@@ -650,7 +679,7 @@ export function composeSchema<
     shape = shape.merge(ProcessBasedShape)
   if (metered.includes(MeteredTemplates.LeaseBased))
     shape = shape.merge(LeaseBasedShape)
-  if (selection.offline) shape = shape.merge(OfflineShape)
+  if (selection.offline) shape = shape.merge(OfflineShape).merge(SchemeShape)
 
   let schema = shape as unknown as AnySchema<BaseFormValues, BaseValues>
   if (selection.timing === TimingTemplates.Timed) {
@@ -670,6 +699,9 @@ export function composeSchema<
   }
   if (metered.includes(MeteredTemplates.LeaseBased)) {
     schema = LeaseBasedRules(schema)
+  }
+  if (selection.offline) {
+    schema = SchemeRules(schema)
   }
 
   return schema as AnySchema<TInput, TOutput>
@@ -759,6 +791,9 @@ export function getFormValuesFromPolicy<
     return {
       ...base,
       product: { id: policy.relationships.product?.data?.id ?? "" },
+      scheme: isScheme(policy.attributes.scheme)
+        ? policy.attributes.scheme
+        : null,
     } as unknown as T
   }
 

@@ -22,6 +22,7 @@ import { settleCreateEntitlements } from "@/lib/entitlements"
 import * as Forms from "@/components/forms"
 import * as Loading from "@/components/loading"
 import * as Policies from "@/components/policies"
+import { Notice } from "@/components/notice"
 import { Separator } from "@/components/ui/separator"
 
 interface DuplicatePolicyFormProps {
@@ -226,6 +227,30 @@ export default function DuplicatePolicyForm({
                   mode={mode}
                   include={["entitlements.attach", "entitlements.create"]}
                 />
+              </Forms.Section.Column>
+            </Forms.Section.Columns>
+
+            <Separator className="my-8" />
+
+            <Forms.Section.Columns title="Offline configuration">
+              <Forms.Section.Column>
+                <Policies.Form.Fields
+                  schema="create"
+                  mode={mode}
+                  include={["scheme"]}
+                />
+                <Notice variant="warning">
+                  <Notice.Title>
+                    Setting a cryptographic scheme on this policy will
+                    cryptographically sign its license keys.
+                  </Notice.Title>
+                  <Notice.Description>
+                    This will make the data embedded in each key immutable. For
+                    most use cases, checking out a license file is recommended
+                    instead. License files do not require a cryptographic
+                    scheme. Avoid combining signed keys with license files.
+                  </Notice.Description>
+                </Notice>
               </Forms.Section.Column>
             </Forms.Section.Columns>
           </Forms.Layout.Sheet>

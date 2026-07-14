@@ -1,6 +1,7 @@
 import { useFormContext, useFieldArray, useWatch } from "react-hook-form"
 
 import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -51,6 +52,8 @@ import {
   MachineLeasingStrategy,
   CheckInInterval,
   ProcessLeasingStrategy,
+  Scheme,
+  SchemeDeprecated,
   PolicyMode,
 } from "@/types/policies"
 import { type FieldVariant } from "@/components/forms/field"
@@ -552,6 +555,16 @@ export default function PoliciesFormFields({
               <RequireVersionScopeField
                 key="requireVersionScope"
                 autoFocus={autoFocus === "requireVersionScope"}
+                descriptions={descriptions}
+                mode={mode}
+              />
+            )
+          case "scheme":
+            return (
+              <SchemeField
+                key="scheme"
+                autoFocus={autoFocus === "scheme"}
+                fieldVariant={fieldVariant}
                 descriptions={descriptions}
                 mode={mode}
               />
@@ -2970,6 +2983,67 @@ function UsePoolField({
               />
             </FormControl>
           </Forms.Field.Header>
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function SchemeField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  mode = PolicyMode.Create,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  mode?: PolicyMode
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return (
+      <div className="w-full justify-between space-y-2 md:flex">
+        <Skeleton className="h-5 w-24 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
+      </div>
+    )
+  }
+
+  return (
+    <FormField
+      control={form.control}
+      name="scheme"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Scheme"
+            variant={fieldVariant}
+            tooltip={descriptions.scheme}
+          >
+            <NullableSelect<Scheme>
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              invalid={!!fieldState.error}
+              autoFocus={autoFocus}
+              placeholder="None"
+              clearLabel="None"
+            >
+              {Object.values(Scheme).map((scheme) => (
+                <SelectItem key={scheme} value={scheme}>
+                  {PolicyOptionLabels.scheme[scheme]}
+                  {SchemeDeprecated[scheme] && (
+                    <Badge variant="disabled">Deprecated</Badge>
+                  )}
+                </SelectItem>
+              ))}
+            </NullableSelect>
+          </Forms.Field.Header>
+          <FormMessage />
         </FormItem>
       )}
     />

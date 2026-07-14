@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Tooltip,
@@ -38,10 +39,10 @@ import {
 
 import * as Schemas from "@/schemas"
 import {
-  PolicyTemplateSelection,
   TimingTemplates,
   AccessTemplates,
   MeteredTemplates,
+  PolicyTemplateSelection,
 } from "@/schemas/policies"
 
 import { toast } from "@/lib/toast"
@@ -58,7 +59,9 @@ import { useCreateEntitlement } from "@/queries/entitlements"
 
 import * as Forms from "@/components/forms"
 import * as Policies from "@/components/policies"
+import CollapsibleCard from "@/components/collapsible-card"
 import DocumentationLink from "@/components/documentation-link"
+import { Notice } from "@/components/notice"
 import { CardSelector, CardOption } from "@/components/card-selector"
 import { BadgeGroup, BadgeGroupItem } from "@/components/badge-group"
 
@@ -86,19 +89,21 @@ export default function CreatePolicyForm({
 
   const schema = useMemo(
     () =>
-      Schemas.Policies.composeSchema<
-        Schemas.Policies.CreateFormValues,
-        Schemas.Policies.CreateValues
-      >(
-        {
-          timing: selection?.timing ?? null,
-          access: selection?.access ?? [],
-          metered: selection?.metered ?? [],
-          offline: selection?.offline ?? false,
-        },
-        { product: true },
-      ),
-    [selection],
+      mode === "scratch"
+        ? Schemas.Policies.CreateSchema
+        : Schemas.Policies.composeSchema<
+            Schemas.Policies.CreateFormValues,
+            Schemas.Policies.CreateValues
+          >(
+            {
+              timing: selection?.timing ?? null,
+              access: selection?.access ?? [],
+              metered: selection?.metered ?? [],
+              offline: selection?.offline ?? false,
+            },
+            { product: true },
+          ),
+    [mode, selection],
   )
 
   const form = useForm<
@@ -860,6 +865,7 @@ function TemplatesForm({
                 "checkInInterval",
                 "checkInIntervalCount",
                 "authenticationStrategy",
+                ...(selection.offline ? (["scheme"] as const) : []),
                 "metadata",
               ]}
             >
@@ -884,6 +890,34 @@ function TemplatesForm({
                 </Forms.Section.Columns>
                 <Policies.Form.Fields schema="create" include={["metadata"]} />
               </Forms.Section.Card>
+
+              {selection.offline && (
+                <CollapsibleCard
+                  title="Offline configuration"
+                  defaultOpen={false}
+                  containerClass="m-4 w-auto"
+                >
+                  <div className="flex flex-col gap-4">
+                    <Policies.Form.Fields
+                      schema="create"
+                      include={["scheme"]}
+                    />
+                    <Notice variant="warning">
+                      <Notice.Title>
+                        Setting a cryptographic scheme on this policy will
+                        cryptographically sign its license keys.
+                      </Notice.Title>
+                      <Notice.Description>
+                        This will make the data embedded in each key immutable.
+                        For most use cases, checking out a license file is
+                        recommended instead. License files do not require a
+                        cryptographic scheme. Avoid combining signed keys with
+                        license files.
+                      </Notice.Description>
+                    </Notice>
+                  </div>
+                </CollapsibleCard>
+              )}
 
               <DocumentationLink page="policies" />
             </Forms.Section.Step>
@@ -1043,6 +1077,7 @@ function ScratchForm({
               "floating",
               "protected",
               "usePool",
+              "scheme",
               "checkInInterval",
               "checkInIntervalCount",
               "maxUses",
@@ -1066,6 +1101,32 @@ function ScratchForm({
                 ]}
                 fieldVariant="stacking"
               />
+
+              <Separator className="my-8" />
+
+              <CollapsibleCard
+                title="Offline configuration"
+                defaultOpen={false}
+                containerClass="w-full"
+              >
+                <Policies.Form.Fields
+                  schema="create"
+                  include={["scheme"]}
+                  fieldVariant="stacking"
+                />
+                <Notice variant="warning">
+                  <Notice.Title>
+                    Setting a cryptographic scheme on this policy will
+                    cryptographically sign its license keys.
+                  </Notice.Title>
+                  <Notice.Description>
+                    This will make the data embedded in each key immutable. For
+                    most use cases, checking out a license file is recommended
+                    instead. License files do not require a cryptographic
+                    scheme. Avoid combining signed keys with license files.
+                  </Notice.Description>
+                </Notice>
+              </CollapsibleCard>
             </Forms.Section.Stacking>
 
             <DocumentationLink page="policies" />

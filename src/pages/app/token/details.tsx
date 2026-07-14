@@ -22,15 +22,9 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 
-import {
-  Copy,
-  Menu,
-  Logs,
-  GitFork,
-  SquarePen,
-  SquarePlus,
-  TriangleAlert,
-} from "lucide-react"
+import { Copy, Menu, Logs, GitFork, SquarePen, SquarePlus } from "lucide-react"
+
+import { Notice } from "@/components/notice"
 
 import { useMobile } from "@/hooks/use-mobile"
 import { useSidebarTab } from "@/hooks/use-sidebar-tab"
@@ -202,23 +196,19 @@ export default function TokenDetails() {
               <BackButton className="mb-8" />
 
               {token.attributes.kind === "admin-token" && (
-                <div className="mb-6 flex items-start gap-2 rounded-md bg-warning/20 p-3 text-sm text-pretty text-warning">
-                  <TriangleAlert className="mt-0.5 size-4 shrink-0" />
-                  <p className="flex flex-col text-xs">
-                    <strong>
-                      Admin tokens should be used sparingly for API
-                      integrations.
-                    </strong>
-                    <span className="text-pretty">
-                      Admin tokens are automatically revoked when the admin's
-                      password is changed, when its second factors are changed,
-                      or when the admin's role or permissions are changed. As
-                      such, we <strong>DO NOT</strong> recommend using admin
-                      tokens for API integrations. Doing so could cause your API
-                      integration to break unexpectedly.
-                    </span>
-                  </p>
-                </div>
+                <Notice variant="warning" className="mb-8">
+                  <Notice.Title>
+                    Admin tokens should be used sparingly for API integrations.
+                  </Notice.Title>
+                  <Notice.Description>
+                    Admin tokens are automatically revoked when the admin's
+                    password is changed, when its second factors are changed, or
+                    when the admin's role or permissions are changed. As such,
+                    we <strong>DO NOT</strong> recommend using admin tokens for
+                    API integrations. Doing so could cause your API integration
+                    to break unexpectedly.
+                  </Notice.Description>
+                </Notice>
               )}
 
               <div className="mb-2 flex items-center gap-2">

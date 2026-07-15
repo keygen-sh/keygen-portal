@@ -62,7 +62,6 @@ import {
   LicenseStatusDescriptions,
   LicenseAttributeDescriptions,
 } from "@/types/licenses"
-import { InternalRoles } from "@/types/users"
 
 import { useGetPolicy } from "@/queries/policies"
 import {
@@ -718,11 +717,7 @@ export default function LicenseDetails() {
                       {licenseUsers.map((user) => (
                         <GoToButton
                           key={user.id}
-                          path={
-                            InternalRoles.includes(user.attributes.role)
-                              ? "/$accountId/app/team/$id"
-                              : "/$accountId/app/users/$id"
-                          }
+                          path="/$accountId/app/users/$id"
                           params={{ accountId: keygen.config.id, id: user.id }}
                           label={getUserLabel(user)}
                         />

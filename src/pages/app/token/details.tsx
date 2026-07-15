@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useParams } from "@tanstack/react-router"
+import { useNavigate, useParams } from "@tanstack/react-router"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -67,6 +67,7 @@ export default function TokenDetails() {
   const revokeToken = useRevokeToken()
   const regenerateToken = useRegenerateToken()
 
+  const navigate = useNavigate()
   const back = useBackNavigate()
   const isMobile = useMobile()
   const [tab, setTab] = useSidebarTab()
@@ -148,7 +149,7 @@ export default function TokenDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => back()}
+                  onClick={() => navigate({ to: ".." })}
                 >
                   Tokens
                 </BreadcrumbLink>

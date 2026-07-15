@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { useState } from "react"
-import { useParams } from "@tanstack/react-router"
+import { useNavigate, useParams } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -112,6 +112,7 @@ export default function PolicyDetails() {
     isError: entitlementsError,
   } = useListPolicyEntitlements(id)
 
+  const navigate = useNavigate()
   const back = useBackNavigate()
 
   const isMobile = useMobile()
@@ -156,7 +157,7 @@ export default function PolicyDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => back()}
+                  onClick={() => navigate({ to: ".." })}
                 >
                   Policies
                 </BreadcrumbLink>

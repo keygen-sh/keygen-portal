@@ -1,5 +1,5 @@
 import { useState, useEffect, type ReactNode } from "react"
-import { useParams } from "@tanstack/react-router"
+import { useNavigate, useParams } from "@tanstack/react-router"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -84,6 +84,7 @@ export default function ProductDetails() {
   const { data: product, isLoading, isFetching, isError } = useGetProduct(id)
   const deleteProduct = useRemoveProduct(id)
 
+  const navigate = useNavigate()
   const back = useBackNavigate()
 
   const isMobile = useMobile()
@@ -127,7 +128,7 @@ export default function ProductDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => back()}
+                  onClick={() => navigate({ to: ".." })}
                 >
                   Products
                 </BreadcrumbLink>

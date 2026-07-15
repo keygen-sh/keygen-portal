@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useParams } from "@tanstack/react-router"
+import { useNavigate, useParams } from "@tanstack/react-router"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -50,6 +50,7 @@ import {
   UserStatusVariants,
   UserStatusDescriptions,
   UserRoleLabels,
+  InternalRoles,
 } from "@/types/users"
 
 import {
@@ -110,7 +111,11 @@ export default function UserDetails() {
   const banUser = useBanUser(id)
   const unbanUser = useUnbanUser(id)
   const resetPassword = useForgotPassword()
+  const navigate = useNavigate()
   const back = useBackNavigate()
+
+  const isTeammate =
+    user != null && InternalRoles.includes(user.attributes.role)
 
   const isMobile = useMobile()
   const [tab, setTab] = useSidebarTab()
@@ -189,9 +194,16 @@ export default function UserDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => back()}
+                  onClick={() =>
+                    isTeammate
+                      ? navigate({
+                          to: "/$accountId/app/team",
+                          params: { accountId: keygen.config.id },
+                        })
+                      : navigate({ to: ".." })
+                  }
                 >
-                  Users
+                  {isTeammate ? "Team" : "Users"}
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />

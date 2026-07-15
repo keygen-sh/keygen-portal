@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { useParams } from "@tanstack/react-router"
+import { useNavigate, useParams } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -51,6 +51,7 @@ import CollapsibleCard from "@/components/collapsible-card"
 export default function RequestLogDetails() {
   const { id } = useParams({ from: "/$accountId/app/request-logs/$id" })
   const { data: requestLog, isFetching, isError } = useGetRequestLog(id)
+  const navigate = useNavigate()
   const back = useBackNavigate()
   const isMobile = useMobile()
 
@@ -75,7 +76,7 @@ export default function RequestLogDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => back()}
+                  onClick={() => navigate({ to: ".." })}
                 >
                   Request Logs
                 </BreadcrumbLink>

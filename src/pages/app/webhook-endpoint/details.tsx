@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useParams } from "@tanstack/react-router"
+import { useNavigate, useParams } from "@tanstack/react-router"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -87,6 +87,7 @@ export default function WebhookEndpointDetails() {
 
   const environment = webhookEndpoint?.relationships.environment?.data
 
+  const navigate = useNavigate()
   const back = useBackNavigate()
   const isMobile = useMobile()
   const truncateUrl = truncator("middle", { maxLength: isMobile ? 16 : 32 })
@@ -129,7 +130,7 @@ export default function WebhookEndpointDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => back()}
+                  onClick={() => navigate({ to: ".." })}
                 >
                   Webhook Endpoints
                 </BreadcrumbLink>

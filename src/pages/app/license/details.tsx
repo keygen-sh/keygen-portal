@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useParams } from "@tanstack/react-router"
+import { useNavigate, useParams } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -155,6 +155,7 @@ export default function LicenseDetails() {
     isError: licenseUsersError,
   } = useListLicenseUsers(id)
 
+  const navigate = useNavigate()
   const back = useBackNavigate()
 
   const isMobile = useMobile()
@@ -266,7 +267,7 @@ export default function LicenseDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => back()}
+                  onClick={() => navigate({ to: ".." })}
                 >
                   Licenses
                 </BreadcrumbLink>

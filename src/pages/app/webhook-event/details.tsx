@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useParams } from "@tanstack/react-router"
+import { useNavigate, useParams } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -87,6 +87,7 @@ export default function WebhookEventDetails() {
 
   const environment = webhookEvent?.relationships.environment?.data
 
+  const navigate = useNavigate()
   const back = useBackNavigate()
   const navigateToResource = useResourceNavigate()
   const isMobile = useMobile()
@@ -137,7 +138,7 @@ export default function WebhookEventDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => back()}
+                  onClick={() => navigate({ to: ".." })}
                 >
                   Webhook Events
                 </BreadcrumbLink>

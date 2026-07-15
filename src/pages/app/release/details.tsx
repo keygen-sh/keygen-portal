@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useParams } from "@tanstack/react-router"
+import { useNavigate, useParams } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -187,6 +187,7 @@ export default function ReleaseDetails() {
     isError: artifactsError,
   } = useListReleaseArtifacts(id)
 
+  const navigate = useNavigate()
   const back = useBackNavigate()
 
   const isMobile = useMobile()
@@ -252,7 +253,7 @@ export default function ReleaseDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => back()}
+                  onClick={() => navigate({ to: ".." })}
                 >
                   Releases
                 </BreadcrumbLink>

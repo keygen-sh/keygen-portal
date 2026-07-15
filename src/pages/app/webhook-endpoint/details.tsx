@@ -45,6 +45,7 @@ import {
 
 import { useMobile } from "@/hooks/use-mobile"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
+import { useBreadcrumbBackNavigate } from "@/hooks/use-breadcrumb-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { truncator } from "@/lib/truncate"
@@ -89,6 +90,7 @@ export default function WebhookEndpointDetails() {
 
   const navigate = useNavigate()
   const back = useBackNavigate()
+  const breadcrumbBack = useBreadcrumbBackNavigate()
   const isMobile = useMobile()
   const truncateUrl = truncator("middle", { maxLength: isMobile ? 16 : 32 })
   const [open, setOpen] = useState({
@@ -130,7 +132,7 @@ export default function WebhookEndpointDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => navigate({ to: ".." })}
+                  onClick={() => breadcrumbBack(() => navigate({ to: ".." }))}
                 >
                   Webhook Endpoints
                 </BreadcrumbLink>

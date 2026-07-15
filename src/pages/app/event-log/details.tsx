@@ -29,6 +29,7 @@ import { useGetEventLog } from "@/queries/event-logs"
 
 import { useMobile } from "@/hooks/use-mobile"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
+import { useBreadcrumbBackNavigate } from "@/hooks/use-breadcrumb-back-navigate"
 
 import { copyToClipboard } from "@/lib/clipboard"
 import {
@@ -54,6 +55,7 @@ export default function EventLogDetails() {
   const { data: eventLog, isFetching, isError } = useGetEventLog(id)
   const navigate = useNavigate()
   const back = useBackNavigate()
+  const breadcrumbBack = useBreadcrumbBackNavigate()
   const isMobile = useMobile()
 
   useEffect(() => {
@@ -80,7 +82,7 @@ export default function EventLogDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => navigate({ to: ".." })}
+                  onClick={() => breadcrumbBack(() => navigate({ to: ".." }))}
                 >
                   Event Logs
                 </BreadcrumbLink>

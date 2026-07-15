@@ -29,6 +29,7 @@ import { Notice } from "@/components/notice"
 import { useMobile } from "@/hooks/use-mobile"
 import { useSidebarTab } from "@/hooks/use-sidebar-tab"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
+import { useBreadcrumbBackNavigate } from "@/hooks/use-breadcrumb-back-navigate"
 import {
   useGetToken,
   useRevokeToken,
@@ -69,6 +70,7 @@ export default function TokenDetails() {
 
   const navigate = useNavigate()
   const back = useBackNavigate()
+  const breadcrumbBack = useBreadcrumbBackNavigate()
   const isMobile = useMobile()
   const [tab, setTab] = useSidebarTab()
 
@@ -149,7 +151,7 @@ export default function TokenDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => navigate({ to: ".." })}
+                  onClick={() => breadcrumbBack(() => navigate({ to: ".." }))}
                 >
                   Tokens
                 </BreadcrumbLink>

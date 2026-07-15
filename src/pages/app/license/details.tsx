@@ -79,6 +79,7 @@ import {
 import { useMobile } from "@/hooks/use-mobile"
 import { useSidebarTab } from "@/hooks/use-sidebar-tab"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
+import { useBreadcrumbBackNavigate } from "@/hooks/use-breadcrumb-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { getUserLabel } from "@/lib/users"
@@ -157,6 +158,7 @@ export default function LicenseDetails() {
 
   const navigate = useNavigate()
   const back = useBackNavigate()
+  const breadcrumbBack = useBreadcrumbBackNavigate()
 
   const isMobile = useMobile()
   const [tab, setTab] = useSidebarTab()
@@ -267,7 +269,7 @@ export default function LicenseDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => navigate({ to: ".." })}
+                  onClick={() => breadcrumbBack(() => navigate({ to: ".." }))}
                 >
                   Licenses
                 </BreadcrumbLink>

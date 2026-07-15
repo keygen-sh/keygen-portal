@@ -27,6 +27,7 @@ import { useGetRequestLog } from "@/queries/request-logs"
 
 import { useMobile } from "@/hooks/use-mobile"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
+import { useBreadcrumbBackNavigate } from "@/hooks/use-breadcrumb-back-navigate"
 
 import {
   formatRequestLogRequest,
@@ -53,6 +54,7 @@ export default function RequestLogDetails() {
   const { data: requestLog, isFetching, isError } = useGetRequestLog(id)
   const navigate = useNavigate()
   const back = useBackNavigate()
+  const breadcrumbBack = useBreadcrumbBackNavigate()
   const isMobile = useMobile()
 
   useEffect(() => {
@@ -76,7 +78,7 @@ export default function RequestLogDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => navigate({ to: ".." })}
+                  onClick={() => breadcrumbBack(() => navigate({ to: ".." }))}
                 >
                   Request Logs
                 </BreadcrumbLink>

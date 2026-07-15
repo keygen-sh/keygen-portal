@@ -15,15 +15,17 @@ import {
   PopoverContent,
 } from "@/components/ui/popover"
 
+import {
+  SECONDS_PER_MINUTE,
+  SECONDS_PER_HOUR,
+  SECONDS_PER_DAY,
+  SECONDS_PER_WEEK,
+  SECONDS_PER_MONTH,
+  SECONDS_PER_YEAR,
+} from "@/lib/temporal"
 import { cn } from "@/lib/utils"
-import { useMobile } from "@/hooks/use-mobile"
 
-const SECONDS_PER_MINUTE = 60
-const SECONDS_PER_HOUR = 3600
-const SECONDS_PER_DAY = 86400
-const SECONDS_PER_WEEK = 604800
-const SECONDS_PER_MONTH = 2629746
-const SECONDS_PER_YEAR = 31556952
+import { useMobile } from "@/hooks/use-mobile"
 
 type Unit = { key: string; label: string; seconds: number | null }
 

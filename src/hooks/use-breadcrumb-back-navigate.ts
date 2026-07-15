@@ -13,7 +13,7 @@ export function useBreadcrumbBackNavigate(): (
   const navigate = useNavigate()
   const location = useLocation()
 
-  return (fallback, listPath) => {
+  return async (fallback, listPath) => {
     const target = listPath ?? location.pathname.replace(/\/[^/]+$/, "")
 
     if (location.state.from?.pathname === target && window.history.length > 1) {
@@ -25,7 +25,7 @@ export function useBreadcrumbBackNavigate(): (
     if (fallback) {
       fallback()
     } else {
-      navigate({ to: ".." })
+      await navigate({ to: ".." })
     }
   }
 }

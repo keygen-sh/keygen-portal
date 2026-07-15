@@ -44,6 +44,7 @@ import {
 
 import { useMobile } from "@/hooks/use-mobile"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
+import { useBreadcrumbBackNavigate } from "@/hooks/use-breadcrumb-back-navigate"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { toast } from "@/lib/toast"
@@ -89,6 +90,7 @@ export default function WebhookEventDetails() {
 
   const navigate = useNavigate()
   const back = useBackNavigate()
+  const breadcrumbBack = useBreadcrumbBackNavigate()
   const navigateToResource = useResourceNavigate()
   const isMobile = useMobile()
   const [open, setOpen] = useState({ delete: false, attributes: false })
@@ -138,7 +140,7 @@ export default function WebhookEventDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => navigate({ to: ".." })}
+                  onClick={() => breadcrumbBack(() => navigate({ to: ".." }))}
                 >
                   Webhook Events
                 </BreadcrumbLink>

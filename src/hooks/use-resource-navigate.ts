@@ -1,4 +1,4 @@
-import { useNavigate } from "@tanstack/react-router"
+import { useLocation, useNavigate } from "@tanstack/react-router"
 
 import type { AnyResource } from "@/types/api"
 
@@ -8,6 +8,7 @@ export type NavigableResource = Pick<AnyResource, "type" | "id">
 
 export function useResourceNavigate() {
   const navigate = useNavigate()
+  const location = useLocation()
 
   return async (resource: NavigableResource | null): Promise<void> => {
     if (!resource) return
@@ -18,6 +19,9 @@ export function useResourceNavigate() {
         accountId: keygen.config.id,
         id: resource.id,
       },
+      // save where we came from so the detail's breadcrumb can return to this
+      // exact list with any filters applied, when it's the canonical parent
+      state: (prev) => ({ ...prev, from: { pathname: location.pathname } }),
     })
   }
 }

@@ -53,6 +53,7 @@ import { useGetProcess, useRemoveProcess } from "@/queries/processes"
 import { useMobile } from "@/hooks/use-mobile"
 import { useSidebarTab } from "@/hooks/use-sidebar-tab"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
+import { useBreadcrumbBackNavigate } from "@/hooks/use-breadcrumb-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
@@ -92,6 +93,7 @@ export default function ProcessDetails() {
 
   const navigate = useNavigate()
   const back = useBackNavigate()
+  const breadcrumbBack = useBreadcrumbBackNavigate()
 
   const isMobile = useMobile()
   const [tab, setTab] = useSidebarTab()
@@ -132,7 +134,7 @@ export default function ProcessDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => navigate({ to: ".." })}
+                  onClick={() => breadcrumbBack(() => navigate({ to: ".." }))}
                 >
                   Processes
                 </BreadcrumbLink>

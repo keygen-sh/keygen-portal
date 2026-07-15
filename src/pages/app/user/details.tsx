@@ -65,6 +65,7 @@ import {
 import { useMobile } from "@/hooks/use-mobile"
 import { useSidebarTab } from "@/hooks/use-sidebar-tab"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
+import { useBreadcrumbBackNavigate } from "@/hooks/use-breadcrumb-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
@@ -113,6 +114,7 @@ export default function UserDetails() {
   const resetPassword = useForgotPassword()
   const navigate = useNavigate()
   const back = useBackNavigate()
+  const breadcrumbBack = useBreadcrumbBackNavigate()
 
   const isTeammate =
     user != null && InternalRoles.includes(user.attributes.role)
@@ -195,12 +197,16 @@ export default function UserDetails() {
                 <BreadcrumbLink
                   className="cursor-pointer"
                   onClick={() =>
-                    isTeammate
-                      ? navigate({
-                          to: "/$accountId/app/team",
-                          params: { accountId: keygen.config.id },
-                        })
-                      : navigate({ to: ".." })
+                    breadcrumbBack(
+                      () =>
+                        isTeammate
+                          ? navigate({
+                              to: "/$accountId/app/team",
+                              params: { accountId: keygen.config.id },
+                            })
+                          : navigate({ to: ".." }),
+                      isTeammate ? `/${keygen.config.id}/app/team` : undefined,
+                    )
                   }
                 >
                   {isTeammate ? "Team" : "Users"}

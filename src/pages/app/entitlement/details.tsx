@@ -42,6 +42,7 @@ import { EntitlementAttributeDescriptions } from "@/types/entitlements"
 import { useMobile } from "@/hooks/use-mobile"
 import { useSidebarTab } from "@/hooks/use-sidebar-tab"
 import { useBackNavigate } from "@/hooks/use-back-navigate"
+import { useBreadcrumbBackNavigate } from "@/hooks/use-breadcrumb-back-navigate"
 import { useGetEntitlement, useRemoveEntitlement } from "@/queries/entitlements"
 
 import { toast } from "@/lib/toast"
@@ -75,6 +76,7 @@ export default function EntitlementDetails() {
 
   const navigate = useNavigate()
   const back = useBackNavigate()
+  const breadcrumbBack = useBreadcrumbBackNavigate()
 
   const isMobile = useMobile()
   const [tab, setTab] = useSidebarTab()
@@ -119,7 +121,7 @@ export default function EntitlementDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => navigate({ to: ".." })}
+                  onClick={() => breadcrumbBack(() => navigate({ to: ".." }))}
                 >
                   Entitlements
                 </BreadcrumbLink>

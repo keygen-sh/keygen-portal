@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useParams } from "@tanstack/react-router"
+import { useNavigate, useParams } from "@tanstack/react-router"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -87,6 +87,7 @@ export default function GroupDetails() {
     isError: ownersError,
   } = useListGroupOwners(id)
 
+  const navigate = useNavigate()
   const back = useBackNavigate()
 
   const isMobile = useMobile()
@@ -128,7 +129,7 @@ export default function GroupDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => back()}
+                  onClick={() => navigate({ to: ".." })}
                 >
                   Groups
                 </BreadcrumbLink>

@@ -19,7 +19,7 @@ function validateSearch(search: Record<string, unknown>): UserFilters {
 }
 
 export const Route = createFileRoute("/$accountId/app/team")({
-  component: () => <Page.App.Settings.Team />,
+  component: () => <Page.App.Teams />,
   validateSearch,
   beforeLoad: ({ context }) =>
     requireAllPermissions(context.queryClient, ["admin.read", "user.read"]),

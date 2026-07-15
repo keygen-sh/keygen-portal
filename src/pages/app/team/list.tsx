@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from "react"
+import { useLocation, useNavigate } from "@tanstack/react-router"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -14,10 +15,10 @@ import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
 import { useFilterSearch } from "@/hooks/use-filter-search"
 import { usePermissions } from "@/hooks/use-permissions"
 import { useTeamTableColumns } from "@/hooks/use-team-table-columns"
-import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { User, UserRole, InternalRoles, type UserFilters } from "@/types/users"
 
+import * as keygen from "@/keygen"
 import * as Users from "@/components/users"
 import Can from "@/components/can"
 import DataTable from "@/components/data-table"
@@ -77,7 +78,8 @@ export default function TeamPage() {
   const maxAdmins = plan?.attributes?.maxAdmins
   const planName = plan?.attributes?.name
 
-  const navigateToResource = useResourceNavigate()
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const [open, setOpen] = useState({ inviteTeammate: false })
 
@@ -135,7 +137,16 @@ export default function TeamPage() {
           table={table}
           columns={columns}
           isLoading={usersLoading}
-          onRowClick={(user) => navigateToResource(user)}
+          onRowClick={(user) =>
+            navigate({
+              to: "/$accountId/app/team/$id",
+              params: { accountId: keygen.config.id, id: user.id },
+              state: (prev) => ({
+                ...prev,
+                from: { pathname: location.pathname },
+              }),
+            })
+          }
         />
       </ScrollArea>
 

@@ -92,8 +92,8 @@ const UserStatusIcons: Record<UserStatus, React.ReactNode> = {
   [UserStatus.Banned]: <Ban className="size-3" />,
 }
 
-export default function UserDetails() {
-  const { id } = useParams({ from: "/$accountId/app/users/$id" })
+export default function TeamDetails() {
+  const { id } = useParams({ from: "/$accountId/app/team/$id" })
   const {
     data: user,
     isLoading: userLoading,
@@ -193,7 +193,7 @@ export default function UserDetails() {
                   className="cursor-pointer"
                   onClick={() => breadcrumbBack()}
                 >
-                  Users
+                  Team
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />

@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/tooltip"
 
 import { type Linkage } from "@/types/api"
+import { InternalRoles } from "@/types/users"
 
 import { useGetArch } from "@/queries/arches"
 import { useGetUser } from "@/queries/users"
@@ -63,6 +64,7 @@ interface ResourceLinkViewProps {
   isError?: boolean
   buttonClassName?: string
   truncate?: boolean
+  to?: string
 }
 
 function ResourceLinkView({
@@ -72,6 +74,7 @@ function ResourceLinkView({
   isError,
   buttonClassName,
   truncate = false,
+  to = `/$accountId/app/${linkage.type}/$id`,
 }: ResourceLinkViewProps): ReactElement {
   if (isLoading) return <Skeleton className="h-5 w-32 rounded-sm" />
 
@@ -85,7 +88,7 @@ function ResourceLinkView({
       <Tooltip>
         <TooltipTrigger className="cursor-pointer">
           <GoToButton
-            path={`/$accountId/app/${linkage.type}/$id`}
+            path={to}
             params={{ accountId: keygen.config.id, id: linkage.id }}
             label={text}
             disabled
@@ -105,7 +108,7 @@ function ResourceLinkView({
 
   return (
     <GoToButton
-      path={`/$accountId/app/${linkage.type}/$id`}
+      path={to}
       params={{ accountId: keygen.config.id, id: linkage.id }}
       label={text}
       buttonClassName={buttonClassName}
@@ -171,7 +174,29 @@ const RESOURCE_LINKS: Record<
     (d) => d?.attributes.name || d?.attributes.fingerprint,
   ),
   processes: makeResourceLink(useGetProcess, (d) => d?.attributes.pid),
-  users: makeResourceLink(useGetUser, (d) => (d ? getUserLabel(d) : null)),
+  users: function UserLink({
+    linkage,
+    buttonClassName,
+    truncate,
+  }: ResolvedLinkProps): ReactElement {
+    const { data, isLoading, isError } = useGetUser(linkage.id)
+
+    return (
+      <ResourceLinkView
+        linkage={linkage}
+        to={
+          data && InternalRoles.includes(data.attributes.role)
+            ? "/$accountId/app/team/$id"
+            : "/$accountId/app/users/$id"
+        }
+        label={data ? getUserLabel(data) : null}
+        isLoading={isLoading}
+        isError={isError}
+        buttonClassName={buttonClassName}
+        truncate={truncate}
+      />
+    )
+  },
   packages: makeResourceLink(useGetPackage, (d) =>
     d ? getPackageLabel(d) : null,
   ),

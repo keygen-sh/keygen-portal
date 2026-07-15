@@ -1,7 +1,6 @@
 import { useCallback } from "react"
 import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useParams } from "@tanstack/react-router"
 
 import { Separator } from "@/components/ui/separator"
 
@@ -17,15 +16,16 @@ import * as Forms from "@/components/forms"
 import * as Users from "@/components/users"
 
 interface EditUserFormProps {
+  id: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
 export default function EditUserForm({
+  id,
   open,
   onOpenChange,
 }: EditUserFormProps) {
-  const { id } = useParams({ from: "/$accountId/app/users/$id" })
   const { data: user } = useGetUser(id)
   const updateUser = useUpdateUser(user?.id ?? "")
   const changeGroup = useChangeUserGroup()

@@ -17,7 +17,6 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import {
   Breadcrumb,
@@ -29,7 +28,6 @@ import {
 } from "@/components/ui/breadcrumb"
 
 import {
-  Ban,
   Copy,
   Logs,
   Menu,
@@ -37,7 +35,6 @@ import {
   SquarePen,
   SquarePlus,
   CircleCheck,
-  ChevronDown,
   CirclePause,
   EllipsisVertical,
 } from "lucide-react"
@@ -51,13 +48,7 @@ import {
   UserRoleLabels,
 } from "@/types/users"
 
-import {
-  useGetUser,
-  useRemoveUser,
-  useBanUser,
-  useUnbanUser,
-  useForgotPassword,
-} from "@/queries/users"
+import { useGetUser, useRemoveUser, useForgotPassword } from "@/queries/users"
 
 import { useMobile } from "@/hooks/use-mobile"
 import { useSidebarTab } from "@/hooks/use-sidebar-tab"
@@ -82,10 +73,9 @@ import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
 import ConfirmationModal from "@/components/confirmation-modal"
 
-const UserStatusIcons: Record<UserStatus, React.ReactNode> = {
+const UserStatusIcons: Partial<Record<UserStatus, React.ReactNode>> = {
   [UserStatus.Active]: <CircleCheck className="size-3" />,
   [UserStatus.Inactive]: <CirclePause className="size-3" />,
-  [UserStatus.Banned]: <Ban className="size-3" />,
 }
 
 export default function TeamDetails() {
@@ -98,8 +88,6 @@ export default function TeamDetails() {
   } = useGetUser(id)
 
   const deleteUser = useRemoveUser(id)
-  const banUser = useBanUser(id)
-  const unbanUser = useUnbanUser(id)
   const resetPassword = useForgotPassword()
   const back = useBackNavigate()
   const breadcrumbBack = useBreadcrumbBackNavigate()
@@ -111,8 +99,6 @@ export default function TeamDetails() {
     delete: false,
     attributes: false,
     resetPassword: false,
-    ban: false,
-    unban: false,
   })
 
   useEffect(() => {
@@ -138,26 +124,6 @@ export default function TeamDetails() {
         await back()
       },
     })
-  }
-
-  const handleBanUser = async () => {
-    try {
-      await banUser.mutateAsync()
-      toast({ message: "User banned", variant: "success" })
-      toggleOpen("ban", false)
-    } catch {
-      toast({ message: "Failed to ban user", variant: "error" })
-    }
-  }
-
-  const handleUnbanUser = async () => {
-    try {
-      await unbanUser.mutateAsync()
-      toast({ message: "User unbanned", variant: "success" })
-      toggleOpen("unban", false)
-    } catch {
-      toast({ message: "Failed to unban user", variant: "error" })
-    }
   }
 
   const handleResetPassword = async () => {
@@ -202,7 +168,6 @@ export default function TeamDetails() {
           {isMobile ? (
             <Can.Any
               permissions={[
-                "user.ban",
                 "user.password.reset",
                 "user.update",
                 "user.delete",
@@ -219,33 +184,6 @@ export default function TeamDetails() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="mr-4 p-0">
-                  {user?.attributes.status === UserStatus.Banned ? (
-                    <Can permission="user.unban">
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          toggleOpen("unban", true)
-                          e.currentTarget.blur()
-                        }}
-                        className="pb-2 text-base"
-                      >
-                        Unban
-                      </DropdownMenuItem>
-                      <Separator />
-                    </Can>
-                  ) : (
-                    <Can permission="user.ban">
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          toggleOpen("ban", true)
-                          e.currentTarget.blur()
-                        }}
-                        className="pb-2 text-base"
-                      >
-                        Ban
-                      </DropdownMenuItem>
-                      <Separator />
-                    </Can>
-                  )}
                   <Can permission="user.password.reset">
                     <DropdownMenuItem
                       onClick={(e) => {
@@ -286,52 +224,17 @@ export default function TeamDetails() {
             </Can.Any>
           ) : (
             <div className="flex items-center space-x-2">
-              <Can.Any permissions={["user.ban", "user.password.reset"]}>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" disabled={userLoading}>
-                      Actions
-                      <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]_&]:rotate-180" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {user?.attributes.status === UserStatus.Banned ? (
-                      <Can permission="user.unban">
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            toggleOpen("unban", true)
-                            e.currentTarget.blur()
-                          }}
-                        >
-                          Unban
-                        </DropdownMenuItem>
-                      </Can>
-                    ) : (
-                      <Can permission="user.ban">
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            toggleOpen("ban", true)
-                            e.currentTarget.blur()
-                          }}
-                        >
-                          Ban
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                      </Can>
-                    )}
-                    <Can permission="user.password.reset">
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          toggleOpen("resetPassword", true)
-                          e.currentTarget.blur()
-                        }}
-                      >
-                        Reset password
-                      </DropdownMenuItem>
-                    </Can>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </Can.Any>
+              <Can permission="user.password.reset">
+                <Button
+                  variant="outline"
+                  disabled={userLoading}
+                  onClick={() => {
+                    toggleOpen("resetPassword", true)
+                  }}
+                >
+                  Reset password
+                </Button>
+              </Can>
               <Can permission="user.update">
                 <Button
                   variant="outline"
@@ -649,25 +552,6 @@ export default function TeamDetails() {
         disabled={userLoading || resetPassword.isPending}
         onClose={() => toggleOpen("resetPassword", false)}
         onConfirm={handleResetPassword}
-      />
-
-      <ConfirmationModal
-        title={`Ban ${user?.attributes.fullName || user?.attributes.email}?`}
-        description="Are you sure you want to ban this user? They will no longer be able to authenticate with the API."
-        open={open.ban}
-        disabled={banUser.isPending}
-        onClose={() => toggleOpen("ban", false)}
-        onConfirm={handleBanUser}
-        variant="destructive"
-      />
-
-      <ConfirmationModal
-        title={`Unban ${user?.attributes.fullName || user?.attributes.email}?`}
-        description="Are you sure you want to unban this user? They will be able to authenticate with the API again."
-        open={open.unban}
-        disabled={unbanUser.isPending}
-        onClose={() => toggleOpen("unban", false)}
-        onConfirm={handleUnbanUser}
       />
     </section>
   )

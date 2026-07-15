@@ -1,4 +1,4 @@
-import { useLocation } from "@tanstack/react-router"
+import { useLocation, useNavigate } from "@tanstack/react-router"
 
 declare module "@tanstack/react-router" {
   interface HistoryState {
@@ -7,9 +7,10 @@ declare module "@tanstack/react-router" {
 }
 
 export function useBreadcrumbBackNavigate(): (
-  fallback: () => void,
+  fallback?: () => void,
   listPath?: string,
 ) => void {
+  const navigate = useNavigate()
   const location = useLocation()
 
   return (fallback, listPath) => {
@@ -21,6 +22,10 @@ export function useBreadcrumbBackNavigate(): (
       return
     }
 
-    fallback()
+    if (fallback) {
+      fallback()
+    } else {
+      navigate({ to: ".." })
+    }
   }
 }

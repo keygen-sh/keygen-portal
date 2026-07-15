@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useNavigate, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -78,7 +78,6 @@ export default function PackageDetails() {
   const productId = pkg?.relationships.product?.data?.id || ""
   const { data: product } = useGetProduct(productId)
 
-  const navigate = useNavigate()
   const back = useBackNavigate()
   const breadcrumbBack = useBreadcrumbBackNavigate()
 
@@ -123,7 +122,7 @@ export default function PackageDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => breadcrumbBack(() => navigate({ to: ".." }))}
+                  onClick={() => breadcrumbBack()}
                 >
                   Packages
                 </BreadcrumbLink>

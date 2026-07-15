@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useNavigate, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -91,7 +91,6 @@ export default function ArtifactDetails() {
   const releaseId = artifact?.relationships.release?.data?.id || ""
   const { data: release } = useGetRelease(releaseId)
 
-  const navigate = useNavigate()
   const back = useBackNavigate()
   const breadcrumbBack = useBreadcrumbBackNavigate()
 
@@ -136,7 +135,7 @@ export default function ArtifactDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => breadcrumbBack(() => navigate({ to: ".." }))}
+                  onClick={() => breadcrumbBack()}
                 >
                   Artifacts
                 </BreadcrumbLink>

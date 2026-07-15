@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useNavigate, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -75,7 +75,6 @@ export default function ComponentDetails() {
   } = useGetComponent(id)
   const removeComponent = useRemoveComponent(id)
 
-  const navigate = useNavigate()
   const back = useBackNavigate()
   const breadcrumbBack = useBreadcrumbBackNavigate()
 
@@ -118,7 +117,7 @@ export default function ComponentDetails() {
               <BreadcrumbItem>
                 <BreadcrumbLink
                   className="cursor-pointer"
-                  onClick={() => breadcrumbBack(() => navigate({ to: ".." }))}
+                  onClick={() => breadcrumbBack()}
                 >
                   Components
                 </BreadcrumbLink>

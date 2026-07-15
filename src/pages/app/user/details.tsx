@@ -197,16 +197,16 @@ export default function UserDetails() {
                 <BreadcrumbLink
                   className="cursor-pointer"
                   onClick={() =>
-                    breadcrumbBack(
-                      () =>
-                        isTeammate
-                          ? navigate({
+                    isTeammate
+                      ? breadcrumbBack(
+                          () =>
+                            navigate({
                               to: "/$accountId/app/team",
                               params: { accountId: keygen.config.id },
-                            })
-                          : navigate({ to: ".." }),
-                      isTeammate ? `/${keygen.config.id}/app/team` : undefined,
-                    )
+                            }),
+                          `/${keygen.config.id}/app/team`,
+                        )
+                      : breadcrumbBack()
                   }
                 >
                   {isTeammate ? "Team" : "Users"}

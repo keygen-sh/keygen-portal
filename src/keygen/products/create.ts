@@ -14,10 +14,15 @@ interface CreateProps {
 export default async function create({
   values,
 }: CreateProps): Promise<ProductResponse> {
+  const { permissions, ...rest } = values
+
   const body = {
     data: {
       type: "products",
-      attributes: compact(values),
+      attributes: compact({
+        ...rest,
+        permissions: !config.isCE ? permissions : undefined,
+      }),
     },
   }
 

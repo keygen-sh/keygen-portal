@@ -26,7 +26,7 @@ export default async function update({
       type: "licenses",
       attributes: {
         ...attributes,
-        ...(permissions != null ? { permissions } : {}),
+        ...(!config.isCE && permissions != null ? { permissions } : {}),
       },
     },
   }

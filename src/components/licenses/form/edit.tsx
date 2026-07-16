@@ -83,6 +83,7 @@ export default function EditLicenseForm({
           maxDisk: license.attributes.maxDisk ?? null,
           maxUses: license.attributes.maxUses ?? null,
           ownerId: currentOwnerId,
+          permissions: license.attributes.permissions ?? null,
           metadata: recordToMetadataPairs(license.attributes.metadata),
           entitlements: {
             attach: licenseEntitlements.map((e) => e.id),
@@ -231,11 +232,22 @@ export default function EditLicenseForm({
 
           <Separator className="my-8" />
 
-          <Licenses.Form.Fields
-            schema="edit"
-            include={["metadata"]}
-            fieldVariant="stacking"
-          />
+          <Forms.Section.Columns>
+            <Forms.Section.Column>
+              <Licenses.Form.Fields
+                schema="edit"
+                include={["permissions"]}
+                fieldVariant="stacking"
+              />
+            </Forms.Section.Column>
+            <Forms.Section.Column>
+              <Licenses.Form.Fields
+                schema="edit"
+                include={["metadata"]}
+                fieldVariant="stacking"
+              />
+            </Forms.Section.Column>
+          </Forms.Section.Columns>
 
           <Separator className="my-8" />
 

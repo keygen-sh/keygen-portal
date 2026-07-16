@@ -48,6 +48,7 @@ export type LicenseAttributes = {
   lastCheckOut: string | null
   lastCheckIn: string | null
   nextCheckIn: string | null
+  permissions: string[] | null
   metadata: Record<string, unknown>
   created: string
   updated: string
@@ -66,6 +67,7 @@ export interface LicenseInput {
   maxMemory?: number | null
   maxDisk?: number | null
   maxUses?: number | null
+  permissions?: string[] | null
   metadata?: Record<string, unknown>
 }
 
@@ -126,6 +128,7 @@ export const LicenseAttributeDescriptions: Readonly<
   lastCheckIn: "The time at which the license was last checked-in.",
   nextCheckIn:
     "The time at which the license must be checked-in by to remain valid.",
+  permissions: "The permissions for the license.",
   metadata:
     "Store arbitrary key/value data on the license for book keeping purposes, entitlements, etc.",
 } as const

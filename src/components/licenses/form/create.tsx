@@ -51,6 +51,7 @@ export default function CreateLicenseForm({
       maxDisk: null,
       maxUses: null,
       ownerId: null,
+      permissions: null,
       metadata: [],
       entitlements: { attach: [], create: [] },
       users: { attach: [] },
@@ -264,7 +265,7 @@ export default function CreateLicenseForm({
 
           <Forms.Section.Step
             crumb="Additional configuration"
-            fields={["protected", "suspended", "metadata"]}
+            fields={["protected", "suspended", "permissions", "metadata"]}
           >
             <Forms.Section.Card title="Additional configuration">
               <Forms.Section.Columns>
@@ -283,6 +284,11 @@ export default function CreateLicenseForm({
                   />
                 </Forms.Section.Column>
               </Forms.Section.Columns>
+              <Licenses.Form.Fields
+                schema="create"
+                include={["permissions"]}
+                fieldVariant="stacking"
+              />
               <Licenses.Form.Fields
                 schema="create"
                 include={["metadata"]}

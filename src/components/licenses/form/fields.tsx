@@ -34,6 +34,7 @@ import {
   LicenseCreateFormFieldDescriptions,
   LicenseEditFormFieldDescriptions,
   LicenseDisabledFormFieldDescriptions,
+  LicensePermissions,
 } from "@/types/licenses"
 import { Policy } from "@/types/policies"
 import { type FieldVariant } from "@/components/forms/field"
@@ -41,6 +42,7 @@ import { type FieldVariant } from "@/components/forms/field"
 import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
 import * as Calendars from "@/components/calendars"
+import MultiSelect from "@/components/multi-select"
 import MetadataInput from "@/components/metadata-input"
 import ByteSizeInput from "@/components/byte-size-input"
 
@@ -71,6 +73,7 @@ const INCLUDE_DEFAULT_FIELDS: Schemas.Licenses.FieldNames[] = [
   "ownerId",
   "suspended",
   "protected",
+  "permissions",
   "metadata",
   "entitlements.attach",
   "entitlements.create",
@@ -243,6 +246,16 @@ export default function LicensesFormFields({
               <AttachUsersField
                 key="users.attach"
                 autoFocus={autoFocus === "users.attach"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "permissions":
+            return (
+              <PermissionsField
+                key="permissions"
+                schema={schema}
+                autoFocus={autoFocus === "permissions"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
               />
@@ -945,6 +958,55 @@ function ProtectedField({
               />
             </FormControl>
           </Forms.Field.Header>
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function PermissionsField({
+  schema,
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  schema?: "create" | "edit"
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Licenses.BaseValues>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="permissions"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Permissions"
+            variant={fieldVariant}
+            optional
+            tooltip={descriptions.permissions}
+          >
+            <MultiSelect
+              value={field.value}
+              onChange={field.onChange}
+              options={LicensePermissions.map((p) => ({
+                label: p,
+                value: p,
+              }))}
+              includeNone
+              includeWildcard
+              placeholder={
+                schema === "create"
+                  ? "Leave blank to use defaults"
+                  : "Select permissions..."
+              }
+              autoFocus={autoFocus}
+            />
+          </Forms.Field.Header>
+          <FormMessage />
         </FormItem>
       )}
     />

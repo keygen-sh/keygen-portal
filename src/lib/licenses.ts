@@ -7,7 +7,10 @@ import { capitalize } from "@/lib/utils"
 import { AttributeType } from "@/components/attribute/value"
 
 export const licenseAttributeTypeSchema: Record<
-  keyof Omit<License["attributes"], "metadata" | "created" | "updated">,
+  keyof Omit<
+    License["attributes"],
+    "metadata" | "permissions" | "created" | "updated"
+  >,
   AttributeType
 > = {
   name: "string",

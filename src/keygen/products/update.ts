@@ -16,10 +16,15 @@ export default async function update({
   id,
   values,
 }: UpdateProps): Promise<ProductResponse> {
+  const { permissions, ...rest } = values
+
   const body = {
     data: {
       type: "products",
-      attributes: compact(values),
+      attributes: compact({
+        ...rest,
+        permissions: !config.isCE ? permissions : undefined,
+      }),
     },
   }
 

@@ -11,7 +11,8 @@ config.validate()
 export default async function create(
   values: Schemas.Licenses.CreateValues,
 ): Promise<LicenseResponse> {
-  const { policyId, ownerId, entitlements, users, ...attributes } = values
+  const { policyId, ownerId, entitlements, users, permissions, ...attributes } =
+    values
   void ownerId
   void entitlements
   void users
@@ -25,7 +26,10 @@ export default async function create(
   const body = {
     data: {
       type: "licenses",
-      attributes: compact(attributes),
+      attributes: compact({
+        ...attributes,
+        permissions: !config.isCE ? permissions : undefined,
+      }),
       relationships,
     },
   }

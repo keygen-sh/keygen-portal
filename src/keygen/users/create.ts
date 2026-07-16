@@ -11,13 +11,16 @@ config.validate()
 export default async function create(
   values: Schemas.Users.CreateValues,
 ): Promise<UserResponse> {
-  const { groupId, ...attributes } = values
+  const { groupId, permissions, ...attributes } = values
   void groupId
 
   const body = {
     data: {
       type: "users",
-      attributes: compact(attributes),
+      attributes: compact({
+        ...attributes,
+        permissions: !config.isCE ? permissions : undefined,
+      }),
     },
   }
 

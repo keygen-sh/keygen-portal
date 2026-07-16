@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Separator } from "@/components/ui/separator"
 
+import * as keygen from "@/keygen"
+
 import * as Schemas from "@/schemas"
 import { UserRole, InternalRoles } from "@/types/users"
 
@@ -91,15 +93,23 @@ export default function EditUserForm({
             <Forms.Section.Column>
               <Users.Form.Fields
                 schema="edit"
-                include={[
-                  "password",
-                  isInternal ? "internalPermissions" : "permissions",
-                  "role",
-                ]}
+                include={["password", "role"]}
                 fieldVariant="stacking"
               />
             </Forms.Section.Column>
           </Forms.Section.Columns>
+
+          {!keygen.config.isCE && (
+            <>
+              <Separator className="my-8" />
+
+              <Users.Form.Fields
+                schema="edit"
+                include={[isInternal ? "internalPermissions" : "permissions"]}
+                fieldVariant="stacking"
+              />
+            </>
+          )}
 
           <Separator className="my-8" />
 

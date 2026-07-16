@@ -11,6 +11,7 @@ import { toast } from "@/lib/toast"
 
 import * as Schemas from "@/schemas"
 
+import * as keygen from "@/keygen"
 import * as Users from "@/components/users"
 import * as Forms from "@/components/forms"
 
@@ -73,13 +74,17 @@ export default function InviteUserForm({
             </Forms.Section.Column>
           </Forms.Section.Columns>
 
-          <Separator dashed className="my-8" />
+          {!keygen.config.isCE && (
+            <>
+              <Separator dashed className="my-8" />
 
-          <Users.Form.Fields
-            schema="invite"
-            include={["internalPermissions"]}
-            fieldVariant="stacking"
-          />
+              <Users.Form.Fields
+                schema="invite"
+                include={["internalPermissions"]}
+                fieldVariant="stacking"
+              />
+            </>
+          )}
         </Forms.Layout.Sheet>
       </Forms.Container.Dialog>
     </Forms.Provider>

@@ -11,6 +11,7 @@ import { useCreateToken } from "@/queries/tokens"
 
 import { toast } from "@/lib/toast"
 
+import * as keygen from "@/keygen"
 import * as Forms from "@/components/forms"
 import * as Tokens from "@/components/tokens"
 import { BadgeGroup, BadgeGroupItem } from "@/components/badge-group"
@@ -130,9 +131,19 @@ export default function CreateTokenForm({
                     />
                   </Forms.Section.Column>
                 </Forms.Section.Columns>
-                <Tokens.Form.Fields include={["permissions"]} />
               </Forms.Section.Card>
             </Forms.Section.Step>
+
+            {!keygen.config.isCE && (
+              <Forms.Section.Step
+                crumb="Token permissions"
+                fields={["permissions"]}
+              >
+                <Forms.Section.Card title="Token permissions">
+                  <Tokens.Form.Fields include={["permissions"]} />
+                </Forms.Section.Card>
+              </Forms.Section.Step>
+            )}
           </Forms.Layout.Wizard>
         </Forms.Container.Dialog>
       </Forms.Provider>

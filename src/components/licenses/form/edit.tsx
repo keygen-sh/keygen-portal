@@ -25,6 +25,7 @@ import { useCreateEntitlement } from "@/queries/entitlements"
 import { toast } from "@/lib/toast"
 import { settleCreateEntitlements } from "@/lib/entitlements"
 
+import * as keygen from "@/keygen"
 import * as Forms from "@/components/forms"
 import * as Licenses from "@/components/licenses"
 
@@ -233,13 +234,15 @@ export default function EditLicenseForm({
           <Separator className="my-8" />
 
           <Forms.Section.Columns>
-            <Forms.Section.Column>
-              <Licenses.Form.Fields
-                schema="edit"
-                include={["permissions"]}
-                fieldVariant="stacking"
-              />
-            </Forms.Section.Column>
+            {!keygen.config.isCE && (
+              <Forms.Section.Column>
+                <Licenses.Form.Fields
+                  schema="edit"
+                  include={["permissions"]}
+                  fieldVariant="stacking"
+                />
+              </Forms.Section.Column>
+            )}
             <Forms.Section.Column>
               <Licenses.Form.Fields
                 schema="edit"

@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Award, Lock, Unlock } from "lucide-react"
 
+import * as keygen from "@/keygen"
+
 import * as Schemas from "@/schemas"
 import { DistributionStrategy } from "@/types/products"
 
@@ -107,15 +109,8 @@ export default function CreateProductForm({
           </Forms.Section.Step>
 
           <Forms.Section.Step
-            crumb="Product attributes"
-            fields={[
-              "name",
-              "code",
-              "url",
-              "platforms",
-              "permissions",
-              "metadata",
-            ]}
+            crumb="Attributes"
+            fields={["name", "code", "url", "platforms"]}
           >
             <Forms.Field.Title>
               <Products.Form.Fields
@@ -138,12 +133,38 @@ export default function CreateProductForm({
                 <Forms.Section.Column>
                   <Products.Form.Fields
                     schema="create"
-                    include={["permissions", "platforms"]}
+                    include={["platforms"]}
                     fieldVariant="stacking"
                   />
                 </Forms.Section.Column>
               </Forms.Section.Columns>
+            </Forms.Section.Card>
 
+            <DocumentationLink page="products" />
+          </Forms.Section.Step>
+
+          {!keygen.config.isCE && (
+            <Forms.Section.Step
+              crumb="Product permissions"
+              fields={["permissions"]}
+            >
+              <Forms.Section.Card title="Product permissions">
+                <Products.Form.Fields
+                  schema="create"
+                  include={["permissions"]}
+                  fieldVariant="stacking"
+                />
+              </Forms.Section.Card>
+
+              <DocumentationLink page="products" />
+            </Forms.Section.Step>
+          )}
+
+          <Forms.Section.Step
+            crumb="Additional configuration"
+            fields={["metadata"]}
+          >
+            <Forms.Section.Card title="Additional configuration">
               <Products.Form.Fields
                 schema="create"
                 include={["metadata"]}

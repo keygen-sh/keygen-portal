@@ -10,6 +10,7 @@ import { useCreateUser, useChangeUserGroup } from "@/queries/users"
 
 import { toast } from "@/lib/toast"
 
+import * as keygen from "@/keygen"
 import * as Forms from "@/components/forms"
 import * as Users from "@/components/users"
 import DocumentationLink from "@/components/documentation-link"
@@ -73,8 +74,8 @@ export default function CreateUserForm({
           errorMessage="Failed to create user"
         >
           <Forms.Section.Step
-            crumb="General attributes"
-            fields={["email", "password", "permissions"]}
+            crumb="Account attributes"
+            fields={["email", "password"]}
           >
             <Forms.Field.Title>
               <Users.Form.Fields
@@ -85,33 +86,22 @@ export default function CreateUserForm({
               />
             </Forms.Field.Title>
 
-            <Forms.Section.Card title="General attributes">
-              <Forms.Section.Columns>
-                <Forms.Section.Column>
-                  <Users.Form.Fields
-                    schema="create"
-                    include={["password"]}
-                    fieldVariant="stacking"
-                  />
-                </Forms.Section.Column>
-                <Forms.Section.Column>
-                  <Users.Form.Fields
-                    schema="create"
-                    include={["permissions"]}
-                    fieldVariant="stacking"
-                  />
-                </Forms.Section.Column>
-              </Forms.Section.Columns>
+            <Forms.Section.Card title="Account attributes">
+              <Users.Form.Fields
+                schema="create"
+                include={["password"]}
+                fieldVariant="stacking"
+              />
             </Forms.Section.Card>
 
             <DocumentationLink page="users" />
           </Forms.Section.Step>
 
           <Forms.Section.Step
-            crumb="Profile configuration"
+            crumb="Profile attributes"
             fields={["firstName", "lastName", "role"]}
           >
-            <Forms.Section.Card title="Profile configuration">
+            <Forms.Section.Card title="Profile attributes">
               <Forms.Section.Columns>
                 <Forms.Section.Column>
                   <Users.Form.Fields
@@ -132,6 +122,23 @@ export default function CreateUserForm({
 
             <DocumentationLink page="users" />
           </Forms.Section.Step>
+
+          {!keygen.config.isCE && (
+            <Forms.Section.Step
+              crumb="User permissions"
+              fields={["permissions"]}
+            >
+              <Forms.Section.Card title="User permissions">
+                <Users.Form.Fields
+                  schema="create"
+                  include={["permissions"]}
+                  fieldVariant="stacking"
+                />
+              </Forms.Section.Card>
+
+              <DocumentationLink page="users" />
+            </Forms.Section.Step>
+          )}
 
           <Forms.Section.Step
             crumb="Additional configuration"

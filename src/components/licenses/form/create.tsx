@@ -16,6 +16,7 @@ import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 import { toast } from "@/lib/toast"
 import { settleCreateEntitlements } from "@/lib/entitlements"
 
+import * as keygen from "@/keygen"
 import * as Forms from "@/components/forms"
 import * as Licenses from "@/components/licenses"
 import DocumentationLink from "@/components/documentation-link"
@@ -263,9 +264,26 @@ export default function CreateLicenseForm({
             <DocumentationLink page="licenses" />
           </Forms.Section.Step>
 
+          {!keygen.config.isCE && (
+            <Forms.Section.Step
+              crumb="License permissions"
+              fields={["permissions"]}
+            >
+              <Forms.Section.Card title="License permissions">
+                <Licenses.Form.Fields
+                  schema="create"
+                  include={["permissions"]}
+                  fieldVariant="stacking"
+                />
+              </Forms.Section.Card>
+
+              <DocumentationLink page="licenses" />
+            </Forms.Section.Step>
+          )}
+
           <Forms.Section.Step
             crumb="Additional configuration"
-            fields={["protected", "suspended", "permissions", "metadata"]}
+            fields={["protected", "suspended", "metadata"]}
           >
             <Forms.Section.Card title="Additional configuration">
               <Forms.Section.Columns>
@@ -284,11 +302,7 @@ export default function CreateLicenseForm({
                   />
                 </Forms.Section.Column>
               </Forms.Section.Columns>
-              <Licenses.Form.Fields
-                schema="create"
-                include={["permissions"]}
-                fieldVariant="stacking"
-              />
+
               <Licenses.Form.Fields
                 schema="create"
                 include={["metadata"]}

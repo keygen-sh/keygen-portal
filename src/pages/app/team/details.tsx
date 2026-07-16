@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { useParams } from "@tanstack/react-router"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Separator } from "@/components/ui/separator"
@@ -344,6 +345,27 @@ export default function TeamDetails() {
                       />
                     </div>
                   </div>
+                  <CollapsibleMenu title="Permissions" defaultOpen={false}>
+                    {user.attributes.permissions != null &&
+                    user.attributes.permissions.length > 0 ? (
+                      <div className="flex max-w-full flex-wrap gap-2">
+                        {user.attributes.permissions.map(
+                          (permission, index) => (
+                            <Badge
+                              key={index}
+                              className="text-sm text-content-muted"
+                            >
+                              {permission}
+                            </Badge>
+                          ),
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-content-muted">
+                        No permissions defined.
+                      </p>
+                    )}
+                  </CollapsibleMenu>
                 </CollapsibleCard>
 
                 <CollapsibleCard title="Relationships">

@@ -79,6 +79,7 @@ type ViewRoute = {
   label: string
   params: Record<string, unknown>
   requires?: readonly Permission[]
+  ee?: boolean
 }
 
 type View = {
@@ -281,6 +282,7 @@ const VIEWS: View[] = [
         label: "Permissions",
         params: { accountId: keygen.config.id },
         requires: ["account.update"],
+        ee: true,
       },
       {
         to: "/$accountId/app/developers",
@@ -318,8 +320,10 @@ function useActiveView(): View {
 function useVisibleViews(): View[] {
   const { canAll } = usePermissions()
 
-  const isRouteVisible = (route: ViewRoute): boolean =>
-    route.requires == null || canAll(route.requires)
+  const isRouteVisible = (route: ViewRoute): boolean => {
+    if (route.ee && keygen.config.isCE) return false
+    return route.requires == null || canAll(route.requires)
+  }
 
   const filtered = VIEWS.map((view) => ({
     ...view,

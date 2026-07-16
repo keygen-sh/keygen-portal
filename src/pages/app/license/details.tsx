@@ -90,6 +90,8 @@ import {
   getProcessesLimitDisplay,
   getCoresLimitDisplay,
   getMachineMetricCount,
+  getMachineCount,
+  getUserCount,
   getByteUsageLimit,
   getUsesLimitDisplay,
   isLimitOverridden,
@@ -893,8 +895,7 @@ export default function LicenseDetails() {
                                   value={getMachinesLimitDisplay(
                                     license,
                                     policy,
-                                    license.relationships.machines?.data
-                                      ?.length ?? 0,
+                                    getMachineCount(license),
                                   )}
                                   variant={
                                     license.attributes.maxMachines ||
@@ -922,7 +923,6 @@ export default function LicenseDetails() {
                                   value={getProcessesLimitDisplay(
                                     license,
                                     policy,
-                                    0,
                                   )}
                                   variant={
                                     license.attributes.maxProcesses ||
@@ -950,8 +950,7 @@ export default function LicenseDetails() {
                                   value={getUsersLimitDisplay(
                                     license,
                                     policy,
-                                    license.relationships.users?.data?.length ??
-                                      0,
+                                    getUserCount(license),
                                   )}
                                   variant={
                                     license.attributes.maxUsers ||
@@ -1123,7 +1122,7 @@ export default function LicenseDetails() {
                         value={getMachinesLimitDisplay(
                           license,
                           policy,
-                          license.relationships.machines?.data?.length ?? 0,
+                          getMachineCount(license),
                         )}
                         tooltip={LicenseAttributeDescriptions.maxMachines}
                         suffix={
@@ -1134,26 +1133,13 @@ export default function LicenseDetails() {
                         }
                       />
                       <Property.Field
-                        icon={Repeat}
-                        label="processes"
-                        variant="reverse"
-                        value={getProcessesLimitDisplay(license, policy, 0)}
-                        tooltip={LicenseAttributeDescriptions.maxProcesses}
-                        suffix={
-                          isLimitOverridden(
-                            license.attributes.maxProcesses,
-                            policy?.attributes.maxProcesses,
-                          ) && <OverriddenBadge />
-                        }
-                      />
-                      <Property.Field
                         icon={Users}
                         label="users"
                         variant="reverse"
                         value={getUsersLimitDisplay(
                           license,
                           policy,
-                          licenseUsers.length,
+                          getUserCount(license),
                         )}
                         tooltip={LicenseAttributeDescriptions.maxUsers}
                         suffix={
@@ -1173,6 +1159,19 @@ export default function LicenseDetails() {
                           isLimitOverridden(
                             license.attributes.maxUses,
                             policy?.attributes.maxUses,
+                          ) && <OverriddenBadge />
+                        }
+                      />
+                      <Property.Field
+                        icon={Repeat}
+                        label="processes"
+                        variant="reverse"
+                        value={getProcessesLimitDisplay(license, policy)}
+                        tooltip={LicenseAttributeDescriptions.maxProcesses}
+                        suffix={
+                          isLimitOverridden(
+                            license.attributes.maxProcesses,
+                            policy?.attributes.maxProcesses,
                           ) && <OverriddenBadge />
                         }
                       />

@@ -2,6 +2,7 @@ import { Policy } from "@/types/policies"
 import { License, LicenseAttributeDescriptions } from "@/types/licenses"
 
 import { formatByteLimitDisplay, formatRawByteLimitDisplay } from "@/lib/bytes"
+import { capitalize } from "@/lib/utils"
 
 import { AttributeType } from "@/components/attribute/value"
 
@@ -109,6 +110,18 @@ export function getMachineMetricCount(
   return typeof value === "number" ? value : 0
 }
 
+export function getMachineCount(license: License): number {
+  const value = license.relationships.machines?.meta?.count
+
+  return typeof value === "number" ? value : 0
+}
+
+export function getUserCount(license: License): number {
+  const value = license.relationships.users?.meta?.count
+
+  return typeof value === "number" ? value : 0
+}
+
 function getByteLimitDisplay(
   license: License,
   policy: Policy | null | undefined,
@@ -183,11 +196,9 @@ export function getUsersLimitDisplay(
 export function getProcessesLimitDisplay(
   license: License,
   policy: Policy | null | undefined,
-  processCount: number = 0,
 ): string {
-  return formatLimitDisplay(
-    processCount,
-    getAttributeLimit(license, policy, "maxProcesses"),
+  return capitalize(
+    formatLimitValue(getAttributeLimit(license, policy, "maxProcesses")),
   )
 }
 

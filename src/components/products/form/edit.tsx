@@ -13,6 +13,7 @@ import { useGetProduct, useUpdateProduct } from "@/queries/products"
 import { toast } from "@/lib/toast"
 import { recordToMetadataPairs } from "@/schemas/metadata"
 
+import * as keygen from "@/keygen"
 import * as Forms from "@/components/forms"
 import * as Products from "@/components/products"
 
@@ -67,7 +68,6 @@ export default function EditProductForm({
           errorMessage="Failed to update product"
           isPending={updateProduct.isPending}
           submitLabel="Update"
-          className="md:h-[70vh]!"
         >
           <Forms.Section.Columns title="Attributes">
             <Forms.Section.Column>
@@ -86,13 +86,17 @@ export default function EditProductForm({
             </Forms.Section.Column>
           </Forms.Section.Columns>
 
-          <Separator className="my-8" />
+          {!keygen.config.isCE && (
+            <>
+              <Separator className="my-8" />
 
-          <Products.Form.Fields
-            schema="edit"
-            include={["permissions"]}
-            fieldVariant="stacking"
-          />
+              <Products.Form.Fields
+                schema="edit"
+                include={["permissions"]}
+                fieldVariant="stacking"
+              />
+            </>
+          )}
 
           <Separator className="my-8" />
 

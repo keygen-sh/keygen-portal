@@ -153,9 +153,9 @@ export default function TokensFormFields({
               />
             )
           case "permissions":
-            return !keygen.config.isCE ? (
+            return (
               <PermissionsField key="permissions" fieldVariant={fieldVariant} />
-            ) : null
+            )
           default:
             return null
         }

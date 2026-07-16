@@ -16,7 +16,7 @@ export default async function update({
   id,
   values,
 }: UpdateProps): Promise<LicenseResponse> {
-  const { ownerId, entitlements, users, ...attributes } = values
+  const { ownerId, entitlements, users, permissions, ...attributes } = values
   void ownerId
   void entitlements
   void users
@@ -24,7 +24,10 @@ export default async function update({
   const body = {
     data: {
       type: "licenses",
-      attributes,
+      attributes: {
+        ...attributes,
+        ...(permissions != null ? { permissions } : {}),
+      },
     },
   }
 

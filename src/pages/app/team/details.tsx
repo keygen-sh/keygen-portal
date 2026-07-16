@@ -59,6 +59,7 @@ import { useBreadcrumbBackNavigate } from "@/hooks/use-breadcrumb-back-navigate"
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
 
+import * as keygen from "@/keygen"
 import * as Users from "@/components/users"
 import * as Property from "@/components/property"
 import * as Attribute from "@/components/attribute"
@@ -345,27 +346,29 @@ export default function TeamDetails() {
                       />
                     </div>
                   </div>
-                  <CollapsibleMenu title="Permissions" defaultOpen={false}>
-                    {user.attributes.permissions != null &&
-                    user.attributes.permissions.length > 0 ? (
-                      <div className="flex max-w-full flex-wrap gap-2">
-                        {user.attributes.permissions.map(
-                          (permission, index) => (
-                            <Badge
-                              key={index}
-                              className="text-sm text-content-muted"
-                            >
-                              {permission}
-                            </Badge>
-                          ),
-                        )}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-content-muted">
-                        No permissions defined.
-                      </p>
-                    )}
-                  </CollapsibleMenu>
+                  {!keygen.config.isCE && (
+                    <CollapsibleMenu title="Permissions" defaultOpen={false}>
+                      {user.attributes.permissions != null &&
+                      user.attributes.permissions.length > 0 ? (
+                        <div className="flex max-w-full flex-wrap gap-2">
+                          {user.attributes.permissions.map(
+                            (permission, index) => (
+                              <Badge
+                                key={index}
+                                className="text-sm text-content-muted"
+                              >
+                                {permission}
+                              </Badge>
+                            ),
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-content-muted">
+                          No permissions defined.
+                        </p>
+                      )}
+                    </CollapsibleMenu>
+                  )}
                 </CollapsibleCard>
 
                 <CollapsibleCard title="Relationships">

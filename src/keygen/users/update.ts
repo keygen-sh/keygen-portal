@@ -18,13 +18,16 @@ export default async function update({
   values,
   root,
 }: UpdateProps): Promise<UserResponse> {
-  const { groupId, ...attributes } = values
+  const { groupId, permissions, ...attributes } = values
   void groupId
 
   const body = {
     data: {
       type: "users",
-      attributes,
+      attributes: {
+        ...attributes,
+        ...(permissions != null ? { permissions } : {}),
+      },
     },
   }
 

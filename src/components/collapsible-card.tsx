@@ -1,4 +1,4 @@
-import { useState, Fragment, Children } from "react"
+import { useState, Fragment, Children, isValidElement } from "react"
 import { motion, AnimatePresence } from "motion/react"
 
 import { cn } from "@/lib/utils"
@@ -8,9 +8,9 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from "@/components/ui/collapsible"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 import { ChevronDown, ChevronUp } from "lucide-react"
 
@@ -33,6 +33,13 @@ export default function CollapsibleCard({
 }: CollapsibleCardProps) {
   const [open, setOpen] = useState(defaultOpen)
   const [transitioned, setTransitioned] = useState(!defaultOpen)
+
+  const items: React.ReactNode[] = []
+  Children.forEach(children, (child) => {
+    if (isValidElement(child)) {
+      items.push(child)
+    }
+  })
 
   return (
     <Card
@@ -89,10 +96,10 @@ export default function CollapsibleCard({
                 >
                   <ScrollArea orientation="horizontal">
                     <CardContent className={cn("p-4", contentClass)}>
-                      {Children.map(children, (child, index) => (
+                      {items.map((child, index) => (
                         <Fragment key={index}>
                           {child}
-                          {index < Children.count(children) - 1 && (
+                          {index < items.length - 1 && (
                             <Separator className="my-4" />
                           )}
                         </Fragment>

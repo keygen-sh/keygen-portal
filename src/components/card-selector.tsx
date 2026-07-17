@@ -152,7 +152,7 @@ export function CardSelector<T>({
                         <PopoverTrigger onClick={(e) => e.stopPropagation()}>
                           <Info className="size-5 text-content-subdued" />
                         </PopoverTrigger>
-                        <PopoverContent className="ml-2 max-w-64 bg-background-4 text-content-muted">
+                        <PopoverContent className="ml-2 max-w-64 bg-background-4 text-pretty text-content-muted">
                           {option.tooltip}
                         </PopoverContent>
                       </Popover>
@@ -161,7 +161,7 @@ export function CardSelector<T>({
                         <TooltipTrigger asChild>
                           <Info className="size-4 pt-0.5 text-content-subdued" />
                         </TooltipTrigger>
-                        <TooltipContent className="max-w-64 bg-background-4 text-content-muted">
+                        <TooltipContent className="max-w-64 bg-background-4 text-pretty text-content-muted">
                           {option.tooltip}
                         </TooltipContent>
                       </Tooltip>

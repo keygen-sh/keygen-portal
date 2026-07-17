@@ -38,12 +38,14 @@ import {
 } from "lucide-react"
 
 import * as Schemas from "@/schemas"
+import { PolicyTemplateSelection } from "@/schemas/policies"
 import {
   TimingTemplates,
   AccessTemplates,
   MeteredTemplates,
-  PolicyTemplateSelection,
-} from "@/schemas/policies"
+  PolicyTemplateLabels,
+  PolicyTemplateDescriptions,
+} from "@/types/policies"
 
 import { toast } from "@/lib/toast"
 import { settleCreateEntitlements } from "@/lib/entitlements"
@@ -284,63 +286,63 @@ function TemplatesSelectionForm({
   const timingOptions: CardOption<TimingTemplates>[] = [
     {
       value: TimingTemplates.Perpetual,
-      label: "Perpetual",
+      label: PolicyTemplateLabels[TimingTemplates.Perpetual],
       icon: <InfinityIcon className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip: PolicyTemplateDescriptions[TimingTemplates.Perpetual],
     },
     {
       value: TimingTemplates.Timed,
-      label: "Timed",
+      label: PolicyTemplateLabels[TimingTemplates.Timed],
       icon: <Clock className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip: PolicyTemplateDescriptions[TimingTemplates.Timed],
     },
     {
       value: TimingTemplates.PerpetualFallback,
-      label: "Perpetual-fallback",
+      label: PolicyTemplateLabels[TimingTemplates.PerpetualFallback],
       icon: <ClockFading className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip: PolicyTemplateDescriptions[TimingTemplates.PerpetualFallback],
     },
   ]
 
   const accessOptions: CardOption<AccessTemplates>[] = [
     {
       value: AccessTemplates.NodeLocked,
-      label: "Node-locked",
+      label: PolicyTemplateLabels[AccessTemplates.NodeLocked],
       icon: <Hexagon className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip: PolicyTemplateDescriptions[AccessTemplates.NodeLocked],
     },
     {
       value: AccessTemplates.UserLocked,
-      label: "User-locked",
+      label: PolicyTemplateLabels[AccessTemplates.UserLocked],
       icon: <User className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip: PolicyTemplateDescriptions[AccessTemplates.UserLocked],
     },
   ]
 
   const meteredOptions: CardOption<MeteredTemplates>[] = [
     {
       value: MeteredTemplates.ProcessBased,
-      label: "Process-based",
+      label: PolicyTemplateLabels[MeteredTemplates.ProcessBased],
       icon: <Cpu className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip: PolicyTemplateDescriptions[MeteredTemplates.ProcessBased],
     },
     {
       value: MeteredTemplates.LeaseBased,
-      label: "Lease-based",
+      label: PolicyTemplateLabels[MeteredTemplates.LeaseBased],
       icon: <Activity className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip: PolicyTemplateDescriptions[MeteredTemplates.LeaseBased],
     },
     {
       value: MeteredTemplates.FeatureBased,
-      label: "Feature-based",
+      label: PolicyTemplateLabels[MeteredTemplates.FeatureBased],
       icon: <Binary className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip: PolicyTemplateDescriptions[MeteredTemplates.FeatureBased],
     },
     {
       value: MeteredTemplates.UsageBased,
-      label: "Usage-based",
+      label: PolicyTemplateLabels[MeteredTemplates.UsageBased],
       icon: <Hash className="size-6 text-content-subdued md:size-5" />,
-      tooltip: "TODO",
+      tooltip: PolicyTemplateDescriptions[MeteredTemplates.UsageBased],
     },
   ]
 

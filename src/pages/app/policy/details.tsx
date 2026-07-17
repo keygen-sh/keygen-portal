@@ -32,19 +32,26 @@ import {
 import {
   Box,
   Cpu,
+  Hash,
+  User,
   Logs,
   Copy,
   Menu,
   Clock,
   Users,
+  Binary,
   Repeat,
+  Hexagon,
   GitFork,
   Monitor,
+  Activity,
   HardDrive,
+  ClockFading,
   MemoryStick,
   SquarePen,
   SquarePlus,
   EllipsisVertical,
+  Infinity as InfinityIcon,
 } from "lucide-react"
 
 import { useGetProduct } from "@/queries/products"
@@ -64,17 +71,20 @@ import { copyToClipboard } from "@/lib/clipboard"
 import { formatByteSize, formatRawByteSize } from "@/lib/bytes"
 
 import {
-  isPerpetual,
   isTimed,
-  isPerpetualFallback,
   isNodeLocked,
-  isUserLocked,
-  isProcessBased,
   isLeaseBased,
-  isFeatureBased,
-  isUsageBased,
+  getPolicyTemplates,
 } from "@/lib/policies"
-import { PolicyAttributeDescriptions } from "@/types/policies"
+import {
+  PolicyAttributeDescriptions,
+  PolicyTemplateLabels,
+  PolicyTemplateDescriptions,
+  TimingTemplates,
+  AccessTemplates,
+  MeteredTemplates,
+  type PolicyTemplate,
+} from "@/types/policies"
 
 import * as keygen from "@/keygen"
 import * as Policies from "@/components/policies"
@@ -92,6 +102,18 @@ import ConfirmationModal from "@/components/confirmation-modal"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
+
+const PolicyTemplateIcons: Record<PolicyTemplate, React.ReactNode> = {
+  [TimingTemplates.Perpetual]: <InfinityIcon className="size-3" />,
+  [TimingTemplates.Timed]: <Clock className="size-3" />,
+  [TimingTemplates.PerpetualFallback]: <ClockFading className="size-3" />,
+  [AccessTemplates.NodeLocked]: <Hexagon className="size-3" />,
+  [AccessTemplates.UserLocked]: <User className="size-3" />,
+  [MeteredTemplates.ProcessBased]: <Cpu className="size-3" />,
+  [MeteredTemplates.LeaseBased]: <Activity className="size-3" />,
+  [MeteredTemplates.FeatureBased]: <Binary className="size-3" />,
+  [MeteredTemplates.UsageBased]: <Hash className="size-3" />,
+}
 
 export default function PolicyDetails() {
   const { id } = useParams({ from: "/$accountId/app/policies/$id" })
@@ -260,60 +282,16 @@ export default function PolicyDetails() {
             <div className="px-4 py-6 md:px-10 md:py-8">
               <BackButton className="mb-8" />
               <div className="mb-2 flex flex-wrap gap-2">
-                {isPerpetual(policy) && (
-                  <Badge variant="secondary">
-                    <Clock className="inline size-4" />
-                    Perpetual
-                  </Badge>
-                )}
-                {isTimed(policy) && (
-                  <Badge variant="secondary">
-                    <Clock className="inline size-4" />
-                    Timed
-                  </Badge>
-                )}
-                {isPerpetualFallback(policy) && (
-                  <Badge variant="secondary">
-                    <Clock className="inline size-4" />
-                    Perpetual-fallback
-                  </Badge>
-                )}
-                {isNodeLocked(policy) && (
-                  <Badge variant="secondary">
-                    <Clock className="inline size-4" />
-                    Node-locked
-                  </Badge>
-                )}
-                {isUserLocked(policy) && (
-                  <Badge variant="secondary">
-                    <Clock className="inline size-4" />
-                    User-locked
-                  </Badge>
-                )}
-                {isProcessBased(policy) && (
-                  <Badge variant="secondary">
-                    <Clock className="inline size-4" />
-                    Process-based
-                  </Badge>
-                )}
-                {isLeaseBased(policy) && (
-                  <Badge variant="secondary">
-                    <Clock className="inline size-4" />
-                    Lease-based
-                  </Badge>
-                )}
-                {isFeatureBased(entitlements) && (
-                  <Badge variant="secondary">
-                    <Clock className="inline size-4" />
-                    Feature-based
-                  </Badge>
-                )}
-                {isUsageBased(policy) && (
-                  <Badge variant="secondary">
-                    <Clock className="inline size-4" />
-                    Usage-based
-                  </Badge>
-                )}
+                {getPolicyTemplates(policy, entitlements).map((template) => (
+                  <TooltipBadge
+                    key={template}
+                    icon={PolicyTemplateIcons[template]}
+                    value={PolicyTemplateLabels[template]}
+                    variant="secondary"
+                    tooltip={PolicyTemplateDescriptions[template]}
+                    className="px-1 text-xs"
+                  />
+                ))}
               </div>
               <div className="flex flex-col gap-3 md:flex-row md:items-center">
                 <h1 className="font-owners-wide text-2xl font-medium">

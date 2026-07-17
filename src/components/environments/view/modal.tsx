@@ -25,6 +25,7 @@ import {
 
 import { useRemoveEnvironment } from "@/queries/environments"
 import { useSlide } from "@/hooks/use-slide"
+import { useEnvironment } from "@/hooks/use-environment"
 
 import * as Motion from "@/components/motion"
 import EnvironmentsList from "./list"
@@ -32,17 +33,18 @@ import EnvironmentDetails from "./details"
 import { toast } from "@/lib/toast"
 
 interface EnvironmentsViewModalProps {
-  selectedEnvironment: Environment | null
-  onSelectEnvironment: (env: Environment | null) => void
+  viewEnvironment: Environment | null
+  onViewEnvironment: (env: Environment | null) => void
   onChangeMode: (mode: EnvironmentMode, env?: Environment) => void
 }
 
 export default function EnvironmentsViewModal({
-  selectedEnvironment,
-  onSelectEnvironment,
+  viewEnvironment,
+  onViewEnvironment,
   onChangeMode,
 }: EnvironmentsViewModalProps) {
-  const deleteEnvironment = useRemoveEnvironment(selectedEnvironment?.id ?? "")
+  const deleteEnvironment = useRemoveEnvironment(viewEnvironment?.id ?? "")
+  const { id: activeEnvironmentId, select } = useEnvironment()
 
   const [view, direction, goTo] = useSlide(
     [EnvironmentView.List, EnvironmentView.Details],
@@ -51,25 +53,33 @@ export default function EnvironmentsViewModal({
 
   const handleViewDetails = useCallback(
     (environment: Environment) => {
-      onSelectEnvironment(environment)
+      onViewEnvironment(environment)
       goTo(EnvironmentView.Details)
     },
-    [goTo, onSelectEnvironment],
+    [goTo, onViewEnvironment],
   )
 
   const handleBackToList = useCallback(() => {
-    onSelectEnvironment(null)
+    onViewEnvironment(null)
     goTo(EnvironmentView.List)
-  }, [goTo, onSelectEnvironment])
+  }, [goTo, onViewEnvironment])
 
   const handleDeleteEnvironment = () => {
+    const deleted = viewEnvironment
+
     deleteEnvironment.mutate(undefined, {
-      onSuccess: () => {
+      onSuccess: async () => {
         toast({
           message: "Environment deleted",
           variant: "success",
         })
-        onSelectEnvironment(null)
+
+        // switch to global if active environment was deleted
+        if (deleted?.id === activeEnvironmentId) {
+          await select(null, null)
+        }
+
+        onViewEnvironment(null)
         goTo(EnvironmentView.List)
       },
     })
@@ -96,12 +106,12 @@ export default function EnvironmentsViewModal({
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>
-              {view === EnvironmentView.Details && selectedEnvironment && (
+              {view === EnvironmentView.Details && viewEnvironment && (
                 <>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
                     <BreadcrumbPage>
-                      {selectedEnvironment.attributes.name}
+                      {viewEnvironment.attributes.name}
                     </BreadcrumbPage>
                   </BreadcrumbItem>
                 </>
@@ -119,14 +129,14 @@ export default function EnvironmentsViewModal({
               onViewDetails={handleViewDetails}
             />
           ) : (
-            selectedEnvironment && (
+            viewEnvironment && (
               <EnvironmentDetails
                 key="environment-details"
-                environment={selectedEnvironment}
+                environment={viewEnvironment}
                 loading={deleteEnvironment.isPending}
                 onDeleteEnvironment={handleDeleteEnvironment}
                 onEditEnvironment={() =>
-                  onChangeMode(EnvironmentMode.Edit, selectedEnvironment)
+                  onChangeMode(EnvironmentMode.Edit, viewEnvironment)
                 }
               />
             )
@@ -140,7 +150,7 @@ export default function EnvironmentsViewModal({
             New Environment
           </Button>
         )}
-        {view === EnvironmentView.Details && selectedEnvironment && (
+        {view === EnvironmentView.Details && viewEnvironment && (
           <Button variant="outline" onClick={handleBackToList}>
             Back to List
           </Button>

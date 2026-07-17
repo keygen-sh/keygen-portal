@@ -20,12 +20,13 @@ export default function EnvironmentsModalManager({
   onClose,
 }: EnvironmentsModalManagerProps): React.ReactElement {
   const [mode, setMode] = useState<EnvironmentMode>(EnvironmentMode.View)
-  const [selectedEnvironment, setSelectedEnvironment] =
-    useState<Environment | null>(null)
+  const [viewEnvironment, setViewEnvironment] = useState<Environment | null>(
+    null,
+  )
 
-  const handleSelectEnvironment = useCallback(
+  const handleViewEnvironment = useCallback(
     (environment: Environment | null) => {
-      setSelectedEnvironment(environment)
+      setViewEnvironment(environment)
     },
     [],
   )
@@ -40,18 +41,18 @@ export default function EnvironmentsModalManager({
         <DialogContent className="flex min-h-screen min-w-screen flex-col justify-start rounded-none p-0 transition-all duration-300 md:min-h-auto md:min-w-[700px] md:rounded-md">
           {mode === EnvironmentMode.View && (
             <View.Modal
-              selectedEnvironment={selectedEnvironment}
-              onSelectEnvironment={handleSelectEnvironment}
+              viewEnvironment={viewEnvironment}
+              onViewEnvironment={handleViewEnvironment}
               onChangeMode={handleChangeMode}
             />
           )}
-          {mode === EnvironmentMode.Edit && selectedEnvironment && (
+          {mode === EnvironmentMode.Edit && viewEnvironment && (
             <EditEnvironmentForm
-              environment={selectedEnvironment}
+              environment={viewEnvironment}
               open={mode === EnvironmentMode.Edit}
               onOpenChange={(newOpen) => {
                 if (!newOpen) {
-                  handleSelectEnvironment(null)
+                  handleViewEnvironment(null)
                   handleChangeMode(EnvironmentMode.View)
                 }
               }}

@@ -22,6 +22,9 @@ import {
   HeartbeatBasis,
   HeartbeatCullStrategy,
   HeartbeatResurrectionStrategy,
+  TimingTemplates,
+  AccessTemplates,
+  MeteredTemplates,
 } from "@/types/policies"
 import { MetadataPairsSchema, recordToMetadataPairs } from "@/schemas/metadata"
 
@@ -370,22 +373,6 @@ export type FieldNames = Exclude<
   FieldPath<AllValues>,
   "encrypted" | "entitlements" | "product.id"
 >
-
-export enum TimingTemplates {
-  Perpetual = "PERPETUAL",
-  Timed = "TIMED",
-  PerpetualFallback = "PERPETUAL_FALLBACK",
-}
-export enum AccessTemplates {
-  NodeLocked = "NODE_LOCKED",
-  UserLocked = "USER_LOCKED",
-}
-export enum MeteredTemplates {
-  ProcessBased = "PROCESS_BASED",
-  LeaseBased = "LEASE_BASED",
-  FeatureBased = "FEATURE_BASED",
-  UsageBased = "USAGE_BASED",
-}
 
 export const TemplateSchema = z.object({
   timing: z.nativeEnum(TimingTemplates).nullable().optional(),

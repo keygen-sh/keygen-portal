@@ -1,7 +1,14 @@
 import { AttributeType } from "@/components/attribute/value"
 
 import { Entitlement } from "@/types/entitlements"
-import { Policy, ExpirationStrategy } from "@/types/policies"
+import {
+  Policy,
+  PolicyTemplate,
+  TimingTemplates,
+  AccessTemplates,
+  MeteredTemplates,
+  ExpirationStrategy,
+} from "@/types/policies"
 
 export function isPerpetual(policy: Policy): boolean {
   return policy.attributes.duration == null || policy.attributes.duration === 0
@@ -56,6 +63,27 @@ export function isUsageBased(policy: Policy): boolean {
   const maxUses = policy.attributes.maxUses
 
   return typeof maxUses === "number" && maxUses > 0
+}
+
+export function getPolicyTemplates(
+  policy: Policy,
+  entitlements: Entitlement[],
+): PolicyTemplate[] {
+  const templates: PolicyTemplate[] = []
+
+  if (isPerpetual(policy)) templates.push(TimingTemplates.Perpetual)
+  if (isTimed(policy)) templates.push(TimingTemplates.Timed)
+  if (isPerpetualFallback(policy))
+    templates.push(TimingTemplates.PerpetualFallback)
+  if (isNodeLocked(policy)) templates.push(AccessTemplates.NodeLocked)
+  if (isUserLocked(policy)) templates.push(AccessTemplates.UserLocked)
+  if (isProcessBased(policy)) templates.push(MeteredTemplates.ProcessBased)
+  if (isLeaseBased(policy)) templates.push(MeteredTemplates.LeaseBased)
+  if (isFeatureBased(entitlements))
+    templates.push(MeteredTemplates.FeatureBased)
+  if (isUsageBased(policy)) templates.push(MeteredTemplates.UsageBased)
+
+  return templates
 }
 
 export const policyAttributeTypeSchema: Record<

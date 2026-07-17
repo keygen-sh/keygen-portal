@@ -341,9 +341,17 @@ function useVisibleViews(): View[] {
 export default function SidebarPanel(): React.ReactElement {
   const activeView = useActiveView()
   const visibleViews = useVisibleViews()
+  const [selectedView, setSelectedView] = useState(activeView)
+  const [prevActiveId, setPrevActiveId] = useState(activeView.id)
+
+  // follow route when nav jumps into a different view section
+  if (activeView.id !== prevActiveId) {
+    setPrevActiveId(activeView.id)
+    setSelectedView(activeView)
+  }
+
   const { can } = usePermissions()
   const accountId = keygen.config.id
-  const [selectedView, setSelectedView] = useState(activeView)
   const { open, setOpen } = useSidebar()
   const [paletteOpen, setPaletteOpen] = useState(false)
 

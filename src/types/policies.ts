@@ -473,3 +473,59 @@ export const PolicyOptionLabels = {
     [Scheme.Rsa2048Pkcs1Sign]: "RSA 2048 PKCS1",
   },
 } as const
+
+export enum TimingTemplates {
+  Perpetual = "PERPETUAL",
+  Timed = "TIMED",
+  PerpetualFallback = "PERPETUAL_FALLBACK",
+}
+export enum AccessTemplates {
+  NodeLocked = "NODE_LOCKED",
+  UserLocked = "USER_LOCKED",
+}
+export enum MeteredTemplates {
+  ProcessBased = "PROCESS_BASED",
+  LeaseBased = "LEASE_BASED",
+  FeatureBased = "FEATURE_BASED",
+  UsageBased = "USAGE_BASED",
+}
+
+export type PolicyTemplate =
+  | TimingTemplates
+  | AccessTemplates
+  | MeteredTemplates
+
+export const PolicyTemplateLabels: Readonly<Record<PolicyTemplate, string>> = {
+  [TimingTemplates.Perpetual]: "Perpetual",
+  [TimingTemplates.Timed]: "Timed",
+  [TimingTemplates.PerpetualFallback]: "Perpetual-fallback",
+  [AccessTemplates.NodeLocked]: "Node-locked",
+  [AccessTemplates.UserLocked]: "User-locked",
+  [MeteredTemplates.ProcessBased]: "Process-based",
+  [MeteredTemplates.LeaseBased]: "Lease-based",
+  [MeteredTemplates.FeatureBased]: "Feature-based",
+  [MeteredTemplates.UsageBased]: "Usage-based",
+} as const
+
+export const PolicyTemplateDescriptions: Readonly<
+  Record<PolicyTemplate, string>
+> = {
+  [TimingTemplates.Perpetual]:
+    "Licenses that implement this policy never expire.",
+  [TimingTemplates.Timed]:
+    "Licenses that implement this policy expire after their duration elapses.",
+  [TimingTemplates.PerpetualFallback]:
+    "A timed policy whose licenses keep passing validation after expiry, but can only access releases published before they expired.",
+  [AccessTemplates.NodeLocked]:
+    "Licenses that implement this policy are locked to a limited number of machines.",
+  [AccessTemplates.UserLocked]:
+    "Licenses that implement this policy are locked to a limited number of users.",
+  [MeteredTemplates.ProcessBased]:
+    "Licenses that implement this policy track a limited number of concurrent machine processes.",
+  [MeteredTemplates.LeaseBased]:
+    "Machines must start and maintain a heartbeat to remain valid under this policy.",
+  [MeteredTemplates.FeatureBased]:
+    "Access under this policy is gated by the entitlements attached to it.",
+  [MeteredTemplates.UsageBased]:
+    "Licenses that implement this policy are limited by a maximum number of recorded uses.",
+} as const

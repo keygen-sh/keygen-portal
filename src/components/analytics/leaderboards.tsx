@@ -41,6 +41,7 @@ import * as keygen from "@/keygen"
 import EmptyChart from "./empty-chart"
 
 const truncateMiddle = truncator("middle", { maxLength: 34 })
+const truncateId = truncator("middle", { maxLength: 12 })
 
 function requestLogSearchForLeaderboard({
   metric,
@@ -317,7 +318,7 @@ function Owner({ linkage }: { linkage: Linkage }) {
   if (isError || !user) {
     return (
       <span className="font-mono text-[11px] text-content-subdued">
-        {linkage.id}
+        {truncateId(linkage.id)}
       </span>
     )
   }

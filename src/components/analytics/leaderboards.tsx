@@ -11,6 +11,7 @@ import {
 } from "recharts"
 
 import CursorTooltip from "@/components/cursor-tooltip"
+import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import {
   ChartConfig,
@@ -23,11 +24,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 import { useCursorFollowTooltip } from "@/hooks/use-cursor-follow-tooltip"
 
+import { useGetUser } from "@/queries/users"
+import { useGetLicense } from "@/queries/licenses"
 import { useLeaderboard } from "@/queries/analytics"
 
-import { GREEN, LEADERBOARDS, useLazyVisibility } from "@/lib/analytics"
+import { cn } from "@/lib/utils"
 import { truncator } from "@/lib/truncate"
+import { getUserLabel } from "@/lib/users"
+import { GREEN, LEADERBOARDS, useLazyVisibility } from "@/lib/analytics"
+
+import { type Linkage } from "@/types/api"
 import { HTTPMethods, type HTTPMethod } from "@/types/http"
+import { LicenseStatusLabels, LicenseStatusVariants } from "@/types/licenses"
+
 import * as keygen from "@/keygen"
 import EmptyChart from "./empty-chart"
 
@@ -201,24 +210,119 @@ function LeaderboardCard({
           tooltipRef={tooltipRef}
           currentPos={currentPos}
           offset={8}
-          className="max-w-[min(32rem,calc(100vw-2rem))]"
-        >
-          {hoveredDiscriminator && (
-            <>
-              <span className="font-mono break-all text-content-normal">
-                {hoveredDiscriminator}
-              </span>
-              {requestLogSearch && (
-                <p className="mt-1.5 text-content-subdued">
-                  Click to view request logs
-                </p>
-              )}
-            </>
+          className={cn(
+            "max-w-[min(32rem,calc(100vw-2rem))]",
+            metric === "licenses" && "w-64",
           )}
+        >
+          {hoveredDiscriminator &&
+            (metric === "licenses" ? (
+              <LicenseLeaderboardTooltip licenseId={hoveredDiscriminator} />
+            ) : (
+              <>
+                <span className="font-mono break-all text-content-normal">
+                  {hoveredDiscriminator}
+                </span>
+                {requestLogSearch && (
+                  <p className="mt-1.5 text-content-subdued">
+                    Click to view request logs
+                  </p>
+                )}
+              </>
+            ))}
         </CursorTooltip>
       </Card>
     </div>
   )
+}
+
+function LicenseLeaderboardTooltip({ licenseId }: { licenseId: string }) {
+  const { data: license, isLoading, isError } = useGetLicense(licenseId)
+  const status = license?.attributes.status
+  const ownerLinkage = license?.relationships.owner?.data ?? null
+  const unavailable = !isLoading && (isError || !license)
+
+  return (
+    <div className="text-xs">
+      {isLoading ? (
+        <Skeleton className="h-4 w-40 rounded-sm" />
+      ) : unavailable ? (
+        <p className="font-medium text-content-muted">License unavailable</p>
+      ) : (
+        <p className="truncate font-medium text-content-muted">
+          {license?.attributes.name || (
+            <span className="text-content-disabled">(name not set)</span>
+          )}
+        </p>
+      )}
+      <p className="mt-0.5 truncate font-mono text-[11px] text-content-subdued">
+        {licenseId}
+      </p>
+
+      <div className="my-2 h-px bg-accent" />
+
+      <dl className="space-y-1.5">
+        {!unavailable && (
+          <>
+            <div className="flex items-center justify-between gap-3">
+              <dt className="text-content-subdued">Status</dt>
+              <dd>
+                {isLoading ? (
+                  <Skeleton className="h-4 w-16 rounded-sm" />
+                ) : status ? (
+                  <Badge variant={LicenseStatusVariants[status]}>
+                    {LicenseStatusLabels[status]}
+                  </Badge>
+                ) : (
+                  <span className="text-content-subdued">None</span>
+                )}
+              </dd>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <dt className="shrink-0 text-content-subdued">Owner</dt>
+              <dd className="min-w-0 truncate text-right text-content-normal">
+                {isLoading ? (
+                  <Skeleton className="ml-auto h-4 w-24 rounded-sm" />
+                ) : ownerLinkage ? (
+                  <Owner linkage={ownerLinkage} />
+                ) : (
+                  <span className="text-content-subdued">None</span>
+                )}
+              </dd>
+            </div>
+          </>
+        )}
+      </dl>
+
+      {unavailable && (
+        <p className="mt-2 text-content-subdued">
+          This license may not be accessible from this environment, or you may
+          not have permission.
+        </p>
+      )}
+
+      <div className="my-2 h-px bg-accent" />
+      <p className="text-content-subdued">Click to view request logs</p>
+    </div>
+  )
+}
+
+function Owner({ linkage }: { linkage: Linkage }) {
+  const { data: user, isLoading, isError } = useGetUser(linkage.id)
+
+  if (isLoading) {
+    return <Skeleton className="ml-auto h-4 w-24 rounded-sm" />
+  }
+
+  if (isError || !user) {
+    return (
+      <span className="font-mono text-[11px] text-content-subdued">
+        {linkage.id}
+      </span>
+    )
+  }
+
+  return <span className="text-content-loud">{getUserLabel(user)}</span>
 }
 
 function LeaderboardTick({

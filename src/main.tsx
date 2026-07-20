@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { routeTree } from "./routeTree.gen"
 import * as sentry from "@/sentry"
 import * as fathom from "@/fathom"
+import * as Page from "@/pages/error"
 
 sentry.init()
 
@@ -22,6 +23,8 @@ const queryClient = new QueryClient({
 const router = createRouter({
   routeTree,
   context: { queryClient },
+  notFoundMode: "root",
+  defaultNotFoundComponent: () => <Page.NotFound />,
 })
 
 fathom.init(router)

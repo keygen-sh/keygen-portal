@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react"
-import { useParams } from "@tanstack/react-router"
+import { useState } from "react"
+import { useParams, notFound } from "@tanstack/react-router"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -98,13 +98,9 @@ export default function WebhookEndpointDetails() {
     attributes: false,
   })
 
-  useEffect(() => {
-    ;(async () => {
-      if (isError && !isFetching) {
-        await back()
-      }
-    })()
-  }, [isError, isFetching, back])
+  if (isError && !isFetching) {
+    notFound({ throw: true })
+  }
 
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))

@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react"
-import { useParams } from "@tanstack/react-router"
+import { useState } from "react"
+import { useParams, notFound } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -102,13 +102,9 @@ export default function ProcessDetails() {
     attributes: false,
   })
 
-  useEffect(() => {
-    ;(async () => {
-      if (processError && !processFetching) {
-        await back()
-      }
-    })()
-  }, [processError, processFetching, back])
+  if (processError && !processFetching) {
+    notFound({ throw: true })
+  }
 
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))

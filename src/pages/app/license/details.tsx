@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react"
-import { useParams } from "@tanstack/react-router"
+import { useState } from "react"
+import { useParams, notFound } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -174,13 +174,9 @@ export default function LicenseDetails() {
     checkOut: false,
   })
 
-  useEffect(() => {
-    ;(async () => {
-      if (licenseError && !licenseFetching) {
-        await back()
-      }
-    })()
-  }, [licenseError, licenseFetching, back])
+  if (licenseError && !licenseFetching) {
+    notFound({ throw: true })
+  }
 
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))

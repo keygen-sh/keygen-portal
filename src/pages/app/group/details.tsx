@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react"
-import { useParams } from "@tanstack/react-router"
+import { useState } from "react"
+import { useParams, notFound } from "@tanstack/react-router"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -99,13 +99,9 @@ export default function GroupDetails() {
     attributes: false,
   })
 
-  useEffect(() => {
-    ;(async () => {
-      if (groupError && !groupFetching) {
-        await back()
-      }
-    })()
-  }, [groupError, groupFetching, back])
+  if (groupError && !groupFetching) {
+    notFound({ throw: true })
+  }
 
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))

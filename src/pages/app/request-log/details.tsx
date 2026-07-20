@@ -1,5 +1,4 @@
-import { useEffect } from "react"
-import { useParams } from "@tanstack/react-router"
+import { useParams, notFound } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -26,7 +25,6 @@ import { Copy, Menu, SquarePen, SquarePlus } from "lucide-react"
 import { useGetRequestLog } from "@/queries/request-logs"
 
 import { useMobile } from "@/hooks/use-mobile"
-import { useBackNavigate } from "@/hooks/use-back-navigate"
 import { useBreadcrumbBackNavigate } from "@/hooks/use-breadcrumb-back-navigate"
 
 import {
@@ -52,17 +50,12 @@ import CollapsibleCard from "@/components/collapsible-card"
 export default function RequestLogDetails() {
   const { id } = useParams({ from: "/$accountId/app/request-logs/$id" })
   const { data: requestLog, isFetching, isError } = useGetRequestLog(id)
-  const back = useBackNavigate()
   const breadcrumbBack = useBreadcrumbBackNavigate()
   const isMobile = useMobile()
 
-  useEffect(() => {
-    ;(async () => {
-      if (isError && !isFetching) {
-        await back()
-      }
-    })()
-  }, [isError, isFetching, back])
+  if (isError && !isFetching) {
+    notFound({ throw: true })
+  }
 
   const environment = requestLog?.relationships.environment?.data
   const requestor = requestLog?.relationships.requestor?.data

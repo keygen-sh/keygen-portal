@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react"
-import { useParams } from "@tanstack/react-router"
+import { useState } from "react"
+import { useParams, notFound } from "@tanstack/react-router"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -125,13 +125,9 @@ export default function UserDetails() {
     unban: false,
   })
 
-  useEffect(() => {
-    ;(async () => {
-      if (userError && !userFetching) {
-        await back()
-      }
-    })()
-  }, [userError, userFetching, back])
+  if (userError && !userFetching) {
+    notFound({ throw: true })
+  }
 
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))

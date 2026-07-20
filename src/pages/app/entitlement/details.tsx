@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react"
-import { useParams } from "@tanstack/react-router"
+import { useState } from "react"
+import { useParams, notFound } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -85,13 +85,9 @@ export default function EntitlementDetails() {
     attributes: false,
   })
 
-  useEffect(() => {
-    ;(async () => {
-      if (entitlementError && !entitlementFetching) {
-        await back()
-      }
-    })()
-  }, [entitlementError, entitlementFetching, back])
+  if (entitlementError && !entitlementFetching) {
+    notFound({ throw: true })
+  }
 
   const toggleOpen = (key: keyof typeof open, value: boolean) => {
     setOpen((prev) => ({ ...prev, [key]: value }))

@@ -79,7 +79,11 @@ const NO_COMMAND_SELECTION = "__palette:none"
 
 export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
   const { isCloud } = useCloud()
-  const commands = useMemo(() => buildCommands({ isCloud }), [isCloud])
+  const supportEmail = keygen.config.supportEmail
+  const commands = useMemo(
+    () => buildCommands({ isCloud, supportEmail }),
+    [isCloud, supportEmail],
+  )
   const commandsById = useMemo(
     () => new Map(commands.map((c) => [c.id, c])),
     [commands],

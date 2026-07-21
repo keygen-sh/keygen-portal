@@ -24,16 +24,20 @@ export default function SSOError() {
               Error: <Badge>{code}</Badge>
             </p>
           )}
-          <p className="text-xs text-content-subdued">
-            If this error is unexpected, and the problem persists, please{" "}
-            <a
-              href="mailto:support@keygen.sh"
-              className="text-secondary underline transition-colors duration-200 hover:text-content-loud"
-            >
-              reach out
-            </a>{" "}
-            to connect with a Keygen engineer.
-          </p>
+          {keygen.config.supportEmail && (
+            <p className="text-xs text-content-subdued">
+              If this error is unexpected, and the problem persists, please{" "}
+              <a
+                href={`mailto:${keygen.config.supportEmail}`}
+                className="text-secondary underline transition-colors duration-200 hover:text-content-loud"
+              >
+                reach out
+              </a>
+              {keygen.config.isCloud
+                ? " to connect with a Keygen engineer."
+                : " for support."}
+            </p>
+          )}
         </div>
         <div className="flex w-full justify-end border-t border-accent p-4">
           <Button asChild size="lg" className="w-full md:w-48">

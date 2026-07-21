@@ -1,7 +1,12 @@
 import { StrictMode } from "react"
 import ReactDOM from "react-dom/client"
 import * as Sentry from "@sentry/react"
-import { RouterProvider, createRouter } from "@tanstack/react-router"
+import {
+  RouterProvider,
+  createRouter,
+  isNotFound,
+  isRedirect,
+} from "@tanstack/react-router"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { routeTree } from "./routeTree.gen"
 import * as sentry from "@/sentry"
@@ -38,7 +43,12 @@ declare module "@tanstack/react-router" {
 const rootElement = document.getElementById("root")!
 
 if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement)
+  const root = ReactDOM.createRoot(rootElement, {
+    onCaughtError: (error) => {
+      if (isNotFound(error) || isRedirect(error)) return
+      console.error(error)
+    },
+  })
 
   root.render(
     <StrictMode>

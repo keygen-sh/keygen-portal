@@ -58,7 +58,6 @@ import { resourceConfigs, MIN_SEARCH_LENGTH } from "@/lib/search"
 
 const DOCS_URL = "https://keygen.sh/docs"
 const API_URL = "https://keygen.sh/docs/api"
-const SUPPORT_EMAIL = "support@keygen.sh"
 
 export const RESOURCE_LABEL: Record<FilterableResource, string> = {
   licenses: "Licenses",
@@ -217,7 +216,10 @@ const FILTER_PRESETS: ReadonlyArray<FilterPreset> = [
   },
 ]
 
-export function buildCommands(opts: { isCloud: boolean }): Command[] {
+export function buildCommands(opts: {
+  isCloud: boolean
+  supportEmail: string
+}): Command[] {
   const all: Command[] = []
 
   for (const resource of COMMAND_SEARCH_RESOURCES) {
@@ -315,16 +317,19 @@ export function buildCommands(opts: { isCloud: boolean }): Command[] {
       kind: "external",
       url: API_URL,
     },
-    {
+  )
+
+  if (opts.supportEmail) {
+    all.push({
       id: "help:support",
       label: "Get support",
       icon: LifeBuoy,
       group: "help",
       keywords: ["support", "help", "contact", "email"],
       kind: "mailto",
-      email: SUPPORT_EMAIL,
-    },
-  )
+      email: opts.supportEmail,
+    })
+  }
 
   return all.filter((c) => opts.isCloud || !c.cloudOnly)
 }

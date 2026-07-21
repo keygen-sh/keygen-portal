@@ -2,12 +2,15 @@ import { useEffect, useState, useMemo } from "react"
 import { useMatches } from "@tanstack/react-router"
 import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 
-import { HeroVariant, heroVariantFromRouteId } from "@/lib/hero"
+import { Button } from "@/components/ui/button"
+
 import { RecentUser, getRecentUser } from "@/lib/users"
+import { HeroVariant, heroVariantFromRouteId } from "@/lib/hero"
+
+import * as keygen from "@/keygen"
 
 import * as Mock from "@/components/mock"
 import Testimonial from "@/components/testimonial"
-import { Button } from "../ui/button"
 
 interface HeroContent {
   headline: string | ((user: RecentUser | null) => string)
@@ -32,22 +35,22 @@ const CONTENT: Record<HeroVariant, HeroContent> = {
   },
   reset: {
     headline: "Let's get you back in",
-    subtitle: (
+    subtitle: keygen.config.supportEmail ? (
       <span>
         Still having issues? Reach out to{" "}
         <Button
           size="link"
           variant="link"
           onClick={() => {
-            window.location.href = "mailto:support@keygen.sh"
+            window.location.href = `mailto:${keygen.config.supportEmail}`
           }}
           className="pointer-events-auto font-normal"
         >
-          support@keygen.sh
+          {keygen.config.supportEmail}
         </Button>
         .
       </span>
-    ),
+    ) : undefined,
   },
 }
 

@@ -32,6 +32,10 @@ const config = {
     return import.meta.env.VITE_KEYGEN_DEFAULT_PLAN_ID || ""
   },
 
+  get supportEmail(): string {
+    return import.meta.env.VITE_SUPPORT_EMAIL || ""
+  },
+
   get isTokenAuthenticated(): boolean {
     return this.authenticationScheme === "token"
   },

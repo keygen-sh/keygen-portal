@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import ErrorShell from "@/components/error-shell"
+import DocumentTitle from "@/components/document-title"
 
 import { getRecentAccounts } from "@/lib/accounts"
 
@@ -17,6 +18,7 @@ export default function NotFound() {
 
   return (
     <ErrorShell>
+      <DocumentTitle title="Page not found" />
       <div className="flex flex-col">
         <div className="w-full border-b border-accent p-4">
           <h1 className="font-owners-wide text-xl">Error 404</h1>

@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { type EventLogFilters } from "@/queries/event-logs"
 import { type EventLogResourceFilter } from "@/types/event-logs"
 
+import { titleHead } from "@/lib/document-title"
 import { expandEventLogEventFilters } from "@/lib/event-logs"
 import { requirePermission } from "@/lib/permissions"
 
@@ -57,6 +58,7 @@ function validateSearch(search: Record<string, unknown>): EventLogFilters {
 }
 
 export const Route = createFileRoute("/$accountId/app/event-logs")({
+  head: titleHead("Event Logs"),
   component: () => <Page.App.EventLogs />,
   validateSearch,
   beforeLoad: ({ context }) =>

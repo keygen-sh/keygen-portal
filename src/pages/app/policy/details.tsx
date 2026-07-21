@@ -101,6 +101,7 @@ import ConfirmationModal from "@/components/confirmation-modal"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
+import DocumentTitle from "@/components/document-title"
 
 const PolicyTemplateIcons: Record<PolicyTemplate, React.ReactNode> = {
   [TimingTemplates.Perpetual]: <InfinityIcon className="size-3" />,
@@ -168,6 +169,7 @@ export default function PolicyDetails() {
 
   return (
     <section className="flex h-screen w-full">
+      <DocumentTitle title={`Policy: ${policy?.attributes.name || id}`} />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
           <Breadcrumb className="flex-1">

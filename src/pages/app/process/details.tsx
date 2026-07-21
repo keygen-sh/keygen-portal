@@ -72,6 +72,7 @@ import ConfirmationModal from "@/components/confirmation-modal"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
+import DocumentTitle from "@/components/document-title"
 
 const ProcessStatusIcons: Record<ProcessStatus, React.ReactNode> = {
   [ProcessStatus.Alive]: <CircleCheck className="size-3" />,
@@ -122,6 +123,7 @@ export default function ProcessDetails() {
 
   return (
     <section className="flex h-screen w-full">
+      <DocumentTitle title={`Process: ${id}`} />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
           <Breadcrumb className="flex-1">

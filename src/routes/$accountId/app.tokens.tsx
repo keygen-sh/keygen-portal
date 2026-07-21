@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 
 import * as Page from "@/pages/index"
+import { titleHead } from "@/lib/document-title"
 import { requirePermission } from "@/lib/permissions"
 import { TokenBearerType, type TokenFilters } from "@/types/tokens"
 
@@ -22,6 +23,7 @@ function validateSearch(search: Record<string, unknown>): TokenFilters {
 }
 
 export const Route = createFileRoute("/$accountId/app/tokens")({
+  head: titleHead("Tokens"),
   component: () => <Page.App.Tokens />,
   validateSearch,
   beforeLoad: ({ context }) =>

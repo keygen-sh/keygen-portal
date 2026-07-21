@@ -70,6 +70,7 @@ import ResourceLink from "@/components/resource-link"
 import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
+import DocumentTitle from "@/components/document-title"
 
 export default function MachineDetails() {
   const { id } = useParams({ from: "/$accountId/app/machines/$id" })
@@ -125,6 +126,9 @@ export default function MachineDetails() {
 
   return (
     <section className="flex h-screen w-full">
+      <DocumentTitle
+        title={`Machine: ${machine?.attributes.name || machine?.attributes.fingerprint || id}`}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
           <Breadcrumb className="flex-1">

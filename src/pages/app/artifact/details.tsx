@@ -76,6 +76,7 @@ import ResourceLink from "@/components/resource-link"
 import ConfirmationModal from "@/components/confirmation-modal"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleCard from "@/components/collapsible-card"
+import DocumentTitle from "@/components/document-title"
 
 const ArtifactStatusIcons: Record<ArtifactStatus, React.ReactNode> = {
   [ArtifactStatus.Waiting]: <CircleDashed className="size-3" />,
@@ -124,6 +125,9 @@ export default function ArtifactDetails() {
 
   return (
     <section className="flex h-screen w-full">
+      <DocumentTitle
+        title={`Artifact: ${artifact?.attributes.filename || id}`}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
           <Breadcrumb className="flex-1">

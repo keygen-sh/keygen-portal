@@ -2,9 +2,11 @@ import { createFileRoute, redirect } from "@tanstack/react-router"
 
 import * as keygen from "@/keygen"
 import * as Page from "@/pages/index"
+import { titleHead } from "@/lib/document-title"
 import { requirePermission } from "@/lib/permissions"
 
 export const Route = createFileRoute("/$accountId/app/permissions")({
+  head: titleHead("Permissions"),
   component: () => <Page.App.Settings.Permissions />,
   beforeLoad: ({ context }) => {
     if (keygen.config.isCE) {

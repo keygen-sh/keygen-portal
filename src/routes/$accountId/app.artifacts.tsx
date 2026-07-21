@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { type ArtifactFilters } from "@/types/artifacts"
 import * as Page from "@/pages/index"
 import { requirePermission } from "@/lib/permissions"
+import { titleHead } from "@/lib/document-title"
 
 function validateSearch(search: Record<string, unknown>): ArtifactFilters {
   const filters: ArtifactFilters = {}
@@ -18,6 +19,7 @@ function validateSearch(search: Record<string, unknown>): ArtifactFilters {
 }
 
 export const Route = createFileRoute("/$accountId/app/artifacts")({
+  head: titleHead("Artifacts"),
   component: () => <Page.App.Artifacts />,
   beforeLoad: ({ context }) =>
     requirePermission(context.queryClient, "artifact.read"),

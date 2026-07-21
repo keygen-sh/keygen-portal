@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { type LicenseFilters } from "@/queries/licenses"
 import * as Page from "@/pages/index"
 import { requirePermission } from "@/lib/permissions"
+import { titleHead } from "@/lib/document-title"
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value)
@@ -37,6 +38,7 @@ function validateSearch(search: Record<string, unknown>): LicenseFilters {
 }
 
 export const Route = createFileRoute("/$accountId/app/licenses")({
+  head: titleHead("Licenses"),
   component: () => <Page.App.Licenses />,
   validateSearch,
   beforeLoad: ({ context }) =>

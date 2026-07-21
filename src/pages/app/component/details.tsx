@@ -62,6 +62,7 @@ import ResourceLink from "@/components/resource-link"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
 import ConfirmationModal from "@/components/confirmation-modal"
+import DocumentTitle from "@/components/document-title"
 
 export default function ComponentDetails() {
   const { id } = useParams({
@@ -106,6 +107,9 @@ export default function ComponentDetails() {
 
   return (
     <section className="flex h-screen w-full">
+      <DocumentTitle
+        title={`Component: ${component?.attributes.name || component?.attributes.fingerprint || id}`}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
           <Breadcrumb className="flex-1">

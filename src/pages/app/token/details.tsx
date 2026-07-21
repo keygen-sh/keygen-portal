@@ -62,6 +62,7 @@ import ResourceLink from "@/components/resource-link"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import ConfirmationModal from "@/components/confirmation-modal"
+import DocumentTitle from "@/components/document-title"
 
 export default function TokenDetails() {
   const { id } = useParams({ from: "/$accountId/app/tokens/$id" })
@@ -140,6 +141,7 @@ export default function TokenDetails() {
 
   return (
     <section className="flex h-screen w-full">
+      <DocumentTitle title={`Token: ${id}`} />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
           <Breadcrumb className="flex-1">

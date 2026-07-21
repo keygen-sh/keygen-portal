@@ -33,7 +33,7 @@ const config = {
   },
 
   get supportEmail(): string {
-    return import.meta.env.VITE_SUPPORT_EMAIL || ""
+    return import.meta.env.VITE_KEYGEN_SUPPORT_EMAIL || ""
   },
 
   get isTokenAuthenticated(): boolean {

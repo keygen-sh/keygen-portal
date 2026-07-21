@@ -97,6 +97,7 @@ import ResourceLink from "@/components/resource-link"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleCard from "@/components/collapsible-card"
 import ConfirmationModal from "@/components/confirmation-modal"
+import DocumentTitle from "@/components/document-title"
 
 const ReleaseChannelIcons: Record<ReleaseChannel, React.ReactNode> = {
   [ReleaseChannel.Stable]: <Package className="size-3" />,
@@ -243,6 +244,9 @@ export default function ReleaseDetails() {
 
   return (
     <section className="flex h-screen w-full">
+      <DocumentTitle
+        title={`Release: ${(release?.attributes.name ?? release?.attributes.version) || id}`}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
           <Breadcrumb className="flex-1">

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { type ComponentFilters } from "@/queries/components"
 import * as Page from "@/pages/index"
 import { requirePermission } from "@/lib/permissions"
+import { titleHead } from "@/lib/document-title"
 
 function validateSearch(search: Record<string, unknown>): ComponentFilters {
   const filters: ComponentFilters = {}
@@ -16,6 +17,7 @@ function validateSearch(search: Record<string, unknown>): ComponentFilters {
 }
 
 export const Route = createFileRoute("/$accountId/app/components")({
+  head: titleHead("Components"),
   component: () => <Page.App.Components />,
   validateSearch,
   beforeLoad: ({ context }) =>

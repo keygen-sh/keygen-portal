@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { type UserFilters } from "@/types/users"
 import * as Page from "@/pages/index"
 import { requireAllPermissions } from "@/lib/permissions"
+import { titleHead } from "@/lib/document-title"
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value)
@@ -19,6 +20,7 @@ function validateSearch(search: Record<string, unknown>): UserFilters {
 }
 
 export const Route = createFileRoute("/$accountId/app/team")({
+  head: titleHead("Team"),
   component: () => <Page.App.Teams />,
   validateSearch,
   beforeLoad: ({ context }) =>

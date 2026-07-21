@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { type ReleaseFilters } from "@/types/releases"
 import * as Page from "@/pages/index"
 import { requirePermission } from "@/lib/permissions"
+import { titleHead } from "@/lib/document-title"
 
 function validateSearch(search: Record<string, unknown>): ReleaseFilters {
   const filters: ReleaseFilters = {}
@@ -18,6 +19,7 @@ function validateSearch(search: Record<string, unknown>): ReleaseFilters {
 }
 
 export const Route = createFileRoute("/$accountId/app/releases")({
+  head: titleHead("Releases"),
   component: () => <Page.App.Releases />,
   beforeLoad: ({ context }) =>
     requirePermission(context.queryClient, "release.read"),

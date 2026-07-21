@@ -60,6 +60,7 @@ import BackButton from "@/components/back-button"
 import ResourceLink from "@/components/resource-link"
 import CollapsibleCard from "@/components/collapsible-card"
 import ConfirmationModal from "@/components/confirmation-modal"
+import DocumentTitle from "@/components/document-title"
 
 export default function EntitlementDetails() {
   const { id } = useParams({
@@ -109,6 +110,9 @@ export default function EntitlementDetails() {
 
   return (
     <section className="flex h-screen w-full">
+      <DocumentTitle
+        title={`Entitlement: ${entitlement?.attributes.name || id}`}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
           <Breadcrumb className="flex-1">

@@ -4,6 +4,7 @@ import { useCloud } from "@/hooks/use-cloud"
 
 import * as keygen from "@/keygen"
 import * as Page from "@/pages/index"
+import { titleHead } from "@/lib/document-title"
 import { requirePermission } from "@/lib/permissions"
 
 function BillingRoute() {
@@ -23,6 +24,7 @@ function BillingRoute() {
 }
 
 export const Route = createFileRoute("/$accountId/app/billing")({
+  head: titleHead("Billing"),
   component: BillingRoute,
   beforeLoad: ({ context }) =>
     requirePermission(context.queryClient, "account.billing.read"),

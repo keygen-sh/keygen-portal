@@ -74,6 +74,7 @@ import ResourceLink from "@/components/resource-link"
 import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import ConfirmationModal from "@/components/confirmation-modal"
+import DocumentTitle from "@/components/document-title"
 
 export default function WebhookEventDetails() {
   const { id } = useParams({ from: "/$accountId/app/webhook-events/$id" })
@@ -128,6 +129,7 @@ export default function WebhookEventDetails() {
 
   return (
     <section className="flex h-screen w-full">
+      <DocumentTitle title={`Webhook Event: ${id}`} />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
           <Breadcrumb className="flex-1">

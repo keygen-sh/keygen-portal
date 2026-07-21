@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { type RequestLogFilters } from "@/queries/request-logs"
 import { type RequestLogResourceFilter } from "@/types/request-logs"
 
+import { titleHead } from "@/lib/document-title"
 import { requirePermission } from "@/lib/permissions"
 
 import * as Page from "@/pages/index"
@@ -53,6 +54,7 @@ function validateSearch(search: Record<string, unknown>): RequestLogFilters {
 }
 
 export const Route = createFileRoute("/$accountId/app/request-logs")({
+  head: titleHead("Request Logs"),
   component: () => <Page.App.RequestLogs />,
   validateSearch,
   beforeLoad: ({ context }) =>

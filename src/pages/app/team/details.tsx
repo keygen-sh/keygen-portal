@@ -74,6 +74,7 @@ import ResourceLink from "@/components/resource-link"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
 import ConfirmationModal from "@/components/confirmation-modal"
+import DocumentTitle from "@/components/document-title"
 
 const UserStatusIcons: Partial<Record<UserStatus, React.ReactNode>> = {
   [UserStatus.Active]: <CircleCheck className="size-3" />,
@@ -138,6 +139,9 @@ export default function TeamDetails() {
 
   return (
     <section className="flex h-screen w-full">
+      <DocumentTitle
+        title={`Team member: ${user?.attributes.fullName || user?.attributes.email || id}`}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
           <Breadcrumb className="flex-1">

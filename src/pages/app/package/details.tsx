@@ -69,6 +69,7 @@ import GoToButton from "@/components/go-to-button"
 import ResourceLink from "@/components/resource-link"
 import ConfirmationModal from "@/components/confirmation-modal"
 import CollapsibleCard from "@/components/collapsible-card"
+import DocumentTitle from "@/components/document-title"
 
 export default function PackageDetails() {
   const { id } = useParams({ from: "/$accountId/app/packages/$id" })
@@ -111,6 +112,9 @@ export default function PackageDetails() {
 
   return (
     <section className="flex h-screen w-full">
+      <DocumentTitle
+        title={`Package: ${(pkg?.attributes.name ?? pkg?.attributes.key) || id}`}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
           <Breadcrumb className="flex-1">

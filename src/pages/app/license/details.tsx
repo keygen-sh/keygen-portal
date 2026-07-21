@@ -115,6 +115,7 @@ import CollapsibleMenu from "@/components/collapsible-menu"
 import CollapsibleCard from "@/components/collapsible-card"
 import ConfirmationModal from "@/components/confirmation-modal"
 import LimitBadge, { OverriddenBadge } from "@/components/limit-badge"
+import DocumentTitle from "@/components/document-title"
 
 const LicenseStatusIcons: Record<LicenseStatus, React.ReactNode> = {
   [LicenseStatus.Active]: <CircleCheck className="size-3" />,
@@ -259,6 +260,7 @@ export default function LicenseDetails() {
 
   return (
     <section className="flex h-screen w-full">
+      <DocumentTitle title={`License: ${license?.attributes.name || id}`} />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
           <Breadcrumb className="flex-1">

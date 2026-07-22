@@ -885,17 +885,12 @@ function DurationField({
               <DurationInput
                 value={field.value}
                 onChange={(value) => {
+                  field.onChange(value)
                   if (mode === PolicyMode.Create && value === null) {
-                    form.reset({
-                      ...form.getValues(),
-                      duration: value,
-                      expirationStrategy: undefined,
-                      expirationBasis: undefined,
-                      renewalBasis: undefined,
-                      transferStrategy: undefined,
-                    })
-                  } else {
-                    field.onChange(value)
+                    form.resetField("expirationStrategy")
+                    form.resetField("expirationBasis")
+                    form.resetField("renewalBasis")
+                    form.resetField("transferStrategy")
                   }
                 }}
                 units={["unlimited", "days", "weeks", "months", "years"]}
@@ -1200,17 +1195,12 @@ function RequireHeartbeatField({
               }
               onValueChange={(value) => {
                 const newValue = value === "" ? undefined : value === "true"
+                field.onChange(newValue)
                 if (mode === PolicyMode.Create && !newValue) {
-                  form.reset({
-                    ...form.getValues(),
-                    requireHeartbeat: newValue,
-                    heartbeatDuration: undefined,
-                    heartbeatCullStrategy: undefined,
-                    heartbeatBasis: undefined,
-                    heartbeatResurrectionStrategy: undefined,
-                  })
-                } else {
-                  field.onChange(newValue)
+                  form.resetField("heartbeatDuration")
+                  form.resetField("heartbeatCullStrategy")
+                  form.resetField("heartbeatBasis")
+                  form.resetField("heartbeatResurrectionStrategy")
                 }
               }}
             >
@@ -2614,14 +2604,9 @@ function CheckInIntervalField({
             <NullableSelect<CheckInInterval>
               value={field.value}
               onChange={(value) => {
+                field.onChange(value)
                 if (mode === PolicyMode.Create && value === null) {
-                  form.reset({
-                    ...form.getValues(),
-                    checkInInterval: value,
-                    checkInIntervalCount: undefined,
-                  })
-                } else {
-                  field.onChange(value)
+                  form.resetField("checkInIntervalCount")
                 }
               }}
               invalid={!!fieldState.error}

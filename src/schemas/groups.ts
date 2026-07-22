@@ -2,13 +2,15 @@ import { FieldPath } from "react-hook-form"
 import { z } from "zod"
 
 import { CombineFormValues } from "@/types/forms"
+
+import { NumberSchema } from "@/schemas/numbers"
 import { MetadataPairsSchema } from "@/schemas/metadata"
 
 const BaseShape = z.object({
   name: z.string().trim().min(1, "Name is required"),
-  maxUsers: z.number().int().positive().nullable().optional(),
-  maxLicenses: z.number().int().positive().nullable().optional(),
-  maxMachines: z.number().int().positive().nullable().optional(),
+  maxUsers: NumberSchema.int().positive().nullable().optional(),
+  maxLicenses: NumberSchema.int().positive().nullable().optional(),
+  maxMachines: NumberSchema.int().positive().nullable().optional(),
   metadata: MetadataPairsSchema.optional(),
 })
 

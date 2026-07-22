@@ -3,6 +3,7 @@ import { z } from "zod"
 
 import { SigningAlgorithm } from "@/types/files"
 import { CombineFormValues } from "@/types/forms"
+import { NumberSchema } from "@/schemas/numbers"
 import { MetadataPairsSchema } from "@/schemas/metadata"
 
 const BaseShape = z.object({
@@ -15,13 +16,13 @@ const BaseShape = z.object({
   expiry: z.string().nullable().optional(),
   suspended: z.boolean().optional().nullable().default(null),
   protected: z.boolean().optional().nullable().default(null),
-  maxMachines: z.number().int().positive().nullable().optional(),
-  maxProcesses: z.number().int().positive().nullable().optional(),
-  maxUsers: z.number().int().positive().nullable().optional(),
-  maxCores: z.number().int().positive().nullable().optional(),
-  maxMemory: z.number().int().positive().nullable().optional(),
-  maxDisk: z.number().int().positive().nullable().optional(),
-  maxUses: z.number().int().positive().nullable().optional(),
+  maxMachines: NumberSchema.int().positive().nullable().optional(),
+  maxProcesses: NumberSchema.int().positive().nullable().optional(),
+  maxUsers: NumberSchema.int().positive().nullable().optional(),
+  maxCores: NumberSchema.int().positive().nullable().optional(),
+  maxMemory: NumberSchema.int().positive().nullable().optional(),
+  maxDisk: NumberSchema.int().positive().nullable().optional(),
+  maxUses: NumberSchema.int().positive().nullable().optional(),
   permissions: z.array(z.string()).nullable().optional(),
   metadata: MetadataPairsSchema.optional(),
   ownerId: z.string().nullable().optional(),
@@ -96,7 +97,7 @@ const CheckOutShape = z.object({
   includeEnabled: z.boolean().default(false),
   include: z.array(z.string()).default([]),
   ttlEnabled: z.boolean().default(false),
-  ttl: z.number().nullable().default(null),
+  ttl: NumberSchema.nullable().default(null),
   encryptEnabled: z.boolean().default(false),
   algorithm: z.string().default(SigningAlgorithm.Ed25519),
 })

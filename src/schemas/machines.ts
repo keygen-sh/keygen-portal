@@ -3,6 +3,7 @@ import { z } from "zod"
 
 import { SigningAlgorithm } from "@/types/files"
 import { CombineFormValues } from "@/types/forms"
+import { NumberSchema } from "@/schemas/numbers"
 import { MetadataPairsSchema } from "@/schemas/metadata"
 
 const BaseShape = z.object({
@@ -10,9 +11,9 @@ const BaseShape = z.object({
   ip: z.string().trim().nullable().optional(),
   hostname: z.string().trim().nullable().optional(),
   platform: z.string().trim().nullable().optional(),
-  cores: z.number().int().positive().nullable().optional(),
-  memory: z.number().int().positive().nullable().optional(),
-  disk: z.number().int().positive().nullable().optional(),
+  cores: NumberSchema.int().positive().nullable().optional(),
+  memory: NumberSchema.int().positive().nullable().optional(),
+  disk: NumberSchema.int().positive().nullable().optional(),
   metadata: MetadataPairsSchema.optional(),
   groupId: z.string().nullable().optional(),
   ownerId: z.string().nullable().optional(),
@@ -62,7 +63,7 @@ const CheckOutShape = z.object({
   includeEnabled: z.boolean().default(false),
   include: z.array(z.string()).default([]),
   ttlEnabled: z.boolean().default(false),
-  ttl: z.number().nullable().default(null),
+  ttl: NumberSchema.nullable().default(null),
   encryptEnabled: z.boolean().default(false),
   algorithm: z.string().default(SigningAlgorithm.Ed25519),
 })

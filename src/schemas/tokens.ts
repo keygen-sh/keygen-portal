@@ -3,14 +3,15 @@ import { z } from "zod"
 
 import { CombineFormValues } from "@/types/forms"
 import { TokenBearerKind } from "@/types/tokens"
+import { NumberSchema } from "@/schemas/numbers"
 
 const BaseShape = z.object({
   bearerKind: z.nativeEnum(TokenBearerKind),
   bearerId: z.string().trim().nullable().optional(),
   name: z.string().trim().nullable().optional(),
   expiry: z.string().nullable().optional(),
-  maxActivations: z.number().int().nullable().optional(),
-  maxDeactivations: z.number().int().nullable().optional(),
+  maxActivations: NumberSchema.int().nullable().optional(),
+  maxDeactivations: NumberSchema.int().nullable().optional(),
   permissions: z.array(z.string()).nullable().optional(),
 })
 

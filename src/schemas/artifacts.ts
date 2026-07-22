@@ -2,12 +2,13 @@ import { FieldPath } from "react-hook-form"
 import { z } from "zod"
 
 import { CombineFormValues } from "@/types/forms"
+import { CoercedNumberSchema } from "@/schemas/numbers"
 import { MetadataPairsSchema } from "@/schemas/metadata"
 
 const BaseShape = z.object({
   filename: z.string().trim().min(1, "Filename is required"),
   filetype: z.string().trim().nullable().optional(),
-  filesize: z.coerce.number().int().min(0).nullable().optional(),
+  filesize: CoercedNumberSchema.int().min(0).nullable().optional(),
   platform: z.string().trim().nullable().optional(),
   arch: z.string().trim().nullable().optional(),
   signature: z.string().trim().nullable().optional(),
@@ -22,7 +23,7 @@ const ReleaseShape = z.object({
 const CreateShape = BaseShape.merge(ReleaseShape)
 
 const UpdateShape = z.object({
-  filesize: z.coerce.number().int().min(0).nullable().optional(),
+  filesize: CoercedNumberSchema.int().min(0).nullable().optional(),
   signature: z.string().trim().nullable().optional(),
   checksum: z.string().trim().nullable().optional(),
   metadata: MetadataPairsSchema.optional(),

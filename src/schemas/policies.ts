@@ -26,6 +26,7 @@ import {
   AccessTemplates,
   MeteredTemplates,
 } from "@/types/policies"
+import { CoercedNumberSchema } from "@/schemas/numbers"
 import { MetadataPairsSchema, recordToMetadataPairs } from "@/schemas/metadata"
 
 // NB(ezekg) zod schemas have _def.typeName at runtime but ZodTypeDef
@@ -84,10 +85,10 @@ export const BaseShape = z.object({
     .nonnegative()
     .nullish()
     .transform((value) => (value == null ? value : value === 0 ? null : value)),
-  maxUses: z.coerce.number().int().positive().nullish(),
-  maxCores: z.coerce.number().int().positive().nullish(),
-  maxMemory: z.coerce.number().int().positive().nullish(),
-  maxDisk: z.coerce.number().int().positive().nullish(),
+  maxUses: CoercedNumberSchema.int().positive().nullish(),
+  maxCores: CoercedNumberSchema.int().positive().nullish(),
+  maxMemory: CoercedNumberSchema.int().positive().nullish(),
+  maxDisk: CoercedNumberSchema.int().positive().nullish(),
   protected: z.boolean().default(true),
 
   requireHeartbeat: z.boolean().default(false),
@@ -386,7 +387,7 @@ export type TemplateFormValues = z.input<typeof TemplateSchema>
 export type TemplateValues = z.output<typeof TemplateSchema>
 
 export const TimedShape = z.object({
-  duration: z.coerce.number().int().positive().nullish().default(1209600),
+  duration: CoercedNumberSchema.int().positive().nullish().default(1209600),
   renewalBasis: z
     .nativeEnum(RenewalBasis)
     .nullish()
@@ -447,7 +448,7 @@ export const PerpetualFallbackShape = z.object({
 export const NodeLockedShape = z.object({
   requireFingerprintScope: z.boolean().default(true),
   floating: z.boolean().default(true),
-  maxMachines: z.coerce.number().int().min(1).optional().default(1),
+  maxMachines: CoercedNumberSchema.int().min(1).optional().default(1),
 })
 
 export const NodeLockedRules = <TInput, TOutput extends BaseValues>(

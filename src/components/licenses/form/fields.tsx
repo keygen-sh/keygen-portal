@@ -43,6 +43,7 @@ import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
 import * as Calendars from "@/components/calendars"
 import MultiSelect from "@/components/multi-select"
+import NumberInput from "@/components/number-input"
 import MetadataInput from "@/components/metadata-input"
 import ByteSizeInput from "@/components/byte-size-input"
 
@@ -565,22 +566,14 @@ function MaxMachinesField({
             tooltip={descriptions.maxMachines}
           >
             <FormControl>
-              <Input
+              <NumberInput
                 {...field}
-                type="number"
-                min={1}
                 placeholder={
                   selectedPolicy
                     ? getLimitPlaceholder(selectedPolicy.attributes.maxMachines)
                     : "Inherit from policy"
                 }
-                value={field.value ?? ""}
                 autoFocus={autoFocus}
-                onChange={(e) =>
-                  field.onChange(
-                    e.target.value ? parseInt(e.target.value) : null,
-                  )
-                }
                 disabled={selectedPolicy?.attributes.floating === false}
                 disabledTooltip={
                   LicenseDisabledFormFieldDescriptions.maxMachines
@@ -621,10 +614,8 @@ function MaxProcessesField({
             tooltip={descriptions.maxProcesses}
           >
             <FormControl>
-              <Input
+              <NumberInput
                 {...field}
-                type="number"
-                min={1}
                 placeholder={
                   selectedPolicy
                     ? getLimitPlaceholder(
@@ -632,13 +623,7 @@ function MaxProcessesField({
                       )
                     : "Inherit from policy"
                 }
-                value={field.value ?? ""}
                 autoFocus={autoFocus}
-                onChange={(e) =>
-                  field.onChange(
-                    e.target.value ? parseInt(e.target.value) : null,
-                  )
-                }
               />
             </FormControl>
           </Forms.Field.Header>
@@ -675,22 +660,14 @@ function MaxUsersField({
             tooltip={descriptions.maxUsers}
           >
             <FormControl>
-              <Input
+              <NumberInput
                 {...field}
-                type="number"
-                min={1}
                 placeholder={
                   selectedPolicy
                     ? getLimitPlaceholder(selectedPolicy.attributes.maxUsers)
                     : "Inherit from policy"
                 }
-                value={field.value ?? ""}
                 autoFocus={autoFocus}
-                onChange={(e) =>
-                  field.onChange(
-                    e.target.value ? parseInt(e.target.value) : null,
-                  )
-                }
               />
             </FormControl>
           </Forms.Field.Header>
@@ -727,22 +704,14 @@ function MaxCoresField({
             tooltip={descriptions.maxCores}
           >
             <FormControl>
-              <Input
+              <NumberInput
                 {...field}
-                type="number"
-                min={1}
                 placeholder={
                   selectedPolicy
                     ? getLimitPlaceholder(selectedPolicy.attributes.maxCores)
                     : "Inherit from policy"
                 }
-                value={field.value ?? ""}
                 autoFocus={autoFocus}
-                onChange={(e) =>
-                  field.onChange(
-                    e.target.value ? parseInt(e.target.value) : null,
-                  )
-                }
               />
             </FormControl>
           </Forms.Field.Header>
@@ -864,22 +833,14 @@ function MaxUsesField({
             tooltip={descriptions.maxUses}
           >
             <FormControl>
-              <Input
+              <NumberInput
                 {...field}
-                type="number"
-                min={1}
                 placeholder={
                   selectedPolicy
                     ? getLimitPlaceholder(selectedPolicy.attributes.maxUses)
                     : "Inherit from policy"
                 }
-                value={field.value ?? ""}
                 autoFocus={autoFocus}
-                onChange={(e) =>
-                  field.onChange(
-                    e.target.value ? parseInt(e.target.value) : null,
-                  )
-                }
               />
             </FormControl>
           </Forms.Field.Header>

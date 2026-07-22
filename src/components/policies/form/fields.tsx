@@ -60,6 +60,7 @@ import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
+import NumberInput from "@/components/number-input"
 import MetadataInput from "@/components/metadata-input"
 import NullableSelect from "@/components/nullable-select"
 import DurationInput from "@/components/duration-input"
@@ -1523,12 +1524,9 @@ function MaxMachinesField({
             tooltip={descriptions.maxMachines}
           >
             <FormControl>
-              <Input
-                type="number"
-                min={1}
+              <NumberInput
                 placeholder="e.g. 1"
                 {...field}
-                value={field.value ?? ""}
                 autoFocus={autoFocus}
               />
             </FormControl>
@@ -2305,12 +2303,9 @@ function MaxProcessesField({
             tooltip={descriptions.maxProcesses}
           >
             <FormControl>
-              <Input
-                type="number"
-                min={1}
+              <NumberInput
                 placeholder="e.g. 1"
                 {...field}
-                value={field.value ?? ""}
                 autoFocus={autoFocus}
               />
             </FormControl>
@@ -2359,12 +2354,9 @@ function MaxUsersField({
             tooltip={descriptions.maxUsers}
           >
             <FormControl>
-              <Input
-                type="number"
-                min={1}
+              <NumberInput
                 placeholder="e.g. 1"
                 {...field}
-                value={field.value ?? ""}
                 autoFocus={autoFocus}
               />
             </FormControl>
@@ -2413,12 +2405,9 @@ function MaxUsesField({
             tooltip={descriptions.maxUses}
           >
             <FormControl>
-              <Input
-                type="number"
-                min={1}
+              <NumberInput
                 placeholder="e.g. 1"
                 {...field}
-                value={field.value ?? ""}
                 autoFocus={autoFocus}
               />
             </FormControl>
@@ -2467,12 +2456,9 @@ function MaxCoresField({
             tooltip={descriptions.maxCores}
           >
             <FormControl>
-              <Input
-                type="number"
-                min={1}
+              <NumberInput
                 placeholder="e.g. 1"
                 {...field}
-                value={field.value ?? ""}
                 autoFocus={autoFocus}
               />
             </FormControl>
@@ -2702,15 +2688,7 @@ function CheckInIntervalCountField({
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <span tabIndex={0}>
-                      <Input
-                        type="number"
-                        min={1}
-                        max={365}
-                        placeholder="1 - 365"
-                        {...field}
-                        value={field.value ?? ""}
-                        disabled
-                      />
+                      <NumberInput placeholder="1 - 365" {...field} disabled />
                     </span>
                   </TooltipTrigger>
                   <TooltipContent className="max-w-80 bg-background-4 text-pretty text-content-muted">
@@ -2718,13 +2696,9 @@ function CheckInIntervalCountField({
                   </TooltipContent>
                 </Tooltip>
               ) : (
-                <Input
-                  type="number"
-                  min={1}
-                  max={365}
+                <NumberInput
                   placeholder="1 - 365"
                   {...field}
-                  value={field.value ?? ""}
                   autoFocus={autoFocus}
                 />
               )}

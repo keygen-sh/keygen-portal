@@ -57,6 +57,7 @@ import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
 import * as Calendars from "@/components/calendars"
 import MultiSelect from "@/components/multi-select"
+import NumberInput from "@/components/number-input"
 import { CardSelector, CardOption } from "@/components/card-selector"
 
 const BEARER_KIND_ICONS: Record<TokenBearerKind, ReactNode> = {
@@ -495,17 +496,7 @@ function MaxActivationsField({
             tooltip={TokenFormFieldDescriptions.maxActivations}
           >
             <FormControl>
-              <Input
-                type="number"
-                min={0}
-                value={field.value ?? ""}
-                placeholder="Unlimited"
-                onChange={(e) =>
-                  field.onChange(
-                    e.target.value ? parseInt(e.target.value) : null,
-                  )
-                }
-              />
+              <NumberInput {...field} placeholder="Unlimited" />
             </FormControl>
           </Forms.Field.Header>
           <FormMessage />
@@ -535,17 +526,7 @@ function MaxDeactivationsField({
             tooltip={TokenFormFieldDescriptions.maxDeactivations}
           >
             <FormControl>
-              <Input
-                type="number"
-                min={0}
-                value={field.value ?? ""}
-                placeholder="Unlimited"
-                onChange={(e) =>
-                  field.onChange(
-                    e.target.value ? parseInt(e.target.value) : null,
-                  )
-                }
-              />
+              <NumberInput {...field} placeholder="Unlimited" />
             </FormControl>
           </Forms.Field.Header>
           <FormMessage />

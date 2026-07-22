@@ -18,6 +18,7 @@ import {
 import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
+import NumberInput from "@/components/number-input"
 import MetadataInput from "@/components/metadata-input"
 
 type Descriptions = typeof GroupFormFieldDescriptions
@@ -194,17 +195,10 @@ function MaxUsersField({
             optional
           >
             <FormControl>
-              <Input
-                type="number"
-                min={1}
+              <NumberInput
                 placeholder="e.g. 10"
                 {...field}
-                value={field.value ?? ""}
                 autoFocus={autoFocus}
-                onChange={(e) => {
-                  const value = e.target.value
-                  field.onChange(value === "" ? null : Number(value))
-                }}
               />
             </FormControl>
           </Forms.Field.Header>
@@ -239,17 +233,10 @@ function MaxLicensesField({
             optional
           >
             <FormControl>
-              <Input
-                type="number"
-                min={1}
+              <NumberInput
                 placeholder="e.g. 100"
                 {...field}
-                value={field.value ?? ""}
                 autoFocus={autoFocus}
-                onChange={(e) => {
-                  const value = e.target.value
-                  field.onChange(value === "" ? null : Number(value))
-                }}
               />
             </FormControl>
           </Forms.Field.Header>
@@ -284,17 +271,10 @@ function MaxMachinesField({
             optional
           >
             <FormControl>
-              <Input
-                type="number"
-                min={1}
+              <NumberInput
                 placeholder="e.g. 50"
                 {...field}
-                value={field.value ?? ""}
                 autoFocus={autoFocus}
-                onChange={(e) => {
-                  const value = e.target.value
-                  field.onChange(value === "" ? null : Number(value))
-                }}
               />
             </FormControl>
           </Forms.Field.Header>

@@ -1,6 +1,5 @@
 import { useState } from "react"
 
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
   Popover,
@@ -17,7 +16,13 @@ import {
   formatByteUnitValue,
 } from "@/lib/bytes"
 
-interface ByteSizeInputProps {
+import NumberInput from "@/components/number-input"
+
+interface ByteSizeInputProps
+  extends Pick<
+    React.ComponentProps<"input">,
+    "id" | "aria-invalid" | "aria-describedby" | "ref"
+  > {
   value?: number | null
   onChange: (bytes: number | null) => void
   defaultUnit?: ByteUnitKey
@@ -35,6 +40,7 @@ export default function ByteSizeInput({
   placeholderBytes,
   autoFocus,
   className,
+  ...inputProps
 }: ByteSizeInputProps): React.ReactElement {
   const [unit, setUnit] = useState<ByteUnit>(() =>
     selectByteUnit(value, defaultUnit),
@@ -42,14 +48,12 @@ export default function ByteSizeInput({
   const [unitsOpen, setUnitsOpen] = useState(false)
 
   const apply = (n: number | null, u: ByteUnit) => {
-    if (n == null || n <= 0) onChange(null)
+    if (n != null && Number.isNaN(n)) onChange(NaN)
+    else if (n == null || n <= 0) onChange(null)
     else onChange(Math.round(n * u.bytes))
   }
 
-  const onNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.currentTarget.value
-    const next = raw === "" ? null : Number(raw)
-
+  const onNumberChange = (next: number | null) => {
     apply(next, unit)
   }
 
@@ -58,7 +62,12 @@ export default function ByteSizeInput({
     setUnitsOpen(false)
   }
 
-  const valueInUnit = formatByteUnitValue(value, unit)
+  const valueInUnit =
+    value == null
+      ? null
+      : Number.isNaN(value)
+        ? NaN
+        : Number((value / unit.bytes).toFixed(2))
   const placeholderInUnit =
     placeholderBytes === undefined
       ? placeholder
@@ -68,10 +77,9 @@ export default function ByteSizeInput({
 
   return (
     <div className={cn("flex items-stretch", className)}>
-      <Input
-        type="number"
-        min={unit.bytes === 1 ? 1 : 0.01}
-        step={unit.bytes === 1 ? 1 : "any"}
+      <NumberInput
+        {...inputProps}
+        decimal={unit.bytes !== 1}
         value={valueInUnit}
         placeholder={placeholderInUnit}
         onChange={onNumberChange}

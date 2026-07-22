@@ -1,7 +1,6 @@
 import { useState, useMemo, useRef } from "react"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
 
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
@@ -26,6 +25,8 @@ import {
 import { cn } from "@/lib/utils"
 
 import { useMobile } from "@/hooks/use-mobile"
+
+import NumberInput from "@/components/number-input"
 
 type Unit = { key: string; label: string; seconds: number | null }
 
@@ -110,7 +111,11 @@ function selectUnit(
   return positive ?? allowed[0]
 }
 
-interface DurationInputProps {
+interface DurationInputProps
+  extends Pick<
+    React.ComponentProps<"input">,
+    "id" | "aria-invalid" | "aria-describedby"
+  > {
   value?: number | null
   onChange: (seconds: number | null) => void
   units?: Array<Unit["key"]>
@@ -130,6 +135,7 @@ export default function DurationInput({
   autoFocus,
   disabledTooltip,
   className,
+  ...inputProps
 }: DurationInputProps): React.ReactElement {
   const availableUnits = useMemo(() => {
     if (!units || units.length === 0) return DEFAULT_UNITS
@@ -153,8 +159,16 @@ export default function DurationInput({
       ? Math.max(1, Math.round(value / unit.seconds))
       : null
 
+  const inputValue =
+    typeof value === "number" && Number.isNaN(value)
+      ? NaN
+      : unit.seconds == null || num == null
+        ? null
+        : num
+
   const apply = (n: number | null, u: Unit) => {
-    if (n == null || u.seconds == null) onChange(null)
+    if (n != null && Number.isNaN(n)) onChange(NaN)
+    else if (n == null || u.seconds == null) onChange(null)
     else onChange(n > 0 ? n * u.seconds : null)
   }
 
@@ -165,12 +179,11 @@ export default function DurationInput({
     onChange(seconds)
   }
 
-  const onNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.currentTarget.value
-    const next = raw === "" ? null : Number(raw)
+  const onNumberChange = (next: number | null) => {
+    const isNaNValue = next != null && Number.isNaN(next)
 
-    // Switch to a default unit if current unit is unlimited
-    if (unit.seconds == null && next != null) {
+    // switch to a default unit if current unit is unlimited
+    if (!isNaNValue && unit.seconds == null && next != null) {
       const defaultUnit =
         availableUnits.find((u) => u.key === "days") ??
         availableUnits.find((u) => u.seconds != null) ??
@@ -194,8 +207,6 @@ export default function DurationInput({
     }
   }
 
-  const isUnlimited = unit.seconds == null
-
   const content = (
     <div className={cn("flex items-stretch", className)}>
       <Popover
@@ -205,12 +216,10 @@ export default function DurationInput({
         modal={true}
       >
         <PopoverPrimitive.Anchor asChild>
-          <Input
+          <NumberInput
+            {...inputProps}
             ref={inputRef}
-            type="number"
-            min={1}
-            step={1}
-            value={isUnlimited || num == null ? "" : num}
+            value={inputValue}
             onFocus={() => setPresetsOpen(true)}
             onChange={onNumberChange}
             disabled={disabled}

@@ -23,6 +23,7 @@ import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
+import NumberInput from "@/components/number-input"
 import MetadataInput from "@/components/metadata-input"
 import ByteSizeInput from "@/components/byte-size-input"
 
@@ -468,17 +469,10 @@ function CoresField({
             optional
           >
             <FormControl>
-              <Input
-                type="number"
-                min={1}
+              <NumberInput
                 placeholder="e.g. 4"
                 {...field}
-                value={field.value ?? ""}
                 autoFocus={autoFocus}
-                onChange={(e) => {
-                  const value = e.target.value
-                  field.onChange(value === "" ? null : Number(value))
-                }}
               />
             </FormControl>
           </Forms.Field.Header>

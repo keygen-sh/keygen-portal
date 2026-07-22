@@ -28,6 +28,7 @@ import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
+import NumberInput from "@/components/number-input"
 import MetadataInput from "@/components/metadata-input"
 
 type Descriptions = typeof ArtifactFormFieldDescriptions
@@ -307,10 +308,8 @@ function FilesizeField({
             optional
           >
             <FormControl>
-              <Input
+              <NumberInput
                 {...field}
-                value={field.value ?? ""}
-                type="number"
                 placeholder="e.g. 3097"
                 autoFocus={autoFocus}
                 autoComplete="off"

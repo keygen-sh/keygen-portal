@@ -1,15 +1,5 @@
 import { clsx, type ClassValue } from "clsx"
-import type { Duration } from "date-fns"
 import { twMerge } from "tailwind-merge"
-
-import {
-  SECONDS_PER_MINUTE,
-  SECONDS_PER_HOUR,
-  SECONDS_PER_DAY,
-  SECONDS_PER_WEEK,
-  SECONDS_PER_MONTH,
-  SECONDS_PER_YEAR,
-} from "@/lib/temporal"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -109,44 +99,6 @@ export function capitalize(s: string): string {
 export function labelize(value?: string | null, map?: Record<string, string>) {
   if (!value) return "--"
   return (map && map[value]) || titleCase(value)
-}
-
-const DURATION_UNITS: [keyof Duration, number][] = [
-  ["years", SECONDS_PER_YEAR],
-  ["months", SECONDS_PER_MONTH],
-  ["weeks", SECONDS_PER_WEEK],
-  ["days", SECONDS_PER_DAY],
-  ["hours", SECONDS_PER_HOUR],
-  ["minutes", SECONDS_PER_MINUTE],
-  ["seconds", 1],
-]
-
-export function secondsToParts(total?: number | null): Duration | null {
-  if (total == null || total === 0) return null
-
-  const seconds = Math.max(0, Math.floor(total))
-
-  // when the value is a whole number of a single unit, show just
-  // that unit so it reads back the way it was entered, e.g. 1 year
-  for (const [unit, size] of DURATION_UNITS) {
-    if (size > 1 && seconds % size === 0) {
-      const part: Duration = {}
-      part[unit] = seconds / size
-      return part
-    }
-  }
-
-  // otherwise break it down across units
-  let remaining = seconds
-  const parts: Duration = {}
-  for (const [unit, size] of DURATION_UNITS) {
-    const count = Math.trunc(remaining / size)
-    if (count > 0) {
-      parts[unit] = count
-      remaining -= count * size
-    }
-  }
-  return parts
 }
 
 export function splitLastWord(s: string): { head: string; tail: string } {

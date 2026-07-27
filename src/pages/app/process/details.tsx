@@ -314,7 +314,7 @@ export default function ProcessDetails() {
                         variant="none"
                         value={
                           <Attribute.Value
-                            type="number"
+                            type="duration"
                             value={process.attributes.interval}
                             tooltip={ProcessAttributeDescriptions.interval}
                           />

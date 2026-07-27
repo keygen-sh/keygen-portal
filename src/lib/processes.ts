@@ -10,5 +10,5 @@ export const processAttributeTypeSchema: Record<
   status: "string",
   lastHeartbeat: "date",
   nextHeartbeat: "date",
-  interval: "number",
+  interval: "duration",
 }

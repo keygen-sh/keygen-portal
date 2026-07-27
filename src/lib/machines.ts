@@ -16,7 +16,7 @@ export const machineAttributeTypeSchema: Record<
   disk: "bytes",
   requireHeartbeat: "boolean",
   heartbeatStatus: "string",
-  heartbeatDuration: "number",
+  heartbeatDuration: "duration",
   lastHeartbeat: "date",
   nextHeartbeat: "date",
   lastCheckOut: "date",

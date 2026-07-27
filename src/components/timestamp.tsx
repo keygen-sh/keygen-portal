@@ -156,7 +156,7 @@ export function TimestampPopover({
       {tooltip && (
         <>
           <p className="text-pretty text-content-loud">{tooltip}</p>
-          <Separator className="my-2" />
+          <Separator className="my-2.5" />
         </>
       )}
       <div className="flex items-center justify-between">

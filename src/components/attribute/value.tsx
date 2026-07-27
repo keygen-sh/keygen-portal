@@ -1,12 +1,12 @@
-import { formatDuration } from "date-fns"
-
 import TooltipBadge from "@/components/tooltip-badge"
+import { DurationPopover } from "@/components/duration"
 import { TimestampPopover } from "@/components/timestamp"
 
 import { truncateKey } from "@/lib/licenses"
-import { cn, capitalize, secondsToParts, labelize } from "@/lib/utils"
+import { cn, capitalize, labelize } from "@/lib/utils"
 import { formatByteSize, formatRawByteSize } from "@/lib/bytes"
 import { formatRelativeTime, formatUtcDate } from "@/lib/timestamps"
+import { toSeconds, formatCompactDurationLabel } from "@/lib/temporal"
 
 import { useMobile } from "@/hooks/use-mobile"
 
@@ -96,15 +96,42 @@ export default function AttributeValue({
     )
   }
 
+  if (type === "duration") {
+    const numeric =
+      typeof raw === "number"
+        ? raw
+        : typeof raw === "string"
+          ? Number(raw)
+          : null
+    const seconds = toSeconds(numeric)
+
+    if (seconds == null) {
+      return (
+        <TooltipBadge
+          value={emptyLabel}
+          variant="disabled"
+          tooltip={tooltip}
+          className={className}
+        />
+      )
+    }
+
+    return (
+      <TooltipBadge
+        value={formatCompactDurationLabel(seconds)}
+        variant={forceDisabled ? "disabled" : undefined}
+        interactive
+        content={<DurationPopover value={seconds} tooltip={tooltip} />}
+        contentClassName="w-80 max-w-none bg-popover p-3"
+        className={className}
+      />
+    )
+  }
+
   let value: string
   let hoverValue: string | undefined
 
   switch (type) {
-    case "duration": {
-      const parts = secondsToParts(Number(raw))
-      value = parts == null ? "Not set" : formatDuration(parts, { zero: false })
-      break
-    }
     case "boolean": {
       const bool = Boolean(raw)
       value = isUnset ? emptyLabel : bool ? "Enabled" : "Disabled"

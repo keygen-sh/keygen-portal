@@ -2,14 +2,17 @@ import { createFileRoute } from "@tanstack/react-router"
 import { type UserFilters } from "@/queries/users"
 import * as Page from "@/pages/index"
 import { requirePermission } from "@/lib/permissions"
+import { cursorSearch, type CursorSearch } from "@/lib/pagination"
 import { titleHead } from "@/lib/document-title"
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value)
 }
 
-function validateSearch(search: Record<string, unknown>): UserFilters {
-  const filters: UserFilters = {}
+function validateSearch(
+  search: Record<string, unknown>,
+): UserFilters & CursorSearch {
+  const filters: UserFilters & CursorSearch = cursorSearch(search)
 
   if (typeof search.status === "string") filters.status = search.status
   if (typeof search.assigned === "boolean") filters.assigned = search.assigned

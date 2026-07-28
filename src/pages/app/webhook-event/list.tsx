@@ -4,8 +4,7 @@ import { WebhookEvent } from "@/types/webhook-events"
 
 import { useListWebhookEvents } from "@/queries/webhook-events"
 
-import { useDataTable } from "@/hooks/use-data-table"
-import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
+import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 import { useWebhookEventTableColumns } from "@/hooks/use-webhook-event-table-columns"
 
@@ -15,9 +14,8 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function WebhookEventsList() {
-  const table = useDataTable()
-  const { page, pageSize, setPage } = table
-  const { cursor, goToPage } = useCursors(page, setPage)
+  const table = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = table
   const columns = useWebhookEventTableColumns()
 
   const {

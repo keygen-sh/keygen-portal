@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react"
+import { useState, useMemo } from "react"
 import { useLocation, useNavigate } from "@tanstack/react-router"
 
 import { Badge } from "@/components/ui/badge"
@@ -10,8 +10,7 @@ import { useListUsers } from "@/queries/users"
 import { useGetAccount, useGetAccountPlan } from "@/queries/accounts"
 
 import { useMobile } from "@/hooks/use-mobile"
-import { useDataTable } from "@/hooks/use-data-table"
-import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
+import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useFilterSearch } from "@/hooks/use-filter-search"
 import { usePermissions } from "@/hooks/use-permissions"
 import { useTeamTableColumns } from "@/hooks/use-team-table-columns"
@@ -29,21 +28,12 @@ import Pagination from "@/components/pagination"
 export default function TeamPage() {
   const isMobile = useMobile()
 
-  const table = useDataTable()
-  const { page, pageSize, setPage } = table
+  const table = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = table
   const columns = useTeamTableColumns()
   const { can } = usePermissions()
 
   const [filters, setFilters] = useFilterSearch<UserFilters>()
-  const { cursor, reset, goToPage } = useCursors(page, setPage)
-
-  const handleFiltersChange = useCallback(
-    (next: UserFilters) => {
-      setFilters(next)
-      reset()
-    },
-    [setFilters, reset],
-  )
 
   // NB(cazden) API requires 'admin.read' whenever an admin appears in the response,
   // remove it from the request if current user can't read admins to avoid 403.
@@ -128,7 +118,7 @@ export default function TeamPage() {
       )}
 
       <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-3 md:p-2.5 md:px-4">
-        <Users.TeamFilterBar filters={filters} onChange={handleFiltersChange} />
+        <Users.TeamFilterBar filters={filters} onChange={setFilters} />
       </div>
 
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">

@@ -2,14 +2,17 @@ import { createFileRoute } from "@tanstack/react-router"
 import { type LicenseFilters } from "@/queries/licenses"
 import * as Page from "@/pages/index"
 import { requirePermission } from "@/lib/permissions"
+import { cursorSearch, type CursorSearch } from "@/lib/pagination"
 import { titleHead } from "@/lib/document-title"
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value)
 }
 
-function validateSearch(search: Record<string, unknown>): LicenseFilters {
-  const filters: LicenseFilters = {}
+function validateSearch(
+  search: Record<string, unknown>,
+): LicenseFilters & CursorSearch {
+  const filters: LicenseFilters & CursorSearch = cursorSearch(search)
 
   if (typeof search.status === "string") filters.status = search.status
   if (typeof search.product === "string") filters.product = search.product

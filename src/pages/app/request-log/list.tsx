@@ -3,9 +3,8 @@ import { useNavigate } from "@tanstack/react-router"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
+import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useEdition } from "@/hooks/use-edition"
-import { useDataTable } from "@/hooks/use-data-table"
 import { useFilterSearch } from "@/hooks/use-filter-search"
 import { useRequestLogTableColumns } from "@/hooks/use-request-log-table-columns"
 
@@ -25,21 +24,12 @@ import PageHeader from "@/components/page-header"
 import Pagination from "@/components/pagination"
 
 export default function RequestLogList() {
-  const table = useDataTable()
-  const { page, pageSize, setPage } = table
+  const table = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = table
   const navigate = useNavigate()
   const { isEE } = useEdition()
 
   const [filters, setFilters] = useFilterSearch<RequestLogFilters>()
-  const { cursor, reset, goToPage } = useCursors(page, setPage)
-
-  const handleFiltersChange = useCallback(
-    (next: RequestLogFilters) => {
-      setFilters(next)
-      reset()
-    },
-    [setFilters, reset],
-  )
 
   const columns = useRequestLogTableColumns()
 
@@ -87,10 +77,7 @@ export default function RequestLogList() {
   const content = (
     <>
       <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-2.5 md:px-4">
-        <RequestLogs.FilterBar
-          filters={filters}
-          onChange={handleFiltersChange}
-        />
+        <RequestLogs.FilterBar filters={filters} onChange={setFilters} />
       </div>
 
       <div className="min-h-0 flex-1 overflow-hidden">

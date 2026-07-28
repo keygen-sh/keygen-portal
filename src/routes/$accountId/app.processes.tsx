@@ -2,10 +2,13 @@ import { createFileRoute } from "@tanstack/react-router"
 import { type ProcessFilters } from "@/queries/processes"
 import * as Page from "@/pages/index"
 import { requirePermission } from "@/lib/permissions"
+import { cursorSearch, type CursorSearch } from "@/lib/pagination"
 import { titleHead } from "@/lib/document-title"
 
-function validateSearch(search: Record<string, unknown>): ProcessFilters {
-  const filters: ProcessFilters = {}
+function validateSearch(
+  search: Record<string, unknown>,
+): ProcessFilters & CursorSearch {
+  const filters: ProcessFilters & CursorSearch = cursorSearch(search)
 
   if (typeof search.machine === "string") filters.machine = search.machine
   if (typeof search.license === "string") filters.license = search.license

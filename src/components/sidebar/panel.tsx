@@ -64,6 +64,9 @@ import Combobox from "./combobox"
 import NewVersionCard from "./new-version-card"
 import BillingStatusCard from "./billing-status-card"
 
+const GITHUB_URL = "https://github.com/keygen-sh/"
+const API_URL = "https://keygen.sh/docs/api/"
+
 enum ViewId {
   Home = "home",
   Licensing = "licensing",
@@ -484,9 +487,21 @@ export default function SidebarPanel(): React.ReactElement {
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem disabled>GitHub</DropdownMenuItem>
-              <DropdownMenuItem disabled>Support</DropdownMenuItem>
-              <DropdownMenuItem disabled>API</DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a href={GITHUB_URL} target="_blank" rel="noreferrer">
+                  GitHub
+                </a>
+              </DropdownMenuItem>
+              {keygen.config.supportEmail && (
+                <DropdownMenuItem asChild>
+                  <a href={`mailto:${keygen.config.supportEmail}`}>Support</a>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem asChild>
+                <a href={API_URL} target="_blank" rel="noreferrer">
+                  API
+                </a>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => logout.mutate()}>
                 Logout

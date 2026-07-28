@@ -24,8 +24,8 @@ import PageHeader from "@/components/page-header"
 import Pagination from "@/components/pagination"
 
 export default function RequestLogList() {
-  const table = useCursorSearch()
-  const { page, pageSize, cursor, goToPage } = table
+  const pagination = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = pagination
   const navigate = useNavigate()
   const { isEE } = useEdition()
 
@@ -61,7 +61,7 @@ export default function RequestLogList() {
     <ScrollArea className="h-full overflow-auto">
       <DataTable<RequestLog>
         data={requestLogs}
-        table={table}
+        pagination={pagination}
         columns={columns}
         isLoading={loading}
         onRowClick={(requestLog) =>

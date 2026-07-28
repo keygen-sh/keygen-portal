@@ -19,8 +19,8 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function ProductsList() {
-  const table = useCursorSearch()
-  const { page, pageSize, cursor, goToPage } = table
+  const pagination = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = pagination
   const columns = useProductTableColumns()
 
   const {
@@ -56,7 +56,7 @@ export default function ProductsList() {
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<Product>
           data={products}
-          table={table}
+          pagination={pagination}
           columns={columns}
           isLoading={productsLoading}
           onRowClick={(product) => navigateToResource(product)}

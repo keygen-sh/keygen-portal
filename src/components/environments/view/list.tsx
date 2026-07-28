@@ -3,7 +3,7 @@ import { Environment } from "@/types/environments"
 import { useListEnvironments } from "@/queries/environments"
 
 import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
-import { useDataTable } from "@/hooks/use-data-table"
+import { usePagination } from "@/hooks/use-pagination"
 import { useEnvironmentTableColumns } from "@/hooks/use-environment-table-columns"
 
 import DataTable from "@/components/data-table"
@@ -17,8 +17,8 @@ interface EnvironmentsListProps {
 export default function EnvironmentsList({
   onViewDetails,
 }: EnvironmentsListProps) {
-  const table = useDataTable()
-  const { page, setPage } = table
+  const pagination = usePagination()
+  const { page, setPage } = pagination
   const { cursor, goToPage } = useCursors(page, setPage)
   const columns = useEnvironmentTableColumns()
 
@@ -37,7 +37,7 @@ export default function EnvironmentsList({
     <>
       <DataTable
         data={environments}
-        table={table}
+        pagination={pagination}
         columns={columns}
         isLoading={isLoading}
         onRowClick={onViewDetails}

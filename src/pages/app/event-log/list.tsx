@@ -131,8 +131,8 @@ function EventLogTableSkeleton() {
 }
 
 export default function EventLogList() {
-  const table = useCursorSearch()
-  const { page, pageSize, cursor, goToPage } = table
+  const pagination = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = pagination
   const navigate = useNavigate()
   const { isEE } = useEdition()
 
@@ -168,7 +168,7 @@ export default function EventLogList() {
     <ScrollArea className="h-full overflow-auto">
       <DataTable<EventLog>
         data={eventLogs}
-        table={table}
+        pagination={pagination}
         columns={columns}
         isLoading={loading}
         onRowClick={(eventLog) =>

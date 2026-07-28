@@ -1,10 +1,10 @@
-import { useState, useCallback } from "react"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-import { useDataTable } from "@/hooks/use-data-table"
-import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
+import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
+import { useFilterSearch } from "@/hooks/use-filter-search"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 import { useTokenTableColumns } from "@/hooks/use-token-table-columns"
 
@@ -20,16 +20,14 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function TokensList() {
-  const table = useDataTable()
-  const { page, pageSize, setPage } = table
+  const table = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = table
   const columns = useTokenTableColumns()
   const navigateToResource = useResourceNavigate()
 
-  // pre-filter to customer-related tokens, e.g. user, license
-  const [filters, setFilters] = useState<TokenFilters>({
+  const [filters, setFilters] = useFilterSearch<TokenFilters>({
     bearerRoles: [...SubjectTokenRoles],
   })
-  const { cursor, reset, goToPage } = useCursors(page, setPage)
 
   const [createOpen, setCreateOpen] = useState(false)
 
@@ -38,14 +36,6 @@ export default function TokensList() {
     links,
     isLoading,
   } = useListTokens({ cursor, pageSize, filters })
-
-  const handleFiltersChange = useCallback(
-    (next: TokenFilters) => {
-      setFilters(next)
-      reset()
-    },
-    [reset],
-  )
 
   const nextCursor = cursorFromLink(links?.next)
 
@@ -64,7 +54,7 @@ export default function TokensList() {
       </PageHeader>
 
       <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-2.5 md:px-4">
-        <Tokens.FilterBar filters={filters} onChange={handleFiltersChange} />
+        <Tokens.FilterBar filters={filters} onChange={setFilters} />
       </div>
 
       <Tokens.Form.Create open={createOpen} onOpenChange={setCreateOpen} />

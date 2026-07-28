@@ -96,14 +96,6 @@ export default function DataTable<T extends TableResource>({
     },
     manualPagination: true,
     pageCount: -1,
-    onPaginationChange: (updater) => {
-      const current = {
-        pageIndex: table.page - 1,
-        pageSize: table.pageSize,
-      }
-      const next = typeof updater === "function" ? updater(current) : updater
-      table.setPage(next.pageIndex + 1)
-    },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),

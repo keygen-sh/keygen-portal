@@ -5,6 +5,7 @@ import { type EventLogResourceFilter } from "@/types/event-logs"
 
 import { titleHead } from "@/lib/document-title"
 import { expandEventLogEventFilters } from "@/lib/event-logs"
+import { cursorSearch, type CursorSearch } from "@/lib/pagination"
 import { requirePermission } from "@/lib/permissions"
 
 import * as Page from "@/pages/index"
@@ -27,8 +28,10 @@ function parseResourceFilter(
   return undefined
 }
 
-function validateSearch(search: Record<string, unknown>): EventLogFilters {
-  const filters: EventLogFilters = {}
+function validateSearch(
+  search: Record<string, unknown>,
+): EventLogFilters & CursorSearch {
+  const filters: EventLogFilters & CursorSearch = cursorSearch(search)
 
   if (Array.isArray(search.events)) {
     const events = search.events.filter(

@@ -1,11 +1,10 @@
-import { useState, useCallback } from "react"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
+import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useMachineTableColumns } from "@/hooks/use-machine-table-columns"
-import { useDataTable } from "@/hooks/use-data-table"
 import { useFilterSearch } from "@/hooks/use-filter-search"
 import { Machine } from "@/types/machines"
 
@@ -21,20 +20,11 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function MachinesList() {
-  const table = useDataTable()
-  const { page, pageSize, setPage } = table
+  const table = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = table
   const columns = useMachineTableColumns()
 
   const [filters, setFilters] = useFilterSearch<MachineFilters>()
-  const { cursor, reset, goToPage } = useCursors(page, setPage)
-
-  const handleFiltersChange = useCallback(
-    (next: MachineFilters) => {
-      setFilters(next)
-      reset()
-    },
-    [setFilters, reset],
-  )
 
   const {
     data: machines,
@@ -67,7 +57,7 @@ export default function MachinesList() {
       </PageHeader>
 
       <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-2.5 md:px-4">
-        <Machines.FilterBar filters={filters} onChange={handleFiltersChange} />
+        <Machines.FilterBar filters={filters} onChange={setFilters} />
       </div>
 
       <Machines.Form.Create open={open} onOpenChange={setOpen} />

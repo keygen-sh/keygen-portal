@@ -10,9 +10,8 @@ import {
   TableCell,
 } from "@/components/ui/table"
 
-import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
+import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useEdition } from "@/hooks/use-edition"
-import { useDataTable } from "@/hooks/use-data-table"
 import { useFilterSearch } from "@/hooks/use-filter-search"
 import { useEventLogTableColumns } from "@/hooks/use-event-log-table-columns"
 
@@ -132,21 +131,12 @@ function EventLogTableSkeleton() {
 }
 
 export default function EventLogList() {
-  const table = useDataTable()
-  const { page, pageSize, setPage } = table
+  const table = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = table
   const navigate = useNavigate()
   const { isEE } = useEdition()
 
   const [filters, setFilters] = useFilterSearch<EventLogFilters>()
-  const { cursor, reset, goToPage } = useCursors(page, setPage)
-
-  const handleFiltersChange = useCallback(
-    (next: EventLogFilters) => {
-      setFilters(next)
-      reset()
-    },
-    [setFilters, reset],
-  )
 
   const columns = useEventLogTableColumns()
 
@@ -194,7 +184,7 @@ export default function EventLogList() {
   const content = (
     <>
       <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-2.5 md:px-4">
-        <EventLogs.FilterBar filters={filters} onChange={handleFiltersChange} />
+        <EventLogs.FilterBar filters={filters} onChange={setFilters} />
       </div>
 
       <div className="min-h-0 flex-1 overflow-hidden">

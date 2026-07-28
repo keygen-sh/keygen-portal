@@ -1,8 +1,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
+import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useArchTableColumns } from "@/hooks/use-arch-table-columns"
-import { useDataTable } from "@/hooks/use-data-table"
 import { Arch } from "@/types/arches"
 
 import { useListArches } from "@/queries/arches"
@@ -13,9 +12,8 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function ArchesList() {
-  const table = useDataTable()
-  const { page, pageSize, setPage } = table
-  const { cursor, goToPage } = useCursors(page, setPage)
+  const table = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = table
   const columns = useArchTableColumns()
 
   const {

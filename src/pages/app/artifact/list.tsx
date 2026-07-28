@@ -1,11 +1,10 @@
-import { useState, useCallback } from "react"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
+import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useArtifactTableColumns } from "@/hooks/use-artifact-table-columns"
-import { useDataTable } from "@/hooks/use-data-table"
 import { useFilterSearch } from "@/hooks/use-filter-search"
 import { Artifact } from "@/types/artifacts"
 
@@ -21,20 +20,11 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function ArtifactsList() {
-  const table = useDataTable()
-  const { page, pageSize, setPage } = table
+  const table = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = table
   const columns = useArtifactTableColumns()
 
   const [filters, setFilters] = useFilterSearch<ArtifactFilters>()
-  const { cursor, reset, goToPage } = useCursors(page, setPage)
-
-  const handleFiltersChange = useCallback(
-    (next: ArtifactFilters) => {
-      setFilters(next)
-      reset()
-    },
-    [setFilters, reset],
-  )
 
   const {
     data: artifacts,
@@ -68,7 +58,7 @@ export default function ArtifactsList() {
       </PageHeader>
 
       <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-2.5 md:px-4">
-        <Artifacts.FilterBar filters={filters} onChange={handleFiltersChange} />
+        <Artifacts.FilterBar filters={filters} onChange={setFilters} />
       </div>
 
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">

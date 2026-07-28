@@ -2,10 +2,13 @@ import { createFileRoute } from "@tanstack/react-router"
 import { type ReleaseFilters } from "@/types/releases"
 import * as Page from "@/pages/index"
 import { requirePermission } from "@/lib/permissions"
+import { cursorSearch, type CursorSearch } from "@/lib/pagination"
 import { titleHead } from "@/lib/document-title"
 
-function validateSearch(search: Record<string, unknown>): ReleaseFilters {
-  const filters: ReleaseFilters = {}
+function validateSearch(
+  search: Record<string, unknown>,
+): ReleaseFilters & CursorSearch {
+  const filters: ReleaseFilters & CursorSearch = cursorSearch(search)
 
   if (typeof search.status === "string") filters.status = search.status
   if (typeof search.channel === "string") filters.channel = search.channel

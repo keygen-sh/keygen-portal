@@ -2,10 +2,13 @@ import { createFileRoute } from "@tanstack/react-router"
 import { type ComponentFilters } from "@/queries/components"
 import * as Page from "@/pages/index"
 import { requirePermission } from "@/lib/permissions"
+import { cursorSearch, type CursorSearch } from "@/lib/pagination"
 import { titleHead } from "@/lib/document-title"
 
-function validateSearch(search: Record<string, unknown>): ComponentFilters {
-  const filters: ComponentFilters = {}
+function validateSearch(
+  search: Record<string, unknown>,
+): ComponentFilters & CursorSearch {
+  const filters: ComponentFilters & CursorSearch = cursorSearch(search)
 
   if (typeof search.machine === "string") filters.machine = search.machine
   if (typeof search.license === "string") filters.license = search.license

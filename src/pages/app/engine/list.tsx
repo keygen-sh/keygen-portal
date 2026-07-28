@@ -1,8 +1,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
+import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useEngineTableColumns } from "@/hooks/use-engine-table-columns"
-import { useDataTable } from "@/hooks/use-data-table"
 import { Engine } from "@/types/engines"
 
 import { useListEngines } from "@/queries/engines"
@@ -13,9 +12,8 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function EnginesList() {
-  const table = useDataTable()
-  const { page, pageSize, setPage } = table
-  const { cursor, goToPage } = useCursors(page, setPage)
+  const table = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = table
   const columns = useEngineTableColumns()
 
   const {

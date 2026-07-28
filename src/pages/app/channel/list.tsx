@@ -1,8 +1,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
+import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useChannelTableColumns } from "@/hooks/use-channel-table-columns"
-import { useDataTable } from "@/hooks/use-data-table"
 import { Channel } from "@/types/channels"
 
 import { useListChannels } from "@/queries/channels"
@@ -13,9 +12,8 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function ChannelsList() {
-  const table = useDataTable()
-  const { page, pageSize, setPage } = table
-  const { cursor, goToPage } = useCursors(page, setPage)
+  const table = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = table
   const columns = useChannelTableColumns()
 
   const {

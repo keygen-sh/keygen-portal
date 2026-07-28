@@ -4,6 +4,7 @@ import { type RequestLogFilters } from "@/queries/request-logs"
 import { type RequestLogResourceFilter } from "@/types/request-logs"
 
 import { titleHead } from "@/lib/document-title"
+import { cursorSearch, type CursorSearch } from "@/lib/pagination"
 import { requirePermission } from "@/lib/permissions"
 
 import * as Page from "@/pages/index"
@@ -26,8 +27,10 @@ function parseResourceFilter(
   return undefined
 }
 
-function validateSearch(search: Record<string, unknown>): RequestLogFilters {
-  const filters: RequestLogFilters = {}
+function validateSearch(
+  search: Record<string, unknown>,
+): RequestLogFilters & CursorSearch {
+  const filters: RequestLogFilters & CursorSearch = cursorSearch(search)
 
   if (typeof search.method === "string") filters.method = search.method
   if (typeof search.status === "string") filters.status = search.status

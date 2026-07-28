@@ -1,12 +1,11 @@
-import { useState, useCallback } from "react"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-import { cursorFromLink, useCursors } from "@/hooks/use-cursors"
+import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useUserTableColumns } from "@/hooks/use-user-table-columns"
 import { useFilterSearch } from "@/hooks/use-filter-search"
-import { useDataTable } from "@/hooks/use-data-table"
 import { User, UserRole, type UserFilters } from "@/types/users"
 
 import { useListUsers } from "@/queries/users"
@@ -21,22 +20,13 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function UsersList() {
-  const table = useDataTable()
-  const { page, pageSize, setPage } = table
+  const table = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = table
   const columns = useUserTableColumns()
 
   const [filters, setFilters] = useFilterSearch<UserFilters>({
     roles: [UserRole.User],
   })
-  const { cursor, reset, goToPage } = useCursors(page, setPage)
-
-  const handleFiltersChange = useCallback(
-    (next: UserFilters) => {
-      setFilters(next)
-      reset()
-    },
-    [setFilters, reset],
-  )
 
   const {
     data: users,
@@ -69,7 +59,7 @@ export default function UsersList() {
       </PageHeader>
 
       <div className="min-w-0 overflow-hidden border-b border-accent px-2 pt-2 pb-2.5 md:px-4">
-        <Users.FilterBar filters={filters} onChange={handleFiltersChange} />
+        <Users.FilterBar filters={filters} onChange={setFilters} />
       </div>
 
       <Users.Form.Create open={open} onOpenChange={setOpen} />

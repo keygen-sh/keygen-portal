@@ -23,6 +23,7 @@ export function cursorSearch(search: object): CursorSearch {
 // returns filters from a route's search params
 export function omitCursorSearch(search: object): Record<string, unknown> {
   const { cursors, ...filters } = search as Record<string, unknown>
+  void cursors
 
   return filters
 }

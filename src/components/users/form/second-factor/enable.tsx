@@ -31,6 +31,7 @@ import { type SecondFactor } from "@/types/second-factors"
 import * as Forms from "@/components/forms"
 import * as Loading from "@/components/loading"
 import OtpInput from "@/components/otp-input"
+import ClipboardValue from "@/components/clipboard-value"
 
 type Step = "password" | "setup"
 
@@ -263,6 +264,15 @@ function SetupStep({
               <div className="flex w-fit justify-center rounded bg-white p-2">
                 <QRCodeSVG value={factor.attributes.uri!} size={180} />
               </div>
+              {factor.attributes.secret != null && (
+                <div className="mt-10 space-y-2">
+                  <p className="text-xs text-content-normal">
+                    Can&apos;t scan the QR code? Enter this secret key into your
+                    authenticator app or password manager instead.
+                  </p>
+                  <ClipboardValue value={factor.attributes.secret} />
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">

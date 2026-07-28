@@ -14,8 +14,8 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function WebhookEventsList() {
-  const table = useCursorSearch()
-  const { page, pageSize, cursor, goToPage } = table
+  const pagination = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = pagination
   const columns = useWebhookEventTableColumns()
 
   const {
@@ -35,7 +35,7 @@ export default function WebhookEventsList() {
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<WebhookEvent>
           data={webhookEvents}
-          table={table}
+          pagination={pagination}
           columns={columns}
           isLoading={isLoading}
           onRowClick={(webhookEvent) => navigateToResource(webhookEvent)}

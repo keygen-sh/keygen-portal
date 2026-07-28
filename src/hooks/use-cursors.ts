@@ -6,8 +6,7 @@ import {
 } from "@tanstack/react-router"
 
 import { cursorSearch } from "@/lib/pagination"
-
-import { usePageSize, type DataTableState } from "@/hooks/use-data-table"
+import { usePageSize, type PaginationState } from "@/hooks/use-pagination"
 
 export function cursorFromLink(link?: string | null): string | null {
   if (!link) return null
@@ -53,7 +52,7 @@ export function useCursors(page: number, setPage: (page: number) => void) {
   return { cursor, reset, goToPage }
 }
 
-export type CursorSearchState = DataTableState & {
+export type CursorSearchState = PaginationState & {
   cursor: string
   goToPage: (page: number, cursor: string | null) => void
 }

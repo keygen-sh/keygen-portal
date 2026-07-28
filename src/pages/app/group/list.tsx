@@ -19,8 +19,8 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function GroupsList() {
-  const table = useCursorSearch()
-  const { page, pageSize, cursor, goToPage } = table
+  const pagination = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = pagination
   const columns = useGroupTableColumns()
 
   const {
@@ -56,7 +56,7 @@ export default function GroupsList() {
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<Group>
           data={groups}
-          table={table}
+          pagination={pagination}
           columns={columns}
           isLoading={groupsLoading}
           onRowClick={(group) => navigateToResource(group)}

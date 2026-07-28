@@ -20,8 +20,8 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function UsersList() {
-  const table = useCursorSearch()
-  const { page, pageSize, cursor, goToPage } = table
+  const pagination = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = pagination
   const columns = useUserTableColumns()
 
   const [filters, setFilters] = useFilterSearch<UserFilters>({
@@ -67,7 +67,7 @@ export default function UsersList() {
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<User>
           data={users}
-          table={table}
+          pagination={pagination}
           columns={columns}
           isLoading={usersLoading}
           onRowClick={(user) => navigateToResource(user)}

@@ -12,8 +12,8 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function EnginesList() {
-  const table = useCursorSearch()
-  const { page, pageSize, cursor, goToPage } = table
+  const pagination = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = pagination
   const columns = useEngineTableColumns()
 
   const {
@@ -34,7 +34,7 @@ export default function EnginesList() {
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<Engine>
           data={engines}
-          table={table}
+          pagination={pagination}
           columns={columns}
           isLoading={enginesLoading}
         />

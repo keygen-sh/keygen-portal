@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useMobile } from "@/hooks/use-mobile"
 
-export type DataTableState = {
+export type PaginationState = {
   page: number
   pageSize: number
 }
@@ -14,7 +14,7 @@ export function usePageSize(): number {
 
 // local page state for lists that aren't a route
 // i.e. environments list dialog
-export function useDataTable(): DataTableState & {
+export function usePagination(): PaginationState & {
   setPage: (page: number) => void
 } {
   const [page, setPage] = useState(1)

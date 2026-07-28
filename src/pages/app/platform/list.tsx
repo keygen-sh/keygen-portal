@@ -12,8 +12,8 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function PlatformsList() {
-  const table = useCursorSearch()
-  const { page, pageSize, cursor, goToPage } = table
+  const pagination = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = pagination
   const columns = usePlatformTableColumns()
 
   const {
@@ -34,7 +34,7 @@ export default function PlatformsList() {
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<Platform>
           data={platforms}
-          table={table}
+          pagination={pagination}
           columns={columns}
           isLoading={platformsLoading}
         />

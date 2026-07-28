@@ -20,8 +20,8 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function PackagesList() {
-  const table = useCursorSearch()
-  const { page, pageSize, cursor, goToPage } = table
+  const pagination = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = pagination
   const columns = usePackageTableColumns()
 
   const [filters, setFilters] = useFilterSearch<PackageFilters>()
@@ -64,7 +64,7 @@ export default function PackagesList() {
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<Package>
           data={packages}
-          table={table}
+          pagination={pagination}
           columns={columns}
           isLoading={packagesLoading}
           onRowClick={(pkg) => navigateToResource(pkg)}

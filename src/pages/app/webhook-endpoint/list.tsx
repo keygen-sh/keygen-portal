@@ -19,8 +19,8 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function WebhookEndpointsList() {
-  const table = useCursorSearch()
-  const { page, pageSize, cursor, goToPage } = table
+  const pagination = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = pagination
   const columns = useWebhookEndpointTableColumns()
 
   const {
@@ -49,7 +49,7 @@ export default function WebhookEndpointsList() {
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<WebhookEndpoint>
           data={webhookEndpoints}
-          table={table}
+          pagination={pagination}
           columns={columns}
           isLoading={isLoading}
           onRowClick={(webhookEndpoint) => navigateToResource(webhookEndpoint)}

@@ -20,8 +20,8 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function PoliciesList() {
-  const table = useCursorSearch()
-  const { page, pageSize, cursor, goToPage } = table
+  const pagination = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = pagination
   const columns = usePolicyTableColumns()
 
   const [filters, setFilters] = useFilterSearch<PolicyFilters>()
@@ -65,7 +65,7 @@ export default function PoliciesList() {
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<Policy>
           data={policies}
-          table={table}
+          pagination={pagination}
           columns={columns}
           isLoading={policiesLoading}
           onRowClick={(policy) => navigateToResource(policy)}

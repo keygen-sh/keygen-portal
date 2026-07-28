@@ -35,14 +35,14 @@ import { cn } from "@/lib/utils"
 import { TableColumns, TableResource } from "@/lib/tables"
 
 import { useMobile } from "@/hooks/use-mobile"
-import { DataTableState } from "@/hooks/use-data-table"
+import { PaginationState } from "@/hooks/use-pagination"
 
 import * as Motion from "@/components/motion"
 import * as Skeletons from "@/components/skeletons"
 
 type DataTableProps<T extends TableResource> = {
   data: T[]
-  table: DataTableState
+  pagination: PaginationState
   columns: TableColumns<T>
   onRowClick?: (row: T) => void
   staticColumns?: number
@@ -52,7 +52,7 @@ type DataTableProps<T extends TableResource> = {
 
 export default function DataTable<T extends TableResource>({
   data,
-  table,
+  pagination,
   columns,
   onRowClick,
   staticColumns = 1,
@@ -69,20 +69,20 @@ export default function DataTable<T extends TableResource>({
   const containerRef = useRef<HTMLDivElement>(null) // For measuring available container width and observing resizes (e.g. sidebar toggle)
 
   // Track which pages have already animated so revisiting doesn't animate again
-  const prevPageRef = useRef(table.page)
+  const prevPageRef = useRef(pagination.page)
   const directionRef = useRef<1 | -1>(1)
   const animatedPagesRef = useRef(new Set<number>())
 
-  if (table.page !== prevPageRef.current) {
-    directionRef.current = table.page > prevPageRef.current ? 1 : -1
+  if (pagination.page !== prevPageRef.current) {
+    directionRef.current = pagination.page > prevPageRef.current ? 1 : -1
     animatedPagesRef.current.add(prevPageRef.current)
-    prevPageRef.current = table.page
+    prevPageRef.current = pagination.page
 
     // Reset horizontal scroll when changing pages
     setScrollIndex(0)
   }
 
-  const shouldAnimate = !animatedPagesRef.current.has(table.page)
+  const shouldAnimate = !animatedPagesRef.current.has(pagination.page)
 
   const [columnWidths, setColumnWidths] = useState<number[]>([]) // Widths of each column for calculating scroll offsets
   const headerCellRefs = useRef<(HTMLTableCellElement | null)[]>([]) // For measuring rendered header cell widths to determine column widths
@@ -92,7 +92,10 @@ export default function DataTable<T extends TableResource>({
     columns,
     state: {
       sorting,
-      pagination: { pageIndex: table.page - 1, pageSize: table.pageSize },
+      pagination: {
+        pageIndex: pagination.page - 1,
+        pageSize: pagination.pageSize,
+      },
     },
     manualPagination: true,
     pageCount: -1,
@@ -181,7 +184,7 @@ export default function DataTable<T extends TableResource>({
     return () => {
       observer.disconnect()
     }
-  }, [data, table.page, measureColumns])
+  }, [data, pagination.page, measureColumns])
 
   function getCellStyle(columnIndex: number): React.CSSProperties {
     // Render static columns above scrollable so they don't get visually cut off when scrolling
@@ -223,7 +226,7 @@ export default function DataTable<T extends TableResource>({
             className="relative overflow-hidden"
             style={{ contain: "inline-size" }}
           >
-            <div key={table.page} className="relative w-full">
+            <div key={pagination.page} className="relative w-full">
               <table className="min-w-full border-separate border-spacing-0 text-sm">
                 <TableHeader>
                   {tableInstance.getHeaderGroups().map((group) => (

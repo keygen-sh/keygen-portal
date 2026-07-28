@@ -20,8 +20,8 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function ProcessesList() {
-  const table = useCursorSearch()
-  const { page, pageSize, cursor, goToPage } = table
+  const pagination = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = pagination
   const columns = useProcessTableColumns()
 
   const [filters, setFilters] = useFilterSearch<ProcessFilters>()
@@ -65,7 +65,7 @@ export default function ProcessesList() {
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<Process>
           data={processes}
-          table={table}
+          pagination={pagination}
           columns={columns}
           isLoading={processesLoading}
           onRowClick={(process) => navigateToResource(process)}

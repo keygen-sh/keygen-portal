@@ -20,8 +20,8 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function MachinesList() {
-  const table = useCursorSearch()
-  const { page, pageSize, cursor, goToPage } = table
+  const pagination = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = pagination
   const columns = useMachineTableColumns()
 
   const [filters, setFilters] = useFilterSearch<MachineFilters>()
@@ -65,7 +65,7 @@ export default function MachinesList() {
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<Machine>
           data={machines}
-          table={table}
+          pagination={pagination}
           columns={columns}
           isLoading={machinesLoading}
           onRowClick={(machine) => navigateToResource(machine)}

@@ -20,8 +20,8 @@ import PageFooter from "@/components/page-footer"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 export default function LicensesList() {
-  const table = useCursorSearch()
-  const { page, pageSize, cursor, goToPage } = table
+  const pagination = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = pagination
   const columns = useLicenseTableColumns()
 
   const [filters, setFilters] = useFilterSearch<LicenseFilters>()
@@ -65,7 +65,7 @@ export default function LicensesList() {
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<License>
           data={licenses}
-          table={table}
+          pagination={pagination}
           columns={columns}
           isLoading={licensesLoading}
           onRowClick={(license) => navigateToResource(license)}

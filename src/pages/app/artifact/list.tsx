@@ -20,8 +20,8 @@ import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
 
 export default function ArtifactsList() {
-  const table = useCursorSearch()
-  const { page, pageSize, cursor, goToPage } = table
+  const pagination = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = pagination
   const columns = useArtifactTableColumns()
 
   const [filters, setFilters] = useFilterSearch<ArtifactFilters>()
@@ -64,7 +64,7 @@ export default function ArtifactsList() {
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<Artifact>
           data={artifacts}
-          table={table}
+          pagination={pagination}
           columns={columns}
           isLoading={artifactsLoading}
           onRowClick={(artifact) => navigateToResource(artifact)}

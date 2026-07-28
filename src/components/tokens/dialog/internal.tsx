@@ -9,7 +9,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 
-import { useDataTable } from "@/hooks/use-data-table"
+import { usePagination } from "@/hooks/use-pagination"
 import { useCursors, cursorFromLink } from "@/hooks/use-cursors"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 import { useTokenTableColumns } from "@/hooks/use-token-table-columns"
@@ -32,8 +32,8 @@ export default function InternalTokensDialog({
   open,
   onOpenChange,
 }: InternalTokensDialogProps) {
-  const table = useDataTable()
-  const { page, setPage } = table
+  const pagination = usePagination()
+  const { page, setPage } = pagination
   const { cursor, reset, goToPage } = useCursors(page, setPage)
   const columns = useTokenTableColumns()
   const navigateToResource = useResourceNavigate()
@@ -82,7 +82,7 @@ export default function InternalTokensDialog({
         <ScrollArea className="min-h-0 flex-1">
           <DataTable<Token>
             data={tokens}
-            table={table}
+            pagination={pagination}
             columns={columns}
             isLoading={isLoading}
             onRowClick={handleNavigate}

@@ -28,8 +28,8 @@ import Pagination from "@/components/pagination"
 export default function TeamPage() {
   const isMobile = useMobile()
 
-  const table = useCursorSearch()
-  const { page, pageSize, cursor, goToPage } = table
+  const pagination = useCursorSearch()
+  const { page, pageSize, cursor, goToPage } = pagination
   const columns = useTeamTableColumns()
   const { can } = usePermissions()
 
@@ -124,7 +124,7 @@ export default function TeamPage() {
       <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
         <DataTable<User>
           data={users}
-          table={table}
+          pagination={pagination}
           columns={columns}
           isLoading={usersLoading}
           onRowClick={(user) =>

@@ -1,5 +1,6 @@
 import client from "@/keygen/client"
 import config from "@/keygen/config"
+import { clearEnvironment } from "@/keygen/environment"
 import type { AuthData } from "@/types/auth"
 
 interface LoginOptions {
@@ -19,6 +20,10 @@ export function login(
   const other = remember ? sessionStorage : localStorage
   other.removeItem("tokenId")
   other.removeItem("token")
+
+  // new session starts in global environment, since any environment
+  // token or session from the previous session is no longer usable
+  clearEnvironment()
 
   storage.setItem("tokenId", tokenId)
   client.setTokenId(tokenId)

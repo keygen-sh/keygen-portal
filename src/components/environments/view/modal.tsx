@@ -28,7 +28,6 @@ import { useSlide } from "@/hooks/use-slide"
 import { useEnvironment } from "@/hooks/use-environment"
 
 import * as Motion from "@/components/motion"
-import * as Loading from "@/components/loading"
 import EnvironmentsList from "./list"
 import EnvironmentDetails from "./details"
 import { toast } from "@/lib/toast"
@@ -69,14 +68,15 @@ export default function EnvironmentsViewModal({
     goTo(EnvironmentView.List)
   }, [goTo, onViewEnvironment])
 
-  const switchTo = async (environment: Environment | null) => {
+  const handleSwitchEnvironment = async () => {
+    if (!viewEnvironment || viewEnvironment.id === activeEnvironmentId) {
+      return
+    }
+
     setSwitching(true)
 
     try {
-      await select(
-        environment?.id ?? null,
-        environment?.attributes.code ?? null,
-      )
+      await select(viewEnvironment.id, viewEnvironment.attributes.code)
     } catch (error) {
       console.error(error)
       return
@@ -85,27 +85,11 @@ export default function EnvironmentsViewModal({
     }
 
     toast({
-      message: `Switched to ${environment?.attributes.name ?? "Global"}`,
+      message: `Switched to ${viewEnvironment.attributes.name}`,
       variant: "success",
     })
 
     onClose()
-  }
-
-  const handleSwitchEnvironment = async () => {
-    if (!viewEnvironment || viewEnvironment.id === activeEnvironmentId) {
-      return
-    }
-
-    await switchTo(viewEnvironment)
-  }
-
-  const handleSwitchToGlobal = async () => {
-    if (activeEnvironmentId == null) {
-      return
-    }
-
-    await switchTo(null)
   }
 
   const handleDeleteEnvironment = () => {
@@ -193,23 +177,12 @@ export default function EnvironmentsViewModal({
 
       <DialogFooter className="border-t border-accent p-4">
         {view === EnvironmentView.List && (
-          <div className="flex items-center gap-2">
-            {activeEnvironmentId != null && (
-              <Button
-                onClick={handleSwitchToGlobal}
-                disabled={switching}
-                className="min-w-36"
-              >
-                {switching ? <Loading.Dots /> : "Switch to Global"}
-              </Button>
-            )}
-            <Button
-              onClick={() => onChangeMode(EnvironmentMode.Create)}
-              disabled={switching}
-            >
-              New Environment
-            </Button>
-          </div>
+          <Button
+            onClick={() => onChangeMode(EnvironmentMode.Create)}
+            disabled={switching}
+          >
+            New Environment
+          </Button>
         )}
         {view === EnvironmentView.Details && viewEnvironment && (
           <Button

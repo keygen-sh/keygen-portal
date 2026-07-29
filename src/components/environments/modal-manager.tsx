@@ -44,6 +44,7 @@ export default function EnvironmentsModalManager({
               viewEnvironment={viewEnvironment}
               onViewEnvironment={handleViewEnvironment}
               onChangeMode={handleChangeMode}
+              onClose={onClose}
             />
           )}
           {mode === EnvironmentMode.Edit && viewEnvironment && (

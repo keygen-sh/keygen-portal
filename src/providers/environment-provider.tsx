@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query"
 import { toast } from "@/lib/toast"
 
 import { useGetOrCreateEnvironmentToken } from "@/queries/tokens"
+import { useLeaveDetailsRoute } from "@/hooks/use-leave-details-route"
 import { EnvironmentContext } from "@/contexts/environment-context"
 import {
   storeEnvironment,
@@ -49,6 +50,7 @@ function EeEnvironmentProvider({
 
   const queryClient = useQueryClient()
   const getOrCreateEnvironmentToken = useGetOrCreateEnvironmentToken()
+  const leaveDetailsRoute = useLeaveDetailsRoute()
 
   const select = useCallback(
     async (environmentId: string | null, environmentCode: string | null) => {
@@ -70,6 +72,11 @@ function EeEnvironmentProvider({
 
         setId(environmentId)
         setCode(environmentCode)
+
+        // resource from the previous environment won't resolve in the new one,
+        // so nav off the details route to its list, if applicable
+        await leaveDetailsRoute()
+
         await queryClient.invalidateQueries({
           predicate: (q) => q.queryKey[0] !== "environments",
         })
@@ -80,7 +87,7 @@ function EeEnvironmentProvider({
         throw error
       }
     },
-    [getOrCreateEnvironmentToken, queryClient],
+    [getOrCreateEnvironmentToken, queryClient, leaveDetailsRoute],
   )
 
   // a restored environment may have been deleted or renamed while we were gone,

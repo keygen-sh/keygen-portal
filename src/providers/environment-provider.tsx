@@ -1,10 +1,17 @@
-import { useState, useMemo, useCallback } from "react"
+import { useState, useMemo, useCallback, useEffect } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 
 import { toast } from "@/lib/toast"
 
 import { useGetOrCreateEnvironmentToken } from "@/queries/tokens"
 import { EnvironmentContext } from "@/contexts/environment-context"
+import {
+  storeEnvironment,
+  clearEnvironment,
+  restoreEnvironment,
+} from "@/keygen/environment"
+
+import * as Loading from "@/components/loading"
 
 import * as keygen from "@/keygen"
 
@@ -29,8 +36,17 @@ function EeEnvironmentProvider({
 }: {
   children: React.ReactNode
 }): React.ReactElement {
-  const [id, setId] = useState<string | null>(null)
-  const [code, setCode] = useState<string | null>(null)
+  const [restored] = useState(restoreEnvironment)
+  const [id, setId] = useState<string | null>(restored?.id ?? null)
+  const [code, setCode] = useState<string | null>(restored?.code ?? null)
+
+  // token auth can't scope a request until the environment token is available
+  const [restoring, setRestoring] = useState(
+    restored != null &&
+      keygen.config.isTokenAuthenticated &&
+      restored.token == null,
+  )
+
   const queryClient = useQueryClient()
   const getOrCreateEnvironmentToken = useGetOrCreateEnvironmentToken()
 
@@ -41,13 +57,15 @@ function EeEnvironmentProvider({
 
       try {
         if (environmentCode == null) {
-          keygen.client.setEnvironmentToken(null)
-          keygen.client.setEnvironment(null)
+          clearEnvironment()
         } else {
           const token = await getOrCreateEnvironmentToken(environmentId!)
 
-          keygen.client.setEnvironmentToken(token)
-          keygen.client.setEnvironment(environmentCode)
+          storeEnvironment({
+            id: environmentId!,
+            code: environmentCode,
+            token,
+          })
         }
 
         setId(environmentId)
@@ -65,7 +83,68 @@ function EeEnvironmentProvider({
     [getOrCreateEnvironmentToken, queryClient],
   )
 
+  // a restored environment may have been deleted or renamed while we were gone,
+  // which would scope every request to an environment that no longer resolves
+  useEffect(() => {
+    if (restored == null) return
+
+    let cancelled = false
+
+    void (async () => {
+      try {
+        const response = await keygen.environments.get({ id: restored.id })
+        if (cancelled) return
+
+        const environment = response.data
+
+        if (environment == null) {
+          toast({
+            message: "Environment unavailable",
+            description: "Switched to the global environment.",
+            variant: "error",
+          })
+
+          await select(null, null)
+          return
+        }
+
+        const token = keygen.config.isTokenAuthenticated
+          ? (restored.token ?? (await getOrCreateEnvironmentToken(restored.id)))
+          : null
+
+        if (cancelled) return
+
+        const { code: currentCode } = environment.attributes
+
+        storeEnvironment({ id: restored.id, code: currentCode, token })
+        setCode(currentCode)
+
+        if (currentCode !== restored.code) {
+          await queryClient.invalidateQueries({
+            predicate: (q) => q.queryKey[0] !== "environments",
+          })
+        }
+      } catch (error) {
+        console.error(error)
+      } finally {
+        if (!cancelled) setRestoring(false)
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [restored, getOrCreateEnvironmentToken, queryClient, select])
+
   const value = useMemo(() => ({ id, code, select }), [id, code, select])
+
+  if (restoring) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <Loading.Dots />
+      </div>
+    )
+  }
 
   return (
     <EnvironmentContext.Provider value={value}>

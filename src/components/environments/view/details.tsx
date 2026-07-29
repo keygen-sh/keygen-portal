@@ -2,8 +2,13 @@ import { useState, type ReactNode } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip"
 
-import { Copy, Globe, GlobeLock } from "lucide-react"
+import { Copy, Globe, GlobeLock, Check } from "lucide-react"
 
 import {
   Environment,
@@ -15,6 +20,7 @@ import {
 
 import { copyToClipboard } from "@/lib/clipboard"
 
+import * as Loading from "@/components/loading"
 import * as Attribute from "@/components/attribute"
 import TooltipBadge from "@/components/tooltip-badge"
 import CollapsibleCard from "@/components/collapsible-card"
@@ -28,6 +34,9 @@ const IsolationStrategyIcons: Record<IsolationStrategy, ReactNode> = {
 interface EnvironmentDetailsProps {
   environment: Environment
   loading: boolean
+  active: boolean
+  switching: boolean
+  onSwitchEnvironment: () => void
   onEditEnvironment: () => void
   onDeleteEnvironment: () => void
 }
@@ -35,16 +44,21 @@ interface EnvironmentDetailsProps {
 export default function EnvironmentDetails({
   environment,
   loading,
+  active,
+  switching,
+  onSwitchEnvironment,
   onEditEnvironment,
   onDeleteEnvironment,
 }: EnvironmentDetailsProps) {
   const [deleteOpen, setDeleteOpen] = useState(false)
 
+  const isCurrent = active && !switching
+
   return (
     <>
       <div className="flex flex-col justify-between p-4 md:flex-row">
         <div className="flex flex-col space-y-2">
-          <div>
+          <div className="flex items-center gap-2">
             <TooltipBadge
               variant="secondary"
               icon={
@@ -62,6 +76,15 @@ export default function EnvironmentDetails({
               }
               className="px-1 text-xs"
             />
+            {isCurrent && (
+              <TooltipBadge
+                variant="success"
+                icon={<Check className="size-3" />}
+                value="Current"
+                tooltip="This is the environment you're currently in and where new resources will be created."
+                className="px-1 text-xs"
+              />
+            )}
           </div>
           <div className="flex items-center gap-2">
             <h1 className="font-owners-wide text-2xl font-medium">
@@ -82,12 +105,41 @@ export default function EnvironmentDetails({
           <Separator />
         </div>
         <div className="mt-2 flex space-x-2 md:mt-0">
-          <Button variant="outline" onClick={onEditEnvironment}>
+          <Button
+            variant="outline"
+            onClick={onEditEnvironment}
+            disabled={switching}
+          >
             Edit
           </Button>
-          <Button variant="outline" onClick={() => setDeleteOpen(true)}>
+          <Button
+            variant="outline"
+            onClick={() => setDeleteOpen(true)}
+            disabled={switching}
+          >
             Delete
           </Button>
+          {!isCurrent && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button onClick={onSwitchEnvironment} disabled={switching}>
+                  {switching ? (
+                    <Loading.Dots className="bg-background" />
+                  ) : (
+                    "Switch"
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="bottom"
+                align="end"
+                sideOffset={4}
+                className="max-w-56 bg-background-4 text-wrap text-content-muted"
+              >
+                Switch into this environment.
+              </TooltipContent>
+            </Tooltip>
+          )}
         </div>
       </div>
 

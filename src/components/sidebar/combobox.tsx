@@ -51,7 +51,7 @@ function CeCombobox(): React.ReactElement {
 }
 
 function EeCombobox(): React.ReactElement {
-  const { code, select } = useEnvironment()
+  const { id: activeEnvironmentId, code, select } = useEnvironment()
 
   const [openModal, setOpenModal] = useState(false)
   const [openPopover, setOpenPopover] = useState(false)
@@ -69,35 +69,27 @@ function EeCombobox(): React.ReactElement {
     ]
   }, [environments])
 
-  const [environmentId, setEnvironmentId] = useState<string | null>(
-    () =>
-      environmentOptions.find((option) => option.code === code)?.id ??
-      "__global",
-  )
-
-  const resolvedEnvironmentId =
-    environmentOptions.length === 0
-      ? null
-      : environmentOptions.some((e) => e.id === environmentId)
-        ? environmentId
-        : environmentOptions[0].id
+  const currentEnvironment =
+    environmentOptions.find((option) => option.id === activeEnvironmentId) ??
+    (activeEnvironmentId != null
+      ? { id: activeEnvironmentId, code, name: code ?? activeEnvironmentId }
+      : GLOBAL_ENVIRONMENT)
 
   const switchEnvironment = async (id: string, newCode: string | null) => {
+    setOpenPopover(false)
+
     if (newCode === code) {
-      setOpenPopover(false)
       return
     }
-    await select(id === "__global" ? null : id, newCode)
-    setEnvironmentId(id)
 
-    setOpenPopover(false)
+    try {
+      await select(id === GLOBAL_ENVIRONMENT.id ? null : id, newCode)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
-  const currentEnvironment = environmentOptions.find(
-    (e) => e.id === resolvedEnvironmentId,
-  )!
-
-  if (isLoading || !currentEnvironment) {
+  if (isLoading) {
     return (
       <div className="flex h-9 w-full items-center pr-4">
         <Skeleton className="h-7 w-full" />
@@ -133,7 +125,7 @@ function EeCombobox(): React.ReactElement {
             <CommandList>
               <CommandGroup heading="Environments">
                 {environmentOptions.map((environment) => {
-                  const selected = environment.id === resolvedEnvironmentId
+                  const selected = environment.id === currentEnvironment.id
 
                   return (
                     <CommandItem

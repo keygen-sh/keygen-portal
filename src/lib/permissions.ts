@@ -5,7 +5,10 @@ import { currentUserQueryOptions } from "@/queries/users"
 import {
   Permissions,
   Permission,
+  UserRole,
+  WildcardPermission,
   DefaultPermissionsByRole,
+  AllowedPermissionsByRole,
 } from "@/types/users"
 
 import config from "@/keygen/config"
@@ -16,21 +19,44 @@ export function isPermission(value: string): value is Permission {
   return PERMISSION_SET.has(value as Permission)
 }
 
+// whether a permission set grants everything
+export function grantsAllPermissions(raw: readonly string[]): boolean {
+  if (raw.includes(WildcardPermission)) {
+    return true
+  }
+
+  const granted = new Set(raw)
+
+  return Permissions.every((permission) => granted.has(permission))
+}
+
+// resolve a permission set into a normalized set of permissions,
+// considering the user's role and whether we're in CE or EE
+export function resolvePermissions(
+  raw: readonly string[] | null | undefined,
+  role: UserRole | null | undefined,
+): ReadonlySet<Permission> {
+  if (raw != null) {
+    if (raw.includes(WildcardPermission)) {
+      return new Set(role != null ? AllowedPermissionsByRole[role] : [])
+    }
+
+    return new Set(raw.filter(isPermission))
+  }
+
+  if (config.isCE && role != null) {
+    return new Set(DefaultPermissionsByRole[role])
+  }
+
+  return new Set()
+}
+
 async function effectivePermissions(
   queryClient: QueryClient,
 ): Promise<ReadonlySet<Permission>> {
   const me = await queryClient.ensureQueryData(currentUserQueryOptions())
-  const raw = me.attributes.permissions
 
-  if (raw != null) {
-    return new Set(raw.filter(isPermission))
-  }
-
-  if (config.isCE) {
-    return new Set(DefaultPermissionsByRole[me.attributes.role] ?? [])
-  }
-
-  return new Set()
+  return resolvePermissions(me.attributes.permissions, me.attributes.role)
 }
 
 export async function requirePermission(

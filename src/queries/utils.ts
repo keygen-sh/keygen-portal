@@ -1,3 +1,5 @@
+import type { QueryClient } from "@tanstack/react-query"
+
 import { partitionFulfilled } from "@/lib/partition"
 import { APIError } from "@/types/api"
 
@@ -24,4 +26,13 @@ export async function settleMutations<T>(
   const results = await Promise.allSettled(mutations)
 
   return partitionSettledMutations(results)
+}
+
+// refetch everything scoped to an environment
+export function invalidateScopedQueries(
+  queryClient: QueryClient,
+): Promise<void> {
+  return queryClient.invalidateQueries({
+    predicate: (query) => query.queryKey[0] !== "environments",
+  })
 }

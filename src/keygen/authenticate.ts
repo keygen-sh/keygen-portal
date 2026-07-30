@@ -4,7 +4,7 @@ import { AuthResponse } from "@/types/auth"
 
 import config from "@/keygen/config"
 import client from "@/keygen/client"
-import { clearEnvironment } from "@/keygen/environment"
+import * as environment from "@/keygen/environment"
 
 config.validate()
 
@@ -24,7 +24,7 @@ export async function authenticate({
   otp,
   account,
 }: AuthProps): Promise<AuthResponse> {
-  clearEnvironment()
+  environment.clear()
 
   const credentials = btoa(
     unescape(encodeURIComponent(`${email || ""}:${password || ""}`)),

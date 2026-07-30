@@ -47,6 +47,7 @@ import {
   UserStatusVariants,
   UserStatusDescriptions,
   UserRoleLabels,
+  WildcardPermission,
 } from "@/types/users"
 
 import { useGetUser, useRemoveUser, useForgotPassword } from "@/queries/users"
@@ -357,7 +358,9 @@ export default function TeamDetails() {
                                 key={index}
                                 className="text-sm text-content-muted"
                               >
-                                {permission}
+                                {permission === WildcardPermission
+                                  ? "All permissions"
+                                  : permission}
                               </Badge>
                             ),
                           )}

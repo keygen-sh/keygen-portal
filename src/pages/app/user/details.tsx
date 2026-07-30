@@ -50,6 +50,7 @@ import {
   UserStatusVariants,
   UserStatusDescriptions,
   UserRoleLabels,
+  WildcardPermission,
 } from "@/types/users"
 
 import {
@@ -462,7 +463,9 @@ export default function UserDetails() {
                                 key={index}
                                 className="text-sm text-content-muted"
                               >
-                                {permission}
+                                {permission === WildcardPermission
+                                  ? "All permissions"
+                                  : permission}
                               </Badge>
                             ),
                           )}

@@ -1,20 +1,27 @@
 import { Link } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
-import ErrorShell from "@/components/error-shell"
-import DocumentTitle from "@/components/document-title"
+
+import { useBackNavigateIfDetailsRoute } from "@/hooks/use-back-navigate"
 
 import { getRecentAccounts } from "@/lib/accounts"
 
 import * as keygen from "@/keygen"
 
+import ErrorShell from "@/components/error-shell"
+import DocumentTitle from "@/components/document-title"
+
 export default function NotFound() {
+  const leaving = useBackNavigateIfDetailsRoute()
+
   const recentAccounts = getRecentAccounts()
   const slug = keygen.config.id
   const dashboardAccountId = keygen.config.hasFixedAccount
     ? slug
     : (recentAccounts.find((a) => a.id === slug || a.slug === slug)?.id ??
       recentAccounts[0]?.id)
+
+  if (leaving) return null
 
   return (
     <ErrorShell>

@@ -1,7 +1,8 @@
 import client from "@/keygen/client"
 import config from "@/keygen/config"
+import * as environments from "@/keygen/environments"
 
-const STORAGE_KEY = "environment"
+const STORAGE_KEY = "keygen.environment.active"
 
 interface StoredEnvironment {
   accountId: string
@@ -16,7 +17,7 @@ export interface ActiveEnvironment {
   token: string | null
 }
 
-function sessionStorageArea(): Storage {
+function activeStorage(): Storage {
   return sessionStorage.getItem("tokenId") != null
     ? sessionStorage
     : localStorage
@@ -41,8 +42,8 @@ function readEnvironment(): StoredEnvironment | null {
   }
 }
 
-export function storeEnvironment({ id, code, token }: ActiveEnvironment): void {
-  const storage = sessionStorageArea()
+export function set({ id, code, token }: ActiveEnvironment): void {
+  const storage = activeStorage()
   const other = storage === localStorage ? sessionStorage : localStorage
   other.removeItem(STORAGE_KEY)
 
@@ -59,7 +60,7 @@ export function storeEnvironment({ id, code, token }: ActiveEnvironment): void {
   client.setEnvironmentToken(token)
 }
 
-export function clearEnvironment(): void {
+export function clear(): void {
   localStorage.removeItem(STORAGE_KEY)
   sessionStorage.removeItem(STORAGE_KEY)
 
@@ -67,7 +68,7 @@ export function clearEnvironment(): void {
   client.setEnvironmentToken(null)
 }
 
-export function restoreEnvironment(): ActiveEnvironment | null {
+export function restore(): ActiveEnvironment | null {
   const stored = readEnvironment()
   if (stored == null) return null
 
@@ -81,4 +82,13 @@ export function restoreEnvironment(): ActiveEnvironment | null {
   client.setEnvironmentToken(environment.token)
 
   return environment
+}
+
+export async function resolve(
+  environment: ActiveEnvironment,
+): Promise<ActiveEnvironment | null> {
+  const response = await environments.get({ id: environment.id })
+  if (response.data == null) return null
+
+  return { ...environment, code: response.data.attributes.code }
 }

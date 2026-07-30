@@ -91,5 +91,8 @@ export { login }
 import { logout } from "./logout"
 export { logout }
 
+import * as environment from "./environment"
+export { environment }
+
 import { search } from "./search"
 export { search }

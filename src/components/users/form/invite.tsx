@@ -3,17 +3,23 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Separator } from "@/components/ui/separator"
 
-import { UserRole, PortalRequiredPermissions } from "@/types/users"
+import { UserRole, WildcardPermission } from "@/types/users"
 
-import { useCreateUser, useForgotPassword } from "@/queries/users"
+import {
+  useCreateUser,
+  useForgotPassword,
+  useGetCurrentUser,
+} from "@/queries/users"
 
 import { toast } from "@/lib/toast"
+import { grantsAllPermissions } from "@/lib/permissions"
 
 import * as Schemas from "@/schemas"
 
 import * as keygen from "@/keygen"
 import * as Users from "@/components/users"
 import * as Forms from "@/components/forms"
+import { Notice } from "@/components/notice"
 
 interface InviteUserFormProps {
   open: boolean
@@ -27,13 +33,22 @@ export default function InviteUserForm({
   const createUser = useCreateUser()
   const resetPassword = useForgotPassword()
 
+  const { data: currentUser } = useGetCurrentUser()
+
+  const currentPermissions = currentUser?.attributes.permissions
+  const canGrantFullAccess =
+    currentPermissions == null || grantsAllPermissions(currentPermissions)
+  const defaultPermissions = canGrantFullAccess
+    ? [WildcardPermission]
+    : currentPermissions
+
   const form = useForm<Schemas.Users.InviteValues>({
     resolver: zodResolver(Schemas.Users.InviteSchema),
     mode: "onChange",
     defaultValues: {
       email: "",
       role: UserRole.Admin,
-      permissions: [...PortalRequiredPermissions],
+      permissions: defaultPermissions,
     },
   })
 
@@ -83,6 +98,20 @@ export default function InviteUserForm({
                 include={["internalPermissions"]}
                 fieldVariant="stacking"
               />
+
+              <Notice className="mt-4">
+                <Notice.Title>
+                  {canGrantFullAccess
+                    ? "New teammates are granted full access by default."
+                    : "New teammates start with the same permissions you have."}
+                </Notice.Title>
+                <Notice.Description>
+                  We recommend narrowing these permissions to only what this
+                  teammate needs. Permissions required for Portal access are
+                  flagged, and removing them will lock the teammate out of parts
+                  in Portal.
+                </Notice.Description>
+              </Notice>
             </>
           )}
         </Forms.Layout.Sheet>

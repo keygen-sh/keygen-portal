@@ -66,7 +66,7 @@ const InviteShape = z.object({
   firstName: z.string().trim().nullable().optional(),
   lastName: z.string().trim().nullable().optional(),
   role: z.nativeEnum(UserRole),
-  permissions: z.array(z.string()).optional(),
+  permissions: z.array(z.string()).nullable().optional(),
 })
 
 const InviteRules = <S extends typeof InviteShape>(schema: S): S => {

@@ -4,11 +4,9 @@ import { PermissionsContext } from "@/contexts/permissions-context"
 
 import { useGetCurrentUser } from "@/queries/users"
 
-import { type Permission, DefaultPermissionsByRole } from "@/types/users"
+import { type Permission } from "@/types/users"
 
-import { isPermission } from "@/lib/permissions"
-
-import config from "@/keygen/config"
+import { resolvePermissions } from "@/lib/permissions"
 
 import * as Loading from "@/components/loading"
 
@@ -22,18 +20,10 @@ export function PermissionsProvider({
   const { data: currentUser, isLoading } = useGetCurrentUser()
 
   const value = useMemo(() => {
-    const raw = currentUser?.attributes.permissions
-
-    let permissions: ReadonlySet<Permission>
-    if (raw != null) {
-      permissions = new Set(raw.filter(isPermission))
-    } else if (config.isCE && currentUser?.attributes.role != null) {
-      permissions = new Set(
-        DefaultPermissionsByRole[currentUser.attributes.role] ?? [],
-      )
-    } else {
-      permissions = new Set()
-    }
+    const permissions = resolvePermissions(
+      currentUser?.attributes.permissions,
+      currentUser?.attributes.role,
+    )
 
     return {
       permissions,

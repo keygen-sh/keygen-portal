@@ -75,10 +75,6 @@ export default function MultiSelect({
     () => new Map(requiredOptions.map((o) => [o.value, o.tooltip])),
     [requiredOptions],
   )
-  const labelMap = useMemo(
-    () => new Map(options.map((o) => [o.value, o.label])),
-    [options],
-  )
   const normalizedOptions = useMemo(() => {
     const base = options.slice()
     if (includeWildcard && !base.some((o) => o.value === "*")) {
@@ -86,6 +82,11 @@ export default function MultiSelect({
     }
     return base
   }, [options, includeWildcard])
+
+  const labelMap = useMemo(
+    () => new Map(normalizedOptions.map((o) => [o.value, o.label])),
+    [normalizedOptions],
+  )
 
   const visibleOptions = useMemo(
     () =>

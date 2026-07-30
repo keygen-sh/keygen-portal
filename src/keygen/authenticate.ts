@@ -1,8 +1,10 @@
 import { addWeeks } from "date-fns"
 
+import { AuthResponse } from "@/types/auth"
+
 import config from "@/keygen/config"
 import client from "@/keygen/client"
-import { AuthResponse } from "@/types/auth"
+import { clearEnvironment } from "@/keygen/environment"
 
 config.validate()
 
@@ -22,6 +24,8 @@ export async function authenticate({
   otp,
   account,
 }: AuthProps): Promise<AuthResponse> {
+  clearEnvironment()
+
   const credentials = btoa(
     unescape(encodeURIComponent(`${email || ""}:${password || ""}`)),
   )

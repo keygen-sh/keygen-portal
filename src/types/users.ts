@@ -325,6 +325,8 @@ export const Permissions = [
 
 export type Permission = (typeof Permissions)[number]
 
+export const WildcardPermission = "*"
+
 export const PortalRequiredPermissions: readonly Permission[] = [
   "account.read",
   "user.read",
@@ -485,3 +487,14 @@ export const UserPermissions: readonly Permission[] = [
   "user.second-factors.update",
   "user.update",
 ]
+
+export const AllowedPermissionsByRole: Readonly<
+  Record<UserRole, readonly Permission[]>
+> = {
+  [UserRole.Admin]: Permissions,
+  [UserRole.Developer]: Permissions,
+  [UserRole.ReadOnly]: ReadOnlyPermissions,
+  [UserRole.SalesAgent]: Permissions,
+  [UserRole.SupportAgent]: Permissions,
+  [UserRole.User]: UserPermissions,
+}

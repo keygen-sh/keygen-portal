@@ -1,4 +1,5 @@
-import { useFormContext } from "react-hook-form"
+import { useMemo } from "react"
+import { useFormContext, useWatch } from "react-hook-form"
 
 import { Input } from "@/components/ui/input"
 import {
@@ -20,6 +21,8 @@ import * as Schemas from "@/schemas"
 
 import { useListGroups } from "@/queries/groups"
 
+import { permissionsForRole } from "@/lib/permissions"
+
 import { ProductPermissions } from "@/types/products"
 import {
   UserRole,
@@ -27,9 +30,12 @@ import {
   ExternalRoles,
   InternalRoles,
   UserRoleLabels,
+  type Permission,
+  WildcardPermission,
   UserRoleDescriptions,
-  PortalRequiredPermissions,
+  AllowedPermissionsByRole,
   UserFormFieldDescriptions,
+  PortalRequiredPermissions,
   UserEditFormFieldDescriptions,
   UserCreateFormFieldDescriptions,
   UserPasswordFormFieldDescriptions,
@@ -581,17 +587,32 @@ function InternalPermissionsField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Users.BaseValues>()
+  const role = useWatch({ control: form.control, name: "role" })
+
+  const allowed: readonly Permission[] =
+    role != null ? AllowedPermissionsByRole[role] : Permissions
+  const options = useMemo(
+    () => allowed.map((p) => ({ label: p, value: p })),
+    [allowed],
+  )
+  const requiredOptions = useMemo(
+    () => PORTAL_REQUIRED_OPTIONS.filter((o) => allowed.includes(o.value)),
+    [allowed],
+  )
 
   return (
     <FormField
       control={form.control}
       name="permissions"
       render={({ field }) => {
-        const selected = field.value ?? []
-        const isWildcardSelected = selected.includes("*")
+        const value = permissionsForRole(field.value, role)
+        const selected = value ?? []
+        const isWildcardSelected = selected.includes(WildcardPermission)
         const missingPortalPermissions = isWildcardSelected
           ? []
-          : PortalRequiredPermissions.filter((p) => !selected.includes(p))
+          : requiredOptions
+              .map((o) => o.value)
+              .filter((p) => !selected.includes(p))
 
         return (
           <FormItem>
@@ -615,15 +636,12 @@ function InternalPermissionsField({
               }
             >
               <MultiSelect
-                value={field.value}
+                value={value}
                 onChange={field.onChange}
-                options={Permissions.map((p) => ({
-                  label: p,
-                  value: p,
-                }))}
+                options={options}
                 includeNone
                 includeWildcard
-                requiredOptions={PORTAL_REQUIRED_OPTIONS}
+                requiredOptions={requiredOptions}
                 autoFocus={autoFocus}
               />
             </Forms.Field.Header>

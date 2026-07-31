@@ -3,16 +3,14 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Separator } from "@/components/ui/separator"
 
-import { UserRole, WildcardPermission } from "@/types/users"
+import { UserRole } from "@/types/users"
 
-import {
-  useCreateUser,
-  useForgotPassword,
-  useGetCurrentUser,
-} from "@/queries/users"
+import { useCreateUser, useForgotPassword } from "@/queries/users"
+
+import { usePermissions } from "@/hooks/use-permissions"
 
 import { toast } from "@/lib/toast"
-import { grantsAllPermissions } from "@/lib/permissions"
+import { permissionsForRole } from "@/lib/permissions"
 
 import * as Schemas from "@/schemas"
 
@@ -33,14 +31,7 @@ export default function InviteUserForm({
   const createUser = useCreateUser()
   const resetPassword = useForgotPassword()
 
-  const { data: currentUser } = useGetCurrentUser()
-
-  const currentPermissions = currentUser?.attributes.permissions
-  const canGrantFullAccess =
-    currentPermissions == null || grantsAllPermissions(currentPermissions)
-  const defaultPermissions = canGrantFullAccess
-    ? [WildcardPermission]
-    : currentPermissions
+  const { permissions: currentPermissions } = usePermissions()
 
   const form = useForm<Schemas.Users.InviteValues>({
     resolver: zodResolver(Schemas.Users.InviteSchema),
@@ -48,12 +39,15 @@ export default function InviteUserForm({
     defaultValues: {
       email: "",
       role: UserRole.Admin,
-      permissions: defaultPermissions,
+      permissions: permissionsForRole(currentPermissions, UserRole.Admin),
     },
   })
 
   const handleSubmit = async (values: Schemas.Users.InviteValues) => {
-    await createUser.mutateAsync(values)
+    await createUser.mutateAsync({
+      ...values,
+      permissions: permissionsForRole(values.permissions, values.role),
+    })
     await resetPassword.mutateAsync({ email: values.email })
     toast({ message: "Invite sent", variant: "success" })
   }
@@ -101,15 +95,13 @@ export default function InviteUserForm({
 
               <Notice className="mt-4">
                 <Notice.Title>
-                  {canGrantFullAccess
-                    ? "New teammates are granted full access by default."
-                    : "New teammates start with the same permissions you have."}
+                  New teammates start with the same permissions you have.
                 </Notice.Title>
                 <Notice.Description>
                   We recommend narrowing these permissions to only what this
                   teammate needs. Permissions required for Portal access are
-                  flagged, and removing them will lock the teammate out of parts
-                  in Portal.
+                  flagged, and removing them will lock the teammate out of
+                  Portal.
                 </Notice.Description>
               </Notice>
             </>

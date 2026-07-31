@@ -19,15 +19,25 @@ export function isPermission(value: string): value is Permission {
   return PERMISSION_SET.has(value as Permission)
 }
 
-// whether a permission set grants everything
-export function grantsAllPermissions(raw: readonly string[]): boolean {
-  if (raw.includes(WildcardPermission)) {
-    return true
+// narrow a permission set down to the permissions a given role is allowed to hold
+export function permissionsForRole(
+  permissions: Iterable<string> | null | undefined,
+  role: UserRole | null | undefined,
+): string[] | null {
+  if (permissions == null) {
+    return null
   }
 
-  const granted = new Set(raw)
+  const selected = new Set(permissions)
 
-  return Permissions.every((permission) => granted.has(permission))
+  if (selected.has(WildcardPermission)) {
+    return [WildcardPermission]
+  }
+
+  const allowed: readonly Permission[] =
+    role != null ? AllowedPermissionsByRole[role] : Permissions
+
+  return allowed.filter((permission) => selected.has(permission))
 }
 
 // resolve a permission set into a normalized set of permissions,

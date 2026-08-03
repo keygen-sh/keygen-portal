@@ -1,3 +1,4 @@
+export { default as EmptyCell } from "./empty-cell"
 export { default as LicenseCell } from "./license-cell"
 export { default as MachineCell } from "./machine-cell"
 export { default as PolicyCell } from "./policy-cell"

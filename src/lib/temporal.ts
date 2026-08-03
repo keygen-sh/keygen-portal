@@ -128,7 +128,7 @@ function secondsToFullParts(seconds: number): Duration {
 // compact duration, e.g. 2 weeks
 export function formatCompactDurationLabel(
   total?: number | null,
-  { emptyLabel = "--" }: DurationFormatOptions = {},
+  { emptyLabel = "Not set" }: DurationFormatOptions = {},
 ): string {
   const seconds = toSeconds(total)
   if (seconds == null) return emptyLabel
@@ -139,7 +139,7 @@ export function formatCompactDurationLabel(
 // full duration, e.g. 1 year, 2 months, 3 days, 4 hours, 5 minutes, 6 seconds
 export function formatFullDurationLabel(
   total?: number | null,
-  { emptyLabel = "--" }: DurationFormatOptions = {},
+  { emptyLabel = "Not set" }: DurationFormatOptions = {},
 ): string {
   const seconds = toSeconds(total)
   if (seconds == null) return emptyLabel

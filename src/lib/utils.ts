@@ -97,7 +97,7 @@ export function capitalize(s: string): string {
 }
 
 export function labelize(value?: string | null, map?: Record<string, string>) {
-  if (!value) return "--"
+  if (!value) return "Not set"
   return (map && map[value]) || titleCase(value)
 }
 

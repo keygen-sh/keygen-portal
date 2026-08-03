@@ -291,7 +291,7 @@ export default function WebhookEndpointDetails() {
                       <Badge variant="secondary">
                         Subscribed to all events
                       </Badge>
-                    ) : subscriptions.length > 0 ? (
+                    ) : (
                       <div className="flex max-w-full flex-wrap gap-2">
                         {subscriptions.map((subscription) => (
                           <Badge key={subscription} variant="secondary">
@@ -299,8 +299,6 @@ export default function WebhookEndpointDetails() {
                           </Badge>
                         ))}
                       </div>
-                    ) : (
-                      <Attribute.Field variant="text" label="None" value="--" />
                     )}
                   </CollapsibleMenu>
                 </CollapsibleCard>
@@ -337,7 +335,7 @@ export default function WebhookEndpointDetails() {
                         ) : productId ? (
                           productId
                         ) : (
-                          "--"
+                          <span className="text-content-subdued">None</span>
                         )
                       }
                     />

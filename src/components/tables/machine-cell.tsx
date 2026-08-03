@@ -1,6 +1,6 @@
-// TODO(cazden) Add machines query
-// import { useGetMachine } from "@/queries/machines"
+import { useGetMachine } from "@/queries/machines"
 
+import EmptyCell from "./empty-cell"
 import ResourceCell from "./resource-cell"
 
 interface MachineCellProps {
@@ -15,15 +15,11 @@ export default function MachineCell({
 }
 
 function MachineCellContent({ id }: { id: string }): React.ReactElement {
-  // const { data, isLoading: machineLoading } = useGetMachine(id)
-
-  void id
-  const data = { attributes: { name: "--" } }
-  const machineLoading = false
+  const { data, isLoading: machineLoading } = useGetMachine(id)
 
   return (
     <ResourceCell isEmpty={!data} isLoading={machineLoading}>
-      {data?.attributes.name}
+      {data?.attributes.name || <EmptyCell />}
     </ResourceCell>
   )
 }

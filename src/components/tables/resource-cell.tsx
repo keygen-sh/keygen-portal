@@ -1,14 +1,21 @@
 import { Skeleton } from "@/components/ui/skeleton"
 
+import EmptyCell from "./empty-cell"
+
 type ResourceCellProps =
-  | { isEmpty: true }
-  | { isEmpty: false; isLoading: boolean; children: React.ReactNode }
+  | { isEmpty: true; isLoading?: never; children?: never }
+  | { isEmpty: boolean; isLoading: boolean; children: React.ReactNode }
 
 export default function ResourceCell(
   props: ResourceCellProps,
 ): React.ReactNode {
-  if (props.isEmpty) return <span className="text-content-normal">--</span>
-  if (props.isLoading)
+  if (props.isLoading) {
     return <Skeleton className="h-6 w-full rounded-sm md:w-2/3" />
+  }
+
+  if (props.isEmpty) {
+    return <EmptyCell label="None" />
+  }
+
   return props.children
 }

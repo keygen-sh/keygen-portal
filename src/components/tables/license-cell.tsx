@@ -1,6 +1,6 @@
-// TODO(cazden) Add licenses query
-// import { useGetLicense } from "@/queries/licenses"
+import { useGetLicense } from "@/queries/licenses"
 
+import EmptyCell from "./empty-cell"
 import ResourceCell from "./resource-cell"
 
 interface LicenseCellProps {
@@ -15,15 +15,11 @@ export default function LicenseCell({
 }
 
 function LicenseCellContent({ id }: { id: string }): React.ReactElement {
-  // const { data, isLoading: licenseLoading } = useGetLicense(id)
-
-  void id
-  const data = { attributes: { name: "--" } }
-  const licenseLoading = false
+  const { data, isLoading: licenseLoading } = useGetLicense(id)
 
   return (
     <ResourceCell isEmpty={!data} isLoading={licenseLoading}>
-      {data?.attributes.name}
+      {data?.attributes.name || <EmptyCell />}
     </ResourceCell>
   )
 }

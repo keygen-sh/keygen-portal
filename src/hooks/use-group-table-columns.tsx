@@ -18,8 +18,6 @@ export function useGroupTableColumns() {
       }),
       column.attr("name", {
         header: "Name",
-        cell: (info) =>
-          info.getValue() || <span className="text-content-muted">--</span>,
       }),
       column.attr("created", {
         sortingFn: "datetime",

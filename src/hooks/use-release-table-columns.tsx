@@ -18,14 +18,12 @@ export function useReleaseTableColumns() {
       }),
       column.attr("name", {
         header: "Name",
-        cell: (info) => info.getValue() ?? "--",
       }),
       column.attr("version", {
         header: "Version",
       }),
       column.attr("tag", {
         header: "Tag",
-        cell: (info) => info.getValue() ?? "--",
       }),
       column.attr("channel", {
         header: "Channel",

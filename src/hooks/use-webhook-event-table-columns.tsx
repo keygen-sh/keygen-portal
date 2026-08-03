@@ -12,6 +12,7 @@ import { httpStatusBadgeVariant } from "@/lib/http"
 import { createTableColumnHelper } from "@/lib/tables"
 import { eventLogBadgeVariant } from "@/lib/event-logs"
 
+import * as Tables from "@/components/tables"
 import { TimestampCell } from "@/components/timestamp"
 import ClipboardButton from "@/components/clipboard-button"
 
@@ -64,8 +65,7 @@ export function useWebhookEventTableColumns() {
         cell: (info) => {
           const code = info.getValue()
 
-          if (code == null)
-            return <span className="text-content-muted">--</span>
+          if (code == null) return <Tables.EmptyCell label="None" />
 
           return (
             <Badge variant={httpStatusBadgeVariant(code)} className="font-mono">

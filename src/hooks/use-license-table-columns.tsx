@@ -25,8 +25,6 @@ export function useLicenseTableColumns() {
       }),
       column.attr("name", {
         header: "Name",
-        cell: (info) =>
-          info.getValue() || <span className="text-content-muted">--</span>,
       }),
       column.attr("key", {
         header: "Key",
@@ -64,7 +62,7 @@ export function useLicenseTableColumns() {
         header: "Expiry",
         cell: (info) => {
           const value = info.getValue()
-          if (!value) return <span className="text-content-muted">Never</span>
+          if (!value) return <Tables.EmptyCell label="Never" />
           return <TimestampCell value={value} />
         },
       }),

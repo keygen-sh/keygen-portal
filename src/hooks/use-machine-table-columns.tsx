@@ -19,13 +19,9 @@ export function useMachineTableColumns() {
       }),
       column.attr("fingerprint", {
         header: "Fingerprint",
-        cell: (info) =>
-          info.getValue() || <span className="text-content-muted">--</span>,
       }),
       column.attr("name", {
         header: "Name",
-        cell: (info) =>
-          info.getValue() || <span className="text-content-muted">--</span>,
       }),
       column.rel("license", {
         sortingFn: "alphanumeric",

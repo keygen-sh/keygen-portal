@@ -11,6 +11,7 @@ import {
 import { formatByteSize } from "@/lib/bytes"
 import { createTableColumnHelper } from "@/lib/tables"
 
+import * as Tables from "@/components/tables"
 import { TimestampCell } from "@/components/timestamp"
 import ClipboardButton from "@/components/clipboard-button"
 
@@ -28,19 +29,20 @@ export function useArtifactTableColumns() {
       }),
       column.attr("filetype", {
         header: "Filetype",
-        cell: (info) => info.getValue() ?? "--",
       }),
       column.attr("filesize", {
         header: "Filesize",
-        cell: (info) => formatByteSize(info.getValue()),
+        cell: (info) => {
+          const value = info.getValue()
+          if (value == null) return <Tables.EmptyCell />
+          return formatByteSize(value)
+        },
       }),
       column.attr("platform", {
         header: "Platform",
-        cell: (info) => info.getValue() ?? "--",
       }),
       column.attr("arch", {
         header: "Arch",
-        cell: (info) => info.getValue() ?? "--",
       }),
       column.attr("status", {
         header: "Status",

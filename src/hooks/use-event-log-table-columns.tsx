@@ -7,13 +7,14 @@ import { type EventLog } from "@/types/event-logs"
 import { eventLogBadgeVariant } from "@/lib/event-logs"
 import { createTableColumnHelper } from "@/lib/tables"
 
+import * as Tables from "@/components/tables"
 import { TimestampCell } from "@/components/timestamp"
 import ClipboardButton from "@/components/clipboard-button"
 
 const column = createTableColumnHelper<EventLog>()
 
-function relationshipIdCell(id?: string, emptyLabel = "--") {
-  if (!id) return <span className="text-content-muted">{emptyLabel}</span>
+function relationshipIdCell(id?: string) {
+  if (!id) return <Tables.EmptyCell label="None" />
 
   return <ClipboardButton value={id} maxLength={8} />
 }

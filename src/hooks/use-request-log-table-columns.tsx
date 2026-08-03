@@ -7,6 +7,7 @@ import { type RequestLog } from "@/types/request-logs"
 import { createTableColumnHelper } from "@/lib/tables"
 import { httpMethodBadgeVariant, httpStatusBadgeVariant } from "@/lib/http"
 
+import * as Tables from "@/components/tables"
 import { TimestampCell } from "@/components/timestamp"
 
 const column = createTableColumnHelper<RequestLog>()
@@ -25,7 +26,7 @@ export function useRequestLogTableColumns() {
         cell: (info) => {
           const ip = info.getValue()
 
-          if (!ip) return <span className="text-content-muted">--</span>
+          if (!ip) return <Tables.EmptyCell />
 
           return (
             <span className="font-mono text-xs text-content-normal">{ip}</span>
@@ -38,7 +39,7 @@ export function useRequestLogTableColumns() {
         cell: (info) => {
           const status = info.getValue()
 
-          if (!status) return <span className="text-content-muted">--</span>
+          if (!status) return <Tables.EmptyCell label="None" />
 
           return (
             <Badge
@@ -56,7 +57,7 @@ export function useRequestLogTableColumns() {
         cell: (info) => {
           const method = info.getValue()
 
-          if (!method) return <span className="text-content-muted">--</span>
+          if (!method) return <Tables.EmptyCell />
 
           return (
             <Badge
@@ -74,7 +75,7 @@ export function useRequestLogTableColumns() {
         cell: (info) => {
           const url = info.getValue()
 
-          if (!url) return <span className="text-content-muted">--</span>
+          if (!url) return <Tables.EmptyCell />
 
           return (
             <span className="font-mono text-xs text-content-normal">{url}</span>

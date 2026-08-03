@@ -18,7 +18,6 @@ export function usePackageTableColumns() {
       }),
       column.attr("name", {
         header: "Name",
-        cell: (info) => info.getValue() ?? "--",
       }),
       column.attr("key", {
         header: "Key",
@@ -27,7 +26,8 @@ export function usePackageTableColumns() {
         header: "Engine",
         cell: (info) => {
           const value = info.getValue()
-          return value ? PackageEngineLabels[value] : "--"
+          if (!value) return <Tables.EmptyCell />
+          return PackageEngineLabels[value]
         },
       }),
       column.rel("product", {

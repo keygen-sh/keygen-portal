@@ -19,8 +19,6 @@ export function useProcessTableColumns() {
       }),
       column.attr("pid", {
         header: "Pid",
-        cell: (info) =>
-          info.getValue() || <span className="text-content-muted">--</span>,
       }),
       column.rel("machine", {
         sortingFn: "alphanumeric",

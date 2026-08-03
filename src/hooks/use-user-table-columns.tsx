@@ -25,13 +25,9 @@ export function useUserTableColumns() {
       }),
       column.attr("fullName", {
         header: "Name",
-        cell: (info) =>
-          info.getValue() || <span className="text-content-muted">--</span>,
       }),
       column.attr("email", {
         header: "Email",
-        cell: (info) =>
-          info.getValue() || <span className="text-content-muted">--</span>,
       }),
       column.attr("status", {
         header: "Status",

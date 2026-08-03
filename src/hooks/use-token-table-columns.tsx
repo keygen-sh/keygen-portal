@@ -7,6 +7,7 @@ import { Token, TokenKindLabels } from "@/types/tokens"
 import { createTableColumnHelper } from "@/lib/tables"
 import { isCurrentToken } from "@/lib/auth"
 
+import * as Tables from "@/components/tables"
 import ResourceLink from "@/components/resource-link"
 import { TimestampCell } from "@/components/timestamp"
 import ClipboardButton from "@/components/clipboard-button"
@@ -36,8 +37,6 @@ export function useTokenTableColumns() {
       }),
       column.attr("name", {
         header: "Name",
-        cell: (info) =>
-          info.getValue() || <span className="text-content-muted">--</span>,
       }),
       column.rel("bearer", {
         header: "Bearer",
@@ -54,7 +53,7 @@ export function useTokenTableColumns() {
           return value ? (
             <TimestampCell value={value} />
           ) : (
-            <span className="text-content-subdued">Never</span>
+            <Tables.EmptyCell label="Never" />
           )
         },
       }),

@@ -61,7 +61,7 @@ export default function PropertyField({
   contentClassName,
   suffix,
   isEmpty = defaultIsEmpty,
-  emptyLabel = "--",
+  emptyLabel = "Not set",
   className,
 }: PropertyFieldProps): React.ReactElement {
   switch (type) {
@@ -274,7 +274,7 @@ export default function PropertyField({
                 <span
                   className={cn("ml-1 text-xs text-content-loud", className)}
                 >
-                  {value}
+                  {emptyLabel}
                 </span>
                 {flexTooltipIcon}
               </>

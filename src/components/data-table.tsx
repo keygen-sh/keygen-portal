@@ -34,6 +34,8 @@ import {
 import { cn } from "@/lib/utils"
 import { TableColumns, TableResource } from "@/lib/tables"
 
+import EmptyCell from "@/components/tables/empty-cell"
+
 import { useMobile } from "@/hooks/use-mobile"
 import { PaginationState } from "@/hooks/use-pagination"
 
@@ -95,6 +97,14 @@ export default function DataTable<T extends TableResource>({
       pagination: {
         pageIndex: pagination.page - 1,
         pageSize: pagination.pageSize,
+      },
+    },
+    defaultColumn: {
+      cell: (info) => {
+        const value = info.getValue()
+        if (value == null || value === "") return <EmptyCell />
+
+        return value as React.ReactNode
       },
     },
     manualPagination: true,

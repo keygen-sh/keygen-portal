@@ -50,7 +50,7 @@ export function formatByteUnitValue(
 
 export function formatByteSize(
   bytes: number | null | undefined,
-  { emptyLabel = "--" }: ByteFormatOptions = {},
+  { emptyLabel = "Not set" }: ByteFormatOptions = {},
 ): string {
   if (bytes == null) return emptyLabel
 
@@ -67,7 +67,7 @@ export function formatByteSize(
 
 export function formatRawByteSize(
   bytes: number | null | undefined,
-  { emptyLabel = "--" }: ByteFormatOptions = {},
+  { emptyLabel = "Not set" }: ByteFormatOptions = {},
 ): string {
   if (bytes == null) return emptyLabel
 

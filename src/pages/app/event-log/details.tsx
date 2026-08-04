@@ -63,7 +63,7 @@ export default function EventLogDetails() {
   const diff = metadataDiffEntries(metadata)
   const displayMetadata = visibleMetadata(metadata)
   const environment = eventLog?.relationships.environment?.data
-  const requestor = eventLog?.relationships.whodunnit?.data
+  const whodunnit = eventLog?.relationships.whodunnit?.data
   const resource = eventLog?.relationships.resource?.data
 
   return (
@@ -138,8 +138,8 @@ export default function EventLogDetails() {
                     />
                     <Attribute.Field
                       variant="text"
-                      label="Requestor"
-                      value={<ResourceLink linkage={requestor} truncate />}
+                      label="Whodunnit"
+                      value={<ResourceLink linkage={whodunnit} truncate />}
                     />
                     <Attribute.Field
                       variant="text"

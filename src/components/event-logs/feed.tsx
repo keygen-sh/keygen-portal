@@ -106,7 +106,7 @@ function EventLogRow({
             onClick={(e) => e.stopPropagation()}
             className="mt-3 cursor-default space-y-0.5 text-xs"
           >
-            <EventLogLinkRow label="Actor">
+            <EventLogLinkRow label="Whodunnit">
               <ResourceLink linkage={whodunnit} buttonClassName="text-xs" />
             </EventLogLinkRow>
             <Can permission="request-log.read">

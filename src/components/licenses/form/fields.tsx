@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils"
 import { getLimitPlaceholder } from "@/lib/licenses"
 
 import { useListUsers } from "@/queries/users"
+import { useListGroups } from "@/queries/groups"
 import { useListPolicies } from "@/queries/policies"
 import { useListProducts } from "@/queries/products"
 import { useListEntitlements } from "@/queries/entitlements"
@@ -72,6 +73,7 @@ const INCLUDE_DEFAULT_FIELDS: Schemas.Licenses.FieldNames[] = [
   "maxDisk",
   "maxUses",
   "ownerId",
+  "groupId",
   "suspended",
   "protected",
   "permissions",
@@ -238,6 +240,15 @@ export default function LicensesFormFields({
                 descriptions={descriptions}
               />
             )
+          case "groupId":
+            return (
+              <GroupIdField
+                key="groupId"
+                autoFocus={autoFocus === "groupId"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
           case "entitlements.attach":
             return <AttachEntitlementsField key="entitlements.attach" />
           case "entitlements.create":
@@ -382,7 +393,7 @@ function PolicyIdField({
   fieldVariant?: FieldVariant
   descriptions: Descriptions
 }) {
-  const form = useFormContext<Schemas.Licenses.CreateValues>()
+  const form = useFormContext<Schemas.Licenses.AllValues>()
 
   const { data: policies = [], isLoading: policiesLoading } = useListPolicies()
   const { data: products = [], isLoading: productsLoading } = useListProducts()
@@ -1197,6 +1208,57 @@ function OwnerIdField({
                 value={field.value ?? null}
                 onChange={(value) => field.onChange(value)}
                 options={users}
+                invalid={!!fieldState.error}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function GroupIdField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Licenses.BaseValues>()
+  const { data: groups = [], isLoading: groupsLoading } = useListGroups()
+
+  if (groupsLoading) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-48 rounded-sm" />
+        <Skeleton className="h-8 w-3/4" />
+      </div>
+    )
+  }
+
+  return (
+    <FormField
+      control={form.control}
+      name="groupId"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Group"
+            variant={fieldVariant}
+            tooltip={descriptions.group}
+            optional
+          >
+            <FormControl>
+              <Search.Select
+                resource="groups"
+                value={field.value ?? null}
+                onChange={(value) => field.onChange(value)}
+                options={groups}
                 invalid={!!fieldState.error}
                 autoFocus={autoFocus}
               />

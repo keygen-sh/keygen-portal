@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as Schemas from "@/schemas"
 import {
   useCreateLicense,
+  useChangeLicenseGroup,
   useChangeLicenseOwner,
   useAttachLicenseUsers,
   useAttachLicenseEntitlements,
@@ -51,6 +52,7 @@ export default function CreateLicenseForm({
       maxMemory: null,
       maxDisk: null,
       maxUses: null,
+      groupId: null,
       ownerId: null,
       permissions: null,
       metadata: [],
@@ -59,6 +61,7 @@ export default function CreateLicenseForm({
     },
   })
   const createLicense = useCreateLicense()
+  const changeGroup = useChangeLicenseGroup()
   const changeOwner = useChangeLicenseOwner()
   const attachUsers = useAttachLicenseUsers()
   const createEntitlement = useCreateEntitlement()
@@ -94,6 +97,13 @@ export default function CreateLicenseForm({
         })
       }
 
+      if (values.groupId) {
+        license = await changeGroup.mutateAsync({
+          licenseId: license.id,
+          groupId: values.groupId,
+        })
+      }
+
       if (createdEntitlementIds.length > 0)
         await attachEntitlements.mutateAsync({
           licenseId: license.id,
@@ -112,6 +122,7 @@ export default function CreateLicenseForm({
     [
       form,
       createLicense,
+      changeGroup,
       changeOwner,
       createEntitlement,
       attachEntitlements,
@@ -127,6 +138,7 @@ export default function CreateLicenseForm({
           onSubmit={handleSubmit}
           isPending={
             createLicense.isPending ||
+            changeGroup.isPending ||
             changeOwner.isPending ||
             createEntitlement.isPending ||
             attachEntitlements.isPending ||
@@ -232,6 +244,7 @@ export default function CreateLicenseForm({
             fields={[
               "entitlements.attach",
               "entitlements.create",
+              "groupId",
               "ownerId",
               "users.attach",
             ]}
@@ -247,7 +260,7 @@ export default function CreateLicenseForm({
                   <Licenses.Form.Fields
                     schema="create"
                     fieldVariant="stacking"
-                    include={["ownerId"]}
+                    include={["groupId", "ownerId"]}
                   />
                 </Forms.Section.Column>
 

@@ -25,6 +25,7 @@ const BaseShape = z.object({
   maxUses: NumberSchema.int().positive().nullable().optional(),
   permissions: z.array(z.string()).nullable().optional(),
   metadata: MetadataPairsSchema.optional(),
+  groupId: z.string().nullable().optional(),
   ownerId: z.string().nullable().optional(),
   entitlements: z
     .object({

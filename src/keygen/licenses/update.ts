@@ -16,7 +16,17 @@ export default async function update({
   id,
   values,
 }: UpdateProps): Promise<LicenseResponse> {
-  const { ownerId, entitlements, users, permissions, ...attributes } = values
+  const {
+    policyId,
+    groupId,
+    ownerId,
+    entitlements,
+    users,
+    permissions,
+    ...attributes
+  } = values
+  void policyId
+  void groupId
   void ownerId
   void entitlements
   void users

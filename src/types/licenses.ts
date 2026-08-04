@@ -168,6 +168,8 @@ export const LicenseCreateFormFieldDescriptions: typeof LicenseFormFieldDescript
 export const LicenseEditFormFieldDescriptions: typeof LicenseFormFieldDescriptions =
   {
     ...LicenseFormFieldDescriptions,
+    policy:
+      "Change a license's policy relationship. This will immediately be taken into effect for all future validations. The license's expiry may be changed, according to the new policy's transfer strategy.",
   }
 
 export const LicenseDisabledFormFieldDescriptions: Readonly<

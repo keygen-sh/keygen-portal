@@ -27,6 +27,7 @@ const BaseShape = z.object({
   metadata: MetadataPairsSchema.optional(),
   groupId: z.string().nullable().optional(),
   ownerId: z.string().nullable().optional(),
+  policyId: z.string().min(1, "Policy is required"),
   entitlements: z
     .object({
       attach: z.array(z.string()).default([]),
@@ -60,11 +61,7 @@ const KeyShape = z.object({
     ),
 })
 
-const PolicyShape = z.object({
-  policyId: z.string().min(1, "Policy is required"),
-})
-
-const CreateShape = BaseShape.merge(KeyShape).merge(PolicyShape)
+const CreateShape = BaseShape.merge(KeyShape)
 const UpdateShape = BaseShape.partial()
 
 type AnyShape = typeof BaseShape | typeof CreateShape | typeof UpdateShape

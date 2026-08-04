@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
 
@@ -11,6 +11,8 @@ import * as Schemas from "@/schemas"
 import {
   useGetLicense,
   useUpdateLicense,
+  useChangeLicensePolicy,
+  useChangeLicenseGroup,
   useChangeLicenseOwner,
   useListLicenseUsers,
   useAttachLicenseUsers,
@@ -40,13 +42,12 @@ export default function EditLicenseForm({
 }: EditLicenseFormProps) {
   const { id } = useParams({ from: "/$accountId/app/licenses/$id" })
   const { data: license } = useGetLicense(id)
-  const { data: policy } = useGetPolicy(
-    license?.relationships.policy?.data?.id ?? "",
-  )
   const { data: licenseEntitlements = [] } = useListLicenseEntitlements(
     license?.id ?? "",
   )
   const { data: licenseUsers = [] } = useListLicenseUsers(license?.id ?? "")
+  const currentPolicyId = license?.relationships.policy?.data?.id ?? null
+  const currentGroupId = license?.relationships.group?.data?.id ?? null
   const currentOwnerId = license?.relationships.owner?.data?.id ?? null
   const attachedLicenseUsers = useMemo(
     () => licenseUsers.filter((user) => user.id !== currentOwnerId),
@@ -54,6 +55,8 @@ export default function EditLicenseForm({
   )
 
   const updateLicense = useUpdateLicense(license?.id ?? "")
+  const changePolicy = useChangeLicensePolicy()
+  const changeGroup = useChangeLicenseGroup()
   const changeOwner = useChangeLicenseOwner()
   const attachUsers = useAttachLicenseUsers()
   const detachUsers = useDetachLicenseUsers()
@@ -83,6 +86,8 @@ export default function EditLicenseForm({
           maxMemory: license.attributes.maxMemory ?? null,
           maxDisk: license.attributes.maxDisk ?? null,
           maxUses: license.attributes.maxUses ?? null,
+          policyId: currentPolicyId ?? "",
+          groupId: currentGroupId,
           ownerId: currentOwnerId,
           permissions: license.attributes.permissions ?? null,
           metadata: recordToMetadataPairs(license.attributes.metadata),
@@ -96,6 +101,9 @@ export default function EditLicenseForm({
         }
       : undefined,
   })
+
+  const selectedPolicyId = useWatch({ control: form.control, name: "policyId" })
+  const { data: policy } = useGetPolicy(selectedPolicyId ?? "")
 
   const handleSubmit = useCallback(
     async (values: Schemas.Licenses.UpdateValues) => {
@@ -157,7 +165,24 @@ export default function EditLicenseForm({
           userIds: attachUserIds,
         })
 
+      const newGroupId = values.groupId ?? null
+      if (newGroupId !== currentGroupId) {
+        await changeGroup.mutateAsync({
+          licenseId: license.id,
+          groupId: newGroupId,
+        })
+      }
+
       await updateLicense.mutateAsync(values)
+
+      const newPolicyId = values.policyId
+      if (newPolicyId && newPolicyId !== currentPolicyId) {
+        await changePolicy.mutateAsync({
+          licenseId: license.id,
+          policyId: newPolicyId,
+        })
+      }
+
       toast({ message: "License updated", variant: "success" })
     },
     [
@@ -168,8 +193,12 @@ export default function EditLicenseForm({
       attachEntitlements,
       detachEntitlements,
       createEntitlement,
+      currentPolicyId,
+      currentGroupId,
       currentOwnerId,
       attachedLicenseUsers,
+      changePolicy,
+      changeGroup,
       changeOwner,
       attachUsers,
       detachUsers,
@@ -189,6 +218,8 @@ export default function EditLicenseForm({
           errorMessage="Failed to update license"
           isPending={
             updateLicense.isPending ||
+            changePolicy.isPending ||
+            changeGroup.isPending ||
             changeOwner.isPending ||
             attachEntitlements.isPending ||
             detachEntitlements.isPending ||
@@ -258,6 +289,11 @@ export default function EditLicenseForm({
             <Forms.Section.Column>
               <Licenses.Form.Fields
                 schema="edit"
+                fieldVariant="stacking"
+                include={["policyId"]}
+              />
+              <Licenses.Form.Fields
+                schema="edit"
                 include={["entitlements.attach", "entitlements.create"]}
               />
             </Forms.Section.Column>
@@ -265,7 +301,7 @@ export default function EditLicenseForm({
               <Licenses.Form.Fields
                 schema="edit"
                 fieldVariant="stacking"
-                include={["ownerId", "users.attach"]}
+                include={["groupId", "ownerId", "users.attach"]}
               />
             </Forms.Section.Column>
           </Forms.Section.Columns>

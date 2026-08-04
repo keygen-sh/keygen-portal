@@ -8,7 +8,6 @@ import { createTableColumnHelper } from "@/lib/tables"
 import { isCurrentToken } from "@/lib/auth"
 
 import * as Tables from "@/components/tables"
-import ResourceLink from "@/components/resource-link"
 import { TimestampCell } from "@/components/timestamp"
 import ClipboardButton from "@/components/clipboard-button"
 
@@ -42,7 +41,7 @@ export function useTokenTableColumns() {
         header: "Bearer",
         enableSorting: false,
         cell: (info) => (
-          <ResourceLink linkage={info.getValue()?.data} truncate />
+          <Tables.PolymorphicBearerCell linkage={info.getValue()?.data} />
         ),
       }),
       column.attr("expiry", {

@@ -57,6 +57,11 @@ export function useLicenseTableColumns() {
         header: "Product",
         cell: (info) => <Tables.ProductCell id={info.getValue()?.data?.id} />,
       }),
+      column.rel("owner", {
+        sortingFn: "alphanumeric",
+        header: "Owner",
+        cell: (info) => <Tables.UserCell id={info.getValue()?.data?.id} />,
+      }),
       column.attr("expiry", {
         sortingFn: "datetime",
         header: "Expiry",

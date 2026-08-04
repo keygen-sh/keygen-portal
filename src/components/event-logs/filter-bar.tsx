@@ -51,7 +51,7 @@ const RESOURCE_TYPES: PolymorphicResourceType[] = [
   resourceType("token"),
 ]
 
-const ACTOR_TYPES: PolymorphicResourceType[] = [
+const WHODUNNIT_TYPES: PolymorphicResourceType[] = [
   resourceType("user", "users"),
   resourceType("license", "licenses"),
   resourceType("product", "products"),
@@ -111,9 +111,9 @@ export default function EventLogFilterBar({
         onChange={(resource) => onChange({ ...filters, resource })}
       />
       <Filters.PolymorphicResourceFilter
-        label="Actor"
+        label="Whodunnit"
         icon={UserRound}
-        types={ACTOR_TYPES}
+        types={WHODUNNIT_TYPES}
         value={asPolymorphic(filters.whodunnit)}
         onChange={(whodunnit) => onChange({ ...filters, whodunnit })}
       />

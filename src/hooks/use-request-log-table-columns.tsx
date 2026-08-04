@@ -69,6 +69,13 @@ export function useRequestLogTableColumns() {
           )
         },
       }),
+      column.rel("requestor", {
+        sortingFn: "alphanumeric",
+        header: "Requestor",
+        cell: (info) => (
+          <Tables.PolymorphicBearerCell linkage={info.getValue()?.data} />
+        ),
+      }),
       column.attr("url", {
         sortingFn: "alphanumeric",
         header: "URL",

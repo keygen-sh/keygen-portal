@@ -32,7 +32,7 @@ const EVENT_LOG_SKELETON_COLUMNS = [
   "Timestamp",
   "Event",
   "Resource",
-  "Actor",
+  "Whodunnit",
   "Request",
 ] as const
 

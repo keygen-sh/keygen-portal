@@ -46,8 +46,10 @@ export function useEventLogTableColumns() {
       }),
       column.rel("whodunnit", {
         sortingFn: "alphanumeric",
-        header: "Actor",
-        cell: (info) => relationshipIdCell(info.getValue()?.data?.id),
+        header: "Whodunnit",
+        cell: (info) => (
+          <Tables.PolymorphicBearerCell linkage={info.getValue()?.data} />
+        ),
       }),
       column.rel("request", {
         sortingFn: "alphanumeric",

@@ -138,6 +138,7 @@ export const LicenseFormFieldDescriptions: Readonly<
     owner: string
     users: string
     policy: string
+    group: string
   }
 > = {
   ...LicenseAttributeDescriptions,
@@ -154,11 +155,14 @@ export const LicenseFormFieldDescriptions: Readonly<
   owner: "The user that owns the license.",
   users: "The user(s) that the license is associated with.",
   policy: "The policy to implement for this license.",
+  group: "The group the license belongs to.",
 }
 
 export const LicenseCreateFormFieldDescriptions: typeof LicenseFormFieldDescriptions =
   {
     ...LicenseFormFieldDescriptions,
+    group:
+      "The group the license belongs to. By default, this is inherited from the license's owner, if present.",
   }
 
 export const LicenseEditFormFieldDescriptions: typeof LicenseFormFieldDescriptions =

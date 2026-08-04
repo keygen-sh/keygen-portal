@@ -177,6 +177,83 @@ export function useChangeLicenseOwner() {
   })
 }
 
+export function useChangeLicensePolicy() {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<
+    License,
+    APIError,
+    { licenseId: string; policyId: string }
+  >({
+    mutationFn: async ({ licenseId, policyId }) => {
+      const response = await keygen.licenses.changePolicy({
+        id: licenseId,
+        policyId,
+      })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response.data
+    },
+
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ["licenses", updated.id, { environment: code }],
+        updated,
+      )
+      await queryClient.invalidateQueries({
+        queryKey: ["licenses", { environment: code }],
+      })
+
+      await queryClient.invalidateQueries({
+        queryKey: [
+          "licenses",
+          updated.id,
+          "entitlements",
+          { environment: code },
+        ],
+      })
+    },
+  })
+}
+
+export function useChangeLicenseGroup() {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<
+    License,
+    APIError,
+    { licenseId: string; groupId: string | null }
+  >({
+    mutationFn: async ({ licenseId, groupId }) => {
+      const response = await keygen.licenses.changeGroup({
+        id: licenseId,
+        groupId,
+      })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response.data
+    },
+
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ["licenses", updated.id, { environment: code }],
+        updated,
+      )
+      await queryClient.invalidateQueries({
+        queryKey: ["licenses", { environment: code }],
+      })
+    },
+  })
+}
+
 export function useRemoveLicense(licenseId: string) {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()

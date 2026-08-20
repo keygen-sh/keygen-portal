@@ -9,6 +9,7 @@ interface ListProps {
   pageCursor?: string | null
   pageSize?: number
   filters?: LicenseFilters
+  environment?: string | null
 }
 
 export default async function list({
@@ -16,6 +17,7 @@ export default async function list({
   pageCursor,
   pageSize,
   filters,
+  environment,
 }: ListProps): Promise<LicenseListResponse> {
   const params = new URLSearchParams()
   if (limit != null) {
@@ -85,6 +87,7 @@ export default async function list({
     `/accounts/${config.id}/licenses?${params.toString()}`,
     {
       method: "GET",
+      ...(environment !== undefined ? { environment } : {}),
     },
   )) as LicenseListResponse
 

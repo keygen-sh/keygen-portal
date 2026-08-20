@@ -44,10 +44,7 @@ export default function InviteUserForm({
   })
 
   const handleSubmit = async (values: Schemas.Users.InviteValues) => {
-    await createUser.mutateAsync({
-      ...values,
-      permissions: permissionsForRole(values.permissions, values.role),
-    })
+    await createUser.mutateAsync(values)
     await resetPassword.mutateAsync({ email: values.email })
     toast({ message: "Invite sent", variant: "success" })
   }

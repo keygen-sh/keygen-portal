@@ -1,7 +1,9 @@
 import { useMemo } from "react"
-import { useFormContext, useWatch } from "react-hook-form"
+import { useFieldArray, useFormContext, useWatch } from "react-hook-form"
+import { X } from "lucide-react"
 
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import {
   FormField,
   FormItem,
@@ -17,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+import * as keygen from "@/keygen"
 import * as Schemas from "@/schemas"
 
 import { useListGroups } from "@/queries/groups"
@@ -25,6 +28,7 @@ import { usePermissions } from "@/hooks/use-permissions"
 import { useAccountDefaultPermissions } from "@/hooks/use-account-default-permissions"
 
 import {
+  permissionsForRole,
   defaultPermissionsFor,
   nextPermissionsForRoleChange,
 } from "@/lib/permissions"
@@ -193,6 +197,14 @@ export default function UsersFormFields({
               <InternalPermissionsField
                 key="internalPermissions"
                 autoFocus={autoFocus === "internalPermissions"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+              />
+            )
+          case "invites":
+            return (
+              <InvitesField
+                key="invites"
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
               />
@@ -891,5 +903,283 @@ function ConfirmPasswordField({
         </FormItem>
       )}
     />
+  )
+}
+
+function emptyInvite(
+  currentPermissions: Iterable<string>,
+): Schemas.Users.InviteValues {
+  return {
+    email: "",
+    firstName: null,
+    lastName: null,
+    role: UserRole.Admin,
+    permissions: permissionsForRole(currentPermissions, UserRole.Admin),
+  }
+}
+
+function InvitesField({
+  fieldVariant = "row",
+  descriptions,
+}: {
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+}) {
+  const form = useFormContext<Schemas.Users.InvitesValues>()
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "invites",
+  })
+
+  const { permissions: currentPermissions } = usePermissions()
+
+  return (
+    <div className="space-y-4">
+      {fields.map((f, i) => (
+        <InviteRow
+          key={f.id}
+          index={i}
+          fieldVariant={fieldVariant}
+          descriptions={descriptions}
+          onRemove={() => remove(i)}
+        />
+      ))}
+
+      <Button
+        size="sm"
+        type="button"
+        variant="ghost"
+        onClick={() => append(emptyInvite(currentPermissions))}
+        className="text-content-muted"
+      >
+        + Add teammate
+      </Button>
+    </div>
+  )
+}
+
+function InviteRow({
+  index,
+  fieldVariant = "row",
+  descriptions,
+  onRemove,
+}: {
+  index: number
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  onRemove?: () => void
+}) {
+  const form = useFormContext<Schemas.Users.InvitesValues>()
+  const role = useWatch({
+    control: form.control,
+    name: `invites.${index}.role`,
+  })
+  const selectedPermissions = useWatch({
+    control: form.control,
+    name: `invites.${index}.permissions`,
+  })
+
+  const { permissions: currentPermissions } = usePermissions()
+  const options = useMemo(() => {
+    const selected = new Set(selectedPermissions ?? [])
+
+    return Permissions.filter(
+      (p) => currentPermissions.has(p) || selected.has(p),
+    ).map((p) => ({ label: p, value: p }))
+  }, [currentPermissions, selectedPermissions])
+  const requiredOptions = useMemo(
+    () =>
+      PORTAL_REQUIRED_OPTIONS.filter((o) => currentPermissions.has(o.value)),
+    [currentPermissions],
+  )
+
+  return (
+    <div className="flex items-start gap-2 rounded border border-accent p-2">
+      <div className="grid flex-1 gap-4 p-2 md:grid-cols-2">
+        <FormField
+          control={form.control}
+          name={`invites.${index}.email`}
+          render={({ field }) => (
+            <FormItem>
+              <Forms.Field.Header
+                label="Email"
+                variant={fieldVariant}
+                tooltip={descriptions.email}
+              >
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="email"
+                    placeholder="Enter email..."
+                    autoComplete="off"
+                  />
+                </FormControl>
+              </Forms.Field.Header>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name={`invites.${index}.role`}
+          render={({ field }) => (
+            <FormItem>
+              <Forms.Field.Header
+                label="Role"
+                variant={fieldVariant}
+                tooltip={descriptions.role}
+              >
+                <FormControl>
+                  <Select
+                    value={field.value ?? UserRole.Admin}
+                    onValueChange={(next) => {
+                      const to = next as UserRole
+                      const synced = nextPermissionsForRoleChange({
+                        value: form.getValues(`invites.${index}.permissions`),
+                        from: field.value ?? UserRole.Admin,
+                        to,
+                        currentPermissions,
+                      })
+
+                      field.onChange(to)
+                      if (synced !== undefined) {
+                        form.setValue(`invites.${index}.permissions`, synced, {
+                          shouldDirty: true,
+                        })
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {InternalRoles.map((internalRole) => (
+                        <TooltipSelectItem
+                          key={internalRole}
+                          value={internalRole}
+                          tooltip={UserRoleDescriptions[internalRole]}
+                          className="pl-4"
+                        >
+                          {UserRoleLabels[internalRole]}
+                        </TooltipSelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+              </Forms.Field.Header>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name={`invites.${index}.firstName`}
+          render={({ field }) => (
+            <FormItem>
+              <Forms.Field.Header
+                label="First name"
+                variant={fieldVariant}
+                tooltip={descriptions.firstName}
+                optional
+              >
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={field.value ?? ""}
+                    placeholder="Enter first name..."
+                    autoComplete="off"
+                  />
+                </FormControl>
+              </Forms.Field.Header>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name={`invites.${index}.lastName`}
+          render={({ field }) => (
+            <FormItem>
+              <Forms.Field.Header
+                label="Last name"
+                variant={fieldVariant}
+                tooltip={descriptions.lastName}
+                optional
+              >
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={field.value ?? ""}
+                    placeholder="Enter last name..."
+                    autoComplete="off"
+                  />
+                </FormControl>
+              </Forms.Field.Header>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {!keygen.config.isCE && (
+          <FormField
+            control={form.control}
+            name={`invites.${index}.permissions`}
+            render={({ field }) => {
+              const value = field.value
+              const selected = value ?? []
+              const isWildcardSelected = selected.includes(WildcardPermission)
+              const missingPortalPermissions = isWildcardSelected
+                ? []
+                : requiredOptions
+                    .map((o) => o.value)
+                    .filter((p) => !selected.includes(p))
+
+              return (
+                <FormItem>
+                  <Forms.Field.Header
+                    label="Permissions"
+                    variant={fieldVariant}
+                    tooltip={descriptions.permissions}
+                    warning={
+                      missingPortalPermissions.length > 0 ? (
+                        <>
+                          <div>
+                            Missing some permissions required for Portal access:
+                          </div>
+                          <ul className="mt-1 list-disc pl-4">
+                            {missingPortalPermissions.map((p) => (
+                              <li key={p}>{p}</li>
+                            ))}
+                          </ul>
+                        </>
+                      ) : undefined
+                    }
+                  >
+                    <PermissionSelect
+                      value={value}
+                      onChange={field.onChange}
+                      options={options}
+                      defaults={role != null ? defaultPermissionsFor(role) : []}
+                      includeNone
+                      includeWildcard
+                      requiredOptions={requiredOptions}
+                    />
+                  </Forms.Field.Header>
+                  <FormMessage />
+                </FormItem>
+              )
+            }}
+          />
+        )}
+      </div>
+
+      {onRemove && (
+        <Button size="icon" type="button" variant="ghost" onClick={onRemove}>
+          <X className="h-4 w-4 text-content-subdued" />
+        </Button>
+      )}
+    </div>
   )
 }

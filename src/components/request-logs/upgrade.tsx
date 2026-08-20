@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button"
 
 import { Lock } from "lucide-react"
 
-import LockedOverlay from "@/components/locked-overlay"
+import { PRICING_URL } from "@/lib/url"
+
 import { useCloud } from "@/hooks/use-cloud"
 
-const UPGRADE_URL = "https://keygen.sh/pricing"
+import LockedOverlay from "@/components/locked-overlay"
 
 export default function RequestLogsUpgrade({
   children,
@@ -33,7 +34,7 @@ export default function RequestLogsUpgrade({
       description={description}
       action={
         <Button size="sm" asChild>
-          <a href={UPGRADE_URL} target="_blank" rel="noreferrer">
+          <a href={PRICING_URL} target="_blank" rel="noreferrer">
             View Pricing
           </a>
         </Button>

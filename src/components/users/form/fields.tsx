@@ -44,7 +44,6 @@ import {
 } from "@/types/users"
 import { type FieldVariant } from "@/components/forms/field"
 
-import * as keygen from "@/keygen"
 import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
 import MetadataInput from "@/components/metadata-input"
@@ -989,4 +988,3 @@ function ConfirmPasswordField({
     />
   )
 }
-

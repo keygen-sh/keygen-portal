@@ -55,17 +55,15 @@ import { useMobile } from "@/hooks/use-mobile"
 import { useAppVersion } from "@/hooks/use-app-version"
 import { usePermissions } from "@/hooks/use-permissions"
 
+import { DOCS_API_URL, GITHUB_URL } from "@/lib/url"
+
 import { useLogout } from "@/queries/auth"
 
 import type { Permission } from "@/types/users"
 
 import * as Palette from "@/components/palette"
+import * as SidebarNotice from "./notice"
 import Combobox from "./combobox"
-import NewVersionCard from "./new-version-card"
-import BillingStatusCard from "./billing-status-card"
-
-const GITHUB_URL = "https://github.com/keygen-sh/"
-const API_URL = "https://keygen.sh/docs/api/"
 
 enum ViewId {
   Home = "home",
@@ -101,6 +99,11 @@ const VIEWS: View[] = [
       {
         to: "/$accountId/app/dashboard",
         label: "Metrics",
+        params: { accountId: keygen.config.id },
+      },
+      {
+        to: "/$accountId/app/learn",
+        label: "Learn",
         params: { accountId: keygen.config.id },
       },
     ]),
@@ -498,7 +501,7 @@ export default function SidebarPanel(): React.ReactElement {
                 </DropdownMenuItem>
               )}
               <DropdownMenuItem asChild>
-                <a href={API_URL} target="_blank" rel="noreferrer">
+                <a href={DOCS_API_URL} target="_blank" rel="noreferrer">
                   API
                 </a>
               </DropdownMenuItem>
@@ -580,11 +583,15 @@ export default function SidebarPanel(): React.ReactElement {
         </SidebarContent>
 
         <SidebarFooter className="w-60 border-none p-4">
-          {hasUpdate ? (
-            <NewVersionCard onReload={reload} />
-          ) : (
-            <BillingStatusCard />
-          )}
+          <SidebarNotice.Onboarding
+            fallback={
+              hasUpdate ? (
+                <SidebarNotice.NewVersion onReload={reload} />
+              ) : (
+                <SidebarNotice.Billing />
+              )
+            }
+          />
         </SidebarFooter>
       </Sidebar>
     </div>

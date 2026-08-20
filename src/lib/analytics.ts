@@ -22,8 +22,6 @@ import {
 
 import { mix } from "@/lib/colors"
 
-export const UPGRADE_URL = "https://keygen.sh/pricing"
-
 export const CHART_COLORS = [
   "var(--color-secondary)",
   "var(--color-primary)",

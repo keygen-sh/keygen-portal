@@ -54,10 +54,8 @@ import { ArtifactStatus } from "@/types/artifacts"
 import { HeartbeatStatus } from "@/types/machines"
 import { type SearchOperator, type SearchQuery } from "@/types/search"
 
+import { DOCS_URL, DOCS_API_URL } from "@/lib/url"
 import { resourceConfigs, MIN_SEARCH_LENGTH } from "@/lib/search"
-
-const DOCS_URL = "https://keygen.sh/docs"
-const API_URL = "https://keygen.sh/docs/api"
 
 export const RESOURCE_LABEL: Record<FilterableResource, string> = {
   licenses: "Licenses",
@@ -315,7 +313,7 @@ export function buildCommands(opts: {
       group: "help",
       keywords: ["api", "reference", "developer"],
       kind: "external",
-      url: API_URL,
+      url: DOCS_API_URL,
     },
   )
 

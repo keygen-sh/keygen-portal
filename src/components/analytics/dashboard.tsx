@@ -25,12 +25,12 @@ import {
   HeatmapRangeDays,
   LEADERBOARD_RANGE_OPTIONS,
   LeaderboardRangeDays,
-  UPGRADE_URL,
   REQUEST_METRICS,
   VALIDATION_METRICS,
   useAnalyticsRange,
   useLazyVisibility,
 } from "@/lib/analytics"
+import { PRICING_URL } from "@/lib/url"
 import EventCharts from "./event-charts"
 import GaugeCard from "./gauge-card"
 import Leaderboards from "./leaderboards"
@@ -47,7 +47,7 @@ const requestUsagePercentFormatter = new Intl.NumberFormat(undefined, {
 function UpgradeButton() {
   return (
     <Button size="sm" asChild>
-      <a href={UPGRADE_URL} target="_blank" rel="noreferrer">
+      <a href={PRICING_URL} target="_blank" rel="noreferrer">
         View pricing
       </a>
     </Button>

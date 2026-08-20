@@ -65,7 +65,7 @@ export default function LoginForm() {
     session.setUser(userId)
 
     void navigate({
-      to: "/$accountId/app/dashboard",
+      to: "/$accountId/app",
       params: { accountId },
     })
   }

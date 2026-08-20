@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 
 import { cn } from "@/lib/utils"
 import { handleFormError } from "@/lib/form-errors"
+import { TERMS_URL, PRIVACY_URL } from "@/lib/url"
 
 import * as Schemas from "@/schemas"
 
@@ -23,9 +24,6 @@ import * as Motion from "@/components/motion"
 import * as Loading from "@/components/loading"
 
 const REDIRECT_DELAY_MS = 5_000
-
-const TERMS_URL = "https://keygen.sh/terms"
-const PRIVACY_URL = "https://keygen.sh/privacy"
 
 export default function RegisterForm() {
   const navigate = useNavigate()
@@ -68,7 +66,7 @@ export default function RegisterForm() {
       session.setUser(userId)
 
       void navigate({
-        to: "/$accountId/app/dashboard",
+        to: "/$accountId/app",
         params: { accountId },
       })
     } catch (error) {

@@ -9,7 +9,7 @@ export const Route = createFileRoute("/$accountId/")({
     const { accountId } = await restoreSession()
 
     return redirect({
-      to: "/$accountId/app/dashboard",
+      to: "/$accountId/app",
       params: { accountId: accountId ?? params.accountId },
       replace: true,
     })

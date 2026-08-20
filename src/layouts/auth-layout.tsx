@@ -22,7 +22,7 @@ export default function AuthLayout() {
   useEffect(() => {
     if (!user) return
     void navigate({
-      to: "/$accountId/app/dashboard",
+      to: "/$accountId/app",
       params: { accountId: keygen.client.currentAccount ?? keygen.config.id },
       replace: true,
     })

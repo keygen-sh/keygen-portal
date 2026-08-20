@@ -12,6 +12,7 @@ import { routeTree } from "./routeTree.gen"
 import * as sentry from "@/sentry"
 import * as fathom from "@/fathom"
 import * as Page from "@/pages/error"
+import * as Loading from "@/components/loading"
 
 sentry.init()
 
@@ -30,6 +31,11 @@ const router = createRouter({
   context: { queryClient },
   notFoundMode: "root",
   defaultNotFoundComponent: () => <Page.NotFound />,
+  defaultPendingComponent: () => (
+    <div className="flex h-screen w-screen items-center justify-center">
+      <Loading.Dots />
+    </div>
+  ),
 })
 
 fathom.init(router)

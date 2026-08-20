@@ -40,6 +40,52 @@ export function permissionsForRole(
   return allowed.filter((permission) => selected.has(permission))
 }
 
+export type PermissionPreset = "all" | "role" | "required" | "none" | "custom"
+
+// determine which preset a given permission set matches, if any
+export function permissionPreset(
+  value: readonly string[] | null | undefined,
+  {
+    grantable,
+    defaults,
+    required = [],
+  }: {
+    grantable: readonly string[]
+    defaults: readonly string[]
+    required?: readonly string[]
+  },
+): PermissionPreset | undefined {
+  if (value == null) {
+    return undefined
+  }
+
+  if (
+    value.includes(WildcardPermission) ||
+    (grantable.length > 0 && grantable.every((v) => value.includes(v)))
+  ) {
+    return "all"
+  }
+
+  if (value.length === 0) {
+    return "none"
+  }
+
+  const matches = (preset: readonly string[]) =>
+    preset.length > 0 &&
+    value.length === preset.length &&
+    preset.every((v) => value.includes(v))
+
+  if (matches(required)) {
+    return "required"
+  }
+
+  if (matches(defaults)) {
+    return "role"
+  }
+
+  return "custom"
+}
+
 // resolve a permission set into a normalized set of permissions,
 // considering the user's role and whether we're in CE or EE
 export function resolvePermissions(

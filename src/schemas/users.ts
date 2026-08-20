@@ -75,8 +75,20 @@ const InviteRules = <S extends typeof InviteShape>(schema: S): S => {
 
 export const InviteSchema = InviteRules(InviteShape)
 
+const InvitesShape = z.object({
+  invites: z.array(InviteShape).min(1, "At least one teammate is required"),
+})
+
+const InvitesRules = <S extends typeof InvitesShape>(schema: S): S => {
+  return schema
+}
+
+export const InvitesSchema = InvitesRules(InvitesShape)
+
 export type PasswordValues = z.output<typeof PasswordSchema>
 export type InviteValues = z.output<typeof InviteSchema>
+export type InvitesFormValues = z.input<typeof InvitesSchema>
+export type InvitesValues = z.output<typeof InvitesSchema>
 export type AllValues = CombineFormValues<
   BaseValues,
   CreateValues,
@@ -88,6 +100,7 @@ export type FieldNames =
   | FieldPath<AllValues>
   | "internalRole"
   | "internalPermissions"
+  | "invites"
 
 export const SchemaMap = {
   base: BaseSchema,
@@ -96,6 +109,7 @@ export const SchemaMap = {
   profile: UpdateSchema,
   password: PasswordSchema,
   invite: InviteSchema,
+  invites: InvitesSchema,
 } as const
 
 export type SchemaNames = keyof typeof SchemaMap

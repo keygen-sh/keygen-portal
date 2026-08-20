@@ -1,13 +1,6 @@
 import { Link } from "@tanstack/react-router"
 import { formatDate } from "date-fns"
 
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardFooter,
-} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
 import { BillingState } from "@/types/billings"
@@ -17,6 +10,8 @@ import { useGetAccount, useGetAccountBilling } from "@/queries/accounts"
 import { DATE_FORMAT } from "@/lib/timestamps"
 
 import * as keygen from "@/keygen"
+
+import SidebarNoticeCard from "./card"
 
 type StateContent = {
   title: string
@@ -53,7 +48,7 @@ const STATE_CONTENT: Partial<Record<BillingState, StateContent>> = {
   },
 }
 
-export default function BillingStatusCard() {
+export default function SidebarNoticeBilling() {
   const { data: account } = useGetAccount()
   const { data: billing } = useGetAccountBilling(
     account?.relationships.billing?.data?.id,
@@ -64,26 +59,20 @@ export default function BillingStatusCard() {
   if (!content) return null
 
   return (
-    <Card className="w-full items-start gap-4 rounded border-none p-4">
-      <CardHeader className="w-full px-0">
-        <CardTitle className="flex items-start gap-2 text-sm">
-          {content.title}
-        </CardTitle>
-        <CardDescription className="text-xs">
-          {content.description(billing?.attributes.subscriptionPeriodEnd)}
-        </CardDescription>
-      </CardHeader>
-
-      <CardFooter className="w-full px-0">
-        <Button size="sm" asChild>
-          <Link
-            to="/$accountId/app/billing"
-            params={{ accountId: keygen.config.id }}
-          >
-            {content.ctaLabel}
-          </Link>
-        </Button>
-      </CardFooter>
-    </Card>
+    <SidebarNoticeCard
+      title={content.title}
+      description={content.description(
+        billing?.attributes.subscriptionPeriodEnd,
+      )}
+    >
+      <Button size="sm" asChild>
+        <Link
+          to="/$accountId/app/billing"
+          params={{ accountId: keygen.config.id }}
+        >
+          {content.ctaLabel}
+        </Link>
+      </Button>
+    </SidebarNoticeCard>
   )
 }

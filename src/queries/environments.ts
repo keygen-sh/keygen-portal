@@ -18,10 +18,13 @@ export function useGetEnvironment(environmentId: string) {
   })
 }
 
-export function useListEnvironments(params?: {
-  cursor?: string | null
-  pageSize?: number
-}) {
+export function useListEnvironments(
+  params?: {
+    cursor?: string | null
+    pageSize?: number
+  },
+  options?: { enabled?: boolean },
+) {
   const query = useQuery({
     queryKey: ["environments", { ...params }],
     queryFn: async () => {
@@ -35,6 +38,7 @@ export function useListEnvironments(params?: {
 
       return response
     },
+    enabled: options?.enabled,
   })
 
   return {

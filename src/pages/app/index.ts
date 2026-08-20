@@ -1,4 +1,5 @@
 export { default as Dashboard } from "./dashboard"
+export { default as Learn } from "./learn"
 export { default as Products } from "./products"
 export { default as Policies } from "./policies"
 export { default as Entitlements } from "./entitlements"

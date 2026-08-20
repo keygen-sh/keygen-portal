@@ -20,20 +20,22 @@ import {
 import * as Schemas from "@/schemas"
 
 import { useListGroups } from "@/queries/groups"
+import { useGetAccountSettings } from "@/queries/accounts"
 
-import { permissionsForRole } from "@/lib/permissions"
+import { usePermissions } from "@/hooks/use-permissions"
 
-import { ProductPermissions } from "@/types/products"
+import { permissionPreset } from "@/lib/permissions"
+
 import {
   UserRole,
   Permissions,
   ExternalRoles,
   InternalRoles,
   UserRoleLabels,
-  type Permission,
   WildcardPermission,
   UserRoleDescriptions,
-  AllowedPermissionsByRole,
+  DefaultUserPermissions,
+  DefaultPermissionsByRole,
   UserFormFieldDescriptions,
   PortalRequiredPermissions,
   UserEditFormFieldDescriptions,
@@ -42,10 +44,11 @@ import {
 } from "@/types/users"
 import { type FieldVariant } from "@/components/forms/field"
 
+import * as keygen from "@/keygen"
 import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
-import MultiSelect from "@/components/multi-select"
 import MetadataInput from "@/components/metadata-input"
+import PermissionSelect from "@/components/permission-select"
 import TooltipSelectItem from "@/components/tooltip-select-item"
 
 type Descriptions = typeof UserFormFieldDescriptions
@@ -399,6 +402,87 @@ function LastNameField({
   )
 }
 
+function useAccountDefaultPermissions(): readonly string[] {
+  const { data: settings = [] } = useGetAccountSettings()
+
+  return useMemo(() => {
+    const value = settings.find(
+      (s) => s.attributes.key === "default_user_permissions",
+    )?.attributes.value
+
+    return value?.length ? value : DefaultUserPermissions
+  }, [settings])
+}
+
+function defaultPermissionsFor(
+  role: UserRole,
+  accountDefaults?: readonly string[],
+): readonly string[] {
+  const defaults =
+    role === UserRole.User && accountDefaults != null
+      ? accountDefaults
+      : DefaultPermissionsByRole[role]
+
+  if (!InternalRoles.includes(role)) {
+    return defaults
+  }
+
+  return [...new Set([...defaults, ...PortalRequiredPermissions])]
+}
+
+function rolePermissionsFor(
+  role: UserRole,
+  currentPermissions: ReadonlySet<string>,
+  accountDefaults?: readonly string[],
+): string[] {
+  return defaultPermissionsFor(role, accountDefaults).filter((p) =>
+    currentPermissions.has(p),
+  )
+}
+
+function nextPermissionsForRoleChange({
+  value,
+  from,
+  to,
+  currentPermissions,
+  accountDefaults,
+}: {
+  value: string[] | null | undefined
+  from: UserRole
+  to: UserRole
+  currentPermissions: ReadonlySet<string>
+  accountDefaults?: readonly string[]
+}): string[] | null | undefined {
+  if (value == null) {
+    return undefined
+  }
+
+  const selected = new Set(value)
+  const grantable = Permissions.filter(
+    (p) => currentPermissions.has(p) || selected.has(p),
+  )
+  const grantableSet = new Set<string>(grantable)
+
+  const required = InternalRoles.includes(from)
+    ? PortalRequiredPermissions.filter((p) => currentPermissions.has(p))
+    : []
+  const preset = permissionPreset(value, {
+    grantable,
+    defaults: defaultPermissionsFor(from, accountDefaults).filter((p) =>
+      grantableSet.has(p),
+    ),
+    required,
+  })
+
+  if (preset === "custom") {
+    return undefined
+  }
+
+  const next = rolePermissionsFor(to, currentPermissions, accountDefaults)
+
+  return next.length > 0 ? next : null
+}
+
 function RoleField({
   autoFocus,
   fieldVariant = "row",
@@ -409,6 +493,8 @@ function RoleField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Users.BaseValues>()
+  const { permissions: currentPermissions } = usePermissions()
+  const accountDefaults = useAccountDefaultPermissions()
 
   return (
     <FormField
@@ -424,7 +510,21 @@ function RoleField({
             <FormControl>
               <Select
                 value={field.value ?? UserRole.User}
-                onValueChange={field.onChange}
+                onValueChange={(next) => {
+                  const to = next as UserRole
+                  const synced = nextPermissionsForRoleChange({
+                    value: form.getValues("permissions"),
+                    from: field.value ?? UserRole.User,
+                    to,
+                    currentPermissions,
+                    accountDefaults,
+                  })
+
+                  field.onChange(to)
+                  if (synced !== undefined) {
+                    form.setValue("permissions", synced, { shouldDirty: true })
+                  }
+                }}
               >
                 <SelectTrigger className="w-full" autoFocus={autoFocus}>
                   <SelectValue placeholder="Select a role" />
@@ -477,6 +577,7 @@ function InternalRoleField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Users.BaseValues>()
+  const { permissions: currentPermissions } = usePermissions()
 
   return (
     <FormField
@@ -492,7 +593,20 @@ function InternalRoleField({
             <FormControl>
               <Select
                 value={field.value ?? UserRole.Admin}
-                onValueChange={field.onChange}
+                onValueChange={(next) => {
+                  const to = next as UserRole
+                  const synced = nextPermissionsForRoleChange({
+                    value: form.getValues("permissions"),
+                    from: field.value ?? UserRole.Admin,
+                    to,
+                    currentPermissions,
+                  })
+
+                  field.onChange(to)
+                  if (synced !== undefined) {
+                    form.setValue("permissions", synced, { shouldDirty: true })
+                  }
+                }}
               >
                 <SelectTrigger className="w-full" autoFocus={autoFocus}>
                   <SelectValue placeholder="Select a role" />
@@ -534,6 +648,33 @@ function PermissionsField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Users.BaseValues>()
+  const role = useWatch({ control: form.control, name: "role" })
+  const selectedPermissions = useWatch({
+    control: form.control,
+    name: "permissions",
+  })
+
+  const resolvedRole = role ?? UserRole.User
+  const { permissions: currentPermissions } = usePermissions()
+  const options = useMemo(() => {
+    const selected = new Set(selectedPermissions ?? [])
+
+    return Permissions.filter(
+      (p) => currentPermissions.has(p) || selected.has(p),
+    ).map((p) => ({ label: p, value: p }))
+  }, [currentPermissions, selectedPermissions])
+  const requiredOptions = useMemo(() => {
+    if (!InternalRoles.includes(resolvedRole)) {
+      return []
+    }
+
+    return PORTAL_REQUIRED_OPTIONS.filter((o) =>
+      currentPermissions.has(o.value),
+    )
+  }, [resolvedRole, currentPermissions])
+  const accountDefaults = useAccountDefaultPermissions()
+
+  const defaults = defaultPermissionsFor(resolvedRole, accountDefaults)
 
   return (
     <FormField
@@ -547,15 +688,14 @@ function PermissionsField({
             optional
             tooltip={descriptions.permissions}
           >
-            <MultiSelect
+            <PermissionSelect
               value={field.value}
               onChange={field.onChange}
-              options={ProductPermissions.map((p) => ({
-                label: p,
-                value: p,
-              }))}
+              options={options}
+              defaults={defaults}
               includeNone
               includeWildcard
+              requiredOptions={requiredOptions}
               placeholder={
                 schema === "create" || schema === "invite"
                   ? "Leave blank to use defaults"
@@ -588,16 +728,23 @@ function InternalPermissionsField({
 }) {
   const form = useFormContext<Schemas.Users.BaseValues>()
   const role = useWatch({ control: form.control, name: "role" })
+  const selectedPermissions = useWatch({
+    control: form.control,
+    name: "permissions",
+  })
 
-  const allowed: readonly Permission[] =
-    role != null ? AllowedPermissionsByRole[role] : Permissions
-  const options = useMemo(
-    () => allowed.map((p) => ({ label: p, value: p })),
-    [allowed],
-  )
+  const { permissions: currentPermissions } = usePermissions()
+  const options = useMemo(() => {
+    const selected = new Set(selectedPermissions ?? [])
+
+    return Permissions.filter(
+      (p) => currentPermissions.has(p) || selected.has(p),
+    ).map((p) => ({ label: p, value: p }))
+  }, [currentPermissions, selectedPermissions])
   const requiredOptions = useMemo(
-    () => PORTAL_REQUIRED_OPTIONS.filter((o) => allowed.includes(o.value)),
-    [allowed],
+    () =>
+      PORTAL_REQUIRED_OPTIONS.filter((o) => currentPermissions.has(o.value)),
+    [currentPermissions],
   )
 
   return (
@@ -605,7 +752,7 @@ function InternalPermissionsField({
       control={form.control}
       name="permissions"
       render={({ field }) => {
-        const value = permissionsForRole(field.value, role)
+        const value = field.value
         const selected = value ?? []
         const isWildcardSelected = selected.includes(WildcardPermission)
         const missingPortalPermissions = isWildcardSelected
@@ -635,10 +782,11 @@ function InternalPermissionsField({
                 ) : undefined
               }
             >
-              <MultiSelect
+              <PermissionSelect
                 value={value}
                 onChange={field.onChange}
                 options={options}
+                defaults={role != null ? defaultPermissionsFor(role) : []}
                 includeNone
                 includeWildcard
                 requiredOptions={requiredOptions}
@@ -841,3 +989,4 @@ function ConfirmPasswordField({
     />
   )
 }
+

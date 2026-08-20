@@ -6,7 +6,12 @@ import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
 import { Encoding } from "@/types/files"
-import { License, LicenseFile, type LicenseFilters } from "@/types/licenses"
+import {
+  License,
+  LicenseFile,
+  type LicenseFilters,
+  type LicenseValidation,
+} from "@/types/licenses"
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
@@ -538,6 +543,41 @@ export function useDetachLicenseUsers() {
       })
       await queryClient.invalidateQueries({
         queryKey: ["licenses", licenseId, { environment: code }],
+      })
+    },
+  })
+}
+
+export function useValidateLicenseKey() {
+  const queryClient = useQueryClient()
+  const { code } = useEnvironment()
+
+  return useMutation<LicenseValidation, APIError, { key: string }>({
+    mutationFn: async ({ key }) => {
+      const response = await keygen.licenses.validateKey({
+        key,
+        environment: code,
+      })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      if (!response.meta) {
+        throw new APIError({
+          title: "Validation failed",
+          detail: "The API did not return a validation result.",
+        })
+      }
+
+      return { license: response.data ?? null, meta: response.meta }
+    },
+
+    onSuccess: async ({ license }) => {
+      if (!license) return
+
+      await queryClient.invalidateQueries({
+        queryKey: ["licenses"],
       })
     },
   })

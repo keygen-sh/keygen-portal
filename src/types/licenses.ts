@@ -92,6 +92,25 @@ export type License = Resource<
 export type LicenseResponse = APIResponse<License>
 export type LicenseListResponse = APIResponse<License[]>
 
+export type LicenseValidationMeta = {
+  ts: string
+  valid: boolean
+  detail: string
+  code: string
+  nonce?: number
+  scope?: Record<string, unknown>
+}
+
+export type LicenseValidationResponse = APIResponse<
+  License | null,
+  LicenseValidationMeta
+>
+
+export type LicenseValidation = {
+  license: License | null
+  meta: LicenseValidationMeta
+}
+
 export const LicenseAttributeDescriptions: Readonly<
   Record<keyof Writable<LicenseAttributes>, string>
 > = {

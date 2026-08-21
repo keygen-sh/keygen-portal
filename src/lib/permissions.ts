@@ -3,12 +3,14 @@ import type { QueryClient } from "@tanstack/react-query"
 import { currentUserQueryOptions } from "@/queries/users"
 
 import {
-  Permissions,
-  Permission,
   UserRole,
+  Permission,
+  Permissions,
+  InternalRoles,
   WildcardPermission,
   DefaultPermissionsByRole,
   AllowedPermissionsByRole,
+  PortalRequiredPermissions,
 } from "@/types/users"
 
 import config from "@/keygen/config"
@@ -84,6 +86,79 @@ export function permissionPreset(
   }
 
   return "custom"
+}
+
+// default permission set for a role
+export function defaultPermissionsFor(
+  role: UserRole,
+  accountDefaults?: readonly string[],
+): readonly string[] {
+  const defaults =
+    role === UserRole.User && accountDefaults != null
+      ? accountDefaults
+      : DefaultPermissionsByRole[role]
+
+  if (!InternalRoles.includes(role)) {
+    return defaults
+  }
+
+  return [...new Set([...defaults, ...PortalRequiredPermissions])]
+}
+
+// a role's defaults narrowed to the permissions the current user holds
+// e.g. if current user isn't an admin, they can only grant permissions they hold
+function rolePermissionsFor(
+  role: UserRole,
+  currentPermissions: ReadonlySet<string>,
+  accountDefaults?: readonly string[],
+): string[] {
+  return defaultPermissionsFor(role, accountDefaults).filter((p) =>
+    currentPermissions.has(p),
+  )
+}
+
+// reseed a permission selection when the role changes
+export function nextPermissionsForRoleChange({
+  value,
+  from,
+  to,
+  currentPermissions,
+  accountDefaults,
+}: {
+  value: string[] | null | undefined
+  from: UserRole
+  to: UserRole
+  currentPermissions: ReadonlySet<string>
+  accountDefaults?: readonly string[]
+}): string[] | null | undefined {
+  if (value == null) {
+    return undefined
+  }
+
+  const selected = new Set(value)
+  const grantable = Permissions.filter(
+    (p) => currentPermissions.has(p) || selected.has(p),
+  )
+  const grantableSet = new Set<string>(grantable)
+
+  const required = InternalRoles.includes(from)
+    ? PortalRequiredPermissions.filter((p) => currentPermissions.has(p))
+    : []
+  const preset = permissionPreset(value, {
+    grantable,
+    defaults: defaultPermissionsFor(from, accountDefaults).filter((p) =>
+      grantableSet.has(p),
+    ),
+    required,
+  })
+
+  if (preset === "custom") {
+    return undefined
+  }
+
+  const next = rolePermissionsFor(to, currentPermissions, accountDefaults)
+
+  return next.length > 0 ? next : null
 }
 
 // resolve a permission set into a normalized set of permissions,

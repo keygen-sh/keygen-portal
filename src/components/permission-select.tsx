@@ -66,6 +66,7 @@ interface PermissionSelectProps {
   onChange: (value: string[] | null) => void
   options: Option[]
   defaults?: readonly string[]
+  grantable?: ReadonlySet<string>
   includeNone?: boolean
   includeWildcard?: boolean
   requiredOptions?: RequiredOption[]
@@ -119,6 +120,7 @@ export default function PermissionSelect({
   onChange,
   options,
   defaults = [],
+  grantable,
   includeNone,
   includeWildcard,
   requiredOptions = [],
@@ -150,9 +152,15 @@ export default function PermissionSelect({
     [groups],
   )
 
+  const isGrantable = (v: string) => grantable?.has(v) ?? true
+
   const toggle = (next: string) => {
+    if (!isGrantable(next) && !items.includes(next) && !isWildcardSelected) {
+      return
+    }
+
     const selected = isWildcardSelected
-      ? optionValues.filter((v) => v !== next)
+      ? optionValues.filter((v) => isGrantable(v) && v !== next)
       : items.includes(next)
         ? items.filter((v) => v !== next)
         : [...items, next]
@@ -161,11 +169,16 @@ export default function PermissionSelect({
   }
 
   const toggleGroup = (values: string[]) => {
-    const base = isWildcardSelected ? optionValues : items
-    const covered = values.every((v) => base.includes(v))
+    const base = isWildcardSelected ? optionValues.filter(isGrantable) : items
+    const checkable = values.filter((v) => isGrantable(v) || base.includes(v))
+    if (checkable.length === 0) {
+      return
+    }
+
+    const covered = checkable.every((v) => base.includes(v))
     const selected = covered
       ? base.filter((v) => !values.includes(v))
-      : [...new Set([...base, ...values])]
+      : [...new Set([...base, ...checkable])]
 
     onChange(selected.length === 0 ? null : selected)
   }
@@ -234,6 +247,7 @@ export default function PermissionSelect({
                   groups={groups}
                   items={items}
                   isWildcardSelected={isWildcardSelected}
+                  grantable={grantable}
                   defaultSet={defaultSet}
                   requiredTooltipMap={requiredTooltipMap}
                   onToggle={toggle}
@@ -272,6 +286,7 @@ interface PermissionSelectListProps {
   groups: PermissionGroup[]
   items: string[]
   isWildcardSelected: boolean
+  grantable?: ReadonlySet<string>
   defaultSet: ReadonlySet<string>
   requiredTooltipMap: ReadonlyMap<string, string>
   onToggle: (value: string) => void
@@ -282,6 +297,7 @@ function PermissionSelectList({
   groups,
   items,
   isWildcardSelected,
+  grantable,
   defaultSet,
   requiredTooltipMap,
   onToggle,
@@ -289,6 +305,7 @@ function PermissionSelectList({
 }: PermissionSelectListProps) {
   const shouldMount = useDeferredMount({ delay: MOUNT_DELAY })
   const search = useCommandState((state) => state.search)
+  const isGrantable = (v: string) => grantable?.has(v) ?? true
 
   if (!shouldMount) {
     return <Skeletons.PermissionSelect />
@@ -316,9 +333,13 @@ function PermissionSelectList({
             })
           : group.options
         const groupValues = visibleOptions.map((o) => o.value)
+        const checkable = groupValues.filter(
+          (v) => isGrantable(v) || isWildcardSelected || items.includes(v),
+        )
         const covered = isWildcardSelected
-          ? groupValues.length
-          : groupValues.filter((v) => items.includes(v)).length
+          ? checkable.length
+          : checkable.filter((v) => items.includes(v)).length
+        const groupLocked = checkable.length === 0
 
         return (
           <CommandGroup
@@ -327,8 +348,9 @@ function PermissionSelectList({
               <span className="flex items-center gap-3 pl-1">
                 <Checkbox
                   tabIndex={-1}
+                  disabled={groupLocked}
                   checked={
-                    covered === groupValues.length
+                    covered > 0 && covered === checkable.length
                       ? true
                       : covered > 0
                         ? "indeterminate"
@@ -352,6 +374,7 @@ function PermissionSelectList({
                   value={permission}
                   description={PermissionDescriptions[permission as Permission]}
                   checked={isCovered}
+                  locked={!isGrantable(permission) && !isCovered}
                   isDefault={defaultSet.has(permission)}
                   requiredTooltip={tooltip}
                   showWarning={showWarning}
@@ -371,6 +394,7 @@ interface PermissionRowProps {
   value: string
   description?: string
   checked: boolean
+  locked?: boolean
   isDefault?: boolean
   requiredTooltip?: string
   showWarning?: boolean
@@ -382,6 +406,7 @@ function PermissionRow({
   value,
   description,
   checked,
+  locked = false,
   isDefault = false,
   requiredTooltip,
   showWarning = false,
@@ -392,11 +417,16 @@ function PermissionRow({
       value={value}
       keywords={description ? [description] : undefined}
       onSelect={onSelect}
+      disabled={locked}
       data-missing-required={showWarning || undefined}
-      className="cursor-pointer items-start gap-3 py-2 pr-3 pl-10 md:items-center"
+      className={cn(
+        "items-start gap-3 py-2 pr-3 pl-10 md:items-center",
+        locked ? "data-[disabled=true]:pointer-events-auto" : "cursor-pointer",
+      )}
     >
       <Checkbox
         checked={checked}
+        disabled={locked}
         className="pointer-events-none mt-0.5 md:mt-0"
       />
 
@@ -404,13 +434,22 @@ function PermissionRow({
         <div className="flex items-center gap-2 md:w-72 md:shrink-0">
           <span className="font-mono text-sm text-content-loud">{label}</span>
 
-          {isDefault && (
+          {locked ? (
             <TooltipBadge
-              value="Default"
-              tooltip="This permission is included by default for this role."
+              value="Locked"
+              tooltip="You cannot grant this permission."
               className="px-1 pr-0.5 text-xs text-content-subdued"
               contentClassName="text-nowrap bg-background-4"
             />
+          ) : (
+            isDefault && (
+              <TooltipBadge
+                value="Default"
+                tooltip="This permission is included by default for this role."
+                className="px-1 pr-0.5 text-xs text-content-subdued"
+                contentClassName="text-nowrap bg-background-4"
+              />
+            )
           )}
         </div>
 

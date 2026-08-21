@@ -555,6 +555,11 @@ function InternalRoleField({
   )
 }
 
+const PERMISSION_OPTIONS = Permissions.map((permission) => ({
+  label: permission,
+  value: permission,
+}))
+
 function PermissionsField({
   schema,
   autoFocus,
@@ -568,20 +573,9 @@ function PermissionsField({
 }) {
   const form = useFormContext<Schemas.Users.BaseValues>()
   const role = useWatch({ control: form.control, name: "role" })
-  const selectedPermissions = useWatch({
-    control: form.control,
-    name: "permissions",
-  })
 
   const resolvedRole = role ?? UserRole.User
   const { permissions: currentPermissions } = usePermissions()
-  const options = useMemo(() => {
-    const selected = new Set(selectedPermissions ?? [])
-
-    return Permissions.filter(
-      (p) => currentPermissions.has(p) || selected.has(p),
-    ).map((p) => ({ label: p, value: p }))
-  }, [currentPermissions, selectedPermissions])
   const requiredOptions = useMemo(() => {
     if (!InternalRoles.includes(resolvedRole)) {
       return []
@@ -610,7 +604,8 @@ function PermissionsField({
             <PermissionSelect
               value={field.value}
               onChange={field.onChange}
-              options={options}
+              options={PERMISSION_OPTIONS}
+              grantable={currentPermissions}
               defaults={defaults}
               includeNone
               includeWildcard
@@ -647,19 +642,8 @@ function InternalPermissionsField({
 }) {
   const form = useFormContext<Schemas.Users.BaseValues>()
   const role = useWatch({ control: form.control, name: "role" })
-  const selectedPermissions = useWatch({
-    control: form.control,
-    name: "permissions",
-  })
 
   const { permissions: currentPermissions } = usePermissions()
-  const options = useMemo(() => {
-    const selected = new Set(selectedPermissions ?? [])
-
-    return Permissions.filter(
-      (p) => currentPermissions.has(p) || selected.has(p),
-    ).map((p) => ({ label: p, value: p }))
-  }, [currentPermissions, selectedPermissions])
   const requiredOptions = useMemo(
     () =>
       PORTAL_REQUIRED_OPTIONS.filter((o) => currentPermissions.has(o.value)),
@@ -704,7 +688,8 @@ function InternalPermissionsField({
               <PermissionSelect
                 value={value}
                 onChange={field.onChange}
-                options={options}
+                options={PERMISSION_OPTIONS}
+                grantable={currentPermissions}
                 defaults={role != null ? defaultPermissionsFor(role) : []}
                 includeNone
                 includeWildcard

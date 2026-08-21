@@ -34,7 +34,7 @@ import {
   UserRoleLabels,
   WildcardPermission,
   UserRoleDescriptions,
-  DefaultUserPermissions,
+  UserDefaultPermissions,
   DefaultPermissionsByRole,
   UserFormFieldDescriptions,
   PortalRequiredPermissions,
@@ -409,7 +409,7 @@ function useAccountDefaultPermissions(): readonly string[] {
       (s) => s.attributes.key === "default_user_permissions",
     )?.attributes.value
 
-    return value?.length ? value : DefaultUserPermissions
+    return value?.length ? value : UserDefaultPermissions
   }, [settings])
 }
 

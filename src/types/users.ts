@@ -345,15 +345,6 @@ export const PortalRequiredPermissions: readonly Permission[] = [
   "token.revoke",
 ]
 
-const BillingPermissions: readonly Permission[] = [
-  "account.billing.read",
-  "account.billing.update",
-  "account.plan.read",
-  "account.plan.update",
-  "account.subscription.read",
-  "account.subscription.update",
-]
-
 const ReadOnlyPermissions: readonly Permission[] = [
   "account.analytics.read",
   "account.billing.read",
@@ -397,45 +388,6 @@ const ReadOnlyPermissions: readonly Permission[] = [
   "webhook-endpoint.read",
   "webhook-event.read",
 ]
-
-const SalesAgentPermissions: readonly Permission[] = [
-  ...ReadOnlyPermissions,
-  "license.check-in",
-  "license.check-out",
-  "license.create",
-  "license.delete",
-  "license.reinstate",
-  "license.renew",
-  "license.revoke",
-  "license.suspend",
-  "license.update",
-  "machine.create",
-  "machine.delete",
-  "machine.update",
-  "token.regenerate",
-  "token.revoke",
-  "user.create",
-  "user.delete",
-  "user.invite",
-  "user.update",
-]
-
-const BillingPermissionSet = new Set<string>(BillingPermissions)
-
-const DeveloperPermissions: readonly Permission[] = Permissions.filter(
-  (p) => !BillingPermissionSet.has(p),
-)
-
-export const DefaultPermissionsByRole: Readonly<
-  Record<UserRole, readonly Permission[]>
-> = {
-  [UserRole.Admin]: [...Permissions],
-  [UserRole.Developer]: DeveloperPermissions,
-  [UserRole.ReadOnly]: ReadOnlyPermissions,
-  [UserRole.SalesAgent]: SalesAgentPermissions,
-  [UserRole.SupportAgent]: ReadOnlyPermissions,
-  [UserRole.User]: [],
-}
 
 export const UserPermissions: readonly Permission[] = [
   "account.read",
@@ -508,8 +460,34 @@ const LegacyDefaultUserExclusions: ReadonlySet<Permission> = new Set([
   "product.read",
 ])
 
-export const DefaultUserPermissions: readonly Permission[] =
+export const AdminDefaultPermissions: readonly Permission[] = [...Permissions]
+
+// can grow or prune these as needed
+export const DeveloperDefaultPermissions: readonly Permission[] = [
+  ...AdminDefaultPermissions,
+]
+export const SupportAgentDefaultPermissions: readonly Permission[] = [
+  ...AdminDefaultPermissions,
+]
+export const SalesAgentDefaultPermissions: readonly Permission[] = [
+  ...AdminDefaultPermissions,
+]
+export const ReadOnlyDefaultPermissions: readonly Permission[] = [
+  ...ReadOnlyPermissions,
+]
+export const UserDefaultPermissions: readonly Permission[] =
   UserPermissions.filter((p) => !LegacyDefaultUserExclusions.has(p))
+
+export const DefaultPermissionsByRole: Readonly<
+  Record<UserRole, readonly Permission[]>
+> = {
+  [UserRole.Admin]: AdminDefaultPermissions,
+  [UserRole.Developer]: DeveloperDefaultPermissions,
+  [UserRole.ReadOnly]: ReadOnlyDefaultPermissions,
+  [UserRole.SalesAgent]: SalesAgentDefaultPermissions,
+  [UserRole.SupportAgent]: SupportAgentDefaultPermissions,
+  [UserRole.User]: UserDefaultPermissions,
+}
 
 export const AllowedPermissionsByRole: Readonly<
   Record<UserRole, readonly Permission[]>

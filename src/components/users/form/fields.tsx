@@ -20,11 +20,14 @@ import {
 import * as Schemas from "@/schemas"
 
 import { useListGroups } from "@/queries/groups"
-import { useGetAccountSettings } from "@/queries/accounts"
 
 import { usePermissions } from "@/hooks/use-permissions"
+import { useAccountDefaultPermissions } from "@/hooks/use-account-default-permissions"
 
-import { permissionPreset } from "@/lib/permissions"
+import {
+  defaultPermissionsFor,
+  nextPermissionsForRoleChange,
+} from "@/lib/permissions"
 
 import {
   UserRole,
@@ -34,8 +37,6 @@ import {
   UserRoleLabels,
   WildcardPermission,
   UserRoleDescriptions,
-  UserDefaultPermissions,
-  DefaultPermissionsByRole,
   UserFormFieldDescriptions,
   PortalRequiredPermissions,
   UserEditFormFieldDescriptions,
@@ -399,87 +400,6 @@ function LastNameField({
       )}
     />
   )
-}
-
-function useAccountDefaultPermissions(): readonly string[] {
-  const { data: settings = [] } = useGetAccountSettings()
-
-  return useMemo(() => {
-    const value = settings.find(
-      (s) => s.attributes.key === "default_user_permissions",
-    )?.attributes.value
-
-    return value?.length ? value : UserDefaultPermissions
-  }, [settings])
-}
-
-function defaultPermissionsFor(
-  role: UserRole,
-  accountDefaults?: readonly string[],
-): readonly string[] {
-  const defaults =
-    role === UserRole.User && accountDefaults != null
-      ? accountDefaults
-      : DefaultPermissionsByRole[role]
-
-  if (!InternalRoles.includes(role)) {
-    return defaults
-  }
-
-  return [...new Set([...defaults, ...PortalRequiredPermissions])]
-}
-
-function rolePermissionsFor(
-  role: UserRole,
-  currentPermissions: ReadonlySet<string>,
-  accountDefaults?: readonly string[],
-): string[] {
-  return defaultPermissionsFor(role, accountDefaults).filter((p) =>
-    currentPermissions.has(p),
-  )
-}
-
-function nextPermissionsForRoleChange({
-  value,
-  from,
-  to,
-  currentPermissions,
-  accountDefaults,
-}: {
-  value: string[] | null | undefined
-  from: UserRole
-  to: UserRole
-  currentPermissions: ReadonlySet<string>
-  accountDefaults?: readonly string[]
-}): string[] | null | undefined {
-  if (value == null) {
-    return undefined
-  }
-
-  const selected = new Set(value)
-  const grantable = Permissions.filter(
-    (p) => currentPermissions.has(p) || selected.has(p),
-  )
-  const grantableSet = new Set<string>(grantable)
-
-  const required = InternalRoles.includes(from)
-    ? PortalRequiredPermissions.filter((p) => currentPermissions.has(p))
-    : []
-  const preset = permissionPreset(value, {
-    grantable,
-    defaults: defaultPermissionsFor(from, accountDefaults).filter((p) =>
-      grantableSet.has(p),
-    ),
-    required,
-  })
-
-  if (preset === "custom") {
-    return undefined
-  }
-
-  const next = rolePermissionsFor(to, currentPermissions, accountDefaults)
-
-  return next.length > 0 ? next : null
 }
 
 function RoleField({

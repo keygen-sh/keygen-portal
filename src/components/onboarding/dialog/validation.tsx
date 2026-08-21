@@ -27,7 +27,7 @@ import { DOCS_URL, DOCS_API_URL } from "@/lib/url"
 
 import * as Motion from "@/components/motion"
 import { Notice } from "@/components/notice"
-import Terminal from "@/components/terminal"
+import Terminal, { type TerminalHandle } from "@/components/terminal"
 import GoToButton from "@/components/go-to-button"
 import ClipboardCommand from "@/components/clipboard-command"
 
@@ -37,6 +37,7 @@ interface ValidationDialogProps {
   license: License
   open: boolean
   onOpenChange: (open: boolean) => void
+  externalResult?: "succeeded" | "failed" | null
 }
 
 function shellQuote(value: string): string {
@@ -66,6 +67,7 @@ export default function ValidationDialog({
   license,
   open,
   onOpenChange,
+  externalResult,
 }: ValidationDialogProps): React.ReactElement {
   const { code } = useEnvironment()
   const validateKey = useValidateLicenseKey()
@@ -74,6 +76,8 @@ export default function ValidationDialog({
   const [phase, setPhase] = useState<"idle" | "running" | "done">("idle")
 
   const openRef = useRef(open)
+  const autoRanRef = useRef(false)
+  const terminalRef = useRef<TerminalHandle>(null)
 
   useEffect(() => {
     openRef.current = open
@@ -81,6 +85,44 @@ export default function ValidationDialog({
 
   const key = license.attributes.key
   const command = buildCurl(key, code)
+
+  const externalValidation =
+    externalResult != null || license.attributes.lastValidated != null
+
+  const performValidation = useCallback(
+    async (validationKey: string, delayMs: number): Promise<string> => {
+      setValidation(null)
+      setPhase("running")
+
+      try {
+        const [result] = await Promise.all([
+          validateKey.mutateAsync({ key: validationKey }),
+          new Promise((resolve) => setTimeout(resolve, delayMs)),
+        ])
+
+        if (openRef.current) {
+          setValidation(result)
+        }
+
+        return JSON.stringify(
+          { data: result.license, meta: result.meta },
+          null,
+          2,
+        )
+      } catch (error) {
+        console.error(error)
+
+        return error instanceof APIError
+          ? `error: we couldn't reach the API -- ${error.detail ?? error.title}`
+          : "error: we couldn't reach the API"
+      } finally {
+        if (openRef.current) {
+          setPhase("done")
+        }
+      }
+    },
+    [validateKey],
+  )
 
   const handleCommand = useCallback(
     (input: string): string | Promise<string> => {
@@ -94,39 +136,9 @@ export default function ValidationDialog({
 
       const pastedKey = input.match(/"key"\s*:\s*"((?:\\.|[^"\\])*)"/)?.[1]
 
-      return (async () => {
-        setValidation(null)
-        setPhase("running")
-
-        try {
-          const [result] = await Promise.all([
-            validateKey.mutateAsync({ key: pastedKey || key }),
-            new Promise((resolve) => setTimeout(resolve, VALIDATE_DELAY_MS)),
-          ])
-
-          if (openRef.current) {
-            setValidation(result)
-          }
-
-          return JSON.stringify(
-            { data: result.license, meta: result.meta },
-            null,
-            2,
-          )
-        } catch (error) {
-          console.error(error)
-
-          return error instanceof APIError
-            ? `error: we couldn't reach the API -- ${error.detail ?? error.title}`
-            : "error: we couldn't reach the API"
-        } finally {
-          if (openRef.current) {
-            setPhase("done")
-          }
-        }
-      })()
+      return performValidation(pastedKey || key, VALIDATE_DELAY_MS)
     },
-    [validateKey, key],
+    [performValidation, key],
   )
 
   const handleOpenChange = useCallback(
@@ -136,10 +148,27 @@ export default function ValidationDialog({
       if (!value) {
         setValidation(null)
         setPhase("idle")
+        autoRanRef.current = false
       }
     },
     [onOpenChange],
   )
+
+  useEffect(() => {
+    if (
+      !open ||
+      autoRanRef.current ||
+      phase !== "idle" ||
+      !externalValidation
+    ) {
+      return
+    }
+
+    autoRanRef.current = true
+    void performValidation(key, 0).then((output) => {
+      terminalRef.current?.print(output)
+    })
+  }, [open, phase, externalValidation, key, performValidation])
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -150,7 +179,7 @@ export default function ValidationDialog({
         </DialogHeader>
 
         <ScrollArea className="h-[60vh]">
-          <div className="flex flex-col gap-4 p-4">
+          <div className="flex flex-col p-4">
             <div
               className={cn(
                 "overflow-hidden transition-[max-height] delay-200 duration-500",
@@ -174,18 +203,19 @@ export default function ValidationDialog({
                   </Notice.Description>
                 </Notice>
 
-                <ClipboardCommand command={command} />
+                <ClipboardCommand command={command} className="mb-4" />
               </div>
             </div>
 
             <Terminal
+              ref={terminalRef}
               onCommand={handleCommand}
               placeholder="# paste the command above and press Enter to run it"
             />
 
             {phase === "done" && validation?.meta.valid && (
               <Motion.Rise duration={0.3}>
-                <Notice className="w-fit">
+                <Notice className="mt-4 w-fit">
                   <Notice.Title>
                     Congratulations — you've completed the Quickstart!
                   </Notice.Title>

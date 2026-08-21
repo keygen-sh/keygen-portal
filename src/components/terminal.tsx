@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 
@@ -51,11 +57,17 @@ type TerminalEntry =
   | { kind: "command"; text: string }
   | { kind: "output"; text: string }
 
+export interface TerminalHandle {
+  run: (command: string) => void
+  print: (output: string) => void
+}
+
 interface TerminalProps {
   title?: string
   placeholder?: string
   onCommand: (command: string) => string | null | Promise<string | null>
   className?: string
+  ref?: React.Ref<TerminalHandle>
 }
 
 export default function Terminal({
@@ -63,6 +75,7 @@ export default function Terminal({
   placeholder,
   onCommand,
   className,
+  ref,
 }: TerminalProps): React.ReactElement {
   const [entries, setEntries] = useState<TerminalEntry[]>([])
   const [input, setInput] = useState("")
@@ -98,37 +111,56 @@ export default function Terminal({
     prevRunning.current = running
   }, [running])
 
-  const submit = useCallback(async () => {
+  const runCommand = useCallback(
+    async (raw: string) => {
+      const command = raw.trim()
+      if (!command || running) return
+
+      setEntries((prev) => [...prev, { kind: "command", text: command }])
+
+      try {
+        const result = onCommand(command)
+
+        let output: string | null
+        if (result instanceof Promise) {
+          setRunning(true)
+          output = await result
+        } else {
+          output = result
+        }
+
+        if (output != null) {
+          setEntries((prev) => [...prev, { kind: "output", text: output }])
+        }
+      } catch (error) {
+        console.error(error)
+        setEntries((prev) => [
+          ...prev,
+          { kind: "output", text: "error: command failed" },
+        ])
+      } finally {
+        setRunning(false)
+      }
+    },
+    [running, onCommand],
+  )
+
+  const submit = useCallback(() => {
     const command = input.trim()
     if (!command || running) return
 
     setInput("")
-    setEntries((prev) => [...prev, { kind: "command", text: command }])
+    void runCommand(command)
+  }, [input, running, runCommand])
 
-    try {
-      const result = onCommand(command)
+  const print = useCallback((output: string) => {
+    setEntries((prev) => [...prev, { kind: "output", text: output }])
+  }, [])
 
-      let output: string | null
-      if (result instanceof Promise) {
-        setRunning(true)
-        output = await result
-      } else {
-        output = result
-      }
-
-      if (output != null) {
-        setEntries((prev) => [...prev, { kind: "output", text: output }])
-      }
-    } catch (error) {
-      console.error(error)
-      setEntries((prev) => [
-        ...prev,
-        { kind: "output", text: "error: command failed" },
-      ])
-    } finally {
-      setRunning(false)
-    }
-  }, [input, running, onCommand])
+  useImperativeHandle(ref, () => ({ run: runCommand, print }), [
+    runCommand,
+    print,
+  ])
 
   return (
     <div

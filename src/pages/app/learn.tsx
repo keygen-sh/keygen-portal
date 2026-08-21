@@ -14,7 +14,7 @@ import {
   PopoverContent,
 } from "@/components/ui/popover"
 
-import { CircleCheckBig, ExternalLink, Undo2 } from "lucide-react"
+import { CircleCheckBig, ExternalLink, RotateCw, Undo2 } from "lucide-react"
 
 import * as keygen from "@/keygen"
 
@@ -26,6 +26,8 @@ import { useGetCurrentUser, useListUsers } from "@/queries/users"
 import { useListProducts } from "@/queries/products"
 import { useListPolicies } from "@/queries/policies"
 import { useListLicenses } from "@/queries/licenses"
+
+import { useValidationListener } from "@/hooks/use-validation-listener"
 import { useListEnvironments } from "@/queries/environments"
 
 import { useEdition } from "@/hooks/use-edition"
@@ -115,6 +117,11 @@ export default function Learn() {
   const hasValidated = licenses.data.some(
     (license) => license.attributes.lastValidated != null,
   )
+
+  const validationListener = useValidationListener({
+    enabled: canProbeLicenses && !hasValidated,
+    licenseId: latestLicense?.id,
+  })
 
   const hasTeammates = teammates.data.length > 1
   const hasEnvironments = environments.data.length > 0
@@ -290,7 +297,15 @@ export default function Learn() {
                 description="Validate your license key with a live API call, and view the new license's attributes and configuration."
                 state={stepState("validate")}
                 actionLabel="Validate License"
-                onAction={() => setOpenDialog("validate")}
+                onAction={() => {
+                  validationListener.arm()
+                  setOpenDialog("validate")
+                }}
+                onRefresh={
+                  validationListener.refreshable
+                    ? validationListener.refresh
+                    : undefined
+                }
               />
             </Carousel>
           </div>
@@ -437,6 +452,7 @@ export default function Learn() {
         <Onboarding.Dialog.Validation
           key={latestLicense.id}
           license={latestLicense}
+          externalResult={validationListener.detected}
           {...dialogProps("validate")}
         />
       )}
@@ -463,6 +479,7 @@ interface OnboardingCardProps {
   onSkip?: () => void
   onUndoSkip?: () => void
   onAction: () => void
+  onRefresh?: () => void
 }
 
 function OnboardingCard({
@@ -474,6 +491,7 @@ function OnboardingCard({
   onSkip,
   onUndoSkip,
   onAction,
+  onRefresh,
 }: OnboardingCardProps) {
   const complete = state === "complete"
   const dimmed = state !== "active"
@@ -554,6 +572,17 @@ function OnboardingCard({
               onClick={onSkip}
             >
               Skip for now
+            </Button>
+          )}
+
+          {state === "active" && onRefresh && (
+            <Button
+              size="sm"
+              variant="ghost"
+              className="w-fit"
+              onClick={onRefresh}
+            >
+              <RotateCw className="size-4" />
             </Button>
           )}
         </div>

@@ -33,7 +33,13 @@ export function useListEventLogs(
     pageSize?: number
     filters?: EventLogFilters
   },
-  options?: { enabled?: boolean },
+  options?: {
+    enabled?: boolean
+    staleTime?: number
+    refetchInterval?: number | false
+    refetchIntervalInBackground?: boolean
+    refetchOnWindowFocus?: boolean
+  },
 ) {
   const { code } = useEnvironment()
 
@@ -57,6 +63,16 @@ export function useListEventLogs(
       return response
     },
     enabled: options?.enabled,
+    ...(options?.staleTime !== undefined && { staleTime: options.staleTime }),
+    ...(options?.refetchInterval !== undefined && {
+      refetchInterval: options.refetchInterval,
+    }),
+    ...(options?.refetchIntervalInBackground !== undefined && {
+      refetchIntervalInBackground: options.refetchIntervalInBackground,
+    }),
+    ...(options?.refetchOnWindowFocus !== undefined && {
+      refetchOnWindowFocus: options.refetchOnWindowFocus,
+    }),
   })
 
   return {

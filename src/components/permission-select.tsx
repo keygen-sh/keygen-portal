@@ -210,7 +210,15 @@ export default function PermissionSelect({
       <DialogContent className="flex h-[calc(100dvh-2rem)] w-full flex-col overflow-hidden p-0 md:min-w-4xl">
         <DialogHeader className="flex items-start border-b border-accent p-4 pt-3">
           <DialogTitle className="text-base">Permissions</DialogTitle>
-          <DialogDescription className="sr-only" />
+          <DialogDescription className="text-sm text-content-subdued">
+            {isNoneSelected
+              ? "No permissions"
+              : isWildcardSelected
+                ? "All permissions"
+                : items.length > 0
+                  ? `${items.length} of ${options.length} permissions`
+                  : "Using defaults"}
+          </DialogDescription>
         </DialogHeader>
 
         <Command
@@ -239,16 +247,6 @@ export default function PermissionSelect({
         </Command>
 
         <div className="flex items-center gap-4 border-t border-accent p-3">
-          <span className="text-sm text-content-subdued">
-            {isNoneSelected
-              ? "No permissions"
-              : isWildcardSelected
-                ? "All permissions"
-                : items.length > 0
-                  ? `${items.length} of ${options.length} permissions`
-                  : "Using defaults"}
-          </span>
-
           <Button
             type="button"
             onClick={() => setOpen(false)}

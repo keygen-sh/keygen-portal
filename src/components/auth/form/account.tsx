@@ -22,9 +22,15 @@ export default function AccountForm() {
   })
 
   function onSubmit({ slug }: Schemas.Auth.AccountValues) {
+    const value = form.getValues("slug").trim()
+    const email = Schemas.Auth.LoginSchema.safeParse({ email: value }).success
+      ? value
+      : undefined
+
     void navigate({
       to: "/$accountId/auth/login",
       params: { accountId: slug },
+      search: { email },
     })
   }
 

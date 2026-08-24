@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useNavigate, Link } from "@tanstack/react-router"
+import { useNavigate, useSearch, Link } from "@tanstack/react-router"
+
 import { Undo2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -13,8 +14,8 @@ import * as Schemas from "@/schemas"
 import { AuthErrorCode, type AuthData } from "@/types/auth"
 
 import { useSlide } from "@/hooks/use-slide"
-import { useSession } from "@/hooks/use-session"
 import { useMobile } from "@/hooks/use-mobile"
+import { useSession } from "@/hooks/use-session"
 
 import { cn } from "@/lib/utils"
 import { toast } from "@/lib/toast"
@@ -47,9 +48,13 @@ export default function LoginForm() {
   const navigate = useNavigate()
   const session = useSession()
 
+  const { email: emailFromParams } = useSearch({
+    from: "/$accountId/auth/login",
+  })
+
   const [step, direction, setStep] = useSlide<Step>(STEP_ORDER, "email")
 
-  const [email, setEmail] = useState("")
+  const [email, setEmail] = useState(emailFromParams ?? "")
   const [password, setPassword] = useState("")
   const [remember, setRemember] = useState(false)
   const [ssoRedirectUrl, setSsoRedirectUrl] = useState<string | null>(null)
@@ -101,6 +106,7 @@ export default function LoginForm() {
       ) : (
         <EmailStep
           key="email"
+          email={email}
           onPasswordRequired={(value) => {
             setEmail(value)
             setStep("password")
@@ -118,10 +124,12 @@ export default function LoginForm() {
 }
 
 function EmailStep({
+  email,
   onPasswordRequired,
   onSsoRequired,
   onBack,
 }: {
+  email: string
   onPasswordRequired: (email: string) => void
   onSsoRequired: (email: string, redirectUrl: string) => void
   onBack: () => void
@@ -140,7 +148,7 @@ function EmailStep({
   const form = useForm<Schemas.Auth.LoginValues>({
     resolver: zodResolver(Schemas.Auth.LoginSchema),
     mode: "onChange",
-    defaultValues: { email: "" },
+    defaultValues: { email },
   })
 
   async function onSubmit({ email }: Schemas.Auth.LoginValues) {

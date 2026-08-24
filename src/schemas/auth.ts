@@ -18,7 +18,7 @@ export const AccountSchema = z.object({
     .string()
     .trim()
     .min(1, "Please enter your account.")
-    .transform(dasherize)
+    .transform((value) => dasherize(value.split("@")[1] || value))
     .pipe(z.string().regex(/^[-A-Za-z0-9]+$/, "Please enter a valid account.")),
 })
 export type AccountValues = z.output<typeof AccountSchema>

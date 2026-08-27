@@ -9,6 +9,7 @@ interface ListProps {
   pageCursor?: string | null
   pageSize?: number
   filters?: UserFilters
+  root?: boolean
 }
 
 export default async function list({
@@ -16,6 +17,7 @@ export default async function list({
   pageCursor,
   pageSize,
   filters,
+  root,
 }: ListProps): Promise<UserListResponse> {
   const params = new URLSearchParams()
   if (limit != null) {
@@ -51,6 +53,7 @@ export default async function list({
     `/accounts/${config.id}/users?${params.toString()}`,
     {
       method: "GET",
+      root,
     },
   )) as UserListResponse
 

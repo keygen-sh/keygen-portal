@@ -93,7 +93,7 @@ export default function Learn() {
   const canProbeLicenses = can("license.read")
 
   const teammates = useListUsers(
-    { pageSize: 2, filters: { roles: [...InternalRoles] } },
+    { pageSize: 2, filters: { roles: [...InternalRoles] }, root: true },
     { enabled: canProbeTeammates },
   )
   const environments = useListEnvironments(

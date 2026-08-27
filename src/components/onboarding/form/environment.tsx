@@ -7,6 +7,8 @@ import { Globe, GlobeLock } from "lucide-react"
 import * as Schemas from "@/schemas"
 import { IsolationStrategy } from "@/types/environments"
 
+import { useEnvironment } from "@/hooks/use-environment"
+
 import { useCreateEnvironment } from "@/queries/environments"
 
 import { toast } from "@/lib/toast"
@@ -37,6 +39,7 @@ export default function EnvironmentOnboardingForm({
   })
 
   const createEnvironment = useCreateEnvironment()
+  const { select } = useEnvironment()
 
   const selectedStrategy = useWatch({
     control: form.control,
@@ -45,10 +48,20 @@ export default function EnvironmentOnboardingForm({
 
   const handleSubmit = useCallback(
     async (values: Schemas.Environments.CreateValues) => {
-      await createEnvironment.mutateAsync(values)
-      toast({ message: "Environment created", variant: "success" })
+      const environment = await createEnvironment.mutateAsync(values)
+
+      toast({
+        message: "Environment created",
+        variant: "success",
+      })
+
+      try {
+        await select(environment.id, environment.attributes.code)
+      } catch (error) {
+        console.error(error)
+      }
     },
-    [createEnvironment],
+    [createEnvironment, select],
   )
 
   return (

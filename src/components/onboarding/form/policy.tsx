@@ -6,6 +6,8 @@ import * as Schemas from "@/schemas"
 
 import { useCreatePolicy } from "@/queries/policies"
 
+import * as fathom from "@/fathom"
+
 import { toast } from "@/lib/toast"
 
 import * as Forms from "@/components/forms"
@@ -45,6 +47,7 @@ export default function PolicyOnboardingForm({
     async (values: Schemas.Policies.CreateValues) => {
       await createPolicy.mutateAsync(values)
       toast({ message: "Policy created", variant: "success" })
+      fathom.track("onboarding: policy completed")
     },
     [createPolicy],
   )

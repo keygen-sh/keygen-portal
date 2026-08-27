@@ -18,6 +18,7 @@ import {
 import { CircleCheckBig, ExternalLink, RotateCw, Undo2 } from "lucide-react"
 
 import * as keygen from "@/keygen"
+import * as fathom from "@/fathom"
 
 import { InternalRoles } from "@/types/users"
 
@@ -91,6 +92,11 @@ export default function Learn() {
     open: openDialog === dialog,
     onOpenChange: (open: boolean) => setOpenDialog(open ? dialog : null),
   })
+
+  const openStep = (step: OnboardingStep) => {
+    fathom.track(`onboarding: ${step} opened`)
+    setOpenDialog(step)
+  }
 
   const canProbeTeammates = can("admin.read")
   const canProbeEnvironments = isEE && can("environment.read")
@@ -201,8 +207,10 @@ export default function Learn() {
     new Set(),
   )
 
-  const skipStep = (step: OnboardingStep) =>
+  const skipStep = (step: OnboardingStep) => {
+    fathom.track(`onboarding: ${step} skipped`)
     setSkippedSteps((prev) => new Set(prev).add(step))
+  }
 
   const unskipStep = (step: OnboardingStep) =>
     setSkippedSteps((prev) => {
@@ -278,7 +286,7 @@ export default function Learn() {
                 state={stepState("invite")}
                 actionLabel="Invite Teammates"
                 disabledTooltip={permissionTooltip("invite")}
-                onAction={() => setOpenDialog("invite")}
+                onAction={() => openStep("invite")}
                 onSkip={() => skipStep("invite")}
                 onUndoSkip={() => unskipStep("invite")}
               />
@@ -290,7 +298,7 @@ export default function Learn() {
                   state={stepState("environment")}
                   actionLabel="New Environment"
                   disabledTooltip={permissionTooltip("environment")}
-                  onAction={() => setOpenDialog("environment")}
+                  onAction={() => openStep("environment")}
                   onSkip={() => skipStep("environment")}
                   onUndoSkip={() => unskipStep("environment")}
                 />
@@ -302,7 +310,7 @@ export default function Learn() {
                 state={stepState("product")}
                 actionLabel="New Product"
                 disabledTooltip={permissionTooltip("product")}
-                onAction={() => setOpenDialog("product")}
+                onAction={() => openStep("product")}
               />
 
               <OnboardingCard
@@ -311,7 +319,7 @@ export default function Learn() {
                 state={stepState("policy")}
                 actionLabel="New Policy"
                 disabledTooltip={permissionTooltip("policy")}
-                onAction={() => setOpenDialog("policy")}
+                onAction={() => openStep("policy")}
               />
 
               <OnboardingCard
@@ -320,7 +328,7 @@ export default function Learn() {
                 state={stepState("license")}
                 actionLabel="New License"
                 disabledTooltip={permissionTooltip("license")}
-                onAction={() => setOpenDialog("license")}
+                onAction={() => openStep("license")}
               />
 
               <OnboardingCard
@@ -330,7 +338,7 @@ export default function Learn() {
                 actionLabel="Validate License"
                 onAction={() => {
                   validationListener.arm()
-                  setOpenDialog("validate")
+                  openStep("validate")
                 }}
                 onRefresh={
                   validationListener.refreshable

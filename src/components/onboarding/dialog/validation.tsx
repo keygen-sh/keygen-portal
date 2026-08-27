@@ -23,6 +23,7 @@ import { useEnvironment } from "@/hooks/use-environment"
 import { type QuickstartEnvironment } from "@/hooks/use-quickstart-environment"
 
 import * as keygen from "@/keygen"
+import * as fathom from "@/fathom"
 
 import { cn } from "@/lib/utils"
 import { DOCS_URL, DOCS_API_URL } from "@/lib/url"
@@ -107,6 +108,7 @@ export default function ValidationDialog({
 
   const openRef = useRef(open)
   const autoRanRef = useRef(false)
+  const trackedValidRef = useRef(false)
   const terminalRef = useRef<TerminalHandle>(null)
 
   useEffect(() => {
@@ -129,6 +131,11 @@ export default function ValidationDialog({
           validateKey.mutateAsync({ key: validationKey }),
           new Promise((resolve) => setTimeout(resolve, delayMs)),
         ])
+
+        if (result.meta.valid && !trackedValidRef.current) {
+          trackedValidRef.current = true
+          fathom.track("onboarding: validate completed")
+        }
 
         if (openRef.current) {
           setValidation(result)

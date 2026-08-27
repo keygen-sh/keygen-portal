@@ -9,6 +9,8 @@ import { IsolationStrategy } from "@/types/environments"
 
 import { useCreateEnvironment } from "@/queries/environments"
 
+import * as fathom from "@/fathom"
+
 import { toast } from "@/lib/toast"
 
 import * as Forms from "@/components/forms"
@@ -46,6 +48,7 @@ export default function EnvironmentOnboardingForm({
         message: "Environment created",
         variant: "success",
       })
+      fathom.track("onboarding: environment completed")
     },
     [createEnvironment],
   )

@@ -7,6 +7,8 @@ import { DistributionStrategy } from "@/types/products"
 
 import { useCreateProduct } from "@/queries/products"
 
+import * as fathom from "@/fathom"
+
 import { toast } from "@/lib/toast"
 
 import * as Forms from "@/components/forms"
@@ -47,6 +49,7 @@ export default function ProductOnboardingForm({
     async (values: Schemas.Products.CreateValues) => {
       await createProduct.mutateAsync(values)
       toast({ message: "Product created", variant: "success" })
+      fathom.track("onboarding: product completed")
     },
     [createProduct],
   )

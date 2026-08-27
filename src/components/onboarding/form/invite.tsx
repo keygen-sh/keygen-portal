@@ -9,6 +9,8 @@ import { useCreateUser, useForgotPassword } from "@/queries/users"
 
 import { usePermissions } from "@/hooks/use-permissions"
 
+import * as fathom from "@/fathom"
+
 import { toast } from "@/lib/toast"
 import { settleInviteUsers } from "@/lib/users"
 import { permissionsForRole } from "@/lib/permissions"
@@ -69,6 +71,7 @@ export default function InviteOnboardingForm({
         message: invited.length === 1 ? "Invite sent" : "Invites sent",
         variant: "success",
       })
+      fathom.track("onboarding: invite completed")
     },
     [form, createUser, resetPassword],
   )

@@ -6,6 +6,8 @@ import * as Schemas from "@/schemas"
 
 import { useCreateLicense } from "@/queries/licenses"
 
+import * as fathom from "@/fathom"
+
 import { toast } from "@/lib/toast"
 
 import * as Forms from "@/components/forms"
@@ -42,6 +44,7 @@ export default function LicenseOnboardingForm({
     async (values: Schemas.Licenses.CreateValues) => {
       await createLicense.mutateAsync(values)
       toast({ message: "License created", variant: "success" })
+      fathom.track("onboarding: license completed")
     },
     [createLicense],
   )

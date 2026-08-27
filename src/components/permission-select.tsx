@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useCommandState } from "cmdk"
 
 import { Badge } from "@/components/ui/badge"
@@ -168,6 +168,12 @@ export default function PermissionSelect({
     onChange(selected.length === 0 ? null : selected)
   }
 
+  const toggleRef = useRef(toggle)
+  useEffect(() => {
+    toggleRef.current = toggle
+  })
+  const onToggle = useCallback((next: string) => toggleRef.current(next), [])
+
   const toggleGroup = (values: string[]) => {
     const base = isWildcardSelected ? optionValues.filter(isGrantable) : items
     const checkable = values.filter((v) => isGrantable(v) || base.includes(v))
@@ -250,7 +256,7 @@ export default function PermissionSelect({
                   grantable={grantable}
                   defaultSet={defaultSet}
                   requiredTooltipMap={requiredTooltipMap}
-                  onToggle={toggle}
+                  onToggle={onToggle}
                   onToggleGroup={toggleGroup}
                 />
               </ScrollArea>
@@ -378,7 +384,7 @@ function PermissionSelectList({
                   isDefault={defaultSet.has(permission)}
                   requiredTooltip={tooltip}
                   showWarning={showWarning}
-                  onSelect={() => onToggle(permission)}
+                  onToggle={onToggle}
                 />
               )
             })}
@@ -398,10 +404,10 @@ interface PermissionRowProps {
   isDefault?: boolean
   requiredTooltip?: string
   showWarning?: boolean
-  onSelect: () => void
+  onToggle: (value: string) => void
 }
 
-function PermissionRow({
+const PermissionRow = memo(function PermissionRow({
   label,
   value,
   description,
@@ -410,13 +416,13 @@ function PermissionRow({
   isDefault = false,
   requiredTooltip,
   showWarning = false,
-  onSelect,
+  onToggle,
 }: PermissionRowProps) {
   return (
     <CommandItem
       value={value}
       keywords={description ? [description] : undefined}
-      onSelect={onSelect}
+      onSelect={() => onToggle(value)}
       disabled={locked}
       data-missing-required={showWarning || undefined}
       className={cn(
@@ -486,7 +492,7 @@ function PermissionRow({
       )}
     </CommandItem>
   )
-}
+})
 
 function RequiredScrollHint({
   listRef,

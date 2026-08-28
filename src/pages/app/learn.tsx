@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
+import { Navigate } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -33,6 +34,10 @@ import { useListEnvironments } from "@/queries/environments"
 import { useEdition } from "@/hooks/use-edition"
 import { useMobile } from "@/hooks/use-mobile"
 import { usePermissions } from "@/hooks/use-permissions"
+import { useEnvironment } from "@/hooks/use-environment"
+import { useQuickstartEnvironment } from "@/hooks/use-quickstart-environment"
+
+import { EnvironmentContext } from "@/contexts/environment-context"
 
 import {
   DOCS_URL,
@@ -66,6 +71,7 @@ const PERMISSION_TOOLTIPS: Record<OnboardingStep, string> = {
 
 export default function Learn() {
   const { isEE } = useEdition()
+  const { code } = useEnvironment()
   const { can, canAll } = usePermissions()
 
   const { data: currentUser } = useGetCurrentUser()
@@ -92,8 +98,13 @@ export default function Learn() {
   const canProbePolicies = can("policy.read")
   const canProbeLicenses = can("license.read")
 
+  const quickstart = useQuickstartEnvironment({
+    enabled: canProbeEnvironments,
+  })
+  const quickstartCode = quickstart.environment?.code ?? null
+
   const teammates = useListUsers(
-    { pageSize: 2, filters: { roles: [...InternalRoles] }, root: true },
+    { pageSize: 2, filters: { roles: [...InternalRoles] } },
     { enabled: canProbeTeammates },
   )
   const environments = useListEnvironments(
@@ -101,16 +112,16 @@ export default function Learn() {
     { enabled: canProbeEnvironments },
   )
   const products = useListProducts(
-    { pageSize: 1 },
-    { enabled: canProbeProducts },
+    { pageSize: 1, environment: quickstartCode },
+    { enabled: canProbeProducts && !quickstart.isPending },
   )
   const policies = useListPolicies(
-    { pageSize: 1 },
-    { enabled: canProbePolicies },
+    { pageSize: 1, environment: quickstartCode },
+    { enabled: canProbePolicies && !quickstart.isPending },
   )
   const licenses = useListLicenses(
-    { pageSize: 10 },
-    { enabled: canProbeLicenses },
+    { pageSize: 10, environment: quickstartCode },
+    { enabled: canProbeLicenses && !quickstart.isPending },
   )
 
   const latestLicense = licenses.data[0] ?? null
@@ -121,7 +132,17 @@ export default function Learn() {
   const validationListener = useValidationListener({
     enabled: canProbeLicenses && !hasValidated,
     licenseId: latestLicense?.id,
+    environment: quickstartCode,
   })
+
+  const quickstartScope = useMemo(
+    () => ({
+      id: quickstart.environment?.id ?? null,
+      code: quickstart.environment?.code ?? null,
+      select: async () => {},
+    }),
+    [quickstart.environment?.id, quickstart.environment?.code],
+  )
 
   const hasTeammates = teammates.data.length > 1
   const hasEnvironments = environments.data.length > 0
@@ -212,6 +233,16 @@ export default function Learn() {
 
   const permissionTooltip = (step: OnboardingStep) =>
     stepPermitted[step] ? undefined : PERMISSION_TOOLTIPS[step]
+
+  if (code != null) {
+    return (
+      <Navigate
+        to="/$accountId/app/dashboard"
+        params={{ accountId: keygen.config.id }}
+        replace
+      />
+    )
+  }
 
   return (
     <section className="flex h-screen flex-col">
@@ -445,17 +476,20 @@ export default function Learn() {
 
       <Onboarding.Form.Invite {...dialogProps("invite")} />
       {isEE && <Onboarding.Form.Environment {...dialogProps("environment")} />}
-      <Onboarding.Form.Product {...dialogProps("product")} />
-      <Onboarding.Form.Policy {...dialogProps("policy")} />
-      <Onboarding.Form.License {...dialogProps("license")} />
-      {latestLicense && (
-        <Onboarding.Dialog.Validation
-          key={latestLicense.id}
-          license={latestLicense}
-          externalResult={validationListener.detected}
-          {...dialogProps("validate")}
-        />
-      )}
+
+      <EnvironmentContext.Provider value={quickstartScope}>
+        <Onboarding.Form.Product {...dialogProps("product")} />
+        <Onboarding.Form.Policy {...dialogProps("policy")} />
+        <Onboarding.Form.License {...dialogProps("license")} />
+        {latestLicense && (
+          <Onboarding.Dialog.Validation
+            key={latestLicense.id}
+            license={latestLicense}
+            externalResult={validationListener.detected}
+            {...dialogProps("validate")}
+          />
+        )}
+      </EnvironmentContext.Provider>
     </section>
   )
 }

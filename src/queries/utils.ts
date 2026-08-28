@@ -34,5 +34,6 @@ export function invalidateScopedQueries(
 ): Promise<void> {
   return queryClient.invalidateQueries({
     predicate: (query) => query.queryKey[0] !== "environments",
+    refetchType: "none",
   })
 }

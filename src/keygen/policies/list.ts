@@ -9,6 +9,7 @@ interface ListProps {
   pageCursor?: string | null
   pageSize?: number
   filters?: PolicyFilters
+  environment?: string | null
 }
 
 export default async function list({
@@ -16,6 +17,7 @@ export default async function list({
   pageCursor,
   pageSize,
   filters,
+  environment,
 }: ListProps): Promise<PoliciesListResponse> {
   const params = new URLSearchParams()
   if (limit != null) {
@@ -33,6 +35,7 @@ export default async function list({
     `/accounts/${config.id}/policies?${params.toString()}`,
     {
       method: "GET",
+      ...(environment !== undefined ? { environment } : {}),
     },
   )) as PoliciesListResponse
 

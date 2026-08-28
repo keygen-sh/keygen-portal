@@ -13,6 +13,7 @@ interface ListProps {
   pageCursor?: string | null
   pageSize?: number
   filters?: EventLogFilters
+  environment?: string | null
 }
 
 function applyPolymorphicResourceFilter(
@@ -36,6 +37,7 @@ export default async function list({
   pageCursor,
   pageSize,
   filters,
+  environment,
 }: ListProps): Promise<EventLogListResponse> {
   const params = new URLSearchParams()
   if (limit != null) {
@@ -66,6 +68,7 @@ export default async function list({
     `/accounts/${config.id}/event-logs?${params.toString()}`,
     {
       method: "GET",
+      ...(environment !== undefined ? { environment } : {}),
     },
   )) as EventLogListResponse
 

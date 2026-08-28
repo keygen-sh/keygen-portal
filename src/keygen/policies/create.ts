@@ -10,6 +10,7 @@ config.validate()
 
 export default async function create(
   values: Schemas.Policies.CreateValues,
+  options?: { environment?: string | null },
 ): Promise<PolicyResponse> {
   const { product, entitlements, ...attributes } = values
   void entitlements
@@ -32,6 +33,9 @@ export default async function create(
   const result = (await client.request(`/accounts/${config.id}/policies`, {
     method: "POST",
     body: JSON.stringify(body),
+    ...(options?.environment !== undefined
+      ? { environment: options.environment }
+      : {}),
   })) as PolicyResponse
 
   return result

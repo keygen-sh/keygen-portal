@@ -8,12 +8,14 @@ interface ListProps {
   limit?: number
   pageCursor?: string | null
   pageSize?: number
+  environment?: string | null
 }
 
 export default async function list({
   limit,
   pageCursor,
   pageSize,
+  environment,
 }: ListProps): Promise<ProductsListResponse> {
   const params = new URLSearchParams()
   if (limit != null) {
@@ -28,6 +30,7 @@ export default async function list({
     `/accounts/${config.id}/products?${params.toString()}`,
     {
       method: "GET",
+      ...(environment !== undefined ? { environment } : {}),
     },
   )) as ProductsListResponse
 

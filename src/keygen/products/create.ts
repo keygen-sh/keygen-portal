@@ -9,10 +9,12 @@ config.validate()
 
 interface CreateProps {
   values: Schemas.Products.CreateValues
+  environment?: string | null
 }
 
 export default async function create({
   values,
+  environment,
 }: CreateProps): Promise<ProductResponse> {
   const { permissions, ...rest } = values
 
@@ -29,6 +31,7 @@ export default async function create({
   const result = (await client.request(`/accounts/${config.id}/products`, {
     method: "POST",
     body: JSON.stringify(body),
+    ...(environment !== undefined ? { environment } : {}),
   })) as ProductResponse
 
   return result

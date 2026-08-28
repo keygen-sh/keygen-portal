@@ -10,6 +10,7 @@ config.validate()
 
 export default async function create(
   values: Schemas.Licenses.CreateValues,
+  options?: { environment?: string | null },
 ): Promise<LicenseResponse> {
   const {
     policyId,
@@ -45,6 +46,9 @@ export default async function create(
   const result = (await client.request(`/accounts/${config.id}/licenses`, {
     method: "POST",
     body: JSON.stringify(body),
+    ...(options?.environment !== undefined
+      ? { environment: options.environment }
+      : {}),
   })) as LicenseResponse
 
   return result

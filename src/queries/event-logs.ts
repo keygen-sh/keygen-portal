@@ -32,6 +32,7 @@ export function useListEventLogs(
     cursor?: string | null
     pageSize?: number
     filters?: EventLogFilters
+    environment?: string | null
   },
   options?: {
     enabled?: boolean
@@ -42,19 +43,18 @@ export function useListEventLogs(
   },
 ) {
   const { code } = useEnvironment()
+  const environment =
+    params?.environment !== undefined ? params.environment : code
 
   const query = useQuery({
     queryKey: ["event-logs", { environment: code, ...params }],
     queryFn: async () => {
-      const response = await keygen.eventLogs.list(
-        params
-          ? {
-              pageCursor: params.cursor,
-              pageSize: params.pageSize,
-              filters: params.filters,
-            }
-          : {},
-      )
+      const response = await keygen.eventLogs.list({
+        pageCursor: params?.cursor,
+        pageSize: params?.pageSize,
+        filters: params?.filters,
+        environment,
+      })
 
       if (response.errors) {
         throw new APIError(response.errors[0])

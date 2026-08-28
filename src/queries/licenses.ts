@@ -41,23 +41,23 @@ export function useListLicenses(
     cursor?: string | null
     pageSize?: number
     filters?: LicenseFilters
+    environment?: string | null
   },
   options?: { enabled?: boolean },
 ) {
   const { code } = useEnvironment()
+  const environment =
+    params?.environment !== undefined ? params.environment : code
 
   const query = useQuery({
     queryKey: ["licenses", { environment: code, ...params }],
     queryFn: async () => {
-      const response = await keygen.licenses.list(
-        params
-          ? {
-              pageCursor: params.cursor,
-              pageSize: params.pageSize,
-              filters: params.filters,
-            }
-          : {},
-      )
+      const response = await keygen.licenses.list({
+        pageCursor: params?.cursor,
+        pageSize: params?.pageSize,
+        filters: params?.filters,
+        environment,
+      })
 
       if (response.errors) {
         throw new APIError(response.errors[0])
@@ -81,7 +81,9 @@ export function useCreateLicense() {
 
   return useMutation<License, APIError, Schemas.Licenses.CreateValues>({
     mutationFn: async (values) => {
-      const response = await keygen.licenses.create(values)
+      const response = await keygen.licenses.create(values, {
+        environment: code,
+      })
 
       if (response.errors) {
         throw new APIError(response.errors[0])

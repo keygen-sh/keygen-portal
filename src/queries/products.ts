@@ -28,17 +28,25 @@ export function useGetProduct(productId: string) {
 }
 
 export function useListProducts(
-  params?: { cursor?: string | null; pageSize?: number },
+  params?: {
+    cursor?: string | null
+    pageSize?: number
+    environment?: string | null
+  },
   options?: { enabled?: boolean },
 ) {
   const { code } = useEnvironment()
+  const environment =
+    params?.environment !== undefined ? params.environment : code
 
   const query = useQuery({
     queryKey: ["products", { environment: code, ...params }],
     queryFn: async () => {
-      const response = await keygen.products.list(
-        params ? { pageCursor: params.cursor, pageSize: params.pageSize } : {},
-      )
+      const response = await keygen.products.list({
+        pageCursor: params?.cursor,
+        pageSize: params?.pageSize,
+        environment,
+      })
 
       if (response.errors) {
         throw new APIError(response.errors[0])
@@ -62,7 +70,7 @@ export function useCreateProduct() {
 
   return useMutation<Product, APIError, Schemas.Products.CreateValues>({
     mutationFn: (values) =>
-      keygen.products.create({ values }).then((response) => {
+      keygen.products.create({ values, environment: code }).then((response) => {
         if (response.errors) {
           throw new APIError(response.errors[0])
         }

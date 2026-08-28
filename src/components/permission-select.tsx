@@ -1,4 +1,12 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import {
+  type ComponentProps,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react"
 import { useCommandState } from "cmdk"
 
 import { Badge } from "@/components/ui/badge"
@@ -81,6 +89,21 @@ interface PermissionGroup {
   key: string
   label: string
   options: Option[]
+}
+
+function KeyboardSelectionCommand(props: ComponentProps<typeof Command>) {
+  const [keyboardNav, setKeyboardNav] = useState(false)
+
+  return (
+    <Command
+      {...props}
+      data-keyboard-nav={keyboardNav || undefined}
+      onPointerDownCapture={() => setKeyboardNav(false)}
+      onPointerMoveCapture={() => setKeyboardNav(false)}
+      onKeyDownCapture={() => setKeyboardNav(true)}
+      disablePointerSelection
+    />
+  )
 }
 
 function permissionFilter(
@@ -240,7 +263,7 @@ export default function PermissionSelect({
           </DialogDescription>
         </DialogHeader>
 
-        <Command
+        <KeyboardSelectionCommand
           className="flex min-h-0 flex-1 flex-col bg-transparent"
           filter={permissionFilter}
         >
@@ -264,7 +287,7 @@ export default function PermissionSelect({
 
             <RequiredScrollHint listRef={listRef} />
           </div>
-        </Command>
+        </KeyboardSelectionCommand>
 
         <div className="flex items-center gap-4 border-t border-accent p-3">
           <Button
@@ -427,7 +450,11 @@ const PermissionRow = memo(function PermissionRow({
       data-missing-required={showWarning || undefined}
       className={cn(
         "items-start gap-3 py-2 pr-3 pl-10 md:items-center",
-        locked ? "data-[disabled=true]:pointer-events-auto" : "cursor-pointer",
+        "data-[selected=true]:bg-transparent data-[selected=true]:text-current",
+        "[[data-keyboard-nav]_&]:data-[selected=true]:bg-accent [[data-keyboard-nav]_&]:data-[selected=true]:text-accent-foreground",
+        locked
+          ? "data-[disabled=true]:pointer-events-auto"
+          : "cursor-pointer hover:bg-accent hover:text-accent-foreground hover:data-[selected=true]:bg-accent hover:data-[selected=true]:text-accent-foreground",
       )}
     >
       <Checkbox

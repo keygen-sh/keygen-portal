@@ -345,6 +345,17 @@ export const PortalRequiredPermissions: readonly Permission[] = [
   "token.revoke",
 ]
 
+export const RequiredPermissionsByRole: Readonly<
+  Record<UserRole, readonly Permission[]>
+> = {
+  [UserRole.Admin]: [...PortalRequiredPermissions, "admin.read"],
+  [UserRole.Developer]: PortalRequiredPermissions,
+  [UserRole.ReadOnly]: PortalRequiredPermissions,
+  [UserRole.SalesAgent]: PortalRequiredPermissions,
+  [UserRole.SupportAgent]: PortalRequiredPermissions,
+  [UserRole.User]: [],
+}
+
 const ReadOnlyPermissions: readonly Permission[] = [
   "account.analytics.read",
   "account.billing.read",

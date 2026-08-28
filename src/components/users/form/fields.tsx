@@ -42,7 +42,7 @@ import {
   WildcardPermission,
   UserRoleDescriptions,
   UserFormFieldDescriptions,
-  PortalRequiredPermissions,
+  RequiredPermissionsByRole,
   UserEditFormFieldDescriptions,
   UserCreateFormFieldDescriptions,
   UserPasswordFormFieldDescriptions,
@@ -588,15 +588,10 @@ function PermissionsField({
 
   const resolvedRole = role ?? UserRole.User
   const { permissions: currentPermissions } = usePermissions()
-  const requiredOptions = useMemo(() => {
-    if (!InternalRoles.includes(resolvedRole)) {
-      return []
-    }
-
-    return PORTAL_REQUIRED_OPTIONS.filter((o) =>
-      currentPermissions.has(o.value),
-    )
-  }, [resolvedRole, currentPermissions])
+  const requiredOptions = useMemo(
+    () => requiredOptionsFor(resolvedRole, currentPermissions),
+    [resolvedRole, currentPermissions],
+  )
   const accountDefaults = useAccountDefaultPermissions()
 
   const defaults = defaultPermissionsFor(resolvedRole, accountDefaults)
@@ -637,11 +632,20 @@ function PermissionsField({
   )
 }
 
-const PORTAL_REQUIRED_OPTIONS = PortalRequiredPermissions.map((permission) => ({
-  label: permission,
-  value: permission,
-  tooltip: "This permission is required for Portal access.",
-}))
+const requiredOptionsFor = (
+  role: UserRole,
+  currentPermissions: ReadonlySet<string>,
+) =>
+  RequiredPermissionsByRole[role]
+    .filter((permission) => currentPermissions.has(permission))
+    .map((permission) => ({
+      label: permission,
+      value: permission,
+      tooltip:
+        permission === "admin.read"
+          ? "This permission is required for admins to read their own user."
+          : "This permission is required for Portal access.",
+    }))
 
 function InternalPermissionsField({
   autoFocus,
@@ -657,9 +661,8 @@ function InternalPermissionsField({
 
   const { permissions: currentPermissions } = usePermissions()
   const requiredOptions = useMemo(
-    () =>
-      PORTAL_REQUIRED_OPTIONS.filter((o) => currentPermissions.has(o.value)),
-    [currentPermissions],
+    () => requiredOptionsFor(role ?? UserRole.Admin, currentPermissions),
+    [role, currentPermissions],
   )
 
   return (
@@ -977,9 +980,8 @@ function InviteRow({
 
   const { permissions: currentPermissions } = usePermissions()
   const requiredOptions = useMemo(
-    () =>
-      PORTAL_REQUIRED_OPTIONS.filter((o) => currentPermissions.has(o.value)),
-    [currentPermissions],
+    () => requiredOptionsFor(role ?? UserRole.Admin, currentPermissions),
+    [role, currentPermissions],
   )
 
   return (

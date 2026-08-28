@@ -100,7 +100,31 @@ function KeyboardSelectionCommand(props: ComponentProps<typeof Command>) {
       data-keyboard-nav={keyboardNav || undefined}
       onPointerDownCapture={() => setKeyboardNav(false)}
       onPointerMoveCapture={() => setKeyboardNav(false)}
-      onKeyDownCapture={() => setKeyboardNav(true)}
+      onKeyDownCapture={(event) => {
+        if (event.key === "Tab") {
+          setKeyboardNav(false)
+          return
+        }
+
+        const target = event.target instanceof Element ? event.target : null
+
+        if (target?.closest("[cmdk-input]") == null) {
+          if (
+            event.key === "ArrowDown" ||
+            event.key === "ArrowUp" ||
+            event.key === "Home" ||
+            event.key === "End"
+          ) {
+            event.currentTarget
+              .querySelector<HTMLElement>("[cmdk-input]")
+              ?.focus()
+            setKeyboardNav(true)
+          }
+          return
+        }
+
+        setKeyboardNav(true)
+      }}
       disablePointerSelection
     />
   )
@@ -452,6 +476,7 @@ const PermissionRow = memo(function PermissionRow({
         "items-start gap-3 py-2 pr-3 pl-10 md:items-center",
         "data-[selected=true]:bg-transparent data-[selected=true]:text-current",
         "[[data-keyboard-nav]_&]:data-[selected=true]:bg-accent [[data-keyboard-nav]_&]:data-[selected=true]:text-accent-foreground",
+        "has-[:focus-visible]:bg-accent has-[:focus-visible]:text-accent-foreground",
         locked
           ? "data-[disabled=true]:pointer-events-auto"
           : "cursor-pointer hover:bg-accent hover:text-accent-foreground hover:data-[selected=true]:bg-accent hover:data-[selected=true]:text-accent-foreground",
@@ -460,7 +485,16 @@ const PermissionRow = memo(function PermissionRow({
       <Checkbox
         checked={checked}
         disabled={locked}
-        className="pointer-events-none mt-0.5 md:mt-0"
+        onCheckedChange={() => onToggle(value)}
+        onClick={(event) => event.stopPropagation()}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault()
+            event.stopPropagation()
+            onToggle(value)
+          }
+        }}
+        className="pointer-events-none mt-0.5 focus-visible:border-input focus-visible:ring-0 md:mt-0"
       />
 
       <div className="flex min-w-0 flex-1 flex-col gap-0.5 md:flex-row md:items-center md:gap-3">

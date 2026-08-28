@@ -10,7 +10,7 @@ import {
   WildcardPermission,
   DefaultPermissionsByRole,
   AllowedPermissionsByRole,
-  PortalRequiredPermissions,
+  RequiredPermissionsByRole,
 } from "@/types/users"
 
 import config from "@/keygen/config"
@@ -102,7 +102,7 @@ export function defaultPermissionsFor(
     return defaults
   }
 
-  return [...new Set([...defaults, ...PortalRequiredPermissions])]
+  return [...new Set([...defaults, ...RequiredPermissionsByRole[role]])]
 }
 
 // a role's defaults narrowed to the permissions the current user holds
@@ -141,9 +141,9 @@ export function nextPermissionsForRoleChange({
   )
   const grantableSet = new Set<string>(grantable)
 
-  const required = InternalRoles.includes(from)
-    ? PortalRequiredPermissions.filter((p) => currentPermissions.has(p))
-    : []
+  const required = RequiredPermissionsByRole[from].filter((p) =>
+    currentPermissions.has(p),
+  )
   const preset = permissionPreset(value, {
     grantable,
     defaults: defaultPermissionsFor(from, accountDefaults).filter((p) =>

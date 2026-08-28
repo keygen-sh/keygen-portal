@@ -54,6 +54,7 @@ import { useCloud } from "@/hooks/use-cloud"
 import { useMobile } from "@/hooks/use-mobile"
 import { useAppVersion } from "@/hooks/use-app-version"
 import { usePermissions } from "@/hooks/use-permissions"
+import { useEnvironment } from "@/hooks/use-environment"
 
 import { DOCS_API_URL, GITHUB_URL } from "@/lib/url"
 
@@ -81,6 +82,7 @@ type ViewRoute = {
   params: Record<string, unknown>
   requires?: readonly Permission[]
   ee?: boolean
+  globalOnly?: boolean
 }
 
 type View = {
@@ -105,6 +107,7 @@ const VIEWS: View[] = [
         to: "/$accountId/app/learn",
         label: "Learn",
         params: { accountId: keygen.config.id },
+        globalOnly: true,
       },
     ]),
   },
@@ -325,9 +328,11 @@ function useActiveView(): View {
 
 function useVisibleViews(): View[] {
   const { canAll } = usePermissions()
+  const { code } = useEnvironment()
 
   const isRouteVisible = (route: ViewRoute): boolean => {
     if (route.ee && keygen.config.isCE) return false
+    if (route.globalOnly && code != null) return false
     return route.requires == null || canAll(route.requires)
   }
 

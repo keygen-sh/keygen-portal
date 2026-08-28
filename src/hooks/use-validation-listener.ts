@@ -17,9 +17,11 @@ const POLL_INTERVAL_MS = 1000 * 10
 export function useValidationListener({
   enabled,
   licenseId,
+  environment,
 }: {
   enabled: boolean
   licenseId?: string
+  environment?: string | null
 }) {
   const queryClient = useQueryClient()
   const { isEE } = useEdition()
@@ -56,6 +58,7 @@ export function useValidationListener({
         events: VALIDATION_EVENTS,
         resource: { type: "license", id: licenseId ?? "" },
       },
+      environment,
     },
     {
       enabled: listening,

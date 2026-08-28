@@ -45,18 +45,13 @@ export function useListUserProducts(userId: string) {
 }
 
 export function useListUsers(
-  params?: {
-    cursor?: string | null
-    pageSize?: number
-    filters?: UserFilters
-    root?: boolean
-  },
+  params?: { cursor?: string | null; pageSize?: number; filters?: UserFilters },
   options?: { enabled?: boolean },
 ) {
   const { code } = useEnvironment()
 
   const query = useQuery({
-    queryKey: ["users", { environment: params?.root ? null : code, ...params }],
+    queryKey: ["users", { environment: code, ...params }],
     queryFn: async () => {
       const response = await keygen.users.list(
         params
@@ -64,7 +59,6 @@ export function useListUsers(
               pageCursor: params.cursor,
               pageSize: params.pageSize,
               filters: params.filters,
-              root: params.root,
             }
           : {},
       )

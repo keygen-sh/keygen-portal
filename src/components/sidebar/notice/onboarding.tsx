@@ -10,6 +10,7 @@ import { useEdition } from "@/hooks/use-edition"
 import { useEnvironment } from "@/hooks/use-environment"
 import { usePermissions } from "@/hooks/use-permissions"
 import { useOnboardingDismissed } from "@/hooks/use-onboarding-dismissed"
+import { useQuickstartEnvironment } from "@/hooks/use-quickstart-environment"
 
 import { dismissOnboarding } from "@/lib/onboarding"
 
@@ -42,7 +43,15 @@ export default function SidebarNoticeOnboarding({
       "license.read",
     ])
 
-  const licenses = useListLicenses({ pageSize: 1 }, { enabled: eligible })
+  const quickstart = useQuickstartEnvironment({
+    enabled: eligible && isEE && can("environment.read"),
+  })
+  const quickstartCode = quickstart.environment?.code ?? null
+
+  const licenses = useListLicenses(
+    { pageSize: 1, environment: quickstartCode },
+    { enabled: eligible && !quickstart.isPending },
+  )
   const hasLicenses = licenses.data.length > 0
 
   const suppressorEnabled = eligible && isEE && can("product.read")
@@ -50,8 +59,8 @@ export default function SidebarNoticeOnboarding({
     enabled: suppressorEnabled,
   })
   const products = useListProducts(
-    { pageSize: 1 },
-    { enabled: suppressorEnabled },
+    { pageSize: 1, environment: quickstartCode },
+    { enabled: suppressorEnabled && !quickstart.isPending },
   )
   const isEstablished =
     suppressorEnabled &&

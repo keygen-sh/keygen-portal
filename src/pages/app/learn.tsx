@@ -71,7 +71,7 @@ const PERMISSION_TOOLTIPS: Record<OnboardingStep, string> = {
 
 export default function Learn() {
   const { isEE } = useEdition()
-  const { code } = useEnvironment()
+  const { code, select } = useEnvironment()
   const { can, canAll } = usePermissions()
 
   const { data: currentUser } = useGetCurrentUser()
@@ -486,6 +486,10 @@ export default function Learn() {
             key={latestLicense.id}
             license={latestLicense}
             externalResult={validationListener.detected}
+            environment={quickstart.environment}
+            onSwitchEnvironment={(environment) =>
+              select(environment.id, environment.code)
+            }
             {...dialogProps("validate")}
           />
         )}

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
+import { useNavigate } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -19,6 +20,7 @@ import { License, LicenseValidation } from "@/types/licenses"
 import { useValidateLicenseKey } from "@/queries/licenses"
 
 import { useEnvironment } from "@/hooks/use-environment"
+import { type QuickstartEnvironment } from "@/hooks/use-quickstart-environment"
 
 import * as keygen from "@/keygen"
 
@@ -38,6 +40,10 @@ interface ValidationDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   externalResult?: "succeeded" | "failed" | null
+  environment?: QuickstartEnvironment | null
+  onSwitchEnvironment?: (
+    environment: QuickstartEnvironment,
+  ) => Promise<void> | void
 }
 
 function shellQuote(value: string): string {
@@ -68,9 +74,33 @@ export default function ValidationDialog({
   open,
   onOpenChange,
   externalResult,
+  environment,
+  onSwitchEnvironment,
 }: ValidationDialogProps): React.ReactElement {
   const { code } = useEnvironment()
+  const navigate = useNavigate()
   const validateKey = useValidateLicenseKey()
+
+  const [switching, setSwitching] = useState(false)
+
+  const handleSwitchEnvironment = useCallback(async () => {
+    if (environment == null || onSwitchEnvironment == null) {
+      return
+    }
+
+    setSwitching(true)
+    try {
+      await onSwitchEnvironment(environment)
+
+      void navigate({
+        to: "/$accountId/app/products",
+        params: { accountId: keygen.config.id },
+      })
+    } catch (error) {
+      console.error(error)
+      setSwitching(false)
+    }
+  }, [environment, onSwitchEnvironment, navigate])
 
   const [validation, setValidation] = useState<LicenseValidation | null>(null)
   const [phase, setPhase] = useState<"idle" | "running" | "done">("idle")
@@ -198,8 +228,7 @@ export default function ValidationDialog({
                   </Notice.Title>
                   <Notice.Description>
                     Copy the snippet below and run it from your own terminal, or
-                    paste it into the terminal at the bottom and press Enter to
-                    run it right here.
+                    paste it into the terminal here.
                   </Notice.Description>
                 </Notice>
 
@@ -221,36 +250,47 @@ export default function ValidationDialog({
                   </Notice.Title>
                   <Notice.Description>
                     <span className="mt-1 block">
-                      Your license is valid and ready. Explore the resources
-                      you've created, or dive deeper into Keygen.
+                      {environment
+                        ? `Your license is valid and ready. Your new resources live in the environment you created earlier. Switch into it to explore them, or dive deeper into Keygen.`
+                        : "Your license is valid and ready. Explore the resources you've created, or dive deeper into Keygen."}
                     </span>
-                    <div className="flex items-center gap-8">
-                      <ul className="mt-2 list-disc gap-1 text-sm text-content-normal">
-                        <li className="w-fit">
-                          <GoToButton
-                            path="/$accountId/app/products"
-                            params={{ accountId: keygen.config.id }}
-                            label="View Products"
-                            buttonClassName="text-xs"
-                          />
-                        </li>
-                        <li className="w-fit">
-                          <GoToButton
-                            path="/$accountId/app/policies"
-                            params={{ accountId: keygen.config.id }}
-                            label="View Policies"
-                            buttonClassName="text-xs"
-                          />
-                        </li>
-                        <li className="w-fit">
-                          <GoToButton
-                            path="/$accountId/app/licenses"
-                            params={{ accountId: keygen.config.id }}
-                            label="View Licenses"
-                            buttonClassName="text-xs"
-                          />
-                        </li>
-                      </ul>
+                    <div className="mt-2 flex items-center gap-2">
+                      {environment ? (
+                        <Button
+                          size="sm"
+                          disabled={switching}
+                          onClick={handleSwitchEnvironment}
+                        >
+                          Switch Environment
+                        </Button>
+                      ) : (
+                        <ul className="mr-6 list-disc gap-1 text-sm text-content-normal">
+                          <li className="w-fit">
+                            <GoToButton
+                              path="/$accountId/app/products"
+                              params={{ accountId: keygen.config.id }}
+                              label="View Products"
+                              buttonClassName="text-xs"
+                            />
+                          </li>
+                          <li className="w-fit">
+                            <GoToButton
+                              path="/$accountId/app/policies"
+                              params={{ accountId: keygen.config.id }}
+                              label="View Policies"
+                              buttonClassName="text-xs"
+                            />
+                          </li>
+                          <li className="w-fit">
+                            <GoToButton
+                              path="/$accountId/app/licenses"
+                              params={{ accountId: keygen.config.id }}
+                              label="View Licenses"
+                              buttonClassName="text-xs"
+                            />
+                          </li>
+                        </ul>
+                      )}
                       <div className="flex gap-2">
                         <Button
                           variant="outline"

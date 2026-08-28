@@ -395,26 +395,39 @@ function PermissionSelectList({
         const groupLocked = checkable.length === 0
 
         return (
-          <CommandGroup
-            key={group.key}
-            heading={
-              <span className="flex items-center gap-3 pl-1">
-                <Checkbox
-                  tabIndex={-1}
-                  disabled={groupLocked}
-                  checked={
-                    covered > 0 && covered === checkable.length
-                      ? true
-                      : covered > 0
-                        ? "indeterminate"
-                        : false
+          <CommandGroup key={group.key}>
+            <div
+              onClick={
+                groupLocked ? undefined : () => onToggleGroup(groupValues)
+              }
+              className={cn(
+                "flex min-h-9 items-center gap-3 rounded-sm py-2 pr-2 pl-3 text-xs font-medium text-muted-foreground select-none has-[:focus-visible]:bg-accent has-[:focus-visible]:text-accent-foreground",
+                !groupLocked &&
+                  "cursor-pointer hover:bg-accent hover:text-accent-foreground",
+              )}
+            >
+              <Checkbox
+                disabled={groupLocked}
+                checked={
+                  covered > 0 && covered === checkable.length
+                    ? true
+                    : covered > 0
+                      ? "indeterminate"
+                      : false
+                }
+                onCheckedChange={() => onToggleGroup(groupValues)}
+                onClick={(event) => event.stopPropagation()}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault()
+                    event.stopPropagation()
+                    onToggleGroup(groupValues)
                   }
-                  onCheckedChange={() => onToggleGroup(groupValues)}
-                />
-                {group.label}
-              </span>
-            }
-          >
+                }}
+                className="pointer-events-none focus-visible:border-input focus-visible:ring-0"
+              />
+              {group.label}
+            </div>
             {group.options.map(({ label, value: permission }) => {
               const tooltip = requiredTooltipMap.get(permission)
               const isCovered = items.includes(permission) || isWildcardSelected

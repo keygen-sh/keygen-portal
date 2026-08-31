@@ -1,3 +1,5 @@
+import { useLocation } from "@tanstack/react-router"
+
 import {
   CommandEmpty,
   CommandGroup,
@@ -5,11 +7,21 @@ import {
 } from "@/components/ui/command"
 import EnterHint from "@/components/enter-hint"
 
-import { Plus, Search, Filter, Copy, ChevronRight } from "lucide-react"
+import {
+  Plus,
+  Star,
+  Search,
+  Filter,
+  Copy,
+  StarOff,
+  ChevronRight,
+} from "lucide-react"
 
 import { recentKey } from "@/lib/palette"
 
 import type { Command, RecentItem } from "@/types/palette"
+
+import { useFavoritePages } from "@/hooks/use-favorites"
 
 import RecentRow from "./recent-row"
 import CommandRow from "./command-row"
@@ -18,6 +30,7 @@ export interface HomeProps {
   filterText: string
   selectedValue: string
   recents: RecentItem[]
+  favoriteCommands: Command[]
   commandsById: Map<string, Command>
   findCommands: Command[]
   filterCommands: Command[]
@@ -28,6 +41,7 @@ export interface HomeProps {
   onOpenFilter: () => void
   onOpenNew: () => void
   onCopyAccountId: () => void
+  onToggleFavoritePage: () => void
   onCommandSelect: (command: Command) => void
   onRecentSelect: (item: RecentItem) => void
 }
@@ -36,6 +50,7 @@ export default function Home({
   filterText,
   selectedValue,
   recents,
+  favoriteCommands,
   commandsById,
   findCommands,
   filterCommands,
@@ -46,17 +61,26 @@ export default function Home({
   onOpenFilter,
   onOpenNew,
   onCopyAccountId,
+  onToggleFavoritePage,
   onCommandSelect,
   onRecentSelect,
 }: HomeProps) {
+  const pathname = useLocation({ select: (location) => location.pathname })
+  const favoritePages = useFavoritePages()
+  const isPageFavorited = favoritePages.some((page) => page.path === pathname)
+
   const isTyping = filterText.trim().length > 0
   const showFindEnterHint = selectedValue === "action:find"
   const showFilterEnterHint = selectedValue === "action:filter"
   const showNewEnterHint = selectedValue === "action:new"
+  const showFavoritePageEnterHint = selectedValue === "action:favorite-page"
   const showCopyAccountIdEnterHint = selectedValue === "account:copy-id"
 
   const liveRecents = recents.filter((r) =>
-    r.kind === "resource" ? true : commandsById.has(r.commandId),
+    r.kind === "resource"
+      ? true
+      : commandsById.has(r.commandId) &&
+        !favoriteCommands.some((c) => c.id === r.commandId),
   )
 
   return (
@@ -106,7 +130,34 @@ export default function Home({
             <ChevronRight className="size-4 text-muted-foreground" />
           </div>
         </CommandItem>
+        <CommandItem
+          value="action:favorite-page"
+          keywords={["favorite", "star", "pin", "bookmark", "page"]}
+          highlighted={showFavoritePageEnterHint}
+          tabbable
+          onSelect={onToggleFavoritePage}
+        >
+          {isPageFavorited ? <StarOff /> : <Star />}
+          <span className="min-w-0 flex-1 truncate">
+            {isPageFavorited ? "Unfavorite this page" : "Favorite this page"}
+          </span>
+          <EnterHint visible={showFavoritePageEnterHint} className="ml-auto" />
+        </CommandItem>
       </CommandGroup>
+
+      {favoriteCommands.length > 0 && (
+        <CommandGroup heading="Favorites">
+          {favoriteCommands.map((command) => (
+            <CommandRow
+              key={command.id}
+              value={`favorite:${command.id}`}
+              command={command}
+              selectedValue={selectedValue}
+              onSelect={() => onCommandSelect(command)}
+            />
+          ))}
+        </CommandGroup>
+      )}
 
       {liveRecents.length > 0 && (
         <CommandGroup heading="Recent">

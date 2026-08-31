@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react"
-import { Link, linkOptions, useMatchRoute } from "@tanstack/react-router"
+import {
+  Link,
+  linkOptions,
+  useLocation,
+  useMatchRoute,
+} from "@tanstack/react-router"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -20,6 +25,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarMenuAction,
   useSidebar,
 } from "@/components/ui/sidebar"
 import {
@@ -42,7 +48,9 @@ import {
   Key,
   User,
   Home,
+  Star,
   Shield,
+  StarOff,
   Webhook,
   Package,
   Settings,
@@ -50,6 +58,12 @@ import {
 
 import * as keygen from "@/keygen"
 
+import {
+  useFavoritePages,
+  useFavoriteRoutes,
+  toggleFavoritePage,
+  toggleFavoriteRoute,
+} from "@/hooks/use-favorites"
 import { useCloud } from "@/hooks/use-cloud"
 import { useMobile } from "@/hooks/use-mobile"
 import { useAppVersion } from "@/hooks/use-app-version"
@@ -365,6 +379,8 @@ export default function SidebarPanel(): React.ReactElement {
   const accountId = keygen.config.id
   const { open, setOpen } = useSidebar()
   const [paletteOpen, setPaletteOpen] = useState(false)
+  const allFavoritePages = useFavoritePages()
+  const favoriteRouteIds = useFavoriteRoutes()
 
   const isMobile = useMobile()
   const { isCloud } = useCloud()
@@ -391,6 +407,25 @@ export default function SidebarPanel(): React.ReactElement {
     : (currentView?.routes ?? []).filter(
         (r) => r.to !== "/$accountId/app/billing",
       )
+
+  const allVisibleRoutes = visibleViews.flatMap((view) =>
+    view.routes.filter(
+      (route) => isCloud || route.to !== "/$accountId/app/billing",
+    ),
+  )
+  const favoriteRoutes = favoriteRouteIds.flatMap((to) => {
+    const route = allVisibleRoutes.find((r) => r.to === to)
+    return route ? [route] : []
+  })
+  const favoritePages = allFavoritePages.filter(
+    (page) => page.accountId === accountId,
+  )
+  const hasFavorites = favoriteRoutes.length > 0 || favoritePages.length > 0
+
+  const pathname = useLocation({ select: (location) => location.pathname })
+  const isCurrentPageFavorited = favoritePages.some(
+    (page) => page.path === pathname,
+  )
 
   return (
     <div className={cn("flex h-full", isMobile && "absolute z-50")}>
@@ -560,31 +595,91 @@ export default function SidebarPanel(): React.ReactElement {
           </SidebarGroup>
         </SidebarHeader>
 
-        <SidebarContent className="overflow-hidden">
+        <SidebarContent className="gap-0 overflow-x-hidden overflow-y-auto">
           <SidebarGroup>
             <SidebarMenu>
               {currentView && (
                 <>
                   <SidebarGroupLabel>{currentView.label}</SidebarGroupLabel>
-                  {visibleRoutes.map((route) => (
-                    <SidebarMenuItem key={route.to}>
-                      <SidebarMenuButton asChild>
-                        <Link
-                          {...route}
-                          params={{ accountId }}
-                          activeProps={{
-                            className: "bg-background-2 text-content-loud",
-                          }}
+                  {visibleRoutes.map((route) => {
+                    const isFavorite = favoriteRouteIds.includes(route.to)
+
+                    return (
+                      <SidebarMenuItem key={route.to}>
+                        <SidebarMenuButton asChild>
+                          <Link
+                            {...route}
+                            params={{ accountId }}
+                            activeOptions={{ exact: isCurrentPageFavorited }}
+                            activeProps={{
+                              className: "bg-background-2 text-content-loud",
+                            }}
+                          >
+                            {route.label}
+                          </Link>
+                        </SidebarMenuButton>
+                        <SidebarMenuAction
+                          showOnHover={!isFavorite}
+                          onClick={() => toggleFavoriteRoute(route.to)}
                         >
-                          {route.label}
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
+                          <Star className={cn(isFavorite && "fill-current")} />
+                        </SidebarMenuAction>
+                      </SidebarMenuItem>
+                    )
+                  })}
                 </>
               )}
             </SidebarMenu>
           </SidebarGroup>
+          {hasFavorites && (
+            <SidebarGroup className="mt-2 pt-0">
+              <SidebarMenu>
+                <SidebarGroupLabel>Favorites</SidebarGroupLabel>
+                {favoriteRoutes.map((route) => (
+                  <SidebarMenuItem key={route.to}>
+                    <SidebarMenuButton asChild>
+                      <Link
+                        {...route}
+                        params={{ accountId }}
+                        activeOptions={{ exact: isCurrentPageFavorited }}
+                        activeProps={{
+                          className: "bg-background-2 text-content-loud",
+                        }}
+                      >
+                        {route.label}
+                      </Link>
+                    </SidebarMenuButton>
+                    <SidebarMenuAction
+                      showOnHover
+                      onClick={() => toggleFavoriteRoute(route.to)}
+                    >
+                      <StarOff />
+                    </SidebarMenuAction>
+                  </SidebarMenuItem>
+                ))}
+                {favoritePages.map((page) => (
+                  <SidebarMenuItem key={page.path}>
+                    <SidebarMenuButton asChild>
+                      <Link
+                        to={page.path}
+                        activeProps={{
+                          className: "bg-background-2 text-content-loud",
+                        }}
+                      >
+                        <span>{page.label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                    <SidebarMenuAction
+                      showOnHover
+                      onClick={() => toggleFavoritePage(page)}
+                    >
+                      <StarOff />
+                    </SidebarMenuAction>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroup>
+          )}
         </SidebarContent>
 
         <SidebarFooter className="w-60 border-none p-4">

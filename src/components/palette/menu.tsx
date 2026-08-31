@@ -31,8 +31,9 @@ import {
 } from "@/lib/palette"
 import { cn } from "@/lib/utils"
 import { labelFor } from "@/lib/search"
-import { copyToClipboard } from "@/lib/clipboard"
 import { pageTitle } from "@/lib/document-title"
+import { viewRouteFor } from "@/lib/views"
+import { copyToClipboard } from "@/lib/clipboard"
 
 import {
   KEYWORD,
@@ -46,7 +47,12 @@ import type { AnyResource } from "@/types/api"
 
 import { useCloud } from "@/hooks/use-cloud"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
-import { useFavoriteCommands, toggleFavoritePage } from "@/hooks/use-favorites"
+import {
+  useFavoriteCommands,
+  useFavoritePages,
+  toggleFavoritePage,
+  toggleFavoriteRoute,
+} from "@/hooks/use-favorites"
 
 import * as keygen from "@/keygen"
 
@@ -112,6 +118,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
     [commands],
   )
 
+  const favoritePages = useFavoritePages()
   const favoriteIds = useFavoriteCommands()
   const favoriteCommands = useMemo(
     () =>
@@ -296,11 +303,22 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
   }
 
   function toggleCurrentPageFavorite() {
-    toggleFavoritePage({
-      path: window.location.pathname,
-      label: pageTitle(document.title) ?? document.title,
-      accountId: keygen.config.id,
-    })
+    const path = window.location.pathname
+    const page = favoritePages.find((p) => p.path === path)
+    const route = viewRouteFor(path)
+
+    if (page) {
+      toggleFavoritePage(page)
+    } else if (route) {
+      toggleFavoriteRoute(route.to)
+    } else {
+      toggleFavoritePage({
+        path,
+        label: pageTitle(document.title) ?? document.title,
+        accountId: keygen.config.id,
+      })
+    }
+
     close()
   }
 

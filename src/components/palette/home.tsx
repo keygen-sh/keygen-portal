@@ -18,10 +18,11 @@ import {
 } from "lucide-react"
 
 import { recentKey } from "@/lib/palette"
+import { viewRouteFor } from "@/lib/views"
 
 import type { Command, RecentItem } from "@/types/palette"
 
-import { useFavoritePages } from "@/hooks/use-favorites"
+import { useFavoritePages, useFavoriteRoutes } from "@/hooks/use-favorites"
 
 import RecentRow from "./recent-row"
 import CommandRow from "./command-row"
@@ -67,7 +68,11 @@ export default function Home({
 }: HomeProps) {
   const pathname = useLocation({ select: (location) => location.pathname })
   const favoritePages = useFavoritePages()
-  const isPageFavorited = favoritePages.some((page) => page.path === pathname)
+  const favoriteRouteIds = useFavoriteRoutes()
+  const currentRoute = viewRouteFor(pathname)
+  const isPageFavorited =
+    favoritePages.some((page) => page.path === pathname) ||
+    (currentRoute != null && favoriteRouteIds.includes(currentRoute.to))
 
   const isTyping = filterText.trim().length > 0
   const showFindEnterHint = selectedValue === "action:find"

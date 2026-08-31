@@ -1,0 +1,117 @@
+import { useEffect, useSyncExternalStore } from "react"
+
+import * as keygen from "@/keygen"
+
+export interface FavoritePage {
+  path: string
+  label: string
+  accountId: string
+}
+
+function createFavoritesStore<T>(
+  storageKey: string,
+  isValid: (value: unknown) => value is T,
+  keyOf: (value: T) => string,
+) {
+  const load = (): ReadonlyArray<T> => {
+    if (typeof window === "undefined") return []
+    try {
+      const raw = window.localStorage.getItem(storageKey)
+      if (!raw) return []
+      const parsed = JSON.parse(raw) as unknown
+      if (!Array.isArray(parsed)) return []
+      return parsed.filter(isValid)
+    } catch {
+      return []
+    }
+  }
+
+  let favorites = load()
+  const listeners = new Set<() => void>()
+
+  const subscribe = (listener: () => void): (() => void) => {
+    listeners.add(listener)
+    return () => listeners.delete(listener)
+  }
+
+  const getSnapshot = (): ReadonlyArray<T> => favorites
+
+  const commit = (next: ReadonlyArray<T>): void => {
+    favorites = next
+    window.localStorage.setItem(storageKey, JSON.stringify(favorites))
+    listeners.forEach((listener) => listener())
+  }
+
+  const toggle = (item: T): void => {
+    const key = keyOf(item)
+    commit(
+      favorites.some((f) => keyOf(f) === key)
+        ? favorites.filter((f) => keyOf(f) !== key)
+        : [...favorites, item],
+    )
+  }
+
+  const update = (item: T): void => {
+    const index = favorites.findIndex((f) => keyOf(f) === keyOf(item))
+    if (index < 0) return
+    if (JSON.stringify(favorites[index]) === JSON.stringify(item)) return
+    const next = [...favorites]
+    next[index] = item
+    commit(next)
+  }
+
+  const useFavorites = (): ReadonlyArray<T> =>
+    useSyncExternalStore(subscribe, getSnapshot)
+
+  return { useFavorites, toggle, update }
+}
+
+const isString = (value: unknown): value is string => typeof value === "string"
+
+const isFavoritePage = (value: unknown): value is FavoritePage => {
+  if (typeof value !== "object" || value === null) return false
+  const page = value as Partial<FavoritePage>
+  return (
+    typeof page.path === "string" &&
+    typeof page.label === "string" &&
+    typeof page.accountId === "string"
+  )
+}
+
+const identity = (id: string): string => id
+
+const commandFavorites = createFavoritesStore(
+  "keygen.command.favorites.v1",
+  isString,
+  identity,
+)
+const routeFavorites = createFavoritesStore(
+  "keygen.route.favorites.v1",
+  isString,
+  identity,
+)
+const pageFavorites = createFavoritesStore(
+  "keygen.page.favorites.v1",
+  isFavoritePage,
+  (page) => page.path,
+)
+
+export const useFavoriteCommands = commandFavorites.useFavorites
+export const toggleFavoriteCommand = commandFavorites.toggle
+
+export const useFavoriteRoutes = routeFavorites.useFavorites
+export const toggleFavoriteRoute = routeFavorites.toggle
+
+export const useFavoritePages = pageFavorites.useFavorites
+export const toggleFavoritePage = pageFavorites.toggle
+
+export function useSyncFavoritePageLabel(label?: string | null): void {
+  useEffect(() => {
+    if (!label) return
+    pageFavorites.update({
+      path: window.location.pathname,
+      label,
+      accountId: keygen.config.id,
+    })
+  }, [label])
+}

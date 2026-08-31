@@ -32,6 +32,7 @@ import {
 import { cn } from "@/lib/utils"
 import { labelFor } from "@/lib/search"
 import { copyToClipboard } from "@/lib/clipboard"
+import { pageTitle } from "@/lib/document-title"
 
 import {
   KEYWORD,
@@ -45,6 +46,7 @@ import type { AnyResource } from "@/types/api"
 
 import { useCloud } from "@/hooks/use-cloud"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
+import { useFavoriteCommands, toggleFavoritePage } from "@/hooks/use-favorites"
 
 import * as keygen from "@/keygen"
 
@@ -108,6 +110,15 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
   const helpCommands = useMemo(
     () => commands.filter((c) => c.group === "help"),
     [commands],
+  )
+
+  const favoriteIds = useFavoriteCommands()
+  const favoriteCommands = useMemo(
+    () =>
+      favoriteIds
+        .map((id) => commandsById.get(id))
+        .filter((c): c is Command => c != null),
+    [favoriteIds, commandsById],
   )
 
   const [screen, setScreen] = useState<Screen>({ kind: "home" })
@@ -282,6 +293,15 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
         close()
         return
     }
+  }
+
+  function toggleCurrentPageFavorite() {
+    toggleFavoritePage({
+      path: window.location.pathname,
+      label: pageTitle(document.title) ?? document.title,
+      accountId: keygen.config.id,
+    })
+    close()
   }
 
   function handleResourceSelect(item: AnyResource) {
@@ -487,6 +507,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
                 filterText={filterText}
                 selectedValue={selectedValue}
                 recents={recents}
+                favoriteCommands={favoriteCommands}
                 commandsById={commandsById}
                 findCommands={findCommands}
                 filterCommands={filterCommands}
@@ -500,6 +521,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
                   void copyToClipboard(keygen.config.id)
                   close()
                 }}
+                onToggleFavoritePage={toggleCurrentPageFavorite}
                 onCommandSelect={executeCommand}
                 onRecentSelect={handleRecentSelect}
               />

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { useNavigate, Link } from "@tanstack/react-router"
+import { useNavigate, useSearch, Link } from "@tanstack/react-router"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
@@ -26,13 +26,17 @@ import * as Loading from "@/components/loading"
 const REDIRECT_DELAY_MS = 5_000
 
 export default function RegisterForm() {
+  const { email: emailFromParams } = useSearch({
+    from: "/auth/register",
+  })
+
   const navigate = useNavigate()
   const session = useSession()
 
   const form = useForm<Schemas.Auth.RegisterValues>({
     resolver: zodResolver(Schemas.Auth.RegisterSchema),
     mode: "onChange",
-    defaultValues: { email: "", password: "", slug: "" },
+    defaultValues: { email: emailFromParams ?? "", password: "", slug: "" },
   })
 
   const createAccount = useCreateAccount()

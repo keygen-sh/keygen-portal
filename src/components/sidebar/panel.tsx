@@ -39,13 +39,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-import { User, Star, StarOff } from "lucide-react"
+import { User, Star, StarOff, GripVertical } from "lucide-react"
 
 import * as keygen from "@/keygen"
 
 import {
-  useFavoritePages,
-  useFavoriteRoutes,
+  favoriteKey,
+  useFavorites,
+  reorderFavorites,
   toggleFavoritePage,
   toggleFavoriteRoute,
 } from "@/hooks/use-favorites"
@@ -54,6 +55,7 @@ import { useMobile } from "@/hooks/use-mobile"
 import { useAppVersion } from "@/hooks/use-app-version"
 import { usePermissions } from "@/hooks/use-permissions"
 import { useEnvironment } from "@/hooks/use-environment"
+import { useListReorder, reorderSubset } from "@/hooks/use-list-reorder"
 
 import { DOCS_API_URL, GITHUB_URL } from "@/lib/url"
 
@@ -103,6 +105,32 @@ function useVisibleViews(): View[] {
   })
 }
 
+function FavoriteReorderItem({
+  onRemove,
+  handleProps,
+  children,
+}: {
+  onRemove: () => void
+  handleProps: React.ComponentProps<typeof SidebarMenuAction>
+  children: React.ReactElement
+}) {
+  return (
+    <SidebarMenuItem data-reorder-item>
+      <SidebarMenuButton asChild>{children}</SidebarMenuButton>
+      <SidebarMenuAction
+        showOnHover
+        className="right-6 cursor-grab touch-none active:cursor-grabbing"
+        {...handleProps}
+      >
+        <GripVertical />
+      </SidebarMenuAction>
+      <SidebarMenuAction showOnHover onClick={onRemove}>
+        <StarOff />
+      </SidebarMenuAction>
+    </SidebarMenuItem>
+  )
+}
+
 export default function SidebarPanel(): React.ReactElement {
   const activeView = useActiveView()
   const visibleViews = useVisibleViews()
@@ -119,8 +147,7 @@ export default function SidebarPanel(): React.ReactElement {
   const accountId = keygen.config.id
   const { open, setOpen } = useSidebar()
   const [paletteOpen, setPaletteOpen] = useState(false)
-  const allFavoritePages = useFavoritePages()
-  const favoriteRouteIds = useFavoriteRoutes()
+  const allFavorites = useFavorites()
 
   const isMobile = useMobile()
   const { isCloud } = useCloud()
@@ -153,18 +180,20 @@ export default function SidebarPanel(): React.ReactElement {
       (route) => isCloud || route.to !== "/$accountId/app/billing",
     ),
   )
-  const favoriteRoutes = favoriteRouteIds.flatMap((to) => {
-    const route = allVisibleRoutes.find((r) => r.to === to)
-    return route ? [route] : []
-  })
-  const favoritePages = allFavoritePages.filter(
-    (page) => page.accountId === accountId,
+  const favorites = allFavorites.filter((favorite) =>
+    favorite.kind === "route"
+      ? allVisibleRoutes.some((route) => route.to === favorite.to)
+      : favorite.accountId === accountId,
   )
-  const hasFavorites = favoriteRoutes.length > 0 || favoritePages.length > 0
+  const hasFavorites = favorites.length > 0
 
   const pathname = useLocation({ select: (location) => location.pathname })
-  const isCurrentPageFavorited = favoritePages.some(
-    (page) => page.path === pathname,
+  const isCurrentPageFavorited = favorites.some(
+    (favorite) => favorite.kind === "page" && favorite.path === pathname,
+  )
+
+  const favoritesReorder = useListReorder((from, to) =>
+    reorderFavorites(reorderSubset(allFavorites, favorites, from, to)),
   )
 
   return (
@@ -342,7 +371,10 @@ export default function SidebarPanel(): React.ReactElement {
                 <>
                   <SidebarGroupLabel>{currentView.label}</SidebarGroupLabel>
                   {visibleRoutes.map((route) => {
-                    const isFavorite = favoriteRouteIds.includes(route.to)
+                    const isFavorite = allFavorites.some(
+                      (favorite) =>
+                        favorite.kind === "route" && favorite.to === route.to,
+                    )
 
                     return (
                       <SidebarMenuItem key={route.to}>
@@ -375,48 +407,46 @@ export default function SidebarPanel(): React.ReactElement {
             <SidebarGroup className="mt-2 pt-0">
               <SidebarMenu>
                 <SidebarGroupLabel>Favorites</SidebarGroupLabel>
-                {favoriteRoutes.map((route) => (
-                  <SidebarMenuItem key={route.to}>
-                    <SidebarMenuButton asChild>
+                {favorites.map((favorite) => {
+                  const { label, linkProps, onRemove } =
+                    favorite.kind === "route"
+                      ? (() => {
+                          const route = allVisibleRoutes.find(
+                            (r) => r.to === favorite.to,
+                          )!
+                          return {
+                            label: route.label,
+                            linkProps: {
+                              ...route,
+                              params: { accountId },
+                              activeOptions: { exact: isCurrentPageFavorited },
+                            },
+                            onRemove: () => toggleFavoriteRoute(favorite.to),
+                          }
+                        })()
+                      : {
+                          label: favorite.label,
+                          linkProps: { to: favorite.path },
+                          onRemove: () => toggleFavoritePage(favorite),
+                        }
+
+                  return (
+                    <FavoriteReorderItem
+                      key={favoriteKey(favorite)}
+                      handleProps={favoritesReorder.handleProps}
+                      onRemove={onRemove}
+                    >
                       <Link
-                        {...route}
-                        params={{ accountId }}
-                        activeOptions={{ exact: isCurrentPageFavorited }}
+                        {...linkProps}
                         activeProps={{
                           className: "bg-background-2 text-content-loud",
                         }}
                       >
-                        {route.label}
+                        <span>{label}</span>
                       </Link>
-                    </SidebarMenuButton>
-                    <SidebarMenuAction
-                      showOnHover
-                      onClick={() => toggleFavoriteRoute(route.to)}
-                    >
-                      <StarOff />
-                    </SidebarMenuAction>
-                  </SidebarMenuItem>
-                ))}
-                {favoritePages.map((page) => (
-                  <SidebarMenuItem key={page.path}>
-                    <SidebarMenuButton asChild>
-                      <Link
-                        to={page.path}
-                        activeProps={{
-                          className: "bg-background-2 text-content-loud",
-                        }}
-                      >
-                        <span>{page.label}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                    <SidebarMenuAction
-                      showOnHover
-                      onClick={() => toggleFavoritePage(page)}
-                    >
-                      <StarOff />
-                    </SidebarMenuAction>
-                  </SidebarMenuItem>
-                ))}
+                    </FavoriteReorderItem>
+                  )
+                })}
               </SidebarMenu>
             </SidebarGroup>
           )}

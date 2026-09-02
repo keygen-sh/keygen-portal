@@ -15,6 +15,7 @@ import {
   Copy,
   StarOff,
   ChevronRight,
+  GripVertical,
 } from "lucide-react"
 
 import { recentKey } from "@/lib/palette"
@@ -22,7 +23,8 @@ import { viewRouteFor } from "@/lib/views"
 
 import type { Command, RecentItem } from "@/types/palette"
 
-import { useFavoritePages, useFavoriteRoutes } from "@/hooks/use-favorites"
+import { useFavorites } from "@/hooks/use-favorites"
+import { useListReorder } from "@/hooks/use-list-reorder"
 
 import RecentRow from "./recent-row"
 import CommandRow from "./command-row"
@@ -43,6 +45,7 @@ export interface HomeProps {
   onOpenNew: () => void
   onCopyAccountId: () => void
   onToggleFavoritePage: () => void
+  onReorderFavorites: (from: number, to: number) => void
   onCommandSelect: (command: Command) => void
   onRecentSelect: (item: RecentItem) => void
 }
@@ -63,16 +66,20 @@ export default function Home({
   onOpenNew,
   onCopyAccountId,
   onToggleFavoritePage,
+  onReorderFavorites,
   onCommandSelect,
   onRecentSelect,
 }: HomeProps) {
   const pathname = useLocation({ select: (location) => location.pathname })
-  const favoritePages = useFavoritePages()
-  const favoriteRouteIds = useFavoriteRoutes()
+  const favorites = useFavorites()
   const currentRoute = viewRouteFor(pathname)
-  const isPageFavorited =
-    favoritePages.some((page) => page.path === pathname) ||
-    (currentRoute != null && favoriteRouteIds.includes(currentRoute.to))
+  const isPageFavorited = favorites.some((favorite) =>
+    favorite.kind === "page"
+      ? favorite.path === pathname
+      : currentRoute != null && favorite.to === currentRoute.to,
+  )
+
+  const favoritesReorder = useListReorder(onReorderFavorites)
 
   const isTyping = filterText.trim().length > 0
   const showFindEnterHint = selectedValue === "action:find"
@@ -153,13 +160,27 @@ export default function Home({
       {favoriteCommands.length > 0 && (
         <CommandGroup heading="Favorites">
           {favoriteCommands.map((command) => (
-            <CommandRow
-              key={command.id}
-              value={`favorite:${command.id}`}
-              command={command}
-              selectedValue={selectedValue}
-              onSelect={() => onCommandSelect(command)}
-            />
+            <div key={command.id} data-reorder-item>
+              <CommandRow
+                value={`favorite:${command.id}`}
+                command={command}
+                selectedValue={selectedValue}
+                onSelect={() => {
+                  if (!favoritesReorder.isDragging()) onCommandSelect(command)
+                }}
+                dragHandle={
+                  !isTyping && (
+                    <button
+                      type="button"
+                      className="inline-flex size-5 shrink-0 cursor-grab touch-none items-center justify-center text-content-subdued opacity-0 group-hover/palette-row:opacity-100 group-data-[selected=true]/palette-row:opacity-100 active:cursor-grabbing pointer-coarse:opacity-100"
+                      {...favoritesReorder.handleProps}
+                    >
+                      <GripVertical className="size-4! text-current" />
+                    </button>
+                  )
+                }
+              />
+            </div>
           ))}
         </CommandGroup>
       )}

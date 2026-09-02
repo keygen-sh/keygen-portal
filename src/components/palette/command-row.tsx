@@ -12,6 +12,7 @@ export interface CommandRowProps {
   selectedValue: string
   onSelect: () => void
   value?: string
+  dragHandle?: React.ReactNode
 }
 
 export default function CommandRow({
@@ -19,6 +20,7 @@ export default function CommandRow({
   selectedValue,
   onSelect,
   value,
+  dragHandle,
 }: CommandRowProps) {
   const favorites = useFavoriteCommands()
   const isFavorite = favorites.includes(command.id)
@@ -37,6 +39,7 @@ export default function CommandRow({
       <command.icon />
       <span className="min-w-0 flex-1 truncate">{command.label}</span>
       <div className="ml-auto flex shrink-0 items-center gap-2">
+        {dragHandle}
         <Favorite
           commandId={command.id}
           isFavorite={isFavorite}

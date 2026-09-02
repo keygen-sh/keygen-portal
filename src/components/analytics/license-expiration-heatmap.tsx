@@ -20,12 +20,12 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 import * as keygen from "@/keygen"
 
-import { cn } from "@/lib/utils"
 import {
   toDisplayRow,
   getTemperatureColor,
   buildExpirationHeatmap,
 } from "@/lib/analytics"
+import { cn } from "@/lib/utils"
 import { truncator } from "@/lib/truncate"
 
 import { License } from "@/types/licenses"
@@ -33,6 +33,7 @@ import { ExpirationHeatmapEntry } from "@/types/analytics"
 
 import {
   useExpirationsHeatmap,
+  useExportExpiringLicenses,
   useLicensesExpiringOn,
 } from "@/queries/analytics"
 
@@ -94,6 +95,18 @@ export default function LicenseExpirationHeatmap({
     () => buildExpirationHeatmap(cells, { start, end }),
     [cells, start, end],
   )
+
+  const exportLicenses = useExportExpiringLicenses()
+
+  const handleExport = () => {
+    const exportStart = format(new Date(), "yyyy-MM-dd")
+    const exportEnd = format(addDays(new Date(), rangeDays - 1), "yyyy-MM-dd")
+
+    exportLicenses.mutate({
+      before: `${exportEnd}T23:59:59.999Z`,
+      filename: `licenses-expiring-${exportStart}-to-${exportEnd}.csv`,
+    })
+  }
 
   const [expanded, setExpanded] = useState(false)
 
@@ -196,17 +209,28 @@ export default function LicenseExpirationHeatmap({
       title="License expirations"
       className="rounded-md md:w-full"
       action={
-        <GoToButton
-          path={`/$accountId/app/licenses`}
-          params={{
-            accountId: keygen.config.id,
-          }}
-          search={{
-            expires: { within: expirationWindow },
-          }}
-          label="View all"
-          className="[&_.group:hover_svg]:text-primary [&_button]:text-content-normal [&_button]:hover:text-content-loud [&_svg]:text-content-normal"
-        />
+        <div className="flex items-center gap-3">
+          <Button
+            variant="link"
+            size="link"
+            onClick={handleExport}
+            disabled={exportLicenses.isPending}
+            className="text-content-normal hover:text-content-loud"
+          >
+            {exportLicenses.isPending ? "Exporting…" : "Export CSV"}
+          </Button>
+          <GoToButton
+            path={`/$accountId/app/licenses`}
+            params={{
+              accountId: keygen.config.id,
+            }}
+            search={{
+              expires: { within: expirationWindow },
+            }}
+            label="View all"
+            className="[&_.group:hover_svg]:text-primary [&_button]:text-content-normal [&_button]:hover:text-content-loud [&_svg]:text-content-normal"
+          />
+        </div>
       }
     >
       {!enabled || isLoading ? (

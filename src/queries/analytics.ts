@@ -1,9 +1,15 @@
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useMutation } from "@tanstack/react-query"
 
 import { useEnvironment } from "@/hooks/use-environment"
+import { cursorFromLink } from "@/hooks/use-cursors"
+
+import { licensesToCsv } from "@/lib/csv"
+import { downloadCsv } from "@/lib/download"
+import { toast } from "@/lib/toast"
 
 import { APIError } from "@/types/api"
 import { DateRangeOptions } from "@/types/analytics"
+import { License } from "@/types/licenses"
 
 import * as keygen from "@/keygen"
 
@@ -220,6 +226,58 @@ export function useLeaderboard(
     enabled: enabled ?? true,
     retry: false,
   })
+}
+
+const EXPORT_PAGE_SIZE = 100
+
+export function useExportExpiringLicenses() {
+  const { code } = useEnvironment()
+
+  return useMutation<License[], APIError, { before: string; filename: string }>(
+    {
+      mutationFn: async ({ before }) => {
+        const licenses: License[] = []
+        let cursor: string | null = null
+
+        do {
+          const response = await keygen.licenses.list({
+            pageSize: EXPORT_PAGE_SIZE,
+            pageCursor: cursor,
+            filters: { expires: { before } },
+            environment: code,
+          })
+
+          if (response.errors) {
+            throw new APIError(response.errors[0])
+          }
+
+          licenses.push(...(response.data ?? []))
+          cursor = cursorFromLink(response.links?.next)
+        } while (cursor)
+
+        return licenses
+      },
+      onSuccess: (licenses, { filename }) => {
+        if (!licenses.length) {
+          toast({
+            message: "No licenses expiring in this range",
+            variant: "warning",
+          })
+          return
+        }
+
+        downloadCsv(licensesToCsv(licenses), filename)
+
+        toast({
+          message: `Exported ${licenses.length} ${licenses.length === 1 ? "license" : "licenses"}`,
+          variant: "success",
+        })
+      },
+      onError: () => {
+        toast({ message: "Failed to export licenses", variant: "error" })
+      },
+    },
+  )
 }
 
 export function useLicensesExpiringOn(

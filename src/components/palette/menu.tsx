@@ -48,11 +48,13 @@ import type { AnyResource } from "@/types/api"
 import { useCloud } from "@/hooks/use-cloud"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 import {
+  useFavorites,
   useFavoriteCommands,
-  useFavoritePages,
   toggleFavoritePage,
   toggleFavoriteRoute,
+  reorderFavoriteCommands,
 } from "@/hooks/use-favorites"
+import { reorderSubset } from "@/hooks/use-list-reorder"
 
 import * as keygen from "@/keygen"
 
@@ -118,7 +120,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
     [commands],
   )
 
-  const favoritePages = useFavoritePages()
+  const favorites = useFavorites()
   const favoriteIds = useFavoriteCommands()
   const favoriteCommands = useMemo(
     () =>
@@ -304,10 +306,12 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
 
   function toggleCurrentPageFavorite() {
     const path = window.location.pathname
-    const page = favoritePages.find((p) => p.path === path)
+    const page = favorites.find(
+      (favorite) => favorite.kind === "page" && favorite.path === path,
+    )
     const route = viewRouteFor(path)
 
-    if (page) {
+    if (page?.kind === "page") {
       toggleFavoritePage(page)
     } else if (route) {
       toggleFavoriteRoute(route.to)
@@ -320,6 +324,17 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
     }
 
     close()
+  }
+
+  function reorderPaletteFavorites(from: number, to: number) {
+    reorderFavoriteCommands(
+      reorderSubset(
+        favoriteIds,
+        favoriteCommands.map((command) => command.id),
+        from,
+        to,
+      ),
+    )
   }
 
   function handleResourceSelect(item: AnyResource) {
@@ -526,6 +541,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
                 selectedValue={selectedValue}
                 recents={recents}
                 favoriteCommands={favoriteCommands}
+                onReorderFavorites={reorderPaletteFavorites}
                 commandsById={commandsById}
                 findCommands={findCommands}
                 filterCommands={filterCommands}

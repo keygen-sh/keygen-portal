@@ -1,3 +1,5 @@
+const UTF8_BOM = "\uFEFF"
+
 export function downloadBlob(
   content: string,
   filename: string,
@@ -14,4 +16,8 @@ export function downloadBlob(
   document.body.removeChild(link)
 
   setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
+
+export function downloadCsv(content: string, filename: string) {
+  downloadBlob(`${UTF8_BOM}${content}`, filename, "text/csv;charset=utf-8")
 }

@@ -12,20 +12,25 @@ import {
   startOfMonth,
   getDaysInMonth,
 } from "date-fns"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, EllipsisVertical } from "lucide-react"
 
-import * as Skeletons from "@/components/skeletons"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 import * as keygen from "@/keygen"
 
-import { cn } from "@/lib/utils"
 import {
   toDisplayRow,
   getTemperatureColor,
   buildExpirationHeatmap,
 } from "@/lib/analytics"
+import { cn } from "@/lib/utils"
 import { truncator } from "@/lib/truncate"
 
 import { License } from "@/types/licenses"
@@ -33,6 +38,7 @@ import { ExpirationHeatmapEntry } from "@/types/analytics"
 
 import {
   useExpirationsHeatmap,
+  useExportExpiringLicenses,
   useLicensesExpiringOn,
 } from "@/queries/analytics"
 
@@ -40,6 +46,7 @@ import { useMobile } from "@/hooks/use-mobile"
 import { useCursorFollowTooltip } from "@/hooks/use-cursor-follow-tooltip"
 
 import * as Motion from "@/components/motion"
+import * as Skeletons from "@/components/skeletons"
 import GoToButton from "@/components/go-to-button"
 import CursorTooltip from "@/components/cursor-tooltip"
 import Card from "./card"
@@ -94,6 +101,18 @@ export default function LicenseExpirationHeatmap({
     () => buildExpirationHeatmap(cells, { start, end }),
     [cells, start, end],
   )
+
+  const exportLicenses = useExportExpiringLicenses()
+
+  const handleExport = () => {
+    const exportStart = format(new Date(), "yyyy-MM-dd")
+    const exportEnd = format(addDays(new Date(), rangeDays - 1), "yyyy-MM-dd")
+
+    exportLicenses.mutate({
+      before: `${exportEnd}T23:59:59.999Z`,
+      filename: `licenses-expiring-${exportStart}-to-${exportEnd}.csv`,
+    })
+  }
 
   const [expanded, setExpanded] = useState(false)
 
@@ -196,17 +215,35 @@ export default function LicenseExpirationHeatmap({
       title="License expirations"
       className="rounded-md md:w-full"
       action={
-        <GoToButton
-          path={`/$accountId/app/licenses`}
-          params={{
-            accountId: keygen.config.id,
-          }}
-          search={{
-            expires: { within: expirationWindow },
-          }}
-          label="View all"
-          className="[&_.group:hover_svg]:text-primary [&_button]:text-content-normal [&_button]:hover:text-content-loud [&_svg]:text-content-normal"
-        />
+        <div className="flex items-center gap-3">
+          <GoToButton
+            path={`/$accountId/app/licenses`}
+            params={{
+              accountId: keygen.config.id,
+            }}
+            search={{
+              expires: { within: expirationWindow },
+            }}
+            label="View all"
+            className="[&_.group:hover_svg]:text-primary [&_button]:text-content-normal [&_button]:hover:text-content-loud [&_svg]:text-content-normal"
+          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="link"
+                variant="ghost"
+                className="rounded-sm px-1 text-content-subdued hover:text-content-loud"
+              >
+                <EllipsisVertical className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleExport}>
+                Export as CSV
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       }
     >
       {!enabled || isLoading ? (

@@ -232,7 +232,7 @@ export default function SidebarPanel(): React.ReactElement {
         >
           <RailGroup className="flex flex-col items-center">
             {visibleViews.map((view) => (
-              <Tooltip key={view.id} delayDuration={300}>
+              <Tooltip key={view.id}>
                 <TooltipTrigger asChild>
                   <Button
                     variant="rail"

@@ -232,19 +232,12 @@ const EXPORT_PAGE_SIZE = 100
 const MAX_EXPORT_PAGES = 10
 export const EXPORT_LIMIT = EXPORT_PAGE_SIZE * MAX_EXPORT_PAGES
 
-class ExportLimitError extends Error {
-  constructor() {
-    super(`Exports are limited to ${EXPORT_LIMIT.toLocaleString()} licenses.`)
-    this.name = "ExportLimitError"
-  }
-}
-
 export function useExportExpiringLicenses() {
   const { code } = useEnvironment()
 
   return useMutation<
-    License[],
-    APIError | ExportLimitError,
+    { licenses: License[]; partial: boolean },
+    APIError,
     { before: string; filename: string }
   >({
     mutationFn: async ({ before }) => {
@@ -269,13 +262,9 @@ export function useExportExpiringLicenses() {
         pages += 1
       } while (cursor && pages < MAX_EXPORT_PAGES)
 
-      if (cursor) {
-        throw new ExportLimitError()
-      }
-
-      return licenses
+      return { licenses, partial: cursor != null }
     },
-    onSuccess: (licenses, { filename }) => {
+    onSuccess: ({ licenses, partial }, { filename }) => {
       if (!licenses.length) {
         toast({
           message: "No licenses expiring in this range",
@@ -286,19 +275,22 @@ export function useExportExpiringLicenses() {
 
       downloadCsv(licensesToCsv(licenses), filename)
 
+      if (partial) {
+        toast({
+          message: `Export did not fully complete because it exceeded the total number of licenses allowed in an export (${EXPORT_LIMIT.toLocaleString()}).`,
+          variant: "warning",
+          options: { duration: 10000 },
+        })
+        return
+      }
+
       toast({
         message: `Exported ${licenses.length} ${licenses.length === 1 ? "license" : "licenses"}`,
         variant: "success",
       })
     },
-    onError: (error) => {
-      toast({
-        message:
-          error instanceof ExportLimitError
-            ? error.message
-            : "Failed to export licenses",
-        variant: "error",
-      })
+    onError: () => {
+      toast({ message: "Failed to export licenses", variant: "error" })
     },
   })
 }

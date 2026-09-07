@@ -31,6 +31,7 @@ import {
   buildExpirationHeatmap,
 } from "@/lib/analytics"
 import { cn } from "@/lib/utils"
+import { toast } from "@/lib/toast"
 import { truncator } from "@/lib/truncate"
 import { endOfDayUtc } from "@/lib/timestamps"
 
@@ -38,6 +39,7 @@ import { License } from "@/types/licenses"
 import { ExpirationHeatmapEntry } from "@/types/analytics"
 
 import {
+  EXPORT_LIMIT,
   useLicensesExpiringOn,
   useExpirationsHeatmap,
   useExportExpiringLicenses,
@@ -106,12 +108,20 @@ export default function LicenseExpirationHeatmap({
   const exportLicenses = useExportExpiringLicenses()
 
   const handleExport = () => {
+    const count = cells.reduce((sum, cell) => sum + cell.count, 0)
+    if (count > EXPORT_LIMIT) {
+      toast({
+        message: `Exports are limited to ${EXPORT_LIMIT.toLocaleString()} licenses`,
+        variant: "error",
+      })
+      return
+    }
+
     const exportStart = format(new Date(), "yyyy-MM-dd")
     const exportEnd = format(addDays(new Date(), rangeDays - 1), "yyyy-MM-dd")
 
     exportLicenses.mutate({
       before: endOfDayUtc(exportEnd),
-      count: cells.reduce((sum, cell) => sum + cell.count, 0),
       filename: `licenses-expiring-${exportStart}-to-${exportEnd}.csv`,
     })
   }

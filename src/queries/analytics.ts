@@ -230,7 +230,7 @@ export function useLeaderboard(
 
 const EXPORT_PAGE_SIZE = 100
 const MAX_EXPORT_PAGES = 10
-const EXPORT_LIMIT = EXPORT_PAGE_SIZE * MAX_EXPORT_PAGES
+export const EXPORT_LIMIT = EXPORT_PAGE_SIZE * MAX_EXPORT_PAGES
 
 class ExportLimitError extends Error {
   constructor() {
@@ -245,13 +245,9 @@ export function useExportExpiringLicenses() {
   return useMutation<
     License[],
     APIError | ExportLimitError,
-    { before: string; count: number; filename: string }
+    { before: string; filename: string }
   >({
-    mutationFn: async ({ before, count }) => {
-      if (count > EXPORT_LIMIT) {
-        throw new ExportLimitError()
-      }
-
+    mutationFn: async ({ before }) => {
       const licenses: License[] = []
       let cursor: string | null = null
       let pages = 0

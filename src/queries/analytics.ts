@@ -229,55 +229,82 @@ export function useLeaderboard(
 }
 
 const EXPORT_PAGE_SIZE = 100
+const MAX_EXPORT_PAGES = 10
+const EXPORT_LIMIT = EXPORT_PAGE_SIZE * MAX_EXPORT_PAGES
+
+class ExportLimitError extends Error {
+  constructor() {
+    super(`Exports are limited to ${EXPORT_LIMIT.toLocaleString()} licenses.`)
+    this.name = "ExportLimitError"
+  }
+}
 
 export function useExportExpiringLicenses() {
   const { code } = useEnvironment()
 
-  return useMutation<License[], APIError, { before: string; filename: string }>(
-    {
-      mutationFn: async ({ before }) => {
-        const licenses: License[] = []
-        let cursor: string | null = null
+  return useMutation<
+    License[],
+    APIError | ExportLimitError,
+    { before: string; count: number; filename: string }
+  >({
+    mutationFn: async ({ before, count }) => {
+      if (count > EXPORT_LIMIT) {
+        throw new ExportLimitError()
+      }
 
-        do {
-          const response = await keygen.licenses.list({
-            pageSize: EXPORT_PAGE_SIZE,
-            pageCursor: cursor,
-            filters: { expires: { before } },
-            environment: code,
-          })
+      const licenses: License[] = []
+      let cursor: string | null = null
+      let pages = 0
 
-          if (response.errors) {
-            throw new APIError(response.errors[0])
-          }
+      do {
+        const response = await keygen.licenses.list({
+          pageSize: EXPORT_PAGE_SIZE,
+          pageCursor: cursor,
+          filters: { expires: { before } },
+          environment: code,
+        })
 
-          licenses.push(...(response.data ?? []))
-          cursor = cursorFromLink(response.links?.next)
-        } while (cursor)
-
-        return licenses
-      },
-      onSuccess: (licenses, { filename }) => {
-        if (!licenses.length) {
-          toast({
-            message: "No licenses expiring in this range",
-            variant: "warning",
-          })
-          return
+        if (response.errors) {
+          throw new APIError(response.errors[0])
         }
 
-        downloadCsv(licensesToCsv(licenses), filename)
+        licenses.push(...(response.data ?? []))
+        cursor = cursorFromLink(response.links?.next)
+        pages += 1
+      } while (cursor && pages < MAX_EXPORT_PAGES)
 
-        toast({
-          message: `Exported ${licenses.length} ${licenses.length === 1 ? "license" : "licenses"}`,
-          variant: "success",
-        })
-      },
-      onError: () => {
-        toast({ message: "Failed to export licenses", variant: "error" })
-      },
+      if (cursor) {
+        throw new ExportLimitError()
+      }
+
+      return licenses
     },
-  )
+    onSuccess: (licenses, { filename }) => {
+      if (!licenses.length) {
+        toast({
+          message: "No licenses expiring in this range",
+          variant: "warning",
+        })
+        return
+      }
+
+      downloadCsv(licensesToCsv(licenses), filename)
+
+      toast({
+        message: `Exported ${licenses.length} ${licenses.length === 1 ? "license" : "licenses"}`,
+        variant: "success",
+      })
+    },
+    onError: (error) => {
+      toast({
+        message:
+          error instanceof ExportLimitError
+            ? error.message
+            : "Failed to export licenses",
+        variant: "error",
+      })
+    },
+  })
 }
 
 export function useLicensesExpiringOn(

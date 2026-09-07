@@ -32,14 +32,15 @@ import {
 } from "@/lib/analytics"
 import { cn } from "@/lib/utils"
 import { truncator } from "@/lib/truncate"
+import { endOfDayUtc } from "@/lib/timestamps"
 
 import { License } from "@/types/licenses"
 import { ExpirationHeatmapEntry } from "@/types/analytics"
 
 import {
+  useLicensesExpiringOn,
   useExpirationsHeatmap,
   useExportExpiringLicenses,
-  useLicensesExpiringOn,
 } from "@/queries/analytics"
 
 import { useMobile } from "@/hooks/use-mobile"
@@ -109,7 +110,8 @@ export default function LicenseExpirationHeatmap({
     const exportEnd = format(addDays(new Date(), rangeDays - 1), "yyyy-MM-dd")
 
     exportLicenses.mutate({
-      before: `${exportEnd}T23:59:59.999Z`,
+      before: endOfDayUtc(exportEnd),
+      count: cells.reduce((sum, cell) => sum + cell.count, 0),
       filename: `licenses-expiring-${exportStart}-to-${exportEnd}.csv`,
     })
   }
@@ -238,7 +240,10 @@ export default function LicenseExpirationHeatmap({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleExport}>
+              <DropdownMenuItem
+                onClick={handleExport}
+                disabled={exportLicenses.isPending}
+              >
                 Export as CSV
               </DropdownMenuItem>
             </DropdownMenuContent>

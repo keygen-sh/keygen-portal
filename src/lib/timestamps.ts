@@ -135,6 +135,11 @@ export function formatUtcDate(value: string): string {
   return utcDateFormatter.format(date)
 }
 
+// returns end of day in UTC for the given ISO timestamp
+export function endOfDayUtc(date: string): string {
+  return `${date}T23:59:59.999Z`
+}
+
 export const DATE_FORMAT = "MM/dd/yyyy"
 
 // formats a start/end ISO range as UTC dates, e.g. "01/01/2023 - 01/31/2023"

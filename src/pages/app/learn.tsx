@@ -413,7 +413,7 @@ export default function Learn() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-none bg-background-2"
+                      className="border-none bg-background-4 dark:bg-background-2"
                       asChild
                     >
                       <a href={DOCS_URL} target="_blank" rel="noreferrer">
@@ -425,7 +425,7 @@ export default function Learn() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-none bg-background-2"
+                      className="border-none bg-background-4 dark:bg-background-2"
                       asChild
                     >
                       <a href={DOCS_API_URL} target="_blank" rel="noreferrer">
@@ -450,7 +450,7 @@ export default function Learn() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-none bg-background-2"
+                      className="border-none bg-background-4 dark:bg-background-2"
                       asChild
                     >
                       <a href={API_SOURCE_URL} target="_blank" rel="noreferrer">
@@ -462,7 +462,7 @@ export default function Learn() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-none bg-background-2"
+                      className="border-none bg-background-4 dark:bg-background-2"
                       asChild
                     >
                       <a

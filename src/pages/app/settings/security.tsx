@@ -40,7 +40,7 @@ export default function SecurityPage() {
                 Change your password.
               </p>
             </div>
-            <div className="h-fit overflow-hidden rounded bg-background-1">
+            <div className="h-fit overflow-hidden rounded border border-accent bg-background shadow-sm dark:border-none dark:bg-background-1">
               <Motion.Resize layoutKey={editingPassword ? "edit" : "view"}>
                 {editingPassword ? (
                   <Users.Form.Password
@@ -48,12 +48,12 @@ export default function SecurityPage() {
                     onClose={() => setEditingPassword(false)}
                   />
                 ) : (
-                  <div className="flex items-center justify-end p-2">
+                  <div className="flex items-center justify-end border-b border-accent bg-background-1 p-2">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setEditingPassword(true)}
-                      className="border-none bg-background-2"
+                      className="border-none bg-background-4 dark:bg-background-2"
                     >
                       Change Password
                     </Button>
@@ -70,7 +70,7 @@ export default function SecurityPage() {
                 Manage two-factor authentication.
               </p>
             </div>
-            <div className="overflow-hidden rounded bg-background-1">
+            <div className="overflow-hidden rounded border border-accent bg-background shadow-sm dark:border-none dark:bg-background-1">
               <Motion.Resize layoutKey={secondFactorMode}>
                 {!isLoading && secondFactorMode === SecondFactorMode.Enable ? (
                   <Users.Form.SecondFactor.Enable
@@ -86,7 +86,7 @@ export default function SecurityPage() {
                   />
                 ) : (
                   <div className="flex flex-col">
-                    <div className="flex items-center justify-end border-b border-accent p-2">
+                    <div className="flex items-center justify-end border-b border-accent bg-background-1 p-2">
                       {isEnabled ? (
                         <Button
                           variant="outline"
@@ -94,7 +94,7 @@ export default function SecurityPage() {
                           onClick={() =>
                             setSecondFactorMode(SecondFactorMode.Disable)
                           }
-                          className="border-none bg-background-2"
+                          className="border-none bg-background-4 dark:bg-background-2"
                         >
                           Deactivate
                         </Button>
@@ -105,7 +105,7 @@ export default function SecurityPage() {
                           onClick={() =>
                             setSecondFactorMode(SecondFactorMode.Enable)
                           }
-                          className="border-none bg-background-2"
+                          className="border-none bg-background-4 dark:bg-background-2"
                         >
                           Enable
                         </Button>

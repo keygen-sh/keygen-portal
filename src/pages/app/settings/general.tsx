@@ -45,7 +45,7 @@ export default function General() {
                 Manage account settings and information.
               </p>
             </div>
-            <div className="overflow-hidden rounded bg-background-1">
+            <div className="overflow-hidden rounded border border-accent bg-background shadow-sm dark:border-none dark:bg-background-1">
               {account && (
                 <Motion.Resize layoutKey={editingAccount ? "edit" : "view"}>
                   {editingAccount ? (
@@ -56,12 +56,12 @@ export default function General() {
                   ) : (
                     <div className="flex flex-col">
                       <Can permission="account.update">
-                        <div className="flex items-center justify-end border-b border-accent p-2">
+                        <div className="flex items-center justify-end border-b border-accent bg-background-1 p-2">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => setEditingAccount(true)}
-                            className="border-none bg-background-2"
+                            className="border-none bg-background-4 dark:bg-background-2"
                           >
                             Edit Account
                           </Button>
@@ -117,7 +117,7 @@ export default function General() {
                 Manage your settings and information.
               </p>
             </div>
-            <div className="overflow-hidden rounded bg-background-1">
+            <div className="overflow-hidden rounded border border-accent bg-background shadow-sm dark:border-none dark:bg-background-1">
               {user && (
                 <Motion.Resize layoutKey={editingProfile ? "edit" : "view"}>
                   {editingProfile ? (
@@ -127,12 +127,12 @@ export default function General() {
                     />
                   ) : (
                     <div className="flex flex-col">
-                      <div className="flex items-center justify-end border-b border-accent p-2">
+                      <div className="flex items-center justify-end border-b border-accent bg-background-1 p-2">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setEditingProfile(true)}
-                          className="border-none bg-background-2"
+                          className="border-none bg-background-4 dark:bg-background-2"
                         >
                           Edit Profile
                         </Button>

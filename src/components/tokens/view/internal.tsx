@@ -40,14 +40,14 @@ export default function InternalTokensPage() {
   const remaining = internalTokens.length - preview.length
 
   return (
-    <div className="overflow-hidden rounded bg-background-1">
+    <div className="overflow-hidden rounded border border-accent bg-background shadow-sm dark:border-none dark:bg-background-1">
       <Can permission="token.generate">
-        <div className="flex items-center justify-end border-b border-accent p-2">
+        <div className="flex items-center justify-end border-b border-accent bg-background-1 p-2">
           <Button
             variant="outline"
             size="sm"
             onClick={() => setCreateOpen(true)}
-            className="border-none bg-background-2"
+            className="border-none bg-background-4 dark:bg-background-2"
           >
             New Token
           </Button>

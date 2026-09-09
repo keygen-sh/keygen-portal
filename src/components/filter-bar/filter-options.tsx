@@ -22,7 +22,7 @@ export function renderHighlightedText(text: string, query: string) {
   return (
     <>
       {before}
-      <mark className="rounded-xs bg-warning/20 px-0 text-warning">
+      <mark className="rounded-xs bg-warning px-0 text-white dark:bg-warning/20 dark:text-warning">
         {match}
       </mark>
       {after}

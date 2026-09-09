@@ -10,11 +10,14 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default: "font-normal bg-background-2 text-content-loud rounded-[3px]",
-        secondary: "font-normal bg-secondary/20 text-secondary rounded-[3px]",
+        secondary:
+          "font-normal bg-secondary text-white dark:bg-secondary/20 dark:text-secondary rounded-[3px]",
         destructive:
-          "font-normal bg-destructive/20 text-destructive rounded-[3px]",
-        warning: "font-normal bg-warning/20 text-warning rounded-[3px]",
-        success: "font-normal bg-primary/20 text-primary rounded-[3px]",
+          "font-normal bg-destructive text-white dark:bg-destructive/20 dark:text-destructive rounded-[3px]",
+        warning:
+          "font-normal bg-warning text-white dark:bg-warning/20 dark:text-warning rounded-[3px]",
+        success:
+          "font-normal bg-primary text-white dark:bg-primary/20 dark:text-primary rounded-[3px]",
         outline: "border border-accent text-content-loud",
         disabled:
           "font-normal bg-content-subdued/10 text-content-subdued rounded-[3px]",

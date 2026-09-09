@@ -180,7 +180,7 @@ function DateRangeSegment({
             "inline-flex h-full cursor-pointer items-center px-0.5 text-xs transition-colors outline-none",
             isDraft
               ? "bg-background-2/60 text-content-disabled italic hover:brightness-125"
-              : "bg-secondary/20 text-secondary hover:text-secondary-light",
+              : "bg-secondary text-white hover:text-white/75 dark:bg-secondary/20 dark:text-secondary dark:hover:text-secondary-light",
           )}
         >
           {displayValue}

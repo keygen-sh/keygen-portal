@@ -22,9 +22,9 @@ function Checkbox({
         className="flex items-center justify-center text-current transition-none"
       >
         {props.checked === "indeterminate" ? (
-          <MinusIcon className="size-3.5" stroke="black" />
+          <MinusIcon className="size-3.5 text-primary-foreground" />
         ) : (
-          <CheckIcon className="size-3.5" stroke="black" />
+          <CheckIcon className="size-3.5 text-primary-foreground" />
         )}
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>

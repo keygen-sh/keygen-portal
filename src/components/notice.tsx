@@ -15,10 +15,12 @@ const noticeVariants = cva(
     variants: {
       variant: {
         default: "bg-background-1 text-content-muted",
-        primary: "bg-primary/20 text-primary",
-        secondary: "bg-secondary/20 text-secondary",
-        warning: "bg-warning/20 text-warning",
-        destructive: "bg-destructive/20 text-destructive",
+        primary: "bg-primary text-white dark:bg-primary/20 dark:text-primary",
+        secondary:
+          "bg-secondary text-white dark:bg-secondary/20 dark:text-secondary",
+        warning: "bg-warning text-white dark:bg-warning/20 dark:text-warning",
+        destructive:
+          "bg-destructive text-white dark:bg-destructive/20 dark:text-destructive",
       },
     },
     defaultVariants: {

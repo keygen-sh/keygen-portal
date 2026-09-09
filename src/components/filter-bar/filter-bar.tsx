@@ -228,7 +228,7 @@ export default function FilterBar({
         {filterCount != null && filterCount > 0 && (
           <button
             type="button"
-            className="group inline-flex h-full shrink-0 cursor-pointer items-center gap-1 rounded-[3px] bg-warning/20 px-1.5 text-xs font-normal whitespace-nowrap text-warning transition-colors hover:bg-destructive/20 hover:text-destructive"
+            className="group inline-flex h-full shrink-0 cursor-pointer items-center gap-1 rounded-[3px] bg-warning px-1.5 text-xs font-normal whitespace-nowrap text-white transition-colors hover:bg-destructive dark:bg-warning/20 dark:text-warning dark:hover:bg-destructive/20 dark:hover:text-destructive"
             disabled={disabled}
             onClick={onClearAll}
           >

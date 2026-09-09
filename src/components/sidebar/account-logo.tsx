@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useTheme } from "next-themes"
 
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -16,12 +17,16 @@ export function AccountLogo({
 }): React.ReactElement {
   const [loadedSrc, setLoadedSrc] = useState<string | null>(null)
   const [erroredSrc, setErroredSrc] = useState<string | null>(null)
+  const { resolvedTheme } = useTheme()
 
   if (!name) {
     return <Skeleton className={cn(BASE_STYLES, className)} />
   }
 
-  const candidate = logoDevImageUrl(name)
+  const candidate = logoDevImageUrl(
+    name,
+    resolvedTheme === "light" ? "light" : "dark",
+  )
   const src = candidate && candidate !== erroredSrc ? candidate : null
 
   if (src) {

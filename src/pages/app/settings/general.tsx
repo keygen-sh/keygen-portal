@@ -1,7 +1,15 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useTheme } from "next-themes"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 import { useGetAccount } from "@/queries/accounts"
 import { useGetCurrentUser } from "@/queries/users"
@@ -26,6 +34,10 @@ export default function General() {
 
   const { data: account } = useGetAccount()
   const { data: user } = useGetCurrentUser()
+
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   const [editingAccount, setEditingAccount] = useState(false)
   const [editingProfile, setEditingProfile] = useState(false)
@@ -178,6 +190,38 @@ export default function General() {
                   )}
                 </Motion.Resize>
               )}
+            </div>
+
+            <div className="flex flex-col space-y-2">
+              <h2 className="font-owners-wide text-lg text-content-loud">
+                Portal
+              </h2>
+              <p className="font-owners-text text-sm text-content-muted">
+                Manage portal appearance and preferences.
+              </p>
+            </div>
+            <div className="overflow-hidden rounded border border-accent bg-background shadow-sm dark:border-none dark:bg-background-1">
+              <div className="flex flex-col gap-4 p-4">
+                <Attribute.Field
+                  label="Theme"
+                  variant="none"
+                  value={
+                    <Select
+                      value={mounted ? (theme ?? "system") : undefined}
+                      onValueChange={setTheme}
+                    >
+                      <SelectTrigger size="sm" className="w-36">
+                        <SelectValue placeholder="System" />
+                      </SelectTrigger>
+                      <SelectContent align="end">
+                        <SelectItem value="light">Light</SelectItem>
+                        <SelectItem value="dark">Dark</SelectItem>
+                        <SelectItem value="system">System</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  }
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -8,6 +8,7 @@ import {
   isRedirect,
 } from "@tanstack/react-router"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { ThemeProvider } from "next-themes"
 import { routeTree } from "./routeTree.gen"
 import * as sentry from "@/sentry"
 import * as fathom from "@/fathom"
@@ -59,9 +60,17 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <Sentry.ErrorBoundary>
-        <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
-        </QueryClientProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          storageKey="keygen.theme"
+          disableTransitionOnChange
+        >
+          <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+          </QueryClientProvider>
+        </ThemeProvider>
       </Sentry.ErrorBoundary>
     </StrictMode>,
   )

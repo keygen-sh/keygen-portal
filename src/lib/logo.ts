@@ -2,7 +2,10 @@ import config from "@/keygen/config"
 
 const ENDPOINT = "https://img.logo.dev/name"
 
-export function logoDevImageUrl(name: string): string | null {
+export function logoDevImageUrl(
+  name: string,
+  theme: "light" | "dark" = "dark",
+): string | null {
   const token = config.logoDevToken
   if (!token) return null
 
@@ -10,7 +13,7 @@ export function logoDevImageUrl(name: string): string | null {
     token,
     size: "64",
     format: "webp",
-    theme: "dark",
+    theme,
     fallback: "404", // we use our own monogram
   })
 

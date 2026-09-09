@@ -30,7 +30,12 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
@@ -50,6 +55,7 @@ import {
   toggleFavoritePage,
   toggleFavoriteRoute,
 } from "@/hooks/use-favorites"
+import { useTheme } from "next-themes"
 import { useCloud } from "@/hooks/use-cloud"
 import { useMobile } from "@/hooks/use-mobile"
 import { useAppVersion } from "@/hooks/use-app-version"
@@ -151,6 +157,7 @@ export default function SidebarPanel(): React.ReactElement {
 
   const isMobile = useMobile()
   const { isCloud } = useCloud()
+  const { theme, setTheme } = useTheme()
   const { hasUpdate, reload } = useAppVersion()
 
   const logout = useLogout()
@@ -297,6 +304,25 @@ export default function SidebarPanel(): React.ReactElement {
                     Settings
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuRadioGroup
+                      value={theme}
+                      onValueChange={setTheme}
+                    >
+                      <DropdownMenuRadioItem value="light">
+                        Light
+                      </DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="dark">
+                        Dark
+                      </DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="system">
+                        System
+                      </DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>

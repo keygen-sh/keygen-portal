@@ -23,14 +23,14 @@ import {
 import { mix } from "@/lib/colors"
 
 export const CHART_COLORS = [
-  "var(--color-secondary)",
-  "var(--color-primary)",
-  "var(--color-warning)",
-  "var(--color-destructive)",
+  "var(--secondary)",
+  "var(--primary)",
+  "var(--warning)",
+  "var(--destructive)",
 ] as const
 
 export const [BLUE, GREEN, AMBER, RED] = CHART_COLORS
-export const GRAY = "var(--color-content-normal)"
+export const GRAY = "var(--content-normal)"
 
 export const REQUEST_METRICS = [
   "requests.2xx",
@@ -556,12 +556,12 @@ export function toDisplayRow(y: number): number {
 }
 
 export function getTemperatureColor(temperature: number): string {
-  if (temperature === 0) return "var(--color-background-1)"
+  if (temperature === 0) return "var(--background-1)"
   if (temperature <= 0.25)
-    return "color-mix(in srgb, var(--color-destructive) 30%, var(--color-background-1))"
+    return "color-mix(in srgb, var(--destructive) 30%, var(--background-1))"
   if (temperature <= 0.5)
-    return "color-mix(in srgb, var(--color-destructive) 55%, var(--color-background-1))"
+    return "color-mix(in srgb, var(--destructive) 55%, var(--background-1))"
   if (temperature <= 0.75)
-    return "color-mix(in srgb, var(--color-destructive) 80%, var(--color-background-1))"
-  return "var(--color-destructive)"
+    return "color-mix(in srgb, var(--destructive) 80%, var(--background-1))"
+  return "var(--destructive)"
 }

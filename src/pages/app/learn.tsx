@@ -259,7 +259,7 @@ export default function Learn() {
       <ScrollArea className="min-h-0 flex-1 overflow-y-auto">
         <div className="flex flex-col gap-8 p-8">
           <div className="">
-            <h2 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl leading-tight font-medium text-transparent drop-shadow-[0_2px_12px_var(--color-background)] select-none">
+            <h2 className="bg-gradient-to-r from-primary to-secondary bg-clip-text font-owners-wide text-2xl leading-tight font-medium text-transparent drop-shadow-[0_2px_12px_var(--background)] select-none">
               {headline}
             </h2>
           </div>
@@ -545,7 +545,7 @@ function OnboardingCard({
   const action = complete ? (
     <span className="flex items-center gap-4 text-content-subdued">
       Complete
-      <CircleCheckBig className="size-4 shrink-0 text-brand-primary" />
+      <CircleCheckBig className="size-4 shrink-0 text-primary" />
     </span>
   ) : state === "skipped" ? (
     <>

@@ -91,11 +91,11 @@ export default function AuthHero() {
                 ease: [0.4, 0, 0.2, 1],
               }}
             >
-              <h2 className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-3xl leading-tight font-medium text-transparent drop-shadow-[0_2px_12px_var(--color-background)] select-none lg:text-4xl">
+              <h2 className="bg-gradient-to-r from-primary to-secondary bg-clip-text font-owners-wide text-3xl leading-tight font-medium text-transparent drop-shadow-[0_2px_12px_var(--background)] select-none lg:text-4xl">
                 {headline}
               </h2>
               {content.subtitle && (
-                <p className="mt-2 max-w-md font-owners-text text-sm leading-relaxed text-content-normal [text-shadow:0_1px_3px_var(--color-background),0_2px_14px_var(--color-background)]">
+                <p className="mt-2 max-w-md font-owners-text text-sm leading-relaxed text-content-normal [text-shadow:0_1px_3px_var(--background),0_2px_14px_var(--background)]">
                   {content.subtitle}
                 </p>
               )}

@@ -119,7 +119,9 @@ export default function DuplicatePolicyForm({
 
   if (policyError || !policy) {
     return (
-      <p className="text-center text-sm text-red-500">Failed to load policy.</p>
+      <p className="text-center text-sm text-destructive">
+        Failed to load policy.
+      </p>
     )
   }
 
@@ -135,7 +137,7 @@ export default function DuplicatePolicyForm({
             <Loading.Dots />
           </div>
         ) : policyError || !policy ? (
-          <p className="text-center text-sm text-red-500">
+          <p className="text-center text-sm text-destructive">
             Failed to load policy.
           </p>
         ) : (

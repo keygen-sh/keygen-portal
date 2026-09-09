@@ -23,10 +23,10 @@ import {
 
 import { ExpirationHeatmapEntry } from "@/types/analytics"
 
-export const GREEN = "var(--color-brand-primary)"
-export const PINK = "var(--color-brand-destructive)"
-export const BLUE = "var(--color-brand-secondary)"
-export const AMBER = "var(--color-brand-amber)"
+export const GREEN = "var(--primary)"
+export const PINK = "var(--destructive)"
+export const BLUE = "var(--secondary)"
+export const AMBER = "var(--warning)"
 export const VIOLET = mix({ color: BLUE, with: PINK, amount: 40 })
 
 interface MetricState {
@@ -40,43 +40,43 @@ const EVENT_DEFINITIONS = [
   {
     name: "license.checked-out",
     color: GREEN,
-    badge: "text-brand-primary bg-brand-primary/15",
+    badge: "text-primary bg-primary/15",
     data: true,
   },
   {
     name: "license.created",
     color: GREEN,
-    badge: "text-brand-primary bg-brand-primary/15",
+    badge: "text-primary bg-primary/15",
     data: true,
   },
   {
     name: "license.deleted",
     color: PINK,
-    badge: "text-brand-destructive bg-brand-destructive/15",
+    badge: "text-destructive bg-destructive/15",
     data: false,
   },
   {
     name: "license.expired",
     color: PINK,
-    badge: "text-brand-destructive bg-brand-destructive/15",
+    badge: "text-destructive bg-destructive/15",
     data: true,
   },
   {
     name: "license.renewed",
     color: BLUE,
-    badge: "text-brand-secondary bg-brand-secondary/15",
+    badge: "text-secondary bg-secondary/15",
     data: true,
   },
   {
     name: "license.revoked",
     color: PINK,
-    badge: "text-brand-destructive bg-brand-destructive/15",
+    badge: "text-destructive bg-destructive/15",
     data: false,
   },
   {
     name: "license.validations.*",
     color: GREEN,
-    badge: "text-brand-primary bg-brand-primary/15",
+    badge: "text-primary bg-primary/15",
     data: true,
   },
 ]
@@ -85,7 +85,7 @@ function SectionHeader({ title, range }: { title: string; range: string }) {
   return (
     <div className="mb-2 flex items-center justify-between">
       <span className="text-xs font-medium text-content-muted">{title}</span>
-      <span className="rounded border border-brand-border-main px-2 py-0.5 text-[11px] text-content-subdued">
+      <span className="rounded border px-2 py-0.5 text-[11px] text-content-subdued">
         {range} ▾
       </span>
     </div>
@@ -164,12 +164,12 @@ export default function Dashboard({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex overflow-hidden rounded-xl border border-brand-border-main bg-background text-content-normal select-none",
+        "flex overflow-hidden rounded-xl border bg-background text-content-normal select-none",
         className,
       )}
     >
-      <div className="flex w-12 shrink-0 flex-col items-center gap-4 border-r border-brand-border-main py-4">
-        <div className="size-5 rounded bg-brand-primary/25" />
+      <div className="flex w-12 shrink-0 flex-col items-center gap-4 border-r py-4">
+        <div className="size-5 rounded bg-primary/25" />
         {[Home, KeyRound, Box, Zap, Webhook, Shield].map((Icon, i) => (
           <Icon
             key={i}
@@ -188,10 +188,7 @@ export default function Dashboard({ className }: { className?: string }) {
 
         <div className="grid grid-cols-4 gap-3">
           {metrics.map((m) => (
-            <div
-              key={m.label}
-              className="rounded-lg border border-brand-border-main p-3"
-            >
+            <div key={m.label} className="rounded-lg border p-3">
               <div className="text-[11px] text-content-subdued">{m.label}</div>
               <div className="mt-1 flex items-end justify-between gap-2">
                 <span className="font-owners-wide text-2xl font-medium text-content-loud tabular-nums">
@@ -209,7 +206,7 @@ export default function Dashboard({ className }: { className?: string }) {
 
         <div>
           <SectionHeader title="Heatmaps" range="Next 1 year" />
-          <div className="rounded-lg border border-brand-border-main p-4">
+          <div className="rounded-lg border p-4">
             <div className="mb-3 flex items-center justify-between">
               <span className="text-xs font-medium text-content-muted">
                 License expirations
@@ -252,10 +249,7 @@ export default function Dashboard({ className }: { className?: string }) {
           <SectionHeader title="Activity" range="Last 90 days" />
           <div className="grid grid-cols-2 gap-3">
             {activity.map(({ title, bars }) => (
-              <div
-                key={title}
-                className="rounded-lg border border-brand-border-main p-4"
-              >
+              <div key={title} className="rounded-lg border p-4">
                 <div className="mb-3 text-xs font-medium text-content-muted">
                   {title}
                 </div>
@@ -289,10 +283,7 @@ export default function Dashboard({ className }: { className?: string }) {
           </div>
           <div className="grid grid-cols-3 gap-3">
             {events.map((ev) => (
-              <div
-                key={ev.name}
-                className="rounded-lg border border-brand-border-main p-3"
-              >
+              <div key={ev.name} className="rounded-lg border p-3">
                 <span
                   className={cn(
                     "rounded px-1.5 py-0.5 font-mono text-[11px]",

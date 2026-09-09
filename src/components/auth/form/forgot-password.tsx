@@ -192,7 +192,7 @@ function SentStep({ email, onEdit }: { email: string; onEdit: () => void }) {
               <PopoverTrigger onClick={(e) => e.stopPropagation()}>
                 <span className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted">
                   {email}
-                  <Undo2 className="text-content ml-1 inline size-3" />
+                  <Undo2 className="ml-1 inline size-3" />
                 </span>
               </PopoverTrigger>
               <PopoverContent
@@ -219,7 +219,7 @@ function SentStep({ email, onEdit }: { email: string; onEdit: () => void }) {
                   className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted"
                 >
                   {email}
-                  <Undo2 className="text-content ml-1 inline size-3" />
+                  <Undo2 className="ml-1 inline size-3" />
                 </button>
               </TooltipTrigger>
               <TooltipContent

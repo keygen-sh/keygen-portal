@@ -23,7 +23,7 @@ const inputVariants = cva(
       variant: {
         default: "placeholder:text-content-subdued!",
         destructive:
-          "text-destructive border-brand-destructive ring-2 ring-destructive/20 focus-visible:ring-destructive/40",
+          "text-destructive border-destructive ring-2 ring-destructive/20 focus-visible:ring-destructive/40",
         outline: "bg-background",
         title: "font-owners-wide font-medium placeholder:text-content-normal",
       },

@@ -282,9 +282,9 @@ export default function DataTable<T extends TableResource>({
                                   (!direction ? (
                                     <ChevronsUpDown className="size-4 md:size-3" />
                                   ) : direction === "asc" ? (
-                                    <ChevronUp className="size-4 text-brand-primary md:size-3" />
+                                    <ChevronUp className="size-4 text-primary md:size-3" />
                                   ) : (
-                                    <ChevronDown className="size-4 text-brand-primary md:size-3" />
+                                    <ChevronDown className="size-4 text-primary md:size-3" />
                                   ))}
                               </Button>
 

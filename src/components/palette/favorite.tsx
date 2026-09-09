@@ -28,7 +28,7 @@ export default function Favorite({
         if (e.key === "Enter" || e.key === " ") e.stopPropagation()
       }}
       className={cn(
-        "inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-sm text-content-subdued outline-none hover:text-content-loud focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ring",
+        "inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-sm text-content-disabled outline-none hover:text-content-loud focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ring dark:text-content-subdued",
         className,
       )}
     >

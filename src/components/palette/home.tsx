@@ -172,7 +172,7 @@ export default function Home({
                   !isTyping && (
                     <button
                       type="button"
-                      className="inline-flex size-5 shrink-0 cursor-grab touch-none items-center justify-center text-content-subdued opacity-0 group-hover/palette-row:opacity-100 group-data-[selected=true]/palette-row:opacity-100 active:cursor-grabbing pointer-coarse:opacity-100"
+                      className="inline-flex size-5 shrink-0 cursor-grab touch-none items-center justify-center text-content-disabled opacity-0 group-hover/palette-row:opacity-100 group-data-[selected=true]/palette-row:opacity-100 active:cursor-grabbing dark:text-content-subdued pointer-coarse:opacity-100"
                       {...favoritesReorder.handleProps}
                     >
                       <GripVertical className="size-4! text-current" />

@@ -96,7 +96,7 @@ const TabsSwitch = React.forwardRef<HTMLDivElement, TabsSwitchProps>(
               className={cn(
                 "p-0 hover:text-content-loud",
                 !borderless && "pb-4",
-                "data-[state=active]:bg-transparent data-[state=active]:shadow-none dark:data-[state=active]:bg-transparent",
+                "data-[state=active]:bg-transparent data-[state=active]:shadow-none",
                 "[&_svg]:transition-colors [&[data-state=active]_svg]:text-brand-primary",
               )}
             >

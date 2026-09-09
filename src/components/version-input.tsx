@@ -75,7 +75,7 @@ export default function VersionInput({
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         className={cn(
-          "flex h-9 w-full min-w-0 items-center rounded-l-md border border-accent bg-transparent shadow-xs transition-colors duration-300 dark:bg-input/30",
+          "flex h-9 w-full min-w-0 items-center rounded-l-md border border-accent bg-transparent shadow-xs transition-colors duration-300",
           focused && "border-content-subdued",
           invalid && "border-destructive!",
           disabled && "pointer-events-none cursor-not-allowed opacity-50",

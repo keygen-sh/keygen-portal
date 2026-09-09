@@ -81,7 +81,7 @@ export default function AccountForm() {
               >
                 <Link
                   to="/auth/register"
-                  className="text-content-main underline-slide py-0.5 font-bold"
+                  className="underline-slide py-0.5 font-bold"
                 >
                   Create one
                 </Link>

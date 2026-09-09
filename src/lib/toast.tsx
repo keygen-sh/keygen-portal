@@ -11,14 +11,14 @@ const variants = {
     background: "bg-background-5/40",
   },
   success: {
-    icon: <CircleCheckBig className="size-4 text-brand-primary" />,
-    title: "text-brand-primary",
-    background: "bg-brand-primary/20",
+    icon: <CircleCheckBig className="size-4 text-primary" />,
+    title: "text-primary",
+    background: "bg-primary/20",
   },
   error: {
-    icon: <AlertCircle className="size-4 text-brand-destructive" />,
-    title: "text-brand-destructive",
-    background: "bg-brand-destructive/20",
+    icon: <AlertCircle className="size-4 text-destructive" />,
+    title: "text-destructive",
+    background: "bg-destructive/20",
   },
   warning: {
     icon: <Info className="size-4 text-warning" />,

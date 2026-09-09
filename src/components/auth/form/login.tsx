@@ -238,7 +238,7 @@ function EmailStep({
                     <PopoverTrigger onClick={(e) => e.stopPropagation()}>
                       <span className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted">
                         {accountLabel}
-                        <Undo2 className="text-content ml-1 inline size-3" />
+                        <Undo2 className="ml-1 inline size-3" />
                       </span>
                     </PopoverTrigger>
                     <PopoverContent
@@ -260,7 +260,7 @@ function EmailStep({
                         className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted"
                       >
                         {accountLabel}
-                        <Undo2 className="text-content ml-1 inline size-3" />
+                        <Undo2 className="ml-1 inline size-3" />
                       </Link>
                     </TooltipTrigger>
                     <TooltipContent
@@ -379,7 +379,7 @@ function PasswordStep({
                   <PopoverTrigger onClick={(e) => e.stopPropagation()}>
                     <span className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted">
                       {emailLabel}
-                      <Undo2 className="text-content ml-1 inline size-3" />
+                      <Undo2 className="ml-1 inline size-3" />
                     </span>
                   </PopoverTrigger>
                   <PopoverContent
@@ -406,7 +406,7 @@ function PasswordStep({
                       onClick={onBack}
                     >
                       {emailLabel}
-                      <Undo2 className="text-content ml-1 inline size-3" />
+                      <Undo2 className="ml-1 inline size-3" />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent

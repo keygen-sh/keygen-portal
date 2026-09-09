@@ -32,7 +32,7 @@ export default function FormsSectionHeader({
     return (
       <h1
         className={cn(
-          "bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none",
+          "bg-gradient-to-r from-primary to-secondary bg-clip-text font-owners-wide text-2xl font-medium text-transparent select-none",
           className,
         )}
       >

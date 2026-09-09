@@ -55,12 +55,12 @@ export default function MotionTerminal({
         {text}▋
       </span>
       <span className="col-start-1 row-start-1">
-        <span className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent">
+        <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
           {text.slice(0, count)}
         </span>
         <motion.span
           aria-hidden
-          className="text-brand-primary"
+          className="text-primary"
           animate={
             !active || phase === "typing"
               ? { opacity: 1 }

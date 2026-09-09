@@ -119,7 +119,7 @@ export default function Testimonial({
               &ldquo;{current.quote}&rdquo;
             </blockquote>
             <figcaption className="mt-4 flex items-center gap-3">
-              <span className="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary font-owners-wide text-sm font-medium text-brand-neutral-900 select-none">
+              <span className="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary font-owners-wide text-sm font-medium text-primary-foreground select-none">
                 {current.name.charAt(0)}
               </span>
               <span className="flex flex-col">
@@ -156,8 +156,8 @@ export default function Testimonial({
                 className={cn(
                   "h-1.5 rounded-full transition-all duration-300",
                   i === index
-                    ? "w-6 bg-brand-primary"
-                    : "w-1.5 bg-brand-border-3 hover:bg-brand-border-4",
+                    ? "w-6 bg-primary"
+                    : "w-1.5 bg-content-disabled hover:bg-content-subdued",
                 )}
               />
             ))}

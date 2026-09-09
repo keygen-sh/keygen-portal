@@ -24,7 +24,7 @@ export default function BackButton({
   return (
     <div className={cn("group flex h-6 w-fit gap-2", className)}>
       <div className="flex h-full items-center">
-        <ChevronLeft className="mt-0.5 size-3.5 text-content-subdued transition-all duration-200 group-hover:-translate-x-2 group-hover:text-brand-primary" />
+        <ChevronLeft className="mt-0.5 size-3.5 text-content-subdued transition-all duration-200 group-hover:-translate-x-2 group-hover:text-primary" />
       </div>
       <Button
         type="button"

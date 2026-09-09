@@ -173,7 +173,8 @@ export default function MultiSelect({
                   key={value}
                   className={cn(
                     "h-5 cursor-pointer text-content-muted",
-                    tooltip != null && "hover:bg-warning/20 hover:text-warning",
+                    tooltip != null &&
+                      "hover:bg-warning hover:text-white dark:hover:bg-warning/20 dark:hover:text-warning",
                   )}
                   onClick={(e) => {
                     e.stopPropagation()

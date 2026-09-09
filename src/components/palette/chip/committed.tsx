@@ -16,12 +16,14 @@ export default function Committed({
   onRemove,
 }: CommittedProps) {
   const keywordClassName = cn(
-    "inline-flex h-full items-center bg-secondary/20 text-secondary/70",
-    invalid && "bg-destructive/20 text-destructive",
+    "inline-flex h-full items-center bg-secondary text-white/70 dark:bg-secondary/20 dark:text-secondary/70",
+    invalid &&
+      "bg-destructive text-white dark:bg-destructive/20 dark:text-destructive",
   )
   const valueClassName = cn(
-    "inline-flex h-full items-center bg-secondary/20 text-secondary",
-    invalid && "bg-destructive/20 text-destructive",
+    "inline-flex h-full items-center bg-secondary text-white dark:bg-secondary/20 dark:text-secondary",
+    invalid &&
+      "bg-destructive text-white dark:bg-destructive/20 dark:text-destructive",
   )
 
   return (
@@ -42,9 +44,9 @@ export default function Committed({
           onRemove()
         }}
         className={cn(
-          "inline-flex h-full cursor-pointer items-center bg-secondary/20 pr-1.5 pl-0.5 text-secondary/70 transition-colors outline-none hover:text-secondary",
+          "inline-flex h-full cursor-pointer items-center bg-secondary pr-1.5 pl-0.5 text-white/70 transition-colors outline-none hover:text-white dark:bg-secondary/20 dark:text-secondary/70 dark:hover:text-secondary",
           invalid &&
-            "bg-destructive/20 text-destructive hover:text-destructive",
+            "bg-destructive text-white hover:text-white dark:bg-destructive/20 dark:text-destructive dark:hover:text-destructive",
         )}
       >
         <X className="size-3" />

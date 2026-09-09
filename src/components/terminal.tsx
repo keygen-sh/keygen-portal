@@ -183,7 +183,7 @@ export default function Terminal({
           <span className="size-2 rounded-full bg-background-4" />
         </span>
 
-        <span className="ml-1 font-mono text-xs text-content-subdued select-none">
+        <span className="ml-1 font-mono text-xs text-content-loud select-none dark:text-content-subdued">
           {title}
         </span>
       </div>

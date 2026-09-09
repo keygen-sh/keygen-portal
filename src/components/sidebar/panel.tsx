@@ -202,7 +202,7 @@ export default function SidebarPanel(): React.ReactElement {
       <Rail
         collapsible={"none"}
         className={cn(
-          "border-r bg-background transition-all duration-200",
+          "dark border-r bg-background transition-all duration-200",
           isMobile && !open ? "w-0" : isMobile && open ? "w-16" : "w-16",
         )}
       >
@@ -329,7 +329,7 @@ export default function SidebarPanel(): React.ReactElement {
         variant="sidebar"
         side="left"
         className={cn(
-          "z-10 flex h-full flex-col overflow-hidden bg-background transition-all duration-200",
+          "z-10 flex h-full flex-col overflow-hidden bg-background-1 transition-all duration-200 dark:bg-background",
           open ? "w-60 border-r" : "w-0",
         )}
       >

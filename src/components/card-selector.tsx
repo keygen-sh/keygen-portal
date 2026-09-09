@@ -133,7 +133,7 @@ export function CardSelector<T>({
             selected={selected}
             onSelect={() => handleSelect(option.value)}
           >
-            <div className="space-y-4 rounded-[inherit] bg-background p-4">
+            <div className="space-y-4 rounded-md bg-background p-4">
               {option.icon && (
                 <CardHeader className="p-0">
                   <CardTitle>{option.icon}</CardTitle>
@@ -203,7 +203,8 @@ const SelectableCard = React.forwardRef<
       className={cn(
         "w-full min-w-0 cursor-pointer rounded-lg bg-background p-0.5 transition-colors duration-300 md:max-w-72",
         "group focus-visible:ring-2 focus-visible:ring-content-subdued focus-visible:outline-none",
-        selected && "bg-linear-to-r from-primary to-secondary",
+        selected &&
+          "border-transparent bg-linear-to-r from-primary to-secondary",
       )}
       data-selected={selected ? "true" : "false"}
     >

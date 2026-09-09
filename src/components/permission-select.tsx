@@ -631,7 +631,7 @@ function RequiredScrollHint({
   }
 
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center bg-linear-to-t from-black to-transparent pt-6 pb-3">
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center bg-linear-to-t from-background to-transparent pt-6 pb-3">
       <Button
         size="sm"
         type="button"

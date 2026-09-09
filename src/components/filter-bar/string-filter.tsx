@@ -113,7 +113,7 @@ function StringInputSegment({
         {isActive ? (
           <button
             type="button"
-            className="inline-flex h-full cursor-pointer items-center bg-secondary/20 px-0.5 text-xs text-secondary transition-colors outline-none hover:text-secondary-light"
+            className="inline-flex h-full cursor-pointer items-center bg-secondary px-0.5 text-xs text-white transition-colors outline-none hover:text-white/75 dark:bg-secondary/20 dark:text-secondary dark:hover:text-secondary-light"
           >
             {value}
           </button>
@@ -124,7 +124,7 @@ function StringInputSegment({
               "inline-flex h-full cursor-pointer items-center px-0.5 text-xs transition-colors outline-none",
               isDraft
                 ? "bg-background-2/60 text-content-disabled italic hover:brightness-125"
-                : "bg-secondary/20 text-secondary hover:text-secondary-light",
+                : "bg-secondary text-white hover:text-white/75 dark:bg-secondary/20 dark:text-secondary dark:hover:text-secondary-light",
             )}
           >
             edit...

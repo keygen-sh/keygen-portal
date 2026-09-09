@@ -111,7 +111,7 @@ export default function VersionInput({
             autoFocus={autoFocus}
             autoComplete="off"
             size={1}
-            className="col-[1/2] row-[1/2] w-full min-w-0 bg-transparent text-sm caret-white outline-none placeholder:text-content-subdued"
+            className="col-[1/2] row-[1/2] w-full min-w-0 bg-transparent text-sm caret-content-loud outline-none placeholder:text-content-subdued"
           />
           {isPrerelease && (
             <span className="invisible col-[1/2] row-[1/2] py-1 text-sm whitespace-pre">
@@ -150,7 +150,7 @@ export default function VersionInput({
               placeholder="1"
               disabled={disabled}
               autoComplete="off"
-              className="min-w-[2ch] flex-1 bg-transparent pr-3 text-sm caret-white outline-none placeholder:text-content-subdued"
+              className="min-w-[2ch] flex-1 bg-transparent pr-3 text-sm caret-content-loud outline-none placeholder:text-content-subdued"
             />
           </>
         )}

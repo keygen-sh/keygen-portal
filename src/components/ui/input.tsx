@@ -11,7 +11,7 @@ import {
 import { cn } from "@/lib/utils"
 
 const inputVariants = cva(
-  "flex w-full min-w-0 rounded-md border border-accent bg-transparent selection:bg-primary selection:text-primary-foreground caret-white " +
+  "flex w-full min-w-0 rounded-md border border-accent bg-transparent selection:bg-primary selection:text-primary-foreground caret-content-loud " +
     "shadow-xs transition-colors duration-300 outline-none select-none " +
     "placeholder:text-muted-foreground " +
     "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 " +
@@ -25,7 +25,8 @@ const inputVariants = cva(
         destructive:
           "text-destructive border-destructive ring-2 ring-destructive/20 focus-visible:ring-destructive/40",
         outline: "bg-background",
-        title: "font-owners-wide font-medium placeholder:text-content-normal",
+        title:
+          "font-owners-wide font-medium shadow-none placeholder:text-content-normal",
       },
       fieldSize: {
         default: "h-9 px-3 py-1 text-sm",

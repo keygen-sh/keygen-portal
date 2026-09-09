@@ -199,15 +199,19 @@ function MetadataInputSegment({
     >
       <PopoverTrigger asChild>
         {isActive ? (
-          <span className="inline-flex h-full cursor-pointer items-center bg-secondary/20 text-xs outline-none">
-            <span className="px-0 text-secondary/40">{"{"}</span>
+          <span className="inline-flex h-full cursor-pointer items-center bg-secondary text-xs outline-none dark:bg-secondary/20">
+            <span className="px-0 text-white/40 dark:text-secondary/40">
+              {"{"}
+            </span>
             {entries.map(([k, v], i) => (
               <span key={k} className="inline-flex items-center">
                 {i > 0 && (
-                  <span className="px-0 text-secondary/40">,&nbsp;</span>
+                  <span className="px-0 text-white/40 dark:text-secondary/40">
+                    ,&nbsp;
+                  </span>
                 )}
                 <span
-                  className="text-secondary transition-colors hover:text-secondary-light"
+                  className="text-white transition-colors hover:text-white/75 dark:text-secondary dark:hover:text-secondary-light"
                   onClick={(e) => {
                     e.preventDefault()
 
@@ -216,9 +220,11 @@ function MetadataInputSegment({
                 >
                   {k}
                 </span>
-                <span className="px-0 text-secondary/40">:&nbsp;</span>
+                <span className="px-0 text-white/40 dark:text-secondary/40">
+                  :&nbsp;
+                </span>
                 <span
-                  className="text-secondary transition-colors hover:text-secondary-light"
+                  className="text-white transition-colors hover:text-white/75 dark:text-secondary dark:hover:text-secondary-light"
                   onClick={(e) => {
                     e.preventDefault()
 
@@ -229,7 +235,9 @@ function MetadataInputSegment({
                 </span>
               </span>
             ))}
-            <span className="px-0 text-secondary/40">{"}"}</span>
+            <span className="px-0 text-white/40 dark:text-secondary/40">
+              {"}"}
+            </span>
           </span>
         ) : (
           <button
@@ -238,7 +246,7 @@ function MetadataInputSegment({
               "inline-flex h-full cursor-pointer items-center px-0.5 text-xs transition-colors outline-none",
               isDraft
                 ? "bg-background-2/60 text-content-disabled italic hover:brightness-125"
-                : "bg-secondary/20 text-secondary hover:text-secondary-light",
+                : "bg-secondary text-white hover:text-white/75 dark:bg-secondary/20 dark:text-secondary dark:hover:text-secondary-light",
             )}
           >
             edit...

@@ -80,7 +80,7 @@ export function FilterSegmentGroup({
                   "inline-flex h-full items-center pr-0.5 pl-1.5",
                   isDraft
                     ? "bg-background-2/60 text-content-subdued"
-                    : "bg-secondary/20 text-secondary/70",
+                    : "bg-secondary text-white/70 dark:bg-secondary/20 dark:text-secondary/70",
                 )}
               >
                 <Icon className="size-3" />
@@ -117,7 +117,7 @@ export function FilterSegmentGroup({
               <button
                 type="button"
                 onClick={onDeactivate}
-                className="inline-flex h-full cursor-pointer items-center bg-secondary/20 pr-1.5 pl-1 text-secondary/70 transition-colors outline-none hover:text-secondary"
+                className="inline-flex h-full cursor-pointer items-center bg-secondary pr-1.5 pl-1 text-white/70 transition-colors outline-none hover:text-white dark:bg-secondary/20 dark:text-secondary/70 dark:hover:text-secondary"
                 aria-label="Remove filter"
               >
                 <X className="size-3" />
@@ -140,7 +140,7 @@ export function FilterSegment({ children }: { children?: React.ReactNode }) {
         "inline-flex h-full items-center gap-1 px-0.5 text-xs transition-colors",
         isDraft
           ? "bg-background-2/60 text-content-subdued"
-          : "bg-secondary/20 text-secondary/70",
+          : "bg-secondary text-white/70 dark:bg-secondary/20 dark:text-secondary/70",
       )}
     >
       {children}
@@ -173,7 +173,7 @@ export function FilterPopoverSegment({
             "inline-flex h-full cursor-pointer items-center gap-1 px-0.5 text-xs transition-colors outline-none",
             isDraft
               ? "bg-background-2/60 text-content-muted hover:brightness-125"
-              : "bg-secondary/20 text-secondary hover:text-secondary-light",
+              : "bg-secondary text-white hover:text-white/75 dark:bg-secondary/20 dark:text-secondary dark:hover:text-secondary-light",
           )}
         >
           {children}

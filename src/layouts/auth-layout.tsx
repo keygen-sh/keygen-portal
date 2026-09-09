@@ -3,7 +3,8 @@ import { Outlet, useMatches, useNavigate } from "@tanstack/react-router"
 
 import { Toaster } from "@/components/ui/sonner"
 
-import logo from "/logo.svg"
+import logoDark from "/logo-dark.svg"
+import logoLight from "/logo-light.svg"
 
 import * as keygen from "@/keygen"
 
@@ -56,14 +57,23 @@ export default function AuthLayout() {
             {label && <BackButton label={label} className="hidden md:flex" />}
           </div>
           <div className="justify-self-center">
-            <img src={logo} alt="Keygen Logo" className="h-6 md:h-8" />
+            <img
+              src={logoLight}
+              alt="Keygen Logo"
+              className="h-6 md:h-8 dark:hidden"
+            />
+            <img
+              src={logoDark}
+              alt="Keygen Logo"
+              className="hidden h-6 md:h-8 dark:block"
+            />
           </div>
         </nav>
         <main className="flex flex-1 items-center justify-center px-4">
           <Outlet />
         </main>
       </section>
-      <section className="z-10 hidden w-1/2 border-l bg-[rgb(0,60,91)] md:block">
+      <section className="dark z-10 hidden w-1/2 border-l bg-[rgb(0,60,91)] md:block">
         <Auth.Hero />
       </section>
     </div>

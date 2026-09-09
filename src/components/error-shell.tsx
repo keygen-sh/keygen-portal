@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
-import logo from "/logo.svg"
+import logoDark from "/logo-dark.svg"
+import logoLight from "/logo-light.svg"
 
 import BackButton from "@/components/back-button"
 
@@ -11,7 +12,16 @@ export default function ErrorShell({ children }: { children: ReactNode }) {
           <BackButton className="hidden md:flex" />
         </div>
         <div className="justify-self-center">
-          <img src={logo} alt="Keygen Logo" className="h-6 md:h-8" />
+          <img
+            src={logoLight}
+            alt="Keygen Logo"
+            className="h-6 md:h-8 dark:hidden"
+          />
+          <img
+            src={logoDark}
+            alt="Keygen Logo"
+            className="hidden h-6 md:h-8 dark:block"
+          />
         </div>
       </nav>
       <main className="flex flex-1 items-center justify-center px-4">

@@ -50,7 +50,7 @@ export function AccountLogo({
       aria-hidden
       className={cn(
         BASE_STYLES,
-        "flex items-center justify-center bg-background-4 text-base font-medium text-white",
+        "flex items-center justify-center bg-background-4 text-base font-medium text-content-loud",
         className,
       )}
     >

@@ -54,7 +54,7 @@ export default function DevelopersPage() {
                 Configure API version and account protection.
               </p>
             </div>
-            <div className="overflow-hidden rounded bg-background-1">
+            <div className="overflow-hidden rounded border border-accent bg-background shadow-sm dark:border-none dark:bg-background-1">
               {accountLoading ? (
                 <div className="space-y-4">
                   <Skeleton className="h-12 w-full" />
@@ -70,12 +70,12 @@ export default function DevelopersPage() {
                   ) : (
                     <div className="flex flex-col">
                       <Can permission="account.update">
-                        <div className="flex items-center justify-end border-b border-accent p-2">
+                        <div className="flex items-center justify-end border-b border-accent bg-background-1 p-2">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => setEditingSettings(true)}
-                            className="border-none bg-background-2"
+                            className="border-none bg-background-4 dark:bg-background-2"
                           >
                             Edit Settings
                           </Button>
@@ -134,7 +134,7 @@ export default function DevelopersPage() {
                 </p>
               </div>
             </div>
-            <div className="overflow-hidden rounded bg-background-1">
+            <div className="overflow-hidden rounded border border-accent bg-background shadow-sm dark:border-none dark:bg-background-1">
               <div className="p-4">
                 {accountLoading ? (
                   <div className="space-y-4">

@@ -42,7 +42,7 @@ export default function PermissionsPage() {
                 Configure default permissions for new licenses and users.
               </p>
             </div>
-            <div className="overflow-hidden rounded bg-background-1">
+            <div className="overflow-hidden rounded border border-accent bg-background shadow-sm dark:border-none dark:bg-background-1">
               <Motion.Resize layoutKey={editingPermissions ? "edit" : "view"}>
                 {editingPermissions ? (
                   <Account.Form.Permissions
@@ -51,13 +51,13 @@ export default function PermissionsPage() {
                   />
                 ) : (
                   <div className="flex flex-col">
-                    <div className="flex items-center justify-end border-b border-accent p-2">
+                    <div className="flex items-center justify-end border-b border-accent bg-background-1 p-2">
                       <Can permission="account.update">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setEditingPermissions(true)}
-                          className="border-none bg-background-2"
+                          className="border-none bg-background-4 dark:bg-background-2"
                         >
                           Edit Permissions
                         </Button>

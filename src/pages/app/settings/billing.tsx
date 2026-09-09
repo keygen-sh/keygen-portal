@@ -104,7 +104,7 @@ export default function BillingPage() {
                 Overview of your current subscription and plan limits.
               </p>
             </div>
-            <div className="overflow-hidden rounded bg-background-1">
+            <div className="overflow-hidden rounded border border-accent bg-background shadow-sm dark:border-none dark:bg-background-1">
               <div className="flex flex-col gap-4 p-4">
                 {isLoading ? (
                   <div className="flex flex-col gap-3">
@@ -265,7 +265,7 @@ export default function BillingPage() {
                 add your tax ID, and view and download past receipts.
               </p>
             </div>
-            <div className="flex h-fit justify-end overflow-hidden rounded bg-background-1">
+            <div className="flex h-fit justify-end overflow-hidden rounded border border-accent bg-background-1 shadow-sm dark:border-none">
               <div className="flex flex-col gap-4 p-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <Button

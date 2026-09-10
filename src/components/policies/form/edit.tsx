@@ -37,6 +37,7 @@ export default function EditPolicyForm({
   const { data: policy } = useGetPolicy(id)
   const { data: policyEntitlements = [] } = useListPolicyEntitlements(
     policy?.id ?? "",
+    { limit: 100 },
   )
 
   const updatePolicy = useUpdatePolicy(policy?.id ?? "")

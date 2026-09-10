@@ -1019,6 +1019,7 @@ function AttachEntitlementsField() {
     useListEntitlements()
   const { data: policyEntitlements = [] } = useListPolicyEntitlements(
     policyId ?? "",
+    { limit: 100 },
   )
 
   if (entitlementsLoading) {

@@ -44,6 +44,7 @@ export default function EditLicenseForm({
   const { data: license } = useGetLicense(id)
   const { data: licenseEntitlements = [] } = useListLicenseEntitlements(
     license?.id ?? "",
+    { limit: 100 },
   )
   const { data: licenseUsers = [] } = useListLicenseUsers(license?.id ?? "")
   const currentPolicyId = license?.relationships.policy?.data?.id ?? null
@@ -51,6 +52,7 @@ export default function EditLicenseForm({
   const currentOwnerId = license?.relationships.owner?.data?.id ?? null
   const { data: currentPolicyEntitlements = [] } = useListPolicyEntitlements(
     currentPolicyId ?? "",
+    { limit: 100 },
   )
   const directLicenseEntitlements = useMemo(
     () =>
@@ -116,6 +118,7 @@ export default function EditLicenseForm({
   const { data: policy } = useGetPolicy(selectedPolicyId ?? "")
   const { data: selectedPolicyEntitlements = [] } = useListPolicyEntitlements(
     selectedPolicyId ?? "",
+    { limit: 100 },
   )
 
   const handleSubmit = useCallback(

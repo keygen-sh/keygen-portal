@@ -156,14 +156,22 @@ export function useRemovePolicy(policyId: string) {
   })
 }
 
-export function useListPolicyEntitlements(policyId: string) {
+export function useListPolicyEntitlements(
+  policyId: string,
+  params?: { limit?: number },
+) {
   const { code } = useEnvironment()
 
   return useQuery({
-    queryKey: ["policies", policyId, "entitlements", { environment: code }],
+    queryKey: [
+      "policies",
+      policyId,
+      "entitlements",
+      { environment: code, ...params },
+    ],
     queryFn: () =>
       keygen.policies
-        .listEntitlements({ policyId, limit: 100 })
+        .listEntitlements({ policyId, limit: params?.limit })
         .then((response) => response.data ?? []),
     enabled: !!policyId,
   })

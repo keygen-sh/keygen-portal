@@ -430,14 +430,22 @@ export function useResetUsageLicense(licenseId: string) {
   })
 }
 
-export function useListLicenseEntitlements(licenseId: string) {
+export function useListLicenseEntitlements(
+  licenseId: string,
+  params?: { limit?: number },
+) {
   const { code } = useEnvironment()
 
   return useQuery({
-    queryKey: ["licenses", licenseId, "entitlements", { environment: code }],
+    queryKey: [
+      "licenses",
+      licenseId,
+      "entitlements",
+      { environment: code, ...params },
+    ],
     queryFn: () =>
       keygen.licenses
-        .listEntitlements({ licenseId })
+        .listEntitlements({ licenseId, limit: params?.limit })
         .then((response) => response.data ?? []),
     enabled: !!licenseId,
   })

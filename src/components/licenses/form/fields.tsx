@@ -25,7 +25,7 @@ import { getLimitPlaceholder } from "@/lib/licenses"
 
 import { useListUsers } from "@/queries/users"
 import { useListGroups } from "@/queries/groups"
-import { useListPolicies } from "@/queries/policies"
+import { useListPolicies, useListPolicyEntitlements } from "@/queries/policies"
 import { useListProducts } from "@/queries/products"
 import { useListEntitlements } from "@/queries/entitlements"
 
@@ -1014,8 +1014,12 @@ function MetadataField({
 
 function AttachEntitlementsField() {
   const form = useFormContext<Schemas.Licenses.AllValues>()
+  const policyId = useWatch({ control: form.control, name: "policyId" })
   const { data: entitlements = [], isLoading: entitlementsLoading } =
     useListEntitlements()
+  const { data: policyEntitlements = [] } = useListPolicyEntitlements(
+    policyId ?? "",
+  )
 
   if (entitlementsLoading) {
     return (
@@ -1038,6 +1042,8 @@ function AttachEntitlementsField() {
               value={field.value ?? []}
               onChange={field.onChange}
               options={entitlements}
+              locked={policyEntitlements}
+              lockedDescription="This entitlement is automatically attached through the selected policy."
               resource="entitlements"
               placeholder="Search entitlements"
             />

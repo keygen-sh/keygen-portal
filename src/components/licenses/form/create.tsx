@@ -10,7 +10,7 @@ import {
   useAttachLicenseUsers,
   useAttachLicenseEntitlements,
 } from "@/queries/licenses"
-import { useListPolicies } from "@/queries/policies"
+import { useListPolicies, useListPolicyEntitlements } from "@/queries/policies"
 import { useCreateEntitlement } from "@/queries/entitlements"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
@@ -74,6 +74,8 @@ export default function CreateLicenseForm({
     () => policies.find((p) => p.id === selectedPolicyId) ?? null,
     [policies, selectedPolicyId],
   )
+  const { data: policyEntitlements = [] } =
+    useListPolicyEntitlements(selectedPolicyId)
 
   const handleSubmit = useCallback(
     async (values: Schemas.Licenses.CreateValues) => {
@@ -91,6 +93,9 @@ export default function CreateLicenseForm({
       })
 
       const { ownerId, groupId } = values
+      const attachEntitlementIds = entitlementIds.filter(
+        (id) => !policyEntitlements.some((e) => e.id === id),
+      )
       const userIds = (values.users?.attach ?? []).filter(
         (id) => id !== ownerId,
       )
@@ -108,12 +113,12 @@ export default function CreateLicenseForm({
             run: () =>
               changeGroup.mutateAsync({ licenseId: license.id, groupId }),
           },
-          entitlementIds.length > 0 && {
+          attachEntitlementIds.length > 0 && {
             failure: "entitlements could not be attached",
             run: () =>
               attachEntitlements.mutateAsync({
                 licenseId: license.id,
-                entitlementIds,
+                entitlementIds: attachEntitlementIds,
               }),
           },
           userIds.length > 0 && {
@@ -128,6 +133,7 @@ export default function CreateLicenseForm({
     },
     [
       form,
+      policyEntitlements,
       createLicense,
       changeGroup,
       changeOwner,

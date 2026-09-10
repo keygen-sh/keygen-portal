@@ -21,7 +21,7 @@ import {
   useAttachLicenseEntitlements,
   useDetachLicenseEntitlements,
 } from "@/queries/licenses"
-import { useGetPolicy } from "@/queries/policies"
+import { useGetPolicy, useListPolicyEntitlements } from "@/queries/policies"
 import { useCreateEntitlement } from "@/queries/entitlements"
 
 import { toast } from "@/lib/toast"
@@ -49,6 +49,16 @@ export default function EditLicenseForm({
   const currentPolicyId = license?.relationships.policy?.data?.id ?? null
   const currentGroupId = license?.relationships.group?.data?.id ?? null
   const currentOwnerId = license?.relationships.owner?.data?.id ?? null
+  const { data: currentPolicyEntitlements = [] } = useListPolicyEntitlements(
+    currentPolicyId ?? "",
+  )
+  const directLicenseEntitlements = useMemo(
+    () =>
+      licenseEntitlements.filter(
+        (e) => !currentPolicyEntitlements.some((p) => p.id === e.id),
+      ),
+    [licenseEntitlements, currentPolicyEntitlements],
+  )
   const attachedLicenseUsers = useMemo(
     () => licenseUsers.filter((user) => user.id !== currentOwnerId),
     [licenseUsers, currentOwnerId],
@@ -92,7 +102,7 @@ export default function EditLicenseForm({
           permissions: license.attributes.permissions ?? null,
           metadata: recordToMetadataPairs(license.attributes.metadata),
           entitlements: {
-            attach: licenseEntitlements.map((e) => e.id),
+            attach: directLicenseEntitlements.map((e) => e.id),
             create: [],
           },
           users: {
@@ -104,34 +114,35 @@ export default function EditLicenseForm({
 
   const selectedPolicyId = useWatch({ control: form.control, name: "policyId" })
   const { data: policy } = useGetPolicy(selectedPolicyId ?? "")
+  const { data: selectedPolicyEntitlements = [] } = useListPolicyEntitlements(
+    selectedPolicyId ?? "",
+  )
 
   const handleSubmit = useCallback(
     async (values: Schemas.Licenses.UpdateValues) => {
       if (!license) return
 
-      const createdEntitlementIds = await settleCreateEntitlements({
+      const entitlementIds = await settleCreateEntitlements({
         form,
         createMutation: createEntitlement,
         values: values.entitlements,
       })
-      if (!createdEntitlementIds) return
+      if (!entitlementIds) return
 
-      const attachEntitlementIds = createdEntitlementIds.filter(
-        (id) => !licenseEntitlements.some((e) => e.id === id),
+      const selectedEntitlementIds = entitlementIds.filter(
+        (id) => !selectedPolicyEntitlements.some((e) => e.id === id),
       )
-      const detachEntitlementIds = licenseEntitlements
-        .filter((e) => !createdEntitlementIds.includes(e.id))
+      const attachEntitlementIds = selectedEntitlementIds.filter(
+        (id) => !directLicenseEntitlements.some((e) => e.id === id),
+      )
+      const detachEntitlementIds = directLicenseEntitlements
+        .filter((e) => !selectedEntitlementIds.includes(e.id))
         .map((e) => e.id)
 
       if (detachEntitlementIds.length > 0)
         await detachEntitlements.mutateAsync({
           licenseId: license.id,
           entitlementIds: detachEntitlementIds,
-        })
-      if (attachEntitlementIds.length > 0)
-        await attachEntitlements.mutateAsync({
-          licenseId: license.id,
-          entitlementIds: attachEntitlementIds,
         })
 
       const newOwnerId = values.ownerId ?? null
@@ -183,13 +194,20 @@ export default function EditLicenseForm({
         })
       }
 
+      if (attachEntitlementIds.length > 0)
+        await attachEntitlements.mutateAsync({
+          licenseId: license.id,
+          entitlementIds: attachEntitlementIds,
+        })
+
       toast({ message: "License updated", variant: "success" })
     },
     [
       form,
       license,
       updateLicense,
-      licenseEntitlements,
+      directLicenseEntitlements,
+      selectedPolicyEntitlements,
       attachEntitlements,
       detachEntitlements,
       createEntitlement,

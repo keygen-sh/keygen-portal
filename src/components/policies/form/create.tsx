@@ -47,10 +47,10 @@ import {
   PolicyTemplateDescriptions,
 } from "@/types/policies"
 
-import { toast } from "@/lib/toast"
+import { settleRelationships } from "@/lib/relationships"
 import { settleCreateEntitlements } from "@/lib/entitlements"
-import { useMobile } from "@/hooks/use-mobile"
 
+import { useMobile } from "@/hooks/use-mobile"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import {
@@ -155,13 +155,20 @@ export default function CreatePolicyForm({
         entitlements: { attach: [], create: [] },
       })
 
-      if (createdEntitlementIds.length > 0)
-        await attachEntitlements.mutateAsync({
-          policyId: policy.id,
-          entitlementIds: createdEntitlementIds,
-        })
+      await settleRelationships({
+        message: "Policy created",
+        steps: [
+          createdEntitlementIds.length > 0 && {
+            failure: "entitlements could not be attached",
+            run: () =>
+              attachEntitlements.mutateAsync({
+                policyId: policy.id,
+                entitlementIds: createdEntitlementIds,
+              }),
+          },
+        ],
+      })
 
-      toast({ message: "Policy created", variant: "success" })
       await navigateToResource(policy)
     },
     [

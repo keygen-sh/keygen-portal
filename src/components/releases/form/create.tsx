@@ -20,7 +20,7 @@ import {
 } from "@/queries/releases"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
-import { toast } from "@/lib/toast"
+import { settleRelationships } from "@/lib/relationships"
 
 import * as Forms from "@/components/forms"
 import * as Releases from "@/components/releases"
@@ -72,19 +72,27 @@ export default function CreateReleaseForm({
       const release = await createRelease.mutateAsync(values)
 
       const entitlementIds = values.constraints?.attach ?? []
-      if (entitlementIds.length > 0)
-        await attachConstraints.mutateAsync({
-          releaseId: release.id,
-          entitlementIds,
-        })
+      const packageId = values.packageId
 
-      if (values.packageId)
-        await changePackage.mutateAsync({
-          releaseId: release.id,
-          packageId: values.packageId,
-        })
+      await settleRelationships({
+        message: "Release created",
+        steps: [
+          entitlementIds.length > 0 && {
+            failure: "constraints could not be attached",
+            run: () =>
+              attachConstraints.mutateAsync({
+                releaseId: release.id,
+                entitlementIds,
+              }),
+          },
+          packageId && {
+            failure: "the package could not be assigned",
+            run: () =>
+              changePackage.mutateAsync({ releaseId: release.id, packageId }),
+          },
+        ],
+      })
 
-      toast({ message: "Release created", variant: "success" })
       await navigateToResource(release)
     },
     [createRelease, attachConstraints, changePackage, navigateToResource],

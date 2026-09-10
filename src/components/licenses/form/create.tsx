@@ -74,8 +74,10 @@ export default function CreateLicenseForm({
     () => policies.find((p) => p.id === selectedPolicyId) ?? null,
     [policies, selectedPolicyId],
   )
-  const { data: policyEntitlements = [] } =
-    useListPolicyEntitlements(selectedPolicyId)
+  const { data: policyEntitlements = [] } = useListPolicyEntitlements(
+    selectedPolicyId,
+    { limit: 100 },
+  )
 
   const handleSubmit = useCallback(
     async (values: Schemas.Licenses.CreateValues) => {

@@ -41,7 +41,9 @@ export default function DuplicatePolicyForm({
     isLoading: policyLoading,
     isError: policyError,
   } = useGetPolicy(id)
-  const { data: policyEntitlements = [] } = useListPolicyEntitlements(id)
+  const { data: policyEntitlements = [] } = useListPolicyEntitlements(id, {
+    limit: 100,
+  })
 
   const createPolicy = useCreatePolicy()
   const createEntitlement = useCreateEntitlement()

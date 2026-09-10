@@ -10,7 +10,7 @@ import {
   useChangeMachineGroup,
 } from "@/queries/machines"
 
-import { toast } from "@/lib/toast"
+import { settleRelationships } from "@/lib/relationships"
 
 import * as Forms from "@/components/forms"
 import * as Machines from "@/components/machines"
@@ -56,21 +56,25 @@ export default function CreateMachineForm({
     async (values: Schemas.Machines.CreateValues) => {
       const machine = await createMachine.mutateAsync(values)
 
-      if (values.ownerId) {
-        await changeOwner.mutateAsync({
-          machineId: machine.id,
-          ownerId: values.ownerId,
-        })
-      }
+      const ownerId = values.ownerId
+      const groupId = values.groupId
 
-      if (values.groupId) {
-        await changeGroup.mutateAsync({
-          machineId: machine.id,
-          groupId: values.groupId,
-        })
-      }
+      await settleRelationships({
+        message: "Machine activated",
+        steps: [
+          ownerId && {
+            failure: "the owner could not be assigned",
+            run: () =>
+              changeOwner.mutateAsync({ machineId: machine.id, ownerId }),
+          },
+          groupId && {
+            failure: "the group could not be assigned",
+            run: () =>
+              changeGroup.mutateAsync({ machineId: machine.id, groupId }),
+          },
+        ],
+      })
 
-      toast({ message: "Machine activated", variant: "success" })
       await navigateToResource(machine)
     },
     [createMachine, changeGroup, changeOwner, navigateToResource],

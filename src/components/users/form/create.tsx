@@ -8,7 +8,7 @@ import { UserRole } from "@/types/users"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 import { useCreateUser, useChangeUserGroup } from "@/queries/users"
 
-import { toast } from "@/lib/toast"
+import { settleRelationships } from "@/lib/relationships"
 
 import * as keygen from "@/keygen"
 import * as Forms from "@/components/forms"
@@ -51,14 +51,18 @@ export default function CreateUserForm({
     async (values: Schemas.Users.CreateValues) => {
       const user = await createUser.mutateAsync(values)
 
-      if (values.groupId) {
-        await changeGroup.mutateAsync({
-          userId: user.id,
-          groupId: values.groupId,
-        })
-      }
+      const groupId = values.groupId
 
-      toast({ message: "User created", variant: "success" })
+      await settleRelationships({
+        message: "User created",
+        steps: [
+          groupId && {
+            failure: "the group could not be assigned",
+            run: () => changeGroup.mutateAsync({ userId: user.id, groupId }),
+          },
+        ],
+      })
+
       await navigateToResource(user)
     },
     [createUser, changeGroup, navigateToResource],

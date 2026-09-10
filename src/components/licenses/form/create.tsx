@@ -14,7 +14,7 @@ import { useListPolicies } from "@/queries/policies"
 import { useCreateEntitlement } from "@/queries/entitlements"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
-import { toast } from "@/lib/toast"
+import { settleRelationships } from "@/lib/relationships"
 import { settleCreateEntitlements } from "@/lib/entitlements"
 
 import * as keygen from "@/keygen"
@@ -77,46 +77,54 @@ export default function CreateLicenseForm({
 
   const handleSubmit = useCallback(
     async (values: Schemas.Licenses.CreateValues) => {
-      const createdEntitlementIds = await settleCreateEntitlements({
+      const entitlementIds = await settleCreateEntitlements({
         form,
         createMutation: createEntitlement,
         values: values.entitlements,
       })
-      if (!createdEntitlementIds) return
+      if (!entitlementIds) return
 
-      let license = await createLicense.mutateAsync({
+      const license = await createLicense.mutateAsync({
         ...values,
         entitlements: { attach: [], create: [] },
         users: { attach: [] },
       })
 
-      if (values.ownerId) {
-        license = await changeOwner.mutateAsync({
-          licenseId: license.id,
-          ownerId: values.ownerId,
-        })
-      }
-
-      if (values.groupId) {
-        license = await changeGroup.mutateAsync({
-          licenseId: license.id,
-          groupId: values.groupId,
-        })
-      }
-
-      if (createdEntitlementIds.length > 0)
-        await attachEntitlements.mutateAsync({
-          licenseId: license.id,
-          entitlementIds: createdEntitlementIds,
-        })
-
+      const ownerId = values.ownerId
+      const groupId = values.groupId
       const userIds = (values.users?.attach ?? []).filter(
-        (id) => id !== values.ownerId,
+        (id) => id !== ownerId,
       )
-      if (userIds.length > 0)
-        await attachUsers.mutateAsync({ licenseId: license.id, userIds })
 
-      toast({ message: "License created", variant: "success" })
+      await settleRelationships({
+        message: "License created",
+        steps: [
+          ownerId && {
+            failure: "the owner could not be assigned",
+            run: () =>
+              changeOwner.mutateAsync({ licenseId: license.id, ownerId }),
+          },
+          groupId && {
+            failure: "the group could not be assigned",
+            run: () =>
+              changeGroup.mutateAsync({ licenseId: license.id, groupId }),
+          },
+          entitlementIds.length > 0 && {
+            failure: "entitlements could not be attached",
+            run: () =>
+              attachEntitlements.mutateAsync({
+                licenseId: license.id,
+                entitlementIds,
+              }),
+          },
+          userIds.length > 0 && {
+            failure: "users could not be attached",
+            run: () =>
+              attachUsers.mutateAsync({ licenseId: license.id, userIds }),
+          },
+        ],
+      })
+
       await navigateToResource(license)
     },
     [

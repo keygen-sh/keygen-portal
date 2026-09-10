@@ -90,8 +90,7 @@ export default function CreateLicenseForm({
         users: { attach: [] },
       })
 
-      const ownerId = values.ownerId
-      const groupId = values.groupId
+      const { ownerId, groupId } = values
       const userIds = (values.users?.attach ?? []).filter(
         (id) => id !== ownerId,
       )

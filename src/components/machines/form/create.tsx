@@ -56,8 +56,7 @@ export default function CreateMachineForm({
     async (values: Schemas.Machines.CreateValues) => {
       const machine = await createMachine.mutateAsync(values)
 
-      const ownerId = values.ownerId
-      const groupId = values.groupId
+      const { ownerId, groupId } = values
 
       await settleRelationships({
         message: "Machine activated",

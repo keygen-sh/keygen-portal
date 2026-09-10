@@ -1,12 +1,17 @@
 import { useState, useRef, useMemo, type KeyboardEvent } from "react"
 
-import { X } from "lucide-react"
+import { Info, X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip"
 import {
   Popover,
   PopoverTrigger,
@@ -33,10 +38,43 @@ import {
 
 import * as Loading from "@/components/loading"
 
+const noLocked: never[] = []
+
+function LockedHint({
+  description,
+  side,
+}: {
+  description: string
+  side: "top" | "left"
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          className="pointer-events-auto ml-auto flex items-center"
+          onClick={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <Info className="size-3.5 text-muted-foreground" />
+        </span>
+      </TooltipTrigger>
+      <TooltipContent
+        side={side}
+        sideOffset={8}
+        className="pointer-events-none max-w-56 bg-background-4 text-pretty text-content-muted"
+      >
+        {description}
+      </TooltipContent>
+    </Tooltip>
+  )
+}
+
 interface SearchMultiSelectProps<T extends SearchOption> {
   value: string[]
   onChange: (value: string[]) => void
   options: T[]
+  locked?: T[]
+  lockedDescription?: string
   resource: SearchableResource
   placeholder?: string
   disabled?: boolean
@@ -49,6 +87,8 @@ export default function SearchMultiSelect<T extends SearchOption>({
   value,
   onChange,
   options,
+  locked = noLocked,
+  lockedDescription,
   resource,
   placeholder,
   disabled,
@@ -59,7 +99,11 @@ export default function SearchMultiSelect<T extends SearchOption>({
   const config = resourceConfigs[resource]
   const getLabel = config.getLabel ?? getDefaultLabel
 
-  const selected = value ?? []
+  const lockedIds = useMemo(() => new Set(locked.map((o) => o.id)), [locked])
+  const selected = useMemo(
+    () => (value ?? []).filter((id) => !lockedIds.has(id)),
+    [value, lockedIds],
+  )
   const [query, setQuery] = useState("")
   const [open, setOpen] = useState(false)
 
@@ -94,8 +138,11 @@ export default function SearchMultiSelect<T extends SearchOption>({
   }
 
   const labelMap = useMemo(
-    () => new Map(options.map((option) => [option.id, getLabel(option)])),
-    [options, getLabel],
+    () =>
+      new Map(
+        [...options, ...locked].map((option) => [option.id, getLabel(option)]),
+      ),
+    [options, locked, getLabel],
   )
 
   const visibleOptions = useMemo(() => {
@@ -117,6 +164,7 @@ export default function SearchMultiSelect<T extends SearchOption>({
     labelMap.get(id) ?? labelRef.current.get(id) ?? id
 
   const toggle = (id: string) => {
+    if (lockedIds.has(id)) return
     const isActive = selected.includes(id)
     const next = isActive ? selected.filter((v) => v !== id) : [...selected, id]
     onChange(next)
@@ -152,6 +200,16 @@ export default function SearchMultiSelect<T extends SearchOption>({
           )}
         >
           <div className="flex min-h-9 w-full flex-wrap items-center gap-x-2 gap-y-2 p-2 text-sm">
+            {locked.map((option) => (
+              <Badge
+                key={option.id}
+                variant="disabled"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {getLabel(option)}
+              </Badge>
+            ))}
+
             {selected.map((id) => (
               <Badge
                 key={id}
@@ -165,7 +223,7 @@ export default function SearchMultiSelect<T extends SearchOption>({
               </Badge>
             ))}
 
-            {selected.length === 0 && (
+            {selected.length === 0 && locked.length === 0 && (
               <span className="pointer-events-none text-content-subdued">
                 {placeholder ?? config.searchPlaceholder}
               </span>
@@ -222,19 +280,27 @@ export default function SearchMultiSelect<T extends SearchOption>({
               ) : (
                 visibleOptions.map((option) => {
                   const label = getLabel(option)
+                  const isLocked = lockedIds.has(option.id)
 
                   return (
                     <CommandItem
                       key={option.id}
                       value={option.id}
                       onSelect={() => toggle(option.id)}
+                      disabled={isLocked}
                       className="cursor-pointer"
                     >
                       <Checkbox
-                        checked={selected.includes(option.id)}
+                        checked={isLocked || selected.includes(option.id)}
                         className="pointer-events-none mr-2"
                       />
                       {label}
+                      {isLocked && lockedDescription && (
+                        <LockedHint
+                          description={lockedDescription}
+                          side="left"
+                        />
+                      )}
                     </CommandItem>
                   )
                 })

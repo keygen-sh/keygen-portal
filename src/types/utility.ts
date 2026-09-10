@@ -4,3 +4,5 @@ export type OptionalExcept<T, K extends keyof T> = Partial<Omit<T, K>> &
   Pick<T, K>
 
 export type Override<T, U> = Omit<T, keyof U> & U
+
+export type Falsy = false | null | undefined | "" | 0

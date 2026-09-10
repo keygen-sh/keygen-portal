@@ -163,7 +163,7 @@ export function useListPolicyEntitlements(policyId: string) {
     queryKey: ["policies", policyId, "entitlements", { environment: code }],
     queryFn: () =>
       keygen.policies
-        .listEntitlements({ policyId })
+        .listEntitlements({ policyId, limit: 100 })
         .then((response) => response.data ?? []),
     enabled: !!policyId,
   })

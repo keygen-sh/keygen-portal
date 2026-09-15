@@ -117,8 +117,6 @@ import ConfirmationModal from "@/components/confirmation-modal"
 import LimitBadge, { OverriddenBadge } from "@/components/limit-badge"
 import DocumentTitle from "@/components/document-title"
 
-const PREVIEW_COUNT = 10
-
 const LicenseStatusIcons: Record<LicenseStatus, React.ReactNode> = {
   [LicenseStatus.Active]: <CircleCheck className="size-3" />,
   [LicenseStatus.Inactive]: <CirclePause className="size-3" />,
@@ -152,7 +150,7 @@ export default function LicenseDetails() {
     isLoading: entitlementsLoading,
     isFetching: entitlementsFetching,
     isError: entitlementsError,
-  } = useListLicenseEntitlements(id, { limit: 100 })
+  } = useListLicenseEntitlements(id)
 
   const {
     data: licenseUsers = [],
@@ -685,16 +683,14 @@ export default function LicenseDetails() {
                 <CollapsibleCard
                   title="Entitlements"
                   footer={
-                    entitlements.length > PREVIEW_COUNT && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={() => toggleOpen("entitlements", true)}
-                        className="h-12 w-full rounded-t-none rounded-b-sm border-t border-accent text-sm text-primary transition-colors hover:bg-background-2"
-                      >
-                        View all license entitlements
-                      </Button>
-                    )
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => toggleOpen("entitlements", true)}
+                      className="h-12 w-full rounded-t-none rounded-b-sm border-t border-accent text-sm text-primary transition-colors hover:bg-background-2"
+                    >
+                      View all license entitlements
+                    </Button>
                   }
                 >
                   {entitlementsError ? (
@@ -705,7 +701,7 @@ export default function LicenseDetails() {
                       <Skeleton className="h-5 w-24 rounded-sm" />
                     </div>
                   ) : entitlements.length > 0 ? (
-                    entitlements.slice(0, PREVIEW_COUNT).map((entitlement) => (
+                    entitlements.map((entitlement) => (
                       <div
                         key={entitlement.id}
                         className="flex items-center justify-between"

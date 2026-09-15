@@ -103,8 +103,6 @@ import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import DocumentTitle from "@/components/document-title"
 
-const PREVIEW_COUNT = 10
-
 const PolicyTemplateIcons: Record<PolicyTemplate, React.ReactNode> = {
   [TimingTemplates.Perpetual]: <InfinityIcon className="size-3" />,
   [TimingTemplates.Timed]: <Clock className="size-3" />,
@@ -135,7 +133,7 @@ export default function PolicyDetails() {
     isLoading: entitlementsLoading,
     isFetching: entitlementsFetching,
     isError: entitlementsError,
-  } = useListPolicyEntitlements(id, { limit: 100 })
+  } = useListPolicyEntitlements(id)
 
   const back = useBackNavigate()
   const breadcrumbBack = useBreadcrumbBackNavigate()
@@ -373,16 +371,14 @@ export default function PolicyDetails() {
                 <CollapsibleCard
                   title="Entitlements"
                   footer={
-                    entitlements.length > PREVIEW_COUNT && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={() => toggleOpen("entitlements", true)}
-                        className="h-12 w-full rounded-t-none rounded-b-sm border-t border-accent text-sm text-primary transition-colors hover:bg-background-2"
-                      >
-                        View all policy entitlements
-                      </Button>
-                    )
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => toggleOpen("entitlements", true)}
+                      className="h-12 w-full rounded-t-none rounded-b-sm border-t border-accent text-sm text-primary transition-colors hover:bg-background-2"
+                    >
+                      View all policy entitlements
+                    </Button>
                   }
                 >
                   {entitlementsError ? (
@@ -393,7 +389,7 @@ export default function PolicyDetails() {
                       <Skeleton className="h-5 w-24 rounded-sm" />
                     </div>
                   ) : entitlements.length > 0 ? (
-                    entitlements.slice(0, PREVIEW_COUNT).map((entitlement) => (
+                    entitlements.map((entitlement) => (
                       <div
                         key={entitlement.id}
                         className="flex items-center justify-between"

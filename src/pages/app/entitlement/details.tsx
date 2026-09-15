@@ -364,7 +364,7 @@ export default function EntitlementDetails() {
       />
 
       {entitlement && (
-        <Entitlements.AdvancedDialog
+        <Entitlements.Dialog.Advanced
           id={entitlement.id}
           open={open.attributes}
           onOpenChange={() => toggleOpen("attributes", false)}

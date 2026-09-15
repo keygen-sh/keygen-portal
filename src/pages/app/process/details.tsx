@@ -533,7 +533,7 @@ export default function ProcessDetails() {
       />
 
       {process && (
-        <Processes.AdvancedDialog
+        <Processes.Dialog.Advanced
           id={process.id}
           open={open.attributes}
           onOpenChange={() => toggleOpen("attributes", false)}

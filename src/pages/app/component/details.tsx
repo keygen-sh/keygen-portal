@@ -464,7 +464,7 @@ export default function ComponentDetails() {
       />
 
       {component && (
-        <Components.AdvancedDialog
+        <Components.Dialog.Advanced
           id={component.id}
           open={open.attributes}
           onOpenChange={() => toggleOpen("attributes", false)}

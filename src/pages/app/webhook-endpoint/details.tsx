@@ -469,7 +469,7 @@ export default function WebhookEndpointDetails() {
       )}
 
       {webhookEndpoint && (
-        <WebhookEndpoints.AdvancedDialog
+        <WebhookEndpoints.Dialog.Advanced
           id={webhookEndpoint.id}
           open={open.attributes}
           onOpenChange={() => toggleOpen("attributes", false)}

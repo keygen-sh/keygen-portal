@@ -539,7 +539,7 @@ export default function GroupDetails() {
       />
 
       {group && (
-        <Groups.AdvancedDialog
+        <Groups.Dialog.Advanced
           id={group.id}
           open={open.attributes}
           onOpenChange={() => toggleOpen("attributes", false)}

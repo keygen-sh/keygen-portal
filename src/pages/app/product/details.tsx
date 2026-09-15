@@ -535,7 +535,7 @@ export default function ProductDetails() {
       />
 
       {product && (
-        <Products.AdvancedDialog
+        <Products.Dialog.Advanced
           id={product.id}
           open={open.attributes}
           onOpenChange={() => toggleOpen("attributes", false)}

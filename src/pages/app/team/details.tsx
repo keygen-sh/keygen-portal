@@ -566,7 +566,7 @@ export default function TeamDetails() {
       />
 
       {user && (
-        <Users.AdvancedDialog
+        <Users.Dialog.Advanced
           id={user.id}
           open={open.attributes}
           onOpenChange={() => toggleOpen("attributes", false)}

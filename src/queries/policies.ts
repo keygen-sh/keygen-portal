@@ -158,23 +158,44 @@ export function useRemovePolicy(policyId: string) {
 
 export function useListPolicyEntitlements(
   policyId: string,
-  params?: { limit?: number },
+  params?: {
+    limit?: number
+    cursor?: string | null
+    pageSize?: number
+  },
+  options?: { enabled?: boolean },
 ) {
   const { code } = useEnvironment()
 
-  return useQuery({
+  const query = useQuery({
     queryKey: [
       "policies",
       policyId,
       "entitlements",
       { environment: code, ...params },
     ],
-    queryFn: () =>
-      keygen.policies
-        .listEntitlements({ policyId, limit: params?.limit })
-        .then((response) => response.data ?? []),
-    enabled: !!policyId,
+    queryFn: async () => {
+      const response = await keygen.policies.listEntitlements({
+        policyId,
+        limit: params?.limit,
+        pageCursor: params?.cursor,
+        pageSize: params?.pageSize,
+      })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response
+    },
+    enabled: !!policyId && (options?.enabled ?? true),
   })
+
+  return {
+    ...query,
+    data: query.data?.data ?? [],
+    links: query.data?.links,
+  }
 }
 
 export function useAttachPolicyEntitlements() {

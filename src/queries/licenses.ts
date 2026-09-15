@@ -432,23 +432,44 @@ export function useResetUsageLicense(licenseId: string) {
 
 export function useListLicenseEntitlements(
   licenseId: string,
-  params?: { limit?: number },
+  params?: {
+    limit?: number
+    cursor?: string | null
+    pageSize?: number
+  },
+  options?: { enabled?: boolean },
 ) {
   const { code } = useEnvironment()
 
-  return useQuery({
+  const query = useQuery({
     queryKey: [
       "licenses",
       licenseId,
       "entitlements",
       { environment: code, ...params },
     ],
-    queryFn: () =>
-      keygen.licenses
-        .listEntitlements({ licenseId, limit: params?.limit })
-        .then((response) => response.data ?? []),
-    enabled: !!licenseId,
+    queryFn: async () => {
+      const response = await keygen.licenses.listEntitlements({
+        licenseId,
+        limit: params?.limit,
+        pageCursor: params?.cursor,
+        pageSize: params?.pageSize,
+      })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response
+    },
+    enabled: !!licenseId && (options?.enabled ?? true),
   })
+
+  return {
+    ...query,
+    data: query.data?.data ?? [],
+    links: query.data?.links,
+  }
 }
 
 export function useAttachLicenseEntitlements() {

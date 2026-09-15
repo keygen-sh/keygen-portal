@@ -117,6 +117,8 @@ import ConfirmationModal from "@/components/confirmation-modal"
 import LimitBadge, { OverriddenBadge } from "@/components/limit-badge"
 import DocumentTitle from "@/components/document-title"
 
+const PREVIEW_COUNT = 10
+
 const LicenseStatusIcons: Record<LicenseStatus, React.ReactNode> = {
   [LicenseStatus.Active]: <CircleCheck className="size-3" />,
   [LicenseStatus.Inactive]: <CirclePause className="size-3" />,
@@ -150,7 +152,7 @@ export default function LicenseDetails() {
     isLoading: entitlementsLoading,
     isFetching: entitlementsFetching,
     isError: entitlementsError,
-  } = useListLicenseEntitlements(id)
+  } = useListLicenseEntitlements(id, { limit: 100 })
 
   const {
     data: licenseUsers = [],
@@ -172,6 +174,7 @@ export default function LicenseDetails() {
     checkIn: false,
     resetUsage: false,
     attributes: false,
+    entitlements: false,
     checkOut: false,
   })
 
@@ -681,10 +684,17 @@ export default function LicenseDetails() {
 
                 <CollapsibleCard
                   title="Entitlements"
-                  subtitle={
-                    <Badge className="ml-2 min-h-5 min-w-5 text-sm text-content-muted">
-                      {entitlements.length}
-                    </Badge>
+                  footer={
+                    entitlements.length > PREVIEW_COUNT && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => toggleOpen("entitlements", true)}
+                        className="h-12 w-full rounded-t-none rounded-b-sm border-t border-accent text-sm text-primary transition-colors hover:bg-background-2"
+                      >
+                        View all license entitlements
+                      </Button>
+                    )
                   }
                 >
                   {entitlementsError ? (
@@ -695,22 +705,23 @@ export default function LicenseDetails() {
                       <Skeleton className="h-5 w-24 rounded-sm" />
                     </div>
                   ) : entitlements.length > 0 ? (
-                    entitlements.map((entitlement) => (
-                      <div key={entitlement.id} className="space-y-1.5">
-                        <div className="flex items-center justify-between">
-                          <GoToButton
-                            path="/$accountId/app/entitlements/$id"
-                            params={{
-                              accountId: keygen.config.id,
-                              id: entitlement.id,
-                            }}
-                            label={entitlement.attributes.name}
-                          />
+                    entitlements.slice(0, PREVIEW_COUNT).map((entitlement) => (
+                      <div
+                        key={entitlement.id}
+                        className="flex items-center justify-between"
+                      >
+                        <GoToButton
+                          path="/$accountId/app/entitlements/$id"
+                          params={{
+                            accountId: keygen.config.id,
+                            id: entitlement.id,
+                          }}
+                          label={entitlement.attributes.name}
+                        />
 
-                          <Badge className="bg-background-3 px-2 py-1 text-content-muted">
-                            {entitlement.attributes.code}
-                          </Badge>
-                        </div>
+                        <Badge className="bg-background-3 px-2 py-1 text-content-muted">
+                          {entitlement.attributes.code}
+                        </Badge>
                       </div>
                     ))
                   ) : (
@@ -1324,6 +1335,15 @@ export default function LicenseDetails() {
           id={license.id}
           open={open.attributes}
           onOpenChange={() => toggleOpen("attributes", false)}
+        />
+      )}
+
+      {license && (
+        <Licenses.Dialog.Entitlements
+          id={license.id}
+          open={open.entitlements}
+          onOpenChange={(value) => toggleOpen("entitlements", value)}
+          title={`${license.attributes.name || truncateKey(license.attributes.key, { maxLength: isMobile ? 16 : 64 })} entitlements`}
         />
       )}
     </section>

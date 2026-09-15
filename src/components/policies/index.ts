@@ -5,3 +5,6 @@ export { default as FilterBar } from "./filter-bar"
 
 import * as Form from "./form"
 export { Form }
+
+import * as Dialog from "./dialog"
+export { Dialog }

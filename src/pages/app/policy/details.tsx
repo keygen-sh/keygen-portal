@@ -103,6 +103,8 @@ import CollapsibleCard from "@/components/collapsible-card"
 import CollapsibleMenu from "@/components/collapsible-menu"
 import DocumentTitle from "@/components/document-title"
 
+const PREVIEW_COUNT = 10
+
 const PolicyTemplateIcons: Record<PolicyTemplate, React.ReactNode> = {
   [TimingTemplates.Perpetual]: <InfinityIcon className="size-3" />,
   [TimingTemplates.Timed]: <Clock className="size-3" />,
@@ -133,7 +135,7 @@ export default function PolicyDetails() {
     isLoading: entitlementsLoading,
     isFetching: entitlementsFetching,
     isError: entitlementsError,
-  } = useListPolicyEntitlements(id)
+  } = useListPolicyEntitlements(id, { limit: 100 })
 
   const back = useBackNavigate()
   const breadcrumbBack = useBreadcrumbBackNavigate()
@@ -145,6 +147,7 @@ export default function PolicyDetails() {
     delete: false,
     duplicate: false,
     attributes: false,
+    entitlements: false,
   })
 
   if (policyError && !policyFetching) {
@@ -369,10 +372,17 @@ export default function PolicyDetails() {
 
                 <CollapsibleCard
                   title="Entitlements"
-                  subtitle={
-                    <Badge className="ml-2 min-h-5 min-w-5 text-sm text-content-muted">
-                      {entitlements.length}
-                    </Badge>
+                  footer={
+                    entitlements.length > PREVIEW_COUNT && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => toggleOpen("entitlements", true)}
+                        className="h-12 w-full rounded-t-none rounded-b-sm border-t border-accent text-sm text-primary transition-colors hover:bg-background-2"
+                      >
+                        View all policy entitlements
+                      </Button>
+                    )
                   }
                 >
                   {entitlementsError ? (
@@ -383,27 +393,23 @@ export default function PolicyDetails() {
                       <Skeleton className="h-5 w-24 rounded-sm" />
                     </div>
                   ) : entitlements.length > 0 ? (
-                    entitlements.map((entitlement) => (
-                      <div key={entitlement.id} className="space-y-1.5">
-                        <div className="flex items-center justify-between">
-                          <GoToButton
-                            path="/$accountId/app/entitlements/$id"
-                            params={{
-                              accountId: keygen.config.id,
-                              id: entitlement.id,
-                            }}
-                            label={entitlement.attributes.name}
-                          />
+                    entitlements.slice(0, PREVIEW_COUNT).map((entitlement) => (
+                      <div
+                        key={entitlement.id}
+                        className="flex items-center justify-between"
+                      >
+                        <GoToButton
+                          path="/$accountId/app/entitlements/$id"
+                          params={{
+                            accountId: keygen.config.id,
+                            id: entitlement.id,
+                          }}
+                          label={entitlement.attributes.name}
+                        />
 
-                          <Badge className="bg-background-3 px-2 py-1 text-content-muted">
-                            {entitlement.attributes.code}
-                          </Badge>
-                        </div>
-
-                        {/* TODO(cazden) Implement usage tracking when meters is implemented */}
-                        <div className="text-xs text-content-normal">
-                          <span>No uses</span>
-                        </div>
+                        <Badge className="bg-background-3 px-2 py-1 text-content-muted">
+                          {entitlement.attributes.code}
+                        </Badge>
                       </div>
                     ))
                   ) : (
@@ -783,6 +789,15 @@ export default function PolicyDetails() {
           id={policy.id}
           open={open.attributes}
           onOpenChange={() => toggleOpen("attributes", false)}
+        />
+      )}
+
+      {policy && (
+        <Policies.Dialog.Entitlements
+          id={policy.id}
+          open={open.entitlements}
+          onOpenChange={(value) => toggleOpen("entitlements", value)}
+          title={`${policy.attributes.name} entitlements`}
         />
       )}
 

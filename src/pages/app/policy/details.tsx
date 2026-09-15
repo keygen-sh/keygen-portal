@@ -781,7 +781,7 @@ export default function PolicyDetails() {
       )}
 
       {policy && (
-        <Policies.AdvancedDialog
+        <Policies.Dialog.Advanced
           id={policy.id}
           open={open.attributes}
           onOpenChange={() => toggleOpen("attributes", false)}

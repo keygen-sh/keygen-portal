@@ -783,7 +783,7 @@ export default function ReleaseDetails() {
       />
 
       {release && (
-        <Releases.AdvancedDialog
+        <Releases.Dialog.Advanced
           id={release.id}
           open={open.attributes}
           onOpenChange={() => toggleOpen("attributes", false)}

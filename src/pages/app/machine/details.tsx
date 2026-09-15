@@ -716,7 +716,7 @@ export default function MachineDetails() {
       />
 
       {machine && (
-        <Machines.AdvancedDialog
+        <Machines.Dialog.Advanced
           id={machine.id}
           open={open.attributes}
           onOpenChange={() => toggleOpen("attributes", false)}

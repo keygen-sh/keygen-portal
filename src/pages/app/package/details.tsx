@@ -451,7 +451,7 @@ export default function PackageDetails() {
       />
 
       {pkg && (
-        <Packages.AdvancedDialog
+        <Packages.Dialog.Advanced
           id={pkg.id}
           open={open.attributes}
           onOpenChange={() => toggleOpen("attributes", false)}

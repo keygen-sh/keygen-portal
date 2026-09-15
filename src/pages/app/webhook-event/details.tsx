@@ -472,7 +472,7 @@ export default function WebhookEventDetails() {
       )}
 
       {webhookEvent && (
-        <WebhookEvents.AdvancedDialog
+        <WebhookEvents.Dialog.Advanced
           id={webhookEvent.id}
           open={open.attributes}
           onOpenChange={() => toggleOpen("attributes", false)}

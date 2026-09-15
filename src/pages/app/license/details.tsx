@@ -1327,7 +1327,7 @@ export default function LicenseDetails() {
       )}
 
       {license && (
-        <Licenses.AdvancedDialog
+        <Licenses.Dialog.Advanced
           id={license.id}
           open={open.attributes}
           onOpenChange={() => toggleOpen("attributes", false)}

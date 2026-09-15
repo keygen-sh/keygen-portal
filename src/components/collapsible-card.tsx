@@ -19,6 +19,7 @@ interface CollapsibleCardProps {
   subtitle?: React.ReactNode
   defaultOpen?: boolean
   children?: React.ReactNode
+  footer?: React.ReactNode
   containerClass?: string
   contentClass?: string
 }
@@ -28,6 +29,7 @@ export default function CollapsibleCard({
   subtitle,
   defaultOpen = true,
   children,
+  footer,
   containerClass,
   contentClass,
 }: CollapsibleCardProps) {
@@ -107,6 +109,7 @@ export default function CollapsibleCard({
                     </CardContent>
                   </ScrollArea>
                 </div>
+                {footer}
               </motion.div>
             </CollapsibleContent>
           )}

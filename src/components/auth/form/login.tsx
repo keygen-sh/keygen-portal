@@ -20,6 +20,7 @@ import { useSession } from "@/hooks/use-session"
 import { cn } from "@/lib/utils"
 import { toast } from "@/lib/toast"
 import { truncator } from "@/lib/truncate"
+import { setPendingRedirect } from "@/lib/auth"
 import { getRecentAccounts } from "@/lib/accounts"
 
 import * as Auth from "@/components/auth"
@@ -591,11 +592,13 @@ function SsoStep({
   onCancel: () => void
 }) {
   const [loading, setLoading] = useState(false)
+  const { redirect } = useSearch({ from: "/$accountId/auth/login" })
 
   function onContinue() {
     if (!redirectUrl) return
 
     setLoading(true)
+    if (redirect) setPendingRedirect(redirect)
     window.location.href = redirectUrl
   }
 

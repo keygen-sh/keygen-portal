@@ -32,7 +32,7 @@ import {
 } from "@/lib/analytics"
 import { cn } from "@/lib/utils"
 import { toast } from "@/lib/toast"
-import { truncator } from "@/lib/truncate"
+import { truncateId } from "@/lib/truncate"
 import { endOfDayUtc } from "@/lib/timestamps"
 
 import { License } from "@/types/licenses"
@@ -67,7 +67,6 @@ const MOBILE_COLUMN_COUNT = 6
 const POPOVER_WIDTH = 208 // w-52
 
 const PREVIEW_LIMIT = 5
-const truncateId = truncator("clip", { maxLength: 8 })
 
 function toMondayRow(isoDay: number): number {
   return isoDay === 0 ? 6 : isoDay - 1

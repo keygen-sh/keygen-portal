@@ -29,8 +29,8 @@ import { useGetLicense } from "@/queries/licenses"
 import { useLeaderboard } from "@/queries/analytics"
 
 import { cn } from "@/lib/utils"
-import { truncator } from "@/lib/truncate"
 import { getUserLabel } from "@/lib/users"
+import { truncator, truncateId } from "@/lib/truncate"
 import { GREEN, LEADERBOARDS, useLazyVisibility } from "@/lib/analytics"
 
 import { type Linkage } from "@/types/api"
@@ -41,7 +41,6 @@ import * as keygen from "@/keygen"
 import EmptyChart from "./empty-chart"
 
 const truncateMiddle = truncator("middle", { maxLength: 34 })
-const truncateId = truncator("clip", { maxLength: 8 })
 
 function requestLogSearchForLeaderboard({
   metric,

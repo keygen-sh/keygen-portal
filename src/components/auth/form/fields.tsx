@@ -13,8 +13,8 @@ import {
 
 import * as Schemas from "@/schemas"
 
+import { truncateId } from "@/lib/truncate"
 import { accountSlugFromEmail } from "@/lib/auth"
-import { truncator } from "@/lib/truncate"
 import { getRecentAccounts } from "@/lib/accounts"
 
 import { AuthFormFieldDescriptions } from "@/types/auth"
@@ -22,8 +22,6 @@ import { AuthFormFieldDescriptions } from "@/types/auth"
 import * as Forms from "@/components/forms"
 import OtpInput from "@/components/otp-input"
 import SuggestInput from "@/components/suggest-input"
-
-const truncateId = truncator("clip", { maxLength: 8 })
 
 interface AuthFormFieldsProps {
   include: Schemas.Auth.FieldNames[]

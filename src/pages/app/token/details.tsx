@@ -45,6 +45,7 @@ import {
 } from "@/types/tokens"
 
 import { toast } from "@/lib/toast"
+import { truncateId } from "@/lib/truncate"
 import { copyToClipboard } from "@/lib/clipboard"
 import { revokeTokenDescription } from "@/lib/tokens"
 
@@ -141,7 +142,9 @@ export default function TokenDetails() {
 
   return (
     <section className="flex h-screen w-full">
-      <DocumentTitle title={`Token: ${id}`} />
+      <DocumentTitle
+        title={`Token: ${token?.attributes.name || truncateId(id)}`}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
           <Breadcrumb className="flex-1">
@@ -158,7 +161,7 @@ export default function TokenDetails() {
               <BreadcrumbItem>
                 {token ? (
                   <BreadcrumbPage>
-                    {token.attributes.name || token.id}
+                    {token.attributes.name || truncateId(id)}
                   </BreadcrumbPage>
                 ) : (
                   <Skeleton className="h-6 w-32" />

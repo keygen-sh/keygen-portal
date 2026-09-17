@@ -81,6 +81,7 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 import { useBreadcrumbBackNavigate } from "@/hooks/use-breadcrumb-back-navigate"
 
 import { toast } from "@/lib/toast"
+import { truncateId } from "@/lib/truncate"
 import { copyToClipboard } from "@/lib/clipboard"
 
 import * as Releases from "@/components/releases"
@@ -245,7 +246,7 @@ export default function ReleaseDetails() {
   return (
     <section className="flex h-screen w-full">
       <DocumentTitle
-        title={`Release: ${(release?.attributes.name ?? release?.attributes.version) || id}`}
+        title={`Release: ${release?.attributes.name || truncateId(id)}`}
       />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
@@ -263,7 +264,7 @@ export default function ReleaseDetails() {
               <BreadcrumbItem>
                 {release ? (
                   <BreadcrumbPage>
-                    {release.attributes.name ?? release.attributes.version}
+                    {release.attributes.name || truncateId(id)}
                   </BreadcrumbPage>
                 ) : (
                   <Skeleton className="h-6 w-32" />
@@ -408,7 +409,11 @@ export default function ReleaseDetails() {
               </div>
               <div className="flex flex-col gap-3 md:flex-row md:items-center">
                 <h1 className="font-owners-wide text-2xl font-medium">
-                  {release.attributes.name ?? release.attributes.version}
+                  {release.attributes.name || (
+                    <span className="flex items-center text-lg font-normal text-content-disabled">
+                      {"(name not set)"}
+                    </span>
+                  )}
                 </h1>
                 <Button
                   variant="clipboard"
@@ -749,7 +754,7 @@ export default function ReleaseDetails() {
       />
 
       <ConfirmationModal
-        title={`Delete ${release?.attributes.name ?? release?.attributes.version}`}
+        title={`Delete ${release?.attributes.name || truncateId(id)}`}
         description="Are you sure you want to delete this release?"
         open={open.delete}
         disabled={deleteRelease.isPending}
@@ -761,7 +766,7 @@ export default function ReleaseDetails() {
       />
 
       <ConfirmationModal
-        title={`Publish ${release?.attributes.name ?? release?.attributes.version}`}
+        title={`Publish ${release?.attributes.name || truncateId(id)}`}
         description="Are you sure you want to publish this release? Once published, it will be accessible to entitled users."
         open={open.publish}
         disabled={publishRelease.isPending}
@@ -772,7 +777,7 @@ export default function ReleaseDetails() {
       />
 
       <ConfirmationModal
-        title={`Yank ${release?.attributes.name ?? release?.attributes.version}`}
+        title={`Yank ${release?.attributes.name || truncateId(id)}`}
         description="Are you sure you want to yank this release? Yanked releases are delisted and no longer accessible to users."
         open={open.yank}
         disabled={yankRelease.isPending}

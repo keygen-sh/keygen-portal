@@ -47,6 +47,7 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 import { useBreadcrumbBackNavigate } from "@/hooks/use-breadcrumb-back-navigate"
 
 import { toast } from "@/lib/toast"
+import { truncateId } from "@/lib/truncate"
 import { copyToClipboard } from "@/lib/clipboard"
 
 import * as Property from "@/components/property"
@@ -108,7 +109,7 @@ export default function ComponentDetails() {
   return (
     <section className="flex h-screen w-full">
       <DocumentTitle
-        title={`Component: ${component?.attributes.name || component?.attributes.fingerprint || id}`}
+        title={`Component: ${component?.attributes.name || truncateId(id)}`}
       />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
@@ -126,8 +127,7 @@ export default function ComponentDetails() {
               <BreadcrumbItem>
                 {component ? (
                   <BreadcrumbPage className="w-40 truncate md:w-auto">
-                    {component?.attributes.name ||
-                      component?.attributes.fingerprint}
+                    {component.attributes.name || truncateId(id)}
                   </BreadcrumbPage>
                 ) : (
                   <Skeleton className="h-6 w-32" />
@@ -204,8 +204,11 @@ export default function ComponentDetails() {
 
               <div className="flex flex-col gap-3 md:flex-row md:items-center">
                 <h1 className="font-owners-wide text-2xl font-medium">
-                  {component?.attributes.name ||
-                    component?.attributes.fingerprint}
+                  {component.attributes.name || (
+                    <span className="flex items-center text-lg font-normal text-content-disabled">
+                      {"(name not set)"}
+                    </span>
+                  )}
                 </h1>
                 <Button
                   variant="clipboard"
@@ -452,7 +455,7 @@ export default function ComponentDetails() {
       />
 
       <ConfirmationModal
-        title={`Delete ${component?.attributes.name || component?.attributes.fingerprint}`}
+        title={`Delete ${component?.attributes.name || truncateId(id)}`}
         description="Are you sure you want to delete this component? This action cannot be undone."
         open={open.delete}
         disabled={componentLoading}

@@ -61,6 +61,7 @@ import { useBreadcrumbBackNavigate } from "@/hooks/use-breadcrumb-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
+import { getReleaseLabel } from "@/lib/releases"
 
 import * as Artifacts from "@/components/artifacts"
 import * as Property from "@/components/property"
@@ -279,9 +280,7 @@ export default function ArtifactDetails() {
                       accountId: keygen.config.id,
                       id: release.id,
                     }}
-                    label={
-                      release.attributes.name ?? release.attributes.version
-                    }
+                    label={getReleaseLabel(release)}
                     className="ml-3"
                   />
                 ) : (

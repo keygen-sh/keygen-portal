@@ -112,9 +112,7 @@ export default function PackageDetails() {
 
   return (
     <section className="flex h-screen w-full">
-      <DocumentTitle
-        title={`Package: ${(pkg?.attributes.name ?? pkg?.attributes.key) || id}`}
-      />
+      <DocumentTitle title={`Package: ${pkg?.attributes.name}`} />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
           <Breadcrumb className="flex-1">
@@ -130,9 +128,7 @@ export default function PackageDetails() {
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 {pkg ? (
-                  <BreadcrumbPage>
-                    {pkg.attributes.name ?? pkg.attributes.key}
-                  </BreadcrumbPage>
+                  <BreadcrumbPage>{pkg.attributes.name}</BreadcrumbPage>
                 ) : (
                   <Skeleton className="h-6 w-32" />
                 )}
@@ -208,7 +204,7 @@ export default function PackageDetails() {
 
               <div className="flex flex-col gap-3 md:flex-row md:items-center">
                 <h1 className="font-owners-wide text-2xl font-medium">
-                  {pkg.attributes.name ?? pkg.attributes.key}
+                  {pkg.attributes.name}
                 </h1>
                 <Button
                   variant="clipboard"
@@ -439,7 +435,7 @@ export default function PackageDetails() {
       />
 
       <ConfirmationModal
-        title={`Delete ${pkg?.attributes.name ?? pkg?.attributes.key}`}
+        title={`Delete ${pkg?.attributes.name}`}
         description="Are you sure you want to delete this package? This will also immediately delete any releases and artifacts."
         open={open.delete}
         disabled={deletePackage.isPending}

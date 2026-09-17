@@ -19,6 +19,12 @@ interface ResetToken {
   token: string
 }
 
+export function parseRedirect(value: unknown): string | undefined {
+  return typeof value === "string" && /^\/goto(?:[/?#]|$)/.test(value)
+    ? value
+    : undefined
+}
+
 // parse a reset token from the URL query string
 export function parseResetToken(
   value: string | undefined | null,

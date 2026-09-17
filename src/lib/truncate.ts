@@ -62,3 +62,5 @@ export function truncator(
       return (v: string) => truncateEnd(v, options)
   }
 }
+
+export const truncateId = truncator("end", { maxLength: 8 })

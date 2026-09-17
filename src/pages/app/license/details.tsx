@@ -83,6 +83,7 @@ import { useBreadcrumbBackNavigate } from "@/hooks/use-breadcrumb-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { getUserLabel } from "@/lib/users"
+import { truncateId } from "@/lib/truncate"
 import { copyToClipboard } from "@/lib/clipboard"
 import {
   getMachinesLimitDisplay,
@@ -261,7 +262,9 @@ export default function LicenseDetails() {
 
   return (
     <section className="flex h-screen w-full">
-      <DocumentTitle title={`License: ${license?.attributes.name || id}`} />
+      <DocumentTitle
+        title={`License: ${license?.attributes.name || truncateId(id)}`}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
           <Breadcrumb className="flex-1">
@@ -278,10 +281,7 @@ export default function LicenseDetails() {
               <BreadcrumbItem>
                 {license ? (
                   <BreadcrumbPage className="w-40 truncate md:w-auto">
-                    {license.attributes.name ||
-                      truncateKey(license.attributes.key, {
-                        maxLength: isMobile ? 16 : 64,
-                      })}
+                    {license.attributes.name || truncateId(id)}
                   </BreadcrumbPage>
                 ) : (
                   <Skeleton className="h-6 w-32" />
@@ -553,7 +553,7 @@ export default function LicenseDetails() {
 
               <div className="flex flex-col gap-3 md:flex-row md:items-center">
                 <h1 className="font-owners-wide text-2xl font-medium">
-                  {license?.attributes.name || (
+                  {license.attributes.name || (
                     <span className="flex items-center text-lg font-normal text-content-disabled">
                       {"(name not set)"}
                     </span>
@@ -1247,7 +1247,7 @@ export default function LicenseDetails() {
 
       {license && (
         <ConfirmationModal
-          title={`Delete ${license.attributes.name || truncateKey(license.attributes.key, { maxLength: isMobile ? 16 : 32 })}`}
+          title={`Delete ${license.attributes.name || truncateId(id)}`}
           description="Are you sure you want to delete this license?"
           open={open.delete}
           disabled={licenseLoading}
@@ -1261,7 +1261,7 @@ export default function LicenseDetails() {
 
       {license && (
         <ConfirmationModal
-          title={`${license.attributes.suspended ? "Reinstate" : "Suspend"} ${license.attributes.name || truncateKey(license.attributes.key, { maxLength: isMobile ? 16 : 32 })}`}
+          title={`${license.attributes.suspended ? "Reinstate" : "Suspend"} ${license.attributes.name || truncateId(id)}`}
           description={
             license.attributes.suspended
               ? "Are you sure you want to reinstate this license?"
@@ -1282,7 +1282,7 @@ export default function LicenseDetails() {
 
       {license && (
         <ConfirmationModal
-          title={`Renew ${license.attributes.name || truncateKey(license.attributes.key, { maxLength: isMobile ? 16 : 32 })}`}
+          title={`Renew ${license.attributes.name || truncateId(id)}`}
           description="Are you sure you want to renew this license?"
           open={open.renew}
           disabled={renewLicense.isPending}
@@ -1295,7 +1295,7 @@ export default function LicenseDetails() {
 
       {license && (
         <ConfirmationModal
-          title={`Check in ${license.attributes.name || truncateKey(license.attributes.key, { maxLength: isMobile ? 16 : 32 })}`}
+          title={`Check in ${license.attributes.name || truncateId(id)}`}
           description="Are you sure you want to check in this license? This will reset the check-in window."
           open={open.checkIn}
           disabled={checkInLicense.isPending}
@@ -1308,7 +1308,7 @@ export default function LicenseDetails() {
 
       {license && (
         <ConfirmationModal
-          title={`Reset usage for ${license.attributes.name || truncateKey(license.attributes.key, { maxLength: isMobile ? 16 : 32 })}`}
+          title={`Reset usage for ${license.attributes.name || truncateId(id)}`}
           description="Are you sure you want to reset usage for this license? This will set the license's usage count back to zero."
           open={open.resetUsage}
           disabled={resetUsageLicense.isPending}
@@ -1339,7 +1339,7 @@ export default function LicenseDetails() {
           id={license.id}
           open={open.entitlements}
           onOpenChange={(value) => toggleOpen("entitlements", value)}
-          title={`${license.attributes.name || truncateKey(license.attributes.key, { maxLength: isMobile ? 16 : 64 })} entitlements`}
+          title={`${license.attributes.name || truncateId(id)} entitlements`}
         />
       )}
     </section>

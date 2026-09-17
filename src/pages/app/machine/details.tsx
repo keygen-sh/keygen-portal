@@ -51,9 +51,10 @@ import { useBackNavigate } from "@/hooks/use-back-navigate"
 import { useBreadcrumbBackNavigate } from "@/hooks/use-breadcrumb-back-navigate"
 
 import { toast } from "@/lib/toast"
+import { truncateId } from "@/lib/truncate"
+import { formatTtlLabel } from "@/lib/licenses"
 import { copyToClipboard } from "@/lib/clipboard"
 import { getHeartbeatStatusVariant } from "@/lib/machines"
-import { formatTtlLabel } from "@/lib/licenses"
 
 import * as keygen from "@/keygen"
 import * as Machines from "@/components/machines"
@@ -127,7 +128,7 @@ export default function MachineDetails() {
   return (
     <section className="flex h-screen w-full">
       <DocumentTitle
-        title={`Machine: ${machine?.attributes.name || machine?.attributes.fingerprint || id}`}
+        title={`Machine: ${machine?.attributes.name || truncateId(id)}`}
       />
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader>
@@ -145,8 +146,7 @@ export default function MachineDetails() {
               <BreadcrumbItem>
                 {machine ? (
                   <BreadcrumbPage className="w-40 truncate md:w-auto">
-                    {machine?.attributes.name ||
-                      machine?.attributes.fingerprint}
+                    {machine.attributes.name || truncateId(id)}
                   </BreadcrumbPage>
                 ) : (
                   <Skeleton className="h-6 w-32" />
@@ -269,7 +269,11 @@ export default function MachineDetails() {
 
               <div className="flex flex-col gap-3 md:flex-row md:items-center">
                 <h1 className="font-owners-wide text-2xl font-medium">
-                  {machine?.attributes.name || machine?.attributes.fingerprint}
+                  {machine.attributes.name || (
+                    <span className="flex items-center text-lg font-normal text-content-disabled">
+                      {"(name not set)"}
+                    </span>
+                  )}
                 </h1>
                 <Button
                   variant="clipboard"
@@ -689,7 +693,7 @@ export default function MachineDetails() {
       />
 
       <ConfirmationModal
-        title={`Reset heartbeat for ${machine?.attributes.name || machine?.attributes.fingerprint}`}
+        title={`Reset heartbeat for ${machine?.attributes.name || truncateId(id)}`}
         description={
           machine?.attributes.requireHeartbeat
             ? `Are you sure you want to reset the heartbeat monitor for this machine? Because the policy requires a heartbeat, this will cause the machine to be deactivated automatically after ${formatTtlLabel(machine.attributes.heartbeatDuration)} unless the machine begins sending a heartbeat again.`
@@ -704,7 +708,7 @@ export default function MachineDetails() {
       />
 
       <ConfirmationModal
-        title={`Deactivate ${machine?.attributes.name || machine?.attributes.fingerprint}`}
+        title={`Deactivate ${machine?.attributes.name || truncateId(id)}`}
         description="Are you sure you want to deactivate this machine? This action cannot be undone."
         open={open.delete}
         disabled={machineLoading}

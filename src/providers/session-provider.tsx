@@ -31,6 +31,7 @@ export function SessionProvider({
     void navigate({
       to: "/$accountId/auth/login",
       params: { accountId: keygen.config.id },
+      search: (prev) => ({ redirect: prev.redirect }),
       replace: true,
     })
   }, [setUser, queryClient, navigate])

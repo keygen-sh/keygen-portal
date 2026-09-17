@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form"
-import { useNavigate, Link } from "@tanstack/react-router"
+import { useNavigate, useSearch, Link } from "@tanstack/react-router"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
@@ -14,6 +14,7 @@ import * as Loading from "@/components/loading"
 
 export default function AccountForm() {
   const navigate = useNavigate()
+  const { redirect } = useSearch({ from: "/auth/" })
 
   const form = useForm<Schemas.Auth.AccountValues>({
     resolver: zodResolver(Schemas.Auth.AccountSchema),
@@ -30,7 +31,7 @@ export default function AccountForm() {
     void navigate({
       to: "/$accountId/auth/login",
       params: { accountId: slug },
-      search: { email },
+      search: { email, redirect },
     })
   }
 

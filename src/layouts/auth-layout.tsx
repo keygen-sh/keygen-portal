@@ -1,5 +1,10 @@
 import { useEffect } from "react"
-import { Outlet, useMatches, useNavigate } from "@tanstack/react-router"
+import {
+  Outlet,
+  useMatches,
+  useNavigate,
+  useSearch,
+} from "@tanstack/react-router"
 
 import { Toaster } from "@/components/ui/sonner"
 
@@ -18,16 +23,24 @@ export default function AuthLayout() {
   const navigate = useNavigate()
   const { user } = useSession()
   const matches = useMatches()
+  const redirect = useSearch({
+    strict: false,
+    select: (search) => search.redirect,
+  })
 
   // Redirect already-authenticated users
   useEffect(() => {
     if (!user) return
+    if (redirect) {
+      void navigate({ href: redirect, replace: true })
+      return
+    }
     void navigate({
       to: "/$accountId/app",
       params: { accountId: keygen.client.currentAccount ?? keygen.config.id },
       replace: true,
     })
-  }, [user, navigate])
+  }, [user, redirect, navigate])
 
   // NB(cazden) Loading state to eliminate jarring UI transitions during redirects, e.g.
   //            if user navs to login page but has a valid session, they're redirected to

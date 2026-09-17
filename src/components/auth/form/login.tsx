@@ -48,7 +48,7 @@ export default function LoginForm() {
   const navigate = useNavigate()
   const session = useSession()
 
-  const { email: emailFromParams } = useSearch({
+  const { email: emailFromParams, redirect } = useSearch({
     from: "/$accountId/auth/login",
   })
 
@@ -63,6 +63,11 @@ export default function LoginForm() {
     const { userId, accountId } = keygen.login(data, { remember })
 
     session.setUser(userId)
+
+    if (redirect) {
+      void navigate({ href: redirect })
+      return
+    }
 
     void navigate({
       to: "/$accountId/app",
@@ -116,7 +121,7 @@ export default function LoginForm() {
             setSsoRedirectUrl(url)
             setStep("sso")
           }}
-          onBack={() => navigate({ to: "/auth" })}
+          onBack={() => navigate({ to: "/auth", search: { redirect } })}
         />
       )}
     </Motion.Slide>
@@ -135,6 +140,7 @@ function EmailStep({
   onBack: () => void
 }) {
   const isMobile = useMobile()
+  const { redirect } = useSearch({ from: "/$accountId/auth/login" })
   const accountLabel = useMemo(() => {
     const id = keygen.config.id
     const recent = getRecentAccounts().find(
@@ -247,7 +253,11 @@ function EmailStep({
                     >
                       <strong>Not the right account?</strong>
                       <br />
-                      <Link to="/auth" className="text-primary">
+                      <Link
+                        to="/auth"
+                        search={{ redirect }}
+                        className="text-primary"
+                      >
                         Switch to a different one.
                       </Link>
                     </PopoverContent>
@@ -257,6 +267,7 @@ function EmailStep({
                     <TooltipTrigger asChild>
                       <Link
                         to="/auth"
+                        search={{ redirect }}
                         className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted"
                       >
                         {accountLabel}

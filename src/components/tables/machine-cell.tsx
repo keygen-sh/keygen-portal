@@ -1,6 +1,7 @@
 import { useGetMachine } from "@/queries/machines"
 
-import EmptyCell from "./empty-cell"
+import ClipboardButton from "@/components/clipboard-button"
+
 import ResourceCell from "./resource-cell"
 
 interface MachineCellProps {
@@ -19,7 +20,7 @@ function MachineCellContent({ id }: { id: string }): React.ReactElement {
 
   return (
     <ResourceCell isEmpty={!data} isLoading={machineLoading}>
-      {data?.attributes.name || <EmptyCell />}
+      {data?.attributes.name || <ClipboardButton value={id} />}
     </ResourceCell>
   )
 }

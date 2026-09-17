@@ -3,6 +3,7 @@ import { License, LicenseAttributeDescriptions } from "@/types/licenses"
 
 import { formatByteLimitDisplay, formatRawByteLimitDisplay } from "@/lib/bytes"
 import { capitalize } from "@/lib/utils"
+import { truncateId } from "@/lib/truncate"
 
 import { AttributeType } from "@/components/attribute/value"
 
@@ -250,7 +251,7 @@ export function truncateKey(
 }
 
 export function getLicenseLabel(license: License) {
-  return license.attributes.name || license.attributes.key
+  return license.attributes.name || truncateId(license.id)
 }
 
 export function formatTtlLabel(seconds: number | null): string {

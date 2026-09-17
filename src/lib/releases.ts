@@ -2,13 +2,10 @@ import semver from "semver"
 
 import { AttributeType } from "@/components/attribute/value"
 import { Release, ReleaseChannel } from "@/types/releases"
-import { truncator } from "@/lib/truncate"
-
-const truncateMiddle = truncator("middle", { maxLength: 12 })
+import { truncateId } from "@/lib/truncate"
 
 export function getReleaseLabel(release: Release): string {
-  const { name, version } = release.attributes
-  return name ?? `${truncateMiddle(release.id)} ${version}`
+  return release.attributes.name || truncateId(release.id)
 }
 
 export const releaseAttributeTypeSchema: Record<

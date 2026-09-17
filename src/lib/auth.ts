@@ -19,10 +19,25 @@ interface ResetToken {
   token: string
 }
 
+const REDIRECT_STORAGE_KEY = "keygen.auth.redirect"
+
 export function parseRedirect(value: unknown): string | undefined {
   return typeof value === "string" && /^\/goto(?:[/?#]|$)/.test(value)
     ? value
     : undefined
+}
+
+export function setPendingRedirect(value: string): void {
+  window.sessionStorage.setItem(REDIRECT_STORAGE_KEY, value)
+}
+
+export function takePendingRedirect(): string | undefined {
+  const value = parseRedirect(
+    window.sessionStorage.getItem(REDIRECT_STORAGE_KEY),
+  )
+  window.sessionStorage.removeItem(REDIRECT_STORAGE_KEY)
+
+  return value
 }
 
 // parse a reset token from the URL query string

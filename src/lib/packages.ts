@@ -1,5 +1,6 @@
 import { AttributeType } from "@/components/attribute/value"
 import { Package } from "@/types/packages"
+import { truncateId } from "@/lib/truncate"
 
 export const packageAttributeTypeSchema: Record<
   keyof Omit<Package["attributes"], "metadata" | "created" | "updated">,
@@ -11,5 +12,5 @@ export const packageAttributeTypeSchema: Record<
 }
 
 export function getPackageLabel(pkg: Package): string {
-  return pkg.attributes.name ?? pkg.attributes.key
+  return pkg.attributes.name || truncateId(pkg.id)
 }

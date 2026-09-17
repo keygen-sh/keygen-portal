@@ -30,11 +30,7 @@ import { useGetEnvironment } from "@/queries/environments"
 
 import { getUserLabel } from "@/lib/users"
 import { getGroupLabel } from "@/lib/groups"
-import { getLicenseLabel } from "@/lib/licenses"
-import { getMachineLabel } from "@/lib/machines"
-import { getPackageLabel } from "@/lib/packages"
-import { getReleaseLabel } from "@/lib/releases"
-import { truncator } from "@/lib/truncate"
+import { truncator, truncateId } from "@/lib/truncate"
 
 import * as keygen from "@/keygen"
 import GoToButton from "@/components/go-to-button"
@@ -75,7 +71,7 @@ function ResourceLinkView({
 }: ResourceLinkViewProps): ReactElement {
   if (isLoading) return <Skeleton className="h-5 w-32 rounded-sm" />
 
-  const resolved = label || linkage.id
+  const resolved = label || truncateId(linkage.id)
   const text = truncate ? truncateLabel(resolved) : resolved
 
   // a resource we can't resolve, e.g. a user/bearer that
@@ -160,24 +156,13 @@ const RESOURCE_LINKS: Record<
   entitlements: makeResourceLink(useGetEntitlement, (d) => d?.attributes.name),
   groups: makeResourceLink(useGetGroup, (d) => (d ? getGroupLabel(d) : null)),
   policies: makeResourceLink(useGetPolicy, (d) => d?.attributes.name),
-  licenses: makeResourceLink(useGetLicense, (d) =>
-    d ? getLicenseLabel(d) : null,
-  ),
-  machines: makeResourceLink(useGetMachine, (d) =>
-    d ? getMachineLabel(d) : null,
-  ),
-  components: makeResourceLink(
-    useGetComponent,
-    (d) => d?.attributes.name || d?.attributes.fingerprint,
-  ),
+  licenses: makeResourceLink(useGetLicense, (d) => d?.attributes.name),
+  machines: makeResourceLink(useGetMachine, (d) => d?.attributes.name),
+  components: makeResourceLink(useGetComponent, (d) => d?.attributes.name),
   processes: makeResourceLink(useGetProcess, (d) => d?.attributes.pid),
   users: makeResourceLink(useGetUser, (d) => (d ? getUserLabel(d) : null)),
-  packages: makeResourceLink(useGetPackage, (d) =>
-    d ? getPackageLabel(d) : null,
-  ),
-  releases: makeResourceLink(useGetRelease, (d) =>
-    d ? getReleaseLabel(d) : null,
-  ),
+  packages: makeResourceLink(useGetPackage, (d) => d?.attributes.name),
+  releases: makeResourceLink(useGetRelease, (d) => d?.attributes.name),
   artifacts: makeResourceLink(useGetArtifact, (d) => d?.attributes.filename),
   platforms: makeResourceLink(useGetPlatform, (d) => d?.attributes.name),
   arches: makeResourceLink(useGetArch, (d) => d?.attributes.name),

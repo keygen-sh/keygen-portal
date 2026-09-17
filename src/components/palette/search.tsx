@@ -12,7 +12,7 @@ import {
   parseCommittedInputState,
 } from "@/lib/palette"
 import { labelFor } from "@/lib/search"
-import { truncator } from "@/lib/truncate"
+import { truncateId } from "@/lib/truncate"
 
 import {
   type SearchInputState,
@@ -25,8 +25,6 @@ import { useSearch } from "@/queries/search"
 import EnterHint from "@/components/enter-hint"
 import * as Loading from "@/components/loading"
 
-const truncateId = truncator("clip", { maxLength: 8 })
-
 function SearchRow({
   item,
   selectedValue,
@@ -38,6 +36,8 @@ function SearchRow({
 }) {
   const value = `${item.type}:${item.id}`
   const showEnterHint = selectedValue === value
+  const label = labelFor(item)
+  const id = truncateId(item.id)
 
   return (
     <CommandItem
@@ -47,11 +47,11 @@ function SearchRow({
       tabbable
       onSelect={() => onResourceSelect(item)}
     >
-      <span className="min-w-0 flex-1 truncate">{labelFor(item)}</span>
+      <span className="min-w-0 flex-1 truncate">{label}</span>
       <div className="ml-auto flex shrink-0 items-center gap-2">
-        <span className="truncate text-xs text-muted-foreground">
-          {truncateId(item.id)}
-        </span>
+        {!label.startsWith(id) && (
+          <span className="truncate text-xs text-muted-foreground">{id}</span>
+        )}
         <EnterHint visible={showEnterHint} />
       </div>
     </CommandItem>

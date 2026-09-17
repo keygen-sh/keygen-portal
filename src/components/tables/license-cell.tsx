@@ -1,6 +1,7 @@
 import { useGetLicense } from "@/queries/licenses"
 
-import EmptyCell from "./empty-cell"
+import ClipboardButton from "@/components/clipboard-button"
+
 import ResourceCell from "./resource-cell"
 
 interface LicenseCellProps {
@@ -19,7 +20,7 @@ function LicenseCellContent({ id }: { id: string }): React.ReactElement {
 
   return (
     <ResourceCell isEmpty={!data} isLoading={licenseLoading}>
-      {data?.attributes.name || <EmptyCell />}
+      {data?.attributes.name || <ClipboardButton value={id} />}
     </ResourceCell>
   )
 }

@@ -24,6 +24,7 @@ import { getLicenseLabel } from "@/lib/licenses"
 import { getMachineLabel } from "@/lib/machines"
 import { getPackageLabel } from "@/lib/packages"
 import { getReleaseLabel } from "@/lib/releases"
+import { truncateId } from "@/lib/truncate"
 
 import * as keygen from "@/keygen"
 
@@ -33,7 +34,7 @@ import GoToButton from "@/components/go-to-button"
 type NamedSearchOption = SearchOption & { attributes: { name: string } }
 
 const getNamedLabel = (option: NamedSearchOption): string => {
-  return option.attributes.name ?? option.id
+  return option.attributes.name || truncateId(option.id)
 }
 
 export const getDefaultLabel = (option: SearchOption): string => {
@@ -237,10 +238,10 @@ export const packagesConfig: ResourceConfig<Package> = {
 export const releasesConfig: ResourceConfig<Release> = {
   getLabel: getReleaseLabel,
   renderOption: (release) => {
-    const { name, version } = release.attributes
+    const { version } = release.attributes
     return (
       <span className="inline-flex items-center gap-2">
-        <span>{name ?? getReleaseLabel(release)}</span>
+        <span>{getReleaseLabel(release)}</span>
         <Badge variant="secondary" className="text-xs">
           {version}
         </Badge>

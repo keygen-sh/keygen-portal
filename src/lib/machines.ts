@@ -2,6 +2,8 @@ import { AttributeType } from "@/components/attribute/value"
 
 import { Machine, HeartbeatStatus } from "@/types/machines"
 
+import { truncateId } from "@/lib/truncate"
+
 export const machineAttributeTypeSchema: Record<
   keyof Omit<Machine["attributes"], "metadata" | "created" | "updated">,
   AttributeType
@@ -38,5 +40,5 @@ export const getHeartbeatStatusVariant = (
 }
 
 export function getMachineLabel(machine: Machine) {
-  return machine.attributes.name || machine.attributes.fingerprint
+  return machine.attributes.name || truncateId(machine.id)
 }

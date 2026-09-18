@@ -20,6 +20,7 @@ import { useSession } from "@/hooks/use-session"
 import { cn } from "@/lib/utils"
 import { toast } from "@/lib/toast"
 import { truncator } from "@/lib/truncate"
+import { redirectTarget, setPendingRedirect } from "@/lib/auth"
 import { getRecentAccounts } from "@/lib/accounts"
 
 import * as Auth from "@/components/auth"
@@ -48,7 +49,7 @@ export default function LoginForm() {
   const navigate = useNavigate()
   const session = useSession()
 
-  const { email: emailFromParams } = useSearch({
+  const { email: emailFromParams, redirect } = useSearch({
     from: "/$accountId/auth/login",
   })
 
@@ -63,6 +64,11 @@ export default function LoginForm() {
     const { userId, accountId } = keygen.login(data, { remember })
 
     session.setUser(userId)
+
+    if (redirect) {
+      void navigate(redirectTarget(redirect))
+      return
+    }
 
     void navigate({
       to: "/$accountId/app",
@@ -116,7 +122,7 @@ export default function LoginForm() {
             setSsoRedirectUrl(url)
             setStep("sso")
           }}
-          onBack={() => navigate({ to: "/auth" })}
+          onBack={() => navigate({ to: "/auth", search: { redirect } })}
         />
       )}
     </Motion.Slide>
@@ -135,6 +141,7 @@ function EmailStep({
   onBack: () => void
 }) {
   const isMobile = useMobile()
+  const { redirect } = useSearch({ from: "/$accountId/auth/login" })
   const accountLabel = useMemo(() => {
     const id = keygen.config.id
     const recent = getRecentAccounts().find(
@@ -247,7 +254,11 @@ function EmailStep({
                     >
                       <strong>Not the right account?</strong>
                       <br />
-                      <Link to="/auth" className="text-primary">
+                      <Link
+                        to="/auth"
+                        search={{ redirect }}
+                        className="text-primary"
+                      >
                         Switch to a different one.
                       </Link>
                     </PopoverContent>
@@ -257,6 +268,7 @@ function EmailStep({
                     <TooltipTrigger asChild>
                       <Link
                         to="/auth"
+                        search={{ redirect }}
                         className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted"
                       >
                         {accountLabel}
@@ -580,11 +592,13 @@ function SsoStep({
   onCancel: () => void
 }) {
   const [loading, setLoading] = useState(false)
+  const { redirect } = useSearch({ from: "/$accountId/auth/login" })
 
   function onContinue() {
     if (!redirectUrl) return
 
     setLoading(true)
+    if (redirect) setPendingRedirect(redirect)
     window.location.href = redirectUrl
   }
 

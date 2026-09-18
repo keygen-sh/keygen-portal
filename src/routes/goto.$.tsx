@@ -5,7 +5,7 @@ import { restoreSession } from "@/keygen/session"
 import { getRecentAccounts } from "@/lib/accounts"
 
 export const Route = createFileRoute("/goto/$")({
-  loader: async ({ location }) => {
+  loader: async ({ params, location }) => {
     const accountId = keygen.config.hasFixedAccount
       ? keygen.config.id
       : (keygen.client.currentAccount ?? getRecentAccounts()[0]?.id)
@@ -39,10 +39,10 @@ export const Route = createFileRoute("/goto/$")({
     }
 
     redirect({
-      href: location.href.replace(
-        /^\/goto(?=[/?#]|$)/,
-        `/${session.accountId ?? accountId}/app`,
-      ),
+      to: `/$accountId/app/${params._splat ?? ""}`,
+      params: { accountId: session.accountId ?? accountId },
+      search: location.search,
+      hash: location.hash,
       replace: true,
       throw: true,
     })

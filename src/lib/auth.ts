@@ -1,3 +1,5 @@
+import { linkOptions, defaultParseSearch } from "@tanstack/react-router"
+
 import * as keygen from "@/keygen"
 
 import { dasherize } from "@/lib/utils"
@@ -25,6 +27,17 @@ export function parseRedirect(value: unknown): string | undefined {
   return typeof value === "string" && /^\/goto(?:[/?#]|$)/.test(value)
     ? value
     : undefined
+}
+
+export function redirectTarget(redirect: string) {
+  const { pathname, search, hash } = new URL(redirect, window.location.origin)
+
+  return linkOptions({
+    to: "/goto/$",
+    params: { _splat: pathname.slice("/goto/".length) },
+    search: defaultParseSearch(search),
+    hash: hash.slice(1),
+  })
 }
 
 export function setPendingRedirect(value: string): void {

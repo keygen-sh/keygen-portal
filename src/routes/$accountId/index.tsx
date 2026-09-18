@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router"
 
 import { restoreSession } from "@/keygen/session"
-import { takePendingRedirect } from "@/lib/auth"
+import { redirectTarget, takePendingRedirect } from "@/lib/auth"
 
 export const Route = createFileRoute("/$accountId/")({
   loader: async ({ params }) => {
@@ -11,7 +11,11 @@ export const Route = createFileRoute("/$accountId/")({
 
     const pendingRedirect = takePendingRedirect()
     if (pendingRedirect) {
-      redirect({ href: pendingRedirect, replace: true, throw: true })
+      redirect({
+        ...redirectTarget(pendingRedirect),
+        replace: true,
+        throw: true,
+      })
       return
     }
 

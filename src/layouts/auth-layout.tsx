@@ -15,6 +15,8 @@ import * as keygen from "@/keygen"
 
 import { useSession } from "@/hooks/use-session"
 
+import { redirectTarget } from "@/lib/auth"
+
 import * as Auth from "@/components/auth"
 import * as Loading from "@/components/loading"
 import BackButton from "@/components/back-button"
@@ -32,7 +34,7 @@ export default function AuthLayout() {
   useEffect(() => {
     if (!user) return
     if (redirect) {
-      void navigate({ href: redirect, replace: true })
+      void navigate({ ...redirectTarget(redirect), replace: true })
       return
     }
     void navigate({

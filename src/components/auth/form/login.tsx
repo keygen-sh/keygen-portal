@@ -20,7 +20,7 @@ import { useSession } from "@/hooks/use-session"
 import { cn } from "@/lib/utils"
 import { toast } from "@/lib/toast"
 import { truncator } from "@/lib/truncate"
-import { setPendingRedirect } from "@/lib/auth"
+import { redirectTarget, setPendingRedirect } from "@/lib/auth"
 import { getRecentAccounts } from "@/lib/accounts"
 
 import * as Auth from "@/components/auth"
@@ -66,7 +66,7 @@ export default function LoginForm() {
     session.setUser(userId)
 
     if (redirect) {
-      void navigate({ href: redirect })
+      void navigate(redirectTarget(redirect))
       return
     }
 

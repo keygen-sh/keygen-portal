@@ -1,6 +1,7 @@
-import { createFileRoute, redirect } from "@tanstack/react-router"
+import { createFileRoute, notFound, redirect } from "@tanstack/react-router"
 
 import * as keygen from "@/keygen"
+import { staticLinkTarget } from "@/lib/routes"
 import { restoreSession } from "@/keygen/session"
 import { getRecentAccounts } from "@/lib/accounts"
 
@@ -38,9 +39,17 @@ export const Route = createFileRoute("/goto/$")({
       return
     }
 
+    const target = staticLinkTarget(
+      params._splat ?? "",
+      session.accountId ?? accountId,
+    )
+    if (!target) {
+      notFound({ throw: true })
+      return
+    }
+
     redirect({
-      to: `/$accountId/app/${params._splat ?? ""}`,
-      params: { accountId: session.accountId ?? accountId },
+      ...target,
       search: location.search,
       hash: location.hash,
       replace: true,

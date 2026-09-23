@@ -11,6 +11,7 @@ import {
 } from "./errors"
 import { uuid } from "./ids"
 import { recordMockRequest } from "./request-logs"
+import { recordDemoMutation } from "@/demo/engagement"
 import { matchMockRoute } from "./router"
 import type { MockResult } from "./types"
 
@@ -116,6 +117,10 @@ export async function handleMockRequest(
 
   if (url.pathname.startsWith("/v1/")) {
     recordMockRequest(ctx, result, rawBody)
+  }
+
+  if (ctx.method !== "GET" && result.status < 400) {
+    recordDemoMutation()
   }
 
   return toResponse(result, requestId)

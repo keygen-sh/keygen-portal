@@ -12,6 +12,7 @@ import { ThemeProvider } from "next-themes"
 import { routeTree } from "./routeTree.gen"
 import * as sentry from "@/sentry"
 import * as fathom from "@/fathom"
+import * as keygen from "@/keygen"
 import * as Page from "@/pages/error"
 import * as Loading from "@/components/loading"
 
@@ -47,31 +48,40 @@ declare module "@tanstack/react-router" {
   }
 }
 
-const rootElement = document.getElementById("root")!
+async function start(): Promise<void> {
+  if (keygen.config.isDemo) {
+    const demo = await import("@/demo")
+    demo.bootMock()
+  }
 
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement, {
-    onCaughtError: (error) => {
-      if (isNotFound(error) || isRedirect(error)) return
-      console.error(error)
-    },
-  })
+  const rootElement = document.getElementById("root")!
 
-  root.render(
-    <StrictMode>
-      <Sentry.ErrorBoundary>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          storageKey="keygen.theme"
-          disableTransitionOnChange
-        >
-          <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
-          </QueryClientProvider>
-        </ThemeProvider>
-      </Sentry.ErrorBoundary>
-    </StrictMode>,
-  )
+  if (!rootElement.innerHTML) {
+    const root = ReactDOM.createRoot(rootElement, {
+      onCaughtError: (error) => {
+        if (isNotFound(error) || isRedirect(error)) return
+        console.error(error)
+      },
+    })
+
+    root.render(
+      <StrictMode>
+        <Sentry.ErrorBoundary>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            storageKey="keygen.theme"
+            disableTransitionOnChange
+          >
+            <QueryClientProvider client={queryClient}>
+              <RouterProvider router={router} />
+            </QueryClientProvider>
+          </ThemeProvider>
+        </Sentry.ErrorBoundary>
+      </StrictMode>,
+    )
+  }
 }
+
+void start()

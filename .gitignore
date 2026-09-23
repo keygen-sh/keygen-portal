@@ -27,6 +27,7 @@ dist-ssr
 
 .env*
 !.env.sample
+!.env.demo
 
 # wrangler files
 .wrangler

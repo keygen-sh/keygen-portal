@@ -2,6 +2,13 @@ import config from "@/keygen/config"
 
 import { APIResponse, APIError } from "@/types/api"
 
+async function resolveFetch(): Promise<typeof fetch> {
+  if (!config.isDemo) return fetch
+
+  const demo = await import("@/demo")
+  return demo.fetchMock
+}
+
 export class Client {
   private host = `https://${config.host}`
 
@@ -101,13 +108,15 @@ export class Client {
     void environment
     void environmentToken
 
-    const response = await fetch(`${this.host}/${prefix ?? "v1"}${endpoint}`, {
-      ...fetchOptions,
-      headers,
-      ...(config.isSessionAuthenticated
-        ? { credentials: "include" } // cookies are only supported on cloud
-        : {}),
-    })
+    const request = await resolveFetch()
+    const response = await request(
+      `${this.host}/${prefix ?? "v1"}${endpoint}`,
+      {
+        ...fetchOptions,
+        headers,
+        ...(config.isSessionAuthenticated ? { credentials: "include" } : {}),
+      },
+    )
 
     const data = (await response.json().catch(() => ({}))) as APIResponse<T>
 

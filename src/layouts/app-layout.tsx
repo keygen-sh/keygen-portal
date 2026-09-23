@@ -73,7 +73,7 @@ function AppLayoutContent() {
   }, [isMobile, router, setOpen])
 
   return (
-    <div className="relative flex h-screen w-screen overflow-hidden">
+    <div className="relative mt-[var(--demo-offset,0px)] flex h-[calc(100dvh_-_var(--demo-offset,0px))] w-screen overflow-hidden">
       <Sidebar.Panel />
       <main
         className={cn(

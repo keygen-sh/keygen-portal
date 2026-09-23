@@ -1,3 +1,5 @@
+import * as Sentry from "@sentry/react"
+
 import config from "@/keygen/config"
 
 import { addRecentAccount } from "@/lib/accounts"
@@ -40,11 +42,13 @@ declare global {
 
 let booted = false
 
-export function bootMock(): void {
+export function boot(): void {
   if (booted) return
   booted = true
 
   installMockUploadShim()
+
+  Sentry.setTag("demo", "true")
 
   const requested = requestedProfile()
   const snapshot = requested ? null : persistence.loadMockSnapshot()

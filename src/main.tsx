@@ -51,7 +51,7 @@ declare module "@tanstack/react-router" {
 async function start(): Promise<void> {
   if (keygen.config.isDemo) {
     const demo = await import("@/demo")
-    demo.bootMock()
+    demo.boot()
   }
 
   const rootElement = document.getElementById("root")!

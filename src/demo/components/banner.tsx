@@ -12,6 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+import * as fathom from "@/fathom"
+
 import { toast } from "@/lib/toast"
 import { PRICING_URL } from "@/lib/url"
 
@@ -52,6 +54,8 @@ export default function DemoBanner() {
     return onDemoEngagement(() => {
       mode = "cta"
       setMessage("cta")
+
+      fathom.track("demo: engaged")
     })
   }, [])
 
@@ -61,6 +65,8 @@ export default function DemoBanner() {
     try {
       resetMockData()
       queryClient.clear()
+
+      fathom.track("demo: data reset")
 
       void router.invalidate().then(() => {
         toast({ message: "Demo records reset", variant: "success" })
@@ -89,6 +95,7 @@ export default function DemoBanner() {
         href={PRICING_URL}
         target="_blank"
         rel="noreferrer"
+        onClick={() => fathom.track(`demo: cta clicked (${message})`)}
         className="group flex items-center gap-1 text-xs font-semibold underline underline-offset-2"
       >
         Create an account

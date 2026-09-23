@@ -10,6 +10,14 @@ let profile = "established"
 let seededAt = new Date().toISOString()
 let timer: number | null = null
 
+export function describeMockStore(): {
+  profile: string
+  seededAt: string
+  persists: boolean
+} {
+  return { profile, seededAt, persists }
+}
+
 export function markMockSeeded(nextProfile: string): void {
   profile = nextProfile
   seededAt = new Date().toISOString()

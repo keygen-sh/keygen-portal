@@ -5,11 +5,12 @@ import { addRecentAccount } from "@/lib/accounts"
 import { handleMockRequest } from "./server/app"
 import * as persistence from "./server/persistence"
 import { mockStore } from "./server/store"
-import { seedMockData, type SeedProfile } from "./seeds"
+import { buildMockData, seedMockData, type SeedProfile } from "./seeds"
 import { MOCK_ACCOUNT, MOCK_ADMIN, MOCK_PORTAL_TOKEN } from "./seeds/universe"
 import { installMockUploadShim } from "./xhr"
 
 import "./handlers"
+import "./demo.css"
 
 export const isDemo = config.isDemo
 export const fetchMock = handleMockRequest
@@ -30,6 +31,7 @@ declare global {
   interface Window {
     demo?: {
       resetMock: (profile?: SeedProfile) => void
+      resetMockData: () => void
       mockStore: typeof mockStore
       MOCK_CREDENTIALS: typeof MOCK_CREDENTIALS
     }
@@ -59,6 +61,7 @@ export function bootMock(): void {
 
   window.demo = {
     resetMock,
+    resetMockData,
     mockStore,
     MOCK_CREDENTIALS,
   }
@@ -106,6 +109,28 @@ export function establishMockSession(): void {
     slug: MOCK_ACCOUNT.slug,
     name: MOCK_ACCOUNT.name,
   })
+}
+
+export function resetMockData(): void {
+  const { profile, seededAt } = persistence.describeMockStore()
+  const pristine = buildMockData(
+    profile as SeedProfile,
+    Date.parse(seededAt) || Date.now(),
+  )
+
+  mockStore.quietly(() => {
+    mockStore.clear()
+
+    for (const type of pristine.types()) {
+      const table = mockStore.table(type)
+
+      for (const row of pristine.table(type).all()) {
+        table.insert(row)
+      }
+    }
+  })
+
+  persistence.saveMockSnapshot()
 }
 
 export function resetMock(profile: SeedProfile = "established"): void {

@@ -16,7 +16,8 @@ export default async function validateKey({
   environment,
   signal,
 }: ValidateKeyProps): Promise<LicenseValidationResponse> {
-  const response = await fetch(
+  const request = config.isDemo ? (await import("@/demo")).fetchMock : fetch
+  const response = await request(
     `https://${config.host}/v1/accounts/${config.id}/licenses/actions/validate-key`,
     {
       method: "POST",

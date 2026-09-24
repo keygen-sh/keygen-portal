@@ -205,37 +205,33 @@ export default function CheckOutLicenseForm({
                         tooltip="A time-to-live (TTL) defines how long before the license file expires.
                                   If no TTL is set, the license file will default to a TTL of 30 days."
                       >
-                        <FormControl>
-                          <Select
-                            value={field.value}
-                            onValueChange={(value) => {
-                              const mode = value as TtlMode
-                              field.onChange(mode)
-                              if (mode === TtlMode.Default) {
-                                form.resetField("ttl")
-                              }
-                              if (mode === TtlMode.Expiry) {
-                                form.setValue("ttl", expiryTtl, {
-                                  shouldValidate: true,
-                                })
-                              }
-                              if (mode === TtlMode.None) {
-                                form.setValue("ttl", null)
-                              }
-                            }}
-                          >
+                        <Select
+                          value={field.value}
+                          onValueChange={(value) => {
+                            const mode = value as TtlMode
+                            if (mode === TtlMode.Expiry) {
+                              form.setValue("ttl", expiryTtl)
+                            } else if (mode === TtlMode.None) {
+                              form.setValue("ttl", null)
+                            } else {
+                              form.resetField("ttl")
+                            }
+                            field.onChange(mode)
+                          }}
+                        >
+                          <FormControl>
                             <SelectTrigger className="w-full">
                               <SelectValue />
                             </SelectTrigger>
-                            <SelectContent>
-                              {Object.values(TtlMode).map((mode) => (
-                                <SelectItem key={mode} value={mode}>
-                                  {TtlModeLabels[mode]}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
+                          </FormControl>
+                          <SelectContent>
+                            {Object.values(TtlMode).map((mode) => (
+                              <SelectItem key={mode} value={mode}>
+                                {TtlModeLabels[mode]}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </Forms.Field.Header>
                       <FormMessage />
                     </FormItem>

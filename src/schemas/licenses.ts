@@ -99,9 +99,11 @@ const CheckOutShape = z.object({
   algorithm: z.string().default(SigningAlgorithm.Ed25519),
 })
 
-const CheckOutRules = <S extends typeof CheckOutShape>(schema: S): S => {
-  return schema
-}
+const CheckOutRules = <S extends typeof CheckOutShape>(schema: S) =>
+  schema.refine((data) => data.ttl === null || data.ttl >= 0, {
+    message: "License has expired, so its expiry cannot be matched",
+    path: ["ttl"],
+  })
 
 export const CheckOutSchema = CheckOutRules(CheckOutShape)
 

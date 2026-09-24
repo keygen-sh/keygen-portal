@@ -220,7 +220,9 @@ export default function CheckOutMachineForm({
                                 form.resetField("ttl")
                               }
                               if (mode === TtlMode.Expiry) {
-                                form.setValue("ttl", expiryTtl)
+                                form.setValue("ttl", expiryTtl, {
+                                  shouldValidate: true,
+                                })
                               }
                               if (mode === TtlMode.None) {
                                 form.setValue("ttl", null)

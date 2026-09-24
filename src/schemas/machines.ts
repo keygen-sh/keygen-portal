@@ -1,7 +1,7 @@
 import { FieldPath } from "react-hook-form"
 import { z } from "zod"
 
-import { SigningAlgorithm } from "@/types/files"
+import { SigningAlgorithm, TtlMode } from "@/types/files"
 import { CombineFormValues } from "@/types/forms"
 import { NumberSchema } from "@/schemas/numbers"
 import { MetadataPairsSchema } from "@/schemas/metadata"
@@ -62,7 +62,7 @@ export type FieldNames = FieldPath<AllValues>
 const CheckOutShape = z.object({
   includeEnabled: z.boolean().default(false),
   include: z.array(z.string()).default([]),
-  ttlEnabled: z.boolean().default(false),
+  ttlMode: z.nativeEnum(TtlMode).default(TtlMode.Default),
   ttl: NumberSchema.nullable().default(null),
   encryptEnabled: z.boolean().default(false),
   algorithm: z.string().default(SigningAlgorithm.Ed25519),

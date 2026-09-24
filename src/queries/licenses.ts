@@ -5,7 +5,7 @@ import { useEnvironment } from "@/hooks/use-environment"
 import * as Schemas from "@/schemas"
 
 import { APIError } from "@/types/api"
-import { Encoding } from "@/types/files"
+import { Encoding, TtlMode } from "@/types/files"
 import {
   License,
   LicenseFile,
@@ -388,7 +388,12 @@ export function useCheckOutLicense(licenseId: string) {
           ? values.include
           : undefined
 
-      const ttl = values.ttlEnabled && values.ttl ? values.ttl : undefined
+      const ttl =
+        values.ttlMode === TtlMode.Default
+          ? undefined
+          : values.ttlMode === TtlMode.None
+            ? null
+            : values.ttl
 
       const encoding = values.encryptEnabled
         ? Encoding.Aes256Gcm

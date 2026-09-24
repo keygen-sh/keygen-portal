@@ -2,6 +2,7 @@ import { useState, useCallback } from "react"
 import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
+import { differenceInSeconds, parseISO } from "date-fns"
 
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -20,13 +21,20 @@ import {
 
 import * as Schemas from "@/schemas"
 
-import { SigningAlgorithm, SigningAlgorithmLabels } from "@/types/files"
+import {
+  SigningAlgorithm,
+  SigningAlgorithmLabels,
+  TtlMode,
+  TtlModeLabels,
+} from "@/types/files"
 
 import { toast } from "@/lib/toast"
 import { downloadBlob } from "@/lib/download"
 import { formatTtlLabel } from "@/lib/licenses"
+import { SECONDS_PER_DAY } from "@/lib/temporal"
 
-import { useCheckOutMachine } from "@/queries/machines"
+import { useGetLicense } from "@/queries/licenses"
+import { useGetMachine, useCheckOutMachine } from "@/queries/machines"
 
 import * as Forms from "@/components/forms"
 import MultiSelect from "@/components/multi-select"
@@ -61,7 +69,16 @@ export default function CheckOutMachineForm({
   onOpenChange,
 }: CheckOutMachineFormProps) {
   const { id } = useParams({ from: "/$accountId/app/machines/$id" })
+  const machine = useGetMachine(id)
+  const license = useGetLicense(
+    machine.data?.relationships.license?.data?.id ?? "",
+  )
   const checkOutMachine = useCheckOutMachine(id)
+
+  const expiry = license.data?.attributes.expiry
+  const expiryTtl = expiry
+    ? differenceInSeconds(parseISO(expiry), new Date())
+    : null
 
   const [showResult, setShowResult] = useState(false)
   const [certificate, setCertificate] = useState("")
@@ -75,10 +92,10 @@ export default function CheckOutMachineForm({
     mode: "onChange",
     defaultValues: {
       includeEnabled: false,
-      ttlEnabled: false,
+      ttlMode: TtlMode.Default,
       encryptEnabled: false,
       include: [],
-      ttl: null,
+      ttl: SECONDS_PER_DAY * 30,
       algorithm: SigningAlgorithm.Ed25519,
     },
   })
@@ -87,7 +104,7 @@ export default function CheckOutMachineForm({
     control: form.control,
     name: "includeEnabled",
   })
-  const ttlEnabled = useWatch({ control: form.control, name: "ttlEnabled" })
+  const ttlMode = useWatch({ control: form.control, name: "ttlMode" })
   const encryptEnabled = useWatch({
     control: form.control,
     name: "encryptEnabled",
@@ -102,17 +119,25 @@ export default function CheckOutMachineForm({
 
   const handleCheckOut = useCallback(
     (values: Schemas.Machines.CheckOutValues) => {
-      checkOutMachine.mutate(values, {
-        onSuccess: (machineFile) => {
-          setCertificate(machineFile.attributes.certificate)
-          setShowResult(true)
+      const ttl = values.ttlMode === TtlMode.Expiry ? expiryTtl : values.ttl
+
+      checkOutMachine.mutate(
+        { ...values, ttl },
+        {
+          onSuccess: (machineFile) => {
+            setCertificate(machineFile.attributes.certificate)
+            setShowResult(true)
+          },
+          onError: () => {
+            toast({
+              message: "Failed to check out machine",
+              variant: "error",
+            })
+          },
         },
-        onError: () => {
-          toast({ message: "Failed to check out machine", variant: "error" })
-        },
-      })
+      )
     },
-    [checkOutMachine],
+    [checkOutMachine, expiryTtl],
   )
 
   const handleOpenChange = useCallback(
@@ -206,30 +231,48 @@ export default function CheckOutMachineForm({
 
             <Forms.Section.Step
               crumb="Time to live"
-              fields={["ttlEnabled", "ttl"]}
+              fields={["ttlMode", "ttl"]}
             >
               <Forms.Section.Card title="Time to live">
                 <FormField
                   control={form.control}
-                  name="ttlEnabled"
+                  name="ttlMode"
                   render={({ field }) => (
                     <FormItem>
                       <Forms.Field.Header
-                        label="Add a custom TTL"
-                        variant="inline"
+                        label="TTL"
+                        variant="stacking"
                         tooltip="A time-to-live (TTL) defines how long before the machine file expires.
                                   If no TTL is set, the machine file will default to a TTL of 30 days."
                       >
                         <FormControl>
-                          <Checkbox
-                            checked={!!field.value}
-                            onCheckedChange={(value) => {
-                              field.onChange(!!value)
-                              if (!value) {
+                          <Select
+                            value={field.value}
+                            onValueChange={(value) => {
+                              const mode = value as TtlMode
+                              field.onChange(mode)
+                              if (mode === TtlMode.Default) {
                                 form.resetField("ttl")
                               }
+                              if (mode === TtlMode.Expiry) {
+                                form.setValue("ttl", expiryTtl)
+                              }
+                              if (mode === TtlMode.None) {
+                                form.setValue("ttl", null)
+                              }
                             }}
-                          />
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.values(TtlMode).map((mode) => (
+                                <SelectItem key={mode} value={mode}>
+                                  {TtlModeLabels[mode]}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </FormControl>
                       </Forms.Field.Header>
                       <FormMessage />
@@ -251,7 +294,7 @@ export default function CheckOutMachineForm({
                             value={field.value}
                             onChange={field.onChange}
                             units={["days", "weeks", "months", "years"]}
-                            disabled={!ttlEnabled}
+                            disabled={ttlMode !== TtlMode.Custom}
                             disabledTooltip="Enable a custom TTL to configure this field."
                           />
                         </FormControl>
@@ -344,9 +387,13 @@ export default function CheckOutMachineForm({
                     </li>
                   )}
                   <li>
-                    {ttlEnabled
+                    {ttlMode === TtlMode.Custom
                       ? `The machine file has a TTL of ${formatTtlLabel(ttl)}.`
-                      : "It has the default TTL of 30 days."}
+                      : ttlMode === TtlMode.Expiry
+                        ? "The machine file's TTL matches the license expiry."
+                        : ttlMode === TtlMode.None
+                          ? "The machine file has no TTL."
+                          : "It has the default TTL of 30 days."}
                   </li>
                 </ul>
               </div>

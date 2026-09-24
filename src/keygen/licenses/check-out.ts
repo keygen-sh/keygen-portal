@@ -8,7 +8,7 @@ config.validate()
 export interface CheckOutProps {
   id: string
   include?: string[]
-  ttl?: number
+  ttl?: number | null
   algorithm: string
 }
 
@@ -24,8 +24,8 @@ export default async function checkOut({
     params.set("include", include.join(","))
   }
 
-  if (ttl) {
-    params.set("ttl", String(ttl))
+  if (ttl !== undefined) {
+    params.set("ttl", ttl === null ? "" : String(ttl))
   }
 
   const result = (await client.request(

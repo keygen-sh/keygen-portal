@@ -60,7 +60,6 @@ export type AllValues = CombineFormValues<
 export type FieldNames = FieldPath<AllValues>
 
 const CheckOutShape = z.object({
-  includeEnabled: z.boolean().default(false),
   include: z.array(z.string()).default([]),
   ttlMode: z.nativeEnum(TtlMode).default(TtlMode.Default),
   ttl: NumberSchema.nullable().default(null),

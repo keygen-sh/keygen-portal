@@ -172,10 +172,7 @@ export function useCheckOutMachine(machineId: string) {
 
   return useMutation<MachineFile, APIError, Schemas.Machines.CheckOutValues>({
     mutationFn: (values) => {
-      const include =
-        values.includeEnabled && values.include.length > 0
-          ? values.include
-          : undefined
+      const include = values.include.length > 0 ? values.include : undefined
 
       const ttl =
         values.ttlMode === TtlMode.Default

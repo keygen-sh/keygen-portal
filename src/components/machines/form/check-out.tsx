@@ -91,7 +91,6 @@ export default function CheckOutMachineForm({
     resolver: zodResolver(Schemas.Machines.CheckOutSchema),
     mode: "onChange",
     defaultValues: {
-      includeEnabled: false,
       ttlMode: TtlMode.Default,
       encryptEnabled: false,
       include: [],
@@ -100,10 +99,6 @@ export default function CheckOutMachineForm({
     },
   })
 
-  const includeEnabled = useWatch({
-    control: form.control,
-    name: "includeEnabled",
-  })
   const ttlMode = useWatch({ control: form.control, name: "ttlMode" })
   const encryptEnabled = useWatch({
     control: form.control,
@@ -170,37 +165,9 @@ export default function CheckOutMachineForm({
           >
             <Forms.Section.Step
               crumb="Include relationships"
-              fields={["includeEnabled", "include"]}
+              fields={["include"]}
             >
               <Forms.Section.Card title="Relationships">
-                <FormField
-                  control={form.control}
-                  name="includeEnabled"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Forms.Field.Header
-                        label="Include relationship data"
-                        variant="inline"
-                        tooltip="You can include additional relationship data in the machine file,
-                                  such as a machine's license, or its components.
-                                  This data will be embedded into the machine file and can be decoded for offline use."
-                      >
-                        <FormControl>
-                          <Checkbox
-                            checked={!!field.value}
-                            onCheckedChange={(value) => {
-                              field.onChange(!!value)
-                              if (!value) {
-                                form.resetField("include")
-                              }
-                            }}
-                          />
-                        </FormControl>
-                      </Forms.Field.Header>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <FormField
                   control={form.control}
                   name="include"
@@ -209,16 +176,14 @@ export default function CheckOutMachineForm({
                       <Forms.Field.Header
                         label="Relationships"
                         variant="stacking"
-                        tooltip="Select the resource relationships to include in the machine file."
+                        tooltip="Select the resource relationships to include in the machine file, if any."
                       >
                         <FormControl>
                           <MultiSelect
                             value={field.value ?? []}
-                            onChange={field.onChange}
+                            onChange={(value) => field.onChange(value ?? [])}
                             options={INCLUDE_OPTIONS}
                             placeholder="Select relationships..."
-                            disabled={!includeEnabled}
-                            disabledTooltip="Enable relationship data to configure this field."
                           />
                         </FormControl>
                       </Forms.Field.Header>
@@ -380,7 +345,7 @@ export default function CheckOutMachineForm({
                       algorithm}
                     {encryptEnabled && " and encrypted with AES-256-GCM"}.
                   </li>
-                  {includeEnabled && include.length > 0 && (
+                  {include.length > 0 && (
                     <li>
                       The following relationships will be included in the
                       machine file: {include.join(", ")}.

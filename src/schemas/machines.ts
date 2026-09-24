@@ -68,10 +68,14 @@ const CheckOutShape = z.object({
 })
 
 const CheckOutRules = <S extends typeof CheckOutShape>(schema: S) =>
-  schema.refine((data) => data.ttl === null || data.ttl >= 0, {
-    message: "License has expired, so its expiry cannot be matched",
-    path: ["ttl"],
-  })
+  schema.refine(
+    (data) =>
+      data.ttlMode !== TtlMode.Expiry || data.ttl === null || data.ttl >= 0,
+    {
+      message: "License has expired, so its expiry cannot be matched",
+      path: ["ttlMode"],
+    },
+  )
 
 export const CheckOutSchema = CheckOutRules(CheckOutShape)
 

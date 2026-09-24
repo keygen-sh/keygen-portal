@@ -144,7 +144,11 @@ export default function DurationInput({
     return filtered.length > 0 ? filtered : DEFAULT_UNITS
   }, [units])
 
-  const availablePresets = presets ?? DEFAULT_PRESETS
+  const availablePresets =
+    presets ??
+    (availableUnits.some((u) => u.seconds == null)
+      ? DEFAULT_PRESETS
+      : DEFAULT_PRESETS.filter((p) => p.seconds != null))
 
   const [unit, setUnit] = useState<Unit>(() =>
     selectUnit(value, availableUnits),

@@ -149,10 +149,19 @@ export default function DurationInput({
   const [unit, setUnit] = useState<Unit>(() =>
     selectUnit(value, availableUnits),
   )
+  const [emitted, setEmitted] = useState(value)
+  const [received, setReceived] = useState(value)
   const [unitsOpen, setUnitsOpen] = useState(false)
   const [presetsOpen, setPresetsOpen] = useState(false)
 
   const inputRef = useRef<HTMLInputElement>(null)
+
+  if (!Object.is(value, received)) {
+    setReceived(value)
+    if (!Object.is(value, emitted)) {
+      setUnit(selectUnit(value, availableUnits))
+    }
+  }
 
   const num =
     value != null && value > 0 && unit.seconds != null
@@ -166,17 +175,22 @@ export default function DurationInput({
         ? null
         : num
 
+  const emit = (seconds: number | null) => {
+    setEmitted(seconds)
+    onChange(seconds)
+  }
+
   const apply = (n: number | null, u: Unit) => {
-    if (n != null && Number.isNaN(n)) onChange(NaN)
-    else if (n == null || u.seconds == null) onChange(null)
-    else onChange(n > 0 ? n * u.seconds : null)
+    if (n != null && Number.isNaN(n)) emit(NaN)
+    else if (n == null || u.seconds == null) emit(null)
+    else emit(n > 0 ? n * u.seconds : null)
   }
 
   const selectPreset = (seconds: number | null) => {
     const selectedUnit = selectUnit(seconds, availableUnits)
     setUnit(selectedUnit)
     setPresetsOpen(false)
-    onChange(seconds)
+    emit(seconds)
   }
 
   const onNumberChange = (next: number | null) => {

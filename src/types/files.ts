@@ -18,3 +18,17 @@ export const SigningAlgorithmLabels: Readonly<
   [SigningAlgorithm.RsaPssSha256]: "RSA PKCS1-PSS",
   [SigningAlgorithm.RsaSha256]: "RSA PKCS1",
 } as const
+
+export enum TtlMode {
+  Default = "default",
+  Expiry = "expiry",
+  None = "none",
+  Custom = "custom",
+}
+
+export const TtlModeLabels: Readonly<Record<TtlMode, string>> = {
+  [TtlMode.Default]: "Default",
+  [TtlMode.Expiry]: "Match TTL with Expiry",
+  [TtlMode.None]: "No TTL",
+  [TtlMode.Custom]: "Custom Duration",
+} as const

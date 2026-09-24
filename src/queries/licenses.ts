@@ -383,10 +383,7 @@ export function useCheckOutLicense(licenseId: string) {
 
   return useMutation<LicenseFile, APIError, Schemas.Licenses.CheckOutValues>({
     mutationFn: (values) => {
-      const include =
-        values.includeEnabled && values.include.length > 0
-          ? values.include
-          : undefined
+      const include = values.include.length > 0 ? values.include : undefined
 
       const ttl =
         values.ttlMode === TtlMode.Default

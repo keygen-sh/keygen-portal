@@ -59,18 +59,16 @@ export default function DemoBanner() {
     })
   }, [])
 
-  function reset(): void {
+  async function reset(): Promise<void> {
     setWorking(true)
 
     try {
       resetMockData()
-      queryClient.clear()
+      queryClient.removeQueries({ type: "inactive" })
+      await Promise.all([queryClient.invalidateQueries(), router.invalidate()])
 
       fathom.track("data reset")
-
-      void router.invalidate().then(() => {
-        toast({ message: "Demo records reset", variant: "success" })
-      })
+      toast({ message: "Demo records reset", variant: "success" })
     } catch (error) {
       console.error(error)
       toast({ message: "Demo reset failed", variant: "error" })

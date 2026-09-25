@@ -157,6 +157,10 @@
   }
 }
 
+@utility h-screen {
+  height: calc(100dvh - var(--demo-offset, 0px));
+}
+
 @utility underline-slide {
   position: relative;
   text-decoration: none;

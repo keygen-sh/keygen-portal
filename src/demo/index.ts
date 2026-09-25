@@ -13,7 +13,6 @@ import { MOCK_ACCOUNT, MOCK_ADMIN, MOCK_PORTAL_TOKEN } from "./seeds/universe"
 import { installMockUploadShim } from "./xhr"
 
 import "./handlers"
-import "./demo.css"
 
 export const isDemo = config.isDemo
 export const fetchMock = handleMockRequest

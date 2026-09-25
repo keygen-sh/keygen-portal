@@ -7,6 +7,7 @@ import { addRecentAccount } from "@/lib/accounts"
 import { handleMockRequest } from "./server/app"
 import * as persistence from "./server/persistence"
 import { mockStore } from "./server/store"
+import type { MockRow } from "./server/types"
 import { buildMockData, seedMockData, type SeedProfile } from "./seeds"
 import { MOCK_ACCOUNT, MOCK_ADMIN, MOCK_PORTAL_TOKEN } from "./seeds/universe"
 import { installMockUploadShim } from "./xhr"
@@ -125,6 +126,7 @@ export function resetMockData(): void {
     profile as SeedProfile,
     Date.parse(seededAt) || Date.now(),
   )
+  const sessionTokens = heldSessionTokens()
 
   mockStore.quietly(() => {
     mockStore.clear()
@@ -136,9 +138,35 @@ export function resetMockData(): void {
         table.insert(row)
       }
     }
+
+    const tokens = mockStore.table("tokens")
+
+    for (const row of sessionTokens) {
+      if (!tokens.has(row.id)) tokens.insert(row)
+    }
   })
 
   persistence.saveMockSnapshot()
+}
+
+function heldSessionTokens(): MockRow[] {
+  const secrets = new Set<string>()
+
+  for (const storage of [localStorage, sessionStorage]) {
+    const token = storage.getItem("token")
+    if (token) secrets.add(token)
+
+    const active = storage.getItem("keygen.environment.active")
+    if (active) {
+      const environment = JSON.parse(active) as { token?: string }
+      if (environment.token) secrets.add(environment.token)
+    }
+  }
+
+  return mockStore
+    .table("tokens")
+    .all()
+    .filter((row) => secrets.has(String(row.attributes.token)))
 }
 
 export function resetMock(profile: SeedProfile = "established"): void {

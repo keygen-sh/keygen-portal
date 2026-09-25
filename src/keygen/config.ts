@@ -1,8 +1,16 @@
 const CLOUD_HOSTS = ["api.keygen.sh", "api.keygen.dev"]
 const AUTHENTICATION_SCHEMES = ["token", "session"] as const
-const DEMO_BASEPATH = "/demo"
 
-type AuthenticationScheme = (typeof AUTHENTICATION_SCHEMES)[number]
+const DEMO_BASEPATH = "/demo"
+const DEMO_ENV: Partial<ImportMetaEnv> = {
+  VITE_KEYGEN_HOST: "api.keygen.sh",
+  VITE_KEYGEN_EDITION: "EE",
+  VITE_KEYGEN_MODE: "multiplayer",
+  VITE_KEYGEN_AUTHENTICATION_SCHEME: "token",
+  VITE_KEYGEN_ACCOUNT_ID: "",
+  VITE_KEYGEN_DEFAULT_PLAN_ID: "22db8e2c-6eef-46da-9353-bae4f2131c74",
+  VITE_LOGODEV_TOKEN: "",
+}
 
 let activeAccountId = ""
 
@@ -13,31 +21,28 @@ function isDemoPathname(pathname: string): boolean {
     normalized === DEMO_BASEPATH || normalized.startsWith(`${DEMO_BASEPATH}/`)
   )
 }
+const isDemo = isDemoPathname(window.location.pathname)
 
-const isCloud =
-  import.meta.env.VITE_KEYGEN_EDITION === "EE" &&
-  import.meta.env.VITE_KEYGEN_MODE === "multiplayer" &&
-  CLOUD_HOSTS.includes(import.meta.env.VITE_KEYGEN_HOST)
-
-const isDemo = isCloud && isDemoPathname(window.location.pathname)
-
-const authenticationScheme: AuthenticationScheme = isDemo
-  ? "token"
-  : import.meta.env.VITE_KEYGEN_AUTHENTICATION_SCHEME || "token"
+const env: ImportMetaEnv = isDemo
+  ? { ...import.meta.env, ...DEMO_ENV }
+  : import.meta.env
 
 const config = {
-  host: import.meta.env.VITE_KEYGEN_HOST,
-  mode: import.meta.env.VITE_KEYGEN_MODE,
-  authenticationScheme,
-  isCE: import.meta.env.VITE_KEYGEN_EDITION !== "EE",
-  isCloud,
+  host: env.VITE_KEYGEN_HOST,
+  mode: env.VITE_KEYGEN_MODE,
+  authenticationScheme: env.VITE_KEYGEN_AUTHENTICATION_SCHEME || "token",
+  isCE: env.VITE_KEYGEN_EDITION !== "EE",
+  isCloud:
+    env.VITE_KEYGEN_EDITION === "EE" &&
+    env.VITE_KEYGEN_MODE === "multiplayer" &&
+    CLOUD_HOSTS.includes(env.VITE_KEYGEN_HOST),
   isDemo,
   basepath: isDemo ? DEMO_BASEPATH : "/",
-  version: import.meta.env.VITE_KEYGEN_VERSION,
-  logoDevToken: import.meta.env.VITE_LOGODEV_TOKEN,
+  version: env.VITE_KEYGEN_VERSION,
+  logoDevToken: env.VITE_LOGODEV_TOKEN,
 
   get id(): string {
-    return import.meta.env.VITE_KEYGEN_ACCOUNT_ID || activeAccountId
+    return env.VITE_KEYGEN_ACCOUNT_ID || activeAccountId
   },
 
   setAccountId(id: string | null): void {
@@ -45,15 +50,15 @@ const config = {
   },
 
   get hasFixedAccount(): boolean {
-    return Boolean(import.meta.env.VITE_KEYGEN_ACCOUNT_ID)
+    return Boolean(env.VITE_KEYGEN_ACCOUNT_ID)
   },
 
   get defaultPlanId(): string {
-    return import.meta.env.VITE_KEYGEN_DEFAULT_PLAN_ID || ""
+    return env.VITE_KEYGEN_DEFAULT_PLAN_ID || ""
   },
 
   get supportEmail(): string {
-    return import.meta.env.VITE_KEYGEN_SUPPORT_EMAIL || ""
+    return env.VITE_KEYGEN_SUPPORT_EMAIL || ""
   },
 
   get isTokenAuthenticated(): boolean {
@@ -65,12 +70,12 @@ const config = {
   },
 
   sentry: {
-    dsn: import.meta.env.VITE_SENTRY_DSN,
-    environment: import.meta.env.VITE_SENTRY_ENVIRONMENT || "production",
+    dsn: env.VITE_SENTRY_DSN,
+    environment: env.VITE_SENTRY_ENVIRONMENT || "production",
   },
 
   fathom: {
-    siteId: import.meta.env.VITE_FATHOM_SITE_ID,
+    siteId: env.VITE_FATHOM_SITE_ID,
   },
 
   validate(): void {

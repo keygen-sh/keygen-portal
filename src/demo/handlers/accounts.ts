@@ -47,6 +47,7 @@ import {
   uuid,
 } from "@/demo/server"
 import { DEFAULT_SETTINGS, DEMO_PUBLIC_KEYS } from "@/demo/seeds/account"
+import config from "@/keygen/config"
 import { LicensePermissions } from "@/types/licenses"
 import { UserPermissions } from "@/types/users"
 
@@ -899,7 +900,7 @@ mockRoute("POST", `${MOCK_ACCOUNT}/actions/manage-subscription`, (ctx) => {
   ctx.resource = { type: TYPE, id: account.id }
   requireBilling(account)
 
-  const url = `/${String(account.attributes.slug)}/app/billing`
+  const url = `${config.basepath}/${String(account.attributes.slug)}/app/billing`
   return { status: 200, body: { meta: { url } }, headers: { Location: url } }
 })
 

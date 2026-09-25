@@ -1,3 +1,5 @@
+import "@/demo/storage"
+
 import { StrictMode } from "react"
 import ReactDOM from "react-dom/client"
 import * as Sentry from "@sentry/react"
@@ -30,6 +32,7 @@ const queryClient = new QueryClient({
 
 const router = createRouter({
   routeTree,
+  basepath: keygen.config.basepath,
   context: { queryClient },
   notFoundMode: "root",
   defaultNotFoundComponent: () => <Page.NotFound />,

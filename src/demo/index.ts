@@ -25,7 +25,7 @@ export const MOCK_CREDENTIALS = {
   password: MOCK_ADMIN.password,
 } as const
 
-export const MOCK_ENTRY_PATH = `/${MOCK_ACCOUNT.slug}/app`
+export const MOCK_ENTRY_PATH = `${config.basepath}/${MOCK_ACCOUNT.slug}/app`
 
 const PROFILES: readonly SeedProfile[] = ["established", "fresh"]
 
@@ -70,9 +70,13 @@ export function boot(): void {
     MOCK_CREDENTIALS,
   }
 
-  if (window.location.pathname === "/") {
+  if (isEntryPathname(window.location.pathname)) {
     window.history.replaceState(null, "", MOCK_ENTRY_PATH)
   }
+}
+
+function isEntryPathname(pathname: string): boolean {
+  return pathname.toLowerCase().replace(/\/$/, "") === config.basepath
 }
 
 function requestedProfile(): SeedProfile | null {

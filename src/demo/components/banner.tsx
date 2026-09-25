@@ -55,7 +55,7 @@ export default function DemoBanner() {
       mode = "cta"
       setMessage("cta")
 
-      fathom.track("demo: engaged")
+      fathom.track("engaged")
     })
   }, [])
 
@@ -66,7 +66,7 @@ export default function DemoBanner() {
       resetMockData()
       queryClient.clear()
 
-      fathom.track("demo: data reset")
+      fathom.track("data reset")
 
       void router.invalidate().then(() => {
         toast({ message: "Demo records reset", variant: "success" })
@@ -95,7 +95,7 @@ export default function DemoBanner() {
         href={PRICING_URL}
         target="_blank"
         rel="noreferrer"
-        onClick={() => fathom.track(`demo: cta clicked (${message})`)}
+        onClick={() => fathom.track(`cta clicked (${message})`)}
         className="group flex items-center gap-1 text-xs font-semibold underline underline-offset-2"
       >
         Create an account

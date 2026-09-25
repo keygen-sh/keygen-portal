@@ -1,21 +1,40 @@
 const CLOUD_HOSTS = ["api.keygen.sh", "api.keygen.dev"]
 const AUTHENTICATION_SCHEMES = ["token", "session"] as const
+const DEMO_BASEPATH = "/demo"
+
+type AuthenticationScheme = (typeof AUTHENTICATION_SCHEMES)[number]
 
 let activeAccountId = ""
+
+function isDemoPathname(pathname: string): boolean {
+  const normalized = pathname.toLowerCase()
+
+  return (
+    normalized === DEMO_BASEPATH || normalized.startsWith(`${DEMO_BASEPATH}/`)
+  )
+}
+
+const isCloud =
+  import.meta.env.VITE_KEYGEN_EDITION === "EE" &&
+  import.meta.env.VITE_KEYGEN_MODE === "multiplayer" &&
+  CLOUD_HOSTS.includes(import.meta.env.VITE_KEYGEN_HOST)
+
+const isDemo = isCloud && isDemoPathname(window.location.pathname)
+
+const authenticationScheme: AuthenticationScheme = isDemo
+  ? "token"
+  : import.meta.env.VITE_KEYGEN_AUTHENTICATION_SCHEME || "token"
 
 const config = {
   host: import.meta.env.VITE_KEYGEN_HOST,
   mode: import.meta.env.VITE_KEYGEN_MODE,
-  authenticationScheme:
-    import.meta.env.VITE_KEYGEN_AUTHENTICATION_SCHEME || "token",
+  authenticationScheme,
   isCE: import.meta.env.VITE_KEYGEN_EDITION !== "EE",
-  isCloud:
-    import.meta.env.VITE_KEYGEN_EDITION === "EE" &&
-    import.meta.env.VITE_KEYGEN_MODE === "multiplayer" &&
-    CLOUD_HOSTS.includes(import.meta.env.VITE_KEYGEN_HOST),
+  isCloud,
+  isDemo,
+  basepath: isDemo ? DEMO_BASEPATH : "/",
   version: import.meta.env.VITE_KEYGEN_VERSION,
   logoDevToken: import.meta.env.VITE_LOGODEV_TOKEN,
-  isDemo: import.meta.env.VITE_KEYGEN_DEMO === "true",
 
   get id(): string {
     return import.meta.env.VITE_KEYGEN_ACCOUNT_ID || activeAccountId

@@ -54,6 +54,7 @@ import {
   uuid,
   visible,
 } from "@/demo/server"
+import config from "@/keygen/config"
 import {
   AllRoles,
   AllowedPermissionsByRole,
@@ -917,7 +918,7 @@ mockRoute(
           subject: invited
             ? `You've been invited to ${accountName} on Keygen`
             : `Reset your ${accountName} password`,
-          link: `${window.location.origin}/${slug}/auth/reset?token=${resetToken}`,
+          link: `${window.location.origin}${config.basepath}/${slug}/auth/reset?token=${resetToken}`,
           kind: invited ? "invite" : "reset",
         },
         { account: accountRef(ctx), user: { type: TYPE, id: row.id } },

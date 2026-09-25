@@ -6,7 +6,7 @@ import {
   useCallback,
   type ReactElement,
 } from "react"
-import { useNavigate } from "@tanstack/react-router"
+import { useNavigate, useRouter } from "@tanstack/react-router"
 import { Command as CommandPrimitive } from "cmdk"
 import { ChevronLeft, X } from "lucide-react"
 
@@ -144,6 +144,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
   // keyboard/search selection because that's what Enter activates.
   const ignorePointerValueChangeRef = useRef(false)
 
+  const router = useRouter()
   const navigate = useNavigate()
   const navigateToResource = useResourceNavigate()
 
@@ -305,7 +306,7 @@ export default function Menu({ open, onOpenChange }: MenuProps): ReactElement {
   }
 
   function toggleCurrentPageFavorite() {
-    const path = window.location.pathname
+    const path = router.state.location.pathname
     const page = favorites.find(
       (favorite) => favorite.kind === "page" && favorite.path === path,
     )

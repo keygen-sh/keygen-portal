@@ -54,6 +54,7 @@ export function SessionProvider({
   // Sync logout when another tab clears the token for multitab cases
   useEffect(() => {
     function handleStorage(e: StorageEvent) {
+      if (keygen.config.isDemo) return
       if (
         e.storageArea === localStorage &&
         (e.key === "token" || e.key === "tokenId") &&

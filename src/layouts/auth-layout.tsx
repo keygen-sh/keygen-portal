@@ -64,7 +64,7 @@ export default function AuthLayout() {
   })()
 
   return (
-    <div className="flex min-h-screen">
+    <div className="mt-[var(--demo-offset,0px)] flex min-h-[calc(100dvh_-_var(--demo-offset,0px))]">
       <Toaster />
       <section className="z-20 flex w-full flex-col bg-background md:w-1/2 md:shadow-2xl/30">
         <nav className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-4 pt-8 md:pt-10">

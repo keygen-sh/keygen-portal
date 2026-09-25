@@ -1,7 +1,7 @@
 import type { MockSnapshot } from "./store"
 import { mockStore } from "./store"
 
-const STORAGE_KEY = "keygen.demo.store"
+const STORAGE_KEY = "store"
 const SAVE_DELAY = 250
 
 const persists = !import.meta.env.DEV

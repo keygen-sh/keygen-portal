@@ -8,5 +8,5 @@ export default function track(event: string): void {
     return
   }
 
-  Fathom.trackEvent(event)
+  Fathom.trackEvent(keygen.config.isDemo ? `demo: ${event}` : event)
 }

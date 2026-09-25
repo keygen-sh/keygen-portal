@@ -1,4 +1,5 @@
 import { useEffect, useSyncExternalStore } from "react"
+import { useRouter } from "@tanstack/react-router"
 
 import * as keygen from "@/keygen"
 
@@ -124,13 +125,15 @@ export const toggleFavoritePage = (page: FavoritePage): void =>
   favorites.toggle({ kind: "page", ...page })
 
 export function useSyncFavoritePageLabel(label?: string | null): void {
+  const router = useRouter()
+
   useEffect(() => {
     if (!label) return
     favorites.update({
       kind: "page",
-      path: window.location.pathname,
+      path: router.state.location.pathname,
       label,
       accountId: keygen.config.id,
     })
-  }, [label])
+  }, [label, router])
 }

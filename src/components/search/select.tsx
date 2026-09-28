@@ -25,7 +25,7 @@ import {
 } from "@/types/search"
 
 import { cn } from "@/lib/utils"
-import { truncator, TruncateStyle } from "@/lib/truncate"
+import { truncateId, truncator, TruncateStyle } from "@/lib/truncate"
 
 import * as Loading from "@/components/loading"
 
@@ -234,6 +234,7 @@ export default function SearchSelect<T extends SearchOption>({
               ) : visibleOptions.length > 0 ? (
                 visibleOptions.map((option) => {
                   const label = getLabel(option)
+                  const shortId = truncateId(option.id)
                   const displayOptionLabel = renderOption
                     ? renderOption(option)
                     : format
@@ -247,7 +248,14 @@ export default function SearchSelect<T extends SearchOption>({
                       onSelect={() => handleSelect(option.id)}
                       className="cursor-pointer"
                     >
-                      {displayOptionLabel}
+                      <span className="min-w-0 flex-1 truncate">
+                        {displayOptionLabel}
+                      </span>
+                      {label !== option.id && label !== shortId && (
+                        <span className="ml-auto shrink-0 font-mono text-xs text-content-subdued">
+                          {shortId}
+                        </span>
+                      )}
                     </CommandItem>
                   )
                 })

@@ -2,7 +2,6 @@ import { useState, useRef, useMemo, type KeyboardEvent } from "react"
 
 import { Info, X } from "lucide-react"
 
-import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -26,15 +25,18 @@ import {
 
 import { useSearch } from "@/queries/search"
 import {
-  resourceConfigs,
-  getDefaultLabel,
-  MIN_SEARCH_LENGTH,
-} from "@/lib/search"
-import {
   SearchOption,
   SearchOperator,
   SearchableResource,
 } from "@/types/search"
+
+import {
+  resourceConfigs,
+  getDefaultLabel,
+  MIN_SEARCH_LENGTH,
+} from "@/lib/search"
+import { cn } from "@/lib/utils"
+import { truncateId } from "@/lib/truncate"
 
 import * as Loading from "@/components/loading"
 
@@ -280,6 +282,7 @@ export default function SearchMultiSelect<T extends SearchOption>({
               ) : (
                 visibleOptions.map((option) => {
                   const label = getLabel(option)
+                  const shortId = truncateId(option.id)
                   const isLocked = lockedIds.has(option.id)
 
                   return (
@@ -294,7 +297,12 @@ export default function SearchMultiSelect<T extends SearchOption>({
                         checked={isLocked || selected.includes(option.id)}
                         className="pointer-events-none mr-2"
                       />
-                      {label}
+                      <span className="min-w-0 flex-1 truncate">{label}</span>
+                      {label !== option.id && label !== shortId && (
+                        <span className="ml-auto shrink-0 font-mono text-xs text-content-subdued">
+                          {shortId}
+                        </span>
+                      )}
                       {isLocked && lockedDescription && (
                         <LockedHint
                           description={lockedDescription}

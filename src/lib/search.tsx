@@ -118,7 +118,7 @@ export const groupsConfig: ResourceConfig<Group> = {
 export const usersConfig: ResourceConfig<User> = {
   getLabel: getUserLabel,
   placeholder: "Select an owner...",
-  searchPlaceholder: "Search by ID or email...",
+  searchPlaceholder: "Search by ID, email, or name...",
   emptyMessage: (
     <span className="flex items-center gap-2">
       No users found.
@@ -130,7 +130,13 @@ export const usersConfig: ResourceConfig<User> = {
     </span>
   ),
   searchQuery: (term) => ({
-    query: { id: term, email: term, firstName: term, lastName: term },
+    query: {
+      id: term,
+      email: term,
+      firstName: term,
+      lastName: term,
+      fullName: term,
+    },
     op: "OR",
   }),
 }

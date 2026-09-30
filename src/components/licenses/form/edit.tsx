@@ -25,6 +25,7 @@ import { useGetPolicy, useListPolicyEntitlements } from "@/queries/policies"
 import { useCreateEntitlement } from "@/queries/entitlements"
 
 import { toast } from "@/lib/toast"
+import { normalizeLicensePermissions } from "@/lib/licenses"
 import { settleCreateEntitlements } from "@/lib/entitlements"
 
 import * as keygen from "@/keygen"
@@ -101,7 +102,9 @@ export default function EditLicenseForm({
           policyId: currentPolicyId ?? "",
           groupId: currentGroupId,
           ownerId: currentOwnerId,
-          permissions: license.attributes.permissions ?? null,
+          permissions: normalizeLicensePermissions(
+            license.attributes.permissions ?? null,
+          ),
           metadata: recordToMetadataPairs(license.attributes.metadata),
           entitlements: {
             attach: directLicenseEntitlements.map((e) => e.id),

@@ -126,7 +126,7 @@ export const TokenAttributeDescriptions: Readonly<
   name: "The name of the token, if any.",
   expiry:
     "The timestamp for when the token expires. Requests using an expired token will be rejected.",
-  permissions: "The permissions for the token",
+  permissions: "The permissions for the token.",
   activations:
     "The number of machine activations that have been performed by this token. This attribute is only applicable to license tokens.",
   maxActivations:

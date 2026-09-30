@@ -29,6 +29,8 @@ import { useListPolicies, useListPolicyEntitlements } from "@/queries/policies"
 import { useListProducts } from "@/queries/products"
 import { useListEntitlements } from "@/queries/entitlements"
 
+import { useAccountDefaultLicensePermissions } from "@/hooks/use-account-default-license-permissions"
+
 import * as Schemas from "@/schemas"
 import {
   LicenseFormFieldDescriptions,
@@ -43,10 +45,10 @@ import { type FieldVariant } from "@/components/forms/field"
 import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
 import * as Calendars from "@/components/calendars"
-import MultiSelect from "@/components/multi-select"
 import NumberInput from "@/components/number-input"
 import MetadataInput from "@/components/metadata-input"
 import ByteSizeInput from "@/components/byte-size-input"
+import PermissionSelect from "@/components/permission-select"
 
 type Descriptions = typeof LicenseFormFieldDescriptions
 
@@ -936,6 +938,11 @@ function ProtectedField({
   )
 }
 
+const PERMISSION_OPTIONS = LicensePermissions.map((permission) => ({
+  label: permission,
+  value: permission,
+}))
+
 function PermissionsField({
   schema,
   autoFocus,
@@ -948,6 +955,7 @@ function PermissionsField({
   descriptions: Descriptions
 }) {
   const form = useFormContext<Schemas.Licenses.BaseValues>()
+  const defaults = useAccountDefaultLicensePermissions()
 
   return (
     <FormField
@@ -961,14 +969,12 @@ function PermissionsField({
             optional
             tooltip={descriptions.permissions}
           >
-            <MultiSelect
+            <PermissionSelect
               value={field.value}
               onChange={field.onChange}
-              options={LicensePermissions.map((p) => ({
-                label: p,
-                value: p,
-              }))}
-              includeNone
+              options={PERMISSION_OPTIONS}
+              defaults={defaults}
+              includeNone={schema === "edit"}
               includeWildcard
               placeholder={
                 schema === "create"

@@ -79,6 +79,7 @@ interface PermissionSelectProps {
   includeWildcard?: boolean
   requiredOptions?: RequiredOption[]
   placeholder?: string
+  emptyDescription?: string
   disabled?: boolean
   autoFocus?: boolean
   disabledTooltip?: string
@@ -172,6 +173,7 @@ export default function PermissionSelect({
   includeWildcard,
   requiredOptions = [],
   placeholder = "Leave blank to use defaults",
+  emptyDescription = "Using defaults",
   disabled,
   autoFocus,
   disabledTooltip,
@@ -283,7 +285,7 @@ export default function PermissionSelect({
                 ? "All permissions"
                 : items.length > 0
                   ? `${items.length} of ${options.length} permissions`
-                  : "Using defaults"}
+                  : emptyDescription}
           </DialogDescription>
         </DialogHeader>
 

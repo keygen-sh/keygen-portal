@@ -56,8 +56,8 @@ import { type FieldVariant } from "@/components/forms/field"
 import * as Forms from "@/components/forms"
 import * as Search from "@/components/search"
 import * as Calendars from "@/components/calendars"
-import MultiSelect from "@/components/multi-select"
 import NumberInput from "@/components/number-input"
+import PermissionSelect from "@/components/permission-select"
 import { CardSelector, CardOption } from "@/components/card-selector"
 
 const BEARER_KIND_ICONS: Record<TokenBearerKind, ReactNode> = {
@@ -536,6 +536,11 @@ function MaxDeactivationsField({
   )
 }
 
+const PERMISSION_OPTIONS = Permissions.map((permission) => ({
+  label: permission,
+  value: permission,
+}))
+
 function PermissionsField({ fieldVariant }: { fieldVariant?: FieldVariant }) {
   const form = useFormContext<Schemas.Tokens.BaseValues>()
 
@@ -551,16 +556,12 @@ function PermissionsField({ fieldVariant }: { fieldVariant?: FieldVariant }) {
             optional
             tooltip={TokenFormFieldDescriptions.permissions}
           >
-            <MultiSelect
+            <PermissionSelect
               value={field.value}
               onChange={field.onChange}
-              options={Permissions.map((permission) => ({
-                label: permission,
-                value: permission,
-              }))}
-              includeNone
-              includeWildcard
+              options={PERMISSION_OPTIONS}
               placeholder="Leave blank to inherit the bearer's permissions"
+              emptyDescription="Inheriting bearer permissions"
             />
           </Forms.Field.Header>
           <FormMessage />

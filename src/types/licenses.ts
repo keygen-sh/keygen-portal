@@ -319,3 +319,13 @@ export const LicensePermissions: readonly Permission[] = [
   "token.revoke",
   "user.read",
 ]
+
+const LegacyDefaultLicenseExclusions: ReadonlySet<Permission> = new Set([
+  "account.read",
+  "policy.read",
+  "product.read",
+  "user.read",
+])
+
+export const LicenseDefaultPermissions: readonly Permission[] =
+  LicensePermissions.filter((p) => !LegacyDefaultLicenseExclusions.has(p))

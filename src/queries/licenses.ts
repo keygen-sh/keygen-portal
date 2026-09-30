@@ -15,6 +15,7 @@ import {
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
+import { normalizeLicensePermissions } from "@/lib/licenses"
 
 export type { LicenseFilters }
 
@@ -118,7 +119,12 @@ export function useUpdateLicense(licenseId: string) {
         const current = response.data
 
         const changes = diff(
-          current.attributes,
+          {
+            ...current.attributes,
+            permissions: normalizeLicensePermissions(
+              current.attributes.permissions,
+            ),
+          },
           values as Partial<typeof current.attributes>,
         ) as Schemas.Licenses.UpdateValues
         if (Object.keys(changes).length === 0) return current

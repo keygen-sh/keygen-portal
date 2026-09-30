@@ -1,5 +1,10 @@
 import { Policy } from "@/types/policies"
-import { License, LicenseAttributeDescriptions } from "@/types/licenses"
+import { WildcardPermission } from "@/types/users"
+import {
+  License,
+  LicensePermissions,
+  LicenseAttributeDescriptions,
+} from "@/types/licenses"
 
 import { formatByteLimitDisplay, formatRawByteLimitDisplay } from "@/lib/bytes"
 import { capitalize } from "@/lib/utils"
@@ -264,4 +269,18 @@ export function formatTtlLabel(seconds: number | null): string {
   if (hours >= 1) return `${hours} hour${hours === 1 ? "" : "s"}`
 
   return `${seconds} seconds`
+}
+
+const LICENSE_PERMISSION_SET: ReadonlySet<string> = new Set(LicensePermissions)
+
+export function normalizeLicensePermissions(
+  permissions: string[] | null,
+): string[] | null {
+  if (permissions == null) {
+    return null
+  }
+
+  return permissions.some((p) => !LICENSE_PERMISSION_SET.has(p))
+    ? [WildcardPermission]
+    : permissions
 }

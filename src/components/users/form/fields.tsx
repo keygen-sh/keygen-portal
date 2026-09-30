@@ -196,6 +196,7 @@ export default function UsersFormFields({
             return (
               <InternalPermissionsField
                 key="internalPermissions"
+                schema={schema}
                 autoFocus={autoFocus === "internalPermissions"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
@@ -614,7 +615,7 @@ function PermissionsField({
               options={PERMISSION_OPTIONS}
               grantable={currentPermissions}
               defaults={defaults}
-              includeNone
+              includeNone={schema === "edit"}
               includeWildcard
               requiredOptions={requiredOptions}
               placeholder={
@@ -648,10 +649,12 @@ const requiredOptionsFor = (
     }))
 
 function InternalPermissionsField({
+  schema,
   autoFocus,
   fieldVariant = "row",
   descriptions,
 }: {
+  schema?: Schemas.Users.SchemaNames
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
@@ -706,7 +709,7 @@ function InternalPermissionsField({
                 options={PERMISSION_OPTIONS}
                 grantable={currentPermissions}
                 defaults={role != null ? defaultPermissionsFor(role) : []}
-                includeNone
+                includeNone={schema === "edit"}
                 includeWildcard
                 requiredOptions={requiredOptions}
                 autoFocus={autoFocus}
@@ -1154,7 +1157,6 @@ function InviteRow({
                       options={PERMISSION_OPTIONS}
                       grantable={currentPermissions}
                       defaults={role != null ? defaultPermissionsFor(role) : []}
-                      includeNone
                       includeWildcard
                       requiredOptions={requiredOptions}
                     />

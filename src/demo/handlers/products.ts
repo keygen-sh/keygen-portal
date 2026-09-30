@@ -51,17 +51,7 @@ const DEFAULT_DISTRIBUTION_STRATEGY = "LICENSED"
 const URL_PROTOCOLS = ["http:", "https:"]
 const BLOCKED_URL_HOSTS = ["localhost", "keygen.sh"]
 const TLD_PATTERN = /\.[a-zA-Z]{2,}$/
-const BACKEND_ONLY_PERMISSIONS = [
-  "group.users.read",
-  "machine.heartbeat.ping",
-  "machine.heartbeat.reset",
-  "process.heartbeat.ping",
-]
-const ALLOWED_PERMISSIONS = new Set([
-  "*",
-  ...ProductPermissions,
-  ...BACKEND_ONLY_PERMISSIONS,
-])
+const ALLOWED_PERMISSIONS = new Set<string>(["*", ...ProductPermissions])
 const RELATED_COLLECTIONS = [
   "policies",
   "licenses",

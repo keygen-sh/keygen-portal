@@ -1,5 +1,6 @@
 import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
 import { Writable } from "@/types/utility"
+import type { Permission } from "@/types/users"
 
 export enum ProductErrorCode {
   CodeTaken = "CODE_TAKEN",
@@ -100,7 +101,7 @@ export const DistributionStrategyLabels: Readonly<
   [DistributionStrategy.Closed]: "Closed",
 } as const
 
-export const ProductPermissions = [
+export const ProductPermissions: readonly Permission[] = [
   "account.read",
   "arch.read",
   "artifact.create",
@@ -124,6 +125,7 @@ export const ProductPermissions = [
   "group.owners.read",
   "group.read",
   "group.update",
+  "group.users.read",
   "key.read",
   "key.create",
   "key.delete",
@@ -155,9 +157,8 @@ export const ProductPermissions = [
   "machine.create",
   "machine.delete",
   "machine.group.update",
-  "machine.heartbeat",
-  "machine.ping",
-  "machine.reset",
+  "machine.heartbeat.ping",
+  "machine.heartbeat.reset",
   "machine.owner.update",
   "machine.proofs.generate",
   "machine.read",
@@ -176,8 +177,7 @@ export const ProductPermissions = [
   "policy.update",
   "process.create",
   "process.delete",
-  "process.heartbeat",
-  "process.ping",
+  "process.heartbeat.ping",
   "process.read",
   "process.update",
   "product.read",
@@ -214,5 +214,3 @@ export const ProductPermissions = [
 ]
 
 export const KnownPlatforms = ["Windows", "macOS", "Linux", "iOS", "Android"]
-
-export type ProductPermission = (typeof ProductPermissions)[number]

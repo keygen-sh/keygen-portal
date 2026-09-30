@@ -212,7 +212,7 @@ export default function PermissionSelect({
         ? items.filter((v) => v !== next)
         : [...items, next]
 
-    onChange(selected.length === 0 ? null : selected)
+    onChange(selected.length === 0 && !includeNone ? null : selected)
   }
 
   const toggleRef = useRef(toggle)
@@ -233,7 +233,7 @@ export default function PermissionSelect({
       ? base.filter((v) => !values.includes(v))
       : [...new Set([...base, ...checkable])]
 
-    onChange(selected.length === 0 ? null : selected)
+    onChange(selected.length === 0 && !includeNone ? null : selected)
   }
 
   const summary = isNoneSelected ? (

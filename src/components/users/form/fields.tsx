@@ -25,7 +25,7 @@ import * as Schemas from "@/schemas"
 import { useListGroups } from "@/queries/groups"
 
 import { usePermissions } from "@/hooks/use-permissions"
-import { useAccountDefaultPermissions } from "@/hooks/use-account-default-permissions"
+import { useAccountDefaultUserPermissions } from "@/hooks/use-account-default-user-permissions"
 
 import {
   permissionsForRole,
@@ -425,7 +425,7 @@ function RoleField({
 }) {
   const form = useFormContext<Schemas.Users.BaseValues>()
   const { permissions: currentPermissions } = usePermissions()
-  const accountDefaults = useAccountDefaultPermissions()
+  const accountDefaults = useAccountDefaultUserPermissions()
 
   return (
     <FormField
@@ -592,7 +592,7 @@ function PermissionsField({
     () => requiredOptionsFor(resolvedRole, currentPermissions),
     [resolvedRole, currentPermissions],
   )
-  const accountDefaults = useAccountDefaultPermissions()
+  const accountDefaults = useAccountDefaultUserPermissions()
 
   const defaults = defaultPermissionsFor(resolvedRole, accountDefaults)
 

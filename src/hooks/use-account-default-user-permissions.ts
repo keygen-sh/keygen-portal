@@ -4,7 +4,7 @@ import { useGetAccountSettings } from "@/queries/accounts"
 
 import { UserDefaultPermissions } from "@/types/users"
 
-export function useAccountDefaultPermissions(): readonly string[] {
+export function useAccountDefaultUserPermissions(): readonly string[] {
   const { data: settings = [] } = useGetAccountSettings()
 
   return useMemo(() => {

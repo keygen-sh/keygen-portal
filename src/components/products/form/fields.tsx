@@ -24,8 +24,8 @@ import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
 import TagInput from "@/components/tag-input"
-import MultiSelect from "@/components/multi-select"
 import MetadataInput from "@/components/metadata-input"
+import PermissionSelect from "@/components/permission-select"
 import { CardSelector, CardOption } from "@/components/card-selector"
 
 type Descriptions = typeof ProductFormFieldDescriptions
@@ -307,6 +307,11 @@ function DistributionStrategyField() {
   )
 }
 
+const PERMISSION_OPTIONS = ProductPermissions.map((permission) => ({
+  label: permission,
+  value: permission,
+}))
+
 function PermissionsField({
   schema,
   autoFocus,
@@ -332,14 +337,12 @@ function PermissionsField({
             tooltip={descriptions.permissions}
             optional
           >
-            <MultiSelect
+            <PermissionSelect
               value={field.value}
               onChange={field.onChange}
-              options={ProductPermissions.map((p) => ({
-                label: p,
-                value: p,
-              }))}
-              includeNone
+              options={PERMISSION_OPTIONS}
+              defaults={ProductPermissions}
+              includeNone={schema === "edit"}
               includeWildcard
               placeholder={
                 schema === "create"

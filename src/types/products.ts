@@ -62,7 +62,7 @@ export const ProductAttributeDescriptions: Readonly<
   distributionStrategy: "The distribution strategy for releases.",
   url: "",
   platforms: "",
-  permissions: "The permissions for the product. Leave blank to use defaults.",
+  permissions: "The permissions for the product.",
   metadata:
     "Store arbitrary key/value data on the product for book keeping purposes, additional product info, etc.",
 } as const
@@ -75,6 +75,8 @@ export const ProductFormFieldDescriptions: typeof ProductAttributeDescriptions =
 export const ProductCreateFormFieldDescriptions: typeof ProductFormFieldDescriptions =
   {
     ...ProductFormFieldDescriptions,
+    permissions:
+      "The permissions for the product. Leave blank to use defaults.",
   }
 
 export const ProductEditFormFieldDescriptions: typeof ProductFormFieldDescriptions =

@@ -9,15 +9,15 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
-import { UserPermissions } from "@/types/users"
-import { LicensePermissions } from "@/types/licenses"
+import { UserPermissions, UserDefaultPermissions } from "@/types/users"
+import { LicensePermissions, LicenseDefaultPermissions } from "@/types/licenses"
 import { type FieldVariant } from "@/components/forms/field"
 import { AccountFormFieldDescriptions } from "@/types/accounts"
 
 import * as Schemas from "@/schemas"
 
 import * as Forms from "@/components/forms"
-import MultiSelect from "@/components/multi-select"
+import PermissionSelect from "@/components/permission-select"
 
 type FieldNames = Schemas.Account.FieldNames
 
@@ -80,14 +80,14 @@ export default function SettingsFormFields({
             return (
               <LicensePermissionsField
                 key="defaultLicensePermissions"
-                autoFocus={autoFocus === "slug"}
+                autoFocus={autoFocus === "defaultLicensePermissions"}
               />
             )
           case "defaultUserPermissions":
             return (
               <UserPermissionsField
                 key="defaultUserPermissions"
-                autoFocus={autoFocus === "slug"}
+                autoFocus={autoFocus === "defaultUserPermissions"}
               />
             )
           default:
@@ -247,6 +247,16 @@ function ProtectedField({
   )
 }
 
+const LICENSE_PERMISSION_OPTIONS = LicensePermissions.map((permission) => ({
+  label: permission,
+  value: permission,
+}))
+
+const USER_PERMISSION_OPTIONS = UserPermissions.map((permission) => ({
+  label: permission,
+  value: permission,
+}))
+
 function LicensePermissionsField({ autoFocus }: { autoFocus?: boolean }) {
   const form = useFormContext<Schemas.Account.PermissionsValues>()
 
@@ -261,16 +271,12 @@ function LicensePermissionsField({ autoFocus }: { autoFocus?: boolean }) {
             variant="stacking"
             tooltip={AccountFormFieldDescriptions.defaultLicensePermissions}
           >
-            <MultiSelect
+            <PermissionSelect
               value={field.value}
               onChange={field.onChange}
-              options={LicensePermissions.map((p) => ({
-                label: p,
-                value: p,
-              }))}
-              includeNone
+              options={LICENSE_PERMISSION_OPTIONS}
+              defaults={LicenseDefaultPermissions}
               includeWildcard
-              placeholder="Select permissions..."
               autoFocus={autoFocus}
             />
           </Forms.Field.Header>
@@ -295,16 +301,12 @@ function UserPermissionsField({ autoFocus }: { autoFocus?: boolean }) {
             variant="stacking"
             tooltip={AccountFormFieldDescriptions.defaultUserPermissions}
           >
-            <MultiSelect
+            <PermissionSelect
               value={field.value}
               onChange={field.onChange}
-              options={UserPermissions.map((p) => ({
-                label: p,
-                value: p,
-              }))}
-              includeNone
+              options={USER_PERMISSION_OPTIONS}
+              defaults={UserDefaultPermissions}
               includeWildcard
-              placeholder="Select permissions..."
               autoFocus={autoFocus}
             />
           </Forms.Field.Header>

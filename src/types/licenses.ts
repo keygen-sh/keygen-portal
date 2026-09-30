@@ -1,5 +1,6 @@
 import { APIResponse, Resource, Relationship, Linkage } from "@/types/api"
 import { Writable } from "@/types/utility"
+import type { Permission } from "@/types/users"
 
 export enum LicenseErrorCode {
   KeyTaken = "KEY_TAKEN",
@@ -275,12 +276,15 @@ export type LicenseFilters = {
   metadata?: Record<string, string>
 }
 
-export const LicensePermissions = [
+export const LicensePermissions: readonly Permission[] = [
   "account.read",
   "arch.read",
   "artifact.read",
   "channel.read",
+  "component.create",
+  "component.delete",
   "component.read",
+  "component.update",
   "constraint.read",
   "engine.read",
   "entitlement.read",

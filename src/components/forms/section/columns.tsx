@@ -1,4 +1,4 @@
-import { Children, isValidElement, type ReactNode } from "react"
+import { Children, Fragment, isValidElement, type ReactNode } from "react"
 
 import { cn } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
@@ -29,14 +29,14 @@ export default function FormsSectionColumns({
 
       <div className={cn("flex flex-col gap-4 md:flex-row", className)}>
         {columns.map((column, index) => (
-          <div key={index} className="flex flex-1 gap-4 md:flex-row">
-            {column}
-            {index < columns.length - 1 && (
+          <Fragment key={index}>
+            {index > 0 && (
               <div className="mx-4 hidden md:block">
                 <Separator orientation="vertical" dashed />
               </div>
             )}
-          </div>
+            {column}
+          </Fragment>
         ))}
       </div>
     </div>

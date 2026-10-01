@@ -34,14 +34,24 @@ const SKELETON_GROUPS: {
   },
 ]
 
-export default function PermissionSelectSkeleton() {
+function StaticSkeleton({ className }: { className?: string }) {
+  return <Skeleton className={cn("animate-none", className)} />
+}
+
+export default function PermissionSelectSkeleton({
+  static: staticSkeletons = false,
+}: {
+  static?: boolean
+}) {
+  const Placeholder = staticSkeletons ? StaticSkeleton : Skeleton
+
   return (
     <>
       {SKELETON_GROUPS.map((group, groupIndex) => (
         <div key={groupIndex} className="p-1">
           <div className="flex items-center gap-3 py-1.5 pl-3">
-            <Skeleton className="size-4 shrink-0 rounded-[4px]" />
-            <Skeleton className={cn("h-4 rounded-[4px]", group.heading)} />
+            <Placeholder className="size-4 shrink-0 rounded-[4px]" />
+            <Placeholder className={cn("h-4 rounded-[4px]", group.heading)} />
           </div>
 
           {group.rows.map(([name, description], rowIndex) => (
@@ -49,14 +59,14 @@ export default function PermissionSelectSkeleton() {
               key={rowIndex}
               className="flex items-start gap-3 py-2 pr-3 pl-10 md:items-center"
             >
-              <Skeleton className="mt-0.5 size-4 shrink-0 rounded-[4px] md:mt-0" />
+              <Placeholder className="mt-0.5 size-4 shrink-0 rounded-[4px] md:mt-0" />
 
               <div className="flex min-w-0 flex-1 flex-col gap-2 md:flex-row md:items-center md:gap-3">
                 <div className="flex items-center md:w-72 md:shrink-0">
-                  <Skeleton className={cn("h-4 rounded-[4px]", name)} />
+                  <Placeholder className={cn("h-4 rounded-[4px]", name)} />
                 </div>
 
-                <Skeleton className={cn("h-3 rounded-[4px]", description)} />
+                <Placeholder className={cn("h-3 rounded-[4px]", description)} />
               </div>
             </div>
           ))}

@@ -19,6 +19,13 @@ export function useProcessTableColumns() {
       }),
       column.attr("pid", {
         header: "Pid",
+        cell: (info) => (
+          <ClipboardButton
+            value={info.getValue()}
+            truncateStyle="middle"
+            maxLength={12}
+          />
+        ),
       }),
       column.rel("machine", {
         sortingFn: "alphanumeric",

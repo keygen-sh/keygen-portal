@@ -69,6 +69,7 @@ export default function DataTable<T extends TableResource>({
   const [scrollIndex, setScrollIndex] = useState(0) // Which scrollable column we've scrolled past
   const [availableWidth, setAvailableWidth] = useState(0) // Determine if columns overflow and how much to scroll
   const containerRef = useRef<HTMLDivElement>(null) // For measuring available container width and observing resizes (e.g. sidebar toggle)
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   // Track which pages have already animated so revisiting doesn't animate again
   const prevPageRef = useRef(pagination.page)
@@ -196,20 +197,21 @@ export default function DataTable<T extends TableResource>({
     }
   }, [data, pagination.page, measureColumns])
 
-  function getCellStyle(columnIndex: number): React.CSSProperties {
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ left: scrollOffset, behavior: "smooth" })
+  }, [scrollOffset])
+
+  function getCellStyle(columnIndex: number): React.CSSProperties | undefined {
     // Render static columns above scrollable so they don't get visually cut off when scrolling
     if (columnIndex < clampedStaticColumns) {
       return {
-        position: "relative",
+        position: "sticky",
+        left: columnOffsets[columnIndex],
         zIndex: clampedStaticColumns - columnIndex + 1,
       }
     }
 
-    // Shift scrollable columns left
-    return {
-      transform: `translateX(-${scrollOffset}px)`,
-      transition: "transform 300ms ease",
-    }
+    return undefined
   }
 
   return (
@@ -236,7 +238,11 @@ export default function DataTable<T extends TableResource>({
             className="relative overflow-hidden"
             style={{ contain: "inline-size" }}
           >
-            <div key={pagination.page} className="relative w-full">
+            <div
+              key={pagination.page}
+              ref={scrollRef}
+              className="relative w-full overflow-hidden"
+            >
               <table className="min-w-full border-separate border-spacing-0 text-sm">
                 <TableHeader>
                   {tableInstance.getHeaderGroups().map((group) => (
@@ -339,12 +345,12 @@ export default function DataTable<T extends TableResource>({
                           className={cn(
                             "group/row",
                             shouldAnimate &&
-                              "border-b-0 animate-in [animation-duration:500ms] fade-in fill-mode-backwards",
+                              "border-b-0 transition-opacity duration-500 starting:opacity-0",
                             onRowClick ? "cursor-pointer" : "cursor-auto",
                           )}
                           style={
                             shouldAnimate
-                              ? { animationDelay: `${index * 30}ms` }
+                              ? { transitionDelay: `${index * 30}ms` }
                               : undefined
                           }
                         >

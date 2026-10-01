@@ -22,6 +22,13 @@ export function useComponentTableColumns() {
       }),
       column.attr("fingerprint", {
         header: "Fingerprint",
+        cell: (info) => (
+          <ClipboardButton
+            value={info.getValue()}
+            truncateStyle="middle"
+            maxLength={12}
+          />
+        ),
       }),
       column.rel("machine", {
         sortingFn: "alphanumeric",

@@ -19,6 +19,13 @@ export function useMachineTableColumns() {
       }),
       column.attr("fingerprint", {
         header: "Fingerprint",
+        cell: (info) => (
+          <ClipboardButton
+            value={info.getValue()}
+            truncateStyle="middle"
+            maxLength={12}
+          />
+        ),
       }),
       column.attr("name", {
         header: "Name",

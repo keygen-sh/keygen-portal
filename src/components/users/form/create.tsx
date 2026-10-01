@@ -12,6 +12,7 @@ import { settleRelationships } from "@/lib/relationships"
 
 import * as keygen from "@/keygen"
 import * as Forms from "@/components/forms"
+import * as Permissions from "@/components/permissions"
 import * as Users from "@/components/users"
 import DocumentationLink from "@/components/documentation-link"
 
@@ -127,22 +128,21 @@ export default function CreateUserForm({
             <DocumentationLink page="users" />
           </Forms.Section.Step>
 
-          {!keygen.config.isCE && (
-            <Forms.Section.Step
-              crumb="User permissions"
-              fields={["permissions"]}
-            >
-              <Forms.Section.Card title="User permissions">
+          <Forms.Section.Step crumb="User permissions" fields={["permissions"]}>
+            <Forms.Section.Card title="User permissions">
+              {keygen.config.isCE ? (
+                <Permissions.Upgrade />
+              ) : (
                 <Users.Form.Fields
                   schema="create"
                   include={["permissions"]}
                   fieldVariant="stacking"
                 />
-              </Forms.Section.Card>
+              )}
+            </Forms.Section.Card>
 
-              <DocumentationLink page="users" />
-            </Forms.Section.Step>
-          )}
+            <DocumentationLink page="users" />
+          </Forms.Section.Step>
 
           <Forms.Section.Step
             crumb="Additional configuration"

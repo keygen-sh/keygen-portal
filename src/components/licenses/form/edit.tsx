@@ -31,6 +31,7 @@ import { settleCreateEntitlements } from "@/lib/entitlements"
 import * as keygen from "@/keygen"
 import * as Forms from "@/components/forms"
 import * as Licenses from "@/components/licenses"
+import * as Permissions from "@/components/permissions"
 
 interface EditLicenseFormProps {
   open: boolean
@@ -289,15 +290,17 @@ export default function EditLicenseForm({
           <Separator className="my-8" />
 
           <Forms.Section.Columns>
-            {!keygen.config.isCE && (
-              <Forms.Section.Column>
+            <Forms.Section.Column>
+              {keygen.config.isCE ? (
+                <Permissions.Upgrade />
+              ) : (
                 <Licenses.Form.Fields
                   schema="edit"
                   include={["permissions"]}
                   fieldVariant="stacking"
                 />
-              </Forms.Section.Column>
-            )}
+              )}
+            </Forms.Section.Column>
             <Forms.Section.Column>
               <Licenses.Form.Fields
                 schema="edit"

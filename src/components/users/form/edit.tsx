@@ -15,6 +15,7 @@ import { toast } from "@/lib/toast"
 import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import * as Forms from "@/components/forms"
+import * as Permissions from "@/components/permissions"
 import * as Users from "@/components/users"
 
 interface EditUserFormProps {
@@ -73,14 +74,18 @@ export default function EditUserForm({
 
   return (
     <Forms.Provider form={form}>
-      <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
+      <Forms.Container.Dialog
+        open={open}
+        onOpenChange={onOpenChange}
+        size="fullscreen"
+      >
         <Forms.Layout.Sheet
           title="Editing an existing user"
           onSubmit={handleSubmit}
           errorMessage="Failed to update user"
           isPending={updateUser.isPending}
           submitLabel="Update"
-          className="md:h-[66vh]!"
+          size="fullscreen"
         >
           <Forms.Section.Columns title="Attributes">
             <Forms.Section.Column>
@@ -99,25 +104,28 @@ export default function EditUserForm({
             </Forms.Section.Column>
           </Forms.Section.Columns>
 
-          {!keygen.config.isCE && (
-            <>
-              <Separator className="my-8" />
-
-              <Users.Form.Fields
-                schema="edit"
-                include={[isInternal ? "internalPermissions" : "permissions"]}
-                fieldVariant="stacking"
-              />
-            </>
-          )}
-
           <Separator className="my-8" />
 
-          <Users.Form.Fields
-            schema="edit"
-            include={["metadata"]}
-            fieldVariant="stacking"
-          />
+          <Forms.Section.Columns>
+            <Forms.Section.Column>
+              {keygen.config.isCE ? (
+                <Permissions.Upgrade />
+              ) : (
+                <Users.Form.Fields
+                  schema="edit"
+                  include={[isInternal ? "internalPermissions" : "permissions"]}
+                  fieldVariant="stacking"
+                />
+              )}
+            </Forms.Section.Column>
+            <Forms.Section.Column>
+              <Users.Form.Fields
+                schema="edit"
+                include={["metadata"]}
+                fieldVariant="stacking"
+              />
+            </Forms.Section.Column>
+          </Forms.Section.Columns>
 
           <Separator className="my-8" />
 

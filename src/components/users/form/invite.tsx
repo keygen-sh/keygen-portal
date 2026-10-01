@@ -9,6 +9,7 @@ import { useCreateUser, useForgotPassword } from "@/queries/users"
 
 import { usePermissions } from "@/hooks/use-permissions"
 
+import { cn } from "@/lib/utils"
 import { toast } from "@/lib/toast"
 import { permissionsForRole } from "@/lib/permissions"
 
@@ -17,6 +18,7 @@ import * as Schemas from "@/schemas"
 import * as keygen from "@/keygen"
 import * as Users from "@/components/users"
 import * as Forms from "@/components/forms"
+import * as Permissions from "@/components/permissions"
 import { Notice } from "@/components/notice"
 
 interface InviteUserFormProps {
@@ -51,19 +53,14 @@ export default function InviteUserForm({
 
   return (
     <Forms.Provider form={form}>
-      <Forms.Container.Dialog
-        open={open}
-        onOpenChange={onOpenChange}
-        size="compact"
-        className="md:w-1/2"
-      >
+      <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
         <Forms.Layout.Sheet
           title="Inviting a teammate"
           onSubmit={handleSubmit}
           errorMessage="Failed to send invite"
           submitLabel="Send Invite"
           isPending={createUser.isPending || resetPassword.isPending}
-          size="compact"
+          className={cn(keygen.config.isCE ? "md:h-[70vh]!" : "md:h-[54vh]!")}
         >
           <Forms.Section.Columns>
             <Forms.Section.Column>
@@ -80,10 +77,12 @@ export default function InviteUserForm({
             </Forms.Section.Column>
           </Forms.Section.Columns>
 
-          {!keygen.config.isCE && (
-            <>
-              <Separator dashed className="my-8" />
+          <Separator dashed className="my-8" />
 
+          {keygen.config.isCE ? (
+            <Permissions.Upgrade />
+          ) : (
+            <>
               <Users.Form.Fields
                 schema="invite"
                 include={["internalPermissions"]}

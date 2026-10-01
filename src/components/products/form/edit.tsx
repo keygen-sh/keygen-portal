@@ -15,6 +15,7 @@ import { recordToMetadataPairs } from "@/schemas/metadata"
 
 import * as keygen from "@/keygen"
 import * as Forms from "@/components/forms"
+import * as Permissions from "@/components/permissions"
 import * as Products from "@/components/products"
 
 interface EditProductFormProps {
@@ -61,13 +62,18 @@ export default function EditProductForm({
 
   return (
     <Forms.Provider form={form}>
-      <Forms.Container.Dialog open={open} onOpenChange={onOpenChange}>
+      <Forms.Container.Dialog
+        open={open}
+        onOpenChange={onOpenChange}
+        size={keygen.config.isCE ? "fullscreen" : "default"}
+      >
         <Forms.Layout.Sheet
           title="Editing an existing product"
           onSubmit={handleSubmit}
           errorMessage="Failed to update product"
           isPending={updateProduct.isPending}
           submitLabel="Update"
+          size={keygen.config.isCE ? "fullscreen" : "default"}
         >
           <Forms.Section.Columns title="Attributes">
             <Forms.Section.Column>
@@ -86,25 +92,28 @@ export default function EditProductForm({
             </Forms.Section.Column>
           </Forms.Section.Columns>
 
-          {!keygen.config.isCE && (
-            <>
-              <Separator className="my-8" />
-
-              <Products.Form.Fields
-                schema="edit"
-                include={["permissions"]}
-                fieldVariant="stacking"
-              />
-            </>
-          )}
-
           <Separator className="my-8" />
 
-          <Products.Form.Fields
-            schema="edit"
-            include={["metadata"]}
-            fieldVariant="stacking"
-          />
+          <Forms.Section.Columns>
+            <Forms.Section.Column>
+              {keygen.config.isCE ? (
+                <Permissions.Upgrade />
+              ) : (
+                <Products.Form.Fields
+                  schema="edit"
+                  include={["permissions"]}
+                  fieldVariant="stacking"
+                />
+              )}
+            </Forms.Section.Column>
+            <Forms.Section.Column>
+              <Products.Form.Fields
+                schema="edit"
+                include={["metadata"]}
+                fieldVariant="stacking"
+              />
+            </Forms.Section.Column>
+          </Forms.Section.Columns>
         </Forms.Layout.Sheet>
       </Forms.Container.Dialog>
     </Forms.Provider>

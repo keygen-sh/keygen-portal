@@ -16,6 +16,7 @@ import { toast } from "@/lib/toast"
 
 import * as Forms from "@/components/forms"
 import * as Products from "@/components/products"
+import * as Permissions from "@/components/permissions"
 import DocumentationLink from "@/components/documentation-link"
 import { BadgeGroup, BadgeGroupItem } from "@/components/badge-group"
 
@@ -143,22 +144,24 @@ export default function CreateProductForm({
             <DocumentationLink page="products" />
           </Forms.Section.Step>
 
-          {!keygen.config.isCE && (
-            <Forms.Section.Step
-              crumb="Product permissions"
-              fields={["permissions"]}
-            >
-              <Forms.Section.Card title="Product permissions">
+          <Forms.Section.Step
+            crumb="Product permissions"
+            fields={["permissions"]}
+          >
+            <Forms.Section.Card title="Product permissions">
+              {keygen.config.isCE ? (
+                <Permissions.Upgrade />
+              ) : (
                 <Products.Form.Fields
                   schema="create"
                   include={["permissions"]}
                   fieldVariant="stacking"
                 />
-              </Forms.Section.Card>
+              )}
+            </Forms.Section.Card>
 
-              <DocumentationLink page="products" />
-            </Forms.Section.Step>
-          )}
+            <DocumentationLink page="products" />
+          </Forms.Section.Step>
 
           <Forms.Section.Step
             crumb="Additional configuration"

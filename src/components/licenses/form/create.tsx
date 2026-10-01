@@ -20,6 +20,7 @@ import { settleCreateEntitlements } from "@/lib/entitlements"
 import * as keygen from "@/keygen"
 import * as Forms from "@/components/forms"
 import * as Licenses from "@/components/licenses"
+import * as Permissions from "@/components/permissions"
 import DocumentationLink from "@/components/documentation-link"
 
 interface CreateLicenseFormProps {
@@ -292,22 +293,24 @@ export default function CreateLicenseForm({
             <DocumentationLink page="licenses" />
           </Forms.Section.Step>
 
-          {!keygen.config.isCE && (
-            <Forms.Section.Step
-              crumb="License permissions"
-              fields={["permissions"]}
-            >
-              <Forms.Section.Card title="License permissions">
+          <Forms.Section.Step
+            crumb="License permissions"
+            fields={["permissions"]}
+          >
+            <Forms.Section.Card title="License permissions">
+              {keygen.config.isCE ? (
+                <Permissions.Upgrade />
+              ) : (
                 <Licenses.Form.Fields
                   schema="create"
                   include={["permissions"]}
                   fieldVariant="stacking"
                 />
-              </Forms.Section.Card>
+              )}
+            </Forms.Section.Card>
 
-              <DocumentationLink page="licenses" />
-            </Forms.Section.Step>
-          )}
+            <DocumentationLink page="licenses" />
+          </Forms.Section.Step>
 
           <Forms.Section.Step
             crumb="Additional configuration"

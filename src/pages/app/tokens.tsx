@@ -11,7 +11,7 @@ export default function Tokens() {
   const key = view === "list" ? "list" : `details-${id}`
 
   return (
-    <Motion.Slide direction={direction}>
+    <Motion.Slide direction={direction} prerender>
       {view === "list" ? (
         <Page.App.Token.List key={key} />
       ) : (

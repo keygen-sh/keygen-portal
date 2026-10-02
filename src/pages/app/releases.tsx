@@ -15,7 +15,7 @@ export default function Releases() {
   const key = view === ReleaseView.List ? "list" : `details-${id}`
 
   return (
-    <Motion.Slide direction={direction}>
+    <Motion.Slide direction={direction} prerender>
       {view === ReleaseView.List ? (
         <Page.App.Release.List key={key} />
       ) : (

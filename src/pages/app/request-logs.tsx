@@ -15,7 +15,7 @@ export default function RequestLogs() {
   const key = view === RequestLogView.List ? "list" : `details-${id}`
 
   return (
-    <Motion.Slide direction={direction}>
+    <Motion.Slide direction={direction} prerender>
       {view === RequestLogView.List ? (
         <Page.App.RequestLog.List key={key} />
       ) : (

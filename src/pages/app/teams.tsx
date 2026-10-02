@@ -15,7 +15,7 @@ export default function Teams() {
   const key = view === UserView.List ? "list" : `details-${id}`
 
   return (
-    <Motion.Slide direction={direction}>
+    <Motion.Slide direction={direction} prerender>
       {view === UserView.List ? (
         <Page.App.Team.List key={key} />
       ) : (

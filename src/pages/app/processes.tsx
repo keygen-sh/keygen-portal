@@ -15,7 +15,7 @@ export default function Processes() {
   const key = view === ProcessView.List ? "list" : `details-${id}`
 
   return (
-    <Motion.Slide direction={direction}>
+    <Motion.Slide direction={direction} prerender>
       {view === ProcessView.List ? (
         <Page.App.Process.List key={key} />
       ) : (

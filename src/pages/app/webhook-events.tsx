@@ -15,7 +15,7 @@ export default function WebhookEvents() {
   const key = view === WebhookEventView.List ? "list" : `details-${id}`
 
   return (
-    <Motion.Slide direction={direction}>
+    <Motion.Slide direction={direction} prerender>
       {view === WebhookEventView.List ? (
         <Page.App.WebhookEvent.List key={key} />
       ) : (

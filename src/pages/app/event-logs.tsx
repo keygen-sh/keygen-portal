@@ -15,7 +15,7 @@ export default function EventLogs() {
   const key = view === EventLogView.List ? "list" : `details-${id}`
 
   return (
-    <Motion.Slide direction={direction}>
+    <Motion.Slide direction={direction} prerender>
       {view === EventLogView.List ? (
         <Page.App.EventLog.List key={key} />
       ) : (

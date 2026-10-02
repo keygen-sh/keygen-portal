@@ -15,7 +15,7 @@ export default function Licenses() {
   const key = view === LicenseView.List ? "list" : `details-${id}`
 
   return (
-    <Motion.Slide direction={direction}>
+    <Motion.Slide direction={direction} prerender>
       {view === LicenseView.List ? (
         <Page.App.License.List key={key} />
       ) : (

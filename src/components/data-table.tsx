@@ -157,7 +157,11 @@ export default function DataTable<T extends TableResource>({
       .map((element) => element?.offsetWidth ?? 0)
 
     if (widths.length > 0 && widths.some((w) => w > 0)) {
-      setColumnWidths(widths)
+      setColumnWidths((prev) =>
+        prev.length === widths.length && prev.every((w, i) => w === widths[i])
+          ? prev
+          : widths,
+      )
     }
   }, [tableColumns.length])
 

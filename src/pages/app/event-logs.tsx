@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import { EventLogView } from "@/types/event-logs"
 
@@ -19,7 +19,7 @@ export default function EventLogs() {
       {view === EventLogView.List ? (
         <Page.App.EventLog.List key={key} />
       ) : (
-        <Outlet key={key} />
+        <Motion.Outlet key={key} />
       )}
     </Motion.Slide>
   )

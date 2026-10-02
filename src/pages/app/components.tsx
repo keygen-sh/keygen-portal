@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import { ComponentView } from "@/types/components"
 
@@ -19,7 +19,7 @@ export default function Components() {
       {view === ComponentView.List ? (
         <Page.App.Component.List key={key} />
       ) : (
-        <Outlet key={key} />
+        <Motion.Outlet key={key} />
       )}
     </Motion.Slide>
   )

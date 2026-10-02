@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import { PolicyView } from "@/types/policies"
 
@@ -19,7 +19,7 @@ export default function Policies() {
       {view === PolicyView.List ? (
         <Page.App.Policy.List key={key} />
       ) : (
-        <Outlet key={key} />
+        <Motion.Outlet key={key} />
       )}
     </Motion.Slide>
   )

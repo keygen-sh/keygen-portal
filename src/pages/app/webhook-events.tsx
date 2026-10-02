@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import { WebhookEventView } from "@/types/webhook-events"
 
@@ -19,7 +19,7 @@ export default function WebhookEvents() {
       {view === WebhookEventView.List ? (
         <Page.App.WebhookEvent.List key={key} />
       ) : (
-        <Outlet key={key} />
+        <Motion.Outlet key={key} />
       )}
     </Motion.Slide>
   )

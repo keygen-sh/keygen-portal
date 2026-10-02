@@ -21,17 +21,20 @@ export default function MotionSlide({
   className,
   children,
 }: MotionSlideProps): React.ReactElement {
+  const translate = axis === "x" ? "translateX" : "translateY"
+
   const slide = {
     enter: (d: 1 | -1) => ({
-      [axis]: d * offset,
+      transform: `${translate}(${d * offset}px)`,
       opacity: 0,
     }),
     center: {
-      [axis]: 0,
+      transform: `${translate}(0px)`,
       opacity: 1,
+      transitionEnd: { transform: "none" },
     },
     exit: (d: 1 | -1) => ({
-      [axis]: d * -offset,
+      transform: `${translate}(${d * -offset}px)`,
       opacity: 0,
     }),
   }

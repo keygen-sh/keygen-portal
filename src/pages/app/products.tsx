@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import { ProductView } from "@/types/products"
 
@@ -19,7 +19,7 @@ export default function Products() {
       {view === ProductView.List ? (
         <Page.App.Product.List key={key} />
       ) : (
-        <Outlet key={key} />
+        <Motion.Outlet key={key} />
       )}
     </Motion.Slide>
   )

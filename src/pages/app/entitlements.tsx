@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import { EntitlementView } from "@/types/entitlements"
 
@@ -19,7 +19,7 @@ export default function Entitlements() {
       {view === EntitlementView.List ? (
         <Page.App.Entitlement.List key={key} />
       ) : (
-        <Outlet key={key} />
+        <Motion.Outlet key={key} />
       )}
     </Motion.Slide>
   )

@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import { GroupView } from "@/types/groups"
 
@@ -19,7 +19,7 @@ export default function Groups() {
       {view === GroupView.List ? (
         <Page.App.Group.List key={key} />
       ) : (
-        <Outlet key={key} />
+        <Motion.Outlet key={key} />
       )}
     </Motion.Slide>
   )

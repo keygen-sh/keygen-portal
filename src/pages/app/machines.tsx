@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import { MachineView } from "@/types/machines"
 
@@ -19,7 +19,7 @@ export default function Machines() {
       {view === MachineView.List ? (
         <Page.App.Machine.List key={key} />
       ) : (
-        <Outlet key={key} />
+        <Motion.Outlet key={key} />
       )}
     </Motion.Slide>
   )

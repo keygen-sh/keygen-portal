@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import { WebhookEndpointView } from "@/types/webhook-endpoints"
 
@@ -19,7 +19,7 @@ export default function WebhookEndpoints() {
       {view === WebhookEndpointView.List ? (
         <Page.App.WebhookEndpoint.List key={key} />
       ) : (
-        <Outlet key={key} />
+        <Motion.Outlet key={key} />
       )}
     </Motion.Slide>
   )

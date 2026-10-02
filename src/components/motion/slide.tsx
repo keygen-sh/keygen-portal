@@ -1,5 +1,5 @@
-import { ReactNode } from "react"
-import { AnimatePresence, motion } from "motion/react"
+import { ReactNode, startTransition, useEffect, useState } from "react"
+import { AnimatePresence, motion, type Variants } from "motion/react"
 import { cn } from "@/lib/utils"
 
 type MotionSlideAxis = "x" | "y"
@@ -9,8 +9,49 @@ interface MotionSlideProps {
   axis?: MotionSlideAxis
   duration?: number
   offset?: number
+  prerender?: boolean
   className?: string
   children: ReactNode
+}
+
+interface MotionSlideItemProps {
+  direction: 1 | -1
+  variants: Variants
+  duration: number
+  waiting: boolean
+  children: ReactNode
+}
+
+function MotionSlideItem({
+  direction,
+  variants,
+  duration,
+  waiting,
+  children,
+}: MotionSlideItemProps): React.ReactElement {
+  const [mounted, setMounted] = useState(!waiting)
+  const [entered, setEntered] = useState(!waiting)
+
+  if (mounted && !entered && !waiting) setEntered(true)
+
+  useEffect(() => {
+    if (!mounted) startTransition(() => setMounted(true))
+  }, [mounted])
+
+  return (
+    <motion.div
+      custom={direction}
+      variants={variants}
+      initial="enter"
+      animate={entered ? "center" : "enter"}
+      exit="exit"
+      transition={{ duration, ease: [0.4, 0, 0.2, 1] }}
+      inert={!entered}
+      style={{ gridArea: "1 / 1 / 2 / 2" }}
+    >
+      {mounted && children}
+    </motion.div>
+  )
 }
 
 export default function MotionSlide({
@@ -18,20 +59,33 @@ export default function MotionSlide({
   axis = "x",
   duration = 0.25,
   offset = 80,
+  prerender = false,
   className,
   children,
 }: MotionSlideProps): React.ReactElement {
+  const key = (children as React.ReactElement)?.key ?? "slide"
+  const [presentKey, setPresentKey] = useState(key)
+  const [exiting, setExiting] = useState(false)
+
+  if (prerender && presentKey !== key) {
+    setPresentKey(key)
+    setExiting(true)
+  }
+
+  const translate = axis === "x" ? "translateX" : "translateY"
+
   const slide = {
     enter: (d: 1 | -1) => ({
-      [axis]: d * offset,
+      transform: `${translate}(${d * offset}px)`,
       opacity: 0,
     }),
     center: {
-      [axis]: 0,
+      transform: `${translate}(0px)`,
       opacity: 1,
+      transitionEnd: { transform: "none" },
     },
     exit: (d: 1 | -1) => ({
-      [axis]: d * -offset,
+      transform: `${translate}(${d * -offset}px)`,
       opacity: 0,
     }),
   }
@@ -41,19 +95,21 @@ export default function MotionSlide({
       className={cn("grid overflow-hidden", className)}
       style={{ gridTemplate: "1fr / 1fr" }}
     >
-      <AnimatePresence custom={direction} initial={false} mode="wait">
-        <motion.div
-          key={(children as React.ReactElement)?.key ?? "slide"}
-          custom={direction}
+      <AnimatePresence
+        custom={direction}
+        initial={false}
+        mode={prerender ? "sync" : "wait"}
+        onExitComplete={() => setExiting(false)}
+      >
+        <MotionSlideItem
+          key={key}
+          direction={direction}
           variants={slide}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{ duration, ease: [0.4, 0, 0.2, 1] }}
-          style={{ gridArea: "1 / 1 / 2 / 2" }}
+          duration={duration}
+          waiting={exiting}
         >
           {children}
-        </motion.div>
+        </MotionSlideItem>
       </AnimatePresence>
     </div>
   )

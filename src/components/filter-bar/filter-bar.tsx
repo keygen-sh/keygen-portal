@@ -74,7 +74,11 @@ export default function FilterBar({
       .slice(0, scrollableCount)
       .map((el) => el?.offsetWidth ?? 0)
     if (widths.length > 0 && widths.some((w) => w > 0)) {
-      setItemWidths(widths)
+      setItemWidths((prev) =>
+        prev.length === widths.length && prev.every((w, i) => w === widths[i])
+          ? prev
+          : widths,
+      )
     }
   }, [scrollableCount])
 

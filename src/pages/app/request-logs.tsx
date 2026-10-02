@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import { RequestLogView } from "@/types/request-logs"
 
@@ -15,11 +15,11 @@ export default function RequestLogs() {
   const key = view === RequestLogView.List ? "list" : `details-${id}`
 
   return (
-    <Motion.Slide direction={direction}>
+    <Motion.Slide direction={direction} prerender>
       {view === RequestLogView.List ? (
         <Page.App.RequestLog.List key={key} />
       ) : (
-        <Outlet key={key} />
+        <Motion.Outlet key={key} />
       )}
     </Motion.Slide>
   )

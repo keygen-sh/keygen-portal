@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import * as Motion from "@/components/motion"
 import * as Page from "@/pages"
@@ -15,7 +15,7 @@ export default function Tokens() {
       {view === "list" ? (
         <Page.App.Token.List key={key} />
       ) : (
-        <Outlet key={key} />
+        <Motion.Outlet key={key} />
       )}
     </Motion.Slide>
   )

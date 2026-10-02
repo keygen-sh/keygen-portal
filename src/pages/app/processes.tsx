@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import { ProcessView } from "@/types/processes"
 
@@ -19,7 +19,7 @@ export default function Processes() {
       {view === ProcessView.List ? (
         <Page.App.Process.List key={key} />
       ) : (
-        <Outlet key={key} />
+        <Motion.Outlet key={key} />
       )}
     </Motion.Slide>
   )

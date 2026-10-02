@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import { LicenseView } from "@/types/licenses"
 
@@ -19,7 +19,7 @@ export default function Licenses() {
       {view === LicenseView.List ? (
         <Page.App.License.List key={key} />
       ) : (
-        <Outlet key={key} />
+        <Motion.Outlet key={key} />
       )}
     </Motion.Slide>
   )

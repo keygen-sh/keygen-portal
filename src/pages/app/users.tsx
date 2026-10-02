@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 
 import { UserView } from "@/types/users"
 
@@ -19,7 +19,7 @@ export default function Users() {
       {view === UserView.List ? (
         <Page.App.User.List key={key} />
       ) : (
-        <Outlet key={key} />
+        <Motion.Outlet key={key} />
       )}
     </Motion.Slide>
   )

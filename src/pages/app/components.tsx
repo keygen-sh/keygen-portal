@@ -15,7 +15,7 @@ export default function Components() {
   const key = view === ComponentView.List ? "list" : `details-${id}`
 
   return (
-    <Motion.Slide direction={direction}>
+    <Motion.Slide direction={direction} prerender>
       {view === ComponentView.List ? (
         <Page.App.Component.List key={key} />
       ) : (

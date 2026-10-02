@@ -15,7 +15,7 @@ export default function Policies() {
   const key = view === PolicyView.List ? "list" : `details-${id}`
 
   return (
-    <Motion.Slide direction={direction}>
+    <Motion.Slide direction={direction} prerender>
       {view === PolicyView.List ? (
         <Page.App.Policy.List key={key} />
       ) : (

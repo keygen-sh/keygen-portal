@@ -15,7 +15,7 @@ export default function Groups() {
   const key = view === GroupView.List ? "list" : `details-${id}`
 
   return (
-    <Motion.Slide direction={direction}>
+    <Motion.Slide direction={direction} prerender>
       {view === GroupView.List ? (
         <Page.App.Group.List key={key} />
       ) : (

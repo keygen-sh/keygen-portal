@@ -15,7 +15,7 @@ export default function Artifacts() {
   const key = view === ArtifactView.List ? "list" : `details-${id}`
 
   return (
-    <Motion.Slide direction={direction}>
+    <Motion.Slide direction={direction} prerender>
       {view === ArtifactView.List ? (
         <Page.App.Artifact.List key={key} />
       ) : (

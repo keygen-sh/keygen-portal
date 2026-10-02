@@ -15,7 +15,7 @@ export default function Entitlements() {
   const key = view === EntitlementView.List ? "list" : `details-${id}`
 
   return (
-    <Motion.Slide direction={direction}>
+    <Motion.Slide direction={direction} prerender>
       {view === EntitlementView.List ? (
         <Page.App.Entitlement.List key={key} />
       ) : (

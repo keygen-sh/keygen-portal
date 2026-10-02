@@ -15,7 +15,7 @@ export default function Products() {
   const key = view === ProductView.List ? "list" : `details-${id}`
 
   return (
-    <Motion.Slide direction={direction}>
+    <Motion.Slide direction={direction} prerender>
       {view === ProductView.List ? (
         <Page.App.Product.List key={key} />
       ) : (

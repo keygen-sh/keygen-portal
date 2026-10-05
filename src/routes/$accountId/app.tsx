@@ -11,12 +11,12 @@ export const Route = createFileRoute("/$accountId/app")({
     })
 
     if (!session?.userId) {
+      const href = location.href.replace(`/${params.accountId}/app`, "/goto")
+
       redirect({
         to: "/$accountId/auth/login",
         params: { accountId: params.accountId },
-        search: {
-          redirect: location.href.replace(`/${params.accountId}/app`, "/goto"),
-        },
+        search: { redirect: /^\/goto\/?$/.test(href) ? undefined : href },
         replace: true,
         throw: true,
       })

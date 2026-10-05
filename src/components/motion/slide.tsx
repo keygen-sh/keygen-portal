@@ -1,5 +1,10 @@
 import { ReactNode, startTransition, useEffect, useState } from "react"
-import { AnimatePresence, motion, type Variants } from "motion/react"
+import {
+  AnimatePresence,
+  motion,
+  useIsPresent,
+  type Variants,
+} from "motion/react"
 import { cn } from "@/lib/utils"
 
 type MotionSlideAxis = "x" | "y"
@@ -29,14 +34,18 @@ function MotionSlideItem({
   waiting,
   children,
 }: MotionSlideItemProps): React.ReactElement {
+  const isPresent = useIsPresent()
   const [mounted, setMounted] = useState(!waiting)
   const [entered, setEntered] = useState(!waiting)
 
-  if (mounted && !entered && !waiting) setEntered(true)
+  if (mounted && !entered) {
+    if (!isPresent) setMounted(false)
+    else if (!waiting) setEntered(true)
+  }
 
   useEffect(() => {
-    if (!mounted) startTransition(() => setMounted(true))
-  }, [mounted])
+    if (!mounted && isPresent) startTransition(() => setMounted(true))
+  }, [mounted, isPresent])
 
   return (
     <motion.div
@@ -46,7 +55,7 @@ function MotionSlideItem({
       animate={entered ? "center" : "enter"}
       exit="exit"
       transition={{ duration, ease: [0.4, 0, 0.2, 1] }}
-      inert={!entered}
+      inert={!entered || !isPresent}
       style={{ gridArea: "1 / 1 / 2 / 2" }}
     >
       {mounted && children}

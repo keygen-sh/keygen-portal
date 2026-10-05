@@ -10,7 +10,7 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 
-import { cn } from "@/lib/utils"
+import { cn, deepEqual } from "@/lib/utils"
 
 import { FilterBarContext } from "@/contexts/filter-bar-context"
 
@@ -74,11 +74,7 @@ export default function FilterBar({
       .slice(0, scrollableCount)
       .map((el) => el?.offsetWidth ?? 0)
     if (widths.length > 0 && widths.some((w) => w > 0)) {
-      setItemWidths((prev) =>
-        prev.length === widths.length && prev.every((w, i) => w === widths[i])
-          ? prev
-          : widths,
-      )
+      setItemWidths((prev) => (deepEqual(prev, widths) ? prev : widths))
     }
   }, [scrollableCount])
 

@@ -1,23 +1,19 @@
-import { useContext, useState } from "react"
+import { useState } from "react"
 import {
-  CatchNotFound,
   Outlet,
-  getRouterContext,
-  matchContext,
   notFound,
   useRouter,
+  CatchNotFound,
+  useChildMatches,
+  getRouterContext,
   type AnyRouter,
 } from "@tanstack/react-router"
 
 const RouterContext = getRouterContext()
 
-function childMatchId(state: AnyRouter["state"], parentMatchId?: string) {
-  const index = state.matches.findIndex((match) => match.id === parentMatchId)
-  return state.matches[index + 1]?.id
-}
-
 function isMatchLive(state: AnyRouter["state"], matchId?: string) {
-  return !state.isLoading && state.matches.some((match) => match.id === matchId)
+  const matches = state.pendingMatches ?? state.matches
+  return matches.some((match) => match.id === matchId)
 }
 
 function holdRouter(router: AnyRouter, matchId?: string) {
@@ -41,8 +37,8 @@ function holdRouter(router: AnyRouter, matchId?: string) {
 // so we hold the last router state so the page can finish animating out
 export default function MotionOutlet() {
   const router = useRouter()
-  const parentMatchId = useContext(matchContext)
-  const [matchId] = useState(() => childMatchId(router.state, parentMatchId))
+  const childMatchId = useChildMatches({ select: (matches) => matches[0]?.id })
+  const [matchId] = useState(childMatchId)
   const [heldRouter] = useState(() => holdRouter(router, matchId))
 
   return (

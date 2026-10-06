@@ -29,10 +29,12 @@ import { useListPolicies, useListPolicyEntitlements } from "@/queries/policies"
 import { useListProducts } from "@/queries/products"
 import { useListEntitlements } from "@/queries/entitlements"
 
+import { useDeferredMount } from "@/hooks/use-deferred-mount"
 import { useAccountDefaultLicensePermissions } from "@/hooks/use-account-default-license-permissions"
 
 import * as Schemas from "@/schemas"
 import {
+  LicenseMode,
   LicenseFormFieldDescriptions,
   LicenseCreateFormFieldDescriptions,
   LicenseEditFormFieldDescriptions,
@@ -59,6 +61,7 @@ interface LicensesFormFieldsProps {
   titleVariant?: boolean
   fieldVariant?: FieldVariant
   selectedPolicy?: Policy | null
+  mode?: LicenseMode
   schema?: "create" | "edit"
 }
 
@@ -92,6 +95,7 @@ export default function LicensesFormFields({
   titleVariant,
   fieldVariant = "row",
   selectedPolicy,
+  mode = LicenseMode.Create,
   schema,
 }: LicensesFormFieldsProps) {
   const descriptions =
@@ -117,6 +121,7 @@ export default function LicensesFormFields({
                 titleVariant={titleVariant}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "key":
@@ -126,6 +131,7 @@ export default function LicensesFormFields({
                 autoFocus={autoFocus === "key"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "policyId":
@@ -135,6 +141,7 @@ export default function LicensesFormFields({
                 autoFocus={autoFocus === "policyId"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "expiry":
@@ -144,6 +151,7 @@ export default function LicensesFormFields({
                 autoFocus={autoFocus === "expiry"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "maxMachines":
@@ -154,6 +162,7 @@ export default function LicensesFormFields({
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
                 selectedPolicy={selectedPolicy}
+                mode={mode}
               />
             )
           case "maxProcesses":
@@ -164,6 +173,7 @@ export default function LicensesFormFields({
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
                 selectedPolicy={selectedPolicy}
+                mode={mode}
               />
             )
           case "maxUsers":
@@ -174,6 +184,7 @@ export default function LicensesFormFields({
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
                 selectedPolicy={selectedPolicy}
+                mode={mode}
               />
             )
           case "maxCores":
@@ -184,6 +195,7 @@ export default function LicensesFormFields({
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
                 selectedPolicy={selectedPolicy}
+                mode={mode}
               />
             )
           case "maxMemory":
@@ -194,6 +206,7 @@ export default function LicensesFormFields({
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
                 selectedPolicy={selectedPolicy}
+                mode={mode}
               />
             )
           case "maxDisk":
@@ -204,6 +217,7 @@ export default function LicensesFormFields({
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
                 selectedPolicy={selectedPolicy}
+                mode={mode}
               />
             )
           case "maxUses":
@@ -214,6 +228,7 @@ export default function LicensesFormFields({
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
                 selectedPolicy={selectedPolicy}
+                mode={mode}
               />
             )
           case "suspended":
@@ -222,6 +237,7 @@ export default function LicensesFormFields({
                 key="suspended"
                 autoFocus={autoFocus === "suspended"}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "protected":
@@ -231,6 +247,7 @@ export default function LicensesFormFields({
                 autoFocus={autoFocus === "protected"}
                 descriptions={descriptions}
                 selectedPolicy={selectedPolicy}
+                mode={mode}
               />
             )
           case "ownerId":
@@ -240,6 +257,7 @@ export default function LicensesFormFields({
                 autoFocus={autoFocus === "ownerId"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "groupId":
@@ -249,12 +267,17 @@ export default function LicensesFormFields({
                 autoFocus={autoFocus === "groupId"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "entitlements.attach":
-            return <AttachEntitlementsField key="entitlements.attach" />
+            return (
+              <AttachEntitlementsField key="entitlements.attach" mode={mode} />
+            )
           case "entitlements.create":
-            return <CreateEntitlementsField key="entitlements.create" />
+            return (
+              <CreateEntitlementsField key="entitlements.create" mode={mode} />
+            )
           case "users.attach":
             return (
               <AttachUsersField
@@ -262,6 +285,7 @@ export default function LicensesFormFields({
                 autoFocus={autoFocus === "users.attach"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "permissions":
@@ -272,6 +296,7 @@ export default function LicensesFormFields({
                 autoFocus={autoFocus === "permissions"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           case "metadata":
@@ -280,6 +305,7 @@ export default function LicensesFormFields({
                 key="metadata"
                 autoFocus={autoFocus === "metadata"}
                 descriptions={descriptions}
+                mode={mode}
               />
             )
           default:
@@ -290,18 +316,43 @@ export default function LicensesFormFields({
   )
 }
 
+function FieldSkeleton({ variant }: { variant: FieldVariant }) {
+  return (
+    <div
+      className={cn(
+        "flex w-full flex-col gap-2",
+        variant === "row" && "md:flex-row md:items-center md:justify-between",
+      )}
+    >
+      <Skeleton className="h-5 w-32 rounded-sm" />
+      <Skeleton
+        className={cn("h-9 w-full rounded-sm", variant === "row" && "md:w-48")}
+      />
+    </div>
+  )
+}
+
 function NameField({
   autoFocus,
   titleVariant,
   fieldVariant = "row",
   descriptions,
+  mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   titleVariant?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.BaseValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return <FieldSkeleton variant={fieldVariant} />
+  }
 
   return (
     <FormField
@@ -350,12 +401,21 @@ function KeyField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.CreateValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return <FieldSkeleton variant={fieldVariant} />
+  }
 
   return (
     <FormField
@@ -390,15 +450,20 @@ function PolicyIdField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.AllValues>()
 
   const { data: policies = [], isLoading: policiesLoading } = useListPolicies()
   const { data: products = [], isLoading: productsLoading } = useListProducts()
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
 
   const policiesByProduct = useMemo(() => {
     const grouped = new Map<
@@ -426,7 +491,7 @@ function PolicyIdField({
     }))
   }, [policies, products])
 
-  if (policiesLoading || productsLoading) {
+  if (!shouldMount || policiesLoading || productsLoading) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-5 w-48 rounded-sm" />
@@ -468,13 +533,22 @@ function ExpiryField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.BaseValues>()
   const [open, setOpen] = useState(false)
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return <FieldSkeleton variant={fieldVariant} />
+  }
 
   return (
     <FormField
@@ -558,13 +632,22 @@ function MaxMachinesField({
   fieldVariant = "row",
   descriptions,
   selectedPolicy,
+  mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
   selectedPolicy?: Policy | null
+  mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.BaseValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return <FieldSkeleton variant={fieldVariant} />
+  }
 
   return (
     <FormField
@@ -606,13 +689,22 @@ function MaxProcessesField({
   fieldVariant = "row",
   descriptions,
   selectedPolicy,
+  mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
   selectedPolicy?: Policy | null
+  mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.BaseValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return <FieldSkeleton variant={fieldVariant} />
+  }
 
   return (
     <FormField
@@ -652,13 +744,22 @@ function MaxUsersField({
   fieldVariant = "row",
   descriptions,
   selectedPolicy,
+  mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
   selectedPolicy?: Policy | null
+  mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.BaseValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return <FieldSkeleton variant={fieldVariant} />
+  }
 
   return (
     <FormField
@@ -696,13 +797,22 @@ function MaxCoresField({
   fieldVariant = "row",
   descriptions,
   selectedPolicy,
+  mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
   selectedPolicy?: Policy | null
+  mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.BaseValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return <FieldSkeleton variant={fieldVariant} />
+  }
 
   return (
     <FormField
@@ -740,13 +850,22 @@ function MaxMemoryField({
   fieldVariant = "row",
   descriptions,
   selectedPolicy,
+  mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
   selectedPolicy?: Policy | null
+  mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.BaseValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return <FieldSkeleton variant={fieldVariant} />
+  }
 
   return (
     <FormField
@@ -782,13 +901,22 @@ function MaxDiskField({
   fieldVariant = "row",
   descriptions,
   selectedPolicy,
+  mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
   selectedPolicy?: Policy | null
+  mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.BaseValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return <FieldSkeleton variant={fieldVariant} />
+  }
 
   return (
     <FormField
@@ -825,13 +953,22 @@ function MaxUsesField({
   fieldVariant = "row",
   descriptions,
   selectedPolicy,
+  mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
   selectedPolicy?: Policy | null
+  mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.BaseValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return <FieldSkeleton variant={fieldVariant} />
+  }
 
   return (
     <FormField
@@ -867,11 +1004,25 @@ function MaxUsesField({
 function SuspendedField({
   autoFocus,
   descriptions,
+  mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
+  mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.BaseValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return (
+      <div className="flex w-full justify-between">
+        <Skeleton className="h-5 w-40 rounded-sm" />
+        <Skeleton className="h-5 w-5 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -903,12 +1054,26 @@ function ProtectedField({
   autoFocus,
   descriptions,
   selectedPolicy,
+  mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
   selectedPolicy?: Policy | null
+  mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.BaseValues>()
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return (
+      <div className="flex w-full justify-between">
+        <Skeleton className="h-5 w-40 rounded-sm" />
+        <Skeleton className="h-5 w-5 rounded-sm" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -948,14 +1113,23 @@ function PermissionsField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = LicenseMode.Create,
 }: {
   schema?: "create" | "edit"
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.BaseValues>()
   const defaults = useAccountDefaultLicensePermissions()
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return <FieldSkeleton variant={fieldVariant} />
+  }
 
   return (
     <FormField
@@ -994,11 +1168,32 @@ function PermissionsField({
 function MetadataField({
   autoFocus,
   descriptions,
+  mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
+  mode?: LicenseMode
 }) {
-  const form = useFormContext<Schemas.Licenses.BaseValues>()
+  const form = useFormContext<Schemas.Licenses.BaseFormValues>()
+  const { metadata = [] } = form.getValues()
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-48 rounded-sm" />
+        {metadata.map(({ id }) => (
+          <div key={id} className="flex space-x-2">
+            <Skeleton className="h-9 w-1/2 rounded-sm" />
+            <Skeleton className="h-9 w-1/2 rounded-sm" />
+          </div>
+        ))}
+        <Skeleton className="h-8 w-48" />
+      </div>
+    )
+  }
 
   return (
     <FormField
@@ -1006,7 +1201,7 @@ function MetadataField({
       name="metadata"
       render={() => (
         <FormItem>
-          <MetadataInput<Schemas.Licenses.BaseValues>
+          <MetadataInput<Schemas.Licenses.BaseFormValues>
             name="metadata"
             tooltip={descriptions.metadata}
             optional
@@ -1018,7 +1213,11 @@ function MetadataField({
   )
 }
 
-function AttachEntitlementsField() {
+function AttachEntitlementsField({
+  mode = LicenseMode.Create,
+}: {
+  mode?: LicenseMode
+} = {}) {
   const form = useFormContext<Schemas.Licenses.AllValues>()
   const policyId = useWatch({ control: form.control, name: "policyId" })
   const { data: entitlements = [], isLoading: entitlementsLoading } =
@@ -1027,8 +1226,11 @@ function AttachEntitlementsField() {
     policyId ?? "",
     { limit: 100 },
   )
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
 
-  if (entitlementsLoading) {
+  if (!shouldMount || entitlementsLoading) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-5 w-48 rounded-sm" />
@@ -1062,13 +1264,29 @@ function AttachEntitlementsField() {
   )
 }
 
-function CreateEntitlementsField() {
+function CreateEntitlementsField({
+  mode = LicenseMode.Create,
+}: {
+  mode?: LicenseMode
+} = {}) {
   const form = useFormContext<Schemas.Licenses.AllValues>()
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "entitlements.create",
   })
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return (
+      <div className="mt-4 space-y-2">
+        <Skeleton className="h-5 w-32 rounded-sm" />
+        <Skeleton className="h-8 w-48" />
+      </div>
+    )
+  }
 
   return (
     <div className="mt-4 space-y-3">
@@ -1128,16 +1346,21 @@ function AttachUsersField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.AllValues>()
   const { data: users = [], isLoading: usersLoading } = useListUsers()
   const ownerId = useWatch({ control: form.control, name: "ownerId" })
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
 
-  if (usersLoading) {
+  if (!shouldMount || usersLoading) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-5 w-48 rounded-sm" />
@@ -1186,15 +1409,20 @@ function OwnerIdField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.BaseValues>()
   const { data: users = [], isLoading: usersLoading } = useListUsers()
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
 
-  if (usersLoading) {
+  if (!shouldMount || usersLoading) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-5 w-48 rounded-sm" />
@@ -1237,15 +1465,20 @@ function GroupIdField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.BaseValues>()
   const { data: groups = [], isLoading: groupsLoading } = useListGroups()
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
 
-  if (groupsLoading) {
+  if (!shouldMount || groupsLoading) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-5 w-48 rounded-sm" />

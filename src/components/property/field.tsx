@@ -136,11 +136,20 @@ export default function PropertyField({
   const tooltipIcon = renderTooltipIcon(false)
   const flexTooltipIcon = renderTooltipIcon(true)
 
-  const suffixSlot = suffix ? (
-    <span className="inline-flex align-middle [&_[data-slot=badge]]:ml-0">
-      {suffix}
-    </span>
-  ) : null
+  const renderSuffixSlot = (gap: boolean) =>
+    suffix ? (
+      <span
+        className={cn(
+          "inline-flex align-middle [&_[data-slot=badge]]:ml-0",
+          gap && "ml-1.5",
+        )}
+      >
+        {suffix}
+      </span>
+    ) : null
+
+  const suffixSlot = renderSuffixSlot(false)
+  const flexSuffixSlot = renderSuffixSlot(true)
 
   const renderReverseText = (displayValue: React.ReactNode) => {
     const { head, tail } = splitLastWord(label)
@@ -244,7 +253,7 @@ export default function PropertyField({
                   <p className="text-xs text-content-muted">{label}</p>
                 )}
                 {hoverValue == null && flexTooltipIcon}
-                {hoverValue == null && suffixSlot}
+                {hoverValue == null && flexSuffixSlot}
               </>
             )}
           </div>
@@ -285,7 +294,7 @@ export default function PropertyField({
                 )}
                 {renderValue("ml-1 text-xs text-content-loud")}
                 {hoverValue == null && flexTooltipIcon}
-                {hoverValue == null && suffixSlot}
+                {hoverValue == null && flexSuffixSlot}
               </>
             )}
           </div>

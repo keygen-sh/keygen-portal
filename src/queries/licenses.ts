@@ -15,7 +15,10 @@ import {
 
 import * as keygen from "@/keygen"
 import { diff } from "@/lib/utils"
-import { normalizeLicensePermissions } from "@/lib/licenses"
+import {
+  normalizeLicenseLimits,
+  normalizeLicensePermissions,
+} from "@/lib/licenses"
 
 export type { LicenseFilters }
 
@@ -117,6 +120,10 @@ export function useUpdateLicense(licenseId: string) {
         }
 
         const current = response.data
+        const currentPolicyId = current.relationships.policy?.data?.id
+        const currentPolicy = currentPolicyId
+          ? (await keygen.policies.get({ id: currentPolicyId })).data
+          : undefined
 
         const {
           policyId,
@@ -135,6 +142,7 @@ export function useUpdateLicense(licenseId: string) {
         const changes = diff(
           {
             ...current.attributes,
+            ...normalizeLicenseLimits(current, currentPolicy),
             permissions: normalizeLicensePermissions(
               current.attributes.permissions,
             ),

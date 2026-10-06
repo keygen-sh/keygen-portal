@@ -11,6 +11,7 @@ export enum LicenseMode {
   View = "view",
   Edit = "edit",
   Create = "create",
+  Duplicate = "duplicate",
 }
 
 export enum LicenseView {

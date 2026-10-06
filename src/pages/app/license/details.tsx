@@ -168,6 +168,7 @@ export default function LicenseDetails() {
   const [open, setOpen] = useState({
     edit: false,
     delete: false,
+    duplicate: false,
     suspend: false,
     renew: false,
     checkIn: false,
@@ -293,6 +294,7 @@ export default function LicenseDetails() {
           {isMobile ? (
             <Can.Any
               permissions={[
+                "license.create",
                 "license.update",
                 "license.delete",
                 "license.renew",
@@ -314,6 +316,18 @@ export default function LicenseDetails() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="mr-4 p-0">
+                  <Can permission="license.create">
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        toggleOpen("duplicate", true)
+                        e.currentTarget.blur()
+                      }}
+                      className="pb-2 text-base"
+                    >
+                      Duplicate
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </Can>
                   <Can permission="license.update">
                     <DropdownMenuItem
                       onClick={(e) => {
@@ -495,6 +509,15 @@ export default function LicenseDetails() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </Can.Any>
+              <Can permission="license.create">
+                <Button
+                  variant="outline"
+                  disabled={licenseLoading}
+                  onClick={() => toggleOpen("duplicate", true)}
+                >
+                  Duplicate
+                </Button>
+              </Can>
               <Can permission="license.update">
                 <Button
                   variant="outline"
@@ -1243,6 +1266,11 @@ export default function LicenseDetails() {
       <Licenses.Form.Edit
         open={open.edit}
         onOpenChange={(value) => toggleOpen("edit", value)}
+      />
+
+      <Licenses.Form.Duplicate
+        open={open.duplicate}
+        onOpenChange={(value) => toggleOpen("duplicate", value)}
       />
 
       {license && (

@@ -22,6 +22,8 @@ import {
 import { useGetPolicy, useListPolicyEntitlements } from "@/queries/policies"
 import { useCreateEntitlement } from "@/queries/entitlements"
 
+import { LicenseMode } from "@/types/licenses"
+
 import { toast } from "@/lib/toast"
 import { settleCreateEntitlements } from "@/lib/entitlements"
 
@@ -74,6 +76,7 @@ export default function EditLicenseForm({
   const createEntitlement = useCreateEntitlement()
   const attachEntitlements = useAttachLicenseEntitlements()
   const detachEntitlements = useDetachLicenseEntitlements()
+  const mode = LicenseMode.Edit
 
   const form = useForm<
     Schemas.Licenses.UpdateFormValues,
@@ -240,6 +243,7 @@ export default function EditLicenseForm({
             <Forms.Section.Column>
               <Licenses.Form.Fields
                 schema="edit"
+                mode={mode}
                 include={[
                   "expiry",
                   "maxCores",
@@ -254,6 +258,7 @@ export default function EditLicenseForm({
             <Forms.Section.Column>
               <Licenses.Form.Fields
                 schema="edit"
+                mode={mode}
                 include={[
                   "maxUsers",
                   "maxMachines",
@@ -277,6 +282,7 @@ export default function EditLicenseForm({
               ) : (
                 <Licenses.Form.Fields
                   schema="edit"
+                  mode={mode}
                   include={["permissions"]}
                   fieldVariant="stacking"
                 />
@@ -285,6 +291,7 @@ export default function EditLicenseForm({
             <Forms.Section.Column>
               <Licenses.Form.Fields
                 schema="edit"
+                mode={mode}
                 include={["metadata"]}
                 fieldVariant="stacking"
               />
@@ -297,17 +304,20 @@ export default function EditLicenseForm({
             <Forms.Section.Column>
               <Licenses.Form.Fields
                 schema="edit"
+                mode={mode}
                 fieldVariant="stacking"
                 include={["policyId"]}
               />
               <Licenses.Form.Fields
                 schema="edit"
+                mode={mode}
                 include={["entitlements.attach", "entitlements.create"]}
               />
             </Forms.Section.Column>
             <Forms.Section.Column>
               <Licenses.Form.Fields
                 schema="edit"
+                mode={mode}
                 fieldVariant="stacking"
                 include={["groupId", "ownerId", "users.attach"]}
               />

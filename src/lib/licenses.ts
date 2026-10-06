@@ -78,7 +78,7 @@ export function formatLimitDisplay(
   return `${current} of ${formatLimitValue(max)}`
 }
 
-type LimitAttribute =
+export type LimitAttribute =
   | "maxMachines"
   | "maxProcesses"
   | "maxUsers"
@@ -86,6 +86,8 @@ type LimitAttribute =
   | "maxMemory"
   | "maxDisk"
   | "maxUses"
+
+export type LicenseLimits = Pick<License["attributes"], LimitAttribute>
 
 type ByteLimitAttribute = "maxMemory" | "maxDisk"
 
@@ -119,6 +121,16 @@ function getAttributeLimit(
     license.attributes[attribute],
     policy?.attributes[attribute] ?? null,
   )
+}
+
+function getOverriddenLimit(
+  license: License,
+  policy: Policy | null | undefined,
+  attribute: LimitAttribute,
+): number | null {
+  const value = license.attributes[attribute]
+
+  return isLimitOverridden(value, policy?.attributes[attribute]) ? value : null
 }
 
 export function getMachineMetricCount(
@@ -280,6 +292,21 @@ export function formatTtlLabel(seconds: number | null): string {
   if (hours >= 1) return `${hours} hour${hours === 1 ? "" : "s"}`
 
   return `${seconds} seconds`
+}
+
+export function normalizeLicenseLimits(
+  license: License,
+  policy: Policy | null | undefined,
+): LicenseLimits {
+  return {
+    maxMachines: getOverriddenLimit(license, policy, "maxMachines"),
+    maxProcesses: getOverriddenLimit(license, policy, "maxProcesses"),
+    maxUsers: getOverriddenLimit(license, policy, "maxUsers"),
+    maxCores: getOverriddenLimit(license, policy, "maxCores"),
+    maxMemory: getOverriddenLimit(license, policy, "maxMemory"),
+    maxDisk: getOverriddenLimit(license, policy, "maxDisk"),
+    maxUses: getOverriddenLimit(license, policy, "maxUses"),
+  }
 }
 
 const LICENSE_PERMISSION_SET: ReadonlySet<string> = new Set(LicensePermissions)

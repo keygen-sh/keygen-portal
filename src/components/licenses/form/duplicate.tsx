@@ -48,6 +48,7 @@ export default function DuplicateLicenseForm({
   )
   const { data: licenseUsers = [] } = useListLicenseUsers(license?.id ?? "")
   const sourcePolicyId = license?.relationships.policy?.data?.id ?? null
+  const { data: sourcePolicy } = useGetPolicy(sourcePolicyId ?? "")
   const { data: sourcePolicyEntitlements = [] } = useListPolicyEntitlements(
     sourcePolicyId ?? "",
     { limit: 100 },
@@ -68,6 +69,7 @@ export default function DuplicateLicenseForm({
     const values =
       Schemas.Licenses.getFormValuesFromLicense<Schemas.Licenses.CreateFormValues>(
         license,
+        sourcePolicy,
       )
     const { permissions } = values
     const matchesDefaultPermissions =
@@ -96,6 +98,7 @@ export default function DuplicateLicenseForm({
     license,
     licenseEntitlements,
     licenseUsers,
+    sourcePolicy,
     sourcePolicyEntitlements,
     defaultPermissions,
   ])

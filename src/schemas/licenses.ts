@@ -4,7 +4,11 @@ import { z } from "zod"
 import { SigningAlgorithm, TtlMode } from "@/types/files"
 import { CombineFormValues } from "@/types/forms"
 import { License } from "@/types/licenses"
-import { normalizeLicensePermissions } from "@/lib/licenses"
+import { Policy } from "@/types/policies"
+import {
+  normalizeLicenseLimits,
+  normalizeLicensePermissions,
+} from "@/lib/licenses"
 import { NumberSchema } from "@/schemas/numbers"
 import { MetadataPairsSchema, recordToMetadataPairs } from "@/schemas/metadata"
 
@@ -118,7 +122,7 @@ export type CheckOutValues = z.output<typeof CheckOutSchema>
 
 export function getFormValuesFromLicense<
   T extends BaseFormValues = BaseFormValues,
->(license: License): T {
+>(license: License, policy: Policy | null | undefined): T {
   const base: BaseFormValues = {
     name: license.attributes.name ?? "",
     expiry: license.attributes.expiry,
@@ -127,13 +131,7 @@ export function getFormValuesFromLicense<
     suspended: license.attributes.suspended,
     protected: license.attributes.protected,
 
-    maxMachines: license.attributes.maxMachines,
-    maxProcesses: license.attributes.maxProcesses,
-    maxUsers: license.attributes.maxUsers,
-    maxUses: license.attributes.maxUses,
-    maxCores: license.attributes.maxCores,
-    maxMemory: license.attributes.maxMemory,
-    maxDisk: license.attributes.maxDisk,
+    ...normalizeLicenseLimits(license, policy),
 
     permissions: normalizeLicensePermissions(
       license.attributes.permissions ?? null,

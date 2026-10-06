@@ -51,6 +51,7 @@ export default function EditLicenseForm({
   const currentPolicyId = license?.relationships.policy?.data?.id ?? null
   const currentGroupId = license?.relationships.group?.data?.id ?? null
   const currentOwnerId = license?.relationships.owner?.data?.id ?? null
+  const { data: currentPolicy } = useGetPolicy(currentPolicyId ?? "")
   const { data: currentPolicyEntitlements = [] } = useListPolicyEntitlements(
     currentPolicyId ?? "",
     { limit: 100 },
@@ -87,7 +88,7 @@ export default function EditLicenseForm({
     mode: "onChange",
     values: license
       ? {
-          ...Schemas.Licenses.getFormValuesFromLicense(license),
+          ...Schemas.Licenses.getFormValuesFromLicense(license, currentPolicy),
           expiry: license.attributes.expiry
             ? license.attributes.expiry.slice(0, 16)
             : null,

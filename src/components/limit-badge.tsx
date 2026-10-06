@@ -20,7 +20,7 @@ export function OverriddenBadge({
   className?: string
 }): React.ReactElement {
   return (
-    <Badge variant="secondary" className={cn("ml-1.5 text-[10px]", className)}>
+    <Badge variant="secondary" className={cn("text-[10px]", className)}>
       Overridden
     </Badge>
   )

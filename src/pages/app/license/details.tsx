@@ -915,7 +915,7 @@ export default function LicenseDetails() {
                                 {isLimitOverridden(
                                   license.attributes.maxCores,
                                   policy?.attributes.maxCores,
-                                ) && <OverriddenBadge className="ml-0" />}
+                                ) && <OverriddenBadge />}
                               </span>
                             }
                           />
@@ -961,7 +961,7 @@ export default function LicenseDetails() {
                                 {isLimitOverridden(
                                   license.attributes.maxMachines,
                                   policy?.attributes.maxMachines,
-                                ) && <OverriddenBadge className="ml-0" />}
+                                ) && <OverriddenBadge />}
                               </span>
                             }
                           />
@@ -988,7 +988,7 @@ export default function LicenseDetails() {
                                 {isLimitOverridden(
                                   license.attributes.maxProcesses,
                                   policy?.attributes.maxProcesses,
-                                ) && <OverriddenBadge className="ml-0" />}
+                                ) && <OverriddenBadge />}
                               </span>
                             }
                           />
@@ -1016,7 +1016,7 @@ export default function LicenseDetails() {
                                 {isLimitOverridden(
                                   license.attributes.maxUsers,
                                   policy?.attributes.maxUsers,
-                                ) && <OverriddenBadge className="ml-0" />}
+                                ) && <OverriddenBadge />}
                               </span>
                             }
                           />
@@ -1038,7 +1038,7 @@ export default function LicenseDetails() {
                                 {isLimitOverridden(
                                   license.attributes.maxUses,
                                   policy?.attributes.maxUses,
-                                ) && <OverriddenBadge className="ml-0" />}
+                                ) && <OverriddenBadge />}
                               </span>
                             }
                           />

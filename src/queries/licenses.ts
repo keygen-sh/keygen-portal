@@ -118,6 +118,20 @@ export function useUpdateLicense(licenseId: string) {
 
         const current = response.data
 
+        const {
+          policyId,
+          groupId,
+          ownerId,
+          entitlements,
+          users,
+          ...attributes
+        } = values
+        void policyId
+        void groupId
+        void ownerId
+        void entitlements
+        void users
+
         const changes = diff(
           {
             ...current.attributes,
@@ -125,7 +139,7 @@ export function useUpdateLicense(licenseId: string) {
               current.attributes.permissions,
             ),
           },
-          values as Partial<typeof current.attributes>,
+          attributes as Partial<typeof current.attributes>,
         ) as Schemas.Licenses.UpdateValues
         if (Object.keys(changes).length === 0) return current
 

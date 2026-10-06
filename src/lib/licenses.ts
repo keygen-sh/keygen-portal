@@ -53,7 +53,18 @@ export function isLimitOverridden(
   licenseValue: number | null,
   policyValue: number | null | undefined,
 ): boolean {
-  return licenseValue !== null && licenseValue !== policyValue
+  return (
+    licenseValue !== null &&
+    !Number.isNaN(licenseValue) &&
+    licenseValue !== policyValue
+  )
+}
+
+export function isLimitInherited(
+  licenseValue: number | null,
+  policyValue: number | null | undefined,
+): boolean {
+  return licenseValue === null || licenseValue === policyValue
 }
 
 export function formatLimitValue(value: number | null): string {

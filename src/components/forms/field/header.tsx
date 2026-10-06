@@ -27,6 +27,7 @@ interface FieldHeaderProps {
   optional?: boolean
   hint?: string
   action?: React.ReactNode
+  suffix?: React.ReactNode
   children: React.ReactNode
   className?: string
 }
@@ -40,12 +41,19 @@ export default function FieldHeader({
   optional = false,
   hint,
   action,
+  suffix,
   children,
   className,
 }: FieldHeaderProps) {
   const isMobile = useMobile()
 
   const { head, tail } = splitLastWord(label)
+
+  const suffixSlot = suffix ? (
+    <span className="inline-flex items-center gap-2 [&_[data-slot=badge]]:ml-0">
+      {suffix}
+    </span>
+  ) : null
 
   return (
     <div
@@ -62,6 +70,7 @@ export default function FieldHeader({
             {head && <>{head} </>}
             <span className="inline-flex gap-2 whitespace-nowrap">
               {tail}
+              {suffixSlot}
               {(tooltip || warning) && (
                 <>
                   <span className="inline-flex md:hidden">

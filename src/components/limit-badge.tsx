@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import TooltipBadge from "@/components/tooltip-badge"
 
 import { cn } from "@/lib/utils"
+import { isLimitInherited, isLimitOverridden } from "@/lib/licenses"
 
 export type LimitBadgeProps = {
   value: string
@@ -24,6 +25,33 @@ export function OverriddenBadge({
       Overridden
     </Badge>
   )
+}
+
+export function InheritedBadge({
+  className,
+}: {
+  className?: string
+}): React.ReactElement {
+  return (
+    <Badge variant="disabled" className={cn("text-[10px]", className)}>
+      Inherited
+    </Badge>
+  )
+}
+
+export function LimitSourceBadge({
+  value,
+  policyValue,
+}: {
+  value: number | null | undefined
+  policyValue: number | null
+}): React.ReactElement | null {
+  const limit = value ?? null
+
+  if (isLimitOverridden(limit, policyValue)) return <OverriddenBadge />
+  if (isLimitInherited(limit, policyValue)) return <InheritedBadge />
+
+  return null
 }
 
 export default function LimitBadge({

@@ -51,6 +51,7 @@ import NumberInput from "@/components/number-input"
 import MetadataInput from "@/components/metadata-input"
 import ByteSizeInput from "@/components/byte-size-input"
 import PermissionSelect from "@/components/permission-select"
+import { LimitSourceBadge } from "@/components/limit-badge"
 
 type Descriptions = typeof LicenseFormFieldDescriptions
 
@@ -660,6 +661,14 @@ function MaxMachinesField({
             variant={fieldVariant}
             optional
             tooltip={descriptions.maxMachines}
+            suffix={
+              selectedPolicy && (
+                <LimitSourceBadge
+                  value={field.value}
+                  policyValue={selectedPolicy.attributes.maxMachines}
+                />
+              )
+            }
           >
             <FormControl>
               <NumberInput
@@ -717,6 +726,14 @@ function MaxProcessesField({
             variant={fieldVariant}
             optional
             tooltip={descriptions.maxProcesses}
+            suffix={
+              selectedPolicy && (
+                <LimitSourceBadge
+                  value={field.value}
+                  policyValue={selectedPolicy.attributes.maxProcesses}
+                />
+              )
+            }
           >
             <FormControl>
               <NumberInput
@@ -772,6 +789,14 @@ function MaxUsersField({
             variant={fieldVariant}
             optional
             tooltip={descriptions.maxUsers}
+            suffix={
+              selectedPolicy && (
+                <LimitSourceBadge
+                  value={field.value}
+                  policyValue={selectedPolicy.attributes.maxUsers}
+                />
+              )
+            }
           >
             <FormControl>
               <NumberInput
@@ -825,6 +850,14 @@ function MaxCoresField({
             variant={fieldVariant}
             optional
             tooltip={descriptions.maxCores}
+            suffix={
+              selectedPolicy && (
+                <LimitSourceBadge
+                  value={field.value}
+                  policyValue={selectedPolicy.attributes.maxCores}
+                />
+              )
+            }
           >
             <FormControl>
               <NumberInput
@@ -878,6 +911,14 @@ function MaxMemoryField({
             variant={fieldVariant}
             optional
             tooltip={descriptions.maxMemory}
+            suffix={
+              selectedPolicy && (
+                <LimitSourceBadge
+                  value={field.value}
+                  policyValue={selectedPolicy.attributes.maxMemory}
+                />
+              )
+            }
           >
             <FormControl>
               <ByteSizeInput
@@ -929,6 +970,14 @@ function MaxDiskField({
             variant={fieldVariant}
             optional
             tooltip={descriptions.maxDisk}
+            suffix={
+              selectedPolicy && (
+                <LimitSourceBadge
+                  value={field.value}
+                  policyValue={selectedPolicy.attributes.maxDisk}
+                />
+              )
+            }
           >
             <FormControl>
               <ByteSizeInput
@@ -981,6 +1030,14 @@ function MaxUsesField({
             variant={fieldVariant}
             optional
             tooltip={descriptions.maxUses}
+            suffix={
+              selectedPolicy && (
+                <LimitSourceBadge
+                  value={field.value}
+                  policyValue={selectedPolicy.attributes.maxUses}
+                />
+              )
+            }
           >
             <FormControl>
               <NumberInput

@@ -3,8 +3,6 @@ import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams } from "@tanstack/react-router"
 
-import { recordToMetadataPairs } from "@/schemas/metadata"
-
 import { Separator } from "@/components/ui/separator"
 
 import * as Schemas from "@/schemas"
@@ -25,7 +23,6 @@ import { useGetPolicy, useListPolicyEntitlements } from "@/queries/policies"
 import { useCreateEntitlement } from "@/queries/entitlements"
 
 import { toast } from "@/lib/toast"
-import { normalizeLicensePermissions } from "@/lib/licenses"
 import { settleCreateEntitlements } from "@/lib/entitlements"
 
 import * as keygen from "@/keygen"
@@ -87,26 +84,10 @@ export default function EditLicenseForm({
     mode: "onChange",
     values: license
       ? {
-          name: license.attributes.name ?? "",
+          ...Schemas.Licenses.getFormValuesFromLicense(license),
           expiry: license.attributes.expiry
             ? license.attributes.expiry.slice(0, 16)
             : null,
-          suspended: license.attributes.suspended ?? false,
-          protected: license.attributes.protected ?? false,
-          maxMachines: license.attributes.maxMachines ?? null,
-          maxProcesses: license.attributes.maxProcesses ?? null,
-          maxUsers: license.attributes.maxUsers ?? null,
-          maxCores: license.attributes.maxCores ?? null,
-          maxMemory: license.attributes.maxMemory ?? null,
-          maxDisk: license.attributes.maxDisk ?? null,
-          maxUses: license.attributes.maxUses ?? null,
-          policyId: currentPolicyId ?? "",
-          groupId: currentGroupId,
-          ownerId: currentOwnerId,
-          permissions: normalizeLicensePermissions(
-            license.attributes.permissions ?? null,
-          ),
-          metadata: recordToMetadataPairs(license.attributes.metadata),
           entitlements: {
             attach: directLicenseEntitlements.map((e) => e.id),
             create: [],

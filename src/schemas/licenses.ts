@@ -3,8 +3,10 @@ import { z } from "zod"
 
 import { SigningAlgorithm, TtlMode } from "@/types/files"
 import { CombineFormValues } from "@/types/forms"
+import { License } from "@/types/licenses"
+import { normalizeLicensePermissions } from "@/lib/licenses"
 import { NumberSchema } from "@/schemas/numbers"
-import { MetadataPairsSchema } from "@/schemas/metadata"
+import { MetadataPairsSchema, recordToMetadataPairs } from "@/schemas/metadata"
 
 const BaseShape = z.object({
   name: z
@@ -113,3 +115,42 @@ export const CheckOutSchema = CheckOutRules(CheckOutShape)
 
 export type CheckOutFormValues = z.input<typeof CheckOutSchema>
 export type CheckOutValues = z.output<typeof CheckOutSchema>
+
+export function getFormValuesFromLicense<
+  T extends BaseFormValues = BaseFormValues,
+>(license: License): T {
+  const base: BaseFormValues = {
+    name: license.attributes.name ?? "",
+    expiry: license.attributes.expiry,
+    metadata: recordToMetadataPairs(license.attributes.metadata),
+
+    suspended: license.attributes.suspended,
+    protected: license.attributes.protected,
+
+    maxMachines: license.attributes.maxMachines,
+    maxProcesses: license.attributes.maxProcesses,
+    maxUsers: license.attributes.maxUsers,
+    maxUses: license.attributes.maxUses,
+    maxCores: license.attributes.maxCores,
+    maxMemory: license.attributes.maxMemory,
+    maxDisk: license.attributes.maxDisk,
+
+    permissions: normalizeLicensePermissions(
+      license.attributes.permissions ?? null,
+    ),
+
+    policyId: license.relationships.policy?.data?.id ?? "",
+    groupId: license.relationships.group?.data?.id ?? null,
+    ownerId: license.relationships.owner?.data?.id ?? null,
+
+    entitlements: {
+      attach: (license.relationships.entitlements?.data ?? []).map((e) => e.id),
+      create: [],
+    },
+    users: {
+      attach: (license.relationships.users?.data ?? []).map((u) => u.id),
+    },
+  }
+
+  return base as T
+}

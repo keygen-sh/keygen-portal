@@ -119,7 +119,9 @@ export default function EditLicenseForm({
         createMutation: createEntitlement,
         values: values.entitlements,
       })
-      if (!entitlementIds) return
+      if (!entitlementIds) {
+        throw new Error("Failed to create entitlement(s)")
+      }
 
       const selectedEntitlementIds = entitlementIds.filter(
         (id) => !selectedPolicyEntitlements.some((e) => e.id === id),

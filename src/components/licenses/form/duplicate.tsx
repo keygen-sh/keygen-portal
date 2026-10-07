@@ -18,6 +18,7 @@ import {
 } from "@/queries/licenses"
 import { useGetPolicy, useListPolicyEntitlements } from "@/queries/policies"
 import { useCreateEntitlement } from "@/queries/entitlements"
+import { useCreateUser } from "@/queries/users"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 import { useAccountDefaultLicensePermissions } from "@/hooks/use-account-default-license-permissions"
 
@@ -25,6 +26,7 @@ import { LicenseMode } from "@/types/licenses"
 
 import { settleRelationships } from "@/lib/relationships"
 import { settleCreateEntitlements } from "@/lib/entitlements"
+import { settleCreateUsers } from "@/lib/users"
 
 import * as keygen from "@/keygen"
 import * as Forms from "@/components/forms"
@@ -58,6 +60,7 @@ export default function DuplicateLicenseForm({
   const createLicense = useCreateLicense()
   const changeGroup = useChangeLicenseGroup()
   const changeOwner = useChangeLicenseOwner()
+  const createUser = useCreateUser()
   const attachUsers = useAttachLicenseUsers()
   const createEntitlement = useCreateEntitlement()
   const attachEntitlements = useAttachLicenseEntitlements()
@@ -92,6 +95,7 @@ export default function DuplicateLicenseForm({
         attach: licenseUsers
           .filter((user) => user.id !== values.ownerId)
           .map((user) => user.id),
+        create: [],
       },
     }
   }, [
@@ -131,19 +135,26 @@ export default function DuplicateLicenseForm({
         throw new Error("Failed to create entitlement(s)")
       }
 
+      const settledUserIds = await settleCreateUsers({
+        form,
+        createMutation: createUser,
+        values: values.users,
+      })
+      if (!settledUserIds) {
+        throw new Error("Failed to create user(s)")
+      }
+
       const created = await createLicense.mutateAsync({
         ...values,
         entitlements: { attach: [], create: [] },
-        users: { attach: [] },
+        users: { attach: [], create: [] },
       })
 
       const { ownerId, groupId } = values
       const attachEntitlementIds = entitlementIds.filter(
         (id) => !selectedPolicyEntitlements.some((e) => e.id === id),
       )
-      const userIds = (values.users?.attach ?? []).filter(
-        (id) => id !== ownerId,
-      )
+      const userIds = settledUserIds.filter((id) => id !== ownerId)
 
       await settleRelationships({
         message: "License created",
@@ -184,6 +195,7 @@ export default function DuplicateLicenseForm({
       changeOwner,
       createEntitlement,
       attachEntitlements,
+      createUser,
       attachUsers,
       navigateToResource,
     ],
@@ -206,6 +218,7 @@ export default function DuplicateLicenseForm({
             changeOwner.isPending ||
             createEntitlement.isPending ||
             attachEntitlements.isPending ||
+            createUser.isPending ||
             attachUsers.isPending
           }
           submitLabel="Create"
@@ -279,7 +292,7 @@ export default function DuplicateLicenseForm({
                 schema="create"
                 mode={mode}
                 fieldVariant="stacking"
-                include={["policyId"]}
+                include={["policyId", "groupId"]}
               />
               <Licenses.Form.Fields
                 schema="create"
@@ -292,7 +305,7 @@ export default function DuplicateLicenseForm({
                 schema="create"
                 mode={mode}
                 fieldVariant="stacking"
-                include={["groupId", "ownerId", "users.attach"]}
+                include={["ownerId", "users.attach", "users.create"]}
               />
             </Forms.Section.Column>
           </Forms.Section.Columns>

@@ -12,10 +12,12 @@ import {
 } from "@/queries/licenses"
 import { useListPolicies, useListPolicyEntitlements } from "@/queries/policies"
 import { useCreateEntitlement } from "@/queries/entitlements"
+import { useCreateUser } from "@/queries/users"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 
 import { settleRelationships } from "@/lib/relationships"
 import { settleCreateEntitlements } from "@/lib/entitlements"
+import { settleCreateUsers } from "@/lib/users"
 
 import * as keygen from "@/keygen"
 import * as Forms from "@/components/forms"
@@ -58,12 +60,13 @@ export default function CreateLicenseForm({
       permissions: null,
       metadata: [],
       entitlements: { attach: [], create: [] },
-      users: { attach: [] },
+      users: { attach: [], create: [] },
     },
   })
   const createLicense = useCreateLicense()
   const changeGroup = useChangeLicenseGroup()
   const changeOwner = useChangeLicenseOwner()
+  const createUser = useCreateUser()
   const attachUsers = useAttachLicenseUsers()
   const createEntitlement = useCreateEntitlement()
   const attachEntitlements = useAttachLicenseEntitlements()
@@ -91,19 +94,26 @@ export default function CreateLicenseForm({
         throw new Error("Failed to create entitlement(s)")
       }
 
+      const settledUserIds = await settleCreateUsers({
+        form,
+        createMutation: createUser,
+        values: values.users,
+      })
+      if (!settledUserIds) {
+        throw new Error("Failed to create user(s)")
+      }
+
       const license = await createLicense.mutateAsync({
         ...values,
         entitlements: { attach: [], create: [] },
-        users: { attach: [] },
+        users: { attach: [], create: [] },
       })
 
       const { ownerId, groupId } = values
       const attachEntitlementIds = entitlementIds.filter(
         (id) => !policyEntitlements.some((e) => e.id === id),
       )
-      const userIds = (values.users?.attach ?? []).filter(
-        (id) => id !== ownerId,
-      )
+      const userIds = settledUserIds.filter((id) => id !== ownerId)
 
       await settleRelationships({
         message: "License created",
@@ -144,6 +154,7 @@ export default function CreateLicenseForm({
       changeOwner,
       createEntitlement,
       attachEntitlements,
+      createUser,
       attachUsers,
       navigateToResource,
     ],
@@ -160,6 +171,7 @@ export default function CreateLicenseForm({
             changeOwner.isPending ||
             createEntitlement.isPending ||
             attachEntitlements.isPending ||
+            createUser.isPending ||
             attachUsers.isPending
           }
           description="Creating a new license"
@@ -265,6 +277,7 @@ export default function CreateLicenseForm({
               "groupId",
               "ownerId",
               "users.attach",
+              "users.create",
             ]}
           >
             <Forms.Section.Card title="Relationships configuration">
@@ -278,7 +291,7 @@ export default function CreateLicenseForm({
                   <Licenses.Form.Fields
                     schema="create"
                     fieldVariant="stacking"
-                    include={["groupId", "ownerId"]}
+                    include={["groupId"]}
                   />
                 </Forms.Section.Column>
 
@@ -286,10 +299,16 @@ export default function CreateLicenseForm({
                   <Licenses.Form.Fields
                     schema="create"
                     fieldVariant="stacking"
-                    include={["users.attach"]}
+                    include={["ownerId"]}
                   />
                 </Forms.Section.Column>
               </Forms.Section.Columns>
+
+              <Licenses.Form.Fields
+                schema="create"
+                fieldVariant="stacking"
+                include={["users.attach", "users.create"]}
+              />
             </Forms.Section.Card>
 
             <DocumentationLink page="licenses" />

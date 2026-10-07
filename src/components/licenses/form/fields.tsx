@@ -87,6 +87,7 @@ const INCLUDE_DEFAULT_FIELDS: Schemas.Licenses.FieldNames[] = [
   "entitlements.attach",
   "entitlements.create",
   "users.attach",
+  "users.create",
 ]
 
 export default function LicensesFormFields({
@@ -286,6 +287,14 @@ export default function LicensesFormFields({
                 autoFocus={autoFocus === "users.attach"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                mode={mode}
+              />
+            )
+          case "users.create":
+            return (
+              <CreateUsersField
+                key="users.create"
+                fieldVariant={fieldVariant}
                 mode={mode}
               />
             )
@@ -1459,6 +1468,126 @@ function AttachUsersField({
         </FormItem>
       )}
     />
+  )
+}
+
+function CreateUsersField({
+  fieldVariant = "row",
+  mode = LicenseMode.Create,
+}: {
+  fieldVariant?: FieldVariant
+  mode?: LicenseMode
+}) {
+  const form = useFormContext<Schemas.Licenses.AllValues>()
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "users.create",
+  })
+  const shouldMount = useDeferredMount({
+    delay: mode === LicenseMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return (
+      <div className="mt-4 space-y-2">
+        <Skeleton className="h-5 w-32 rounded-sm" />
+        <Skeleton className="h-8 w-48" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-4">
+      <Forms.Field.Header label="Create users" variant={fieldVariant} optional>
+        <div className="space-y-3">
+          {fields.map((f, i) => (
+            <div key={f.id} className="flex items-start gap-2">
+              <div className="grid flex-1 gap-2 md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name={`users.create.${i}.email`}
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="Enter email..."
+                          autoComplete="off"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`users.create.${i}.firstName`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter first name..."
+                          autoComplete="off"
+                          {...field}
+                          value={field.value ?? ""}
+                          onChange={(e) =>
+                            field.onChange(e.target.value || null)
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`users.create.${i}.lastName`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter last name..."
+                          autoComplete="off"
+                          {...field}
+                          value={field.value ?? ""}
+                          onChange={(e) =>
+                            field.onChange(e.target.value || null)
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex items-center">
+                <Button
+                  size="icon"
+                  type="button"
+                  variant="ghost"
+                  onClick={() => remove(i)}
+                >
+                  <X className="h-4 w-4 text-content-subdued" />
+                </Button>
+              </div>
+            </div>
+          ))}
+          <Button
+            size="sm"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              append({ email: "", firstName: null, lastName: null })
+            }
+            className="text-content-muted"
+          >
+            + New user
+          </Button>
+        </div>
+      </Forms.Field.Header>
+    </div>
   )
 }
 

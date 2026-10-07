@@ -21,11 +21,13 @@ import {
 } from "@/queries/licenses"
 import { useGetPolicy, useListPolicyEntitlements } from "@/queries/policies"
 import { useCreateEntitlement } from "@/queries/entitlements"
+import { useCreateUser } from "@/queries/users"
 
 import { LicenseMode } from "@/types/licenses"
 
 import { toast } from "@/lib/toast"
 import { settleCreateEntitlements } from "@/lib/entitlements"
+import { settleCreateUsers } from "@/lib/users"
 
 import * as keygen from "@/keygen"
 import * as Forms from "@/components/forms"
@@ -72,6 +74,7 @@ export default function EditLicenseForm({
   const changePolicy = useChangeLicensePolicy()
   const changeGroup = useChangeLicenseGroup()
   const changeOwner = useChangeLicenseOwner()
+  const createUser = useCreateUser()
   const attachUsers = useAttachLicenseUsers()
   const detachUsers = useDetachLicenseUsers()
   const createEntitlement = useCreateEntitlement()
@@ -98,6 +101,7 @@ export default function EditLicenseForm({
           },
           users: {
             attach: attachedLicenseUsers.map((u) => u.id),
+            create: [],
           },
         }
       : undefined,
@@ -123,6 +127,15 @@ export default function EditLicenseForm({
         throw new Error("Failed to create entitlement(s)")
       }
 
+      const settledUserIds = await settleCreateUsers({
+        form,
+        createMutation: createUser,
+        values: values.users,
+      })
+      if (!settledUserIds) {
+        throw new Error("Failed to create user(s)")
+      }
+
       const selectedEntitlementIds = entitlementIds.filter(
         (id) => !selectedPolicyEntitlements.some((e) => e.id === id),
       )
@@ -140,9 +153,7 @@ export default function EditLicenseForm({
         })
 
       const newOwnerId = values.ownerId ?? null
-      const selectedUserIds = (values.users?.attach ?? []).filter(
-        (id) => id !== newOwnerId,
-      )
+      const selectedUserIds = settledUserIds.filter((id) => id !== newOwnerId)
 
       const attachUserIds = selectedUserIds.filter(
         (id) => !attachedLicenseUsers.some((u) => u.id === id),
@@ -212,6 +223,7 @@ export default function EditLicenseForm({
       changePolicy,
       changeGroup,
       changeOwner,
+      createUser,
       attachUsers,
       detachUsers,
     ],
@@ -236,6 +248,7 @@ export default function EditLicenseForm({
             attachEntitlements.isPending ||
             detachEntitlements.isPending ||
             createEntitlement.isPending ||
+            createUser.isPending ||
             attachUsers.isPending ||
             detachUsers.isPending
           }
@@ -309,7 +322,7 @@ export default function EditLicenseForm({
                 schema="edit"
                 mode={mode}
                 fieldVariant="stacking"
-                include={["policyId"]}
+                include={["policyId", "groupId"]}
               />
               <Licenses.Form.Fields
                 schema="edit"
@@ -322,7 +335,7 @@ export default function EditLicenseForm({
                 schema="edit"
                 mode={mode}
                 fieldVariant="stacking"
-                include={["groupId", "ownerId", "users.attach"]}
+                include={["ownerId", "users.attach", "users.create"]}
               />
             </Forms.Section.Column>
           </Forms.Section.Columns>

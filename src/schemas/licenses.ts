@@ -51,8 +51,17 @@ const BaseShape = z.object({
   users: z
     .object({
       attach: z.array(z.string()).default([]),
+      create: z
+        .array(
+          z.object({
+            email: z.string().trim().email("Email is invalid"),
+            firstName: z.string().trim().nullable().optional(),
+            lastName: z.string().trim().nullable().optional(),
+          }),
+        )
+        .default([]),
     })
-    .default({ attach: [] }),
+    .default({ attach: [], create: [] }),
 })
 
 const KeyShape = z.object({
@@ -147,6 +156,7 @@ export function getFormValuesFromLicense<
     },
     users: {
       attach: (license.relationships.users?.data ?? []).map((u) => u.id),
+      create: [],
     },
   }
 

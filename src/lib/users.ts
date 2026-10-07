@@ -92,6 +92,91 @@ export async function settleInviteUsers<
   return invited
 }
 
+type UserValues = {
+  attach?: string[]
+  create?: {
+    email: string
+    firstName?: string | null
+    lastName?: string | null
+  }[]
+}
+
+interface SettleCreateUsersProps<
+  TFieldValues extends FieldValues,
+  TContext = unknown,
+  TTransformedValues = TFieldValues,
+> {
+  form: UseFormReturn<TFieldValues, TContext, TTransformedValues>
+  values?: UserValues
+  createMutation: {
+    mutateAsync: (values: {
+      email: string
+      firstName?: string | null
+      lastName?: string | null
+      role: UserRole
+    }) => Promise<User>
+  }
+}
+
+export async function settleCreateUsers<
+  TFieldValues extends FieldValues,
+  TContext = unknown,
+  TTransformedValues = TFieldValues,
+>({
+  form,
+  values,
+  createMutation,
+}: SettleCreateUsersProps<TFieldValues, TContext, TTransformedValues>): Promise<
+  string[] | null
+> {
+  const attachIds = values?.attach ?? []
+  const toCreate = values?.create ?? []
+
+  const [created, errors] = await settleMutations<User>(
+    toCreate.map((attributes) =>
+      createMutation.mutateAsync({ ...attributes, role: UserRole.User }),
+    ),
+  )
+  const nextAttach = Array.from(
+    new Set([...attachIds, ...created.map((u) => u.id)]),
+  )
+  const nextCreate = errors.map(({ index }) => toCreate[index])
+
+  form.setValue(
+    "users.attach" as Path<TFieldValues>,
+    nextAttach as PathValue<TFieldValues, Path<TFieldValues>>,
+  )
+  form.setValue(
+    "users.create" as Path<TFieldValues>,
+    nextCreate as PathValue<TFieldValues, Path<TFieldValues>>,
+  )
+
+  if (errors.length > 0) {
+    let message = "Field is invalid"
+    errors.forEach((error, index) => {
+      message =
+        error.reason.code === UserErrorCode.EmailTaken
+          ? "Email is already taken"
+          : "Field is invalid"
+
+      form.setError(`users.create.${index}.email` as Path<TFieldValues>, {
+        type: "validate",
+        message,
+      })
+    })
+
+    toast({
+      message: "Failed to create user(s)",
+      description: message,
+      variant: "error",
+    })
+
+    return null
+  }
+
+  return nextAttach
+}
+
 const RECENT_STORAGE_KEY = "keygen.user.recent"
 
 export interface RecentUser {

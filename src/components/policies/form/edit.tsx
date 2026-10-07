@@ -72,7 +72,9 @@ export default function EditPolicyForm({
         createMutation: createEntitlement,
         values: values.entitlements,
       })
-      if (!createdEntitlementIds) return
+      if (!createdEntitlementIds) {
+        throw new Error("Failed to create entitlement(s)")
+      }
 
       const attachEntitlementIds = createdEntitlementIds.filter(
         (id) => !policyEntitlements.some((e) => e.id === id),

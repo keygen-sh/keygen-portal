@@ -87,7 +87,9 @@ export default function CreateLicenseForm({
         createMutation: createEntitlement,
         values: values.entitlements,
       })
-      if (!entitlementIds) return
+      if (!entitlementIds) {
+        throw new Error("Failed to create entitlement(s)")
+      }
 
       const license = await createLicense.mutateAsync({
         ...values,

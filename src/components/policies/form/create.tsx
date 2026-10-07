@@ -148,7 +148,9 @@ export default function CreatePolicyForm({
         createMutation: createEntitlement,
         values: values.entitlements,
       })
-      if (!createdEntitlementIds) return
+      if (!createdEntitlementIds) {
+        throw new Error("Failed to create entitlement(s)")
+      }
 
       const policy = await createPolicy.mutateAsync({
         ...values,

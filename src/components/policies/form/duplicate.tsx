@@ -85,7 +85,9 @@ export default function DuplicatePolicyForm({
         createMutation: createEntitlement,
         values: values.entitlements,
       })
-      if (!createdEntitlementIds) return
+      if (!createdEntitlementIds) {
+        throw new Error("Failed to create entitlement(s)")
+      }
 
       const created = await createPolicy.mutateAsync({
         ...values,

@@ -11,10 +11,15 @@ import {
 } from "@tanstack/react-router"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ThemeProvider } from "next-themes"
+
 import { routeTree } from "./routeTree.gen"
+
 import * as sentry from "@/sentry"
 import * as fathom from "@/fathom"
 import * as keygen from "@/keygen"
+
+import "@/lib/translate"
+
 import * as Page from "@/pages/error"
 import * as Loading from "@/components/loading"
 

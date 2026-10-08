@@ -20,6 +20,25 @@ import * as Loading from "@/components/loading"
 
 sentry.init()
 
+// reloads tabs left open across a deploy when their old build fails to load
+const STALE_BUILD_RELOAD_KEY = "keygen.build.reload"
+
+let isReloadingStaleBuild = false
+
+window.addEventListener("vite:preloadError", () => {
+  try {
+    if (sessionStorage.getItem(STALE_BUILD_RELOAD_KEY) === __APP_VERSION__) {
+      return
+    }
+    sessionStorage.setItem(STALE_BUILD_RELOAD_KEY, __APP_VERSION__)
+  } catch {
+    return
+  }
+
+  isReloadingStaleBuild = true
+  window.location.reload()
+})
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -62,7 +81,9 @@ async function start(): Promise<void> {
   if (!rootElement.innerHTML) {
     const root = ReactDOM.createRoot(rootElement, {
       onCaughtError: (error) => {
-        if (isNotFound(error) || isRedirect(error)) return
+        if (isNotFound(error) || isRedirect(error) || isReloadingStaleBuild) {
+          return
+        }
         console.error(error)
       },
     })

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { motion } from "motion/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "@tanstack/react-router"
-import { ChevronRight, EllipsisVertical, RotateCcw } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -12,13 +11,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+import { ChevronRight, EllipsisVertical, RotateCcw } from "lucide-react"
+
+import { useMobile } from "@/hooks/use-mobile"
+
 import * as fathom from "@/fathom"
 
 import { toast } from "@/lib/toast"
 import { PRICING_URL } from "@/lib/url"
 
-import { onDemoEngagement, recordDemoSection } from "@/demo/engagement"
 import { resetMockData } from "@/demo"
+import { onDemoEngagement, recordDemoSection } from "@/demo/engagement"
 
 type BannerMode = "info" | "cta"
 
@@ -27,6 +30,8 @@ const OFFSET = "1.75rem"
 let mode: BannerMode = "info"
 
 export default function DemoBanner() {
+  const isMobile = useMobile()
+
   const router = useRouter()
   const queryClient = useQueryClient()
   const [message, setMessage] = useState<BannerMode>(() => mode)
@@ -85,9 +90,11 @@ export default function DemoBanner() {
       className="fixed inset-x-0 top-0 z-50 flex h-(--demo-offset) items-center justify-center gap-2 bg-primary px-10 text-white dark:text-background"
     >
       <p className="text-center text-xs font-semibold">
-        {message === "cta"
-          ? "Enjoying the demo? Keygen is free to start."
-          : "You are exploring a demo. Ready to start using Keygen?"}
+        {isMobile
+          ? "You are exploring a demo."
+          : message === "cta"
+            ? "Enjoying the demo? Keygen is free to start."
+            : "You are exploring a demo. Ready to start using Keygen?"}
       </p>
       <a
         href={PRICING_URL}

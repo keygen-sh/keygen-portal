@@ -44,9 +44,8 @@ export default async function createForBearer({
     {
       method: "POST",
       body: JSON.stringify(body),
-      ...(environment != null
-        ? { environment, environmentToken }
-        : { root: true }),
+      // otherwise use the active environment since bearers can belong to it
+      ...(environment != null ? { environment, environmentToken } : {}),
     },
   )) as TokenResponse
 

@@ -110,7 +110,7 @@ export function useGetOrCreateEnvironmentToken() {
 
 export function useCreateToken() {
   const queryClient = useQueryClient()
-  const { code } = useEnvironment()
+  const { id: activeEnvironmentId, code } = useEnvironment()
   const ensureEnvironmentToken = useGetOrCreateEnvironmentToken()
 
   return useMutation<Token, APIError, Schemas.Tokens.CreateValues>({
@@ -118,7 +118,16 @@ export function useCreateToken() {
       let response: TokenResponse
 
       if (values.bearerKind === TokenBearerKind.Admin) {
-        response = await keygen.tokens.create({ values })
+        response = await keygen.tokens.create({
+          values,
+          relationships: activeEnvironmentId
+            ? {
+                environment: {
+                  data: { type: "environments", id: activeEnvironmentId },
+                },
+              }
+            : undefined,
+        })
       } else {
         const bearerType = TokenBearerResourceTypes[values.bearerKind]
 

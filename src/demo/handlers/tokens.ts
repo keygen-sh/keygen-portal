@@ -6,6 +6,7 @@ import {
   baseRefs,
   basicCredentials,
   bodyAttributes,
+  bodyData,
   bodyMeta,
   bodyRelationship,
   type MockContext,
@@ -611,10 +612,9 @@ function generateForCurrentBearer(ctx: MockContext): MockResult {
       )
     }
 
-    const existing =
-      Object.keys(attributes).length === 0
-        ? reusableEnvironmentToken(ctx, bearer, environment)
-        : undefined
+    const existing = !("attributes" in bodyData(ctx))
+      ? reusableEnvironmentToken(ctx, bearer, environment)
+      : undefined
     if (existing) {
       ctx.resource = { type: TYPE, id: existing.id }
       return {

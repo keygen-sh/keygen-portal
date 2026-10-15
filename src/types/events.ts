@@ -63,7 +63,6 @@ export const EventTypes = [
   "license.user.updated",
   "license.users.attached",
   "license.users.detached",
-  "license.validated",
   "license.validation.failed",
   "license.validation.succeeded",
 
@@ -105,7 +104,6 @@ export const EventTypes = [
   "release.constraints.detached",
   "release.created",
   "release.deleted",
-  "release.downloaded",
   "release.package.updated",
   "release.published",
   "release.updated",

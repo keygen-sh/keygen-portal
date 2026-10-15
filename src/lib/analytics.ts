@@ -280,7 +280,7 @@ export const VALIDATION_METRICS = [
 export const EVENT_GROUPS = [
   {
     title: "Releases",
-    events: ["release.downloaded", "release.upgraded"],
+    events: ["artifact.downloaded", "release.upgraded"],
   },
   {
     title: "Users",

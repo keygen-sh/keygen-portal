@@ -33,6 +33,8 @@ export const EventTypes = [
 
   "group.created",
   "group.deleted",
+  "group.owners.attached",
+  "group.owners.detached",
   "group.updated",
 
   "key.created",
@@ -95,6 +97,8 @@ export const EventTypes = [
   "process.heartbeat.dead",
   "process.heartbeat.ping",
   "process.heartbeat.pong",
+  "process.heartbeat.resurrected",
+  "process.updated",
 
   "product.created",
   "product.deleted",

@@ -51,7 +51,7 @@ function CeCombobox(): React.ReactElement {
 }
 
 function EeCombobox(): React.ReactElement {
-  const { id: activeEnvironmentId, code, select } = useEnvironment()
+  const { id: activeEnvironmentId, code, name, select } = useEnvironment()
 
   const [openModal, setOpenModal] = useState(false)
   const [openPopover, setOpenPopover] = useState(false)
@@ -72,18 +72,31 @@ function EeCombobox(): React.ReactElement {
   const currentEnvironment =
     environmentOptions.find((option) => option.id === activeEnvironmentId) ??
     (activeEnvironmentId != null
-      ? { id: activeEnvironmentId, code, name: code ?? activeEnvironmentId }
+      ? {
+          id: activeEnvironmentId,
+          code,
+          name: name ?? code ?? activeEnvironmentId,
+        }
       : GLOBAL_ENVIRONMENT)
 
-  const switchEnvironment = async (id: string, newCode: string | null) => {
+  const switchEnvironment = async (option: {
+    id: string
+    code: string | null
+    name: string
+  }) => {
     setOpenPopover(false)
 
-    if (newCode === code) {
+    if (option.code === code) {
       return
     }
 
     try {
-      await select(id === GLOBAL_ENVIRONMENT.id ? null : id, newCode)
+      // only the global option has a null code
+      await select(
+        option.code == null
+          ? null
+          : { id: option.id, code: option.code, name: option.name },
+      )
     } catch (error) {
       console.error(error)
     }
@@ -131,9 +144,7 @@ function EeCombobox(): React.ReactElement {
                     <CommandItem
                       key={environment.id}
                       value={environment.id}
-                      onSelect={() =>
-                        switchEnvironment(environment.id, environment.code)
-                      }
+                      onSelect={() => switchEnvironment(environment)}
                     >
                       {selected ? (
                         <Check className="mr-2 size-4" />

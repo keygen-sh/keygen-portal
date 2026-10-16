@@ -9,6 +9,7 @@ import * as keygen from "@/keygen"
 const NO_ENVIRONMENT: EnvironmentContextValue = {
   id: null,
   code: null,
+  name: null,
   select: async () => {},
 }
 

@@ -1,41 +1,53 @@
 import { useState } from "react"
-import { Activity, BarChart3, Grid3X3, Lock } from "lucide-react"
 
-import LockedOverlay from "@/components/locked-overlay"
-import * as Skeletons from "@/components/skeletons"
 import { Button } from "@/components/ui/button"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
-import { useMobile } from "@/hooks/use-mobile"
+import { Activity, BarChart3, Grid3X3, Lock, Info } from "lucide-react"
+
+import * as Skeletons from "@/components/skeletons"
+import LockedOverlay from "@/components/locked-overlay"
+
 import { useCloud } from "@/hooks/use-cloud"
+import { useMobile } from "@/hooks/use-mobile"
 import { useEdition } from "@/hooks/use-edition"
 import { usePermissions } from "@/hooks/use-permissions"
+import { useEnvironment } from "@/hooks/use-environment"
 
+import { useListEnvironments } from "@/queries/environments"
 import { useGetAccount, useGetAccountPlan } from "@/queries/accounts"
 import {
-  useRequestSpark,
   useGauge,
+  useRequestSpark,
   useValidationSpark,
 } from "@/queries/analytics"
 
-import ActivityChart from "./activity-chart"
+import { Environment } from "@/types/environments"
+
 import {
-  SPARK_RANGE_OPTIONS,
   SparkRangeDays,
-  HEATMAP_RANGE_OPTIONS,
-  HeatmapRangeDays,
-  LEADERBOARD_RANGE_OPTIONS,
-  LeaderboardRangeDays,
   REQUEST_METRICS,
-  VALIDATION_METRICS,
-  useAnalyticsRange,
+  HeatmapRangeDays,
   useLazyVisibility,
+  useAnalyticsRange,
+  VALIDATION_METRICS,
+  SPARK_RANGE_OPTIONS,
+  LeaderboardRangeDays,
+  HEATMAP_RANGE_OPTIONS,
+  LEADERBOARD_RANGE_OPTIONS,
 } from "@/lib/analytics"
 import { PRICING_URL } from "@/lib/url"
-import EventCharts from "./event-charts"
+
 import GaugeCard from "./gauge-card"
+import EventCharts from "./event-charts"
 import Leaderboards from "./leaderboards"
-import LicenseExpirationHeatmap from "./license-expiration-heatmap"
 import SectionHeader from "./section-header"
+import ActivityChart from "./activity-chart"
+import LicenseExpirationHeatmap from "./license-expiration-heatmap"
 
 const requestUsageFormatter = new Intl.NumberFormat()
 const requestUsagePercentFormatter = new Intl.NumberFormat(undefined, {
@@ -93,6 +105,15 @@ function RequestUsageSummary({
   count: number
   limit?: number | null
 }) {
+  const { id: environmentId, code: environmentCode } = useEnvironment()
+  const { data: environments = [] } = useListEnvironments(undefined, {
+    enabled: environmentId != null,
+  })
+  const environmentName =
+    environments.find(
+      (environment: Environment) => environment.id === environmentId,
+    )?.attributes.name ?? environmentCode
+
   const formattedCount = requestUsageFormatter.format(count)
   const hasLimit = limit != null && limit > 0
   const formattedLimit = hasLimit ? requestUsageFormatter.format(limit) : null
@@ -101,24 +122,50 @@ function RequestUsageSummary({
     : null
 
   return (
-    <span className="block text-right text-xs leading-snug font-normal text-content-subdued">
-      You've made{" "}
-      <span className="font-semibold text-content-muted">{formattedCount}</span>{" "}
-      API requests today
-      {hasLimit && (
-        <>
-          ,{" "}
+    <>
+      <span className="flex items-center justify-end gap-1 text-xs leading-snug font-normal text-content-subdued">
+        <span className="text-right">
+          You've made{" "}
           <span className="font-semibold text-content-muted">
-            {formattedPercent}
+            {formattedCount}
           </span>{" "}
-          of your daily limit of{" "}
-          <span className="font-semibold text-content-muted">
-            {formattedLimit}
-          </span>
-        </>
-      )}
-      .
-    </span>
+          API requests today
+          {hasLimit && (
+            <>
+              ,{" "}
+              <span className="font-semibold text-content-muted">
+                {formattedPercent}
+              </span>{" "}
+              of your daily limit of{" "}
+              <span className="font-semibold text-content-muted">
+                {formattedLimit}
+              </span>
+            </>
+          )}
+          .
+        </span>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Info className="size-3 cursor-pointer" />
+          </TooltipTrigger>
+          <TooltipContent
+            side="top"
+            align="end"
+            className="max-w-64 bg-background-4 text-pretty text-content-muted"
+          >
+            These stats are not account-wide but per-environment. You're
+            currently viewing activity for the{" "}
+            {environmentName != null ? (
+              <span className="font-semibold">{environmentName}</span>
+            ) : (
+              "global"
+            )}{" "}
+            environment.
+            {hasLimit && " Your limit applies to all environments combined."}
+          </TooltipContent>
+        </Tooltip>
+      </span>
+    </>
   )
 }
 

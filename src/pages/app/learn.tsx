@@ -145,9 +145,14 @@ export default function Learn() {
     () => ({
       id: quickstart.environment?.id ?? null,
       code: quickstart.environment?.code ?? null,
+      name: quickstart.environment?.name ?? null,
       select: async () => {},
     }),
-    [quickstart.environment?.id, quickstart.environment?.code],
+    [
+      quickstart.environment?.id,
+      quickstart.environment?.code,
+      quickstart.environment?.name,
+    ],
   )
 
   const hasTeammates = teammates.data.length > 1
@@ -495,9 +500,7 @@ export default function Learn() {
             license={latestLicense}
             externalResult={validationListener.detected}
             environment={quickstart.environment}
-            onSwitchEnvironment={(environment) =>
-              select(environment.id, environment.code)
-            }
+            onSwitchEnvironment={select}
             {...dialogProps("validate")}
           />
         )}

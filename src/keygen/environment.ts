@@ -8,12 +8,14 @@ interface StoredEnvironment {
   accountId: string
   id: string
   code: string
+  name?: string
   token?: string
 }
 
 export interface ActiveEnvironment {
   id: string
   code: string
+  name: string
   token: string | null
 }
 
@@ -42,7 +44,7 @@ function readEnvironment(): StoredEnvironment | null {
   }
 }
 
-export function set({ id, code, token }: ActiveEnvironment): void {
+export function set({ id, code, name, token }: ActiveEnvironment): void {
   const storage = activeStorage()
   const other = storage === localStorage ? sessionStorage : localStorage
   other.removeItem(STORAGE_KEY)
@@ -51,6 +53,7 @@ export function set({ id, code, token }: ActiveEnvironment): void {
     accountId: config.id,
     id,
     code,
+    name,
     ...(config.isTokenAuthenticated && token != null ? { token } : {}),
   }
 
@@ -75,6 +78,7 @@ export function restore(): ActiveEnvironment | null {
   const environment = {
     id: stored.id,
     code: stored.code,
+    name: stored.name ?? stored.code, // older stored environments have no name
     token: stored.token ?? null,
   }
 
@@ -90,5 +94,7 @@ export async function resolve(
   const response = await environments.get({ id: environment.id })
   if (response.data == null) return null
 
-  return { ...environment, code: response.data.attributes.code }
+  const { code, name } = response.data.attributes
+
+  return { ...environment, code, name }
 }

@@ -76,7 +76,11 @@ export default function EnvironmentsViewModal({
     setSwitching(true)
 
     try {
-      await select(viewEnvironment.id, viewEnvironment.attributes.code)
+      await select({
+        id: viewEnvironment.id,
+        code: viewEnvironment.attributes.code,
+        name: viewEnvironment.attributes.name,
+      })
     } catch (error) {
       console.error(error)
       return
@@ -104,7 +108,7 @@ export default function EnvironmentsViewModal({
 
         // switch to global if active environment was deleted
         if (deleted?.id === activeEnvironmentId) {
-          await select(null, null)
+          await select(null)
         }
 
         onViewEnvironment(null)

@@ -18,15 +18,12 @@ import { useEdition } from "@/hooks/use-edition"
 import { usePermissions } from "@/hooks/use-permissions"
 import { useEnvironment } from "@/hooks/use-environment"
 
-import { useListEnvironments } from "@/queries/environments"
 import { useGetAccount, useGetAccountPlan } from "@/queries/accounts"
 import {
   useGauge,
   useRequestSpark,
   useValidationSpark,
 } from "@/queries/analytics"
-
-import { Environment } from "@/types/environments"
 
 import {
   SparkRangeDays,
@@ -105,14 +102,7 @@ function RequestUsageSummary({
   count: number
   limit?: number | null
 }) {
-  const { id: environmentId, code: environmentCode } = useEnvironment()
-  const { data: environments = [] } = useListEnvironments(undefined, {
-    enabled: environmentId != null,
-  })
-  const environmentName =
-    environments.find(
-      (environment: Environment) => environment.id === environmentId,
-    )?.attributes.name ?? environmentCode
+  const { name: environmentName } = useEnvironment()
 
   const formattedCount = requestUsageFormatter.format(count)
   const hasLimit = limit != null && limit > 0

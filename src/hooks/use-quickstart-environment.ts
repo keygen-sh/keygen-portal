@@ -25,8 +25,7 @@ export function useQuickstartEnvironment(options?: { enabled?: boolean }): {
       (environment) =>
         environment.attributes.isolationStrategy === IsolationStrategy.Shared,
     )
-    .sort((a, b) => a.attributes.created.localeCompare(b.attributes.created))
-    .at(0)
+    .sort((a, b) => a.attributes.created.localeCompare(b.attributes.created))[0]
 
   const target: QuickstartEnvironment | null = shared
     ? {

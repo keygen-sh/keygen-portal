@@ -15,6 +15,7 @@ export class Client {
   private rootToken?: string | null
   private environmentToken?: string | null
   private environment?: string | null
+  private sessionEnvironment?: string | null
   private user?: string | null
   private account?: string | null
   private tokenId?: string | null
@@ -34,6 +35,10 @@ export class Client {
 
   public setEnvironment(code: string | null) {
     this.environment = code
+  }
+
+  public setSessionEnvironment(alias: string | null) {
+    this.sessionEnvironment = alias
   }
 
   public setUser(id: string | null) {
@@ -60,6 +65,10 @@ export class Client {
     return this.tokenId
   }
 
+  public get currentSessionEnvironment(): string | null {
+    return this.sessionEnvironment ?? null
+  }
+
   private get activeToken(): string | null | undefined {
     return this.environmentToken ?? this.rootToken
   }
@@ -77,13 +86,19 @@ export class Client {
     // override to target an environment other than the active one
     // e.g. creating an environment token from the global context
     const envHeader =
-      options.environment !== undefined ? options.environment : this.environment
+      this.sessionEnvironment ??
+      (options.root
+        ? null
+        : options.environment !== undefined
+          ? options.environment
+          : this.environment)
 
-    const authToken = options.root
-      ? this.rootToken
-      : options.environmentToken !== undefined
-        ? options.environmentToken
-        : this.activeToken
+    const authToken =
+      options.root || this.sessionEnvironment != null
+        ? this.rootToken
+        : options.environmentToken !== undefined
+          ? options.environmentToken
+          : this.activeToken
 
     const defaultHeaders = {
       Accept: "application/vnd.api+json",
@@ -92,9 +107,7 @@ export class Client {
       ...(config.isTokenAuthenticated && authToken
         ? { Authorization: `Bearer ${authToken}` }
         : {}),
-      ...(options.root || !envHeader
-        ? {}
-        : { "Keygen-Environment": envHeader }),
+      ...(envHeader ? { "Keygen-Environment": envHeader } : {}),
     }
 
     const headers = {

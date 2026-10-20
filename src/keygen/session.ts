@@ -1,6 +1,7 @@
 import client from "@/keygen/client"
 import config from "@/keygen/config"
 import * as profiles from "@/keygen/profiles"
+import * as sessionEnvironment from "@/keygen/session-environment"
 import { verify } from "@/keygen/verify"
 
 type RestoredSession = {
@@ -33,8 +34,14 @@ async function attemptRestoreSession(): Promise<RestoredSession> {
   const tokenId =
     localStorage.getItem("tokenId") ?? sessionStorage.getItem("tokenId")
 
+  sessionEnvironment.restore(tokenId)
+
   if (config.isTokenAuthenticated && token && tokenId) {
-    const { data } = await verify({ token, tokenId })
+    const { data } = await verify({
+      token,
+      tokenId,
+      environment: client.currentSessionEnvironment,
+    })
 
     if (data) {
       const userId = data.relationships.bearer?.data?.id ?? null
@@ -45,6 +52,12 @@ async function attemptRestoreSession(): Promise<RestoredSession> {
       client.setUser(userId)
       client.setAccount(accountId)
 
+      sessionEnvironment.reconcile({
+        accountId,
+        tokenId,
+        environmentId: data.relationships.environment?.data?.id ?? null,
+      })
+
       return { userId, accountId }
     }
   }
@@ -54,7 +67,11 @@ async function attemptRestoreSession(): Promise<RestoredSession> {
       id: string
       relationships?: { account?: { data?: { id: string } | null } }
     }
-    included?: { type: string; id: string }[]
+    included?: {
+      type: string
+      id: string
+      relationships?: { environment?: { data?: { id: string } | null } }
+    }[]
   }
 
   if (me.data) {
@@ -65,8 +82,18 @@ async function attemptRestoreSession(): Promise<RestoredSession> {
     client.setUser(me.data.id)
     client.setAccount(accountId)
 
+    sessionEnvironment.reconcile({
+      accountId,
+      tokenId: t?.id ?? null,
+      environmentId: t
+        ? (t.relationships?.environment?.data?.id ?? null)
+        : undefined,
+    })
+
     return { userId: me.data.id, accountId }
   }
+
+  sessionEnvironment.release()
 
   return { userId: null, accountId: null }
 }

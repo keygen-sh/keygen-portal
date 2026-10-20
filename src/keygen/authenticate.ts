@@ -4,7 +4,8 @@ import { AuthResponse } from "@/types/auth"
 
 import config from "@/keygen/config"
 import client from "@/keygen/client"
-import * as environment from "@/keygen/environment"
+import * as activeEnvironment from "@/keygen/environment"
+import * as sessionEnvironment from "@/keygen/session-environment"
 
 config.validate()
 
@@ -16,6 +17,7 @@ interface AuthProps {
   password?: string
   otp?: string
   account?: string
+  environment?: string | null
 }
 
 export async function authenticate({
@@ -23,8 +25,10 @@ export async function authenticate({
   password,
   otp,
   account,
+  environment,
 }: AuthProps): Promise<AuthResponse> {
-  environment.clear()
+  activeEnvironment.clear()
+  sessionEnvironment.release()
 
   const credentials = btoa(
     unescape(encodeURIComponent(`${email || ""}:${password || ""}`)),
@@ -48,6 +52,7 @@ export async function authenticate({
     {
       method: "POST",
       headers: { Authorization: `Basic ${credentials}` },
+      environment: environment ?? null,
       body,
     },
   )) as AuthResponse

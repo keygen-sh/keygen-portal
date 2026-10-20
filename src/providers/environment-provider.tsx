@@ -1,3 +1,5 @@
+import { useState } from "react"
+
 import { useActiveEnvironment } from "@/hooks/use-active-environment"
 import {
   EnvironmentContext,
@@ -25,7 +27,7 @@ function CeEnvironmentProvider({
   )
 }
 
-function EeEnvironmentProvider({
+function ActiveEnvironmentProvider({
   children,
 }: {
   children: React.ReactNode
@@ -37,6 +39,33 @@ function EeEnvironmentProvider({
       {children}
     </EnvironmentContext.Provider>
   )
+}
+
+function EeEnvironmentProvider({
+  children,
+}: {
+  children: React.ReactNode
+}): React.ReactElement {
+  const [session] = useState<EnvironmentContextValue | null>(() => {
+    const environment = keygen.sessionEnvironment.get()
+    if (environment == null) return null
+
+    return {
+      id: environment.id,
+      code: environment.code ?? environment.id,
+      name: environment.name,
+      select: async () => {},
+    }
+  })
+
+  if (session) {
+    return (
+      <EnvironmentContext.Provider value={session}>
+        {children}
+      </EnvironmentContext.Provider>
+    )
+  }
+  return <ActiveEnvironmentProvider>{children}</ActiveEnvironmentProvider>
 }
 
 export function EnvironmentProvider({

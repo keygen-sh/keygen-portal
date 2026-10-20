@@ -2,6 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router"
 
 import * as Layout from "@/layouts/index"
 import { restoreSession } from "@/keygen/session"
+import { loginSearch } from "@/lib/auth"
 
 export const Route = createFileRoute("/$accountId/app")({
   beforeLoad: async ({ params, location }) => {
@@ -16,7 +17,9 @@ export const Route = createFileRoute("/$accountId/app")({
       redirect({
         to: "/$accountId/auth/login",
         params: { accountId: params.accountId },
-        search: { redirect: /^\/goto\/?$/.test(href) ? undefined : href },
+        search: loginSearch({
+          redirect: /^\/goto\/?$/.test(href) ? undefined : href,
+        }),
         replace: true,
         throw: true,
       })

@@ -1,14 +1,16 @@
 import client from "@/keygen/client"
 import config from "@/keygen/config"
+import * as sessionEnvironment from "@/keygen/session-environment"
 import type { AuthData } from "@/types/auth"
 
 interface LoginOptions {
   remember?: boolean
+  environment?: string | null
 }
 
 export function login(
   data: AuthData,
-  { remember = false }: LoginOptions = {},
+  { remember = false, environment }: LoginOptions = {},
 ): { userId: string; accountId: string } {
   const { id: tokenId, attributes, relationships } = data
   const { token } = attributes
@@ -30,6 +32,22 @@ export function login(
 
   client.setAccount(accountId)
   client.setUser(userId)
+
+  const environmentId = relationships.environment?.data?.id ?? null
+  if (environmentId) {
+    sessionEnvironment.set({
+      accountId,
+      tokenId,
+      id: environmentId,
+      code:
+        environment && !sessionEnvironment.isEnvironmentId(environment)
+          ? environment
+          : null,
+      name: null,
+    })
+  } else {
+    sessionEnvironment.clear()
+  }
 
   return { userId, accountId }
 }

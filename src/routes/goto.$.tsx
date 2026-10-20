@@ -3,6 +3,7 @@ import { createFileRoute, notFound, redirect } from "@tanstack/react-router"
 import * as keygen from "@/keygen"
 import { staticLinkTarget } from "@/lib/routes"
 import { restoreSession } from "@/keygen/session"
+import { loginSearch } from "@/lib/auth"
 import { getRecentAccounts } from "@/lib/accounts"
 
 export const Route = createFileRoute("/goto/$")({
@@ -32,7 +33,7 @@ export const Route = createFileRoute("/goto/$")({
       redirect({
         to: "/$accountId/auth/login",
         params: { accountId },
-        search: { redirect: location.href },
+        search: loginSearch({ redirect: location.href }),
         replace: true,
         throw: true,
       })

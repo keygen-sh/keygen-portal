@@ -13,6 +13,7 @@ import { EnvironmentProvider } from "@/providers/environment-provider"
 import { PermissionsProvider } from "@/providers/permissions-provider"
 
 import { cn } from "@/lib/utils"
+import { loginSearch } from "@/lib/auth"
 
 import * as keygen from "@/keygen"
 
@@ -31,6 +32,7 @@ export default function AppLayout() {
       void navigate({
         to: "/$accountId/auth/login",
         params: { accountId: keygen.config.id },
+        search: loginSearch(),
         replace: true,
       })
     }

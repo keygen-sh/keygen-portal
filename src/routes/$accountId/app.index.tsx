@@ -11,6 +11,10 @@ const NEW_USER_WINDOW_MS = 7 * 24 * 60 * 60 * 1000 // 7 days
 
 // redirect new users to the learn page if they have the required permissions and no licenses
 async function shouldLandOnLearn(queryClient: QueryClient): Promise<boolean> {
+  if (keygen.sessionEnvironment.get() != null) {
+    return false
+  }
+
   const me = await queryClient
     .ensureQueryData(currentUserQueryOptions())
     .catch(() => null)

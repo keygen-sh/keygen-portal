@@ -93,7 +93,7 @@ async function attemptRestoreSession(): Promise<RestoredSession> {
     return { userId: me.data.id, accountId }
   }
 
-  sessionEnvironment.release()
+  sessionEnvironment.clear()
 
   return { userId: null, accountId: null }
 }

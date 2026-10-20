@@ -3,7 +3,6 @@ import { useNavigate } from "@tanstack/react-router"
 
 import * as keygen from "@/keygen"
 import { useSession } from "@/hooks/use-session"
-import { loginSearch } from "@/lib/auth"
 
 export function useLogout() {
   const queryClient = useQueryClient()
@@ -18,7 +17,6 @@ export function useLogout() {
       void navigate({
         to: "/$accountId/auth/login",
         params: { accountId: keygen.config.id },
-        search: loginSearch(),
         replace: true,
       })
     },

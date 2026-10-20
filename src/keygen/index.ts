@@ -94,5 +94,8 @@ export { logout }
 import * as environment from "./environment"
 export { environment }
 
+import * as sessionEnvironment from "./session-environment"
+export { sessionEnvironment }
+
 import { search } from "./search"
 export { search }

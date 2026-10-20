@@ -49,7 +49,11 @@ export default function LoginForm() {
   const navigate = useNavigate()
   const session = useSession()
 
-  const { email: emailFromParams, redirect } = useSearch({
+  const {
+    email: emailFromParams,
+    redirect,
+    env,
+  } = useSearch({
     from: "/$accountId/auth/login",
   })
 
@@ -61,7 +65,10 @@ export default function LoginForm() {
   const [ssoRedirectUrl, setSsoRedirectUrl] = useState<string | null>(null)
 
   function onSubmit(data: AuthData, remember: boolean) {
-    const { userId, accountId } = keygen.login(data, { remember })
+    const { userId, accountId } = keygen.login(data, {
+      remember,
+      environment: env,
+    })
 
     session.setUser(userId)
 
@@ -141,7 +148,7 @@ function EmailStep({
   onBack: () => void
 }) {
   const isMobile = useMobile()
-  const { redirect } = useSearch({ from: "/$accountId/auth/login" })
+  const { redirect, env } = useSearch({ from: "/$accountId/auth/login" })
   const accountLabel = useMemo(() => {
     const id = keygen.config.id
     const recent = getRecentAccounts().find(
@@ -160,7 +167,7 @@ function EmailStep({
 
   async function onSubmit({ email }: Schemas.Auth.LoginValues) {
     try {
-      const { errors } = await keygen.authenticate({ email })
+      const { errors } = await keygen.authenticate({ email, environment: env })
 
       if (!errors?.length) {
         throw new Error("Service is unavailable.")
@@ -190,6 +197,21 @@ function EmailStep({
           form.setError("email", {
             type: "manual",
             message: "Invalid email. Please try again.",
+          })
+          break
+        case AuthErrorCode.EnvironmentInvalid:
+          toast({
+            message: "Environment not found.",
+            description: `"${env}" doesn't exist on this account. Try a different environment, or remove the environment to sign in globally.`,
+            variant: "error",
+          })
+          break
+        case AuthErrorCode.EnvironmentNotSupported:
+          toast({
+            message: "Environments are unavailable.",
+            description:
+              "This account doesn't support environments. Remove the environment to sign in.",
+            variant: "error",
           })
           break
         case AuthErrorCode.SsoNotSupported:
@@ -322,6 +344,7 @@ function PasswordStep({
   onBack: () => void
 }) {
   const isMobile = useMobile()
+  const { env } = useSearch({ from: "/$accountId/auth/login" })
   const emailLabel = truncate(email)
 
   const form = useForm<Schemas.Auth.PasswordValues>({
@@ -332,7 +355,11 @@ function PasswordStep({
 
   async function onSubmit({ password, remember }: Schemas.Auth.PasswordValues) {
     try {
-      const { data, errors } = await keygen.authenticate({ email, password })
+      const { data, errors } = await keygen.authenticate({
+        email,
+        password,
+        environment: env,
+      })
 
       if (errors?.length) {
         const { code } = errors[0] as unknown as { code: AuthErrorCode }
@@ -450,7 +477,7 @@ function PasswordStep({
                 <Link
                   to="/$accountId/auth/forgot"
                   params={{ accountId: keygen.config.id }}
-                  search={{ email }}
+                  search={{ email, env }}
                 >
                   Forgot password?
                 </Link>
@@ -493,6 +520,8 @@ function VerifyStep({
   onPasswordInvalid: () => void
   onBack: () => void
 }) {
+  const { env } = useSearch({ from: "/$accountId/auth/login" })
+
   const form = useForm<Schemas.Auth.VerifyValues>({
     resolver: zodResolver(Schemas.Auth.VerifySchema),
     defaultValues: { otp: "" },
@@ -504,6 +533,7 @@ function VerifyStep({
         email,
         password,
         otp,
+        environment: env,
       })
 
       if (errors?.length) {

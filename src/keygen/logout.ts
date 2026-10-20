@@ -23,7 +23,7 @@ export async function logout() {
   client.setUser(null)
   client.setTokenId(null)
   environment.clear()
-  sessionEnvironment.release()
+  sessionEnvironment.clear()
 
   for (const key of STORAGE_KEYS) {
     localStorage.removeItem(key)

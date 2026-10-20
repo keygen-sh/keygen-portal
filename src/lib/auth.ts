@@ -53,6 +53,23 @@ export function takePendingRedirect(): string | undefined {
   return value
 }
 
+export function parseEnvironment(value: unknown): string | undefined {
+  return !keygen.config.isCE && typeof value === "string" && value !== ""
+    ? value
+    : undefined
+}
+
+// get redirect and env from the URL query string
+export function loginSearch({
+  redirect,
+  env,
+}: { redirect?: string; env?: string } = {}): {
+  redirect?: string
+  env?: string
+} {
+  return { redirect, env: env ?? keygen.sessionEnvironment.recall() }
+}
+
 // parse a reset token from the URL query string
 export function parseResetToken(
   value: string | undefined | null,

@@ -511,12 +511,12 @@ mockRoute("GET", `${MOCK_ACCOUNT}/artifacts/:id`, (ctx) => {
   const row = requireVisible(ctx, artifacts(), ctx.params.id, LABEL)
   ctx.resource = { type: TYPE, id: row.id }
 
-  if (!isDownloadable(row)) {
+  if (!isDownloadable(row) || ctx.prefer.has("no-download")) {
     return { status: 200, body: { data: serializeMockArtifact(ctx, row) } }
   }
 
   const redirect = downloadUrlFor(row)
-  if (!ctx.prefer.has("no-download")) recordDownload(ctx, row)
+  recordDownload(ctx, row)
 
   return {
     status: 200,

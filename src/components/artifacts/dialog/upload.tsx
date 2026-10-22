@@ -3,6 +3,8 @@ import { useState, useCallback, useRef } from "react"
 import { Upload } from "lucide-react"
 
 import { toast } from "@/lib/toast"
+import { cn } from "@/lib/utils"
+import { uploadFile } from "@/lib/upload"
 
 import { Button } from "@/components/ui/button"
 import GuardModal from "@/components/guard-modal"
@@ -20,40 +22,30 @@ export default function ArtifactUploadDialog({
 }: ArtifactUploadDialogProps) {
   const [file, setFile] = useState<File | null>(null)
   const [progress, setProgress] = useState<number | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const uploaded = progress === 100
+  const uploaded = progress === 100 && error === null
+  const uploading = progress !== null && error === null
 
   const handleUpload = useCallback(
     async (selected: File) => {
       setProgress(0)
+      setError(null)
 
-      return new Promise<void>((resolve, reject) => {
-        const xhr = new XMLHttpRequest()
-        xhr.open("PUT", url)
-
-        xhr.upload.addEventListener("progress", (e) => {
-          if (e.lengthComputable) {
-            setProgress(Math.round((e.loaded / e.total) * 100))
-          }
+      try {
+        await uploadFile(url, selected, setProgress)
+        setProgress(100)
+        toast({ message: "File uploaded successfully", variant: "success" })
+      } catch (e) {
+        const message = e instanceof Error ? e.message : "Upload failed"
+        setError(message)
+        toast({
+          message: "Failed to upload artifact",
+          description: message,
+          variant: "error",
         })
-
-        xhr.addEventListener("load", () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            setProgress(100)
-            toast({ message: "File uploaded successfully", variant: "success" })
-            resolve()
-          } else {
-            reject(new Error(`Upload failed with status ${xhr.status}`))
-          }
-        })
-
-        xhr.addEventListener("error", () => {
-          reject(new Error("Upload failed"))
-        })
-
-        xhr.send(selected)
-      })
+      }
     },
     [url],
   )
@@ -85,7 +77,7 @@ export default function ArtifactUploadDialog({
             variant="outline"
             size="sm"
             onClick={() => fileInputRef.current?.click()}
-            disabled={progress !== null}
+            disabled={uploading}
           >
             <Upload />
             Choose file
@@ -96,6 +88,7 @@ export default function ArtifactUploadDialog({
             className="hidden"
             onChange={(e) => {
               const selected = e.target.files?.[0] ?? null
+              e.target.value = ""
               setFile(selected)
               if (selected) void handleUpload(selected)
             }}
@@ -106,12 +99,24 @@ export default function ArtifactUploadDialog({
           <div className="flex flex-col gap-1.5">
             <div className="h-2 w-full overflow-hidden rounded-full bg-background-1">
               <div
-                className="h-full rounded-full bg-primary transition-[width] duration-200 ease-out"
-                style={{ width: `${progress}%` }}
+                className={cn(
+                  "h-full rounded-full transition-[width] duration-200 ease-out",
+                  error ? "bg-destructive" : "bg-primary",
+                )}
+                style={{ width: `${error ? 100 : progress}%` }}
               />
             </div>
-            <span className="text-xs text-content-muted">
-              {progress < 100 ? `Uploading... ${progress}%` : "Upload complete"}
+            <span
+              className={cn(
+                "text-xs",
+                error ? "text-destructive" : "text-content-muted",
+              )}
+            >
+              {error
+                ? error
+                : progress < 100
+                  ? `Uploading... ${progress}%`
+                  : "Upload complete"}
             </span>
           </div>
         )}

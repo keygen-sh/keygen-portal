@@ -34,6 +34,29 @@ export function useGetArtifact(artifactId: string) {
   })
 }
 
+export function useDownloadArtifact(artifactId: string) {
+  return useMutation<string, APIError>({
+    mutationFn: async () => {
+      const response = await keygen.artifacts.download({ id: artifactId })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      const url = response.data.links.redirect
+      if (!url) {
+        throw new APIError({
+          title: "Request Error",
+          detail: "Artifact is not downloadable.",
+          code: "CLIENT_ERROR",
+        })
+      }
+
+      return url
+    },
+  })
+}
+
 export function useListArtifacts(
   params?: {
     cursor?: string | null

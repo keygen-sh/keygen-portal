@@ -48,11 +48,16 @@ import {
   ArtifactStatusVariants,
   ArtifactStatusDescriptions,
 } from "@/types/artifacts"
+import { ReleaseStatus } from "@/types/releases"
 
 import * as keygen from "@/keygen"
 
 import { useGetRelease } from "@/queries/releases"
-import { useGetArtifact, useRemoveArtifact } from "@/queries/artifacts"
+import {
+  useGetArtifact,
+  useRemoveArtifact,
+  useDownloadArtifact,
+} from "@/queries/artifacts"
 
 import { useMobile } from "@/hooks/use-mobile"
 import { useSidebarTab } from "@/hooks/use-sidebar-tab"
@@ -61,6 +66,7 @@ import { useBreadcrumbBackNavigate } from "@/hooks/use-breadcrumb-back-navigate"
 
 import { toast } from "@/lib/toast"
 import { copyToClipboard } from "@/lib/clipboard"
+import { openDownloadUrl } from "@/lib/download"
 import { getReleaseLabel } from "@/lib/releases"
 
 import * as Artifacts from "@/components/artifacts"
@@ -89,6 +95,7 @@ export default function ArtifactDetails() {
   const { id } = useParams({ from: "/$accountId/app/artifacts/$id" })
   const { data: artifact, isLoading, isFetching, isError } = useGetArtifact(id)
   const deleteArtifact = useRemoveArtifact(id)
+  const downloadArtifact = useDownloadArtifact(id)
 
   const releaseId = artifact?.relationships.release?.data?.id || ""
   const { data: release } = useGetRelease(releaseId)
@@ -122,6 +129,23 @@ export default function ArtifactDetails() {
         await back()
       },
     })
+  }
+
+  const isDownloadable =
+    artifact?.attributes.status === ArtifactStatus.Uploaded &&
+    release !== undefined &&
+    release.attributes.status !== ReleaseStatus.Yanked
+
+  const handleDownloadArtifact = async () => {
+    try {
+      await openDownloadUrl(() => downloadArtifact.mutateAsync())
+    } catch (e) {
+      toast({
+        message: "Failed to download artifact",
+        description: e instanceof Error ? e.message : undefined,
+        variant: "error",
+      })
+    }
   }
 
   return (
@@ -166,20 +190,18 @@ export default function ArtifactDetails() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="mr-4 p-0">
-                {artifact?.attributes.status === ArtifactStatus.Uploaded &&
-                  artifact.links.redirect && (
-                    <>
-                      <DropdownMenuItem
-                        onClick={() =>
-                          window.open(artifact.links.redirect, "_blank")
-                        }
-                        className="pb-2 text-base"
-                      >
-                        Download
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                    </>
-                  )}
+                {isDownloadable && (
+                  <>
+                    <DropdownMenuItem
+                      disabled={downloadArtifact.isPending}
+                      onClick={handleDownloadArtifact}
+                      className="pb-2 text-base"
+                    >
+                      Download
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
                 <Can permission="artifact.update">
                   <DropdownMenuItem
                     onClick={(e) => {
@@ -207,17 +229,15 @@ export default function ArtifactDetails() {
             </DropdownMenu>
           ) : (
             <div className="flex items-center space-x-2">
-              {artifact?.attributes.status === ArtifactStatus.Uploaded &&
-                artifact.links.redirect && (
-                  <Button
-                    variant="outline"
-                    onClick={() =>
-                      window.open(artifact.links.redirect, "_blank")
-                    }
-                  >
-                    Download
-                  </Button>
-                )}
+              {isDownloadable && (
+                <Button
+                  variant="outline"
+                  disabled={downloadArtifact.isPending}
+                  onClick={handleDownloadArtifact}
+                >
+                  Download
+                </Button>
+              )}
               <Can permission="artifact.update">
                 <Button
                   variant="outline"

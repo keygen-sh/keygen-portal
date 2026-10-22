@@ -21,3 +21,21 @@ export function downloadBlob(
 export function downloadCsv(content: string, filename: string) {
   downloadBlob(`${UTF8_BOM}${content}`, filename, "text/csv;charset=utf-8")
 }
+
+export async function openDownloadUrl(getUrl: () => Promise<string>) {
+  const win = window.open("about:blank", "_blank")
+  if (win) win.opener = null
+
+  try {
+    const url = await getUrl()
+
+    if (win) {
+      win.location.replace(url)
+    } else {
+      window.location.assign(url)
+    }
+  } catch (error) {
+    win?.close()
+    throw error
+  }
+}

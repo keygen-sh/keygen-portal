@@ -53,7 +53,6 @@ async function attemptRestoreSession(): Promise<RestoredSession> {
       client.setAccount(accountId)
 
       sessionEnvironment.reconcile({
-        accountId,
         tokenId,
         environmentId: data.relationships.environment?.data?.id ?? null,
       })
@@ -83,7 +82,6 @@ async function attemptRestoreSession(): Promise<RestoredSession> {
     client.setAccount(accountId)
 
     sessionEnvironment.reconcile({
-      accountId,
       tokenId: t?.id ?? null,
       environmentId: t
         ? (t.relationships?.environment?.data?.id ?? null)

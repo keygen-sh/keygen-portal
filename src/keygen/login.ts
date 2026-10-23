@@ -36,13 +36,9 @@ export function login(
   const environmentId = relationships.environment?.data?.id ?? null
   if (environmentId) {
     sessionEnvironment.set({
-      accountId,
       tokenId,
       id: environmentId,
-      code:
-        environment && !sessionEnvironment.isEnvironmentId(environment)
-          ? environment
-          : null,
+      code: environment && environment !== environmentId ? environment : null,
       name: null,
     })
   } else {

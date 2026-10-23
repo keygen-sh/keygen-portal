@@ -228,15 +228,12 @@ function EmailStep({
         case AuthErrorCode.EnvironmentInvalid:
           toast({
             message: "Environment not found.",
-            description: `"${env}" doesn't exist on this account. Try a different environment, or remove the environment to sign in globally.`,
             variant: "error",
           })
           break
         case AuthErrorCode.EnvironmentNotSupported:
           toast({
             message: "Environments are unavailable.",
-            description:
-              "This account doesn't support environments. Remove the environment to sign in.",
             variant: "error",
           })
           break

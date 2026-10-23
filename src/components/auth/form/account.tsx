@@ -14,7 +14,7 @@ import * as Loading from "@/components/loading"
 
 export default function AccountForm() {
   const navigate = useNavigate()
-  const { redirect } = useSearch({ from: "/auth/" })
+  const { redirect, env } = useSearch({ from: "/auth/" })
 
   const form = useForm<Schemas.Auth.AccountValues>({
     resolver: zodResolver(Schemas.Auth.AccountSchema),
@@ -31,7 +31,7 @@ export default function AccountForm() {
     void navigate({
       to: "/$accountId/auth/login",
       params: { accountId: slug },
-      search: { email, redirect },
+      search: { email, redirect, env },
     })
   }
 

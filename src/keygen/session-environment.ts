@@ -1,10 +1,7 @@
 import client from "@/keygen/client"
-import config from "@/keygen/config"
 import * as environments from "@/keygen/environments"
 
 const STORAGE_KEY = "keygen.environment.session"
-const ENVIRONMENT_ID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 export interface SessionEnvironment {
   id: string | null
@@ -13,16 +10,11 @@ export interface SessionEnvironment {
 }
 
 export interface StoredSessionEnvironment extends SessionEnvironment {
-  accountId: string
   tokenId: string | null
 }
 
 let current: SessionEnvironment | null = null
 let pending: string | null = null
-
-export function isEnvironmentId(value: string): boolean {
-  return ENVIRONMENT_ID_RE.test(value)
-}
 
 function credentialStorage(): Storage {
   return sessionStorage.getItem("tokenId") != null
@@ -37,7 +29,7 @@ function read(): StoredSessionEnvironment | null {
 
   try {
     const stored = JSON.parse(raw) as StoredSessionEnvironment
-    if (!stored?.accountId || (!stored.id && !stored.code)) return null
+    if (!stored?.id && !stored?.code) return null
 
     return stored
   } catch {
@@ -65,11 +57,7 @@ export function restore(tokenId: string | null): void {
     return
   }
 
-  const otherToken = stored.tokenId != null && stored.tokenId !== tokenId
-  const otherAccount =
-    isEnvironmentId(config.id) && config.id !== stored.accountId
-
-  if (otherToken || otherAccount) {
+  if (stored.tokenId != null && stored.tokenId !== tokenId) {
     clear()
     return
   }
@@ -95,19 +83,14 @@ export function set(record: StoredSessionEnvironment): void {
 }
 
 export function reconcile(truth: {
-  accountId: string | null
   tokenId: string | null
   environmentId: string | null | undefined
 }): void {
   if (pending != null) {
-    const alias = pending
-    const byId = isEnvironmentId(alias)
-
     set({
-      accountId: truth.accountId ?? "",
       tokenId: truth.tokenId,
-      id: truth.environmentId ?? (byId ? alias : null),
-      code: byId ? null : alias,
+      id: truth.environmentId ?? null,
+      code: pending,
       name: null,
     })
 

@@ -129,7 +129,7 @@ export default function LoginForm() {
             setSsoRedirectUrl(url)
             setStep("sso")
           }}
-          onBack={() => navigate({ to: "/auth", search: { redirect } })}
+          onBack={() => navigate({ to: "/auth", search: { redirect, env } })}
         />
       )}
     </Motion.Slide>
@@ -278,7 +278,7 @@ function EmailStep({
                       <br />
                       <Link
                         to="/auth"
-                        search={{ redirect }}
+                        search={{ redirect, env }}
                         className="text-primary"
                       >
                         Switch to a different one.
@@ -290,7 +290,7 @@ function EmailStep({
                     <TooltipTrigger asChild>
                       <Link
                         to="/auth"
-                        search={{ redirect }}
+                        search={{ redirect, env }}
                         className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted"
                       >
                         {accountLabel}

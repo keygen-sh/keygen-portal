@@ -1,5 +1,6 @@
 import client from "@/keygen/client"
 import config from "@/keygen/config"
+import * as environments from "@/keygen/environments"
 
 const STORAGE_KEY = "keygen.environment.session"
 const ENVIRONMENT_ID_RE =
@@ -116,6 +117,18 @@ export function reconcile(truth: {
   if (current != null && truth.environmentId === null) {
     clear()
   }
+}
+
+export async function resolve(): Promise<void> {
+  const stored = read()
+  if (current == null || current.id != null || stored == null) return
+
+  const response = await environments.get({ id: current.code! })
+  if (response.data == null) return
+
+  const { code, name } = response.data.attributes
+
+  set({ ...stored, id: response.data.id, code, name })
 }
 
 export function release(): void {

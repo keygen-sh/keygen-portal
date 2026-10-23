@@ -7,6 +7,7 @@ config.validate()
 interface VerifyProps {
   tokenId: string
   token: string
+  environment?: string | null
 }
 
 /**
@@ -16,8 +17,10 @@ interface VerifyProps {
 export async function verify({
   tokenId,
   token,
+  environment,
 }: VerifyProps): Promise<TokenResponse> {
   const tempClient = new Client(token)
+  tempClient.setSessionEnvironment(environment ?? null)
 
   const result = (await tempClient.request(
     `/accounts/${config.id}/tokens/${tokenId}`,

@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query"
 import * as keygen from "@/keygen"
 import { SessionContext } from "@/contexts/session-context"
 import { restoreSession } from "@/keygen/session"
+import { loginSearch } from "@/lib/auth"
 
 interface SessionProviderProps {
   children: React.ReactNode
@@ -31,7 +32,7 @@ export function SessionProvider({
     void navigate({
       to: "/$accountId/auth/login",
       params: { accountId: keygen.config.id },
-      search: (prev) => ({ redirect: prev.redirect }),
+      search: (prev) => loginSearch({ redirect: prev.redirect, env: prev.env }),
       replace: true,
     })
   }, [setUser, queryClient, navigate])

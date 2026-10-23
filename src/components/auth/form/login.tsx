@@ -20,7 +20,12 @@ import { useSession } from "@/hooks/use-session"
 import { cn } from "@/lib/utils"
 import { toast } from "@/lib/toast"
 import { truncator } from "@/lib/truncate"
-import { redirectTarget, setPendingRedirect } from "@/lib/auth"
+import {
+  activateEnvironment,
+  redirectTarget,
+  setPendingEnvironment,
+  setPendingRedirect,
+} from "@/lib/auth"
 import { getRecentAccounts } from "@/lib/accounts"
 
 import * as Auth from "@/components/auth"
@@ -49,7 +54,11 @@ export default function LoginForm() {
   const navigate = useNavigate()
   const session = useSession()
 
-  const { email: emailFromParams, redirect } = useSearch({
+  const {
+    email: emailFromParams,
+    redirect,
+    env,
+  } = useSearch({
     from: "/$accountId/auth/login",
   })
 
@@ -59,9 +68,17 @@ export default function LoginForm() {
   const [password, setPassword] = useState("")
   const [remember, setRemember] = useState(false)
   const [ssoRedirectUrl, setSsoRedirectUrl] = useState<string | null>(null)
+  const [scoped, setScoped] = useState(false)
 
-  function onSubmit(data: AuthData, remember: boolean) {
-    const { userId, accountId } = keygen.login(data, { remember })
+  async function onSubmit(data: AuthData, remember: boolean) {
+    const { userId, accountId } = keygen.login(data, {
+      remember,
+      environment: scoped ? env : undefined,
+    })
+
+    if (env && !scoped) {
+      await activateEnvironment(env)
+    }
 
     session.setUser(userId)
 
@@ -82,6 +99,7 @@ export default function LoginForm() {
         <PasswordStep
           key="password"
           email={email}
+          scoped={scoped}
           onOtpRequired={(value, rememberValue) => {
             setPassword(value)
             setRemember(rememberValue)
@@ -96,6 +114,7 @@ export default function LoginForm() {
           email={email}
           password={password}
           remember={remember}
+          scoped={scoped}
           onAuthenticated={onSubmit}
           onPasswordInvalid={() => setStep("password")}
           onBack={() => setStep("email")}
@@ -104,6 +123,7 @@ export default function LoginForm() {
         <SsoStep
           key="sso"
           redirectUrl={ssoRedirectUrl}
+          scoped={scoped}
           onCancel={() => {
             setSsoRedirectUrl(null)
             setStep("email")
@@ -113,16 +133,18 @@ export default function LoginForm() {
         <EmailStep
           key="email"
           email={email}
-          onPasswordRequired={(value) => {
+          onPasswordRequired={(value, isScoped) => {
             setEmail(value)
+            setScoped(isScoped)
             setStep("password")
           }}
-          onSsoRequired={(value, url) => {
+          onSsoRequired={(value, url, isScoped) => {
             setEmail(value)
+            setScoped(isScoped)
             setSsoRedirectUrl(url)
             setStep("sso")
           }}
-          onBack={() => navigate({ to: "/auth", search: { redirect } })}
+          onBack={() => navigate({ to: "/auth", search: { redirect, env } })}
         />
       )}
     </Motion.Slide>
@@ -136,12 +158,12 @@ function EmailStep({
   onBack,
 }: {
   email: string
-  onPasswordRequired: (email: string) => void
-  onSsoRequired: (email: string, redirectUrl: string) => void
+  onPasswordRequired: (email: string, scoped: boolean) => void
+  onSsoRequired: (email: string, redirectUrl: string, scoped: boolean) => void
   onBack: () => void
 }) {
   const isMobile = useMobile()
-  const { redirect } = useSearch({ from: "/$accountId/auth/login" })
+  const { redirect, env } = useSearch({ from: "/$accountId/auth/login" })
   const accountLabel = useMemo(() => {
     const id = keygen.config.id
     const recent = getRecentAccounts().find(
@@ -160,7 +182,18 @@ function EmailStep({
 
   async function onSubmit({ email }: Schemas.Auth.LoginValues) {
     try {
-      const { errors } = await keygen.authenticate({ email })
+      let scoped = false
+      let response = await keygen.authenticate({ email })
+
+      if (
+        env &&
+        response.errors?.some((e) => e.code === AuthErrorCode.EmailInvalid)
+      ) {
+        scoped = true
+        response = await keygen.authenticate({ email, environment: env })
+      }
+
+      const { errors } = response
 
       if (!errors?.length) {
         throw new Error("Service is unavailable.")
@@ -174,11 +207,11 @@ function EmailStep({
 
       switch (err.code) {
         case AuthErrorCode.PasswordRequired:
-          onPasswordRequired(email)
+          onPasswordRequired(email, scoped)
           break
         case AuthErrorCode.SsoRequired:
           if (err.links?.redirect) {
-            onSsoRequired(email, err.links.redirect)
+            onSsoRequired(email, err.links.redirect, scoped)
           } else {
             toast({
               message: "Single sign-on is unavailable.",
@@ -190,6 +223,18 @@ function EmailStep({
           form.setError("email", {
             type: "manual",
             message: "Invalid email. Please try again.",
+          })
+          break
+        case AuthErrorCode.EnvironmentInvalid:
+          toast({
+            message: "Environment not found.",
+            variant: "error",
+          })
+          break
+        case AuthErrorCode.EnvironmentNotSupported:
+          toast({
+            message: "Environments are unavailable.",
+            variant: "error",
           })
           break
         case AuthErrorCode.SsoNotSupported:
@@ -256,7 +301,7 @@ function EmailStep({
                       <br />
                       <Link
                         to="/auth"
-                        search={{ redirect }}
+                        search={{ redirect, env }}
                         className="text-primary"
                       >
                         Switch to a different one.
@@ -268,7 +313,7 @@ function EmailStep({
                     <TooltipTrigger asChild>
                       <Link
                         to="/auth"
-                        search={{ redirect }}
+                        search={{ redirect, env }}
                         className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted"
                       >
                         {accountLabel}
@@ -312,16 +357,19 @@ function EmailStep({
 
 function PasswordStep({
   email,
+  scoped,
   onOtpRequired,
   onAuthenticated,
   onBack,
 }: {
   email: string
+  scoped: boolean
   onOtpRequired: (password: string, remember: boolean) => void
   onAuthenticated: (data: AuthData, remember: boolean) => void
   onBack: () => void
 }) {
   const isMobile = useMobile()
+  const { env } = useSearch({ from: "/$accountId/auth/login" })
   const emailLabel = truncate(email)
 
   const form = useForm<Schemas.Auth.PasswordValues>({
@@ -332,7 +380,11 @@ function PasswordStep({
 
   async function onSubmit({ password, remember }: Schemas.Auth.PasswordValues) {
     try {
-      const { data, errors } = await keygen.authenticate({ email, password })
+      const { data, errors } = await keygen.authenticate({
+        email,
+        password,
+        environment: scoped ? env : undefined,
+      })
 
       if (errors?.length) {
         const { code } = errors[0] as unknown as { code: AuthErrorCode }
@@ -450,7 +502,7 @@ function PasswordStep({
                 <Link
                   to="/$accountId/auth/forgot"
                   params={{ accountId: keygen.config.id }}
-                  search={{ email }}
+                  search={{ email, env }}
                 >
                   Forgot password?
                 </Link>
@@ -482,6 +534,7 @@ function VerifyStep({
   email,
   password,
   remember,
+  scoped,
   onAuthenticated,
   onPasswordInvalid,
   onBack,
@@ -489,10 +542,13 @@ function VerifyStep({
   email: string
   password: string
   remember: boolean
+  scoped: boolean
   onAuthenticated: (data: AuthData, remember: boolean) => void
   onPasswordInvalid: () => void
   onBack: () => void
 }) {
+  const { env } = useSearch({ from: "/$accountId/auth/login" })
+
   const form = useForm<Schemas.Auth.VerifyValues>({
     resolver: zodResolver(Schemas.Auth.VerifySchema),
     defaultValues: { otp: "" },
@@ -504,6 +560,7 @@ function VerifyStep({
         email,
         password,
         otp,
+        environment: scoped ? env : undefined,
       })
 
       if (errors?.length) {
@@ -586,19 +643,22 @@ function VerifyStep({
 
 function SsoStep({
   redirectUrl,
+  scoped,
   onCancel,
 }: {
   redirectUrl: string | null
+  scoped: boolean
   onCancel: () => void
 }) {
   const [loading, setLoading] = useState(false)
-  const { redirect } = useSearch({ from: "/$accountId/auth/login" })
+  const { redirect, env } = useSearch({ from: "/$accountId/auth/login" })
 
   function onContinue() {
     if (!redirectUrl) return
 
     setLoading(true)
     if (redirect) setPendingRedirect(redirect)
+    if (env && !scoped) setPendingEnvironment(env)
     window.location.href = redirectUrl
   }
 

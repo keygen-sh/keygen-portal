@@ -1,6 +1,7 @@
 import client from "@/keygen/client"
 import config from "@/keygen/config"
 import * as environment from "@/keygen/environment"
+import * as sessionEnvironment from "@/keygen/session-environment"
 import * as tokens from "@/keygen/tokens"
 
 const STORAGE_KEYS = config.isSessionAuthenticated
@@ -22,6 +23,7 @@ export async function logout() {
   client.setUser(null)
   client.setTokenId(null)
   environment.clear()
+  sessionEnvironment.clear()
 
   for (const key of STORAGE_KEYS) {
     localStorage.removeItem(key)

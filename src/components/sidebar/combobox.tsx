@@ -18,10 +18,12 @@ import { Check, ChevronsUpDown, Circle } from "lucide-react"
 
 import { Environment } from "@/types/environments"
 
-import { useListEnvironments } from "@/queries/environments"
+import { useGetEnvironment, useListEnvironments } from "@/queries/environments"
 import { useGetAccount } from "@/queries/accounts"
 import { useEnvironment } from "@/hooks/use-environment"
 import { useEdition } from "@/hooks/use-edition"
+
+import * as keygen from "@/keygen"
 
 import * as Environments from "@/components/environments"
 
@@ -45,6 +47,28 @@ function CeCombobox(): React.ReactElement {
         ) : (
           <Skeleton className="h-4 w-20" />
         )}
+      </div>
+    </div>
+  )
+}
+
+function ScopedCombobox(): React.ReactElement {
+  const { id, code, name } = useEnvironment()
+  const { data: account } = useGetAccount()
+  const { data: environment } = useGetEnvironment(id ?? code ?? "")
+
+  return (
+    <div className="flex items-start px-1 py-1">
+      <AccountLogo name={account?.attributes.name} className="mr-2" />
+      <div className="flex max-w-32 flex-col text-left text-sm text-content-loud">
+        {account ? (
+          <span className="truncate">{account.attributes.name}</span>
+        ) : (
+          <Skeleton className="h-4 w-20" />
+        )}
+        <span className="text-xs font-normal text-content-normal">
+          {environment?.attributes.name ?? name ?? code}
+        </span>
       </div>
     </div>
   )
@@ -182,5 +206,11 @@ function EeCombobox(): React.ReactElement {
 
 export default function SidebarCombobox(): React.ReactElement {
   const { isCE } = useEdition()
-  return isCE ? <CeCombobox /> : <EeCombobox />
+
+  if (isCE) return <CeCombobox />
+  return keygen.sessionEnvironment.get() != null ? (
+    <ScopedCombobox />
+  ) : (
+    <EeCombobox />
+  )
 }

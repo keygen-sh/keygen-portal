@@ -17,6 +17,8 @@ export enum AuthErrorCode {
   SsoUserNotFound = "SSO_USER_NOT_FOUND",
   SsoUserInvalid = "SSO_USER_INVALID",
   SsoSessionInvalid = "SSO_SESSION_INVALID",
+  EnvironmentInvalid = "ENVIRONMENT_INVALID",
+  EnvironmentNotSupported = "ENVIRONMENT_NOT_SUPPORTED",
 }
 
 export interface AuthAttributes {

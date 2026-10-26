@@ -12,10 +12,10 @@ import type {
 } from "@/contexts/environment-context"
 
 import * as keygen from "@/keygen"
-import type { ActiveEnvironment } from "@/keygen/environment"
+import type { ActiveEnvironment } from "@/keygen/active-environment"
 
 export function useActiveEnvironment(): EnvironmentContextValue {
-  const [restored] = useState(() => keygen.environment.restore())
+  const [restored] = useState(() => keygen.activeEnvironment.restore())
   const [id, setId] = useState<string | null>(restored?.id ?? null)
   const [code, setCode] = useState<string | null>(restored?.code ?? null)
   const [name, setName] = useState<string | null>(restored?.name ?? null)
@@ -27,11 +27,11 @@ export function useActiveEnvironment(): EnvironmentContextValue {
     async (environment: EnvironmentSelection | null) => {
       try {
         if (environment == null) {
-          keygen.environment.clear()
+          keygen.activeEnvironment.clear()
         } else {
           const token = await getToken(environment.id)
 
-          keygen.environment.set({ ...environment, token })
+          keygen.activeEnvironment.set({ ...environment, token })
         }
 
         setId(environment?.id ?? null)
@@ -54,7 +54,7 @@ export function useActiveEnvironment(): EnvironmentContextValue {
     if (restored == null) return
 
     async function revalidate(stored: ActiveEnvironment) {
-      const environment = await keygen.environment.resolve(stored)
+      const environment = await keygen.activeEnvironment.resolve(stored)
 
       if (environment == null) {
         toast({
@@ -73,7 +73,7 @@ export function useActiveEnvironment(): EnvironmentContextValue {
         return
       }
 
-      keygen.environment.set(environment)
+      keygen.activeEnvironment.set(environment)
       setCode(environment.code)
       setName(environment.name)
 

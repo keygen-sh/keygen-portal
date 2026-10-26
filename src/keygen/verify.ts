@@ -20,7 +20,7 @@ export async function verify({
   environment,
 }: VerifyProps): Promise<TokenResponse> {
   const tempClient = new Client(token)
-  tempClient.setSessionEnvironment(environment ?? null)
+  tempClient.setRootEnvironment(environment ?? null)
 
   const result = (await tempClient.request(
     `/accounts/${config.id}/tokens/${tokenId}`,

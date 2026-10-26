@@ -4,8 +4,8 @@ import { AuthResponse } from "@/types/auth"
 
 import config from "@/keygen/config"
 import client from "@/keygen/client"
-import * as activeEnvironment from "@/keygen/environment"
-import * as sessionEnvironment from "@/keygen/session-environment"
+import * as activeEnvironment from "@/keygen/active-environment"
+import * as rootEnvironment from "@/keygen/root-environment"
 
 config.validate()
 
@@ -28,7 +28,7 @@ export async function authenticate({
   environment,
 }: AuthProps): Promise<AuthResponse> {
   activeEnvironment.clear()
-  sessionEnvironment.release()
+  rootEnvironment.release()
 
   const credentials = btoa(
     unescape(encodeURIComponent(`${email || ""}:${password || ""}`)),

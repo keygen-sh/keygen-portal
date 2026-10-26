@@ -8,10 +8,10 @@ interface LoginOptions {
   environment?: string | null
 }
 
-export function login(
+export async function login(
   data: AuthData,
   { remember = false, environment }: LoginOptions = {},
-): { userId: string; accountId: string } {
+): Promise<{ userId: string; accountId: string }> {
   const { id: tokenId, attributes, relationships } = data
   const { token } = attributes
   const userId = relationships.bearer.data.id
@@ -41,6 +41,7 @@ export function login(
       code: environment && environment !== environmentId ? environment : null,
       name: null,
     })
+    await sessionEnvironment.resolve()
   } else {
     sessionEnvironment.clear()
   }

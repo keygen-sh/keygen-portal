@@ -56,6 +56,7 @@ async function attemptRestoreSession(): Promise<RestoredSession> {
         tokenId,
         environmentId: data.relationships.environment?.data?.id ?? null,
       })
+      await sessionEnvironment.resolve()
 
       return { userId, accountId }
     }

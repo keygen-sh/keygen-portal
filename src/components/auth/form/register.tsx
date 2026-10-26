@@ -61,7 +61,7 @@ export default function RegisterForm() {
         )
       }
 
-      const { userId, accountId } = keygen.login(data, { remember: true })
+      const { userId, accountId } = await keygen.login(data, { remember: true })
 
       // *keygen music intensifies*
       setIsRegistered(true)

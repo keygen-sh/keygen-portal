@@ -64,8 +64,8 @@ export default function LoginForm() {
   const [remember, setRemember] = useState(false)
   const [ssoRedirectUrl, setSsoRedirectUrl] = useState<string | null>(null)
 
-  function onSubmit(data: AuthData, remember: boolean) {
-    const { userId, accountId } = keygen.login(data, {
+  async function onSubmit(data: AuthData, remember: boolean) {
+    const { userId, accountId } = await keygen.login(data, {
       remember,
       environment: env,
     })
@@ -337,7 +337,7 @@ function PasswordStep({
 }: {
   email: string
   onOtpRequired: (password: string, remember: boolean) => void
-  onAuthenticated: (data: AuthData, remember: boolean) => void
+  onAuthenticated: (data: AuthData, remember: boolean) => Promise<void>
   onBack: () => void
 }) {
   const isMobile = useMobile()
@@ -378,7 +378,7 @@ function PasswordStep({
         return
       }
 
-      onAuthenticated(data!, remember)
+      await onAuthenticated(data!, remember)
     } catch (error) {
       console.error(error)
       toast({
@@ -513,7 +513,7 @@ function VerifyStep({
   email: string
   password: string
   remember: boolean
-  onAuthenticated: (data: AuthData, remember: boolean) => void
+  onAuthenticated: (data: AuthData, remember: boolean) => Promise<void>
   onPasswordInvalid: () => void
   onBack: () => void
 }) {
@@ -558,7 +558,7 @@ function VerifyStep({
         return
       }
 
-      onAuthenticated(data!, remember)
+      await onAuthenticated(data!, remember)
     } catch (error) {
       console.error(error)
       toast({

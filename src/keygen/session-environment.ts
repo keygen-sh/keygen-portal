@@ -104,9 +104,9 @@ export function reconcile(truth: {
 
 export async function resolve(): Promise<void> {
   const stored = read()
-  if (current == null || current.id != null || stored == null) return
+  if (current == null || current.name != null || stored == null) return
 
-  const response = await environments.get({ id: current.code! })
+  const response = await environments.get({ id: (current.id ?? current.code)! })
   if (response.data == null) return
 
   const { code, name } = response.data.attributes

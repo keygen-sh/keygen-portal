@@ -67,7 +67,7 @@ export function loginSearch({
   redirect?: string
   env?: string
 } {
-  return { redirect, env: env ?? keygen.sessionEnvironment.recall() }
+  return { redirect, env: env ?? keygen.rootEnvironment.recall() }
 }
 
 // parse a reset token from the URL query string

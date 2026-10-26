@@ -1,7 +1,7 @@
 import client from "@/keygen/client"
 import config from "@/keygen/config"
 import * as profiles from "@/keygen/profiles"
-import * as sessionEnvironment from "@/keygen/session-environment"
+import * as rootEnvironment from "@/keygen/root-environment"
 import { verify } from "@/keygen/verify"
 
 type RestoredSession = {
@@ -34,13 +34,13 @@ async function attemptRestoreSession(): Promise<RestoredSession> {
   const tokenId =
     localStorage.getItem("tokenId") ?? sessionStorage.getItem("tokenId")
 
-  sessionEnvironment.restore(tokenId)
+  rootEnvironment.restore(tokenId)
 
   if (config.isTokenAuthenticated && token && tokenId) {
     const { data } = await verify({
       token,
       tokenId,
-      environment: client.currentSessionEnvironment,
+      environment: client.currentRootEnvironment,
     })
 
     if (data) {
@@ -52,11 +52,11 @@ async function attemptRestoreSession(): Promise<RestoredSession> {
       client.setUser(userId)
       client.setAccount(accountId)
 
-      sessionEnvironment.reconcile({
+      rootEnvironment.reconcile({
         tokenId,
         environmentId: data.relationships.environment?.data?.id ?? null,
       })
-      await sessionEnvironment.resolve()
+      await rootEnvironment.resolve()
 
       return { userId, accountId }
     }
@@ -82,18 +82,18 @@ async function attemptRestoreSession(): Promise<RestoredSession> {
     client.setUser(me.data.id)
     client.setAccount(accountId)
 
-    sessionEnvironment.reconcile({
+    rootEnvironment.reconcile({
       tokenId: t?.id ?? null,
       environmentId: t
         ? (t.relationships?.environment?.data?.id ?? null)
         : undefined,
     })
-    await sessionEnvironment.resolve()
+    await rootEnvironment.resolve()
 
     return { userId: me.data.id, accountId }
   }
 
-  sessionEnvironment.clear()
+  rootEnvironment.clear()
 
   return { userId: null, accountId: null }
 }

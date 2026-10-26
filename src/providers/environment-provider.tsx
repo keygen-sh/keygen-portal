@@ -46,8 +46,8 @@ function EeEnvironmentProvider({
 }: {
   children: React.ReactNode
 }): React.ReactElement {
-  const [session] = useState<EnvironmentContextValue | null>(() => {
-    const environment = keygen.sessionEnvironment.get()
+  const [root] = useState<EnvironmentContextValue | null>(() => {
+    const environment = keygen.rootEnvironment.get()
     if (environment == null) return null
 
     return {
@@ -58,9 +58,9 @@ function EeEnvironmentProvider({
     }
   })
 
-  if (session) {
+  if (root) {
     return (
-      <EnvironmentContext.Provider value={session}>
+      <EnvironmentContext.Provider value={root}>
         {children}
       </EnvironmentContext.Provider>
     )

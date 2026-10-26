@@ -13,32 +13,32 @@ export class Client {
   private host = `https://${config.host}`
 
   private rootToken?: string | null
-  private environmentToken?: string | null
-  private environment?: string | null
-  private sessionEnvironment?: string | null
+  private rootEnvironment?: string | null
+  private activeEnvironmentToken?: string | null
+  private activeEnvironment?: string | null
   private user?: string | null
   private account?: string | null
   private tokenId?: string | null
 
-  constructor(token?: string | null, environment?: string | null) {
+  constructor(token?: string | null, activeEnvironment?: string | null) {
     this.rootToken = token ?? null
-    this.environment = environment ?? null
+    this.activeEnvironment = activeEnvironment ?? null
   }
 
   public setRootToken(token: string | null) {
     this.rootToken = token
   }
 
-  public setEnvironmentToken(token: string | null) {
-    this.environmentToken = token
+  public setRootEnvironment(alias: string | null) {
+    this.rootEnvironment = alias
   }
 
-  public setEnvironment(code: string | null) {
-    this.environment = code
+  public setActiveEnvironmentToken(token: string | null) {
+    this.activeEnvironmentToken = token
   }
 
-  public setSessionEnvironment(alias: string | null) {
-    this.sessionEnvironment = alias
+  public setActiveEnvironment(code: string | null) {
+    this.activeEnvironment = code
   }
 
   public setUser(id: string | null) {
@@ -65,12 +65,12 @@ export class Client {
     return this.tokenId
   }
 
-  public get currentSessionEnvironment(): string | null {
-    return this.sessionEnvironment ?? null
+  public get currentRootEnvironment(): string | null {
+    return this.rootEnvironment ?? null
   }
 
-  private get activeToken(): string | null | undefined {
-    return this.environmentToken ?? this.rootToken
+  private get requestToken(): string | null | undefined {
+    return this.activeEnvironmentToken ?? this.rootToken
   }
 
   async request<T = unknown>(
@@ -86,19 +86,19 @@ export class Client {
     // override to target an environment other than the active one
     // e.g. creating an environment token from the global context
     const envHeader =
-      this.sessionEnvironment ??
+      this.rootEnvironment ??
       (options.root
         ? null
         : options.environment !== undefined
           ? options.environment
-          : this.environment)
+          : this.activeEnvironment)
 
     const authToken =
-      options.root || this.sessionEnvironment != null
+      options.root || this.rootEnvironment != null
         ? this.rootToken
         : options.environmentToken !== undefined
           ? options.environmentToken
-          : this.activeToken
+          : this.requestToken
 
     const defaultHeaders = {
       Accept: "application/vnd.api+json",

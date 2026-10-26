@@ -91,11 +91,11 @@ export { login }
 import { logout } from "./logout"
 export { logout }
 
-import * as environment from "./environment"
-export { environment }
+import * as activeEnvironment from "./active-environment"
+export { activeEnvironment }
 
-import * as sessionEnvironment from "./session-environment"
-export { sessionEnvironment }
+import * as rootEnvironment from "./root-environment"
+export { rootEnvironment }
 
 import { search } from "./search"
 export { search }

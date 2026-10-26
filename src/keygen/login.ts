@@ -1,6 +1,6 @@
 import client from "@/keygen/client"
 import config from "@/keygen/config"
-import * as sessionEnvironment from "@/keygen/session-environment"
+import * as rootEnvironment from "@/keygen/root-environment"
 import type { AuthData } from "@/types/auth"
 
 interface LoginOptions {
@@ -35,15 +35,15 @@ export async function login(
 
   const environmentId = relationships.environment?.data?.id ?? null
   if (environmentId) {
-    sessionEnvironment.set({
+    rootEnvironment.set({
       tokenId,
       id: environmentId,
       code: environment && environment !== environmentId ? environment : null,
       name: null,
     })
-    await sessionEnvironment.resolve()
+    await rootEnvironment.resolve()
   } else {
-    sessionEnvironment.clear()
+    rootEnvironment.clear()
   }
 
   return { userId, accountId }

@@ -59,16 +59,16 @@ export function set({ id, code, name, token }: ActiveEnvironment): void {
 
   storage.setItem(STORAGE_KEY, JSON.stringify(stored))
 
-  client.setEnvironment(code)
-  client.setEnvironmentToken(token)
+  client.setActiveEnvironment(code)
+  client.setActiveEnvironmentToken(token)
 }
 
 export function clear(): void {
   localStorage.removeItem(STORAGE_KEY)
   sessionStorage.removeItem(STORAGE_KEY)
 
-  client.setEnvironment(null)
-  client.setEnvironmentToken(null)
+  client.setActiveEnvironment(null)
+  client.setActiveEnvironmentToken(null)
 }
 
 export function restore(): ActiveEnvironment | null {
@@ -82,8 +82,8 @@ export function restore(): ActiveEnvironment | null {
     token: stored.token ?? null,
   }
 
-  client.setEnvironment(environment.code)
-  client.setEnvironmentToken(environment.token)
+  client.setActiveEnvironment(environment.code)
+  client.setActiveEnvironmentToken(environment.token)
 
   return environment
 }

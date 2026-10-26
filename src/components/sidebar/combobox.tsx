@@ -190,5 +190,5 @@ export default function SidebarCombobox(): React.ReactElement {
   const { isCE } = useEdition()
 
   if (isCE) return <CeCombobox />
-  return <EeCombobox disabled={keygen.sessionEnvironment.get() != null} />
+  return <EeCombobox disabled={keygen.rootEnvironment.get() != null} />
 }

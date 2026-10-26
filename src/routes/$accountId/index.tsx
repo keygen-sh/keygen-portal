@@ -16,7 +16,7 @@ export const Route = createFileRoute("/$accountId/")({
   loaderDeps: ({ search }) => ({ env: search.env }),
   beforeLoad: ({ search }) => {
     if (search.env && keygen.config.isSessionAuthenticated) {
-      keygen.sessionEnvironment.prime(search.env)
+      keygen.rootEnvironment.prime(search.env)
     }
   },
   loader: async ({ params, deps }) => {

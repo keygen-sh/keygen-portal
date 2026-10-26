@@ -18,7 +18,7 @@ import { Check, ChevronsUpDown, Circle } from "lucide-react"
 
 import { Environment } from "@/types/environments"
 
-import { useGetEnvironment, useListEnvironments } from "@/queries/environments"
+import { useListEnvironments } from "@/queries/environments"
 import { useGetAccount } from "@/queries/accounts"
 import { useEnvironment } from "@/hooks/use-environment"
 import { useEdition } from "@/hooks/use-edition"
@@ -53,9 +53,8 @@ function CeCombobox(): React.ReactElement {
 }
 
 function ScopedCombobox(): React.ReactElement {
-  const { id, code, name } = useEnvironment()
+  const { name } = useEnvironment()
   const { data: account } = useGetAccount()
-  const { data: environment } = useGetEnvironment(id ?? code ?? "")
 
   return (
     <div className="flex items-start px-1 py-1">
@@ -66,9 +65,7 @@ function ScopedCombobox(): React.ReactElement {
         ) : (
           <Skeleton className="h-4 w-20" />
         )}
-        <span className="text-xs font-normal text-content-normal">
-          {environment?.attributes.name ?? name ?? code}
-        </span>
+        <span className="text-xs font-normal text-content-normal">{name}</span>
       </div>
     </div>
   )

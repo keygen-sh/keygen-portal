@@ -73,6 +73,29 @@ export class Client {
     return this.activeEnvironmentToken ?? this.rootToken
   }
 
+  private credentials(options: {
+    root?: boolean
+    environment?: string | null
+    environmentToken?: string | null
+  }): { environment?: string | null; token?: string | null } {
+    if (options.root || this.rootEnvironment != null) {
+      return { environment: this.rootEnvironment, token: this.rootToken }
+    }
+
+    // override to target an environment other than the active one
+    // e.g. creating an environment token from the global context
+    return {
+      environment:
+        options.environment !== undefined
+          ? options.environment
+          : this.activeEnvironment,
+      token:
+        options.environmentToken !== undefined
+          ? options.environmentToken
+          : this.requestToken,
+    }
+  }
+
   async request<T = unknown>(
     endpoint: string,
     options: RequestInit & {
@@ -83,22 +106,8 @@ export class Client {
       environmentToken?: string | null
     } = {},
   ): Promise<APIResponse<T>> {
-    // override to target an environment other than the active one
-    // e.g. creating an environment token from the global context
-    const envHeader =
-      this.rootEnvironment ??
-      (options.root
-        ? null
-        : options.environment !== undefined
-          ? options.environment
-          : this.activeEnvironment)
-
-    const authToken =
-      options.root || this.rootEnvironment != null
-        ? this.rootToken
-        : options.environmentToken !== undefined
-          ? options.environmentToken
-          : this.requestToken
+    const { environment: envHeader, token: authToken } =
+      this.credentials(options)
 
     const defaultHeaders = {
       Accept: "application/vnd.api+json",

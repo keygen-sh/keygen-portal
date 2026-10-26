@@ -52,26 +52,7 @@ function CeCombobox(): React.ReactElement {
   )
 }
 
-function ScopedCombobox(): React.ReactElement {
-  const { name } = useEnvironment()
-  const { data: account } = useGetAccount()
-
-  return (
-    <div className="flex items-start px-1 py-1">
-      <AccountLogo name={account?.attributes.name} className="mr-2" />
-      <div className="flex max-w-32 flex-col text-left text-sm text-content-loud">
-        {account ? (
-          <span className="truncate">{account.attributes.name}</span>
-        ) : (
-          <Skeleton className="h-4 w-20" />
-        )}
-        <span className="text-xs font-normal text-content-normal">{name}</span>
-      </div>
-    </div>
-  )
-}
-
-function EeCombobox(): React.ReactElement {
+function EeCombobox({ disabled }: { disabled: boolean }): React.ReactElement {
   const { id: activeEnvironmentId, code, name, select } = useEnvironment()
 
   const [openModal, setOpenModal] = useState(false)
@@ -135,7 +116,11 @@ function EeCombobox(): React.ReactElement {
     <>
       <Popover open={openPopover} onOpenChange={setOpenPopover}>
         <PopoverTrigger asChild>
-          <Button variant="ghost" className="h-auto px-1.5 py-1">
+          <Button
+            variant="ghost"
+            className="h-auto px-1.5 py-1 disabled:opacity-100"
+            disabled={disabled}
+          >
             <AccountLogo name={account?.attributes.name} className="mr-2" />
 
             <div className="flex max-w-32 flex-col text-left text-content-loud">
@@ -145,7 +130,7 @@ function EeCombobox(): React.ReactElement {
                 ) : (
                   <Skeleton className="h-4 w-20" />
                 )}
-                <ChevronsUpDown className="size-3 opacity-60" />
+                {!disabled && <ChevronsUpDown className="size-3 opacity-60" />}
               </div>
               <span className="text-xs font-normal text-content-normal">
                 {currentEnvironment.name}
@@ -205,9 +190,5 @@ export default function SidebarCombobox(): React.ReactElement {
   const { isCE } = useEdition()
 
   if (isCE) return <CeCombobox />
-  return keygen.sessionEnvironment.get() != null ? (
-    <ScopedCombobox />
-  ) : (
-    <EeCombobox />
-  )
+  return <EeCombobox disabled={keygen.sessionEnvironment.get() != null} />
 }

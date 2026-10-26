@@ -2,7 +2,6 @@ import { linkOptions, defaultParseSearch } from "@tanstack/react-router"
 
 import * as keygen from "@/keygen"
 
-import { toast } from "@/lib/toast"
 import { dasherize } from "@/lib/utils"
 
 // whether the given token is the one authenticating the current Portal session
@@ -69,47 +68,6 @@ export function loginSearch({
   env?: string
 } {
   return { redirect, env: env ?? keygen.sessionEnvironment.recall() }
-}
-
-const ENVIRONMENT_STORAGE_KEY = "keygen.auth.environment"
-
-export function setPendingEnvironment(value: string): void {
-  window.sessionStorage.setItem(ENVIRONMENT_STORAGE_KEY, value)
-}
-
-export function takePendingEnvironment(): string | undefined {
-  const value = parseEnvironment(
-    window.sessionStorage.getItem(ENVIRONMENT_STORAGE_KEY),
-  )
-  window.sessionStorage.removeItem(ENVIRONMENT_STORAGE_KEY)
-
-  return value
-}
-
-export async function activateEnvironment(alias: string): Promise<void> {
-  const environment = await keygen.environments.get({ id: alias })
-  if (environment.data == null) {
-    toast({
-      message: "Environment not found.",
-      description: `"${alias}" doesn't exist on this account. You've been signed in globally.`,
-      variant: "error",
-    })
-
-    return
-  }
-
-  const token = await keygen.tokens.create({
-    relationships: {
-      environment: { data: { type: "environments", id: environment.data.id } },
-    },
-  })
-
-  keygen.environment.set({
-    id: environment.data.id,
-    code: environment.data.attributes.code,
-    name: environment.data.attributes.name,
-    token: token.data?.attributes.token ?? null,
-  })
 }
 
 // parse a reset token from the URL query string

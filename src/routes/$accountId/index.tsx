@@ -3,11 +3,9 @@ import { createFileRoute, redirect } from "@tanstack/react-router"
 import * as keygen from "@/keygen"
 import { restoreSession } from "@/keygen/session"
 import {
-  activateEnvironment,
   loginSearch,
   parseEnvironment,
   redirectTarget,
-  takePendingEnvironment,
   takePendingRedirect,
 } from "@/lib/auth"
 
@@ -27,24 +25,16 @@ export const Route = createFileRoute("/$accountId/")({
     const { userId, accountId } = await restoreSession()
 
     const pendingRedirect = takePendingRedirect()
-    const pendingEnvironment = takePendingEnvironment()
 
     if (!userId) {
       redirect({
         to: "/$accountId/auth/login",
         params: { accountId: params.accountId },
-        search: loginSearch({
-          redirect: pendingRedirect,
-          env: deps.env ?? pendingEnvironment,
-        }),
+        search: loginSearch({ redirect: pendingRedirect, env: deps.env }),
         replace: true,
         throw: true,
       })
       return
-    }
-
-    if (pendingEnvironment && keygen.sessionEnvironment.get() == null) {
-      await activateEnvironment(pendingEnvironment)
     }
 
     if (pendingRedirect) {

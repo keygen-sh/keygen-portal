@@ -20,12 +20,7 @@ import { useSession } from "@/hooks/use-session"
 import { cn } from "@/lib/utils"
 import { toast } from "@/lib/toast"
 import { truncator } from "@/lib/truncate"
-import {
-  activateEnvironment,
-  redirectTarget,
-  setPendingEnvironment,
-  setPendingRedirect,
-} from "@/lib/auth"
+import { redirectTarget, setPendingRedirect } from "@/lib/auth"
 import { getRecentAccounts } from "@/lib/accounts"
 
 import * as Auth from "@/components/auth"
@@ -68,17 +63,12 @@ export default function LoginForm() {
   const [password, setPassword] = useState("")
   const [remember, setRemember] = useState(false)
   const [ssoRedirectUrl, setSsoRedirectUrl] = useState<string | null>(null)
-  const [scoped, setScoped] = useState(false)
 
-  async function onSubmit(data: AuthData, remember: boolean) {
+  function onSubmit(data: AuthData, remember: boolean) {
     const { userId, accountId } = keygen.login(data, {
       remember,
-      environment: scoped ? env : undefined,
+      environment: env,
     })
-
-    if (env && !scoped) {
-      await activateEnvironment(env)
-    }
 
     session.setUser(userId)
 
@@ -99,7 +89,6 @@ export default function LoginForm() {
         <PasswordStep
           key="password"
           email={email}
-          scoped={scoped}
           onOtpRequired={(value, rememberValue) => {
             setPassword(value)
             setRemember(rememberValue)
@@ -114,7 +103,6 @@ export default function LoginForm() {
           email={email}
           password={password}
           remember={remember}
-          scoped={scoped}
           onAuthenticated={onSubmit}
           onPasswordInvalid={() => setStep("password")}
           onBack={() => setStep("email")}
@@ -123,7 +111,6 @@ export default function LoginForm() {
         <SsoStep
           key="sso"
           redirectUrl={ssoRedirectUrl}
-          scoped={scoped}
           onCancel={() => {
             setSsoRedirectUrl(null)
             setStep("email")
@@ -133,14 +120,12 @@ export default function LoginForm() {
         <EmailStep
           key="email"
           email={email}
-          onPasswordRequired={(value, isScoped) => {
+          onPasswordRequired={(value) => {
             setEmail(value)
-            setScoped(isScoped)
             setStep("password")
           }}
-          onSsoRequired={(value, url, isScoped) => {
+          onSsoRequired={(value, url) => {
             setEmail(value)
-            setScoped(isScoped)
             setSsoRedirectUrl(url)
             setStep("sso")
           }}
@@ -158,8 +143,8 @@ function EmailStep({
   onBack,
 }: {
   email: string
-  onPasswordRequired: (email: string, scoped: boolean) => void
-  onSsoRequired: (email: string, redirectUrl: string, scoped: boolean) => void
+  onPasswordRequired: (email: string) => void
+  onSsoRequired: (email: string, redirectUrl: string) => void
   onBack: () => void
 }) {
   const isMobile = useMobile()
@@ -182,18 +167,7 @@ function EmailStep({
 
   async function onSubmit({ email }: Schemas.Auth.LoginValues) {
     try {
-      let scoped = false
-      let response = await keygen.authenticate({ email })
-
-      if (
-        env &&
-        response.errors?.some((e) => e.code === AuthErrorCode.EmailInvalid)
-      ) {
-        scoped = true
-        response = await keygen.authenticate({ email, environment: env })
-      }
-
-      const { errors } = response
+      const { errors } = await keygen.authenticate({ email, environment: env })
 
       if (!errors?.length) {
         throw new Error("Service is unavailable.")
@@ -207,11 +181,11 @@ function EmailStep({
 
       switch (err.code) {
         case AuthErrorCode.PasswordRequired:
-          onPasswordRequired(email, scoped)
+          onPasswordRequired(email)
           break
         case AuthErrorCode.SsoRequired:
           if (err.links?.redirect) {
-            onSsoRequired(email, err.links.redirect, scoped)
+            onSsoRequired(email, err.links.redirect)
           } else {
             toast({
               message: "Single sign-on is unavailable.",
@@ -357,13 +331,11 @@ function EmailStep({
 
 function PasswordStep({
   email,
-  scoped,
   onOtpRequired,
   onAuthenticated,
   onBack,
 }: {
   email: string
-  scoped: boolean
   onOtpRequired: (password: string, remember: boolean) => void
   onAuthenticated: (data: AuthData, remember: boolean) => void
   onBack: () => void
@@ -383,7 +355,7 @@ function PasswordStep({
       const { data, errors } = await keygen.authenticate({
         email,
         password,
-        environment: scoped ? env : undefined,
+        environment: env,
       })
 
       if (errors?.length) {
@@ -534,7 +506,6 @@ function VerifyStep({
   email,
   password,
   remember,
-  scoped,
   onAuthenticated,
   onPasswordInvalid,
   onBack,
@@ -542,7 +513,6 @@ function VerifyStep({
   email: string
   password: string
   remember: boolean
-  scoped: boolean
   onAuthenticated: (data: AuthData, remember: boolean) => void
   onPasswordInvalid: () => void
   onBack: () => void
@@ -560,7 +530,7 @@ function VerifyStep({
         email,
         password,
         otp,
-        environment: scoped ? env : undefined,
+        environment: env,
       })
 
       if (errors?.length) {
@@ -643,22 +613,19 @@ function VerifyStep({
 
 function SsoStep({
   redirectUrl,
-  scoped,
   onCancel,
 }: {
   redirectUrl: string | null
-  scoped: boolean
   onCancel: () => void
 }) {
   const [loading, setLoading] = useState(false)
-  const { redirect, env } = useSearch({ from: "/$accountId/auth/login" })
+  const { redirect } = useSearch({ from: "/$accountId/auth/login" })
 
   function onContinue() {
     if (!redirectUrl) return
 
     setLoading(true)
     if (redirect) setPendingRedirect(redirect)
-    if (env && !scoped) setPendingEnvironment(env)
     window.location.href = redirectUrl
   }
 

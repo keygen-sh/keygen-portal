@@ -25,7 +25,7 @@ const INVALID_LINK_MESSAGE =
 
 export default function ResetPasswordForm() {
   const navigate = useNavigate()
-  const { token } = useSearch({ from: "/$accountId/auth/reset" })
+  const { token, env } = useSearch({ from: "/$accountId/auth/reset" })
   const resetPassword = useResetPassword()
 
   const reset = useMemo(() => parseResetToken(token), [token])
@@ -47,6 +47,7 @@ export default function ResetPasswordForm() {
         userId: reset.userId,
         token: reset.token,
         newPassword: password,
+        environment: env,
       })
 
       toast({
@@ -57,6 +58,7 @@ export default function ResetPasswordForm() {
       void navigate({
         to: "/$accountId/auth/login",
         params: { accountId: keygen.config.id },
+        search: { env },
       })
     } catch (error) {
       const apiError = error instanceof APIError ? error : null

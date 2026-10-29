@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useMachineTableColumns } from "@/hooks/use-machine-table-columns"
@@ -62,15 +61,13 @@ export default function MachinesList() {
 
       <Machines.Form.Create open={open} onOpenChange={setOpen} />
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<Machine>
-          data={machines}
-          pagination={pagination}
-          columns={columns}
-          isLoading={machinesLoading}
-          onRowClick={(machine) => navigateToResource(machine)}
-        />
-      </ScrollArea>
+      <DataTable<Machine>
+        data={machines}
+        pagination={pagination}
+        columns={columns}
+        isLoading={machinesLoading}
+        onRowClick={(machine) => navigateToResource(machine)}
+      />
 
       <PageFooter>
         <Pagination

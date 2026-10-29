@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useArtifactTableColumns } from "@/hooks/use-artifact-table-columns"
@@ -61,15 +60,13 @@ export default function ArtifactsList() {
         <Artifacts.FilterBar filters={filters} onChange={setFilters} />
       </div>
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<Artifact>
-          data={artifacts}
-          pagination={pagination}
-          columns={columns}
-          isLoading={artifactsLoading}
-          onRowClick={(artifact) => navigateToResource(artifact)}
-        />
-      </ScrollArea>
+      <DataTable<Artifact>
+        data={artifacts}
+        pagination={pagination}
+        columns={columns}
+        isLoading={artifactsLoading}
+        onRowClick={(artifact) => navigateToResource(artifact)}
+      />
 
       <PageFooter>
         <Pagination

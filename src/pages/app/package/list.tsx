@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { usePackageTableColumns } from "@/hooks/use-package-table-columns"
@@ -61,15 +60,13 @@ export default function PackagesList() {
         <Packages.FilterBar filters={filters} onChange={setFilters} />
       </div>
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<Package>
-          data={packages}
-          pagination={pagination}
-          columns={columns}
-          isLoading={packagesLoading}
-          onRowClick={(pkg) => navigateToResource(pkg)}
-        />
-      </ScrollArea>
+      <DataTable<Package>
+        data={packages}
+        pagination={pagination}
+        columns={columns}
+        isLoading={packagesLoading}
+        onRowClick={(pkg) => navigateToResource(pkg)}
+      />
 
       <PageFooter>
         <Pagination

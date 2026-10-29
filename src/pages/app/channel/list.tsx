@@ -1,5 +1,3 @@
-import { ScrollArea } from "@/components/ui/scroll-area"
-
 import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useChannelTableColumns } from "@/hooks/use-channel-table-columns"
 import { Channel } from "@/types/channels"
@@ -31,14 +29,12 @@ export default function ChannelsList() {
     <section className="flex h-screen flex-col">
       <PageHeader title="Channels" />
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<Channel>
-          data={channels}
-          pagination={pagination}
-          columns={columns}
-          isLoading={channelsLoading}
-        />
-      </ScrollArea>
+      <DataTable<Channel>
+        data={channels}
+        pagination={pagination}
+        columns={columns}
+        isLoading={channelsLoading}
+      />
 
       <PageFooter>
         <Pagination

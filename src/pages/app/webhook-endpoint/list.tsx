@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { WebhookEndpoint } from "@/types/webhook-endpoints"
 
@@ -46,15 +45,13 @@ export default function WebhookEndpointsList() {
         <WebhookEndpoints.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<WebhookEndpoint>
-          data={webhookEndpoints}
-          pagination={pagination}
-          columns={columns}
-          isLoading={isLoading}
-          onRowClick={(webhookEndpoint) => navigateToResource(webhookEndpoint)}
-        />
-      </ScrollArea>
+      <DataTable<WebhookEndpoint>
+        data={webhookEndpoints}
+        pagination={pagination}
+        columns={columns}
+        isLoading={isLoading}
+        onRowClick={(webhookEndpoint) => navigateToResource(webhookEndpoint)}
+      />
 
       <PageFooter>
         <Pagination

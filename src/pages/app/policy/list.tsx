@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { usePolicyTableColumns } from "@/hooks/use-policy-table-columns"
@@ -62,15 +61,13 @@ export default function PoliciesList() {
         <Policies.FilterBar filters={filters} onChange={setFilters} />
       </div>
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<Policy>
-          data={policies}
-          pagination={pagination}
-          columns={columns}
-          isLoading={policiesLoading}
-          onRowClick={(policy) => navigateToResource(policy)}
-        />
-      </ScrollArea>
+      <DataTable<Policy>
+        data={policies}
+        pagination={pagination}
+        columns={columns}
+        isLoading={policiesLoading}
+        onRowClick={(policy) => navigateToResource(policy)}
+      />
 
       <PageFooter>
         <Pagination

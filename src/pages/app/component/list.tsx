@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useComponentTableColumns } from "@/hooks/use-component-table-columns"
@@ -62,15 +61,13 @@ export default function ComponentsList() {
 
       <Components.Form.Create open={open} onOpenChange={setOpen} />
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<Component>
-          data={components}
-          pagination={pagination}
-          columns={columns}
-          isLoading={componentsLoading}
-          onRowClick={(component) => navigateToResource(component)}
-        />
-      </ScrollArea>
+      <DataTable<Component>
+        data={components}
+        pagination={pagination}
+        columns={columns}
+        isLoading={componentsLoading}
+        onRowClick={(component) => navigateToResource(component)}
+      />
 
       <PageFooter>
         <Pagination

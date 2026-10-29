@@ -1,5 +1,3 @@
-import { ScrollArea } from "@/components/ui/scroll-area"
-
 import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useEngineTableColumns } from "@/hooks/use-engine-table-columns"
 import { Engine } from "@/types/engines"
@@ -31,14 +29,12 @@ export default function EnginesList() {
     <section className="flex h-screen flex-col">
       <PageHeader title="Engines" />
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<Engine>
-          data={engines}
-          pagination={pagination}
-          columns={columns}
-          isLoading={enginesLoading}
-        />
-      </ScrollArea>
+      <DataTable<Engine>
+        data={engines}
+        pagination={pagination}
+        columns={columns}
+        isLoading={enginesLoading}
+      />
 
       <PageFooter>
         <Pagination

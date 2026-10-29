@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useUserTableColumns } from "@/hooks/use-user-table-columns"
@@ -64,15 +63,13 @@ export default function UsersList() {
 
       <Users.Form.Create open={open} onOpenChange={setOpen} />
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<User>
-          data={users}
-          pagination={pagination}
-          columns={columns}
-          isLoading={usersLoading}
-          onRowClick={(user) => navigateToResource(user)}
-        />
-      </ScrollArea>
+      <DataTable<User>
+        data={users}
+        pagination={pagination}
+        columns={columns}
+        isLoading={usersLoading}
+        onRowClick={(user) => navigateToResource(user)}
+      />
 
       <PageFooter>
         <Pagination

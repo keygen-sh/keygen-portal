@@ -29,8 +29,8 @@ const inputVariants = cva(
           "font-owners-wide font-medium shadow-none placeholder:text-content-normal",
       },
       fieldSize: {
-        default: "h-9 px-3 py-1 text-sm",
-        sm: "h-8 px-2 py-1 text-sm",
+        default: "h-9 px-3 py-1 text-base md:text-sm",
+        sm: "h-8 px-2 py-1 text-base md:text-sm",
         lg: "h-10 px-4 py-2 text-base",
         xl: "text-xl",
       },

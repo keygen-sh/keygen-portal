@@ -15,6 +15,7 @@ import {
 } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   TableHeader,
   TableHead,
@@ -66,10 +67,12 @@ export default function DataTable<T extends TableResource>({
   const [sorting, setSorting] = useState<SortingState>([])
 
   // Horizontal scroll state
-  const [scrollIndex, setScrollIndex] = useState(0) // Which scrollable column we've scrolled past
-  const [availableWidth, setAvailableWidth] = useState(0) // Determine if columns overflow and how much to scroll
-  const containerRef = useRef<HTMLDivElement>(null) // For measuring available container width and observing resizes (e.g. sidebar toggle)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const tableRef = useRef<HTMLTableElement>(null)
+  const scrollTargetRef = useRef<number | null>(null)
 
   // Track which pages have already animated so revisiting doesn't animate again
   const prevPageRef = useRef(pagination.page)
@@ -82,7 +85,8 @@ export default function DataTable<T extends TableResource>({
     prevPageRef.current = pagination.page
 
     // Reset horizontal scroll when changing pages
-    setScrollIndex(0)
+    scrollTargetRef.current = null
+    setCanScrollLeft(false)
   }
 
   const shouldAnimate = !animatedPagesRef.current.has(pagination.page)
@@ -130,25 +134,6 @@ export default function DataTable<T extends TableResource>({
     }
     return offsets
   }, [columnWidths])
-  const totalColumnsWidth = columnOffsets[columnWidths.length] ?? 0
-
-  // FIXME(cazden) Remove the +2 hack
-  const allColumnsVisible =
-    columnWidths.length === 0 || availableWidth + 2 >= totalColumnsWidth
-
-  const maxScrollOffset = Math.max(0, totalColumnsWidth - availableWidth)
-  const unclampedScrollOffset =
-    columnWidths.length > 0
-      ? (columnOffsets[clampedStaticColumns + scrollIndex] ??
-          columnOffsets[columnWidths.length] ??
-          0) - (columnOffsets[clampedStaticColumns] ?? 0)
-      : 0
-  const scrollOffset = Math.min(unclampedScrollOffset, maxScrollOffset)
-
-  const scrollableColumnCount = tableColumns.length - clampedStaticColumns
-
-  const canScrollLeft = scrollIndex > 0
-  const canScrollRight = !allColumnsVisible && scrollOffset < maxScrollOffset
 
   // Read offset width from each header cell to get rendered widths
   const measureColumns = useCallback(() => {
@@ -161,45 +146,92 @@ export default function DataTable<T extends TableResource>({
     }
   }, [tableColumns.length])
 
-  // Measure columns and container width on initial render to determine if scroll buttons are needed and how much to scroll
+  const updateScrollState = useCallback(() => {
+    const scroller = scrollRef.current
+    if (!scroller) return
+
+    const maxOffset = scroller.scrollWidth - scroller.clientWidth
+    setCanScrollLeft(scroller.scrollLeft > 1)
+    setCanScrollRight(scroller.scrollLeft < maxOffset - 1)
+  }, [])
+
+  // Measure columns and scroll extent on initial render to determine if scroll buttons are needed
   useLayoutEffect(() => {
     measureColumns()
-
-    const container = containerRef.current
-    if (container) {
-      setAvailableWidth(container.getBoundingClientRect().width)
-    }
+    updateScrollState()
   }, [
     data,
     isMobile,
     measureColumns,
+    updateScrollState,
     tableColumns.length,
     clampedStaticColumns,
   ])
 
-  // Measure on container resize (e.g. sidebar toggle)
+  // Measure on container or table resize (e.g. sidebar toggle, cells loading)
   useEffect(() => {
     const container = containerRef.current
+    const table = tableRef.current
 
     function measure() {
-      if (container) {
-        setAvailableWidth(container.getBoundingClientRect().width)
-      }
-
       measureColumns()
+      updateScrollState()
     }
 
     const observer = new ResizeObserver(measure)
     if (container) observer.observe(container)
+    if (table) observer.observe(table)
 
     return () => {
       observer.disconnect()
     }
-  }, [data, pagination.page, measureColumns])
+  }, [data, pagination.page, measureColumns, updateScrollState])
 
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ left: scrollOffset, behavior: "smooth" })
-  }, [scrollOffset])
+  function handleScroll() {
+    const scroller = scrollRef.current
+    if (
+      scroller &&
+      scrollTargetRef.current !== null &&
+      Math.abs(scroller.scrollLeft - scrollTargetRef.current) < 1
+    ) {
+      scrollTargetRef.current = null
+    }
+
+    updateScrollState()
+  }
+
+  function getColumnScrollOffsets(): number[] {
+    const cells = headerCellRefs.current.slice(
+      clampedStaticColumns,
+      tableColumns.length,
+    )
+    const origin = cells[0]?.offsetLeft ?? 0
+
+    return cells.map((cell) => (cell?.offsetLeft ?? 0) - origin)
+  }
+
+  function scrollLeft() {
+    const scroller = scrollRef.current
+    if (!scroller) return
+
+    const offset = scrollTargetRef.current ?? scroller.scrollLeft
+    const target = getColumnScrollOffsets().findLast((o) => o < offset - 1)
+
+    scrollTargetRef.current = target ?? 0
+    scroller.scrollTo({ left: scrollTargetRef.current, behavior: "smooth" })
+  }
+
+  function scrollRight() {
+    const scroller = scrollRef.current
+    if (!scroller) return
+
+    const maxOffset = scroller.scrollWidth - scroller.clientWidth
+    const offset = scrollTargetRef.current ?? scroller.scrollLeft
+    const target = getColumnScrollOffsets().find((o) => o > offset + 1)
+
+    scrollTargetRef.current = Math.min(target ?? maxOffset, maxOffset)
+    scroller.scrollTo({ left: scrollTargetRef.current, behavior: "smooth" })
+  }
 
   function getCellStyle(columnIndex: number): React.CSSProperties | undefined {
     // Render static columns above scrollable so they don't get visually cut off when scrolling
@@ -215,7 +247,9 @@ export default function DataTable<T extends TableResource>({
   }
 
   return (
-    <div className={cn("relative flex min-w-0 flex-1 flex-col", className)}>
+    <div
+      className={cn("relative flex min-h-0 min-w-0 flex-1 flex-col", className)}
+    >
       <Skeletons.Table
         className={cn(
           !isLoading && "absolute opacity-0 transition-opacity duration-500",
@@ -235,15 +269,26 @@ export default function DataTable<T extends TableResource>({
         >
           <div
             ref={containerRef}
-            className="relative overflow-hidden"
+            className="relative h-full overflow-hidden"
             style={{ contain: "inline-size" }}
           >
-            <div
+            <ScrollArea
               key={pagination.page}
-              ref={scrollRef}
-              className="relative w-full overflow-hidden"
+              orientation="both"
+              className="h-full"
+              viewportProps={{
+                ref: scrollRef,
+                className: "overscroll-x-contain",
+                onScroll: handleScroll,
+                onScrollEnd: () => {
+                  scrollTargetRef.current = null
+                },
+              }}
             >
-              <table className="min-w-full border-separate border-spacing-0 text-sm">
+              <table
+                ref={tableRef}
+                className="min-w-full border-separate border-spacing-0 text-sm"
+              >
                 <TableHeader>
                   {tableInstance.getHeaderGroups().map((group) => (
                     <TableRow key={group.id}>
@@ -305,9 +350,7 @@ export default function DataTable<T extends TableResource>({
                                     size="icon"
                                     className="h-6 w-6"
                                     disabled={!canScrollLeft}
-                                    onClick={() =>
-                                      setScrollIndex((i) => Math.max(i - 1, 0))
-                                    }
+                                    onClick={scrollLeft}
                                   >
                                     <ChevronLeft className="h-3 w-3" />
                                   </Button>
@@ -316,11 +359,7 @@ export default function DataTable<T extends TableResource>({
                                     size="icon"
                                     className="h-6 w-6"
                                     disabled={!canScrollRight}
-                                    onClick={() =>
-                                      setScrollIndex((i) =>
-                                        Math.min(i + 1, scrollableColumnCount),
-                                      )
-                                    }
+                                    onClick={scrollRight}
                                   >
                                     <ChevronRight className="h-3 w-3" />
                                   </Button>
@@ -391,7 +430,7 @@ export default function DataTable<T extends TableResource>({
                   )}
                 </TableBody>
               </table>
-            </div>
+            </ScrollArea>
 
             {/* Gradient hint */}
             <div

@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useGroupTableColumns } from "@/hooks/use-group-table-columns"
@@ -53,15 +52,13 @@ export default function GroupsList() {
         <Groups.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<Group>
-          data={groups}
-          pagination={pagination}
-          columns={columns}
-          isLoading={groupsLoading}
-          onRowClick={(group) => navigateToResource(group)}
-        />
-      </ScrollArea>
+      <DataTable<Group>
+        data={groups}
+        pagination={pagination}
+        columns={columns}
+        isLoading={groupsLoading}
+        onRowClick={(group) => navigateToResource(group)}
+      />
 
       <PageFooter>
         <Pagination

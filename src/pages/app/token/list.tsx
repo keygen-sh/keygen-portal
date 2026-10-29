@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useFilterSearch } from "@/hooks/use-filter-search"
@@ -59,15 +58,13 @@ export default function TokensList() {
 
       <Tokens.Form.Create open={createOpen} onOpenChange={setCreateOpen} />
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<Token>
-          data={tokens}
-          pagination={pagination}
-          columns={columns}
-          isLoading={isLoading}
-          onRowClick={(token) => navigateToResource(token)}
-        />
-      </ScrollArea>
+      <DataTable<Token>
+        data={tokens}
+        pagination={pagination}
+        columns={columns}
+        isLoading={isLoading}
+        onRowClick={(token) => navigateToResource(token)}
+      />
 
       <PageFooter>
         <Pagination

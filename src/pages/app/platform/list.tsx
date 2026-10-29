@@ -1,5 +1,3 @@
-import { ScrollArea } from "@/components/ui/scroll-area"
-
 import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { usePlatformTableColumns } from "@/hooks/use-platform-table-columns"
 import { Platform } from "@/types/platforms"
@@ -31,14 +29,12 @@ export default function PlatformsList() {
     <section className="flex h-screen flex-col">
       <PageHeader title="Platforms" />
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<Platform>
-          data={platforms}
-          pagination={pagination}
-          columns={columns}
-          isLoading={platformsLoading}
-        />
-      </ScrollArea>
+      <DataTable<Platform>
+        data={platforms}
+        pagination={pagination}
+        columns={columns}
+        isLoading={platformsLoading}
+      />
 
       <PageFooter>
         <Pagination

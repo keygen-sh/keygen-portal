@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useEntitlementTableColumns } from "@/hooks/use-entitlement-table-columns"
@@ -53,15 +52,13 @@ export default function EntitlementsList() {
         <Entitlements.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<Entitlement>
-          data={entitlements}
-          pagination={pagination}
-          columns={columns}
-          isLoading={entitlementsLoading}
-          onRowClick={(entitlement) => navigateToResource(entitlement)}
-        />
-      </ScrollArea>
+      <DataTable<Entitlement>
+        data={entitlements}
+        pagination={pagination}
+        columns={columns}
+        isLoading={entitlementsLoading}
+        onRowClick={(entitlement) => navigateToResource(entitlement)}
+      />
 
       <PageFooter>
         <Pagination

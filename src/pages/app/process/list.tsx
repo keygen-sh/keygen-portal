@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useProcessTableColumns } from "@/hooks/use-process-table-columns"
@@ -62,15 +61,13 @@ export default function ProcessesList() {
 
       <Processes.Form.Create open={open} onOpenChange={setOpen} />
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<Process>
-          data={processes}
-          pagination={pagination}
-          columns={columns}
-          isLoading={processesLoading}
-          onRowClick={(process) => navigateToResource(process)}
-        />
-      </ScrollArea>
+      <DataTable<Process>
+        data={processes}
+        pagination={pagination}
+        columns={columns}
+        isLoading={processesLoading}
+        onRowClick={(process) => navigateToResource(process)}
+      />
 
       <PageFooter>
         <Pagination

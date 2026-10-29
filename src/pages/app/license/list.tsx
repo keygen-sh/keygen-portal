@@ -17,7 +17,6 @@ import DataTable from "@/components/data-table"
 import Pagination from "@/components/pagination"
 import PageHeader from "@/components/page-header"
 import PageFooter from "@/components/page-footer"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 export default function LicensesList() {
   const pagination = useCursorSearch()
@@ -62,15 +61,13 @@ export default function LicensesList() {
 
       <Licenses.Form.Create open={open} onOpenChange={setOpen} />
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<License>
-          data={licenses}
-          pagination={pagination}
-          columns={columns}
-          isLoading={licensesLoading}
-          onRowClick={(license) => navigateToResource(license)}
-        />
-      </ScrollArea>
+      <DataTable<License>
+        data={licenses}
+        pagination={pagination}
+        columns={columns}
+        isLoading={licensesLoading}
+        onRowClick={(license) => navigateToResource(license)}
+      />
 
       <PageFooter>
         <Pagination

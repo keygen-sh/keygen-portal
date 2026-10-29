@@ -1,5 +1,3 @@
-import { ScrollArea } from "@/components/ui/scroll-area"
-
 import { WebhookEvent } from "@/types/webhook-events"
 
 import { useListWebhookEvents } from "@/queries/webhook-events"
@@ -32,15 +30,13 @@ export default function WebhookEventsList() {
     <section className="flex h-screen flex-col">
       <PageHeader title="Webhook Events" />
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<WebhookEvent>
-          data={webhookEvents}
-          pagination={pagination}
-          columns={columns}
-          isLoading={isLoading}
-          onRowClick={(webhookEvent) => navigateToResource(webhookEvent)}
-        />
-      </ScrollArea>
+      <DataTable<WebhookEvent>
+        data={webhookEvents}
+        pagination={pagination}
+        columns={columns}
+        isLoading={isLoading}
+        onRowClick={(webhookEvent) => navigateToResource(webhookEvent)}
+      />
 
       <PageFooter>
         <Pagination

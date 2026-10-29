@@ -1,5 +1,3 @@
-import { ScrollArea } from "@/components/ui/scroll-area"
-
 import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useArchTableColumns } from "@/hooks/use-arch-table-columns"
 import { Arch } from "@/types/arches"
@@ -31,14 +29,12 @@ export default function ArchesList() {
     <section className="flex h-screen flex-col">
       <PageHeader title="Architectures" />
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<Arch>
-          data={arches}
-          pagination={pagination}
-          columns={columns}
-          isLoading={archesLoading}
-        />
-      </ScrollArea>
+      <DataTable<Arch>
+        data={arches}
+        pagination={pagination}
+        columns={columns}
+        isLoading={archesLoading}
+      />
 
       <PageFooter>
         <Pagination

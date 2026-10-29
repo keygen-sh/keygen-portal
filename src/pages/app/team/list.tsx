@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from "@tanstack/react-router"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { useListUsers } from "@/queries/users"
 import { useGetAccount, useGetAccountPlan } from "@/queries/accounts"
@@ -121,24 +120,22 @@ export default function TeamPage() {
         <Users.TeamFilterBar filters={filters} onChange={setFilters} />
       </div>
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<User>
-          data={users}
-          pagination={pagination}
-          columns={columns}
-          isLoading={usersLoading}
-          onRowClick={(user) =>
-            navigate({
-              to: "/$accountId/app/team/$id",
-              params: { accountId: keygen.config.id, id: user.id },
-              state: (prev) => ({
-                ...prev,
-                from: { pathname: location.pathname },
-              }),
-            })
-          }
-        />
-      </ScrollArea>
+      <DataTable<User>
+        data={users}
+        pagination={pagination}
+        columns={columns}
+        isLoading={usersLoading}
+        onRowClick={(user) =>
+          navigate({
+            to: "/$accountId/app/team/$id",
+            params: { accountId: keygen.config.id, id: user.id },
+            state: (prev) => ({
+              ...prev,
+              from: { pathname: location.pathname },
+            }),
+          })
+        }
+      />
 
       <PageFooter>
         <Pagination

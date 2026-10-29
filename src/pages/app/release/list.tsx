@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useReleaseTableColumns } from "@/hooks/use-release-table-columns"
@@ -61,15 +60,13 @@ export default function ReleasesList() {
         <Releases.FilterBar filters={filters} onChange={setFilters} />
       </div>
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<Release>
-          data={releases}
-          pagination={pagination}
-          columns={columns}
-          isLoading={releasesLoading}
-          onRowClick={(release) => navigateToResource(release)}
-        />
-      </ScrollArea>
+      <DataTable<Release>
+        data={releases}
+        pagination={pagination}
+        columns={columns}
+        isLoading={releasesLoading}
+        onRowClick={(release) => navigateToResource(release)}
+      />
 
       <PageFooter>
         <Pagination

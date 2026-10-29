@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { cursorFromLink, useCursorSearch } from "@/hooks/use-cursors"
 import { useProductTableColumns } from "@/hooks/use-product-table-columns"
@@ -53,15 +52,13 @@ export default function ProductsList() {
         <Products.Form.Create open={open} onOpenChange={setOpen} />
       </PageHeader>
 
-      <ScrollArea className="h-[calc(100vh-7rem)] overflow-auto">
-        <DataTable<Product>
-          data={products}
-          pagination={pagination}
-          columns={columns}
-          isLoading={productsLoading}
-          onRowClick={(product) => navigateToResource(product)}
-        />
-      </ScrollArea>
+      <DataTable<Product>
+        data={products}
+        pagination={pagination}
+        columns={columns}
+        isLoading={productsLoading}
+        onRowClick={(product) => navigateToResource(product)}
+      />
 
       <PageFooter>
         <Pagination

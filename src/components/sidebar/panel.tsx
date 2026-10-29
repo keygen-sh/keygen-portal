@@ -43,6 +43,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover"
 
 import { User, Star, StarOff, GripVertical } from "lucide-react"
 
@@ -134,6 +139,39 @@ function FavoriteReorderItem({
         <StarOff />
       </SidebarMenuAction>
     </SidebarMenuItem>
+  )
+}
+
+function RailTooltip({
+  label,
+  children,
+}: {
+  label: string
+  children: React.ReactElement
+}) {
+  const isMobile = useMobile()
+
+  if (isMobile) {
+    return (
+      <Popover>
+        <PopoverTrigger asChild>{children}</PopoverTrigger>
+        <PopoverContent
+          side="right"
+          className="w-fit border-none bg-primary px-3 py-1.5 text-xs text-primary-foreground shadow-none"
+        >
+          {label}
+        </PopoverContent>
+      </Popover>
+    )
+  }
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent side="right" className="ml-1">
+        {label}
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
@@ -239,36 +277,28 @@ export default function SidebarPanel(): React.ReactElement {
         >
           <RailGroup className="flex flex-col items-center">
             {visibleViews.map((view) => (
-              <Tooltip key={view.id}>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="rail"
-                    size="rail"
+              <RailTooltip key={view.id} label={view.label}>
+                <Button
+                  variant="rail"
+                  size="rail"
+                  className={cn(
+                    currentView?.id === view.id && "bg-background-3",
+                  )}
+                  onClick={() => {
+                    setSelectedView(view)
+                    setOpen(true)
+                  }}
+                >
+                  <view.icon
                     className={cn(
-                      currentView?.id === view.id && "bg-background-3",
+                      "size-6 md:size-5",
+                      currentView?.id === view.id
+                        ? "text-content-loud"
+                        : "group-hover:text-primary",
                     )}
-                    onClick={() => {
-                      setSelectedView(view)
-                      setOpen(true)
-                    }}
-                  >
-                    <view.icon
-                      className={cn(
-                        "size-6 md:size-5",
-                        currentView?.id === view.id
-                          ? "text-content-loud"
-                          : "group-hover:text-primary",
-                      )}
-                    />
-                  </Button>
-                </TooltipTrigger>
-
-                {!isMobile && (
-                  <TooltipContent side="right" className="ml-1">
-                    {view.label}
-                  </TooltipContent>
-                )}
-              </Tooltip>
+                  />
+                </Button>
+              </RailTooltip>
             ))}
           </RailGroup>
         </RailContent>

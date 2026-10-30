@@ -124,7 +124,7 @@ const CREATE_ACTIONS: ReadonlyArray<CreateAction> = [
 const FILTER_PRESETS: ReadonlyArray<FilterPreset> = [
   {
     id: "licenses-new",
-    label: "New licenses",
+    label: "Recently created licenses",
     icon: CalendarPlus,
     type: "licenses",
     search: {},

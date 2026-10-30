@@ -24,6 +24,7 @@ import {
   MonitorOff,
   TimerReset,
   CircleSlash,
+  CalendarPlus,
   CalendarClock,
   CalendarRange,
   AlertTriangle,
@@ -121,6 +122,13 @@ const CREATE_ACTIONS: ReadonlyArray<CreateAction> = [
 ]
 
 const FILTER_PRESETS: ReadonlyArray<FilterPreset> = [
+  {
+    id: "licenses-new",
+    label: "New licenses",
+    icon: CalendarPlus,
+    type: "licenses",
+    search: {},
+  },
   {
     id: "licenses-expiring-week",
     label: "Licenses expiring this week",

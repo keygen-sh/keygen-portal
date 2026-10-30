@@ -76,6 +76,13 @@ export default function AuthFormFields({
             return <RememberField key="remember" />
           case "otp":
             return <OtpField key="otp" onComplete={onOtpComplete} />
+          case "environment":
+            return (
+              <EnvironmentField
+                key="environment"
+                autoFocus={autoFocus === "environment"}
+              />
+            )
           default:
             return null
         }
@@ -249,6 +256,37 @@ function SlugField({
                 autoFocus={autoFocus}
               />
             )}
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function EnvironmentField({ autoFocus }: FieldProps) {
+  const form = useFormContext<{ environment: string }>()
+
+  return (
+    <FormField
+      control={form.control}
+      name="environment"
+      render={({ field }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Environment"
+            tooltip={AuthFormFieldDescriptions.environment}
+            variant="stacking"
+          >
+            <FormControl>
+              <Input
+                {...field}
+                autoComplete="off"
+                spellCheck={false}
+                autoFocus={autoFocus}
+                placeholder="Leave empty for global"
+              />
+            </FormControl>
           </Forms.Field.Header>
           <FormMessage />
         </FormItem>

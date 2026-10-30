@@ -28,6 +28,11 @@ export const VerifySchema = z.object({
 })
 export type VerifyValues = z.output<typeof VerifySchema>
 
+export const EnvironmentSchema = z.object({
+  environment: z.string().trim(),
+})
+export type EnvironmentValues = z.output<typeof EnvironmentSchema>
+
 export const RegisterSchema = z.object({
   email: z.string().email("Please enter a valid email."),
   password: z.string().min(8, "Password must be at least 8 characters."),
@@ -69,3 +74,4 @@ export type FieldNames =
   | "slug"
   | "newSlug"
   | "otp"
+  | "environment"

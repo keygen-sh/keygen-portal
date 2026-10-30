@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate, useSearch, Link } from "@tanstack/react-router"
 
-import { Undo2 } from "lucide-react"
+import { Globe, GlobeLock, Undo2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 
@@ -149,6 +149,7 @@ function EmailStep({
 }) {
   const isMobile = useMobile()
   const { redirect, env } = useSearch({ from: "/$accountId/auth/login" })
+  const [environmentOpen, setEnvironmentOpen] = useState(false)
   const accountLabel = useMemo(() => {
     const id = keygen.config.id
     const recent = getRecentAccounts().find(
@@ -256,43 +257,79 @@ function EmailStep({
               Sign in to your account
             </Forms.Section.Header>
 
-            {!keygen.config.hasFixedAccount && (
+            {(!keygen.config.hasFixedAccount || !keygen.config.isCE) && (
               <div className="space-x-1 text-sm text-content-subdued select-none">
-                Signing in to{" "}
-                {isMobile ? (
-                  <Popover>
-                    <PopoverTrigger onClick={(e) => e.stopPropagation()}>
-                      <span className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted">
-                        {accountLabel}
-                        <Undo2 className="ml-1 inline size-3" />
-                      </span>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      sideOffset={4}
-                      className="max-w-56 bg-background-4 text-content-muted"
-                    >
-                      <strong>Not the right account?</strong>
-                      <br />
-                      <Link
-                        to="/auth"
-                        search={{ redirect, env }}
-                        className="text-primary"
-                      >
-                        Switch to a different one.
-                      </Link>
-                    </PopoverContent>
-                  </Popover>
-                ) : (
+                {!keygen.config.hasFixedAccount && (
+                  <>
+                    Signing in to{" "}
+                    {isMobile ? (
+                      <Popover>
+                        <PopoverTrigger onClick={(e) => e.stopPropagation()}>
+                          <span className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted">
+                            {accountLabel}
+                            <Undo2 className="ml-1 inline size-3" />
+                          </span>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          sideOffset={4}
+                          className="max-w-56 bg-background-4 text-content-muted"
+                        >
+                          <strong>Not the right account?</strong>
+                          <br />
+                          <Link
+                            to="/auth"
+                            search={{ redirect, env }}
+                            className="text-primary"
+                          >
+                            Switch to a different one.
+                          </Link>
+                        </PopoverContent>
+                      </Popover>
+                    ) : (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Link
+                            to="/auth"
+                            search={{ redirect, env }}
+                            className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted"
+                          >
+                            {accountLabel}
+                            <Undo2 className="ml-1 inline size-3" />
+                          </Link>
+                        </TooltipTrigger>
+                        <TooltipContent
+                          side="right"
+                          align="start"
+                          sideOffset={4}
+                          className="max-w-56 bg-background-4 text-wrap text-content-muted"
+                        >
+                          <strong>Not the right account?</strong> Switch to a
+                          different one.
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                  </>
+                )}
+                {!keygen.config.isCE && (
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Link
-                        to="/auth"
-                        search={{ redirect, env }}
-                        className="inline-flex cursor-pointer items-center rounded-sm bg-content-subdued/30 px-1 py-0.5 font-mono text-content-muted"
+                      <button
+                        type="button"
+                        aria-label="Switch environment"
+                        onClick={() => setEnvironmentOpen(true)}
+                        className={cn(
+                          "inline-flex h-6 cursor-pointer items-center rounded-sm px-1.5 py-0.5 align-bottom",
+                          env
+                            ? "bg-warning/30 text-warning"
+                            : "bg-content-subdued/30 text-content-subdued",
+                        )}
                       >
-                        {accountLabel}
-                        <Undo2 className="ml-1 inline size-3" />
-                      </Link>
+                        {env ? (
+                          <GlobeLock className="size-3" />
+                        ) : (
+                          <Globe className="size-3" />
+                        )}
+                      </button>
                     </TooltipTrigger>
                     <TooltipContent
                       side="right"
@@ -300,7 +337,14 @@ function EmailStep({
                       sideOffset={4}
                       className="max-w-56 bg-background-4 text-wrap text-content-muted"
                     >
-                      <strong>Not the right account?</strong> Switch to a
+                      <strong>Environment:</strong>{" "}
+                      {env ? (
+                        <span className="font-mono">{truncate(env)}</span>
+                      ) : (
+                        "Global"
+                      )}
+                      <br />
+                      <strong>Not the right environment?</strong> Switch to a
                       different one.
                     </TooltipContent>
                   </Tooltip>
@@ -323,6 +367,13 @@ function EmailStep({
               )}
             </Button>
           </form>
+
+          {!keygen.config.isCE && (
+            <Auth.Dialog.Environment
+              open={environmentOpen}
+              onOpenChange={setEnvironmentOpen}
+            />
+          )}
         </section>
       </Forms.Container.Page>
     </Forms.Provider>

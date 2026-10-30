@@ -83,4 +83,6 @@ export const AuthFormFieldDescriptions: Readonly<Record<FieldNames, string>> = {
     "A unique identifier for your account, used in URLs and API requests.",
   remember: "Keep your session active on this device.",
   otp: "The 6-digit code from your two-factor authentication app.",
+  environment:
+    'This can either be your environment\'s "code" or its unique ID.',
 } as const

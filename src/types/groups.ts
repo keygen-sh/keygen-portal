@@ -67,7 +67,7 @@ export type GroupOwnerListResponse = APIResponse<GroupOwner[]>
 export const GroupAttributeDescriptions: Readonly<
   Record<keyof Writable<GroupAttributes>, string>
 > = {
-  name: "The name of the group.",
+  name: "A human-readable name for the group.",
   maxUsers: "The maximum number of users that can be in the group.",
   maxLicenses: "The maximum number of licenses that can be in the group.",
   maxMachines: "The maximum number of machines that can be in the group.",

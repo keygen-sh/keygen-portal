@@ -116,7 +116,7 @@ export type LicenseValidation = {
 export const LicenseAttributeDescriptions: Readonly<
   Record<keyof Writable<LicenseAttributes>, string>
 > = {
-  name: "A distinguishing label for the license.",
+  name: "A human-readable name for the license.",
   key: "The unique license key.",
   expiry: "The time at which the license will expire.",
   status:

@@ -75,7 +75,7 @@ export const UserAttributeDescriptions: Readonly<
   fullName: "The full name of the user.",
   firstName: "The first name of the user.",
   lastName: "The last name of the user.",
-  email: "The unique email of the user.",
+  email: "The user's email address. Must be unique within the account.",
   status: "The status of the user.",
   role: "The role of the user.",
   permissions: "The permissions for the user.",

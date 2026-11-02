@@ -141,7 +141,7 @@ export const TokenFormFieldDescriptions: Readonly<
   typeof TokenAttributeDescriptions & { bearer: string; bearerKind: string }
 > = {
   ...TokenAttributeDescriptions,
-  name: "An optional name for the token. This can be used to easily identify tokens at a glance.",
+  name: "A human-readable name for the token.",
   bearer: "The specific resource this token belongs to and authenticates as.",
   bearerKind: "The type of bearer this token authenticates as.",
 }

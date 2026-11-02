@@ -78,7 +78,8 @@ export const ArtifactFormFieldDescriptions: Readonly<
   }
 > = {
   ...ArtifactAttributeDescriptions,
-  filename: "Must be unique to the artifact's release relationship.",
+  filename:
+    "The filename of the artifact. Must be unique within the scope of the release it belongs to.",
   filetype:
     "Must match the filename's extension. When the filename does not contain an extension, filetype can be an arbitrary string, e.g. bin or null. When the release has multiple valid extensions, e.g. tar.gz, we recommend including the complete extension in the filetype.",
   platform: "The platform of the artifact, e.g. darwin.",

@@ -53,7 +53,7 @@ export type PackageFilters = {
 export const PackageAttributeDescriptions: Readonly<
   Record<keyof Writable<PackageAttributes>, string>
 > = {
-  name: "The human-readable name of the package.",
+  name: "A human-readable name for the package.",
   key: "The machine-readable key of the package.",
   engine:
     "The package distribution engine. One of: pypi, tauri, rubygems, npm, oci, or raw.",

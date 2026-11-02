@@ -92,7 +92,7 @@ export type ReleaseConstraintListResponse = APIResponse<ReleaseConstraint[]>
 export const ReleaseAttributeDescriptions: Readonly<
   Record<keyof Writable<ReleaseAttributes>, string>
 > = {
-  name: "The human-readable name of the release.",
+  name: "A human-readable name for the release.",
   description:
     "The description of the release. Useful for release notes and the like.",
   channel:

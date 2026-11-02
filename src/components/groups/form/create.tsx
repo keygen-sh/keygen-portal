@@ -73,6 +73,7 @@ export default function CreateGroupForm({
                 schema="create"
                 include={["name"]}
                 titleVariant
+                fieldVariant="stacking"
                 autoFocus="name"
               />
             </Forms.Field.Title>

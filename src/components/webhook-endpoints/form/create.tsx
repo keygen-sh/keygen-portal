@@ -66,6 +66,7 @@ export default function CreateWebhookEndpointForm({
                 schema="create"
                 include={["url"]}
                 titleVariant
+                fieldVariant="stacking"
                 autoFocus="url"
               />
             </Forms.Field.Title>

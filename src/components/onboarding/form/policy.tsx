@@ -86,6 +86,7 @@ export default function PolicyOnboardingForm({
                   schema="create"
                   include={["name"]}
                   titleVariant
+                  fieldVariant="stacking"
                   autoFocus="name"
                 />
               </Forms.Field.Title>

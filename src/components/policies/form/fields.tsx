@@ -639,34 +639,32 @@ function NameField({
       name="name"
       render={({ field }) => (
         <FormItem>
-          {titleVariant ? (
+          <Forms.Field.Header
+            label="Policy name"
+            variant={fieldVariant}
+            tooltip={descriptions.name}
+          >
             <FormControl>
-              <Input
-                {...field}
-                variant="title"
-                placeholder="Enter policy name..."
-                className="border-none text-xl placeholder:text-content-subdued! md:text-2xl"
-                autoFocus={autoFocus ?? field.value.length === 0}
-                autoComplete="off"
-              />
-            </FormControl>
-          ) : (
-            <Forms.Field.Header
-              label="Policy name"
-              variant={fieldVariant}
-              tooltip={descriptions.name}
-            >
-              <FormControl>
+              {titleVariant ? (
+                <Input
+                  {...field}
+                  variant="title"
+                  placeholder="Enter policy name..."
+                  className="h-14 border-accent px-4 text-xl placeholder:text-content-subdued! md:text-2xl"
+                  autoFocus={autoFocus ?? field.value.length === 0}
+                  autoComplete="off"
+                />
+              ) : (
                 <Input
                   {...field}
                   placeholder="Enter policy name..."
                   autoFocus={autoFocus}
                   autoComplete="off"
                 />
-              </FormControl>
-            </Forms.Field.Header>
-          )}
-          <FormMessage className={titleVariant ? "ml-2" : undefined} />
+              )}
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
         </FormItem>
       )}
     />

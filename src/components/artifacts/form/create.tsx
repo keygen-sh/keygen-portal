@@ -97,6 +97,7 @@ export default function CreateArtifactForm({
                   schema="create"
                   include={["filename"]}
                   titleVariant
+                  fieldVariant="stacking"
                   autoFocus="filename"
                 />
               </Forms.Field.Title>

@@ -148,25 +148,23 @@ function UrlField({
       name="url"
       render={({ field }) => (
         <FormItem>
-          {titleVariant ? (
+          <Forms.Field.Header
+            label="URL"
+            variant={fieldVariant}
+            tooltip={descriptions.url}
+          >
             <FormControl>
-              <Input
-                {...field}
-                value={field.value ?? ""}
-                variant="title"
-                placeholder="https://example.com/webhooks"
-                className="border-none text-xl placeholder:text-content-subdued! md:text-2xl"
-                autoFocus={autoFocus ?? !field.value}
-                autoComplete="off"
-              />
-            </FormControl>
-          ) : (
-            <Forms.Field.Header
-              label="URL"
-              variant={fieldVariant}
-              tooltip={descriptions.url}
-            >
-              <FormControl>
+              {titleVariant ? (
+                <Input
+                  {...field}
+                  value={field.value ?? ""}
+                  variant="title"
+                  placeholder="https://example.com/webhooks"
+                  className="h-14 border-accent px-4 text-xl placeholder:text-content-subdued! md:text-2xl"
+                  autoFocus={autoFocus ?? !field.value}
+                  autoComplete="off"
+                />
+              ) : (
                 <Input
                   {...field}
                   value={field.value ?? ""}
@@ -174,10 +172,10 @@ function UrlField({
                   autoFocus={autoFocus}
                   autoComplete="off"
                 />
-              </FormControl>
-            </Forms.Field.Header>
-          )}
-          <FormMessage className={titleVariant ? "ml-2" : undefined} />
+              )}
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
         </FormItem>
       )}
     />

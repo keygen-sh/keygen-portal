@@ -65,6 +65,7 @@ export default function CreateProcessForm({
                 schema="create"
                 include={["pid"]}
                 titleVariant
+                fieldVariant="stacking"
                 autoFocus="pid"
               />
             </Forms.Field.Title>

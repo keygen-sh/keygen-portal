@@ -186,6 +186,7 @@ export default function CreateLicenseForm({
                 schema="create"
                 include={["name"]}
                 titleVariant
+                fieldVariant="stacking"
                 autoFocus="name"
               />
             </Forms.Field.Title>

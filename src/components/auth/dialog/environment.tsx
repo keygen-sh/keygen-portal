@@ -12,8 +12,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 
-import * as keygen from "@/keygen"
-
 import * as Schemas from "@/schemas"
 
 import * as Auth from "@/components/auth"
@@ -46,7 +44,7 @@ export default function EnvironmentDialog({
 
 function EnvironmentForm({ onDone }: { onDone: () => void }) {
   const navigate = useNavigate()
-  const { env } = useSearch({ from: "/$accountId/auth/login" })
+  const { env } = useSearch({ from: "/$accountId/auth" })
 
   const form = useForm<Schemas.Auth.EnvironmentValues>({
     resolver: zodResolver(Schemas.Auth.EnvironmentSchema),
@@ -56,8 +54,7 @@ function EnvironmentForm({ onDone }: { onDone: () => void }) {
 
   function select(environment: string) {
     void navigate({
-      to: "/$accountId/auth/login",
-      params: { accountId: keygen.config.id },
+      to: ".",
       search: (prev) => ({ ...prev, env: environment || undefined }),
     })
 

@@ -41,7 +41,7 @@ export type EntitlementListResponse = APIResponse<Entitlement[]>
 export const EntitlementAttributeDescriptions: Readonly<
   Record<keyof Writable<EntitlementAttributes>, string>
 > = {
-  name: "Entitlement name.",
+  name: "A human-readable name for the entitlement.",
   code: "This can be used to lookup the entitlement by a human-readable identifier.",
   metadata:
     "Store arbitrary key/value data on the entitlement for book keeping purposes, supplemental entitlement data, etc.",

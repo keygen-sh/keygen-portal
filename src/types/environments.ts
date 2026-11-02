@@ -45,7 +45,7 @@ export type EnvironmentsListResponse = APIResponse<Environment[]>
 export const EnvironmentAttributeDescriptions: Readonly<
   Record<keyof Writable<EnvironmentAttributes>, string>
 > = {
-  name: "Environment name.",
+  name: "A human-readable name for the environment.",
   code: "The unique code for the environment. The code cannot collide with any environments that already exist.",
   isolationStrategy:
     "The isolation strategy used for isolating the environment from other environments.",

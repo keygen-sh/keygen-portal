@@ -57,7 +57,7 @@ export type ProductsListResponse = APIResponse<Product[]>
 export const ProductAttributeDescriptions: Readonly<
   Record<keyof Writable<ProductAttributes>, string>
 > = {
-  name: "Product name.",
+  name: "A human-readable name for the product.",
   code: "This can be used to lookup the product by a human-readable identifier.",
   distributionStrategy: "The distribution strategy for releases.",
   url: "",

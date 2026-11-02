@@ -69,7 +69,7 @@ export const ProcessFormFieldDescriptions: Readonly<
   typeof ProcessAttributeDescriptions & { machine: string }
 > = {
   ...ProcessAttributeDescriptions,
-  pid: "This can be an arbitrary string, but must be unique within the scope of the machine it belongs to.",
+  pid: "This can be an arbitray string, but must be unique within the scope of the machine it belongs to.",
   machine: "The machine that the process belongs to.",
 } as const
 

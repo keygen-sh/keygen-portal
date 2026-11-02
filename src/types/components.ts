@@ -47,7 +47,7 @@ export const ComponentAttributeDescriptions: Readonly<
   Record<keyof Writable<ComponentAttributes>, string>
 > = {
   fingerprint: "The unique fingerprint of the component.",
-  name: "The human-readable name of the component.",
+  name: "A human-readable name for the component.",
   metadata:
     "Store arbitrary key/value data on the component for book keeping purposes, entitlements, etc.",
 } as const

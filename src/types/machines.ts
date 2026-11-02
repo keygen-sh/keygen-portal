@@ -80,7 +80,7 @@ export const MachineAttributeDescriptions: Readonly<
   Record<keyof Writable<MachineAttributes>, string>
 > = {
   fingerprint: "The unique fingerprint of the machine.",
-  name: "The human-readable name of the machine.",
+  name: "A human-readable name for the machine.",
   ip: "The IP of the machine.",
   hostname: "The hostname of the machine.",
   platform: "The platform of the machine.",

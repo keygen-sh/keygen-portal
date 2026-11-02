@@ -264,7 +264,7 @@ export type PolicyFilters = {
 export const PolicyAttributeDescriptions: Readonly<
   Record<keyof Writable<PolicyAttributes>, string>
 > = {
-  name: "Policy name.",
+  name: "A human-readable name for the policy.",
   duration:
     "Duration in seconds. Licenses that implement this policy do not expire when this is null.",
   strict:

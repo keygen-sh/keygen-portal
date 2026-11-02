@@ -349,7 +349,7 @@ export const PolicyAttributeDescriptions: Readonly<
   overageStrategy:
     "The strategy used for a license's overage allowance, affecting max machines, max cores, max memory, max disk and max processes.",
   metadata:
-    "Store arbitray key-value data on the policy for book keeping purposes, additional rules, etc.",
+    "Store arbitrary key-value data on the policy for book keeping purposes, additional rules, etc.",
 } as const
 
 export const PolicyFormFieldDescriptions: Readonly<

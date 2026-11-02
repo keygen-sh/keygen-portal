@@ -254,26 +254,24 @@ function EmailField({
       name="email"
       render={({ field }) => (
         <FormItem>
-          {titleVariant ? (
+          <Forms.Field.Header
+            label="Email"
+            variant={fieldVariant}
+            tooltip={descriptions.email}
+          >
             <FormControl>
-              <Input
-                {...field}
-                type="email"
-                value={field.value || ""}
-                variant="title"
-                placeholder="Enter user email..."
-                className="border-none text-xl placeholder:text-content-subdued! md:text-2xl"
-                autoFocus={autoFocus ?? field.value.length === 0}
-                autoComplete="off"
-              />
-            </FormControl>
-          ) : (
-            <Forms.Field.Header
-              label="Email"
-              variant={fieldVariant}
-              tooltip={descriptions.email}
-            >
-              <FormControl>
+              {titleVariant ? (
+                <Input
+                  {...field}
+                  type="email"
+                  value={field.value || ""}
+                  variant="title"
+                  placeholder="Enter user email..."
+                  className="h-14 border-accent px-4 text-xl placeholder:text-content-subdued! md:text-2xl"
+                  autoFocus={autoFocus ?? field.value.length === 0}
+                  autoComplete="off"
+                />
+              ) : (
                 <Input
                   {...field}
                   type="email"
@@ -282,10 +280,10 @@ function EmailField({
                   autoFocus={autoFocus}
                   autoComplete="off"
                 />
-              </FormControl>
-            </Forms.Field.Header>
-          )}
-          <FormMessage className={titleVariant ? "ml-2" : undefined} />
+              )}
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
         </FormItem>
       )}
     />

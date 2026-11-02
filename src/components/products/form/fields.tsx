@@ -156,34 +156,32 @@ function NameField({
       name="name"
       render={({ field }) => (
         <FormItem>
-          {titleVariant ? (
+          <Forms.Field.Header
+            label="Product name"
+            variant={fieldVariant}
+            tooltip={descriptions.name}
+          >
             <FormControl>
-              <Input
-                {...field}
-                variant="title"
-                placeholder="Enter product name..."
-                className="border-none text-xl placeholder:text-content-subdued! md:text-2xl"
-                autoFocus={autoFocus ?? field.value.length === 0}
-                autoComplete="off"
-              />
-            </FormControl>
-          ) : (
-            <Forms.Field.Header
-              label="Product name"
-              variant={fieldVariant}
-              tooltip={descriptions.name}
-            >
-              <FormControl>
+              {titleVariant ? (
+                <Input
+                  {...field}
+                  variant="title"
+                  placeholder="Enter product name..."
+                  className="h-14 border-accent px-4 text-xl placeholder:text-content-subdued! md:text-2xl"
+                  autoFocus={autoFocus ?? field.value.length === 0}
+                  autoComplete="off"
+                />
+              ) : (
                 <Input
                   {...field}
                   placeholder="Enter product name..."
                   autoFocus={autoFocus}
                   autoComplete="off"
                 />
-              </FormControl>
-            </Forms.Field.Header>
-          )}
-          <FormMessage className={titleVariant ? "ml-2" : undefined} />
+              )}
+            </FormControl>
+          </Forms.Field.Header>
+          <FormMessage />
         </FormItem>
       )}
     />

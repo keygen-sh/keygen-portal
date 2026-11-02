@@ -187,41 +187,41 @@ function FilenameField({
       name="filename"
       render={({ field }) => (
         <FormItem>
-          {titleVariant ? (
-            <Popover open={isMobile && nameFocused}>
-              <PopoverAnchor asChild>
-                <FormControl>
-                  <Input
-                    {...field}
-                    value={field.value ?? ""}
-                    variant="title"
-                    placeholder="Enter filename..."
-                    className="border-none text-xl placeholder:text-content-subdued! md:text-2xl"
-                    autoFocus={autoFocus ?? (field.value ?? "").length === 0}
-                    autoComplete="off"
-                    onFocus={() => setNameFocused(true)}
-                    onBlur={() => setNameFocused(false)}
-                  />
-                </FormControl>
-              </PopoverAnchor>
-              <PopoverContent
-                side="bottom"
-                align="start"
-                className="m-1 w-76 bg-background-4 text-pretty text-content-muted"
-                onOpenAutoFocus={(e) => e.preventDefault()}
-              >
-                <p className="flex gap-1 text-pretty">
-                  <Info className="mt-1.5 h-4 w-4 shrink-0" />
-                  {descriptions.filename}
-                </p>
-              </PopoverContent>
-            </Popover>
-          ) : (
-            <Forms.Field.Header
-              label="Filename"
-              variant={fieldVariant}
-              tooltip={descriptions.filename}
-            >
+          <Forms.Field.Header
+            label="Filename"
+            variant={fieldVariant}
+            tooltip={descriptions.filename}
+          >
+            {titleVariant ? (
+              <Popover open={isMobile && nameFocused}>
+                <PopoverAnchor asChild>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      value={field.value ?? ""}
+                      variant="title"
+                      placeholder="Enter filename..."
+                      className="h-14 border-accent px-4 text-xl placeholder:text-content-subdued! md:text-2xl"
+                      autoFocus={autoFocus ?? (field.value ?? "").length === 0}
+                      autoComplete="off"
+                      onFocus={() => setNameFocused(true)}
+                      onBlur={() => setNameFocused(false)}
+                    />
+                  </FormControl>
+                </PopoverAnchor>
+                <PopoverContent
+                  side="bottom"
+                  align="start"
+                  className="m-1 w-76 bg-background-4 text-pretty text-content-muted"
+                  onOpenAutoFocus={(e) => e.preventDefault()}
+                >
+                  <p className="flex gap-1 text-pretty">
+                    <Info className="mt-1.5 h-4 w-4 shrink-0" />
+                    {descriptions.filename}
+                  </p>
+                </PopoverContent>
+              </Popover>
+            ) : (
               <FormControl>
                 <Input
                   {...field}
@@ -231,10 +231,10 @@ function FilenameField({
                   autoComplete="off"
                 />
               </FormControl>
-            </Forms.Field.Header>
-          )}
-          <FormMessage className={titleVariant ? "ml-2" : undefined} />
-          <p className="ml-2 hidden items-center gap-1 text-sm text-content-normal md:flex">
+            )}
+          </Forms.Field.Header>
+          <FormMessage />
+          <p className="hidden items-center gap-1 text-sm text-content-normal md:flex">
             <Info className="mt-0.25 h-4 w-4 shrink-0" />
             {descriptions.filename}
           </p>

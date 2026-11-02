@@ -125,41 +125,41 @@ function PidField({
       name="pid"
       render={({ field }) => (
         <FormItem>
-          {titleVariant ? (
-            <Popover open={isMobile && pidFocused}>
-              <PopoverAnchor asChild>
-                <FormControl>
-                  <Input
-                    {...field}
-                    value={field.value || ""}
-                    variant={titleVariant ? "title" : "default"}
-                    placeholder="Enter process pid..."
-                    className="border-none text-xl placeholder:text-content-subdued! md:text-2xl"
-                    autoFocus={!field.value}
-                    autoComplete="off"
-                    onFocus={() => setPidFocused(true)}
-                    onBlur={() => setPidFocused(false)}
-                  />
-                </FormControl>
-              </PopoverAnchor>
-              <PopoverContent
-                side="bottom"
-                align="start"
-                className="m-1 w-76 bg-background-4 text-pretty text-content-muted"
-                onOpenAutoFocus={(e) => e.preventDefault()}
-              >
-                <p className="flex gap-1 text-pretty">
-                  <Info className="mt-1.5 h-4 w-4 shrink-0" />
-                  {descriptions.pid}
-                </p>
-              </PopoverContent>
-            </Popover>
-          ) : (
-            <Forms.Field.Header
-              label="Process ID (PID)"
-              variant={fieldVariant}
-              tooltip={descriptions.pid}
-            >
+          <Forms.Field.Header
+            label="Process ID (PID)"
+            variant={fieldVariant}
+            tooltip={descriptions.pid}
+          >
+            {titleVariant ? (
+              <Popover open={isMobile && pidFocused}>
+                <PopoverAnchor asChild>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      value={field.value || ""}
+                      variant={titleVariant ? "title" : "default"}
+                      placeholder="Enter process pid..."
+                      className="h-14 border-accent px-4 text-xl placeholder:text-content-subdued! md:text-2xl"
+                      autoFocus={!field.value}
+                      autoComplete="off"
+                      onFocus={() => setPidFocused(true)}
+                      onBlur={() => setPidFocused(false)}
+                    />
+                  </FormControl>
+                </PopoverAnchor>
+                <PopoverContent
+                  side="bottom"
+                  align="start"
+                  className="m-1 w-76 bg-background-4 text-pretty text-content-muted"
+                  onOpenAutoFocus={(e) => e.preventDefault()}
+                >
+                  <p className="flex gap-1 text-pretty">
+                    <Info className="mt-1.5 h-4 w-4 shrink-0" />
+                    {descriptions.pid}
+                  </p>
+                </PopoverContent>
+              </Popover>
+            ) : (
               <FormControl>
                 <Input
                   {...field}
@@ -169,10 +169,10 @@ function PidField({
                   autoComplete="off"
                 />
               </FormControl>
-            </Forms.Field.Header>
-          )}
-          <FormMessage className={titleVariant ? "ml-2" : undefined} />
-          <p className="ml-2 hidden items-center gap-1 text-sm text-content-normal md:flex">
+            )}
+          </Forms.Field.Header>
+          <FormMessage />
+          <p className="hidden items-center gap-1 text-sm text-content-normal md:flex">
             <Info className="mt-0.25 h-4 w-4 shrink-0" />
             {descriptions.pid}
           </p>

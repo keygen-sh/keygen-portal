@@ -107,6 +107,7 @@ export default function CreateTokenForm({
                 <Tokens.Form.Fields
                   include={["name"]}
                   titleVariant
+                  fieldVariant="stacking"
                   autoFocus="name"
                 />
               </Forms.Field.Title>

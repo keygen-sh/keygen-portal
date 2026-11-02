@@ -87,6 +87,7 @@ export default function CreateUserForm({
                 schema="create"
                 include={["email"]}
                 titleVariant
+                fieldVariant="stacking"
                 autoFocus="email"
               />
             </Forms.Field.Title>

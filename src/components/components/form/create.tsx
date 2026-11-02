@@ -65,6 +65,7 @@ export default function CreateComponentForm({
                 schema="create"
                 include={["name"]}
                 titleVariant
+                fieldVariant="stacking"
                 autoFocus="name"
               />
             </Forms.Field.Title>

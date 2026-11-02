@@ -150,7 +150,7 @@ export default function ResetPasswordForm() {
                           "inline-flex h-6 cursor-pointer items-center rounded-sm px-1.5 py-0.5 align-bottom",
                           env
                             ? "bg-warning/30 text-warning"
-                            : "bg-content-subdued/30 text-content-subdued",
+                            : "bg-content-subdued/15 text-content-subdued/75",
                         )}
                       >
                         {env ? (

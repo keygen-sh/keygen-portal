@@ -265,7 +265,7 @@ export default function DataTable<T extends TableResource>({
       >
         <Motion.Slide
           direction={directionRef.current}
-          className="min-h-0 min-w-0 flex-1 px-2"
+          className="min-h-0 min-w-0 flex-1 px-2 *:min-h-0"
         >
           <div
             ref={containerRef}

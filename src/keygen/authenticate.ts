@@ -3,7 +3,7 @@ import { addWeeks } from "date-fns"
 import { AuthResponse } from "@/types/auth"
 
 import config from "@/keygen/config"
-import client from "@/keygen/client"
+import client, { Client } from "@/keygen/client"
 import * as activeEnvironment from "@/keygen/active-environment"
 import * as rootEnvironment from "@/keygen/root-environment"
 
@@ -20,16 +20,23 @@ interface AuthProps {
   environment?: string | null
 }
 
-export async function authenticate({
-  email,
-  password,
-  otp,
-  account,
-  environment,
-}: AuthProps): Promise<AuthResponse> {
+export async function authenticate(props: AuthProps): Promise<AuthResponse> {
   activeEnvironment.clear()
   rootEnvironment.release()
 
+  return generateToken(client, props)
+}
+
+export async function reauthenticate(
+  props: Pick<AuthProps, "email" | "password" | "otp" | "environment">,
+): Promise<AuthResponse> {
+  return generateToken(new Client(), props)
+}
+
+async function generateToken(
+  requester: Client,
+  { email, password, otp, account, environment }: AuthProps,
+): Promise<AuthResponse> {
   const credentials = btoa(
     unescape(encodeURIComponent(`${email || ""}:${password || ""}`)),
   )
@@ -47,7 +54,7 @@ export async function authenticate({
     ...(otp != null ? { meta: { otp } } : {}),
   })
 
-  const result = (await client.request(
+  const result = (await requester.request(
     `/accounts/${account ?? config.id}/tokens`,
     {
       method: "POST",

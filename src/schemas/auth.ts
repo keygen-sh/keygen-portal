@@ -13,6 +13,13 @@ export const PasswordSchema = z.object({
 })
 export type PasswordValues = z.output<typeof PasswordSchema>
 
+export const ReauthenticateSchema = PasswordSchema.pick({
+  password: true,
+}).extend({
+  otp: z.string(),
+})
+export type ReauthenticateValues = z.output<typeof ReauthenticateSchema>
+
 export const AccountSchema = z.object({
   slug: z
     .string()

@@ -1,6 +1,7 @@
 import client from "@/keygen/client"
 import config from "@/keygen/config"
 import * as rootEnvironment from "@/keygen/root-environment"
+import * as tokens from "@/keygen/tokens"
 import type { AuthData } from "@/types/auth"
 
 interface LoginOptions {
@@ -47,4 +48,21 @@ export async function login(
   }
 
   return { userId, accountId }
+}
+
+export async function relogin(
+  data: AuthData,
+): Promise<{ userId: string; accountId: string }> {
+  const tokenId = client.currentTokenId
+  const remember = localStorage.getItem("tokenId") != null
+
+  if (tokenId) {
+    try {
+      await tokens.revoke({ id: tokenId })
+    } catch (error) {
+      console.error("Failed to revoke token on relogin", error)
+    }
+  }
+
+  return login(data, { remember })
 }

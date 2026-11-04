@@ -1,12 +1,17 @@
-import { useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 
+import { toast } from "@/lib/toast"
+
+import { useGetOrCreateEnvironmentToken } from "@/queries/tokens"
 import { useActiveEnvironment } from "@/hooks/use-active-environment"
 import {
   EnvironmentContext,
   type EnvironmentContextValue,
+  type EnvironmentSelection,
 } from "@/contexts/environment-context"
 
 import * as keygen from "@/keygen"
+import type { RootEnvironment } from "@/keygen/root-environment"
 
 const NO_ENVIRONMENT: EnvironmentContextValue = {
   id: null,
@@ -41,28 +46,70 @@ function ActiveEnvironmentProvider({
   )
 }
 
+function RootEnvironmentProvider({
+  environment,
+  onRelease,
+  children,
+}: {
+  environment: RootEnvironment
+  onRelease: () => void
+  children: React.ReactNode
+}): React.ReactElement {
+  const getToken = useGetOrCreateEnvironmentToken()
+
+  const select = useCallback(
+    async (selection: EnvironmentSelection | null) => {
+      if (keygen.rootEnvironment.get() != null) return
+
+      try {
+        if (selection == null) {
+          keygen.activeEnvironment.clear()
+        } else {
+          const token = await getToken(selection.id)
+
+          keygen.activeEnvironment.set({ ...selection, token })
+        }
+      } catch (error) {
+        toast({ message: "Unauthorized", variant: "error" })
+
+        throw error
+      } finally {
+        onRelease()
+      }
+    },
+    [getToken, onRelease],
+  )
+
+  const value = useMemo<EnvironmentContextValue>(
+    () => ({
+      id: environment.id,
+      code: environment.code ?? environment.id,
+      name: environment.name,
+      select,
+    }),
+    [environment, select],
+  )
+
+  return (
+    <EnvironmentContext.Provider value={value}>
+      {children}
+    </EnvironmentContext.Provider>
+  )
+}
+
 function EeEnvironmentProvider({
   children,
 }: {
   children: React.ReactNode
 }): React.ReactElement {
-  const [root] = useState<EnvironmentContextValue | null>(() => {
-    const environment = keygen.rootEnvironment.get()
-    if (environment == null) return null
-
-    return {
-      id: environment.id,
-      code: environment.code ?? environment.id,
-      name: environment.name,
-      select: async () => {},
-    }
-  })
+  const [root, setRoot] = useState(() => keygen.rootEnvironment.get())
+  const release = useCallback(() => setRoot(null), [])
 
   if (root) {
     return (
-      <EnvironmentContext.Provider value={root}>
+      <RootEnvironmentProvider environment={root} onRelease={release}>
         {children}
-      </EnvironmentContext.Provider>
+      </RootEnvironmentProvider>
     )
   }
   return <ActiveEnvironmentProvider>{children}</ActiveEnvironmentProvider>

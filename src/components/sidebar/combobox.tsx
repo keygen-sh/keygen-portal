@@ -20,16 +20,25 @@ import { Environment } from "@/types/environments"
 
 import { useListEnvironments } from "@/queries/environments"
 import { useGetAccount } from "@/queries/accounts"
+import { useGetCurrentUser } from "@/queries/users"
 import { useEnvironment } from "@/hooks/use-environment"
 import { useEdition } from "@/hooks/use-edition"
 
 import * as keygen from "@/keygen"
 
+import * as Auth from "@/components/auth"
 import * as Environments from "@/components/environments"
+import { Notice } from "@/components/notice"
 
 import { AccountLogo } from "@/components/sidebar/account-logo"
 
-const GLOBAL_ENVIRONMENT = {
+interface EnvironmentOption {
+  id: string
+  code: string | null
+  name: string
+}
+
+const GLOBAL_ENVIRONMENT: EnvironmentOption = {
   id: "__global",
   code: null,
   name: "Global",
@@ -52,13 +61,21 @@ function CeCombobox(): React.ReactElement {
   )
 }
 
-function EeCombobox({ disabled }: { disabled: boolean }): React.ReactElement {
+function EeCombobox(): React.ReactElement {
   const { id: activeEnvironmentId, code, name, select } = useEnvironment()
 
   const [openModal, setOpenModal] = useState(false)
   const [openPopover, setOpenPopover] = useState(false)
+  const [openReauthenticate, setOpenReauthenticate] = useState(false)
+  const [pendingEnvironment, setPendingEnvironment] =
+    useState<EnvironmentOption | null>(null)
   const { data: environments = [], isLoading } = useListEnvironments()
   const { data: account } = useGetAccount()
+  const { data: me } = useGetCurrentUser()
+
+  const scoped = keygen.rootEnvironment.get() != null
+  const globalUser = me?.relationships.environment?.data === null
+  const disabled = scoped && !globalUser
 
   const environmentOptions = useMemo(() => {
     return [
@@ -81,17 +98,7 @@ function EeCombobox({ disabled }: { disabled: boolean }): React.ReactElement {
         }
       : GLOBAL_ENVIRONMENT)
 
-  const switchEnvironment = async (option: {
-    id: string
-    code: string | null
-    name: string
-  }) => {
-    setOpenPopover(false)
-
-    if (option.code === code) {
-      return
-    }
-
+  const selectEnvironment = async (option: EnvironmentOption) => {
     try {
       // only the global option has a null code
       await select(
@@ -102,6 +109,22 @@ function EeCombobox({ disabled }: { disabled: boolean }): React.ReactElement {
     } catch (error) {
       console.error(error)
     }
+  }
+
+  const switchEnvironment = async (option: EnvironmentOption) => {
+    setOpenPopover(false)
+
+    if (option.id === currentEnvironment.id) {
+      return
+    }
+
+    if (scoped) {
+      setPendingEnvironment(option)
+      setOpenReauthenticate(true)
+      return
+    }
+
+    await selectEnvironment(option)
   }
 
   if (isLoading) {
@@ -162,17 +185,19 @@ function EeCombobox({ disabled }: { disabled: boolean }): React.ReactElement {
                   )
                 })}
               </CommandGroup>
-              <div className="border-t border-accent">
-                <CommandItem
-                  onSelect={() => {
-                    setOpenModal(true)
-                    setOpenPopover(false)
-                  }}
-                  className="m-1 text-content-normal"
-                >
-                  Manage Environments
-                </CommandItem>
-              </div>
+              {!scoped && (
+                <div className="border-t border-accent">
+                  <CommandItem
+                    onSelect={() => {
+                      setOpenModal(true)
+                      setOpenPopover(false)
+                    }}
+                    className="m-1 text-content-normal"
+                  >
+                    Manage Environments
+                  </CommandItem>
+                </div>
+              )}
             </CommandList>
           </Command>
         </PopoverContent>
@@ -182,6 +207,29 @@ function EeCombobox({ disabled }: { disabled: boolean }): React.ReactElement {
         open={openModal}
         onClose={() => setOpenModal(false)}
       />
+
+      {pendingEnvironment && (
+        <Auth.Dialog.Reauthenticate
+          open={openReauthenticate}
+          onOpenChange={setOpenReauthenticate}
+          environment={pendingEnvironment.code}
+          description="Switch environment"
+          notice={
+            <Notice>
+              <p>
+                You're currently authenticated in the{" "}
+                <strong>{currentEnvironment.name}</strong> environment. To
+                switch to <strong>{pendingEnvironment.name}</strong>, re-enter
+                your password.
+              </p>
+            </Notice>
+          }
+          onAuthenticated={async () => {
+            await selectEnvironment(pendingEnvironment)
+            setOpenReauthenticate(false)
+          }}
+        />
+      )}
     </>
   )
 }
@@ -190,5 +238,5 @@ export default function SidebarCombobox(): React.ReactElement {
   const { isCE } = useEdition()
 
   if (isCE) return <CeCombobox />
-  return <EeCombobox disabled={keygen.rootEnvironment.get() != null} />
+  return <EeCombobox />
 }

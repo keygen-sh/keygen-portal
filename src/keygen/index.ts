@@ -4,8 +4,8 @@ export { config }
 import client from "./client"
 export { client }
 
-import { authenticate } from "./authenticate"
-export { authenticate }
+import { authenticate, reauthenticate } from "./authenticate"
+export { authenticate, reauthenticate }
 
 import { verify } from "./verify"
 export { verify }
@@ -85,8 +85,8 @@ export { webhookEndpoints }
 import * as webhookEvents from "./webhook-events"
 export { webhookEvents }
 
-import { login } from "./login"
-export { login }
+import { login, relogin } from "./login"
+export { login, relogin }
 
 import { logout } from "./logout"
 export { logout }

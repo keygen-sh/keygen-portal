@@ -62,6 +62,7 @@ import {
   LicenseStatusDescriptions,
   LicenseAttributeDescriptions,
 } from "@/types/licenses"
+import { RenewalStrategy } from "@/types/policies"
 
 import { useGetPolicy } from "@/queries/policies"
 import {
@@ -145,6 +146,8 @@ export default function LicenseDetails() {
 
   const policyId = license?.relationships.policy?.data?.id || ""
   const { data: policy } = useGetPolicy(policyId)
+  const isRenewable =
+    policy?.attributes.renewalStrategy !== RenewalStrategy.NoRenew
 
   const {
     data: entitlements = [],
@@ -352,18 +355,20 @@ export default function LicenseDetails() {
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                   </Can>
-                  <Can permission="license.renew">
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        toggleOpen("renew", true)
-                        e.currentTarget.blur()
-                      }}
-                      className="pb-2 text-base"
-                    >
-                      Renew
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                  </Can>
+                  {isRenewable && (
+                    <Can permission="license.renew">
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          toggleOpen("renew", true)
+                          e.currentTarget.blur()
+                        }}
+                        className="pb-2 text-base"
+                      >
+                        Renew
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </Can>
+                  )}
                   <Can
                     permission={
                       license?.attributes.suspended
@@ -442,17 +447,19 @@ export default function LicenseDetails() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <Can permission="license.renew">
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          toggleOpen("renew", true)
-                          e.currentTarget.blur()
-                        }}
-                      >
-                        Renew
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                    </Can>
+                    {isRenewable && (
+                      <Can permission="license.renew">
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            toggleOpen("renew", true)
+                            e.currentTarget.blur()
+                          }}
+                        >
+                          Renew
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                      </Can>
+                    )}
                     <Can
                       permission={
                         license?.attributes.suspended

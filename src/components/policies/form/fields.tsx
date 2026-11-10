@@ -1055,7 +1055,13 @@ function RenewalBasisField({
 }) {
   const form = useFormContext<Schemas.Policies.AllValues>()
   const duration = useWatch<Schemas.Policies.AllValues>({ name: "duration" })
-  const isDisabled = disabled || !duration
+  const renewalStrategy = useWatch<Schemas.Policies.AllValues>({
+    name: "renewalStrategy",
+  })
+
+  const isNoRenew = renewalStrategy === RenewalStrategy.NoRenew
+  const isDisabled = disabled || !duration || isNoRenew
+
   const shouldMount = useDeferredMount({
     delay: mode === PolicyMode.Create ? 0 : 500,
   })
@@ -1085,7 +1091,11 @@ function RenewalBasisField({
               onChange={(value) => field.onChange(value)}
               invalid={!!fieldState.error}
               disabled={isDisabled}
-              disabledTooltip="Set a duration to configure this field."
+              disabledTooltip={
+                !duration
+                  ? "Set a duration to configure this field."
+                  : "Set the renewal strategy to Manual Renew to configure this field."
+              }
               autoFocus={autoFocus}
             >
               {Object.values(RenewalBasis).map((basis) => (

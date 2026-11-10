@@ -1314,6 +1314,13 @@ mockRoute("POST", `${MOCK_ACCOUNT}/licenses/:id/actions/renew`, (ctx) => {
       ),
     )
   }
+  if (policy?.attributes.renewalStrategy === "NO_RENEW") {
+    fail(
+      unprocessableEntity(
+        "cannot be renewed because the policy does not allow renewals",
+      ),
+    )
+  }
   const expiry = expiryOf(row)
   if (expiry == null) {
     fail(

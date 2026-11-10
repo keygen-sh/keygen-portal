@@ -32,6 +32,7 @@ type PolicyAttributes = {
   expirationStrategy: string
   expirationBasis: string
   renewalBasis: string
+  renewalStrategy: string
   transferStrategy: string
   authenticationStrategy: string
   machineLeasingStrategy: string
@@ -88,6 +89,7 @@ const SERVER_DEFAULTS: Omit<PolicyAttributes, "name"> = {
   expirationStrategy: "RESTRICT_ACCESS",
   expirationBasis: "FROM_CREATION",
   renewalBasis: "FROM_EXPIRY",
+  renewalStrategy: "MANUAL_RENEW",
   transferStrategy: "KEEP_EXPIRY",
   authenticationStrategy: "TOKEN",
   machineLeasingStrategy: "PER_LICENSE",
@@ -284,6 +286,7 @@ function policyPlans(seed: SeedContext): PolicyPlan[] {
         expirationStrategy: "MAINTAIN_ACCESS",
         expirationBasis: "FROM_FIRST_VALIDATION",
         renewalBasis: "FROM_NOW",
+        renewalStrategy: "NO_RENEW",
         transferStrategy: "RESET_EXPIRY",
         authenticationStrategy: "LICENSE",
         overageStrategy: "ALLOW_1_5X_OVERAGE",

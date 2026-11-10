@@ -170,6 +170,7 @@ export default function EditPolicyForm({
                   "processLeasingStrategy",
                   "protected",
                   "renewalBasis",
+                  "renewalStrategy",
                   "requireCheckIn",
                   "requireChecksumScope",
                   "requireComponentsScope",

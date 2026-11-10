@@ -334,6 +334,7 @@ export default function PolicyDetails() {
                       "transferStrategy",
                       "expirationBasis",
                       "renewalBasis",
+                      "renewalStrategy",
                     ]}
                   />
                 )}

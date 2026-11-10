@@ -12,6 +12,7 @@ import {
   OverageStrategy,
   ExpirationBasis,
   RenewalBasis,
+  RenewalStrategy,
   TransferStrategy,
   MachineUniquenessStrategy,
   MachineMatchingStrategy,
@@ -137,6 +138,10 @@ export const BaseShape = z.object({
     .nativeEnum(RenewalBasis)
     .nullish()
     .default(RenewalBasis.FromExpiry),
+  renewalStrategy: z
+    .nativeEnum(RenewalStrategy)
+    .nullish()
+    .default(RenewalStrategy.ManualRenew),
   transferStrategy: z
     .nativeEnum(TransferStrategy)
     .nullish()
@@ -202,6 +207,14 @@ export const BaseRules = <TInput, TOutput extends BaseValues>(
         values.duration == null || values.renewalBasis != null,
       {
         path: ["renewalBasis"],
+        message: "Required when duration is set",
+      },
+    )
+    .refine(
+      (values: BaseValues) =>
+        values.duration == null || values.renewalStrategy != null,
+      {
+        path: ["renewalStrategy"],
         message: "Required when duration is set",
       },
     )
@@ -419,6 +432,10 @@ export const TimedRules = <TInput, TOutput extends BaseValues>(
     })
     .refine((values: BaseValues) => values.renewalBasis != null, {
       path: ["renewalBasis"],
+      message: "Required for Timed policies",
+    })
+    .refine((values: BaseValues) => values.renewalStrategy != null, {
+      path: ["renewalStrategy"],
       message: "Required for Timed policies",
     })
     .refine((values: BaseValues) => values.transferStrategy != null, {
@@ -724,6 +741,7 @@ export function getFormValuesFromPolicy<
     expirationStrategy: policy.attributes.expirationStrategy,
     expirationBasis: policy.attributes.expirationBasis,
     renewalBasis: policy.attributes.renewalBasis,
+    renewalStrategy: policy.attributes.renewalStrategy,
     transferStrategy: policy.attributes.transferStrategy,
 
     strict: policy.attributes.strict,

@@ -101,6 +101,10 @@ export enum RenewalBasis {
   FromNow = "FROM_NOW",
   FromNowIfExpired = "FROM_NOW_IF_EXPIRED",
 }
+export enum RenewalStrategy {
+  ManualRenew = "MANUAL_RENEW",
+  NoRenew = "NO_RENEW",
+}
 export enum TransferStrategy {
   KeepExpiry = "KEEP_EXPIRY",
   ResetExpiry = "RESET_EXPIRY",
@@ -177,6 +181,7 @@ export type PolicyAttributes = {
   expirationStrategy: ExpirationStrategy | null
   expirationBasis: ExpirationBasis | null
   renewalBasis: RenewalBasis | null
+  renewalStrategy: RenewalStrategy | null
   transferStrategy: TransferStrategy | null
 
   authenticationStrategy: AuthenticationStrategy | null
@@ -195,6 +200,7 @@ export interface PolicyInput {
   expirationStrategy?: ExpirationStrategy | null
   expirationBasis?: ExpirationBasis | null
   renewalBasis?: RenewalBasis | null
+  renewalStrategy?: RenewalStrategy | null
   transferStrategy?: TransferStrategy | null
 
   strict?: boolean
@@ -338,6 +344,8 @@ export const PolicyAttributeDescriptions: Readonly<
     "The event that causes a license's expiry to be set, e.g. on creation.",
   renewalBasis:
     "The event that causes a license's initial expiry to be set, e.g. on creation.",
+  renewalStrategy:
+    "The strategy for renewing licenses that implement the policy, i.e. whether licenses can be manually renewed or cannot be renewed at all.",
   transferStrategy:
     "The strategy used when a license is transferred to this policy.",
   authenticationStrategy:
@@ -457,6 +465,10 @@ export const PolicyOptionLabels = {
     [RenewalBasis.FromExpiry]: "From Expiry",
     [RenewalBasis.FromNow]: "From Now",
     [RenewalBasis.FromNowIfExpired]: "From Now If Expired",
+  },
+  renewalStrategy: {
+    [RenewalStrategy.ManualRenew]: "Manual Renew",
+    [RenewalStrategy.NoRenew]: "No Renew",
   },
   transferStrategy: {
     [TransferStrategy.KeepExpiry]: "Keep Expiry",

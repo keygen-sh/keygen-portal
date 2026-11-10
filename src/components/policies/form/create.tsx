@@ -664,6 +664,7 @@ function TemplatesForm({
                 "expirationStrategy",
                 "expirationBasis",
                 "renewalBasis",
+                "renewalStrategy",
                 "transferStrategy",
               ]}
             >
@@ -674,13 +675,17 @@ function TemplatesForm({
                     <Forms.Section.Column>
                       <Policies.Form.Fields
                         schema="create"
-                        include={["expirationStrategy", "expirationBasis"]}
+                        include={[
+                          "expirationStrategy",
+                          "expirationBasis",
+                          "transferStrategy",
+                        ]}
                       />
                     </Forms.Section.Column>
                     <Forms.Section.Column>
                       <Policies.Form.Fields
                         schema="create"
-                        include={["renewalBasis", "transferStrategy"]}
+                        include={["renewalStrategy", "renewalBasis"]}
                       />
                     </Forms.Section.Column>
                   </Forms.Section.Columns>
@@ -1011,6 +1016,7 @@ function ScratchForm({
               "transferStrategy",
               "expirationStrategy",
               "expirationBasis",
+              "renewalStrategy",
               "renewalBasis",
             ]}
           >
@@ -1021,6 +1027,7 @@ function ScratchForm({
                   "duration",
                   "expirationStrategy",
                   "expirationBasis",
+                  "renewalStrategy",
                   "renewalBasis",
                   "transferStrategy",
                 ]}

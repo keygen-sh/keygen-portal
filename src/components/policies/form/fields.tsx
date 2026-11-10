@@ -40,6 +40,7 @@ import {
   ExpirationBasis,
   ExpirationStrategy,
   RenewalBasis,
+  RenewalStrategy,
   TransferStrategy,
   HeartbeatBasis,
   HeartbeatCullStrategy,
@@ -124,6 +125,7 @@ const INCLUDE_DEFAULT_FIELDS: Schemas.Policies.FieldNames[] = [
   "product",
   "protected",
   "renewalBasis",
+  "renewalStrategy",
   "requireCheckIn",
   "requireChecksumScope",
   "requireComponentsScope",
@@ -464,6 +466,16 @@ export default function PoliciesFormFields({
               <RenewalBasisField
                 key="renewalBasis"
                 autoFocus={autoFocus === "renewalBasis"}
+                fieldVariant={fieldVariant}
+                descriptions={descriptions}
+                mode={mode}
+              />
+            )
+          case "renewalStrategy":
+            return (
+              <RenewalStrategyField
+                key="renewalStrategy"
+                autoFocus={autoFocus === "renewalStrategy"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
                 mode={mode}
@@ -888,6 +900,7 @@ function DurationField({
                     form.resetField("expirationStrategy")
                     form.resetField("expirationBasis")
                     form.resetField("renewalBasis")
+                    form.resetField("renewalStrategy")
                     form.resetField("transferStrategy")
                   }
                 }}
@@ -1078,6 +1091,68 @@ function RenewalBasisField({
               {Object.values(RenewalBasis).map((basis) => (
                 <SelectItem key={basis} value={basis}>
                   {PolicyOptionLabels.renewalBasis[basis]}
+                </SelectItem>
+              ))}
+            </NullableSelect>
+          </Forms.Field.Header>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+function RenewalStrategyField({
+  autoFocus,
+  fieldVariant = "row",
+  descriptions,
+  disabled,
+  mode = PolicyMode.Create,
+}: {
+  autoFocus?: boolean
+  fieldVariant?: FieldVariant
+  descriptions: Descriptions
+  disabled?: boolean
+  mode?: PolicyMode
+}) {
+  const form = useFormContext<Schemas.Policies.AllValues>()
+  const duration = useWatch<Schemas.Policies.AllValues>({ name: "duration" })
+  const isDisabled = disabled || !duration
+  const shouldMount = useDeferredMount({
+    delay: mode === PolicyMode.Create ? 0 : 500,
+  })
+
+  if (!shouldMount) {
+    return (
+      <div className="w-full justify-between space-y-2 md:flex">
+        <Skeleton className="h-5 w-36 rounded-sm" />
+        <Skeleton className="h-9 w-full rounded-sm md:w-48" />
+      </div>
+    )
+  }
+
+  return (
+    <FormField
+      control={form.control}
+      name="renewalStrategy"
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <Forms.Field.Header
+            label="Renewal strategy"
+            variant={fieldVariant}
+            tooltip={descriptions.renewalStrategy}
+          >
+            <NullableSelect<RenewalStrategy>
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              invalid={!!fieldState.error}
+              disabled={isDisabled}
+              disabledTooltip="Set a duration to configure this field."
+              autoFocus={autoFocus}
+            >
+              {Object.values(RenewalStrategy).map((strategy) => (
+                <SelectItem key={strategy} value={strategy}>
+                  {PolicyOptionLabels.renewalStrategy[strategy]}
                 </SelectItem>
               ))}
             </NullableSelect>

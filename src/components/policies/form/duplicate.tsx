@@ -200,6 +200,7 @@ export default function DuplicatePolicyForm({
                     "product",
                     "protected",
                     "renewalBasis",
+                    "renewalStrategy",
                     "requireCheckIn",
                     "requireChecksumScope",
                     "requireComponentsScope",

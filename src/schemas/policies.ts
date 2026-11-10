@@ -204,7 +204,9 @@ export const BaseRules = <TInput, TOutput extends BaseValues>(
     )
     .refine(
       (values: BaseValues) =>
-        values.duration == null || values.renewalBasis != null,
+        values.duration == null ||
+        values.renewalStrategy === RenewalStrategy.NoRenew ||
+        values.renewalBasis != null,
       {
         path: ["renewalBasis"],
         message: "Required when duration is set",
@@ -430,10 +432,15 @@ export const TimedRules = <TInput, TOutput extends BaseValues>(
       path: ["expirationBasis"],
       message: "Required for Timed policies",
     })
-    .refine((values: BaseValues) => values.renewalBasis != null, {
-      path: ["renewalBasis"],
-      message: "Required for Timed policies",
-    })
+    .refine(
+      (values: BaseValues) =>
+        values.renewalStrategy === RenewalStrategy.NoRenew ||
+        values.renewalBasis != null,
+      {
+        path: ["renewalBasis"],
+        message: "Required for Timed policies",
+      },
+    )
     .refine((values: BaseValues) => values.renewalStrategy != null, {
       path: ["renewalStrategy"],
       message: "Required for Timed policies",

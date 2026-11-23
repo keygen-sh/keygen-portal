@@ -37,6 +37,7 @@ export default function EditReleaseForm({
   const { data: release } = useGetRelease(id)
   const { data: releaseConstraints = [] } = useListReleaseConstraints(
     release?.id ?? "",
+    { limit: 100 },
   )
 
   const updateRelease = useUpdateRelease(release?.id ?? "")

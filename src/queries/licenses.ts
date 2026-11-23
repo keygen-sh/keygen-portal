@@ -558,14 +558,22 @@ export function useDetachLicenseEntitlements() {
   })
 }
 
-export function useListLicenseUsers(licenseId: string) {
+export function useListLicenseUsers(
+  licenseId: string,
+  params?: { limit?: number },
+) {
   const { code } = useEnvironment()
 
   return useQuery({
-    queryKey: ["licenses", licenseId, "users", { environment: code }],
+    queryKey: [
+      "licenses",
+      licenseId,
+      "users",
+      { environment: code, ...params },
+    ],
     queryFn: () =>
       keygen.licenses
-        .listUsers({ licenseId })
+        .listUsers({ licenseId, limit: params?.limit })
         .then((response) => response.data ?? []),
     enabled: !!licenseId,
   })

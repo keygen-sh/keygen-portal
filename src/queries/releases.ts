@@ -212,14 +212,22 @@ export function useListReleaseArtifacts(releaseId: string) {
   })
 }
 
-export function useListReleaseConstraints(releaseId: string) {
+export function useListReleaseConstraints(
+  releaseId: string,
+  params?: { limit?: number },
+) {
   const { code } = useEnvironment()
 
   return useQuery({
-    queryKey: ["releases", releaseId, "constraints", { environment: code }],
+    queryKey: [
+      "releases",
+      releaseId,
+      "constraints",
+      { environment: code, ...params },
+    ],
     queryFn: () =>
       keygen.releases
-        .listConstraints({ releaseId })
+        .listConstraints({ releaseId, limit: params?.limit })
         .then((response) => response.data ?? []),
     enabled: !!releaseId,
   })

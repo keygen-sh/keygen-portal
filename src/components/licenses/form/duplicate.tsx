@@ -18,7 +18,8 @@ import {
 } from "@/queries/licenses"
 import { useGetPolicy, useListPolicyEntitlements } from "@/queries/policies"
 import { useCreateEntitlement } from "@/queries/entitlements"
-import { useCreateUser } from "@/queries/users"
+import { useGetUser, useCreateUser } from "@/queries/users"
+import { useGetGroup } from "@/queries/groups"
 import { useResourceNavigate } from "@/hooks/use-resource-navigate"
 import { useAccountDefaultLicensePermissions } from "@/hooks/use-account-default-license-permissions"
 
@@ -52,12 +53,15 @@ export default function DuplicateLicenseForm({
     limit: 100,
   })
   const sourcePolicyId = license?.relationships.policy?.data?.id ?? null
+  const sourceGroupId = license?.relationships.group?.data?.id ?? null
   const sourceOwnerId = license?.relationships.owner?.data?.id ?? null
   const { data: sourcePolicy } = useGetPolicy(sourcePolicyId ?? "")
   const { data: sourcePolicyEntitlements = [] } = useListPolicyEntitlements(
     sourcePolicyId ?? "",
     { limit: 100 },
   )
+  const { data: sourceGroup } = useGetGroup(sourceGroupId ?? "")
+  const { data: sourceOwner } = useGetUser(sourceOwnerId ?? "")
   const attachedLicenseEntitlements = useMemo(
     () =>
       licenseEntitlements.filter(
@@ -301,6 +305,8 @@ export default function DuplicateLicenseForm({
                 schema="create"
                 mode={mode}
                 fieldVariant="stacking"
+                selectedPolicy={policy}
+                selectedGroup={sourceGroup}
                 include={["policyId", "groupId"]}
               />
               <Licenses.Form.Fields
@@ -315,6 +321,7 @@ export default function DuplicateLicenseForm({
                 schema="create"
                 mode={mode}
                 fieldVariant="stacking"
+                selectedOwner={sourceOwner}
                 attachedUsers={attachedLicenseUsers}
                 include={["ownerId", "users.attach", "users.create"]}
               />

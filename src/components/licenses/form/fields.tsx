@@ -44,6 +44,7 @@ import {
 import { Policy } from "@/types/policies"
 import { Entitlement } from "@/types/entitlements"
 import { User } from "@/types/users"
+import { Group } from "@/types/groups"
 import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
@@ -64,6 +65,8 @@ interface LicensesFormFieldsProps {
   titleVariant?: boolean
   fieldVariant?: FieldVariant
   selectedPolicy?: Policy | null
+  selectedOwner?: User | null
+  selectedGroup?: Group | null
   attachedEntitlements?: Entitlement[]
   attachedUsers?: User[]
   mode?: LicenseMode
@@ -101,6 +104,8 @@ export default function LicensesFormFields({
   titleVariant,
   fieldVariant = "row",
   selectedPolicy,
+  selectedOwner,
+  selectedGroup,
   attachedEntitlements,
   attachedUsers,
   mode = LicenseMode.Create,
@@ -149,6 +154,7 @@ export default function LicensesFormFields({
                 autoFocus={autoFocus === "policyId"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                selectedPolicy={selectedPolicy}
                 mode={mode}
               />
             )
@@ -265,6 +271,7 @@ export default function LicensesFormFields({
                 autoFocus={autoFocus === "ownerId"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                selectedOwner={selectedOwner}
                 mode={mode}
               />
             )
@@ -275,6 +282,7 @@ export default function LicensesFormFields({
                 autoFocus={autoFocus === "groupId"}
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
+                selectedGroup={selectedGroup}
                 mode={mode}
               />
             )
@@ -469,11 +477,13 @@ function PolicyIdField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  selectedPolicy,
   mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  selectedPolicy?: Policy | null
   mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.AllValues>()
@@ -485,12 +495,17 @@ function PolicyIdField({
   })
 
   const policiesByProduct = useMemo(() => {
+    const selectablePolicies =
+      selectedPolicy && !policies.some((p) => p.id === selectedPolicy.id)
+        ? [...policies, selectedPolicy]
+        : policies
+
     const grouped = new Map<
       string,
       { productName: string; policies: typeof policies }
     >()
 
-    for (const policy of policies) {
+    for (const policy of selectablePolicies) {
       const productId = policy.relationships.product?.data?.id
       if (!productId) continue
 
@@ -508,7 +523,7 @@ function PolicyIdField({
       label: data.productName,
       options: data.policies,
     }))
-  }, [policies, products])
+  }, [policies, products, selectedPolicy])
 
   if (!shouldMount || policiesLoading || productsLoading) {
     return (
@@ -1618,11 +1633,13 @@ function OwnerIdField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  selectedOwner,
   mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  selectedOwner?: User | null
   mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.BaseValues>()
@@ -1639,6 +1656,11 @@ function OwnerIdField({
       </div>
     )
   }
+
+  const selectableUsers =
+    selectedOwner && !users.some((user) => user.id === selectedOwner.id)
+      ? [...users, selectedOwner]
+      : users
 
   return (
     <FormField
@@ -1657,7 +1679,7 @@ function OwnerIdField({
                 resource="users"
                 value={field.value ?? null}
                 onChange={(value) => field.onChange(value)}
-                options={users}
+                options={selectableUsers}
                 invalid={!!fieldState.error}
                 autoFocus={autoFocus}
               />
@@ -1674,11 +1696,13 @@ function GroupIdField({
   autoFocus,
   fieldVariant = "row",
   descriptions,
+  selectedGroup,
   mode = LicenseMode.Create,
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
+  selectedGroup?: Group | null
   mode?: LicenseMode
 }) {
   const form = useFormContext<Schemas.Licenses.BaseValues>()
@@ -1695,6 +1719,11 @@ function GroupIdField({
       </div>
     )
   }
+
+  const selectableGroups =
+    selectedGroup && !groups.some((group) => group.id === selectedGroup.id)
+      ? [...groups, selectedGroup]
+      : groups
 
   return (
     <FormField
@@ -1713,7 +1742,7 @@ function GroupIdField({
                 resource="groups"
                 value={field.value ?? null}
                 onChange={(value) => field.onChange(value)}
-                options={groups}
+                options={selectableGroups}
                 invalid={!!fieldState.error}
                 autoFocus={autoFocus}
               />

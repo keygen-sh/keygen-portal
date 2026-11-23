@@ -21,7 +21,8 @@ import {
 } from "@/queries/licenses"
 import { useGetPolicy, useListPolicyEntitlements } from "@/queries/policies"
 import { useCreateEntitlement } from "@/queries/entitlements"
-import { useCreateUser } from "@/queries/users"
+import { useGetUser, useCreateUser } from "@/queries/users"
+import { useGetGroup } from "@/queries/groups"
 
 import { LicenseMode } from "@/types/licenses"
 
@@ -60,6 +61,8 @@ export default function EditLicenseForm({
     currentPolicyId ?? "",
     { limit: 100 },
   )
+  const { data: currentGroup } = useGetGroup(currentGroupId ?? "")
+  const { data: currentOwner } = useGetUser(currentOwnerId ?? "")
   const attachedLicenseEntitlements = useMemo(
     () =>
       licenseEntitlements.filter(
@@ -324,6 +327,8 @@ export default function EditLicenseForm({
                 schema="edit"
                 mode={mode}
                 fieldVariant="stacking"
+                selectedPolicy={policy}
+                selectedGroup={currentGroup}
                 include={["policyId", "groupId"]}
               />
               <Licenses.Form.Fields
@@ -338,6 +343,7 @@ export default function EditLicenseForm({
                 schema="edit"
                 mode={mode}
                 fieldVariant="stacking"
+                selectedOwner={currentOwner}
                 attachedUsers={attachedLicenseUsers}
                 include={["ownerId", "users.attach", "users.create"]}
               />

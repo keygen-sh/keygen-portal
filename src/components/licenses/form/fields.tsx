@@ -43,6 +43,7 @@ import {
 } from "@/types/licenses"
 import { Policy } from "@/types/policies"
 import { Entitlement } from "@/types/entitlements"
+import { User } from "@/types/users"
 import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
@@ -64,6 +65,7 @@ interface LicensesFormFieldsProps {
   fieldVariant?: FieldVariant
   selectedPolicy?: Policy | null
   attachedEntitlements?: Entitlement[]
+  attachedUsers?: User[]
   mode?: LicenseMode
   schema?: "create" | "edit"
 }
@@ -100,6 +102,7 @@ export default function LicensesFormFields({
   fieldVariant = "row",
   selectedPolicy,
   attachedEntitlements,
+  attachedUsers,
   mode = LicenseMode.Create,
   schema,
 }: LicensesFormFieldsProps) {
@@ -295,6 +298,7 @@ export default function LicensesFormFields({
                 fieldVariant={fieldVariant}
                 descriptions={descriptions}
                 mode={mode}
+                attachedUsers={attachedUsers}
               />
             )
           case "users.create":
@@ -1427,11 +1431,13 @@ function AttachUsersField({
   fieldVariant = "row",
   descriptions,
   mode = LicenseMode.Create,
+  attachedUsers = [],
 }: {
   autoFocus?: boolean
   fieldVariant?: FieldVariant
   descriptions: Descriptions
   mode?: LicenseMode
+  attachedUsers?: User[]
 }) {
   const form = useFormContext<Schemas.Licenses.AllValues>()
   const { data: users = [], isLoading: usersLoading } = useListUsers()
@@ -1449,9 +1455,12 @@ function AttachUsersField({
     )
   }
 
-  const attachableUsers = ownerId
-    ? users.filter((user) => user.id !== ownerId)
-    : users
+  const attachableUsers = [
+    ...users,
+    ...attachedUsers.filter(
+      (attached) => !users.some((user) => user.id === attached.id),
+    ),
+  ].filter((user) => user.id !== ownerId)
 
   return (
     <FormField

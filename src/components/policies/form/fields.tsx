@@ -57,6 +57,7 @@ import {
   SchemeDeprecated,
   PolicyMode,
 } from "@/types/policies"
+import { Entitlement } from "@/types/entitlements"
 import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
@@ -88,6 +89,7 @@ interface PoliciesFormFieldsProps {
   autoFocus?: Schemas.Policies.FieldNames
   titleVariant?: boolean
   fieldVariant?: FieldVariant
+  attachedEntitlements?: Entitlement[]
   mode?: PolicyMode
   schema?: "create" | "edit"
 }
@@ -147,6 +149,7 @@ export default function PoliciesFormFields({
   autoFocus,
   titleVariant,
   fieldVariant = "row",
+  attachedEntitlements,
   mode = PolicyMode.Create,
   schema,
 }: PoliciesFormFieldsProps) {
@@ -227,7 +230,11 @@ export default function PoliciesFormFields({
             )
           case "entitlements.attach":
             return (
-              <AttachEntitlementsField key="entitlements.attach" mode={mode} />
+              <AttachEntitlementsField
+                key="entitlements.attach"
+                mode={mode}
+                attachedEntitlements={attachedEntitlements}
+              />
             )
           case "entitlements.create":
             return (
@@ -3143,8 +3150,10 @@ function RequireCheckInField({
 
 function AttachEntitlementsField({
   mode = PolicyMode.Create,
+  attachedEntitlements = [],
 }: {
   mode?: PolicyMode
+  attachedEntitlements?: Entitlement[]
 } = {}) {
   const form = useFormContext<Schemas.Policies.AllValues>()
   const { data: entitlements = [], isLoading: entitlementsLoading } =
@@ -3162,6 +3171,13 @@ function AttachEntitlementsField({
     )
   }
 
+  const attachableEntitlements = [
+    ...entitlements,
+    ...attachedEntitlements.filter(
+      (attached) => !entitlements.some((e) => e.id === attached.id),
+    ),
+  ]
+
   return (
     <FormField
       control={form.control}
@@ -3173,7 +3189,7 @@ function AttachEntitlementsField({
             <Search.MultiSelect
               value={field.value ?? []}
               onChange={field.onChange}
-              options={entitlements}
+              options={attachableEntitlements}
               resource="entitlements"
               placeholder="Search entitlements"
             />

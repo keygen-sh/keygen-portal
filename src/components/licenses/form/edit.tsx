@@ -58,7 +58,7 @@ export default function EditLicenseForm({
     currentPolicyId ?? "",
     { limit: 100 },
   )
-  const directLicenseEntitlements = useMemo(
+  const attachedLicenseEntitlements = useMemo(
     () =>
       licenseEntitlements.filter(
         (e) => !currentPolicyEntitlements.some((p) => p.id === e.id),
@@ -96,7 +96,7 @@ export default function EditLicenseForm({
             ? license.attributes.expiry.slice(0, 16)
             : null,
           entitlements: {
-            attach: directLicenseEntitlements.map((e) => e.id),
+            attach: attachedLicenseEntitlements.map((e) => e.id),
             create: [],
           },
           users: {
@@ -140,9 +140,9 @@ export default function EditLicenseForm({
         (id) => !selectedPolicyEntitlements.some((e) => e.id === id),
       )
       const attachEntitlementIds = selectedEntitlementIds.filter(
-        (id) => !directLicenseEntitlements.some((e) => e.id === id),
+        (id) => !attachedLicenseEntitlements.some((e) => e.id === id),
       )
-      const detachEntitlementIds = directLicenseEntitlements
+      const detachEntitlementIds = attachedLicenseEntitlements
         .filter((e) => !selectedEntitlementIds.includes(e.id))
         .map((e) => e.id)
 
@@ -211,7 +211,7 @@ export default function EditLicenseForm({
       form,
       license,
       updateLicense,
-      directLicenseEntitlements,
+      attachedLicenseEntitlements,
       selectedPolicyEntitlements,
       attachEntitlements,
       detachEntitlements,
@@ -327,6 +327,7 @@ export default function EditLicenseForm({
               <Licenses.Form.Fields
                 schema="edit"
                 mode={mode}
+                attachedEntitlements={attachedLicenseEntitlements}
                 include={["entitlements.attach", "entitlements.create"]}
               />
             </Forms.Section.Column>

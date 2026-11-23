@@ -203,6 +203,7 @@ export default function EditPolicyForm({
               <Policies.Form.Fields
                 schema="edit"
                 mode={PolicyMode.Edit}
+                attachedEntitlements={policyEntitlements}
                 include={["entitlements.attach", "entitlements.create"]}
               />
             </Forms.Section.Column>

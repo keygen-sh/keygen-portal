@@ -42,6 +42,7 @@ import {
   LicensePermissions,
 } from "@/types/licenses"
 import { Policy } from "@/types/policies"
+import { Entitlement } from "@/types/entitlements"
 import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
@@ -62,6 +63,7 @@ interface LicensesFormFieldsProps {
   titleVariant?: boolean
   fieldVariant?: FieldVariant
   selectedPolicy?: Policy | null
+  attachedEntitlements?: Entitlement[]
   mode?: LicenseMode
   schema?: "create" | "edit"
 }
@@ -97,6 +99,7 @@ export default function LicensesFormFields({
   titleVariant,
   fieldVariant = "row",
   selectedPolicy,
+  attachedEntitlements,
   mode = LicenseMode.Create,
   schema,
 }: LicensesFormFieldsProps) {
@@ -274,7 +277,11 @@ export default function LicensesFormFields({
             )
           case "entitlements.attach":
             return (
-              <AttachEntitlementsField key="entitlements.attach" mode={mode} />
+              <AttachEntitlementsField
+                key="entitlements.attach"
+                mode={mode}
+                attachedEntitlements={attachedEntitlements}
+              />
             )
           case "entitlements.create":
             return (
@@ -1279,8 +1286,10 @@ function MetadataField({
 
 function AttachEntitlementsField({
   mode = LicenseMode.Create,
+  attachedEntitlements = [],
 }: {
   mode?: LicenseMode
+  attachedEntitlements?: Entitlement[]
 } = {}) {
   const form = useFormContext<Schemas.Licenses.AllValues>()
   const policyId = useWatch({ control: form.control, name: "policyId" })
@@ -1303,6 +1312,13 @@ function AttachEntitlementsField({
     )
   }
 
+  const attachableEntitlements = [
+    ...entitlements,
+    ...attachedEntitlements.filter(
+      (attached) => !entitlements.some((e) => e.id === attached.id),
+    ),
+  ]
+
   return (
     <FormField
       control={form.control}
@@ -1314,7 +1330,7 @@ function AttachEntitlementsField({
             <Search.MultiSelect
               value={field.value ?? []}
               onChange={field.onChange}
-              options={entitlements}
+              options={attachableEntitlements}
               locked={policyEntitlements}
               lockedDescription="This entitlement is automatically attached through the selected policy."
               resource="entitlements"

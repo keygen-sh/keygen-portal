@@ -55,6 +55,13 @@ export default function DuplicateLicenseForm({
     sourcePolicyId ?? "",
     { limit: 100 },
   )
+  const attachedLicenseEntitlements = useMemo(
+    () =>
+      licenseEntitlements.filter(
+        (e) => !sourcePolicyEntitlements.some((p) => p.id === e.id),
+      ),
+    [licenseEntitlements, sourcePolicyEntitlements],
+  )
   const defaultPermissions = useAccountDefaultLicensePermissions()
 
   const createLicense = useCreateLicense()
@@ -86,9 +93,7 @@ export default function DuplicateLicenseForm({
       key: "",
       permissions: matchesDefaultPermissions ? null : permissions,
       entitlements: {
-        attach: licenseEntitlements
-          .filter((e) => !sourcePolicyEntitlements.some((p) => p.id === e.id))
-          .map((e) => e.id),
+        attach: attachedLicenseEntitlements.map((e) => e.id),
         create: [],
       },
       users: {
@@ -100,10 +105,9 @@ export default function DuplicateLicenseForm({
     }
   }, [
     license,
-    licenseEntitlements,
+    attachedLicenseEntitlements,
     licenseUsers,
     sourcePolicy,
-    sourcePolicyEntitlements,
     defaultPermissions,
   ])
 
@@ -297,6 +301,7 @@ export default function DuplicateLicenseForm({
               <Licenses.Form.Fields
                 schema="create"
                 mode={mode}
+                attachedEntitlements={attachedLicenseEntitlements}
                 include={["entitlements.attach", "entitlements.create"]}
               />
             </Forms.Section.Column>

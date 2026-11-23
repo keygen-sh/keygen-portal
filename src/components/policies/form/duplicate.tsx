@@ -233,6 +233,7 @@ export default function DuplicatePolicyForm({
                 <Policies.Form.Fields
                   schema="create"
                   mode={mode}
+                  attachedEntitlements={policyEntitlements}
                   include={["entitlements.attach", "entitlements.create"]}
                 />
               </Forms.Section.Column>

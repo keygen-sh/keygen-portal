@@ -338,6 +338,7 @@ export default function EditLicenseForm({
                 schema="edit"
                 mode={mode}
                 fieldVariant="stacking"
+                attachedUsers={attachedLicenseUsers}
                 include={["ownerId", "users.attach", "users.create"]}
               />
             </Forms.Section.Column>

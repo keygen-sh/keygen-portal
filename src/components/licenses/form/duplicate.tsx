@@ -52,6 +52,7 @@ export default function DuplicateLicenseForm({
     limit: 100,
   })
   const sourcePolicyId = license?.relationships.policy?.data?.id ?? null
+  const sourceOwnerId = license?.relationships.owner?.data?.id ?? null
   const { data: sourcePolicy } = useGetPolicy(sourcePolicyId ?? "")
   const { data: sourcePolicyEntitlements = [] } = useListPolicyEntitlements(
     sourcePolicyId ?? "",
@@ -63,6 +64,10 @@ export default function DuplicateLicenseForm({
         (e) => !sourcePolicyEntitlements.some((p) => p.id === e.id),
       ),
     [licenseEntitlements, sourcePolicyEntitlements],
+  )
+  const attachedLicenseUsers = useMemo(
+    () => licenseUsers.filter((user) => user.id !== sourceOwnerId),
+    [licenseUsers, sourceOwnerId],
   )
   const defaultPermissions = useAccountDefaultLicensePermissions()
 
@@ -99,16 +104,14 @@ export default function DuplicateLicenseForm({
         create: [],
       },
       users: {
-        attach: licenseUsers
-          .filter((user) => user.id !== values.ownerId)
-          .map((user) => user.id),
+        attach: attachedLicenseUsers.map((user) => user.id),
         create: [],
       },
     }
   }, [
     license,
     attachedLicenseEntitlements,
-    licenseUsers,
+    attachedLicenseUsers,
     sourcePolicy,
     defaultPermissions,
   ])
@@ -312,6 +315,7 @@ export default function DuplicateLicenseForm({
                 schema="create"
                 mode={mode}
                 fieldVariant="stacking"
+                attachedUsers={attachedLicenseUsers}
                 include={["ownerId", "users.attach", "users.create"]}
               />
             </Forms.Section.Column>

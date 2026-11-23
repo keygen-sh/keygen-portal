@@ -48,7 +48,9 @@ export default function DuplicateLicenseForm({
     license?.id ?? "",
     { limit: 100 },
   )
-  const { data: licenseUsers = [] } = useListLicenseUsers(license?.id ?? "")
+  const { data: licenseUsers = [] } = useListLicenseUsers(license?.id ?? "", {
+    limit: 100,
+  })
   const sourcePolicyId = license?.relationships.policy?.data?.id ?? null
   const { data: sourcePolicy } = useGetPolicy(sourcePolicyId ?? "")
   const { data: sourcePolicyEntitlements = [] } = useListPolicyEntitlements(

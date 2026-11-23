@@ -49,7 +49,9 @@ export default function EditLicenseForm({
     license?.id ?? "",
     { limit: 100 },
   )
-  const { data: licenseUsers = [] } = useListLicenseUsers(license?.id ?? "")
+  const { data: licenseUsers = [] } = useListLicenseUsers(license?.id ?? "", {
+    limit: 100,
+  })
   const currentPolicyId = license?.relationships.policy?.data?.id ?? null
   const currentGroupId = license?.relationships.group?.data?.id ?? null
   const currentOwnerId = license?.relationships.owner?.data?.id ?? null

@@ -14,6 +14,7 @@ import {
   useGetRelease,
   useUpdateRelease,
   useListReleaseConstraints,
+  useListReleaseEntitlements,
   useAttachReleaseConstraints,
   useDetachReleaseConstraints,
   useChangeReleasePackage,
@@ -36,6 +37,10 @@ export default function EditReleaseForm({
   const { id } = useParams({ from: "/$accountId/app/releases/$id" })
   const { data: release } = useGetRelease(id)
   const { data: releaseConstraints = [] } = useListReleaseConstraints(
+    release?.id ?? "",
+    { limit: 100 },
+  )
+  const { data: releaseEntitlements = [] } = useListReleaseEntitlements(
     release?.id ?? "",
     { limit: 100 },
   )
@@ -171,6 +176,7 @@ export default function EditReleaseForm({
             <Forms.Section.Column>
               <Releases.Form.Fields
                 schema="edit"
+                attachedEntitlements={releaseEntitlements}
                 include={["constraints.attach"]}
               />
             </Forms.Section.Column>

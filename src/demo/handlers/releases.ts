@@ -871,6 +871,26 @@ mockRoute("DELETE", `${MOCK_ACCOUNT}/releases/:id/constraints`, (ctx) => {
   return { status: 204 }
 })
 
+mockRoute("GET", `${MOCK_ACCOUNT}/releases/:id/entitlements`, (ctx) => {
+  const release = findRelease(ctx, ctx.params.id)
+  ctx.resource = { type: TYPE, id: release.id }
+
+  const rows = scoped(
+    ctx,
+    newestFirst(
+      constraintsFor(release.id).flatMap((constraint) => {
+        const row = entitlements().get(constraint.refs.entitlement?.id ?? "")
+        return row ? [row] : []
+      }),
+    ),
+  )
+
+  return {
+    status: 200,
+    body: paginateMock(ctx, rows, (row) => serializeMock(ctx, row)),
+  }
+})
+
 mockRoute("GET", `${MOCK_ACCOUNT}/releases/:id/artifacts`, (ctx) => {
   const release = findRelease(ctx, ctx.params.id)
   ctx.resource = { type: TYPE, id: release.id }

@@ -42,6 +42,7 @@ import {
   ReleaseCreateFormFieldDescriptions,
   ReleaseEditFormFieldDescriptions,
 } from "@/types/releases"
+import { Entitlement } from "@/types/entitlements"
 import { type FieldVariant } from "@/components/forms/field"
 
 import * as Forms from "@/components/forms"
@@ -60,6 +61,7 @@ interface ReleasesFormFieldsProps {
   autoFocus?: Schemas.Releases.FieldNames
   titleVariant?: boolean
   fieldVariant?: FieldVariant
+  attachedEntitlements?: Entitlement[]
   schema?: "create" | "edit"
 }
 
@@ -82,6 +84,7 @@ export default function ReleasesFormFields({
   autoFocus,
   titleVariant,
   fieldVariant = "row",
+  attachedEntitlements,
   schema,
 }: ReleasesFormFieldsProps) {
   const descriptions =
@@ -170,6 +173,7 @@ export default function ReleasesFormFields({
                 key="constraints.attach"
                 autoFocus={autoFocus === "constraints.attach"}
                 descriptions={descriptions}
+                attachedEntitlements={attachedEntitlements}
               />
             )
           case "packageId":
@@ -583,9 +587,11 @@ function ProductIdField({
 function ConstraintsAttachField({
   autoFocus,
   descriptions,
+  attachedEntitlements = [],
 }: {
   autoFocus?: boolean
   descriptions: Descriptions
+  attachedEntitlements?: Entitlement[]
 }) {
   const form = useFormContext<Schemas.Releases.AllValues>()
   const { data: entitlements = [], isLoading: entitlementsLoading } =
@@ -599,6 +605,13 @@ function ConstraintsAttachField({
       </div>
     )
   }
+
+  const attachableEntitlements = [
+    ...entitlements,
+    ...attachedEntitlements.filter(
+      (attached) => !entitlements.some((e) => e.id === attached.id),
+    ),
+  ]
 
   return (
     <FormField
@@ -616,7 +629,7 @@ function ConstraintsAttachField({
               <Search.MultiSelect
                 value={field.value ?? []}
                 onChange={field.onChange}
-                options={entitlements}
+                options={attachableEntitlements}
                 resource="entitlements"
                 placeholder="Search entitlements"
                 invalid={!!fieldState.error}

@@ -233,6 +233,48 @@ export function useListReleaseConstraints(
   })
 }
 
+export function useListReleaseEntitlements(
+  releaseId: string,
+  params?: {
+    limit?: number
+    cursor?: string | null
+    pageSize?: number
+  },
+  options?: { enabled?: boolean },
+) {
+  const { code } = useEnvironment()
+
+  const query = useQuery({
+    queryKey: [
+      "releases",
+      releaseId,
+      "entitlements",
+      { environment: code, ...params },
+    ],
+    queryFn: async () => {
+      const response = await keygen.releases.listEntitlements({
+        releaseId,
+        limit: params?.limit,
+        pageCursor: params?.cursor,
+        pageSize: params?.pageSize,
+      })
+
+      if (response.errors) {
+        throw new APIError(response.errors[0])
+      }
+
+      return response
+    },
+    enabled: !!releaseId && (options?.enabled ?? true),
+  })
+
+  return {
+    ...query,
+    data: query.data?.data ?? [],
+    links: query.data?.links,
+  }
+}
+
 export function useAttachReleaseConstraints() {
   const queryClient = useQueryClient()
   const { code } = useEnvironment()
@@ -248,6 +290,14 @@ export function useAttachReleaseConstraints() {
     onSuccess: async (_, { releaseId }) => {
       await queryClient.invalidateQueries({
         queryKey: ["releases", releaseId, "constraints", { environment: code }],
+      })
+      await queryClient.invalidateQueries({
+        queryKey: [
+          "releases",
+          releaseId,
+          "entitlements",
+          { environment: code },
+        ],
       })
       await queryClient.invalidateQueries({
         queryKey: ["releases", releaseId, { environment: code }],
@@ -271,6 +321,14 @@ export function useDetachReleaseConstraints() {
     onSuccess: async (_, { releaseId }) => {
       await queryClient.invalidateQueries({
         queryKey: ["releases", releaseId, "constraints", { environment: code }],
+      })
+      await queryClient.invalidateQueries({
+        queryKey: [
+          "releases",
+          releaseId,
+          "entitlements",
+          { environment: code },
+        ],
       })
       await queryClient.invalidateQueries({
         queryKey: ["releases", releaseId, { environment: code }],
